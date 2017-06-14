@@ -1,0 +1,54 @@
+Downloading/unpacking pid
+  Getting page https://pypi.python.org/simple/pid/
+  URLs to search for versions for pid:
+  * https://pypi.python.org/simple/pid/
+  Analyzing links from page https://pypi.python.org/simple/pid/
+    Found link https://pypi.python.org/packages/00/3c/c695e99d7a25d09ad755d0dd6100acac8c86709c85fce8158e6ec8265ee3/pid-1.0.1.tar.gz#md5=452746eba356ee5a3673e841320fd957 (from https://pypi.python.org/simple/pid/), version: 1.0.1
+    Found link https://pypi.python.org/packages/06/48/89deeddd1c5c0a6f2d4211df2ec6987611fd20ede0ec904dcab479baee18/pid-1.0.3.tar.gz#md5=bcc545f0c63429cbe3f86a3d4d411d4c (from https://pypi.python.org/simple/pid/), version: 1.0.3
+    Found link https://pypi.python.org/packages/18/1b/78c988741f197a9447ead816e7b44889f2024bd39d719080e8250c9fdb69/pid-1.1.0-py2.py3-none-any.whl#md5=8d11d39760e3c0de08bc85b96895a38a (from https://pypi.python.org/simple/pid/), version: 1.1.0
+    Found link https://pypi.python.org/packages/33/aa/c0cfe62d15254e4ff1899a81840fa39f1a22ccd54d5e1de2788e4ecaa077/pid-2.1.0-py2.py3-none-any.whl#md5=78bccdd2d4f6af05d4049c9edd5a2b13 (from https://pypi.python.org/simple/pid/), version: 2.1.0
+    Found link https://pypi.python.org/packages/3d/00/86e6b8907d9d2caf3a213c89fb4d5d86ca7b20f71576ac0121efe3c6441a/pid-1.0.0-py2.py3-none-any.whl#md5=ebcb638e5106597b39a24fe1b85b016e (from https://pypi.python.org/simple/pid/), version: 1.0.0
+    Found link https://pypi.python.org/packages/42/5a/695e6ac6d73dd9b2d5993b20d7724cb0e168af8192a013127e182e9adc4d/pid-1.0.8-py2.py3-none-any.whl#md5=8868120ad4221216326146de411b2b3b (from https://pypi.python.org/simple/pid/), version: 1.0.8
+    Found link https://pypi.python.org/packages/4f/5c/6a830cf8dd637753cdd4c63ccc98b8d7be7e36fd1b511d8e80cebd614ba7/pid-2.1.0.tar.gz#md5=ed4f604bf259092a44c0fae417cb44ff (from https://pypi.python.org/simple/pid/), version: 2.1.0
+    Found link https://pypi.python.org/packages/52/ef/e8bacae62f5c1bb3807b0ee97fb3a9285e30a25d18df6d8b2cf33ffdc6c3/pid-2.0.1.tar.gz#md5=1120fb3f538a005100135523e4e4c668 (from https://pypi.python.org/simple/pid/), version: 2.0.1
+    Found link https://pypi.python.org/packages/54/5d/439b5ace146fd7af70a223573160fe2e99f93d03eb58c3ba6be96c0bd7f1/pid-1.0.6-py2.py3-none-any.whl#md5=bf5f58d504014ee9748a5caf02732f26 (from https://pypi.python.org/simple/pid/), version: 1.0.6
+    Found link https://pypi.python.org/packages/58/93/f192fd3b79c92d7f5065b5500a9694fe82b8bd5bba9ee24505cae499f82b/pid-1.0.6.tar.gz#md5=5d80c6250e53df460f23a867ce64d331 (from https://pypi.python.org/simple/pid/), version: 1.0.6
+    Found link https://pypi.python.org/packages/72/99/6a05542d3ebd45643e34189a0a6e21ed61be3834c324b6d09d0a6051598a/pid-1.0.7-py2.py3-none-any.whl#md5=b34c56d9132e1cbb4828fdb1a302005d (from https://pypi.python.org/simple/pid/), version: 1.0.7
+    Found link https://pypi.python.org/packages/7a/00/aaa596eb9963f224538dcdbbb53a5deeceab51ae2a5fe5ef93df5bdf8932/pid-2.1.1.tar.gz#md5=9634b1e3d545544a9d496e25e4530d14 (from https://pypi.python.org/simple/pid/), version: 2.1.1
+    Found link https://pypi.python.org/packages/89/90/8001ec1c49da9e5c61d0ebe93fad336b8fd8e14917c48a24b8b643c8ed22/pid-2.0.0.tar.gz#md5=59a1183275a53fe9bde5ebd271b6a934 (from https://pypi.python.org/simple/pid/), version: 2.0.0
+    Found link https://pypi.python.org/packages/8f/8c/0233bfa09ba323bdafbc304939e31d41438dee557603eb6abd5c8967013c/pid-1.0.3-py2.py3-none-any.whl#md5=bfe614de1488031b59463a5f26e15ba9 (from https://pypi.python.org/simple/pid/), version: 1.0.3
+    Found link https://pypi.python.org/packages/98/4c/081552ee6c452cb3f5360d562505f7b11ae7ab0c8e01f98f231dd6a6b756/pid-1.0.7.tar.gz#md5=25548f05415d0ebd5af682ad6d07fefa (from https://pypi.python.org/simple/pid/), version: 1.0.7
+    Found link https://pypi.python.org/packages/9e/56/5f82a98a022e657b3e2be64efc57d912ffc07c40af03c50e4bb0bc5895cb/pid-1.0.8.tar.gz#md5=42c08280cc86457c57871b637b669b10 (from https://pypi.python.org/simple/pid/), version: 1.0.8
+    Found link https://pypi.python.org/packages/9e/da/6f780e844dc855db5b828d9c45114bfa1ec5572e5ca5e0e68c3ebbdb76bc/pid-1.0.9.tar.gz#md5=f706df9e4c2072ead05df3ebe5ed5395 (from https://pypi.python.org/simple/pid/), version: 1.0.9
+    Found link https://pypi.python.org/packages/9f/09/2ec49cbc8fdec3f41024f27e33a9cfb292c427742142bc53fb441156f63a/pid-1.0.1-py2.py3-none-any.whl#md5=e1f0493f74b5071cebfd1a2aaacc172a (from https://pypi.python.org/simple/pid/), version: 1.0.1
+    Found link https://pypi.python.org/packages/a4/c0/5200173e3dba219bb890da2ff9600da766667b2a7eeb5a7602ad9ddd04ca/pid-1.1.0.tar.gz#md5=343f20dfa18af6b452c6e4ee8fb3bfa3 (from https://pypi.python.org/simple/pid/), version: 1.1.0
+    Found link https://pypi.python.org/packages/a6/36/9f2178c218680aff2dbddedec9d547ec46de21ba52cf0abd075167b60514/pid-1.0.2-py2.py3-none-any.whl#md5=dbfcc7b47579502bdf609069287f6b78 (from https://pypi.python.org/simple/pid/), version: 1.0.2
+    Found link https://pypi.python.org/packages/b7/b1/6d009b50d67f20b7775faa219f1b0ed24b93fde30338af95b2094ef9635a/pid-2.1.1-py2.py3-none-any.whl#md5=7a4c1cd5df40a0adfc1a147da7425b34 (from https://pypi.python.org/simple/pid/), version: 2.1.1
+    Found link https://pypi.python.org/packages/d9/cb/1aad05bcc384217ecec581b52798ef058cfe28dd5d5a7ba2ef4cc918007c/pid-1.0.0.tar.gz#md5=1f236243d9ebfc914cca064d6746e03e (from https://pypi.python.org/simple/pid/), version: 1.0.0
+    Found link https://pypi.python.org/packages/db/14/cf330f21b22656ae02bc52a0e01f15fe109704bc1b9e5f9bfbe15c7d8a8f/pid-1.0.9-py2.py3-none-any.whl#md5=e5b901f86381384ecc261e6cb5f06e7e (from https://pypi.python.org/simple/pid/), version: 1.0.9
+    Found link https://pypi.python.org/packages/e7/58/2c22cb54bef77525679650eaf061e396260fb4098854627c8f5cbb418c38/pid-2.0.0-py2.py3-none-any.whl#md5=8d79fe9e865af8f6856b5ae34fb2e77d (from https://pypi.python.org/simple/pid/), version: 2.0.0
+    Found link https://pypi.python.org/packages/f4/cd/299516bd728d130656b6e5c29245f541d05d9a1b0c68e43e7c9c160cf5d9/pid-1.0.2.tar.gz#md5=df2a6d606f97b5e8f5c6a80b013b4bf5 (from https://pypi.python.org/simple/pid/), version: 1.0.2
+  Using version 2.1.1 (newest of versions: 2.1.1, 2.1.1, 2.1.0, 2.1.0, 2.0.1, 2.0.0, 2.0.0, 1.1.0, 1.1.0, 1.0.9, 1.0.9, 1.0.8, 1.0.8, 1.0.7, 1.0.7, 1.0.6, 1.0.6, 1.0.3, 1.0.3, 1.0.2, 1.0.2, 1.0.1, 1.0.1, 1.0.0, 1.0.0)
+  Downloading pid-2.1.1-py2.py3-none-any.whl
+  Downloading from URL https://pypi.python.org/packages/b7/b1/6d009b50d67f20b7775faa219f1b0ed24b93fde30338af95b2094ef9635a/pid-2.1.1-py2.py3-none-any.whl#md5=7a4c1cd5df40a0adfc1a147da7425b34 (from https://pypi.python.org/simple/pid/)
+Installing collected packages: pid
+Cleaning up...
+Exception:
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/dist-packages/pip/basecommand.py", line 122, in main
+    status = self.run(options, args)
+  File "/usr/lib/python2.7/dist-packages/pip/commands/install.py", line 295, in run
+    requirement_set.install(install_options, global_options, root=options.root_path)
+  File "/usr/lib/python2.7/dist-packages/pip/req.py", line 1436, in install
+    requirement.install(install_options, global_options, *args, **kwargs)
+  File "/usr/lib/python2.7/dist-packages/pip/req.py", line 672, in install
+    self.move_wheel_files(self.source_dir, root=root)
+  File "/usr/lib/python2.7/dist-packages/pip/req.py", line 902, in move_wheel_files
+    pycompile=self.pycompile,
+  File "/usr/lib/python2.7/dist-packages/pip/wheel.py", line 214, in move_wheel_files
+    clobber(source, lib_dir, True)
+  File "/usr/lib/python2.7/dist-packages/pip/wheel.py", line 204, in clobber
+    os.makedirs(destdir)
+  File "/usr/lib/python2.7/os.py", line 157, in makedirs
+    mkdir(name, mode)
+OSError: [Errno 13] Permission denied: '/usr/local/lib/python2.7/dist-packages/pid'
