@@ -24,7 +24,6 @@ typeset -i iSource=-1                       # active source, -1 = none
 #USB
 typeset -r sMountPoint="/media/usb"
 #typeset -r sUsbFolder=""
-#typeset sMpcDir="/"
 typeset -a arDirStruct
 typeset -i iDirectory=0
 typeset -i iDirectoryArrayLen
@@ -255,42 +254,24 @@ mpc_get_PlaylistDirs() {
 
 # updates arSourceAvailable[1] (mpc)
 mpc_check(){
-	local pscount
+	local dbcount
 	local label
-	
-	label="SJOERD" #todo, don't hardcode
 
+	label="SJOERD" #todo, don't hardcode
+	
 	# playlist loading is handled by scripts that trigger on mount/removing of media
+	# mpd database is updated on mount by same script.
     echo "Check if anything is mounted on /media"
 	if mount | grep -q /media; then
-		echo "Media is ready!"
-
-		pscount=$(mpc playlist | wc -l)
-		
-		if [[ "$pscount" == "0" ]]; then
-			echo "Playlist is empty, trying to populate..."
-			mpc listall $label | mpc add
-			pscount=$(mpc playlist | wc -l)
-			if [[ "$pscount" == "0" ]]; then
-				echo "... failed, treating source as not available."
-				arSourceAvailable[1]=0
-			else
-				echo "... success."
-				arSourceAvailable[1]=1
-			fi
+		echo "Media is available; checking to see if it has music..."
+		dbcount=$(mpc listall $label | wc -l)
+		if [[ "$dbcount" == "0" ]]; then
+			echo "...No music on this media, treating source as not avaiable."
+			arSourceAvailable[1]=0
 		else
-			echo "Playlist succesfully loaded by udisk-glue."
+			echo "...Media contains music."
 			arSourceAvailable[1]=1
 		fi
-		
-		#if mpc | grep -q "#"; then
-		#	echo "Playlist is ready"
-		#	arSourceAvailable[1]=1
-		#else
-		#	"No playlist ready"
-		#	arSourceAvailable[1]=0
-		#fi
-		
 	else
 		echo "No media mounted"
 		arSourceAvailable[1]=0
@@ -305,11 +286,42 @@ mpc_init(){
 }
 
 mpc_play(){
+	local pscount
+	local label
+	
+	label="SJOERD" #todo, don't hardcode
+
 	echo "Play mpc"
 
-	# if playlist is empty, start by playing the root
+	# playlist should be filled by mount script, but can be replace when playing local music.
+	
+	pscount=$(mpc playlist | wc -l)
+	
+	if [[ "$pscount" == "0" ]]; then
+		echo "Playlist is empty, trying to populate..."
+		mpc listall $label | mpc add
+		pscount=$(mpc playlist | wc -l)
+		if [[ "$pscount" == "0" ]]; then
+			echo "... failed, treating source as not available."
+			arSourceAvailable[1]=0
+		else
+			echo "... success."
+			arSourceAvailable[1]=1
+		fi
+	else
+		echo "Playlist succesfully loaded by udisk-glue."
+		arSourceAvailable[1]=1
+	fi
+		
+		#if mpc | grep -q "#"; then
+		#	echo "Playlist is ready"
+		#	arSourceAvailable[1]=1
+		#else
+		#	"No playlist ready"
+		#	arSourceAvailable[1]=0
+		#fi
 
-	sMpcDir="."
+
 
 }
 
