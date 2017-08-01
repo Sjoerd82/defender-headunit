@@ -94,6 +94,9 @@ check_mount_usb(){
 }
 
 settings_write() {
+
+	sMpcRandom=$(mpc | grep random | cut -c37-39)
+
 	echo "Writing settings"
 	echo "#!/bin/bash" > /home/hu/hu_settings.sh
 	echo iSource=$iSource >> /home/hu/hu_settings.sh
@@ -392,13 +395,20 @@ mpc_random_off(){
 mpc_random_toggle(){
 	echo "Toggeling Random"
 
-	if [[ $sMpcRandom = "on" ]]; then
-		sMpcRandom="off"
-	else
-		sMpcRandom="on"
-	fi
+	# Shuffle can be set from outside, so just toggle, and save new state.
+	mpc $params_mpc random
+	
+	# Get state from mpc
+	#sMpcRandom=$(mpc | grep random | cut -c37-39)
 	settings_write
-	mpc $params_mpc random $sMpcRandom
+	
+	#if [[ $sMpcRandom = "on" ]]; then
+	#	sMpcRandom="off"
+	#else
+	#	sMpcRandom="on"
+	#fi
+	#settings_write
+	#mpc $params_mpc random $sMpcRandom
 }
 
 mpc_play_folder(){
@@ -701,6 +711,7 @@ mode_change(){
 
         case $iSource in
         1) mpc_random_toggle;;
+        2) mpc_random_toggle;;
         *) echo "Not Supported";;
         esac
 }
@@ -742,6 +753,14 @@ iFMStation=0
 	# Play/Pause button may not be implemented on control panel,
 	# therefore, always try to play if a source becomes avaiable.
 
+	# turn on remote control
+	if [[ $(ps -ef | grep "python ads1x15_remote.py" | wc -l)  < 2 ]]; then
+		echo "Starting ADS1x15 remote"
+		python ads1x15_remote.py &
+	else
+		echo "ADS1x15 remote already running"
+	fi
+	
 	echo "Initialization finished"
 
 }
