@@ -14,10 +14,10 @@ trap '' SIGTSTP
 screen -X multiuser on
 screen -X acladd pi
 
-typeset -a arSource=(fm mpc bt alsa)
-typeset -a arSourceAvailable=(1 1 1 1)
-typeset -i iSourceArrayLen=3
-typeset -i iSource=-1
+typeset -a arSource=(fm mpc locmus bt alsa) # source types
+typeset -a arSourceAvailable=(1 1 1 1 1)    # ?
+typeset -i iSourceArrayLen=4                # number of sources, 0 based?
+typeset -i iSource=-1                       # active source, -1 = none
 #USB
 typeset -r sMountPoint="/media/usb"
 #typeset sMpcDir="/"
@@ -25,6 +25,8 @@ typeset -a arDirStruct
 typeset -i iDirectory=0
 typeset -i iDirectoryArrayLen
 typeset -a arDirStartPos
+#LOCAL MUSIC
+typeset -r sLMountPoint="/media/music"
 #ALSA
 typeset -i iVolume=50
 typeset sAlsaMixer="Master"
@@ -416,6 +418,7 @@ check_source(){
 	#arSourceAvailable[1]=$(mpc_check)
 	arSourceAvailable[2]=1
 	arSourceAvailable[3]=1
+        arSourceAvailable[4]=1
 
 	# if iSource is not -1 then check if requested source is available
 #	if [[ $iSource > -1 && "${arSourceAvailable[$iSource]}" == "0" ]]; then
@@ -427,8 +430,8 @@ check_source(){
 		fi
 	fi
 
-	# Otherwise, try in order..
-	for (( i=3; i>=0; i--))
+	# Otherwise, try in order.. ; todo, remove hardcoded 4
+	for (( i=4; i>=0; i--))
 	do
 		if [ "${arSourceAvailable[$i]}" == 0 ]; then
 			echo "${arSource[$i]}:	available."
@@ -458,7 +461,7 @@ source_next(){
 	fi
 
 	echo "Switching from ${arSource[$iSource]}"
-	for (( i=0; i<=3; i++))
+	for (( i=0; i<=4; i++))
 	do
 	        if [ "$iSource" = "$iSourceArrayLen" ]; then
         	        iSource=0
