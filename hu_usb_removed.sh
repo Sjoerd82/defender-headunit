@@ -9,7 +9,7 @@ typeset root_folder=""
 # todo test parameter is there..
 root_folder=$(basename $1)
 
-# Safe position and current file name for this drive
+# save position and current file name for this drive
 mpc | sed -n 2p | grep -Po '(?<=#)[^/]*' > /home/hu/mp_$root_folder.txt
 mpc -f %file% current >> /home/hu/mp_$root_folder.txt
 

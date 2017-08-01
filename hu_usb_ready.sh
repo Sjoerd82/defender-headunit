@@ -12,6 +12,9 @@ typeset lkf=""  # Last Known File
 
 root_folder=$(basename $1)
 
+
+# the mp_ file is created by the hu_usb_removed.sh script.
+
 # First line is the original position
 lkp=$(head -n1 /home/hu/mp_$root_folder.txt)
 

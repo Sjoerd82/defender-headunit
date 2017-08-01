@@ -4,6 +4,9 @@
 # This script does not mount the USB drive, this should be handled outside of
 # the script.
 
+# See: /etc/udisks-glue.conf
+# 
+
 # Script starts with init(), see bottom of the script.
 
 # capture CTRL+C, CTRL+Z and quit singles using the trap
@@ -26,7 +29,8 @@ typeset -i iDirectory=0
 typeset -i iDirectoryArrayLen
 typeset -a arDirStartPos
 #LOCAL MUSIC
-typeset -r sLocalMusic="/media/music"
+typeset -r sLocalMusic="/media/local_music"		# symlink to /home/hu/music
+typeset -r sLocalMusicMPD="local_music"			# directory from a MPD pov.
 #ALSA
 typeset -i iVolume=50
 typeset sAlsaMixer="Master"
@@ -39,7 +43,7 @@ typeset -i bRandom=0
 typeset -a arMpcPlaylist
 typeset -a arMpcPlaylistDirs
 typeset -i iMpcPos
-typeset sMpcRepeat="off"
+typeset sMpcRepeat="on"
 typeset sMpcRandom="off"
 
 #FM
@@ -398,13 +402,41 @@ locmus_check(){
 }
 
 locmus_play(){
+
+	local typeset lkp="1" # Last Known Position
+	local typeset lkf=""  # Last Known File
+
+	# try to continue playing where left.
+
+	# First line is the original position
+	lkp=$(head -n1 /home/hu/mp_locmus.txt)
+
+	# Second line is the file name
+	lkf=$(tail -n1 /home/hu/mp_locmus.txt)
+
+	# Derive position from file name
+	lkp=$(mpc -f "%position% %file%" playlist | grep "$lkf" | cut -d' ' -f1)
+	#TODO: only use this if it yields a result, otherwise use the lkp
+	
 	mpc $params_mpc -q stop
 	mpc $params_mpc -q clear
 
-	mpc --wait $params_mpc update $sLocalMusic
-	mpc $params_mpc listall $root_folder | mpc $params_mpc add
-	mpc $params_mpc play
-	#$lkp
+	mpc --wait $params_mpc update $sLocalMusicMPD
+	mpc $params_mpc listall $sLocalMusicMPD | mpc $params_mpc add
+	mpc $params_mpc play $lkp
+	
+	# todo: start background script to monitor changes to the local music folder
+}
+
+# Stop playing local music
+locmus_stop(){
+
+	# save position and current file name for this drive
+	mpc | sed -n 2p | grep -Po '(?<=#)[^/]*' > /home/hu/mp_locmus.txt
+	mpc -f %file% current >> /home/hu/mp_locmus.txt
+	
+	# stop playback
+	mpc $params_mpc -q stop	
 }
 
 play_pause(){
