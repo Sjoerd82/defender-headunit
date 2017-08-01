@@ -505,7 +505,7 @@ locmus_play(){
 	lkf=$(tail -n1 /home/hu/mp_locmus.txt)
 
 	# Derive position from file name
-	lkp=$(mpc -f "%position% %file%" playlist | grep "$lkf" | cut -d' ' -f1)
+	#lkp=$(mpc -f "%position% %file%" playlist | grep "$lkf" | cut -d' ' -f1)
 	#TODO: only use this if it yields a result, otherwise use the lkp
 	
 	echo "LKP*: $lkp"
