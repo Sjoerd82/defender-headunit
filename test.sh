@@ -335,8 +335,12 @@ mpc_play(){
 	#TODO: only use this if it yields a result, otherwise use the lkp
 
 		
+	echo "LKP*: $lkp"
+	echo "LKF : $lkf"
 	echo "Starting playback"
+	mpc $params_mpc -q stop
 	mpc $params_mpc -q play $lkp
+	
 
 }
 
