@@ -23,6 +23,7 @@ typeset -i iSourceArrayLen=4                # number of sources, 0 based?
 typeset -i iSource=-1                       # active source, -1 = none
 #USB
 typeset -r sMountPoint="/media/usb"
+typeset -r sUsbFolder= ""
 #typeset sMpcDir="/"
 typeset -a arDirStruct
 typeset -i iDirectory=0
@@ -254,20 +255,42 @@ mpc_get_PlaylistDirs() {
 
 # updates arSourceAvailable[1] (mpc)
 mpc_check(){
-	local ret
+	local pscount
+	local label
+	
+	label = "SJOERD"
 
 	# playlist loading is handled by scripts that trigger on mount/removing of media
     echo "Check if anything is mounted on /media"
 	if mount | grep -q /media; then
 		echo "Media is ready!"
 
-		if mpc | grep -q "#"; then
-			echo "Playlist is ready"
-			arSourceAvailable[1]=1
+		pscount = mpc playlist | wc -l
+		
+		if [[ "$pscount" == "0" ]]; then
+			echo "Playlist is empty, trying to populate..."
+			mpc listall $label | mpc add
+			pscount = mpc playlist | wc -l
+			if [[ "$pscount" == "0" ]]; then
+				echo "... failed, treating source as not available."
+				arSourceAvailable[1]=0
+			else
+				echo "... success."
+				arSourceAvailable[1]=1
+			fi
 		else
-			"No playlist ready"
-			arSourceAvailable[1]=0
+			echo "Playlist succesfully loaded by udisk-glue."
+			arSourceAvailable[1]=1
 		fi
+		
+		#if mpc | grep -q "#"; then
+		#	echo "Playlist is ready"
+		#	arSourceAvailable[1]=1
+		#else
+		#	"No playlist ready"
+		#	arSourceAvailable[1]=0
+		#fi
+		
 	else
 		echo "No media mounted"
 		arSourceAvailable[1]=0
@@ -521,6 +544,7 @@ source_updateAvailable(){
 
 	# Display source availability.
     echo "---------------------------------"
+    echo "Current source: $iSource"
 	for (( i=0; i<=4; i++))
 	do
 		if [ "${arSourceAvailable[$i]}" == 1 ]; then
