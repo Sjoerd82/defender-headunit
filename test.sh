@@ -516,7 +516,7 @@ source_updateAvailable(){
 
 	# Display source availability.
     echo "---------------------------------"
-	for (( i=0; i>=4; i++))
+	for (( i=0; i<=4; i++))
 	do
 		if [ "${arSourceAvailable[$i]}" == 1 ]; then
 			echo "${arSource[$i]}:	available."
@@ -546,7 +546,7 @@ check_source(){
 
 	# Otherwise, try in order.. ; todo, remove hardcoded 4
 	# for (( i=4; i>=0; i--))
-	for (( i=0; i>=4; i++))
+	for (( i=0; i<=4; i++))
 	do
 		if [ "${arSourceAvailable[$i]}" == 1 ]; then
 			echo "Requested source is available. Source set to: ${arSource[$iSource]}"
