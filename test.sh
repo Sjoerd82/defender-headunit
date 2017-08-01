@@ -417,6 +417,8 @@ locmus_check(){
 
 locmus_play(){
 
+	echo "Playing local music"
+
 	local typeset lkp="1" # Last Known Position
 	local typeset lkf=""  # Last Known File
 
@@ -459,6 +461,7 @@ play_pause(){
 	case $iSource in
         0) fm_play_pause;;
         1) mpc_play_pause;;
+        2) mpc_play_pause;;
         *) echo "Not Supported";;
         esac
 }
@@ -467,6 +470,7 @@ next(){
 	case $iSource in
 	0) fm_next;;
 	1) mpc_next;;
+	2) mpc_next;;
 	*) echo "Not Supported";;
 	esac
 }
@@ -475,6 +479,7 @@ prev(){
         case $iSource in
         0) fm_prev;;
         1) mpc_prev;;
+        2) mpc_prev;;
         *) echo "Not Supported";;
         esac
 }
