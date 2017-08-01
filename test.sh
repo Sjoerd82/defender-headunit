@@ -14,8 +14,8 @@ trap '' SIGTSTP
 screen -X multiuser on
 screen -X acladd pi
 
-typeset -a arSource=(fm mpc locmus bt alsa) # source types
-typeset -a arSourceAvailable=(1 1 1 1 1)    # ?
+typeset -a arSource=(fm mpc locmus bt alsa) # source types; add new sources in the end
+typeset -a arSourceAvailable=(0 0 0 0 0)    # corresponds to arSource; 1=available
 typeset -i iSourceArrayLen=4                # number of sources, 0 based?
 typeset -i iSource=-1                       # active source, -1 = none
 #USB
@@ -26,7 +26,7 @@ typeset -i iDirectory=0
 typeset -i iDirectoryArrayLen
 typeset -a arDirStartPos
 #LOCAL MUSIC
-typeset -r sLMountPoint="/media/music"
+typeset -r sLocalMusic="/media/music"
 #ALSA
 typeset -i iVolume=50
 typeset sAlsaMixer="Master"
@@ -130,6 +130,12 @@ volume_down(){
 
 ## FM #######
 
+
+# updates arSourceAvailable[0] (fm) --- TODO
+fm_check(){
+ arSourceAvailable[0]=0 # not available
+}
+
 fm_play(){
 	echo "FM play"
 	bPlayingFM=1
@@ -166,12 +172,22 @@ fm_prev(){
 	echo "FM Prev Station"
 }
 
+# updates arSourceAvailable[3] (bt) -- TODO
+bt_check(){
+ arSourceAvailable[3]=0 # not available
+}
+
 bt_play(){
 	echo "BT play"
 }
 
 bt_init(){
 	/home/hu/blueagent5.py --pin 0000 &
+}
+
+# updates arSourceAvailable[4] (alsa) -- TODO
+linein_check(){
+ arSourceAvailable[4]=0 # not available
 }
 
 linein_play(){
@@ -214,27 +230,28 @@ mpc_get_PlaylistDirs() {
 	IFS=$SAVEIFS
 }
 
+# updates arSourceAvailable[1] (mpc)
+# bit redundant, but also returns 1 if not availble, or 0 if available.
 mpc_check(){
 	local ret
 
 	# playlist loading is handled by scripts that trigger on mount/removing of media
-
-        echo "Check if anything is mounted on /media"
+    echo "Check if anything is mounted on /media"
 	if mount | grep -q /media; then
 		echo "Media is ready!"
 
 		if mpc | grep -q "#"; then
 			echo "Playlist is ready"
-			arSourceAvailable[1]=0
+			arSourceAvailable[1]=1
 			return 0
 		else
 			"No playlist ready"
-			arSourceAvailable[1]=1
+			arSourceAvailable[1]=0
 			return 1
 		fi
 	else
 		echo "No media mounted"
-		arSourceAvailable[1]=1
+		arSourceAvailable[1]=0
 		return 1
 	fi
 
@@ -368,6 +385,16 @@ mpc_prev_folder(){
         mpc $params_mpc play $iNewPos
 }
 
+# updates arSourceAvailable[2] (locmus)
+locmus_check(){
+
+	if [ "$(ls -A s$LocalMusic)" ]; then
+		echo "Local music directory present, and has files"
+	else
+		echo "Local music directory not present"
+	fi
+}
+
 play_pause(){
 	echo "Toggling Play/Pause"
 	case $iSource in
@@ -409,21 +436,35 @@ source_play(){
 	esac
 }
 
+# updates arSourceAvailable
+source_updateAvailable(){
+
+	# 0; fm
+	fm_check
+
+	# 1; mpc, USB
+	mpc_check
+	
+	# 2; locmus, local music
+	locmus_check
+	
+	# 3; bt, bluetooth
+	bt_check
+	
+	# 4; alsa, play from aux jack
+	linein_check
+	
+}
+
 check_source(){
 	echo "Checking sources"
 
-	#todo
-	arSourceAvailable[0]=0
-	mpc_check # make up your mind man...
-	#arSourceAvailable[1]=$(mpc_check)
-	arSourceAvailable[2]=1
-	arSourceAvailable[3]=1
-        arSourceAvailable[4]=1
-
+	source_updateAvailable
+	
 	# if iSource is not -1 then check if requested source is available
 #	if [[ $iSource > -1 && "${arSourceAvailable[$iSource]}" == "0" ]]; then
 	if [[ "$iSource" -gt -1 ]]; then
-		if [[ "${arSourceAvailable[$iSource]}" == "0" ]]; then
+		if [[ "${arSourceAvailable[$iSource]}" == "1" ]]; then
 			# requested source is available.
 			echo "Requested source is available. Source set to: ${arSource[$iSource]}"
 			return 0
@@ -433,7 +474,7 @@ check_source(){
 	# Otherwise, try in order.. ; todo, remove hardcoded 4
 	for (( i=4; i>=0; i--))
 	do
-		if [ "${arSourceAvailable[$i]}" == 0 ]; then
+		if [ "${arSourceAvailable[$i]}" == 1 ]; then
 			echo "${arSource[$i]}:	available."
 			iSource=$i
 		else
@@ -517,10 +558,10 @@ iFMStation=0
 	# play startup sound
 	alsa_play_fx 1
 
-        # load previous state
-        source /home/hu/hu_settings.sh
+    # load previous state
+    source /home/hu/hu_settings.sh
 
-        # check available sources
+	# check available sources
 	check_source
 
 	# initialize sources
