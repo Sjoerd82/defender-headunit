@@ -23,7 +23,7 @@ typeset -i iSourceArrayLen=4                # number of sources, 0 based?
 typeset -i iSource=-1                       # active source, -1 = none
 #USB
 typeset -r sMountPoint="/media/usb"
-typeset -r sUsbFolder= ""
+#typeset -r sUsbFolder=""
 #typeset sMpcDir="/"
 typeset -a arDirStruct
 typeset -i iDirectory=0
@@ -265,12 +265,12 @@ mpc_check(){
 	if mount | grep -q /media; then
 		echo "Media is ready!"
 
-		pscount=mpc playlist | wc -l
+		pscount=$(mpc playlist | wc -l)
 		
 		if [[ "$pscount" == "0" ]]; then
 			echo "Playlist is empty, trying to populate..."
 			mpc listall $label | mpc add
-			pscount = mpc playlist | wc -l
+			pscount=$(mpc playlist | wc -l)
 			if [[ "$pscount" == "0" ]]; then
 				echo "... failed, treating source as not available."
 				arSourceAvailable[1]=0
