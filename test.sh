@@ -138,6 +138,7 @@ volume_down(){
 # updates arSourceAvailable[0] (fm) --- TODO
 fm_check(){
  arSourceAvailable[0]=0 # not available
+ #echo "Source 0 Unavailable; FM"
 }
 
 fm_play(){
@@ -176,9 +177,15 @@ fm_prev(){
 	echo "FM Prev Station"
 }
 
+fm_stop(){
+ #todo.. stop something?
+ bPlayingFM=0
+}
+
 # updates arSourceAvailable[3] (bt) -- TODO
 bt_check(){
  arSourceAvailable[3]=0 # not available
+ #echo "Source 3 Unavailable; bluetooth"
 }
 
 bt_play(){
@@ -189,13 +196,24 @@ bt_init(){
 	/home/hu/blueagent5.py --pin 0000 &
 }
 
+bt_stop(){
+	# do something?
+	echo "Stopping bluetooth"
+}
+
 # updates arSourceAvailable[4] (alsa) -- TODO
 linein_check(){
  arSourceAvailable[4]=0 # not available
-}
+ #echo "Source 4 Unavailable; Line-In / ALSA"
+ }
 
 linein_play(){
 	echo "Play line-in"
+}
+
+linein_stop(){
+	#todo
+	echo "Stopping Line-In playback"
 }
 
 #############
@@ -426,6 +444,7 @@ locmus_play(){
 	mpc $params_mpc play $lkp
 	
 	# todo: start background script to monitor changes to the local music folder
+	# Nah... overkill
 }
 
 # Stop playing local music
@@ -498,7 +517,17 @@ source_updateAvailable(){
 	
 	# 4; alsa, play from aux jack
 	linein_check
-	
+
+	# Display source availability.
+	for (( i=0; i>=4; i++))
+	do
+		if [ "${arSourceAvailable[$i]}" == 1 ]; then
+			echo "${arSource[$i]}:	available."
+		else
+			echo "${arSource[$i]}:	not available."
+		fi
+	done
+
 }
 
 # set active source
@@ -522,10 +551,8 @@ check_source(){
 	for (( i=0; i>=4; i++))
 	do
 		if [ "${arSourceAvailable[$i]}" == 1 ]; then
-			echo "${arSource[$i]}:	available."
+			echo "Requested source is available. Source set to: ${arSource[$iSource]}"
 			iSource=$i
-		else
-			echo "${arSource[$i]}:	not available."
 		fi
 	done
 
@@ -559,6 +586,24 @@ source_next(){
 
 		if [ "${arSourceAvailable[$iSource]}" == 0 ]; then
 			echo "Switching to ${arSource[$iSource]}"
+			
+			case $a in
+			0) fm_stop;;
+			1) mpc_stop;;
+			2) locmus_stop;;
+			3) bt_stop;;
+			4) linein_stop;;
+			esac
+
+			case $iSource in
+			0) fm_play;;
+			1) mpc_play;;
+			2) locmus_play;;
+			3) bt_play;;
+			4) linein_play;;
+			*) echo "Unknown source";;
+			esac
+
 			settings_write
 			return 0
 		fi
