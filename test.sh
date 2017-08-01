@@ -258,7 +258,7 @@ mpc_check(){
 	local pscount
 	local label
 	
-	label = "SJOERD"
+	label="SJOERD" #todo, don't hardcode
 
 	# playlist loading is handled by scripts that trigger on mount/removing of media
     echo "Check if anything is mounted on /media"
