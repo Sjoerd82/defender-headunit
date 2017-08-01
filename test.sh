@@ -253,7 +253,6 @@ mpc_get_PlaylistDirs() {
 }
 
 # updates arSourceAvailable[1] (mpc)
-# bit redundant, but also returns 1 if not availble, or 0 if available.
 mpc_check(){
 	local ret
 
@@ -265,16 +264,13 @@ mpc_check(){
 		if mpc | grep -q "#"; then
 			echo "Playlist is ready"
 			arSourceAvailable[1]=1
-			return 0
 		else
 			"No playlist ready"
 			arSourceAvailable[1]=0
-			return 1
 		fi
 	else
 		echo "No media mounted"
 		arSourceAvailable[1]=0
-		return 1
 	fi
 
 }
@@ -519,6 +515,7 @@ source_updateAvailable(){
 	linein_check
 
 	# Display source availability.
+    echo "---------------------------------"
 	for (( i=0; i>=4; i++))
 	do
 		if [ "${arSourceAvailable[$i]}" == 1 ]; then
@@ -527,6 +524,7 @@ source_updateAvailable(){
 			echo "${arSource[$i]}:	not available."
 		fi
 	done
+    echo "---------------------------------"
 
 }
 
