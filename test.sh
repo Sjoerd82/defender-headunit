@@ -388,11 +388,23 @@ mpc_prev_folder(){
 # updates arSourceAvailable[2] (locmus)
 locmus_check(){
 
-	if [ "$(ls -A s$LocalMusic)" ]; then
-		echo "Local music directory present, and has files"
+	if [ "$(ls -A $sLocalMusic)" ]; then
+		echo "Local music directory present and has files"
+		arSourceAvailable[2]=1
 	else
 		echo "Local music directory not present"
+		arSourceAvailable[2]=0
 	fi
+}
+
+locmus_play(){
+	mpc $params_mpc -q stop
+	mpc $params_mpc -q clear
+
+	mpc --wait $params_mpc update $sLocalMusic
+	mpc $params_mpc listall $root_folder | mpc $params_mpc add
+	mpc $params_mpc play
+	#$lkp
 }
 
 play_pause(){
@@ -430,8 +442,9 @@ source_play(){
 	case $iSource in
 	0) fm_play;;
 	1) mpc_play;;
-	2) bt_play;;
-	3) linein_play;;
+	2) locmus_play;;
+	3) bt_play;;
+	4) linein_play;;
 	*) echo "Unknown source";;
 	esac
 }
@@ -456,6 +469,7 @@ source_updateAvailable(){
 	
 }
 
+# set active source
 check_source(){
 	echo "Checking sources"
 
@@ -472,7 +486,8 @@ check_source(){
 	fi
 
 	# Otherwise, try in order.. ; todo, remove hardcoded 4
-	for (( i=4; i>=0; i--))
+	# for (( i=4; i>=0; i--))
+	for (( i=0; i>=4; i++))
 	do
 		if [ "${arSourceAvailable[$i]}" == 1 ]; then
 			echo "${arSource[$i]}:	available."
