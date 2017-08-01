@@ -582,7 +582,7 @@ source_next(){
         	        iSource=$iSource+1
 	        fi
 
-		if [ "${arSourceAvailable[$iSource]}" == 0 ]; then
+		if [ "${arSourceAvailable[$iSource]}" == 1 ]; then
 			echo "Switching to ${arSource[$iSource]}"
 			
 			case $a in
