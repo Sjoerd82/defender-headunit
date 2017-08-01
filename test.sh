@@ -554,8 +554,10 @@ do
         echo "6. Volume down"
         echo "7. Prev Folder (USB)"
         echo "8. Next Folder (USB)"
-	echo "9. Mode: Shuffle (all) / Normal"
+        echo "9. Mode: Shuffle (all) / Normal"
         echo "0. Exit"
+		echo "DEBUG OPTIONS:"
+        echo "C. check_source"
 	echo "---------------------------------"
 	read -r -N 1 -p "Enter your choice [0-8] : " c
 	# take action
@@ -569,6 +571,7 @@ do
 		7) mpc_prev_folder;;
 		8) mpc_next_folder;;
 		9) mode_change;;
+		C) check_source;;
 		0) break;;
 		*) Pause "Select between 0 to 8 only"
 	esac
