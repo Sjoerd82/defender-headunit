@@ -1,4 +1,4 @@
 #!/bin/bash
-iSource=1
+iSource=2
 sMpcRepeat=off
 sMpcRandom=off
