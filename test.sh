@@ -320,8 +320,23 @@ mpc_play(){
 		#	"No playlist ready"
 		#	arSourceAvailable[1]=0
 		#fi
+	
+	local typeset lkp="1" # Last Known Position
+	local typeset lkf=""  # Last Known File
 
+	# First line is the original position
+	lkp=$(head -n1 /home/hu/mp_$label.txt)
 
+	# Second line is the file name
+	lkf=$(tail -n1 /home/hu/mp_$label.txt)
+
+	# Derive position from file name
+	lkp=$(mpc -f "%position% %file%" playlist | grep "$lkf" | cut -d' ' -f1)
+	#TODO: only use this if it yields a result, otherwise use the lkp
+
+		
+	echo "Starting playback"
+	mpc $params_mpc -q play $lkp
 
 }
 
