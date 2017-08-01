@@ -341,8 +341,18 @@ mpc_play(){
 }
 
 mpc_stop(){
-	echo "Stopping mpc playback"
-	mpc $params_mpc stop
+	local label
+	label="SJOERD" #todo, don't hardcode
+
+	echo "Stopping mpc playback. Saving playlist position and clearing playlist."
+	
+	# save position and current file name for this drive
+	mpc | sed -n 2p | grep -Po '(?<=#)[^/]*' > /home/hu/mp_$label.txt
+	mpc -f %file% current >> /home/hu/mp_$label.txt
+
+	mpc $params_mpc -q stop
+	mpc $params_mpc -q clear
+
 }
 
 mpc_play_pause(){
@@ -483,6 +493,9 @@ locmus_play(){
 	# Derive position from file name
 	lkp=$(mpc -f "%position% %file%" playlist | grep "$lkf" | cut -d' ' -f1)
 	#TODO: only use this if it yields a result, otherwise use the lkp
+	
+	echo "LKP*: $lkp"
+	echo "LKF : $lkf"
 	
 	mpc $params_mpc -q stop
 	mpc $params_mpc -q clear
