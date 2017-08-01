@@ -483,12 +483,15 @@ locmus_play(){
 # Stop playing local music
 locmus_stop(){
 
+	echo "Stopping source: locmus. Saving playlist position and clearing playlist."
+
 	# save position and current file name for this drive
 	mpc | sed -n 2p | grep -Po '(?<=#)[^/]*' > /home/hu/mp_locmus.txt
 	mpc -f %file% current >> /home/hu/mp_locmus.txt
 	
 	# stop playback
-	mpc $params_mpc -q stop	
+	mpc $params_mpc -q stop
+	mpc $params_mpc -q clear
 }
 
 play_pause(){
