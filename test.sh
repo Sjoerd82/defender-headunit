@@ -265,7 +265,7 @@ mpc_check(){
 	if mount | grep -q /media; then
 		echo "Media is ready!"
 
-		pscount = mpc playlist | wc -l
+		pscount=mpc playlist | wc -l
 		
 		if [[ "$pscount" == "0" ]]; then
 			echo "Playlist is empty, trying to populate..."
