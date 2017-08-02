@@ -131,6 +131,6 @@ while True:
         button_press('SOURCE')
     elif BUTTON10_LO <= value_0 <= BUTTON10_HI:
         print('BUTTON10')
-        #Off
+        button_press('OFF')
 
     time.sleep(0.1)
