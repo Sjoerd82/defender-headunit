@@ -66,6 +66,9 @@ def button_press ( func ):
 	elif func == 'DIR_NEXT':
 		print('Next directory')
 		mpc_next_folder()
+	elif func == 'UPDATE_LOCAL':
+		print('Updating local MPD database')
+		call(["mpc", "--wait", "update", sLocalMusicMPD])
 	elif func == 'OFF':
 		print('Shutting down')
 		#todo: save state
@@ -121,8 +124,6 @@ def mpc_next_folder():
 	print('Next folder')
 	
 	# get current folder
-	print('--------------------')
-	print('DEBUG!')
 	#pipe = Popen('mpc -f %file%', shell=True, stdout=PIPE)
 	#pipe = subprocess.call(["mpc", "-f", "'%file%'"])
 	#pipe = Popen('mpc -f %file%', shell=True, stdout=PIPE)	
@@ -130,12 +131,6 @@ def mpc_next_folder():
 	
 	dirname_current = os.path.dirname(pipe.splitlines()[0])	
 	print('Current folder = {0:s}'.format(dirname_current))
-	"""
-	for line in pipe.stdout:
-		dirname_current = os.path.dirname(line.strip())
-		print('Current folder = {0:s}'.format(dirname_current))
-		break
-	"""
 	
 	try:
 		iNextPos = arMpcPlaylistDirs[([y[1] for y in arMpcPlaylistDirs].index(dirname_current)+1)][0]
@@ -147,7 +142,6 @@ def mpc_next_folder():
 	print(iNextPos)
 	call(["mpc", "play", str(iNextPos)])
 
-	print('--------------------')
 	
 	# updates arSourceAvailable[0] (fm) --- TODO
 def fm_check():
@@ -466,6 +460,7 @@ while True:
 	if BUTTON01_LO <= value_0 <= BUTTON01_HI:
 		print('BUTTON01')
 		#Bottom button
+		button_press('UPDATE_LOCAL')
 	elif BUTTON02_LO <= value_0 <= BUTTON02_HI:
 		print('BUTTON02')
 		#Side button, met streepje
