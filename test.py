@@ -34,7 +34,7 @@ BUTTON10_LO = 1050
 BUTTON10_HI = 1100
 
 # Global variables
-arSource = ['fm','mpc','locmus','bt','alsa'] # source types; add new sources in the end
+arSource = ['fm','usb','locmus','bt','alsa'] # source types; add new sources in the end
 arSourceAvailable = [0,0,0,0,0]              # corresponds to arSource; 1=available
 iSource =-1                        			 # active source, -1 = none
 
@@ -101,10 +101,34 @@ def linein_check():
 	#echo "Source 4 Unavailable; Line-In / ALSA"
 
 # updates arSourceAvailable[1] (mpc)
-def mpc_check():
+def usb_check():
 	print('Checking if USB is available')
-	arSourceAvailable[1]=1 # not available
 
+	print('  Check if anything is mounted on /media...')
+	arSourceAvailable[1]=1 # Available, unless:
+	
+	# Check if there's anything mounted:
+	try:
+		grepOut = subprocess.check_output("mount | grep -q /media", shell=True)
+	except subprocess.CalledProcessError as grepexc:                                                                                                   
+		arSourceAvailable[1]=0
+
+	# playlist loading is handled by scripts that trigger on mount/removing of media
+	# mpd database is updated on mount by same script.
+	# So, let's check if there's anything in the database for this source:
+	
+	if arSourceAvailable[1] == 1:
+		print('  Media is mounted. Continuing to check if there''s music...')	
+		task = subprocess.Popen("mpc listall SJOERD | wc -l", shell=True, stdout=subprocess.PIPE)
+		mpcOut = task.stdout.read()
+		assert task.wait() == 0
+		
+		if mpcOut == 0:
+			print('  Nothing in the database for this source.')
+			arSourceAvailable[1]=0	
+	else:
+		print('  Nothing mounted on /media.')
+	
 	""""
 	local dbcount
 	local label
@@ -151,7 +175,7 @@ def source_updateAvailable():
 	fm_check()
 
 	# 1; mpc, USB
-	mpc_check()
+	usb_check()
 	
 	# 2; locmus, local music
 	locmus_check()
