@@ -105,7 +105,7 @@ def source_updateAvailable():
 	#mpc_check
 	
 	# 2; locmus, local music
-	locmus_check
+	locmus_check()
 	
 	# 3; bt, bluetooth
 	#bt_check
