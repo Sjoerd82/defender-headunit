@@ -232,7 +232,7 @@ def source_next():
 		#if end of list reached, but no new source was found, then start again on the beginning of the list
 		print (i)
 		print (len(arSource))
-		if i = len(arSource):
+		if i == len(arSource):
 			for source in arSource[:i]:
 				print(source)
 				if arSourceAvailable[i] == 1:
