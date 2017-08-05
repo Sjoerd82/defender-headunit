@@ -113,7 +113,7 @@ def mpc_get_PlaylistDirs():
 		iPos += 1
 
 	print('DEBUG!!')
-	for x in arMpcPlaylistDirs
+	for x in arMpcPlaylistDirs:
 		print x
 		
 def mpc_next_folder():
