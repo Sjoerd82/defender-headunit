@@ -48,6 +48,9 @@ def button_press ( func ):
     if func == 'SHUFFLE':
        print('Toggling shuffle')
        call(["mpc", "random"])
+    elif func == 'SOURCE':
+       print('Next source')
+	   source_next()
     elif func == 'ATT':
        print('ATT mode')
     elif func == 'TRACK_NEXT':
@@ -129,33 +132,10 @@ def usb_check():
 			arSourceAvailable[1]=0
 		else:
 			print('  Found {0:s} tracks'.format(mpcOut))
+			#TODO: remove the trailing line feed..
 	else:
 		print('  Nothing mounted on /media.')
 	
-	""""
-	local dbcount
-	local label
-
-	label="SJOERD" #todo, don't hardcode
-	
-	# playlist loading is handled by scripts that trigger on mount/removing of media
-	# mpd database is updated on mount by same script.
-    echo "Check if anything is mounted on /media"
-	if mount | grep -q /media; then
-		echo "Media is available; checking to see if it has music..."
-		dbcount=$(mpc listall $label | wc -l)
-		if [[ "$dbcount" == "0" ]]; then
-			echo "...No music on this media, treating source as not avaiable."
-			arSourceAvailable[1]=0
-		else
-			echo "...Media contains music."
-			arSourceAvailable[1]=1
-		fi
-	else
-		echo "No media mounted"
-		arSourceAvailable[1]=0
-	fi
-	"""
 
 # updates arSourceAvailable[2] (locmus)
 def locmus_check():
@@ -208,6 +188,34 @@ def source_check():
 	print('Checking sources')
 	source_updateAvailable()
 
+def source_next():
+	print('Switching to next source')
+	
+	if iSource == -1:
+		#No current source, switch to the first available, starting at 0
+		i = 0
+		for source in arSource:		
+			print(source)
+			if arSourceAvailable[i] == 1:
+				print('Switching to {0:s}'.format(source))
+				break
+			i += 1
+			
+		if iSource == 0:
+			print('No sources available!')
+
+"""			else:
+		i = iSource		
+		for source in arSource[i:]:		
+			print(source)
+			if arSourceAvailable[i] == 1:
+				print('Switching to {0:s}'.format(source))
+				break
+			else:
+				print(' ...Not available')
+			i += 1
+"""
+	
 def init():
 	print('Initializing ...')
 
