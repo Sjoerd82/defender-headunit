@@ -161,6 +161,8 @@ def usb_play():
 		source_next()
 		source_play()
 		#TODO: error sound
+		break
+		
 	else:
 		print('Emptying playlist')
 		call(["mpc", "clear"])
@@ -185,7 +187,14 @@ def usb_play():
 		else:
 			print('Found {0:s} tracks'.format(mpcOut))
 			#TODO: remove the trailing line feed..
-			
+
+	#TODO: get latest position..
+	
+	print('Starting playback')
+	call(["mpc", "-q" , "stop"])
+	#mpc $params_mpc -q play $lkp
+	call(["mpc", "-q" , "play"])
+
 
 # updates arSourceAvailable[2] (locmus)
 def locmus_check():
