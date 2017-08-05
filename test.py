@@ -126,6 +126,9 @@ def mpc_next_folder():
 	#pipe = Popen('mpc -f %file%', shell=True, stdout=PIPE)
 	#pipe = subprocess.call(["mpc", "-f", "'%file%'"])
 	#xpipe = subprocess.check_output("mpc -f %file%", shell=True)
+	
+	dirname_current = 'SJOERD/MusicTest/Coldplay - 2011 - Mylo Xyloto'
+	"""
 	i=0
 	xpipe = ''
 	xpipe = Popen('mpc -f %file%', shell=True, stdout=PIPE)	
@@ -137,7 +140,8 @@ def mpc_next_folder():
 			print(dirname_current)
 		i += 1
 	errcode = xpipe.returncode
-
+	"""
+	
 	#dirname_current = os.path.dirname(xpipe.splitlines()[0])	
 	print('Current folder = {0:s}'.format(dirname_current))
 	"""for line in pipe.stdout:
