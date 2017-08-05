@@ -127,7 +127,7 @@ def mpc_next_folder():
 	#pipe = subprocess.call(["mpc", "-f", "'%file%'"])
 	#xpipe = subprocess.check_output("mpc -f %file%", shell=True)
 	i=0
-	xpipe = Popen('mpc -f %file%', shell=True, stdout=PIPE)	
+	local xpipe = Popen('mpc -f %file%', shell=True, stdout=PIPE)	
 	# wait for the process to terminate
 	for line in xpipe.stdout:
 		print(line)
@@ -153,7 +153,7 @@ def mpc_next_folder():
 		iNextPos = 1
 
 	print(iNextPos)
-	call(["mpc", "play", str(iNextPos)])
+	#call(["mpc", "play", str(iNextPos)])
 
 	print('--------------------')
 	
