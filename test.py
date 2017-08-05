@@ -51,6 +51,7 @@ def button_press ( func ):
 	elif func == 'SOURCE':
 		print('Next source')
 		source_next()
+		source_play()
 	elif func == 'ATT':
 		print('ATT mode')
 	elif func == 'TRACK_NEXT':
@@ -228,9 +229,10 @@ def source_next():
 				break
 			i += 1
 		
+		#if end of list reached, but no new source was found, then start again on the beginning of the list
 		print (i)
 		print (len(arSource))
-		if i > len(arSource)-1:
+		if i = len(arSource):
 			for source in arSource[:i]:
 				print(source)
 				if arSourceAvailable[i] == 1:
@@ -239,7 +241,10 @@ def source_next():
 					break
 				i += 1
 
-	
+def source_play():
+	print('Start playback for source X')
+	#TODO
+				
 def init():
 	print('Initializing ...')
 
@@ -252,6 +257,7 @@ def init():
 	# check available sources
 	source_check()
 	source_next()
+	source_play()
 
 	# initialize sources
 	#bt_init
