@@ -89,19 +89,19 @@ def alsa_play_fx( fx ):
 # updates arSourceAvailable[0] (fm) --- TODO
 def fm_check():
 	print('Checking if FM is available')
-	arSourceAvailable[0]=1 # not available
+	arSourceAvailable[0]=0 # not available
 	#echo "Source 0 Unavailable; FM"
 
 # updates arSourceAvailable[3] (bt) -- TODO
 def bt_check():
 	print('Checking if Bluetooth is available')
-	arSourceAvailable[3]=1 # not available
+	arSourceAvailable[3]=0 # not available
 	#echo "Source 3 Unavailable; bluetooth"
 
 # updates arSourceAvailable[4] (alsa) -- TODO
 def linein_check():
 	print('Checking if Line-In is available')
-	arSourceAvailable[4]=1 # not available
+	arSourceAvailable[4]=0 # not available
 	#echo "Source 4 Unavailable; Line-In / ALSA"
 
 # updates arSourceAvailable[1] (mpc)
