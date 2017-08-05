@@ -209,8 +209,6 @@ def source_next():
 
 	else:
 	
-		print('DEBUG ELSE')
-
 		#start at beginning, if we're at the end of the list
 		if iSource == len(arSource)-1:
 			i = 0
@@ -232,6 +230,7 @@ def source_next():
 		if i == len(arSource):
 			print('DEBUG')
 			print(iSource)
+			i = 0
 			for source in arSource[:iSource]:
 				print(source)
 				if arSourceAvailable[i] == 1:
