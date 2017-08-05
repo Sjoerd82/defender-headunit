@@ -304,7 +304,7 @@ def source_play():
 		bt_play()
 	elif iSource == 4:
 		linein_play()
-	else
+	else:
 		print('ERROR: Invalid source.')
 				
 def init():
