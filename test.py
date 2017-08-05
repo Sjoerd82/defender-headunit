@@ -230,6 +230,8 @@ def source_next():
 		print (i)
 		print (len(arSource))
 		if i == len(arSource):
+			print('DEBUG')
+			print(iSource)
 			for source in arSource[:iSource]:
 				print(source)
 				if arSourceAvailable[i] == 1:
