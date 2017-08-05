@@ -114,8 +114,8 @@ def source_updateAvailable():
 	#linein_check
 
 	# Display source availability.
-    print('---------------------------------')
-    print('Current source: $iSource"')
+	print('---------------------------------')
+	print('Current source: $iSource"')
 	
 	for i in arSource:
 		print(i)
@@ -128,7 +128,7 @@ def source_updateAvailable():
 	#		echo "${arSource[$i]}:	not available."
 	#	fi
 	#done
-    print('---------------------------------')
+	print('---------------------------------')
 
 def source_check():
 	print('Checking sources')
