@@ -212,8 +212,9 @@ def source_next():
 	else:
 	
 		print('DEBUG ELSE')
-	
-		i = iSource		
+
+		#start at next source in line
+		i = iSource+1
 		for source in arSource[i:]:
 			print(source)
 			if arSourceAvailable[i] == 1:
