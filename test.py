@@ -226,7 +226,7 @@ def source_next():
 		print (len(arSource))
 		if i > len(arSource)-1:
 			for source in arSource[:i]:
-			print(source)
+				print(source)
 				if arSourceAvailable[i] == 1:
 					print('Switching to {0:s}'.format(source))
 					iSource = i
