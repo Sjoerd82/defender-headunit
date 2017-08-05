@@ -93,17 +93,29 @@ def fm_check():
 	arSourceAvailable[0]=0 # not available
 	#echo "Source 0 Unavailable; FM"
 
+def fm_play():
+	print('Start playing FM radio...')
+	#TODO
+	
 # updates arSourceAvailable[3] (bt) -- TODO
 def bt_check():
 	print('Checking if Bluetooth is available')
 	arSourceAvailable[3]=0 # not available
 	#echo "Source 3 Unavailable; bluetooth"
 
+def bt_play():
+	print('Start playing Bluetooth...')
+	#TODO
+	
 # updates arSourceAvailable[4] (alsa) -- TODO
 def linein_check():
 	print('Checking if Line-In is available')
 	arSourceAvailable[4]=0 # not available
 	#echo "Source 4 Unavailable; Line-In / ALSA"
+
+def linein_play():
+	print('Start playing from line-in...')
+	#TODO
 
 # updates arSourceAvailable[1] (mpc)
 def usb_check():
@@ -138,6 +150,43 @@ def usb_check():
 		print('  Nothing mounted on /media.')
 	
 
+def usb_play():
+	print('Start playing USB (MPD)')
+
+	print('Checking if source is still good')
+	usb_check()
+	
+	if arSourceAvailable[1] == 0:
+		print('Aborting playback, trying next source.')
+		source_next()
+		source_play()
+		#TODO: error sound
+	else:
+		print('Emptying playlist')
+		call(["mpc", "clear"])
+
+		print('Populating playlist')
+		p1 = subprocess.Popen(["mpc", "listall", "SJOERD"], stdout=subprocess.PIPE)
+		p2 = subprocess.Popen(["mpc", "add"], stdin=p1.stdout, stdout=subprocess.PIPE)
+		p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
+		output,err = p2.communicate()
+
+		print('Checking playlist')
+		task = subprocess.Popen("mpc playlist | wc -l", shell=True, stdout=subprocess.PIPE)
+		mpcOut = task.stdout.read()
+		assert task.wait() == 0
+		
+		if mpcOut == 0:
+			print('Nothing in the playlist, marking source unavailable.')
+			arSourceAvailable[1]=0
+			source_next()
+			source_play()
+			#TODO: error sound
+		else:
+			print('Found {0:s} tracks'.format(mpcOut))
+			#TODO: remove the trailing line feed..
+			
+
 # updates arSourceAvailable[2] (locmus)
 def locmus_check():
 
@@ -151,7 +200,11 @@ def locmus_check():
 		print("Local music directory present and has files.")
 		arSourceAvailable[2]=1
 
-	
+
+def locmus_play():
+	print('Start playing local music...')
+	#TODO
+		
 # updates arSourceAvailable
 def source_updateAvailable():
 
@@ -194,6 +247,8 @@ def source_next():
 	
 	print('Switching to next source')
 	
+	# TODO: sources may have become (un)available -> check this!
+	
 	if iSource == -1:
 		#No current source, switch to the first available, starting at 0
 		i = 0
@@ -228,8 +283,6 @@ def source_next():
 		print (i)
 		print (len(arSource))
 		if i == len(arSource):
-			print('DEBUG')
-			print(iSource)
 			i = 0
 			for source in arSource[:iSource]:
 				print(source)
@@ -240,8 +293,19 @@ def source_next():
 				i += 1
 
 def source_play():
-	print('Start playback for source X')
-	#TODO
+	print('Start playback: {0:s}'.format(arSource[iSource]))
+	if iSource == 0:
+		fm_play()
+	elif iSource == 1:
+		usb_play()
+	elif iSource == 2:
+		locmus_play()
+	elif iSource == 3:
+		bt_play()
+	elif iSource == 4:
+		linein_play()
+	else
+		print('ERROR: Invalid source.')
 				
 def init():
 	print('Initializing ...')
