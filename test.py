@@ -108,7 +108,7 @@ def mpc_get_PlaylistDirs():
 
 	pipe = Popen('mpc -f %file% playlist', shell=True, stdout=PIPE)
 
-	#del arMpcPlaylistDirs
+	del arMpcPlaylistDirs
 
 	for line in pipe.stdout:
 		dirname_current=os.path.dirname(line.strip())
@@ -130,7 +130,8 @@ def mpc_current_folder():
 def mpc_next_folder_pos():
 	global arMpcPlaylistDirs
 	dirname_current = mpc_current_folder()
-
+	print('Current folder: {0:s}'.format(dirname_current))
+	
 	try:
 		iNextPos = arMpcPlaylistDirs[([y[1] for y in arMpcPlaylistDirs].index(dirname_current)+1)][0]
 		print('New folder = {0:s}'.format(arMpcPlaylistDirs[([y[1] for y in arMpcPlaylistDirs].index(dirname_current)+1)][1]))
@@ -140,35 +141,27 @@ def mpc_next_folder_pos():
 
 	return iNextPos
 
-def mpc_next_folder():
-	#global arMpcPlaylistDirs
-	#print('Next folder')
-	
-	# get current folder
-	#pipe = Popen('mpc -f %file%', shell=True, stdout=PIPE)
-	#pipe = subprocess.call(["mpc", "-f", "'%file%'"])
-	#pipe = Popen('mpc -f %file%', shell=True, stdout=PIPE)	
-	
-	""""
-	pipe = subprocess.check_output("mpc -f %file%", shell=True)
-	
-	dirname_current = os.path.dirname(pipe.splitlines()[0])	
-	print('Current folder = {0:s}'.format(dirname_current))
-	"""
+def mpc_prev_folder_pos():
+	global arMpcPlaylistDirs
+	dirname_current = mpc_current_folder()
+	print('Current folder: {0:s}'.format(dirname_current))
 
-	#dirname_current = mpc_current_folder()
-	#print('Current folder = {0:s}'.format(dirname_current))
-	
-	iNextPos = mpc_next_folder_pos()
-	print(iNextPos)
-	call(["mpc", "play", str(iNextPos)])
+	try:
+		iNextPos = arMpcPlaylistDirs[([y[1] for y in arMpcPlaylistDirs].index(dirname_current)-1)][0]
+		print('New folder = {0:s}'.format(arMpcPlaylistDirs[([y[1] for y in arMpcPlaylistDirs].index(dirname_current)-1)][1]))
+	except IndexError:
+		# I assume we past the beginning of the list...
+		print len(arMpcPlaylistDirs)
+		iNextPos = arMpcPlaylistDirs[len(arMpcPlaylistDirs)][0]
+
+		
+def mpc_next_folder():
+	print('Next folder')
+	call(["mpc", "play", str(mpc_next_folder_pos())])
 
 def mpc_prev_folder():
-	global arMpcPlaylistDirs
 	print('Prev folder')
-
-	
-
+	call(["mpc", "play", str(mpc_prev_folder_pos())])
 	
 	# updates arSourceAvailable[0] (fm) --- TODO
 def fm_check():
