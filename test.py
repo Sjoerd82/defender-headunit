@@ -98,7 +98,7 @@ def mpc_get_PlaylistDirs():
 	global arMpcPlaylistDirs
 	dirname_current = ''
 	dirname_prev = ''
-	iPos = 0
+	iPos = 1
 
 	pipe = Popen('mpc -f %file% playlist', shell=True, stdout=PIPE)
 
