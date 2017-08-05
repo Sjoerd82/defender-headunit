@@ -9,6 +9,14 @@ arSourceAvailable = [0,0,0,0,0]              # corresponds to arSource; 1=availa
 iSource =-1                        			 # active source, -1 = none
 
 # Keyboard listener
+def on_press(key):
+    try:
+        print('alphanumeric key {0} pressed'.format(
+            key.char))
+    except AttributeError:
+        print('special key {0} pressed'.format(
+            key))
+
 def on_release(key):
     print('{0} released'.format(
         key))
@@ -75,7 +83,7 @@ while True:
 
 	# Collect events until released
 	with keyboard.Listener(
-        on_release=on_release) as listener:
-    listener.join()
-	
+			on_press=on_press,
+			on_release=on_release) as listener:
+		listener.join()
 
