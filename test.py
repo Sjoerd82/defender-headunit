@@ -59,13 +59,13 @@ def button_press ( func ):
 		print('ATT mode')
 	elif func == 'TRACK_NEXT':
 		print('Next track')
-		call(["mpc", "next"])
+		#call(["mpc", "next"])
 	elif func == 'TRACK_PREV':
 		print('Prev. track')
-		call(["mpc", "prev"])
+		#call(["mpc", "prev"])
 	elif func == 'DIR_NEXT':
 		print('Next directory')
-		mpc_next_folder()
+		#mpc_next_folder()
 	elif func == 'OFF':
 		print('Shutting down')
 		#todo: save state
