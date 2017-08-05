@@ -130,12 +130,12 @@ def mpc_next_folder():
 	
 	# wait for the process to terminate
 	i=0
-	for line in process.stdout:
+	for line in xpipe.stdout:
 		print(line)
 		if i == 0:
 			dirname_current = os.path.dirname(line.strip())
 			print(dirname_current)
-	errcode = process.returncode
+	errcode = xpipe.returncode
 
 	#dirname_current = os.path.dirname(xpipe.splitlines()[0])	
 	print('Current folder = {0:s}'.format(dirname_current))
