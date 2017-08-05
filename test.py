@@ -4,6 +4,7 @@ import os
 import time
 import subprocess
 from subprocess import call
+from subprocess import Popen, PIPE
 
 # Import the ADS1x15 module.
 import Adafruit_ADS1x15
