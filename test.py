@@ -424,44 +424,44 @@ def init():
 # Main loop
 init()
 while True:
-    # Read channel 0
-    value_0 = adc.read_adc(0, gain=GAIN)
+	# Read channel 0
+	value_0 = adc.read_adc(0, gain=GAIN)
 	value_1 = adc.read_adc(1, gain=GAIN)
-    #print(value_0)
+	#print(value_0)
 
-    if BUTTON01_LO <= value_0 <= BUTTON01_HI:
-        print('BUTTON01')
-        #Bottom button
-    elif BUTTON02_LO <= value_0 <= BUTTON02_HI:
-        print('BUTTON02')
-        #Side button, met streepje
-    elif BUTTON03_LO <= value_0 <= BUTTON03_HI:
-        print('BUTTON03')
-        #VOL
-    elif BUTTON04_LO <= value_0 <= BUTTON04_HI:
-        print('BUTTON04')
-        #VOL
-    elif BUTTON05_LO <= value_0 <= BUTTON05_HI:
-        print('BUTTON05')
+	if BUTTON01_LO <= value_0 <= BUTTON01_HI:
+		print('BUTTON01')
+		#Bottom button
+	elif BUTTON02_LO <= value_0 <= BUTTON02_HI:
+		print('BUTTON02')
+		#Side button, met streepje
+	elif BUTTON03_LO <= value_0 <= BUTTON03_HI:
+		print('BUTTON03')
+		#VOL
+	elif BUTTON04_LO <= value_0 <= BUTTON04_HI:
+		print('BUTTON04')
+		#VOL
+	elif BUTTON05_LO <= value_0 <= BUTTON05_HI:
+		print('BUTTON05')
 		print(value_1)
-        button_press('TRACK_NEXT')
+		button_press('TRACK_NEXT')
 		button_press('DIR_NEXT')
-    elif BUTTON06_LO <= value_0 <= BUTTON06_HI:
-        print('BUTTON06')
+	elif BUTTON06_LO <= value_0 <= BUTTON06_HI:
+		print('BUTTON06')
 		print(value_1)
-        button_press('TRACK_PREV')
+		button_press('TRACK_PREV')
 		button_press('DIR_PREV')
-    elif BUTTON07_LO <= value_0 <= BUTTON07_HI:
-        print('BUTTON07')
-        button_press('SHUFFLE')
-    elif BUTTON08_LO <= value_0 <= BUTTON08_HI:
-        print('BUTTON08')
-        button_press('ATT')
-    elif BUTTON09_LO <= value_0 <= BUTTON09_HI:
-        print('BUTTON09')
-        button_press('SOURCE')
-    elif BUTTON10_LO <= value_0 <= BUTTON10_HI:
-        print('BUTTON10')
-        button_press('OFF')
+	elif BUTTON07_LO <= value_0 <= BUTTON07_HI:
+		print('BUTTON07')
+		button_press('SHUFFLE')
+	elif BUTTON08_LO <= value_0 <= BUTTON08_HI:
+		print('BUTTON08')
+		button_press('ATT')
+	elif BUTTON09_LO <= value_0 <= BUTTON09_HI:
+		print('BUTTON09')
+		button_press('SOURCE')
+	elif BUTTON10_LO <= value_0 <= BUTTON10_HI:
+		print('BUTTON10')
+		button_press('OFF')
 
-    time.sleep(0.1)
+	time.sleep(0.1)
