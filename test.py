@@ -132,6 +132,7 @@ def source_updateAvailable():
 
 def source_check():
 	print('Checking sources')
+	source_updateAvailable
 
 def init():
 	print('Initializing ...')
@@ -161,6 +162,7 @@ def init():
 
 	
 # Main loop
+init()
 init
 while True:
     # Read channel 0
