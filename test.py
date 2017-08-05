@@ -35,9 +35,9 @@ BUTTON10_LO = 1050
 BUTTON10_HI = 1100
 
 # Global variables
-global arSource = ['fm','usb','locmus','bt','alsa'] # source types; add new sources in the end
-global arSourceAvailable = [0,0,0,0,0]              # corresponds to arSource; 1=available
-global iSource = -1                        	  	 	# active source, -1 = none
+arSource = ['fm','usb','locmus','bt','alsa'] # source types; add new sources in the end
+arSourceAvailable = [0,0,0,0,0]              # corresponds to arSource; 1=available
+iSource = -1                        	  	 	# active source, -1 = none
 
 #LOCAL MUSIC
 sLocalMusic="/media/local_music"		# symlink to /home/hu/music
@@ -189,6 +189,8 @@ def source_check():
 	source_updateAvailable()
 
 def source_next():
+	global iSource
+	
 	print('Switching to next source')
 	
 	if iSource == -1:
