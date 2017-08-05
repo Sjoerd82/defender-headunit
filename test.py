@@ -112,6 +112,10 @@ def mpc_get_PlaylistDirs():
 		dirname_prev = dirname_current
 		iPos += 1
 
+	print('DEBUG!!')
+	for x in arMpcPlaylistDirs
+		print x
+		
 def mpc_next_folder():
 	global arMpcPlaylistDirs
 	print('Next folder')
