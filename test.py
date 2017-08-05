@@ -3,7 +3,7 @@
 import os
 import time
 import subprocess
-#from subprocess import call
+from subprocess import call
 
 # Import the ADS1x15 module.
 import Adafruit_ADS1x15
@@ -227,6 +227,7 @@ def init():
 
 	# check available sources
 	source_check()
+	source_next()
 
 	# initialize sources
 	#bt_init
