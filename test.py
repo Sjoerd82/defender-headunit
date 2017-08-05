@@ -108,7 +108,7 @@ def mpc_get_PlaylistDirs():
 
 	pipe = Popen('mpc -f %file% playlist', shell=True, stdout=PIPE)
 
-	del arMpcPlaylistDirs
+	#del arMpcPlaylistDirs
 
 	for line in pipe.stdout:
 		dirname_current=os.path.dirname(line.strip())
