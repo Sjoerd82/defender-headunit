@@ -16,10 +16,10 @@ def on_release(key):
         # Stop listener
         return False
 
-def source_check:
+def source_check():
 	print('Checking sources')
 
-def init:
+def init():
 	print('Initializing ...')
 
 	# play startup sound
