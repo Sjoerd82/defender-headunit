@@ -93,9 +93,9 @@ def alsa_play_fx( fx ):
 
 def mpc_get_PlaylistDirs():
 	global arMpcPlaylistDirs
-	local dirname_current = ''
-	local dirname_prev = ''
-	local iPos = 0
+	dirname_current = ''
+	dirname_prev = ''
+	iPos = 0
 
 	pipe = Popen('mpc -f %file% playlist', shell=True, stdout=PIPE)
 
