@@ -123,7 +123,12 @@ def mpc_next_folder():
 		print('Current folder = {0:s}'.format(dirname_current))
 		break
 
-	iNextPos = arMpcPlaylistDirs[([y[1] for y in arMpcPlaylistDirs].index(dirname_current)+1)][0]
+	try:
+		iNextPos = arMpcPlaylistDirs[([y[1] for y in arMpcPlaylistDirs].index(dirname_current)+1)][0]
+	except IndexError:
+		# I assume the end of the list has been reached...
+		iNextPos = 1
+	
 	call(["mpc", "play", iNextPos])
 
 	
