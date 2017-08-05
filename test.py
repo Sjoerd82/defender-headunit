@@ -77,7 +77,7 @@ def button_press ( func ):
         elif func == 'TRACK_PREV'  and press_count == 10:
             break
 
-def alsa_play_fx( fx ){
+def alsa_play_fx( fx ):
 	print('Playing effect')
 	#TODO
 
