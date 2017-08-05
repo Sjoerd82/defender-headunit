@@ -117,17 +117,15 @@ def source_updateAvailable():
 	print('---------------------------------')
 	print('Current source: $iSource"')
 	
-	for i in arSource:
-		print(i)
+	i = 0
+	for source in arSource:
+		print(source)
+		if arSourceAvailable[i] == 1:
+			print(' ...Available')
+		else:
+			print(' ...Not available')
+		i += 1
 	
-	#for (( i=0; i<=4; i++))
-	#do
-	#	if [ "${arSourceAvailable[$i]}" == 1 ]; then
-	#		echo "${arSource[$i]}:	available."
-	#	else
-	#		echo "${arSource[$i]}:	not available."
-	#	fi
-	#done
 	print('---------------------------------')
 
 def source_check():
