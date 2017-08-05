@@ -59,13 +59,13 @@ def button_press ( func ):
 		print('ATT mode')
 	elif func == 'TRACK_NEXT':
 		print('Next track')
-		#call(["mpc", "next"])
+		call(["mpc", "next"])
 	elif func == 'TRACK_PREV':
 		print('Prev. track')
-		#call(["mpc", "prev"])
+		call(["mpc", "prev"])
 	elif func == 'DIR_NEXT':
 		print('Next directory')
-		#mpc_next_folder()
+		mpc_next_folder()
 	elif func == 'OFF':
 		print('Shutting down')
 		#todo: save state
@@ -125,26 +125,13 @@ def mpc_next_folder():
 	print('DEBUG!')
 	#pipe = Popen('mpc -f %file%', shell=True, stdout=PIPE)
 	#pipe = subprocess.call(["mpc", "-f", "'%file%'"])
-	#xpipe = subprocess.check_output("mpc -f %file%", shell=True)
+	#pipe = Popen('mpc -f %file%', shell=True, stdout=PIPE)	
+	pipe = subprocess.check_output("mpc -f %file%", shell=True)
 	
-	dirname_current = 'SJOERD/MusicTest/Coldplay - 2011 - Mylo Xyloto'
-	"""
-	i=0
-	xpipe = ''
-	xpipe = Popen('mpc -f %file%', shell=True, stdout=PIPE)	
-	# wait for the process to terminate
-	for line in xpipe.stdout:
-		print(line)
-		if i == 0:
-			dirname_current = os.path.dirname(line.strip())
-			print(dirname_current)
-		i += 1
-	errcode = xpipe.returncode
-	"""
-	
-	#dirname_current = os.path.dirname(xpipe.splitlines()[0])	
+	dirname_current = os.path.dirname(xpipe.splitlines()[0])	
 	print('Current folder = {0:s}'.format(dirname_current))
-	"""for line in pipe.stdout:
+	"""
+	for line in pipe.stdout:
 		dirname_current = os.path.dirname(line.strip())
 		print('Current folder = {0:s}'.format(dirname_current))
 		break
@@ -158,7 +145,7 @@ def mpc_next_folder():
 		iNextPos = 1
 
 	print(iNextPos)
-	#call(["mpc", "play", str(iNextPos)])
+	call(["mpc", "play", str(iNextPos)])
 
 	print('--------------------')
 	
