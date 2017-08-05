@@ -65,6 +65,9 @@ def button_press ( func ):
 	elif func == 'TRACK_PREV':
 		print('Prev. track')
 		call(["mpc", "prev"])
+	elif func == 'DIR_NEXT':
+		print('Next directory')
+		mpc_next_folder()
 	elif func == 'OFF':
 		print('Shutting down')
 		#todo: save state
@@ -99,10 +102,9 @@ def mpc_get_PlaylistDirs():
 	dirname_prev = ''
 	iPos = 0
 
-	"""
 	pipe = Popen('mpc -f %file% playlist', shell=True, stdout=PIPE)
 
-	del arMpcPlaylistDirs
+	#del arMpcPlaylistDirs
 
 	for line in pipe.stdout:
 		dirname_current=os.path.dirname(line.strip())
@@ -111,7 +113,6 @@ def mpc_get_PlaylistDirs():
 			arMpcPlaylistDirs.append(t)
 		dirname_prev = dirname_current
 		iPos += 1
-	"""
 
 def mpc_next_folder():
 	global arMpcPlaylistDirs
