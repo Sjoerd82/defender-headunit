@@ -220,8 +220,7 @@ def source_next():
 						print('Switching to {0:s}'.format(source))
 						break
 					i += 1
-			
-"""
+
 	
 def init():
 	print('Initializing ...')
