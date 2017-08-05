@@ -68,7 +68,7 @@ def button_press ( func ):
 		mpc_next_folder()		
 	elif func == 'DIR_PREV':
 		print('Prev directory')
-		mpc_prev_folder
+		mpc_prev_folder()
 	elif func == 'UPDATE_LOCAL':
 		print('Updating local MPD database')
 		locmus_update()
