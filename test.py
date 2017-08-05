@@ -129,7 +129,7 @@ def mpc_next_folder():
 		# I assume the end of the list has been reached...
 		iNextPos = 1
 	
-	call(["mpc", "play", iNextPos])
+	call(["mpc", "play", str(iNextPos]))
 
 	
 	# updates arSourceAvailable[0] (fm) --- TODO
