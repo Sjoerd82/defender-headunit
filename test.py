@@ -126,7 +126,9 @@ def usb_check():
 		
 		if mpcOut == 0:
 			print('  Nothing in the database for this source.')
-			arSourceAvailable[1]=0	
+			arSourceAvailable[1]=0
+		else:
+			print('  Found {0:d} tracks'.format(mpcOut))
 	else:
 		print('  Nothing mounted on /media.')
 	
@@ -189,7 +191,7 @@ def source_updateAvailable():
 
 	# Display source availability.
 	print('---------------------------------')
-	print('Current source: $iSource"')
+	print('Current source: {0:d}'.format(iSource))
 	
 	i = 0
 	for source in arSource:
