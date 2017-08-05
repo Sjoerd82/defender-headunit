@@ -193,6 +193,9 @@ def source_next():
 	
 	print('Switching to next source')
 	
+	print('DEBUG--')
+	print(iSource)
+	
 	if iSource == -1:
 		#No current source, switch to the first available, starting at 0
 		i = 0
@@ -208,8 +211,11 @@ def source_next():
 
 	else:
 	
+		print('DEBUG ELSE')
+	
 		i = iSource		
 		for source in arSource[i:]:
+			print(source)
 			if arSourceAvailable[i] == 1:
 				print('Switching to {0:s}'.format(source))
 				iSource = i
@@ -220,6 +226,7 @@ def source_next():
 		print (len(arSource))
 		if i > len(arSource)-1:
 			for source in arSource[:i]:
+			print(source)
 				if arSourceAvailable[i] == 1:
 					print('Switching to {0:s}'.format(source))
 					iSource = i
