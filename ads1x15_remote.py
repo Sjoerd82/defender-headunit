@@ -69,7 +69,7 @@ def button_press ( func ):
     elif func == 'OFF':
        print('Shutting down')
 	   #todo: save state
-       call(["systemctl", "poweroff", "i"])
+       call(["systemctl", "poweroff", "-i"])
 
     # Feedback beep
     call(["gpio", "write", "6", "1"])
