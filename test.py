@@ -132,7 +132,7 @@ def source_updateAvailable():
 
 def source_check():
 	print('Checking sources')
-	source_updateAvailable
+	source_updateAvailable()
 
 def init():
 	print('Initializing ...')
@@ -144,7 +144,7 @@ def init():
     #source /home/hu/hu_settings.sh
 
 	# check available sources
-	source_check
+	source_check()
 
 	# initialize sources
 	#bt_init
@@ -163,7 +163,6 @@ def init():
 	
 # Main loop
 init()
-init
 while True:
     # Read channel 0
     value_0 =  adc.read_adc(0, gain=GAIN)
