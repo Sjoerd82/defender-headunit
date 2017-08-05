@@ -45,7 +45,8 @@ sLocalMusic="/media/local_music"		# symlink to /home/hu/music
 sLocalMusicMPD="local_music"			# directory from a MPD pov.
 
 #MPC
-global arMpcPlaylistDirs = [ ]
+global arMpcPlaylistDirs
+arMpcPlaylistDirs = [ ]
 
 
 def button_press ( func ):
