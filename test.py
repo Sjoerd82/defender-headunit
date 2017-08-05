@@ -68,7 +68,7 @@ def button_press ( func ):
 		mpc_next_folder()
 	elif func == 'UPDATE_LOCAL':
 		print('Updating local MPD database')
-		call(["mpc", "--wait", "update", sLocalMusicMPD])
+		locmus_update()
 	elif func == 'OFF':
 		print('Shutting down')
 		#todo: save state
@@ -317,6 +317,18 @@ def locmus_play():
 		
 			print('Loading directory structure')
 			mpc_get_PlaylistDirs()
+		
+def locmus_update():
+	print('Updating local database')
+
+	#Remember position and/or track in playlist
+
+	#Update
+	call(["mpc", "--wait", "update", sLocalMusicMPD])
+	
+	#Reload playlist
+	locmus_play()
+	
 		
 # updates arSourceAvailable
 def source_updateAvailable():
