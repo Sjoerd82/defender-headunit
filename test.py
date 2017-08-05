@@ -35,9 +35,9 @@ BUTTON10_LO = 1050
 BUTTON10_HI = 1100
 
 # Global variables
-arSource = ['fm','usb','locmus','bt','alsa'] # source types; add new sources in the end
-arSourceAvailable = [0,0,0,0,0]              # corresponds to arSource; 1=available
-iSource =-1                        			 # active source, -1 = none
+global arSource = ['fm','usb','locmus','bt','alsa'] # source types; add new sources in the end
+global arSourceAvailable = [0,0,0,0,0]              # corresponds to arSource; 1=available
+global iSource = -1                        	  	 	# active source, -1 = none
 
 #LOCAL MUSIC
 sLocalMusic="/media/local_music"		# symlink to /home/hu/music
@@ -89,19 +89,19 @@ def alsa_play_fx( fx ):
 # updates arSourceAvailable[0] (fm) --- TODO
 def fm_check():
 	print('Checking if FM is available')
-	arSourceAvailable[0]=0 # not available
+	arSourceAvailable[0]=1 # not available
 	#echo "Source 0 Unavailable; FM"
 
 # updates arSourceAvailable[3] (bt) -- TODO
 def bt_check():
 	print('Checking if Bluetooth is available')
-	arSourceAvailable[3]=0 # not available
+	arSourceAvailable[3]=1 # not available
 	#echo "Source 3 Unavailable; bluetooth"
 
 # updates arSourceAvailable[4] (alsa) -- TODO
 def linein_check():
 	print('Checking if Line-In is available')
-	arSourceAvailable[4]=0 # not available
+	arSourceAvailable[4]=1 # not available
 	#echo "Source 4 Unavailable; Line-In / ALSA"
 
 # updates arSourceAvailable[1] (mpc)
