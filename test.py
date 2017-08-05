@@ -121,13 +121,23 @@ def mpc_next_folder():
 	print('Next folder')
 	
 	# get current folder
-	#pipe = Popen('mpc -f %file%', shell=True, stdout=PIPE)
-	#pipe = subprocess.call(["mpc", "-f", "'%file%'"])
 	print('--------------------')
 	print('DEBUG!')
-	xpipe = subprocess.check_output("mpc -f %file%", shell=True)
-	print(xpipe)
-	dirname_current = os.path.dirname(xpipe.splitlines()[0])	
+	#pipe = Popen('mpc -f %file%', shell=True, stdout=PIPE)
+	#pipe = subprocess.call(["mpc", "-f", "'%file%'"])
+	#xpipe = subprocess.check_output("mpc -f %file%", shell=True)
+	xpipe = Popen('mpc -f %file%', shell=True, stdout=PIPE)
+	
+	# wait for the process to terminate
+	i=0
+	for line in process.stdout:
+		print(line)
+		if i == 0:
+			dirname_current = os.path.dirname(line.strip())
+			print(dirname_current)
+	errcode = process.returncode
+
+	#dirname_current = os.path.dirname(xpipe.splitlines()[0])	
 	print('Current folder = {0:s}'.format(dirname_current))
 	"""for line in pipe.stdout:
 		dirname_current = os.path.dirname(line.strip())
