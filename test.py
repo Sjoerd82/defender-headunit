@@ -45,7 +45,7 @@ sLocalMusic="/media/local_music"		# symlink to /home/hu/music
 sLocalMusicMPD="local_music"			# directory from a MPD pov.
 
 #MPC
-arMpcPlaylistDirs = [ ]
+global arMpcPlaylistDirs = [ ]
 
 
 def button_press ( func ):
@@ -93,7 +93,7 @@ def alsa_play_fx( fx ):
 
 
 def mpc_get_PlaylistDirs():
-	#global arMpcPlaylistDirs
+	global arMpcPlaylistDirs
 	dirname_current = ''
 	dirname_prev = ''
 	iPos = 0
