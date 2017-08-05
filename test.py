@@ -65,7 +65,10 @@ def button_press ( func ):
 		call(["mpc", "prev"])
 	elif func == 'DIR_NEXT':
 		print('Next directory')
-		mpc_next_folder()
+		mpc_next_folder()		
+	elif func == 'DIR_PREV':
+		print('Prev directory')
+		mpc_prev_folder
 	elif func == 'UPDATE_LOCAL':
 		print('Updating local MPD database')
 		locmus_update()
@@ -118,20 +121,16 @@ def mpc_get_PlaylistDirs():
 	print('DEBUG!!')
 	for x in arMpcPlaylistDirs:
 		print x
-		
-def mpc_next_folder():
-	global arMpcPlaylistDirs
-	print('Next folder')
-	
-	# get current folder
-	#pipe = Popen('mpc -f %file%', shell=True, stdout=PIPE)
-	#pipe = subprocess.call(["mpc", "-f", "'%file%'"])
-	#pipe = Popen('mpc -f %file%', shell=True, stdout=PIPE)	
+
+def mpc_current_folder():
+	# Get current folder
 	pipe = subprocess.check_output("mpc -f %file%", shell=True)
-	
-	dirname_current = os.path.dirname(pipe.splitlines()[0])	
-	print('Current folder = {0:s}'.format(dirname_current))
-	
+	return os.path.dirname(pipe.splitlines()[0])
+
+def mpc_next_folder_pos
+	global arMpcPlaylistDirs
+	dirname_current = mpc_current_folder()
+
 	try:
 		iNextPos = arMpcPlaylistDirs[([y[1] for y in arMpcPlaylistDirs].index(dirname_current)+1)][0]
 		print('New folder = {0:s}'.format(arMpcPlaylistDirs[([y[1] for y in arMpcPlaylistDirs].index(dirname_current)+1)][1]))
@@ -139,8 +138,36 @@ def mpc_next_folder():
 		# I assume the end of the list has been reached...
 		iNextPos = 1
 
+	return iNextPos
+
+def mpc_next_folder():
+	#global arMpcPlaylistDirs
+	#print('Next folder')
+	
+	# get current folder
+	#pipe = Popen('mpc -f %file%', shell=True, stdout=PIPE)
+	#pipe = subprocess.call(["mpc", "-f", "'%file%'"])
+	#pipe = Popen('mpc -f %file%', shell=True, stdout=PIPE)	
+	
+	""""
+	pipe = subprocess.check_output("mpc -f %file%", shell=True)
+	
+	dirname_current = os.path.dirname(pipe.splitlines()[0])	
+	print('Current folder = {0:s}'.format(dirname_current))
+	"""
+
+	#dirname_current = mpc_current_folder()
+	#print('Current folder = {0:s}'.format(dirname_current))
+	
+	iNextPos = mpc_next_folder_pos()
 	print(iNextPos)
 	call(["mpc", "play", str(iNextPos)])
+
+def mpc_prev_folder():
+	global arMpcPlaylistDirs
+	print('Prev folder')
+
+	
 
 	
 	# updates arSourceAvailable[0] (fm) --- TODO
@@ -322,6 +349,8 @@ def locmus_update():
 	print('Updating local database')
 
 	#Remember position and/or track in playlist
+	#or.. also cool, start playing at the first next new track
+	#TODO
 
 	#Update
 	call(["mpc", "--wait", "update", sLocalMusicMPD])
