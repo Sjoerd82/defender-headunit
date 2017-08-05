@@ -134,7 +134,7 @@ def mpc_next_folder():
 		if i == 0:
 			dirname_current = os.path.dirname(line.strip())
 			print(dirname_current)
-		i += 0
+		i += 1
 	errcode = xpipe.returncode
 
 	#dirname_current = os.path.dirname(xpipe.splitlines()[0])	
