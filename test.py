@@ -455,14 +455,16 @@ while True:
 		#VOL
 	elif BUTTON05_LO <= value_0 <= BUTTON05_HI:
 		print('BUTTON05')
-		print(value_1)
-		button_press('TRACK_NEXT')
-		button_press('DIR_NEXT')
+		if value_1 < 300:
+			button_press('TRACK_NEXT')
+		else:
+			button_press('DIR_NEXT')
 	elif BUTTON06_LO <= value_0 <= BUTTON06_HI:
 		print('BUTTON06')
-		print(value_1)
-		button_press('TRACK_PREV')
-		button_press('DIR_PREV')
+		if value_1 < 300:
+			button_press('TRACK_PREV')
+		else:
+			button_press('DIR_PREV')
 	elif BUTTON07_LO <= value_0 <= BUTTON07_HI:
 		print('BUTTON07')
 		button_press('SHUFFLE')
