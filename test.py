@@ -91,8 +91,7 @@ def alsa_play_fx( fx ):
 	#TODO
 
 
-def mpc_get_PlaylistDirs()
-
+def mpc_get_PlaylistDirs():
 	global arMpcPlaylistDirs
 	local dirname_current = ''
 	local dirname_prev = ''
