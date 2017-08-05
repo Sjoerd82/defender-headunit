@@ -154,7 +154,9 @@ def mpc_prev_folder_pos():
 		print len(arMpcPlaylistDirs)
 		iNextPos = arMpcPlaylistDirs[len(arMpcPlaylistDirs)][0]
 
-		
+	return iNextPos
+
+	
 def mpc_next_folder():
 	print('Next folder')
 	call(["mpc", "play", str(mpc_next_folder_pos())])
