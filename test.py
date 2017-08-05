@@ -110,7 +110,7 @@ def mpc_get_PlaylistDirs():
 		iPos += 1
 
 
-def mpc_next_folder()
+def mpc_next_folder():
 	print('Next folder')
 	print(arMpcPlaylistDirs[3])
 
