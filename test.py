@@ -161,6 +161,7 @@ def init():
 
 	
 # Main loop
+init
 while True:
     # Read channel 0
     value_0 =  adc.read_adc(0, gain=GAIN)
