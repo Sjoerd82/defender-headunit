@@ -127,7 +127,7 @@ def mpc_current_folder():
 	pipe = subprocess.check_output("mpc -f %file%", shell=True)
 	return os.path.dirname(pipe.splitlines()[0])
 
-def mpc_next_folder_pos
+def mpc_next_folder_pos():
 	global arMpcPlaylistDirs
 	dirname_current = mpc_current_folder()
 
