@@ -45,9 +45,7 @@ sLocalMusic="/media/local_music"		# symlink to /home/hu/music
 sLocalMusicMPD="local_music"			# directory from a MPD pov.
 
 #MPC
-#global arMpcPlaylistDirs
 arMpcPlaylistDirs = [ ]
-
 
 def button_press ( func ):
 	if func == 'SHUFFLE':
@@ -117,7 +115,16 @@ def mpc_get_PlaylistDirs():
 def mpc_next_folder():
 	global arMpcPlaylistDirs
 	print('Next folder')
-	print(arMpcPlaylistDirs[3])
+	
+	# get current folder
+	pipe = Popen('mpc -f %file%', shell=True, stdout=PIPE)
+	for line in pipe.stdout:
+		dirname_current = os.path.dirname(line.strip())
+		print('Current folder = {0:s}'.format(dirname_current))
+		break
+
+	iNextPos = arMpcPlaylistDirs[([y[1] for y in arMpcPlaylistDirs].index(dirname_current)+1)][0]
+	call(["mpc", "play", iNextPos])
 
 	
 	# updates arSourceAvailable[0] (fm) --- TODO
