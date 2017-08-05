@@ -151,7 +151,7 @@ def usb_check():
 	
 
 def usb_play():
-	print('Start playing USB (MPD)')
+	print('[PLAY] USB (MPD)')
 
 	print('Checking if source is still good')
 	usb_check()
@@ -164,7 +164,9 @@ def usb_play():
 		
 	else:
 		print('Emptying playlist')
+		call(["mpc", "stop"])
 		call(["mpc", "clear"])
+		#todo: how about cropping, populating, and removing the first? item .. for faster continuity???
 
 		print('Populating playlist')
 		p1 = subprocess.Popen(["mpc", "listall", "SJOERD"], stdout=subprocess.PIPE)
@@ -209,8 +211,51 @@ def locmus_check():
 
 
 def locmus_play():
-	print('Start playing local music...')
-	#TODO
+	print('[PLAY] LOCAL (MPD)')
+
+	print('Checking if source is still good')
+	locmus_check()
+	
+	if arSourceAvailable[2] == 0:
+		print('Aborting playback, trying next source.')
+		source_next()
+		source_play()
+		#TODO: error sound
+		
+	else:
+		# mpc --wait $params_mpc update $sLocalMusicMPD # <<<< -----  do this outside of this script using inotifywait ....
+		print('Emptying playlist')
+		call(["mpc", "stop"])
+		call(["mpc", "clear"])
+		#todo: how about cropping, populating, and removing the first? item .. for faster continuity???
+
+		print('Populating playlist')
+		p1 = subprocess.Popen(["mpc", "listall", sLocalMusicMPD], stdout=subprocess.PIPE)
+		p2 = subprocess.Popen(["mpc", "add"], stdin=p1.stdout, stdout=subprocess.PIPE)
+		p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
+		output,err = p2.communicate()
+
+		print('Checking playlist')
+		task = subprocess.Popen("mpc playlist | wc -l", shell=True, stdout=subprocess.PIPE)
+		mpcOut = task.stdout.read()
+		assert task.wait() == 0
+		
+		if mpcOut == 0:
+			print('Nothing in the playlist, marking source unavailable.')
+			arSourceAvailable[2]=0
+			source_next()
+			source_play()
+			#TODO: error sound
+		else:
+			print('Found {0:s} tracks'.format(mpcOut))
+			#TODO: remove the trailing line feed..
+
+			#TODO: get latest position..	
+			print('Starting playback')
+			call(["mpc", "-q" , "stop"])
+			#mpc $params_mpc -q play $lkp
+			call(["mpc", "-q" , "play"])
+		
 		
 # updates arSourceAvailable
 def source_updateAvailable():
