@@ -45,42 +45,42 @@ sLocalMusicMPD="local_music"			# directory from a MPD pov.
 
 
 def button_press ( func ):
-    if func == 'SHUFFLE':
-       print('Toggling shuffle')
-       call(["mpc", "random"])
-    elif func == 'SOURCE':
-       print('Next source')
-	   source_next()
-    elif func == 'ATT':
-       print('ATT mode')
-    elif func == 'TRACK_NEXT':
-       print('Next track')
-       call(["mpc", "next"])
-    elif func == 'TRACK_PREV':
-       print('Prev. track')
-       call(["mpc", "prev"])
-    elif func == 'OFF':
-       print('Shutting down')
-	   #todo: save state
-       call(["systemctl", "poweroff", "-i"])
+	if func == 'SHUFFLE':
+		print('Toggling shuffle')
+		call(["mpc", "random"])
+	elif func == 'SOURCE':
+		print('Next source')
+		source_next()
+	elif func == 'ATT':
+		print('ATT mode')
+	elif func == 'TRACK_NEXT':
+		print('Next track')
+		call(["mpc", "next"])
+	elif func == 'TRACK_PREV':
+		print('Prev. track')
+		call(["mpc", "prev"])
+	elif func == 'OFF':
+		print('Shutting down')
+		#todo: save state
+		call(["systemctl", "poweroff", "-i"])
 
-    # Feedback beep
-    call(["gpio", "write", "6", "1"])
-    time.sleep(0.05)
-    call(["gpio", "write", "6", "0"])
+	# Feedback beep
+	call(["gpio", "write", "6", "1"])
+	time.sleep(0.05)
+	call(["gpio", "write", "6", "0"])
 
-    # Wait until button is released
+	# Wait until button is released
 
-    value_0 = adc.read_adc(0)
-    press_count = 0
-    while value_0 > 600:
-        value_0 = adc.read_adc(0)
-        time.sleep(0.1)
-        press_count+=1
-        if func == 'TRACK_NEXT' and press_count == 10:
-            break
-        elif func == 'TRACK_PREV'  and press_count == 10:
-            break
+	value_0 = adc.read_adc(0)
+	press_count = 0
+	while value_0 > 600:
+		value_0 = adc.read_adc(0)
+		time.sleep(0.1)
+		press_count+=1
+		if func == 'TRACK_NEXT' and press_count == 10:
+			break
+		elif func == 'TRACK_PREV'  and press_count == 10:
+			break
 
 def alsa_play_fx( fx ):
 	print('Playing effect')
