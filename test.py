@@ -2,7 +2,8 @@
 
 import os
 import time
-from subprocess import call
+import subprocess
+#from subprocess import call
 
 # Import the ADS1x15 module.
 import Adafruit_ADS1x15
