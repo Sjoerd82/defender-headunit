@@ -93,7 +93,7 @@ def alsa_play_fx( fx ):
 
 
 def mpc_get_PlaylistDirs():
-	global arMpcPlaylistDirs
+	#global arMpcPlaylistDirs
 	dirname_current = ''
 	dirname_prev = ''
 	iPos = 0
