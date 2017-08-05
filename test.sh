@@ -21,6 +21,7 @@ typeset -a arSource=(fm mpc locmus bt alsa) # source types; add new sources in t
 typeset -a arSourceAvailable=(0 0 0 0 0)    # corresponds to arSource; 1=available
 typeset -i iSourceArrayLen=4                # number of sources, 0 based?
 typeset -i iSource=-1                       # active source, -1 = none
+
 #USB
 typeset -r sMountPoint="/media/usb"
 #typeset -r sUsbFolder=""

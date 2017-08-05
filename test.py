@@ -1,7 +1,60 @@
 # Python port
 
-# Main loop
+from pynput import keyboard
 
+
+# Global variables
+arSource = ['fm','mpc','locmus','bt','alsa'] # source types; add new sources in the end
+arSourceAvailable = [0,0,0,0,0]              # corresponds to arSource; 1=available
+iSource =-1                        			 # active source, -1 = none
+
+# Keyboard listener
+def on_release(key):
+    print('{0} released'.format(
+        key))
+    if key == keyboard.Key.esc:
+        # Stop listener
+        return False
+
+def source_check
+	print('Checking sources')
+
+def init
+	print('Initializing ...')
+
+	# play startup sound
+	#alsa_play_fx 1
+
+    # load previous state
+    #source /home/hu/hu_settings.sh
+
+	# check available sources
+	source_check
+
+	# initialize sources
+	#bt_init
+	#mpc_init
+	#get_state
+	#source_play
+
+	#not the best place...
+	#mpc_get_PlaylistDirs
+
+	# Play/Pause button may not be implemented on control panel,
+	# therefore, always try to play if a source becomes avaiable.
+
+	# turn on remote control
+	#if [[ $(ps -ef | grep "python ads1x15_remote.py" | wc -l)  < 2 ]]; then
+	#	echo "Starting ADS1x15 remote"
+	#	python ads1x15_remote.py &
+	#else
+	#	echo "ADS1x15 remote already running"
+	#fi
+	
+	print('Initialization finished')
+
+	
+# Main loop
 while True:
 	# display menu
 	print('Current source : ${arSource[$iSource]}')
@@ -19,27 +72,10 @@ while True:
 	print('DEBUG OPTIONS:')
 	print('C. check_source')
 	print('---------------------------------')
-	c = raw_input('Enter your choice [0-9] : ')
-	# take action
-	if c == '1':
-		print('1) source_next')
-	elif c == '2':
-		print('2) play_pause')
-	elif c == '3':
-		print('3) next')
-	elif c == '4':
-		print('4) prev')
-	elif c == '5':
-		print('5) volume_up')
-	elif c == '6':
-		print('6) volume_down')
-	elif c == '7':
-		print('7) mpc_prev_folder')
-	elif c == '8':
-		print('8) mpc_next_folder')
-	elif c == '9':
-		print('9) mode_change')
-	elif c == 'C':
-		print('C) check_source')
-	else:
-		print('Select between 0 to 8 only')
+
+	# Collect events until released
+	with keyboard.Listener(
+        on_release=on_release) as listener:
+    listener.join()
+	
+
