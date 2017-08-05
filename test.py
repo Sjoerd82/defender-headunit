@@ -45,7 +45,7 @@ sLocalMusic="/media/local_music"		# symlink to /home/hu/music
 sLocalMusicMPD="local_music"			# directory from a MPD pov.
 
 #MPC
-global arMpcPlaylistDirs
+#global arMpcPlaylistDirs
 arMpcPlaylistDirs = [ ]
 
 
@@ -113,6 +113,7 @@ def mpc_get_PlaylistDirs():
 
 
 def mpc_next_folder():
+	global arMpcPlaylistDirs
 	print('Next folder')
 	print(arMpcPlaylistDirs[3])
 
