@@ -1,5 +1,6 @@
 # Python port, but without menu
 
+import os
 import time
 from subprocess import call
 
