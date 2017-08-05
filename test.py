@@ -123,8 +123,11 @@ def mpc_next_folder():
 	# get current folder
 	#pipe = Popen('mpc -f %file%', shell=True, stdout=PIPE)
 	#pipe = subprocess.call(["mpc", "-f", "'%file%'"])
+	print('--------------------')
+	print('DEBUG!')
 	pipe = subprocess.check_output("mpc -f %file%", shell=True)
-	dirname_current = os.path.dirname(pipe.splitlines()[0])
+	print(pipe)
+	dirname_current = os.path.dirname(pipe.splitlines()[0])	
 	print('Current folder = {0:s}'.format(dirname_current))
 	"""for line in pipe.stdout:
 		dirname_current = os.path.dirname(line.strip())
@@ -138,9 +141,11 @@ def mpc_next_folder():
 	except IndexError:
 		# I assume the end of the list has been reached...
 		iNextPos = 1
-	
+
+	print(iNextPos)
 	call(["mpc", "play", str(iNextPos)])
 
+	print('--------------------')
 	
 	# updates arSourceAvailable[0] (fm) --- TODO
 def fm_check():
