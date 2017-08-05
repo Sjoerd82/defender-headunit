@@ -43,6 +43,9 @@ iSource = -1                        	  	 	# active source, -1 = none
 sLocalMusic="/media/local_music"		# symlink to /home/hu/music
 sLocalMusicMPD="local_music"			# directory from a MPD pov.
 
+#MPC
+arMpcPlaylistDirs = [ ]
+
 
 def button_press ( func ):
 	if func == 'SHUFFLE':
@@ -87,7 +90,33 @@ def alsa_play_fx( fx ):
 	print('Playing effect')
 	#TODO
 
-# updates arSourceAvailable[0] (fm) --- TODO
+
+def mpc_get_PlaylistDirs()
+
+	global arMpcPlaylistDirs
+	local dirname_current = ''
+	local dirname_prev = ''
+	local iPos = 0
+
+	pipe = Popen('mpc -f %file% playlist', shell=True, stdout=PIPE)
+
+	del arMpcPlaylistDirs
+
+	for line in pipe.stdout:
+		dirname_current=os.path.dirname(line.strip())
+		t = iPos, dirname_current
+		if dirname_prev != dirname_current:
+			arMpcPlaylistDirs.append(t)
+		dirname_prev = dirname_current
+		iPos += 1
+
+
+def mpc_next_folder()
+	print('Next folder')
+	print(arMpcPlaylistDirs[3])
+
+	
+	# updates arSourceAvailable[0] (fm) --- TODO
 def fm_check():
 	print('Checking if FM is available')
 	arSourceAvailable[0]=0 # not available
@@ -195,6 +224,9 @@ def usb_play():
 			#mpc $params_mpc -q play $lkp
 			call(["mpc", "-q" , "play"])
 
+			print('Loading directory structure')
+			mpc_get_PlaylistDirs()
+
 
 # updates arSourceAvailable[2] (locmus)
 def locmus_check():
@@ -256,6 +288,8 @@ def locmus_play():
 			#mpc $params_mpc -q play $lkp
 			call(["mpc", "-q" , "play"])
 		
+			print('Loading directory structure')
+			mpc_get_PlaylistDirs()
 		
 # updates arSourceAvailable
 def source_updateAvailable():
@@ -392,7 +426,8 @@ def init():
 init()
 while True:
     # Read channel 0
-    value_0 =  adc.read_adc(0, gain=GAIN)
+    value_0 = adc.read_adc(0, gain=GAIN)
+	value_1 = adc.read_adc(1, gain=GAIN)
     #print(value_0)
 
     if BUTTON01_LO <= value_0 <= BUTTON01_HI:
@@ -409,10 +444,14 @@ while True:
         #VOL
     elif BUTTON05_LO <= value_0 <= BUTTON05_HI:
         print('BUTTON05')
+		print(value_1)
         button_press('TRACK_NEXT')
+		button_press('DIR_NEXT')
     elif BUTTON06_LO <= value_0 <= BUTTON06_HI:
         print('BUTTON06')
+		print(value_1)
         button_press('TRACK_PREV')
+		button_press('DIR_PREV')
     elif BUTTON07_LO <= value_0 <= BUTTON07_HI:
         print('BUTTON07')
         button_press('SHUFFLE')
