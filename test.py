@@ -125,9 +125,9 @@ def mpc_next_folder():
 	#pipe = subprocess.call(["mpc", "-f", "'%file%'"])
 	print('--------------------')
 	print('DEBUG!')
-	pipe = subprocess.check_output("mpc -f %file%", shell=True)
-	print(pipe)
-	dirname_current = os.path.dirname(pipe.splitlines()[0])	
+	xpipe = subprocess.check_output("mpc -f %file%", shell=True)
+	print(xpipe)
+	dirname_current = os.path.dirname(xpipe.splitlines()[0])	
 	print('Current folder = {0:s}'.format(dirname_current))
 	"""for line in pipe.stdout:
 		dirname_current = os.path.dirname(line.strip())
