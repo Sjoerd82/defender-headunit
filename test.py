@@ -126,15 +126,15 @@ def mpc_next_folder():
 	#pipe = Popen('mpc -f %file%', shell=True, stdout=PIPE)
 	#pipe = subprocess.call(["mpc", "-f", "'%file%'"])
 	#xpipe = subprocess.check_output("mpc -f %file%", shell=True)
-	xpipe = Popen('mpc -f %file%', shell=True, stdout=PIPE)
-	
-	# wait for the process to terminate
 	i=0
+	xpipe = Popen('mpc -f %file%', shell=True, stdout=PIPE)	
+	# wait for the process to terminate
 	for line in xpipe.stdout:
 		print(line)
 		if i == 0:
 			dirname_current = os.path.dirname(line.strip())
 			print(dirname_current)
+		i += 0
 	errcode = xpipe.returncode
 
 	#dirname_current = os.path.dirname(xpipe.splitlines()[0])	
