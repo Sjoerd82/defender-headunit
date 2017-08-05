@@ -203,28 +203,28 @@ def source_next():
 				break
 			i += 1
 			
-		if iSource == 0:
+		if iSource == -1:
 			print('No sources available!')
 
-		else:
+	else:
+	
+		i = iSource		
+		for source in arSource[i:]:
+			if arSourceAvailable[i] == 1:
+				print('Switching to {0:s}'.format(source))
+				iSource = i
+				break
+			i += 1
 		
-			i = iSource		
-			for source in arSource[i:]:
+		print (i)
+		print (len(arSource))
+		if i > len(arSource)-1:
+			for source in arSource[:i]:
 				if arSourceAvailable[i] == 1:
 					print('Switching to {0:s}'.format(source))
 					iSource = i
 					break
 				i += 1
-			
-			print (i)
-			print (len(arSource))
-			if i > len(arSource)-1:
-				for source in arSource[:i]:
-					if arSourceAvailable[i] == 1:
-						print('Switching to {0:s}'.format(source))
-						iSource = i
-						break
-					i += 1
 
 	
 def init():
