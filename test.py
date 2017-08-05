@@ -197,6 +197,7 @@ def source_next():
 		for source in arSource:		
 			if arSourceAvailable[i] == 1:
 				print('Switching to {0:s}'.format(source))
+				iSource = i
 				break
 			i += 1
 			
@@ -209,15 +210,17 @@ def source_next():
 			for source in arSource[i:]:
 				if arSourceAvailable[i] == 1:
 					print('Switching to {0:s}'.format(source))
+					iSource = i
 					break
 				i += 1
 			
 			print (i)
 			print (len(arSource))
-			if i > len(arSource):
+			if i > len(arSource)-1:
 				for source in arSource[:i]:
 					if arSourceAvailable[i] == 1:
 						print('Switching to {0:s}'.format(source))
+						iSource = i
 						break
 					i += 1
 
