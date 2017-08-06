@@ -122,6 +122,7 @@ if [ -z "$STY" ]; then
     exec screen -S headunit -c /home/hu/.screenrc
     # nothing else gets executed
 else
-    ./test.sh
+    #./test.sh
+	./test.py
 fi
 

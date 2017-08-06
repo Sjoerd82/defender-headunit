@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 # Python port, but without menu
 
 import os
