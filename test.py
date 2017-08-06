@@ -69,7 +69,7 @@ def button_press ( func ):
 		volume(20)
 	elif func == 'VOL_UP':
 		print('VOL_UP')
-		volume_down(1000)
+		volume_up(1000)
 	elif func == 'VOL_DOWN':
 		print('VOL_DOWN')
 		volume_down(1000)
@@ -121,12 +121,12 @@ def volume( percentage ):
 
 def volume_up( step ):
 	print('Volume up')
-	call(["amixer", "-q", "-c", "0", "set", "Master", "1000+", "unmute"])
+	call(["amixer", "-q", "-c", "0", "set", "Master", "5+", "unmute"])
 
 
 def volume_down( step ):
 	print('Volume down')
-	call(["amixer", "-q", "-c", "0", "set", "Master", "1000-", "unmute"])
+	call(["amixer", "-q", "-c", "0", "set", "Master", "5-", "unmute"])
 
 	
 def mpc_get_PlaylistDirs():
