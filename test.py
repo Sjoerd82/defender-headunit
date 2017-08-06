@@ -195,7 +195,11 @@ def mpc_prev_folder():
 	print('Prev folder')
 	call(["mpc", "play", str(mpc_prev_folder_pos())])
 	
-	# updates arSourceAvailable[0] (fm) --- TODO
+def mpc_stop():
+	print('Stopping MPC [pause]')
+	call(["mpc", "pause"])
+
+# updates arSourceAvailable[0] (fm) --- TODO
 def fm_check():
 	print('Checking if FM is available')
 	arSourceAvailable[0]=0 # not available
@@ -208,8 +212,8 @@ def fm_play():
 # updates arSourceAvailable[3] (bt) -- TODO
 def bt_check():
 	print('Checking if Bluetooth is available')
-	arSourceAvailable[3]=0 # not available
-	#echo "Source 3 Unavailable; bluetooth"
+	arSourceAvailable[3]=1 # Available
+	#TODO: How to check???? When to decide it's avaiable?
 
 def bt_play():
 	print('Start playing Bluetooth...')
@@ -480,6 +484,7 @@ def source_play():
 	elif iSource == 2:
 		locmus_play()
 	elif iSource == 3:
+		mpc_stop()
 		bt_play()
 	elif iSource == 4:
 		linein_play()
@@ -524,12 +529,14 @@ while True:
 	#print(value_0)
 
 	if BUTTON01_LO <= value_0 <= BUTTON01_HI:
-		print('BUTTON01')
 		#Bottom button
+		print('BUTTON01')
 		button_press('UPDATE_LOCAL')
+
 	elif BUTTON02_LO <= value_0 <= BUTTON02_HI:
-		print('BUTTON02')
 		#Side button, met streepje
+		print('BUTTON02')
+
 	elif BUTTON03_LO <= value_0 <= BUTTON03_HI:
 		button_press('VOL_UP')
 		
@@ -537,28 +544,27 @@ while True:
 		button_press('VOL_DOWN')
 		
 	elif BUTTON05_LO <= value_0 <= BUTTON05_HI:
-		print('BUTTON05')
 		if value_1 < 300:
 			button_press('TRACK_NEXT')
 		else:
 			button_press('DIR_NEXT')
+
 	elif BUTTON06_LO <= value_0 <= BUTTON06_HI:
-		print('BUTTON06')
 		if value_1 < 300:
 			button_press('TRACK_PREV')
 		else:
 			button_press('DIR_PREV')
+
 	elif BUTTON07_LO <= value_0 <= BUTTON07_HI:
-		print('BUTTON07')
 		button_press('SHUFFLE')
+
 	elif BUTTON08_LO <= value_0 <= BUTTON08_HI:
-		print('BUTTON08')
 		button_press('ATT')
+
 	elif BUTTON09_LO <= value_0 <= BUTTON09_HI:
-		print('BUTTON09')
 		button_press('SOURCE')
+
 	elif BUTTON10_LO <= value_0 <= BUTTON10_HI:
-		print('BUTTON10')
 		button_press('OFF')
 
 	time.sleep(0.1)
