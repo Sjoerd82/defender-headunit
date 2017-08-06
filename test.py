@@ -40,12 +40,21 @@ arSource = ['fm','usb','locmus','bt','alsa'] # source types; add new sources in 
 arSourceAvailable = [0,0,0,0,0]              # corresponds to arSource; 1=available
 iSource = -1                        	  	 	# active source, -1 = none
 
+#ALSA
+iVolume = 50
+sAlsaMixer = "Master"
+iAlsaMixerStep=1000
+params_amixer="-q" #-c card -D device, etc.
+
+
 #LOCAL MUSIC
 sLocalMusic="/media/local_music"		# symlink to /home/hu/music
 sLocalMusicMPD="local_music"			# directory from a MPD pov.
 
 #MPC
 arMpcPlaylistDirs = [ ]
+
+
 
 def button_press ( func ):
 	if func == 'SHUFFLE':
@@ -56,7 +65,14 @@ def button_press ( func ):
 		source_next()
 		source_play()
 	elif func == 'ATT':
-		print('ATT mode')
+		print('ATT')
+		volume(20)
+	elif func == 'VOL_UP':
+		print('VOL_UP')
+		volume_down(1000)
+	elif func == 'VOL_DOWN':
+		print('VOL_DOWN')
+		volume_down(1000)
 	elif func == 'TRACK_NEXT':
 		print('Next track')
 		call(["mpc", "next"])
@@ -99,7 +115,20 @@ def alsa_play_fx( fx ):
 	print('Playing effect')
 	#TODO
 
+def volume( percentage ):
+	print('Setting volume')
+	call(["amixer", "-q", "-c", "0", "set", "Master", "20%", "unmute"])
 
+def volume_up( step ):
+	print('Volume up')
+	call(["amixer", "-q", "-c", "0", "set", "Master", "1000+", "unmute"])
+
+
+def volume_down( step ):
+	print('Volume down')
+	call(["amixer", "-q", "-c", "0", "set", "Master", "1000-", "unmute"])
+
+	
 def mpc_get_PlaylistDirs():
 	global arMpcPlaylistDirs
 	dirname_current = ''
@@ -109,6 +138,7 @@ def mpc_get_PlaylistDirs():
 	pipe = Popen('mpc -f %file% playlist', shell=True, stdout=PIPE)
 
 	#del arMpcPlaylistDirs
+	arMpcPlaylistDirs = []
 
 	for line in pipe.stdout:
 		dirname_current=os.path.dirname(line.strip())
@@ -501,11 +531,11 @@ while True:
 		print('BUTTON02')
 		#Side button, met streepje
 	elif BUTTON03_LO <= value_0 <= BUTTON03_HI:
-		print('BUTTON03')
-		#VOL
+		button_press('VOL_UP')
+		
 	elif BUTTON04_LO <= value_0 <= BUTTON04_HI:
-		print('BUTTON04')
-		#VOL
+		button_press('VOL_DOWN')
+		
 	elif BUTTON05_LO <= value_0 <= BUTTON05_HI:
 		print('BUTTON05')
 		if value_1 < 300:
