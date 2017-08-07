@@ -31,6 +31,7 @@ import subprocess
 from subprocess import call
 from subprocess import Popen, PIPE
 from tendo import singleton
+import pickle
 
 # Import the ADS1x15 module.
 import Adafruit_ADS1x15
@@ -67,7 +68,7 @@ arSourceAvailable = [0,0,0,0,0]              # corresponds to arSource; 1=availa
 iSource = -1                        	  	 	# active source, -1 = none
 
 #ALSA
-iVolume = 50
+#iVolume = 50
 sAlsaMixer = "Master"
 iAlsaMixerStep=1000
 params_amixer="-q" #-c card -D device, etc.
@@ -80,47 +81,15 @@ sLocalMusicMPD="local_music"			# directory from a MPD pov.
 #MPC
 arMpcPlaylistDirs = [ ]
 
-def check_already_running():
-	print('Checking if we\'re already runnning')
+def load_settings():
+	try:
+		volume = pickle.load( open( "headunit.p", "rb" ) )
+	except:
+		#assume: first time, so no settings saved yet? Setting default
+		volume = 20
+		pickle.dump( volume, open( "headunit.p", "wb" ) )
 
-	#using tendo...
-	me = singleton.SingleInstance() # will sys.exit(-1) if other instance is running
-	
-	# pgrep exit status:
-	#
-    #   0      One or more processes matched the criteria.
-    #   1      No processes matched.
-    #   2      Syntax error in the command line.
-    #   3      Fatal error: out of memory etc.
-	#
-	# If the exit code is non-zero it raises a CalledProcessError.
-
-	# grep exit status:
-    #   The exit status is 0 if selected lines are found, and 1 if not found.  If an error occurred the exit status is 2.
-	# (Note: POSIX error handling code should check for '2' or greater.)
-	
-	#p1 = subprocess.Popen(["pgrep", "-a", "python"], stdout=subprocess.PIPE)
-	#p2 = subprocess.Popen(["grep", "headunit.py"], stdin=p1.stdout, stdout=subprocess.PIPE)
-	#p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
-	#output,err = p2.communicate()
-
-	#print('DEBUG')
-	#print(p1.returncode)
-	#print(p2.returncode)
-	
-	#if p2.returncode == 0:
-	#	print('already running... aborting')
-	#	exit()
-	
-	#try:
-	#	grepOut = subprocess.check_output("pgrep -a python | grep headunit.py", shell=True)
-	#except subprocess.CalledProcessError as grepexc:                                                                                                   
-	#	print('already running... aborting')
-
-	#grepOut = subprocess.check_output("pgrep -a python | grep headunit.py", shell=True)
-	#print(subprocess.CalledProcessError.returncode)
-	
-	#print subprocess.call("pgrep -a python | grep headunit.py", shell=True)
+	volume_set( volume )
 
 def button_press ( func ):
 	if func == 'SHUFFLE':
@@ -189,10 +158,20 @@ def volume_up( step ):
 	print('Volume up')
 	call(["amixer", "-q", "-c", "0", "set", "Master", "5+", "unmute"])
 
+	# Safe volume change
+	pipe = subprocess.check_output("amixer get Master | awk '$0~/%/{print $5}' | tr -d '[]%'", shell=True)
+	volume = pipe.splitlines()[0] #LEFT CHANNEL
+	pickle.dump( volume, open( "headunit.p", "wb" ) )
+
 
 def volume_down( step ):
 	print('Volume down')
 	call(["amixer", "-q", "-c", "0", "set", "Master", "5-", "unmute"])
+
+	# Safe volume change
+	pipe = subprocess.check_output("amixer get Master | awk '$0~/%/{print $5}' | tr -d '[]%'", shell=True)
+	volume = pipe.splitlines()[0] #LEFT CHANNEL
+	pickle.dump( volume, open( "headunit.p", "wb" ) )
 
 	
 def mpc_get_PlaylistDirs():
@@ -560,16 +539,15 @@ def source_play():
 def init():
 	print('Initializing ...')
 
-	#check_already_running()
-	
+    # load previous state
+    #source /home/hu/hu_settings.sh
+	load_settings()
+
 	# set volume
 	volume_set( 60 )
 	
 	# play startup sound
 	alsa_play_fx( 1 )
-
-    # load previous state
-    #source /home/hu/hu_settings.sh
 
 	# check available sources
 	source_check()
@@ -591,9 +569,15 @@ def init():
 	print('Initialization finished')
 
 	
+#-------------------------------------------------------------------------------
 # Main loop
+print('Checking if we\'re already runnning')
 me = singleton.SingleInstance() # will sys.exit(-1) if other instance is running
+
+# Initialize
 init()
+
+# Loop
 while True:
 	# Read channel 0
 	value_0 = adc.read_adc(0, gain=GAIN)
