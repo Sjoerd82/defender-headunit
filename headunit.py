@@ -334,7 +334,7 @@ def mpc_lkp( lkp_file ):
 	# try to continue playing where left.
 	print('DEBUG!!')
 	# First line is the original position
-	bladiebla = "head -nl "+lkp_file
+	bladiebla = "head -n1 "+lkp_file
 	lkpOut = subprocess.check_output(bladiebla, shell=True)
 	lkp = int(lkpOut.splitlines()[0])
 	print(lkp)
