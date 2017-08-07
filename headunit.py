@@ -114,7 +114,7 @@ def check_already_running():
 	#	print('already running... aborting')
 
 	grepOut = subprocess.check_output("pgrep -a python | grep headunit.py", shell=True)
-	print(subprocess.CalledProcessError)
+	print(subprocess.CalledProcessError.returncode)
 
 def button_press ( func ):
 	if func == 'SHUFFLE':
