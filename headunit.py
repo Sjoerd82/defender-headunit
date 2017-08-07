@@ -66,7 +66,8 @@ BUTTON10_HI = 1100
 arSource = ['fm','usb','locmus','bt','alsa'] # source types; add new sources in the end
 arSourceAvailable = [0,0,0,0,0]              # corresponds to arSource; 1=available
 iAtt = 0									 # Att mode toggle
-#iVolumePct = 20								 # Default volume
+#iVolumePct = 20							 # Default volume
+iDoSave	= 0									 # Indicator to do a save anytime soon
 
 dSettings = {'source': -1, 'volume': 20, 'random': 'on' }
 
@@ -204,6 +205,7 @@ def volume_set( percentage ):
 def volume_up( step ):
 	global dSettings
 	global iAtt
+	global iDoSave
 
 	print('Volume up')
 	iAtt = 0
@@ -213,11 +215,13 @@ def volume_up( step ):
 	#pipe = subprocess.check_output("amixer get Master | awk '$0~/%/{print $5}' | tr -d '[]%'", shell=True)
 	pipe = subprocess.check_output("amixer get Master | awk '$0~/%/{print $4}' | tr -d '[]%'", shell=True)
 	dSettings['volume'] = int(pipe.splitlines()[0]) #LEFT CHANNEL
-	save_settings()
+	#save_settings() #too slow
+	iDoSave = 1
 
 def volume_down( step ):
 	global dSettings
 	global iAtt
+	global iDoSave
 
 	print('Volume down')
 	iAtt = 0
@@ -227,7 +231,8 @@ def volume_down( step ):
 	#pipe = subprocess.check_output("amixer get Master | awk '$0~/%/{print $5}' | tr -d '[]%'", shell=True)
 	pipe = subprocess.check_output("amixer get Master | awk '$0~/%/{print $4}' | tr -d '[]%'", shell=True)
 	dSettings['volume'] = int(pipe.splitlines()[0]) #LEFT CHANNEL
-	save_settings()
+	#save_settings() #too slow
+	iDoSave = 1
 
 def seek_next():
 	global dSettings
@@ -654,6 +659,7 @@ me = singleton.SingleInstance() # will sys.exit(-1) if other instance is running
 init()
 
 # Loop
+iLoopCounter = 0
 while True:
 	# Read channel 0
 	value_0 = adc.read_adc(0, gain=GAIN)
@@ -699,4 +705,10 @@ while True:
 	elif BUTTON10_LO <= value_0 <= BUTTON10_HI:
 		button_press('OFF')
 
+	# Check if there's a change in settings that we want to save.
+	if iLoopCounter % 10 == 0  and iDoSave == 1:
+		iDoSave = 0
+		save_settings()
+	
 	time.sleep(0.1)
+	iLoopCounter += 1
