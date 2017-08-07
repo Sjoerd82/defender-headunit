@@ -223,13 +223,13 @@ def volume_down( step ):
 	save_settings()
 
 def seek_next():
-	if dSettings['source'] == 1 or dSettings['source'] == 2 then:
+	if dSettings['source'] == 1 or dSettings['source'] == 2:
 		mpc_next_track()
 	#elif source == then
 	#fm_next ofzoiets
 
 def seek_prev():
-	if dSettings['source'] == 1 or dSettings['source'] == 2 then:
+	if dSettings['source'] == 1 or dSettings['source'] == 2:
 		mpc_prev_track()
 	
 def mpc_get_PlaylistDirs():
