@@ -335,7 +335,7 @@ def mpc_lkp( lkp_file ):
 	print('DEBUG!!')
 	# First line is the original position
 	lkpOut = subprocess.check_output("head", "-n1", lkp_file, shell=True)
-	lkp = lkpOut.splitlines()[0]
+	lkp = int(lkpOut.splitlines()[0])
 	print(lkp)
 
 	# Second line is the file name
@@ -345,7 +345,7 @@ def mpc_lkp( lkp_file ):
 	#lkp=$(mpc -f "%position% %file%" playlist | grep "$lkf" | cut -d' ' -f1)
 	#TODO: only use this if it yields a result, otherwise use the lkp
 
-	return int(lkp)
+	return lkp
 	
 # updates arSourceAvailable[0] (fm) --- TODO
 def fm_check():
