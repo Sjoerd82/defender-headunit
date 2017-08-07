@@ -176,7 +176,7 @@ def volume_att_toggle():
 		# we're not saving this volume level, as it is temporary.
 		# ATT will be reset by pressing ATT again, or changing the volume
 		call(["amixer", "-q", "-c", "0", "set", "Master", "20%", "unmute"])
-	else
+	else:
 		print('Uhmmm.. this shouldn\'t have happened')
 		iAtt = 0
 
