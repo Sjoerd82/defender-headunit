@@ -168,7 +168,7 @@ def volume_up( step ):
 	# Safe volume change
 	pipe = subprocess.check_output("amixer get Master | awk '$0~/%/{print $5}' | tr -d '[]%'", shell=True)
 	volume = pipe.splitlines()[0] #LEFT CHANNEL
-	pickle.dump( volume, open( "headunit.p", "wb" ) )
+	pickle.dump( int(volume), open( "headunit.p", "wb" ) )
 
 
 def volume_down( step ):
@@ -178,7 +178,7 @@ def volume_down( step ):
 	# Safe volume change
 	pipe = subprocess.check_output("amixer get Master | awk '$0~/%/{print $5}' | tr -d '[]%'", shell=True)
 	volume = pipe.splitlines()[0] #LEFT CHANNEL
-	pickle.dump( volume, open( "headunit.p", "wb" ) )
+	pickle.dump( int(volume), open( "headunit.p", "wb" ) )
 
 	
 def mpc_get_PlaylistDirs():
