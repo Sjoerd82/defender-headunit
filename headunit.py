@@ -106,6 +106,7 @@ def load_settings():
 	volume_set( dSettings['volume'] )
 	
 	#SOURCE
+	
 	#RANDOM
 	#POS.
 
@@ -517,8 +518,8 @@ def locmus_stop():
 	
 	# save position and current file name for this drive
 	
-	call("mpc | sed -n 2p | grep -Po '(?<=#)[^/]*' > /home/hu/mp_locmus.txt")
-	call("mpc -f %file% current >> /home/hu/mp_locmus.txt")
+	subprocess.check_output("mpc | sed -n 2p | grep -Po '(?<=#)[^/]*' > /home/hu/mp_locmus.txt")
+	subprocess.check_output("mpc -f %file% current >> /home/hu/mp_locmus.txt")
 	
 	# stop playback
 	mpc_stop()
