@@ -336,8 +336,9 @@ def mpc_lkp( lkp_file ):
 	# First line is the original position
 	bladiebla = "head -n1 "+lkp_file
 	lkpOut = subprocess.check_output(bladiebla, shell=True)
-	lkp = int(lkpOut.splitlines()[0])
-	print(lkp)
+	#lkp = int(lkpOut.splitlines()[0])
+	#print(lkp)
+	print lkpOut.splitlines()[0]
 
 	# Second line is the file name
 	#lkf=$(tail -n1 /home/hu/mp_locmus.txt)
@@ -346,7 +347,7 @@ def mpc_lkp( lkp_file ):
 	#lkp=$(mpc -f "%position% %file%" playlist | grep "$lkf" | cut -d' ' -f1)
 	#TODO: only use this if it yields a result, otherwise use the lkp
 
-	return lkp
+	return 3 #lkp
 	
 # updates arSourceAvailable[0] (fm) --- TODO
 def fm_check():
