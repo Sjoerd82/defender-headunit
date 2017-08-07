@@ -195,7 +195,8 @@ def volume_up( step ):
 	call(["amixer", "-q", "-c", "0", "set", "Master", "5+", "unmute"])
 
 	# Save volume change
-	pipe = subprocess.check_output("amixer get Master | awk '$0~/%/{print $5}' | tr -d '[]%'", shell=True)
+	#pipe = subprocess.check_output("amixer get Master | awk '$0~/%/{print $5}' | tr -d '[]%'", shell=True)
+	pipe = subprocess.check_output("amixer get Master | awk '$0~/%/{print $4}' | tr -d '[]%'", shell=True)
 	iVolumePct = int(pipe.splitlines()[0]) #LEFT CHANNEL
 	pickle.dump( iVolumePct, open( "headunit.p", "wb" ) )
 
@@ -209,7 +210,8 @@ def volume_down( step ):
 	call(["amixer", "-q", "-c", "0", "set", "Master", "5-", "unmute"])
 
 	# Save volume change
-	pipe = subprocess.check_output("amixer get Master | awk '$0~/%/{print $5}' | tr -d '[]%'", shell=True)
+	#pipe = subprocess.check_output("amixer get Master | awk '$0~/%/{print $5}' | tr -d '[]%'", shell=True)
+	pipe = subprocess.check_output("amixer get Master | awk '$0~/%/{print $4}' | tr -d '[]%'", shell=True)
 	iVolumePct = int(pipe.splitlines()[0]) #LEFT CHANNEL
 	pickle.dump( iVolumePct, open( "headunit.p", "wb" ) )
 
