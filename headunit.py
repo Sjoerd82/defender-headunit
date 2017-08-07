@@ -69,7 +69,7 @@ iAtt = 0									 # Att mode toggle
 #iVolumePct = 20							 # Default volume
 iDoSave	= 0									 # Indicator to do a save anytime soon
 
-dSettings = {'source': -1, 'volume': 20, 'random': 'on' }
+dSettings = {'source': -1, 'volume': 20}	 # No need to save random, thats done by MPC/MPD itself.
 
 #ALSA
 sAlsaMixer = "Master"
@@ -706,7 +706,7 @@ while True:
 		button_press('OFF')
 
 	# Check if there's a change in settings that we want to save.
-	if iLoopCounter % 10 == 0  and iDoSave == 1:
+	if iLoopCounter % 100 == 0  and iDoSave == 1:
 		iDoSave = 0
 		save_settings()
 	
