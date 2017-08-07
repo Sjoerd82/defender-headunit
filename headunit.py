@@ -338,7 +338,7 @@ def mpc_lkp( lkp_file ):
 	lkpOut = subprocess.check_output(bladiebla, shell=True)
 	#lkp = int(lkpOut.splitlines()[0])
 	#print(lkp)
-	print lkpOut.splitlines()[0]
+	#print lkpOut.splitlines()[0]
 
 	# Second line is the file name
 	#lkf=$(tail -n1 /home/hu/mp_locmus.txt)
