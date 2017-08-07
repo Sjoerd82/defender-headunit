@@ -80,7 +80,7 @@ sLocalMusicMPD="local_music"			# directory from a MPD pov.
 arMpcPlaylistDirs = [ ]
 
 def check_already_running():
-	print('Checking if we''re already runnning')
+	print('Checking if we\'re already runnning')
 
 	# pgrep exit status:
 	#
@@ -95,24 +95,26 @@ def check_already_running():
     #   The exit status is 0 if selected lines are found, and 1 if not found.  If an error occurred the exit status is 2.
 	# (Note: POSIX error handling code should check for '2' or greater.)
 	
-	p1 = subprocess.Popen(["pgrep", "-a", "python"], stdout=subprocess.PIPE)
-	p2 = subprocess.Popen(["grep", "headunit.py"], stdin=p1.stdout, stdout=subprocess.PIPE)
-	p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
-	output,err = p2.communicate()
+	#p1 = subprocess.Popen(["pgrep", "-a", "python"], stdout=subprocess.PIPE)
+	#p2 = subprocess.Popen(["grep", "headunit.py"], stdin=p1.stdout, stdout=subprocess.PIPE)
+	#p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
+	#output,err = p2.communicate()
 
-	print('DEBUG')
-	print(p1.returncode)
-	print(p2.returncode)
+	#print('DEBUG')
+	#print(p1.returncode)
+	#print(p2.returncode)
 	
 	#if p2.returncode == 0:
 		#print('already running... aborting')
 		#exit()
 	
-	#	try:
-	#		grepOut = subprocess.check_output("pgrep -a python | grep headunit.py", shell=True)
-	#	except subprocess.CalledProcessError as grepexc:                                                                                                   
-	#		print('already running... aborting')
+	#try:
+	#	grepOut = subprocess.check_output("pgrep -a python | grep headunit.py", shell=True)
+	#except subprocess.CalledProcessError as grepexc:                                                                                                   
+	#	print('already running... aborting')
 
+	grepOut = subprocess.check_output("pgrep -a python | grep headunit.py", shell=True)
+	print(subprocess.CalledProcessError)
 
 def button_press ( func ):
 	if func == 'SHUFFLE':
@@ -555,7 +557,7 @@ def init():
 	check_already_running()
 	
 	# set volume
-	volume_set( 50 )
+	volume_set( 60 )
 	
 	# play startup sound
 	alsa_play_fx( 1 )
