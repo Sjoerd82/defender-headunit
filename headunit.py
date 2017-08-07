@@ -82,13 +82,20 @@ sLocalMusicMPD="local_music"			# directory from a MPD pov.
 arMpcPlaylistDirs = [ ]
 
 def load_settings():
+	#default
+	volume = 20
+
 	try:
 		volume = pickle.load( open( "headunit.p", "rb" ) )
 	except:
 		#assume: first time, so no settings saved yet? Setting default
-		volume = 20
 		pickle.dump( volume, open( "headunit.p", "wb" ) )
 
+	#check if the value is valid
+	if volume < 0 or volume > 100:
+		volume = 20
+		pickle.dump( volume, open( "headunit.p", "wb" ) )
+		
 	volume_set( volume )
 
 def button_press ( func ):
