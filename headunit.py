@@ -560,7 +560,7 @@ def source_play():
 def init():
 	print('Initializing ...')
 
-	check_already_running()
+	#check_already_running()
 	
 	# set volume
 	volume_set( 60 )
@@ -592,6 +592,7 @@ def init():
 
 	
 # Main loop
+me = singleton.SingleInstance() # will sys.exit(-1) if other instance is running
 init()
 while True:
 	# Read channel 0
