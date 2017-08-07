@@ -65,9 +65,11 @@ BUTTON10_HI = 1100
 # Global variables
 arSource = ['fm','usb','locmus','bt','alsa'] # source types; add new sources in the end
 arSourceAvailable = [0,0,0,0,0]              # corresponds to arSource; 1=available
-iSource = -1                        	     # active source, -1 = none
+#iSource = -1                        	     # active source, -1 = none
 iAtt = 0									 # Att mode toggle
 iVolumePct = 20								 # Default volume
+
+dSettings = {'source': -1, 'volume': 20, 'random': 'on' }
 
 #ALSA
 sAlsaMixer = "Master"
@@ -117,12 +119,12 @@ def button_press ( func ):
 	elif func == 'VOL_DOWN':
 		print('VOL_DOWN')
 		volume_down(1000)
-	elif func == 'TRACK_NEXT':
-		print('Next track')
-		call(["mpc", "next"])
-	elif func == 'TRACK_PREV':
-		print('Prev. track')
-		call(["mpc", "prev"])
+	elif func == 'SEEK_NEXT':
+		print('Seek/Next')
+		seek_next()
+	elif func == 'SEEK_PREV':
+		print('Seek/Prev.)
+		seek_prev()
 	elif func == 'DIR_NEXT':
 		print('Next directory')
 		mpc_next_folder()		
@@ -215,6 +217,15 @@ def volume_down( step ):
 	iVolumePct = int(pipe.splitlines()[0]) #LEFT CHANNEL
 	pickle.dump( iVolumePct, open( "headunit.p", "wb" ) )
 
+def seek_next():
+	if source == then:
+		mpc_next_track()
+	#elif source == then
+	#fm_next ofzoiets
+
+def seek_prev():
+	if source == then:
+		mpc_prev_track()
 	
 def mpc_get_PlaylistDirs():
 	global arMpcPlaylistDirs
@@ -273,7 +284,16 @@ def mpc_prev_folder_pos():
 
 	return iNextPos
 
+def mpc_next_track():
+	print('Next track')
+	call(["mpc", "next"])
+	#todo save to pos.file
 	
+def mpc_prev_track():
+	print('Prev. track')
+	call(["mpc", "prev"])
+	#todo save to pos.file
+
 def mpc_next_folder():
 	print('Next folder')
 	call(["mpc", "play", str(mpc_next_folder_pos())])
@@ -495,7 +515,7 @@ def source_updateAvailable():
 
 	# Display source availability.
 	print('---------------------------------')
-	print('Current source: {0:d}'.format(iSource))
+	print('Current source: {0:d}'.format(dSettings['source']))
 	
 	i = 0
 	for source in arSource:
@@ -513,39 +533,39 @@ def source_check():
 	source_updateAvailable()
 
 def source_next():
-	global iSource
+	global dSettings	#global iSource
 	
 	print('Switching to next source')
 	
 	# TODO: sources may have become (un)available -> check this!
 	
-	if iSource == -1:
+	if dSettings['source'] == -1:
 		#No current source, switch to the first available, starting at 0
 		i = 0
 		for source in arSource:		
 			if arSourceAvailable[i] == 1:
 				print('Switching to {0:s}'.format(source))
-				iSource = i
+				dSettings['source'] = i
 				break
 			i += 1
 			
-		if iSource == -1:
+		if dSettings['source'] == -1:
 			print('No sources available!')
 
 	else:
 	
 		#start at beginning, if we're at the end of the list
-		if iSource == len(arSource)-1:
+		if dSettings['source'] == len(arSource)-1:
 			i = 0
 		else:
 			#start at next source in line
-			i = iSource+1
+			i = dSettings['source']+1
 		
 		for source in arSource[i:]:
 			print(source)
 			if arSourceAvailable[i] == 1:
 				print('Switching to {0:s}'.format(source))
-				iSource = i
+				dSettings['source'] = i
 				break
 			i += 1
 		
@@ -554,26 +574,26 @@ def source_next():
 		print (len(arSource))
 		if i == len(arSource):
 			i = 0
-			for source in arSource[:iSource]:
+			for source in arSource[:dSettings['source']]:
 				print(source)
 				if arSourceAvailable[i] == 1:
 					print('Switching to {0:s}'.format(source))
-					iSource = i
+					dSettings['source'] = i
 					break
 				i += 1
 
 def source_play():
-	print('Start playback: {0:s}'.format(arSource[iSource]))
-	if iSource == 0:
+	print('Start playback: {0:s}'.format(arSource[dSettings['source']]))
+	if dSettings['source'] == 0:
 		fm_play()
-	elif iSource == 1:
+	elif dSettings['source'] == 1:
 		usb_play()
-	elif iSource == 2:
+	elif dSettings['source'] == 2:
 		locmus_play()
-	elif iSource == 3:
+	elif dSettings['source'] == 3:
 		mpc_stop()
 		bt_play()
-	elif iSource == 4:
+	elif dSettings['source'] == 4:
 		linein_play()
 	else:
 		print('ERROR: Invalid source.')
@@ -640,13 +660,13 @@ while True:
 		
 	elif BUTTON05_LO <= value_0 <= BUTTON05_HI:
 		if value_1 < 300:
-			button_press('TRACK_NEXT')
+			button_press('SEEK_NEXT')
 		else:
 			button_press('DIR_NEXT')
 
 	elif BUTTON06_LO <= value_0 <= BUTTON06_HI:
 		if value_1 < 300:
-			button_press('TRACK_PREV')
+			button_press('SEEK_PREV')
 		else:
 			button_press('DIR_PREV')
 
