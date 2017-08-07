@@ -163,7 +163,7 @@ def alsa_play_fx( fx ):
 
 def volume_set( percentage ):
 	print('Setting volume')
-	volpct = percentage+'%'
+	volpct = str(percentage)+'%'
 	call(["amixer", "-q", "-c", "0", "set", "Master", volpct, "unmute"])
 
 def volume_up( step ):
