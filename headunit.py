@@ -325,6 +325,28 @@ def mpc_stop():
 	print('Stopping MPC [pause]')
 	call(["mpc", "pause"])
 
+def mpc_lkp( lkp_file ):
+	print('Retrieving last known position from lkp file: {0:s}'.format(lkp_file))
+
+	lkp="1" # Last Known Position
+	lkf=""  # Last Known File
+
+	# try to continue playing where left.
+	print('DEBUG!!')
+	# First line is the original position
+	lkpOut = subprocess.check_output("head", "-n1", lkp_file, shell=True)
+	lkp = lkpOut.splitlines()[0]
+	print(lkp)
+
+	# Second line is the file name
+	#lkf=$(tail -n1 /home/hu/mp_locmus.txt)
+
+	# Derive position from file name
+	#lkp=$(mpc -f "%position% %file%" playlist | grep "$lkf" | cut -d' ' -f1)
+	#TODO: only use this if it yields a result, otherwise use the lkp
+
+	return int(lkp)
+	
 # updates arSourceAvailable[0] (fm) --- TODO
 def fm_check():
 	print('Checking if FM is available')
@@ -491,11 +513,12 @@ def locmus_play():
 			print('Found {0:s} tracks'.format(mpcOut))
 			#TODO: remove the trailing line feed..
 
-			#TODO: get latest position..	
+			#Get last known position
+			playslist_pos = mpc_lkp('/home/hu/mp_locmus.txt')
+			
 			print('Starting playback')
 			call(["mpc", "-q" , "stop"])
-			#mpc $params_mpc -q play $lkp
-			call(["mpc", "-q" , "play"])
+			call(["mpc", "-q" , "play", playslist_pos])
 		
 			print('Loading directory structure')
 			mpc_get_PlaylistDirs()
