@@ -104,9 +104,9 @@ def check_already_running():
 	print(p1.returncode)
 	print(p2.returncode)
 	
-	if p2.returncode == 0:
-		print('already running... aborting')
-		exit()
+	#if p2.returncode == 0:
+		#print('already running... aborting')
+		#exit()
 	
 	#	try:
 	#		grepOut = subprocess.check_output("pgrep -a python | grep headunit.py", shell=True)
