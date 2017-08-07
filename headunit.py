@@ -65,10 +65,11 @@ BUTTON10_HI = 1100
 # Global variables
 arSource = ['fm','usb','locmus','bt','alsa'] # source types; add new sources in the end
 arSourceAvailable = [0,0,0,0,0]              # corresponds to arSource; 1=available
-iSource = -1                        	  	 	# active source, -1 = none
+iSource = -1                        	     # active source, -1 = none
+iAtt = 0									 # Att mode toggle
+iVolumePct = 20								 # Default volume
 
 #ALSA
-#iVolume = 50
 sAlsaMixer = "Master"
 iAlsaMixerStep=1000
 params_amixer="-q" #-c card -D device, etc.
@@ -82,25 +83,22 @@ sLocalMusicMPD="local_music"			# directory from a MPD pov.
 arMpcPlaylistDirs = [ ]
 
 def load_settings():
+	global iVolumePct
+	
 	print('Loading previous settings')
-	#default
-	volume = 20
 
 	try:
-		volume = pickle.load( open( "headunit.p", "rb" ) )
+		iVolumePct = pickle.load( open( "headunit.p", "rb" ) )
 	except:
 		#assume: first time, so no settings saved yet? Setting default
-		pickle.dump( volume, open( "headunit.p", "wb" ) )
+		pickle.dump( iVolumePct, open( "headunit.p", "wb" ) )
 
-	print('DEBUG:')
-	print volume
-	
 	#check if the value is valid
-	if volume < 0 or volume > 100:
-		volume = 20
-		pickle.dump( volume, open( "headunit.p", "wb" ) )
+	if iVolumePct < 0 or iVolumePct > 100:
+		iVolumePct = 20
+		pickle.dump( iVolumePct, open( "headunit.p", "wb" ) )
 		
-	volume_set( volume )
+	volume_set( iVolumePct )
 
 def button_press ( func ):
 	if func == 'SHUFFLE':
@@ -112,7 +110,7 @@ def button_press ( func ):
 		source_play()
 	elif func == 'ATT':
 		print('ATT')
-		volume_set(20)
+		volume_att_toggle()
 	elif func == 'VOL_UP':
 		print('VOL_UP')
 		volume_up(1000)
@@ -161,29 +159,59 @@ def alsa_play_fx( fx ):
 	print('Playing effect')
 	#TODO
 
+
+def volume_att_toggle():
+	global iAtt
+	global iVolumePct
+
+	print('Toggling ATT volume')
+	if iAtt == 1:
+		print('Restoring previous volume')
+		iAtt = 0
+		volpct = str(iVolumePct)+'%'
+		call(["amixer", "-q", "-c", "0", "set", "Master", volpct, "unmute"])
+	elif iAtt == 0:
+		print('Setting att volume (20%)')
+		iAtt = 1
+		# we're not saving this volume level, as it is temporary.
+		# ATT will be reset by pressing ATT again, or changing the volume
+		call(["amixer", "-q", "-c", "0", "set", "Master", "20%", "unmute"])
+	else
+		print('Uhmmm.. this shouldn\'t have happened')
+		iAtt = 0
+
+	
 def volume_set( percentage ):
 	print('Setting volume')
 	volpct = str(percentage)+'%'
 	call(["amixer", "-q", "-c", "0", "set", "Master", volpct, "unmute"])
 
 def volume_up( step ):
+	global iVolumePct
+	global iAtt
+
 	print('Volume up')
+	iAtt = 0
 	call(["amixer", "-q", "-c", "0", "set", "Master", "5+", "unmute"])
 
-	# Safe volume change
+	# Save volume change
 	pipe = subprocess.check_output("amixer get Master | awk '$0~/%/{print $5}' | tr -d '[]%'", shell=True)
-	volume = pipe.splitlines()[0] #LEFT CHANNEL
-	pickle.dump( int(volume), open( "headunit.p", "wb" ) )
+	iVolumePct = int(pipe.splitlines()[0]) #LEFT CHANNEL
+	pickle.dump( iVolumePct, open( "headunit.p", "wb" ) )
 
 
 def volume_down( step ):
+	global iVolumePct
+	global iAtt
+
 	print('Volume down')
+	iAtt = 0
 	call(["amixer", "-q", "-c", "0", "set", "Master", "5-", "unmute"])
 
-	# Safe volume change
+	# Save volume change
 	pipe = subprocess.check_output("amixer get Master | awk '$0~/%/{print $5}' | tr -d '[]%'", shell=True)
-	volume = pipe.splitlines()[0] #LEFT CHANNEL
-	pickle.dump( int(volume), open( "headunit.p", "wb" ) )
+	iVolumePct = int(pipe.splitlines()[0]) #LEFT CHANNEL
+	pickle.dump( iVolumePct, open( "headunit.p", "wb" ) )
 
 	
 def mpc_get_PlaylistDirs():
