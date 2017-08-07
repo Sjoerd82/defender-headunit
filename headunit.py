@@ -80,7 +80,7 @@ sLocalMusicMPD="local_music"			# directory from a MPD pov.
 arMpcPlaylistDirs = [ ]
 
 def check_already_running():
-	print('Checking if we*re already runnning')
+	print('Checking if we''re already runnning')
 
 	# pgrep exit status:
 	#
@@ -100,6 +100,10 @@ def check_already_running():
 	p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
 	output,err = p2.communicate()
 
+	print('DEBUG')
+	print(p1.returncode)
+	print(p2.returncode)
+	
 	if p2.returncode == 0:
 		print('already running... aborting')
 		exit()
@@ -202,9 +206,9 @@ def mpc_get_PlaylistDirs():
 		dirname_prev = dirname_current
 		iPos += 1
 
-	print('DEBUG!!')
-	for x in arMpcPlaylistDirs:
-		print x
+	#DEBUG
+	#for x in arMpcPlaylistDirs:
+	#	print x
 
 def mpc_current_folder():
 	# Get current folder
