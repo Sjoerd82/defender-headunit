@@ -543,9 +543,6 @@ def init():
     #source /home/hu/hu_settings.sh
 	load_settings()
 
-	# set volume
-	volume_set( 60 )
-	
 	# play startup sound
 	alsa_play_fx( 1 )
 
