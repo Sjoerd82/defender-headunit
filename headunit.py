@@ -123,7 +123,7 @@ def button_press ( func ):
 		print('Seek/Next')
 		seek_next()
 	elif func == 'SEEK_PREV':
-		print('Seek/Prev.)
+		print('Seek/Prev.')
 		seek_prev()
 	elif func == 'DIR_NEXT':
 		print('Next directory')
