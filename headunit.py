@@ -100,7 +100,7 @@ def check_already_running():
 	p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
 	output,err = p2.communicate()
 
-	if p1.returncode == 0:
+	if p2.returncode == 0:
 		print('already running... aborting')
 		exit()
 	
