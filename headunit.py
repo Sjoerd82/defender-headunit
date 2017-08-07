@@ -518,8 +518,10 @@ def locmus_stop():
 	
 	# save position and current file name for this drive
 	
-	subprocess.check_output("mpc | sed -n 2p | grep -Po '(?<=#)[^/]*' > /home/hu/mp_locmus.txt")
-	subprocess.check_output("mpc -f %file% current >> /home/hu/mp_locmus.txt")
+	#subprocess.check_output("mpc | sed -n 2p | grep -Po '(?<=#)[^/]*' > /home/hu/mp_locmus.txt")
+	#subprocess.check_output("mpc -f %file% current >> /home/hu/mp_locmus.txt")
+	pipe1 = Popen("mpc | sed -n 2p | grep -Po '(?<=#)[^/]*' > /home/hu/mp_locmus.txt", shell=True, stdout=PIPE)
+	pipe2 = Popen("mpc -f %file% current >> /home/hu/mp_locmus.txt", shell=True, stdout=PIPE)
 	
 	# stop playback
 	mpc_stop()
