@@ -82,6 +82,7 @@ sLocalMusicMPD="local_music"			# directory from a MPD pov.
 arMpcPlaylistDirs = [ ]
 
 def load_settings():
+	print('Loading previous settings')
 	#default
 	volume = 20
 
@@ -91,6 +92,9 @@ def load_settings():
 		#assume: first time, so no settings saved yet? Setting default
 		pickle.dump( volume, open( "headunit.p", "wb" ) )
 
+	print('DEBUG:')
+	print volume
+	
 	#check if the value is valid
 	if volume < 0 or volume > 100:
 		volume = 20
@@ -159,7 +163,8 @@ def alsa_play_fx( fx ):
 
 def volume_set( percentage ):
 	print('Setting volume')
-	call(["amixer", "-q", "-c", "0", "set", "Master", "20%", "unmute"])
+	volpct = percentage+'%'
+	call(["amixer", "-q", "-c", "0", "set", "Master", volpct, "unmute"])
 
 def volume_up( step ):
 	print('Volume up')
