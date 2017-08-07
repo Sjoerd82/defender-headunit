@@ -84,6 +84,8 @@ sLocalMusicMPD="local_music"			# directory from a MPD pov.
 arMpcPlaylistDirs = [ ]
 
 def load_settings():
+	global dSettings
+	
 	print('Loading previous settings')
 
 	try:
@@ -107,6 +109,8 @@ def load_settings():
 	#POS.
 
 def save_settings():
+	global dSettings
+	
 	print('Saving settings')
 	pickle.dump( dSettings, open( "headunit.p", "wb" ) )
 	#pickle.dump( iVolumePct, open( "headunit.p", "wb" ) )
@@ -172,6 +176,7 @@ def alsa_play_fx( fx ):
 
 
 def volume_att_toggle():
+	global dSettings
 	global iAtt
 
 	print('Toggling ATT volume')
@@ -197,6 +202,7 @@ def volume_set( percentage ):
 	call(["amixer", "-q", "-c", "0", "set", "Master", volpct, "unmute"])
 
 def volume_up( step ):
+	global dSettings
 	global iAtt
 
 	print('Volume up')
@@ -210,6 +216,7 @@ def volume_up( step ):
 	save_settings()
 
 def volume_down( step ):
+	global dSettings
 	global iAtt
 
 	print('Volume down')
@@ -223,12 +230,14 @@ def volume_down( step ):
 	save_settings()
 
 def seek_next():
+	global dSettings
 	if dSettings['source'] == 1 or dSettings['source'] == 2:
 		mpc_next_track()
 	#elif source == then
 	#fm_next ofzoiets
 
 def seek_prev():
+	global dSettings
 	if dSettings['source'] == 1 or dSettings['source'] == 2:
 		mpc_prev_track()
 	
@@ -502,6 +511,7 @@ def locmus_update():
 		
 # updates arSourceAvailable
 def source_updateAvailable():
+	global dSettings
 
 	# 0; fm
 	fm_check()
@@ -538,7 +548,7 @@ def source_check():
 	source_updateAvailable()
 
 def source_next():
-	global dSettings	#global iSource
+	global dSettings
 	
 	print('Switching to next source')
 	
@@ -588,6 +598,8 @@ def source_next():
 				i += 1
 
 def source_play():
+	global dSettings
+
 	print('Start playback: {0:s}'.format(arSource[dSettings['source']]))
 	if dSettings['source'] == 0:
 		fm_play()
