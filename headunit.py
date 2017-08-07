@@ -150,7 +150,7 @@ def button_press ( func ):
 		locmus_update()
 	elif func == 'OFF':
 		print('Shutting down')
-		#todo: save state
+		save_settings()
 		call(["systemctl", "poweroff", "-i"])
 
 	# Feedback beep
@@ -159,7 +159,7 @@ def button_press ( func ):
 	call(["gpio", "write", "6", "0"])
 
 	# Wait until button is released
-
+	""" why did we do this again??
 	value_0 = adc.read_adc(0)
 	press_count = 0
 	while value_0 > 600:
@@ -170,11 +170,11 @@ def button_press ( func ):
 			break
 		elif func == 'TRACK_PREV'  and press_count == 10:
 			break
+	"""
 
 def alsa_play_fx( fx ):
 	print('Playing effect')
 	#TODO
-
 
 def volume_att_toggle():
 	global dSettings
@@ -189,14 +189,13 @@ def volume_att_toggle():
 	elif iAtt == 0:
 		print('Setting att volume (20%)')
 		iAtt = 1
-		# we're not saving this volume level, as it is temporary.
+		# We're not saving this volume level, as it is temporary.
 		# ATT will be reset by pressing ATT again, or changing the volume
 		call(["amixer", "-q", "-c", "0", "set", "Master", "20%", "unmute"])
 	else:
 		print('Uhmmm.. this shouldn\'t have happened')
 		iAtt = 0
 
-	
 def volume_set( percentage ):
 	volpct = str(percentage)+'%'
 	print('Setting volume to {0:s}'.format(volpct))
@@ -208,6 +207,8 @@ def volume_up( step ):
 	global iDoSave
 
 	print('Volume up')
+	
+	# reset Att. state
 	iAtt = 0
 	call(["amixer", "-q", "-c", "0", "set", "Master", "5+", "unmute"])
 
@@ -224,6 +225,8 @@ def volume_down( step ):
 	global iDoSave
 
 	print('Volume down')
+	
+	# reset Att. state
 	iAtt = 0
 	call(["amixer", "-q", "-c", "0", "set", "Master", "5-", "unmute"])
 
@@ -264,10 +267,6 @@ def mpc_get_PlaylistDirs():
 			arMpcPlaylistDirs.append(t)
 		dirname_prev = dirname_current
 		iPos += 1
-
-	#DEBUG
-	#for x in arMpcPlaylistDirs:
-	#	print x
 
 def mpc_current_folder():
 	# Get current folder
@@ -512,7 +511,20 @@ def locmus_update():
 	
 	#Reload playlist
 	locmus_play()
+
+def locmus_stop():
+	print('Stopping source: locmus. Saving playlist position and clearing playlist.')
 	
+	# save position and current file name for this drive
+	
+	call("mpc | sed -n 2p | grep -Po '(?<=#)[^/]*' > /home/hu/mp_locmus.txt")
+	call("mpc -f %file% current >> /home/hu/mp_locmus.txt")
+	
+	# stop playback
+	mpc_stop()
+	#mpc $params_mpc -q stop
+	#mpc $params_mpc -q clear
+
 		
 # updates arSourceAvailable
 def source_updateAvailable():
@@ -613,7 +625,7 @@ def source_play():
 	elif dSettings['source'] == 2:
 		locmus_play()
 	elif dSettings['source'] == 3:
-		mpc_stop()
+		locmus_stop()
 		bt_play()
 	elif dSettings['source'] == 4:
 		linein_play()
