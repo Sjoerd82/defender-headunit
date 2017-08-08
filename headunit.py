@@ -155,9 +155,7 @@ def button_press ( func ):
 		call(["systemctl", "poweroff", "-i"])
 
 	# Feedback beep
-	call(["gpio", "write", "6", "1"])
-	time.sleep(0.05)
-	call(["gpio", "write", "6", "0"])
+	beep()
 
 	# Wait until button is released
 	""" why did we do this again??
@@ -172,6 +170,11 @@ def button_press ( func ):
 		elif func == 'TRACK_PREV'  and press_count == 10:
 			break
 	"""
+
+def beep():
+	call(["gpio", "write", "6", "1"])
+	time.sleep(0.05)
+	call(["gpio", "write", "6", "0"])
 
 def alsa_play_fx( fx ):
 	print('Playing effect')
@@ -521,7 +524,7 @@ def locmus_play():
 			
 			print('Starting playback')
 			call(["mpc", "-q" , "stop"])
-			call(["mpc", "-q" , "play", playslist_pos])
+			call(["mpc", "-q" , "play", str(playslist_pos]))
 		
 			print('Loading directory structure')
 			mpc_get_PlaylistDirs()
@@ -664,6 +667,11 @@ def source_play():
 def init():
 	print('Initializing ...')
 
+	# initialize gpio (beep)
+	print('Enabling GPIO output on pin 6 (beeper)')
+	call(["gpio", "write", "6", "0"])
+	call(["gpio", "mode", "6", "out"])
+	
     # load previous state
     #source /home/hu/hu_settings.sh
 	load_settings()
@@ -689,6 +697,7 @@ def init():
 	# therefore, always try to play if a source becomes avaiable.
 	
 	print('Initialization finished')
+	beep()
 
 	
 #-------------------------------------------------------------------------------
