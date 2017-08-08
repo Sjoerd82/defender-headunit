@@ -333,7 +333,7 @@ def mpc_stop():
 	print('Stopping MPC [pause]')
 	call(["mpc", "pause"])
 
-def mpc_save_pos ( label )
+def mpc_save_pos ( label ):
 
 	print('Saving playlist position')
 	# save position and current file name for this drive
