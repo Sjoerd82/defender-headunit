@@ -356,13 +356,11 @@ def mpc_lkp( lkp_file ):
 	lkf=""  # Last Known File
 
 	# try to continue playing where left.
-	print('DEBUG!!')
 	# First line is the original position
 	#bladiebla = "head -n1 /home/hu/mp_locmus.txt" #+lkp_file
 	lkpOut = subprocess.check_output("head -n1 /home/hu/mp_locmus.txt", shell=True)
 	
 	lkp = int(lkpOut.splitlines()[0])
-	print(lkp)
 	#print lkpOut.splitlines()[0]
 
 	# Second line is the file name
