@@ -125,6 +125,7 @@ def button_press ( func ):
 	if func == 'SHUFFLE':
 		print('Toggling shuffle')
 		call(["mpc", "random"])
+		#TODO: FUTURE: IF SWITHCHING *TO* RANDOM, THEN ALSO DO A NEXT_TRACK..
 	elif func == 'SOURCE':
 		print('Next source')
 		source_next()
@@ -311,6 +312,9 @@ def mpc_next_track():
 	print('Next track')
 	call(["mpc", "next"])
 	#todo save to pos.file
+	#TODO: handle usb/locmus
+	mpc_save_pos( 'locmus' )
+
 	
 def mpc_prev_track():
 	print('Prev. track')
@@ -329,6 +333,22 @@ def mpc_stop():
 	print('Stopping MPC [pause]')
 	call(["mpc", "pause"])
 
+def mpc_save_pos ( label )
+
+	print('Saving playlist position')
+	# save position and current file name for this drive
+	mp_filename = '/home/hu/mp_' + label + '.txt'
+	print mp_filename
+	
+	cmd1 = "mpc | sed -n 2p | grep -Po '(?<=#)[^/]*' > " + mp_filename
+	cmd2 = "mpc -f %file% current >> " + mp_filename
+	
+	#subprocess.check_output("mpc | sed -n 2p | grep -Po '(?<=#)[^/]*' > /home/hu/mp_locmus.txt")
+	#subprocess.check_output("mpc -f %file% current >> /home/hu/mp_locmus.txt")
+	pipe1 = Popen(cmd1, shell=True, stdout=PIPE)
+	pipe2 = Popen(cmd2, shell=True, stdout=PIPE)
+
+	
 def mpc_lkp( lkp_file ):
 	print('Retrieving last known position from lkp file: {0:s}'.format(lkp_file))
 
@@ -547,11 +567,7 @@ def locmus_stop():
 	print('Stopping source: locmus. Saving playlist position and clearing playlist.')
 	
 	# save position and current file name for this drive
-	
-	#subprocess.check_output("mpc | sed -n 2p | grep -Po '(?<=#)[^/]*' > /home/hu/mp_locmus.txt")
-	#subprocess.check_output("mpc -f %file% current >> /home/hu/mp_locmus.txt")
-	pipe1 = Popen("mpc | sed -n 2p | grep -Po '(?<=#)[^/]*' > /home/hu/mp_locmus.txt", shell=True, stdout=PIPE)
-	pipe2 = Popen("mpc -f %file% current >> /home/hu/mp_locmus.txt", shell=True, stdout=PIPE)
+	mpc_save_pos( 'locmus' )
 	
 	# stop playback
 	mpc_stop()
