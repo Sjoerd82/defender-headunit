@@ -627,6 +627,7 @@ def source_next():
 			if arSourceAvailable[i] == 1:
 				print('Switching to {0:s}'.format(source))
 				dSettings['source'] = i
+				save_settings()
 				break
 			i += 1
 			
@@ -647,12 +648,11 @@ def source_next():
 			if arSourceAvailable[i] == 1:
 				print('Switching to {0:s}'.format(source))
 				dSettings['source'] = i
+				save_settings()
 				break
 			i += 1
 		
 		#if end of list reached, but no new source was found, then start again on the beginning of the list
-		print (i)
-		print (len(arSource))
 		if i == len(arSource):
 			i = 0
 			for source in arSource[:dSettings['source']]:
@@ -660,6 +660,7 @@ def source_next():
 				if arSourceAvailable[i] == 1:
 					print('Switching to {0:s}'.format(source))
 					dSettings['source'] = i
+					save_settings()
 					break
 				i += 1
 
