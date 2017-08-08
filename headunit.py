@@ -118,6 +118,10 @@ def save_settings():
 	#pickle.dump( iVolumePct, open( "headunit.p", "wb" ) )
 	
 def button_press ( func ):
+	# Feedback beep
+	beep()
+
+	# Handle button
 	if func == 'SHUFFLE':
 		print('Toggling shuffle')
 		call(["mpc", "random"])
@@ -153,9 +157,6 @@ def button_press ( func ):
 		print('Shutting down')
 		save_settings()
 		call(["systemctl", "poweroff", "-i"])
-
-	# Feedback beep
-	beep()
 
 	# Wait until button is released
 	""" why did we do this again??
@@ -340,8 +341,8 @@ def mpc_lkp( lkp_file ):
 	#bladiebla = "head -n1 /home/hu/mp_locmus.txt" #+lkp_file
 	lkpOut = subprocess.check_output("head -n1 /home/hu/mp_locmus.txt", shell=True)
 	
-	#lkp = int(lkpOut.splitlines()[0])
-	#print(lkp)
+	lkp = int(lkpOut.splitlines()[0])
+	print(lkp)
 	#print lkpOut.splitlines()[0]
 
 	# Second line is the file name
@@ -351,7 +352,7 @@ def mpc_lkp( lkp_file ):
 	#lkp=$(mpc -f "%position% %file%" playlist | grep "$lkf" | cut -d' ' -f1)
 	#TODO: only use this if it yields a result, otherwise use the lkp
 
-	return 3 #lkp
+	return lkp
 	
 # updates arSourceAvailable[0] (fm) --- TODO
 def fm_check():
