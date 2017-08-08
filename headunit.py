@@ -524,7 +524,7 @@ def locmus_play():
 			
 			print('Starting playback')
 			call(["mpc", "-q" , "stop"])
-			call(["mpc", "-q" , "play", str(playslist_pos]))
+			call(["mpc", "-q" , "play", str(playslist_pos)])
 		
 			print('Loading directory structure')
 			mpc_get_PlaylistDirs()
