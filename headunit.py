@@ -25,6 +25,9 @@
 # - Pi Zero hat
 # - Line-In hardware control
 
+# Known issues
+# - Audio channels don't seem to mute on start, but if they do, we don't have anything implemented to unmute them.
+
 import os
 import time
 import subprocess
@@ -32,6 +35,7 @@ from subprocess import call
 from subprocess import Popen, PIPE
 from tendo import singleton
 import pickle
+import alsaaudio
 
 # Import the ADS1x15 module.
 import Adafruit_ADS1x15
@@ -76,6 +80,10 @@ sAlsaMixer = "Master"
 iAlsaMixerStep=1000
 params_amixer="-q" #-c card -D device, etc.
 
+#ALSA, via alsaaudio
+oAlsaMixer = None
+## this replaces:
+## call(["amixer", "-q", "-c", "0", "set", "Master", volpct, "unmute"])
 
 #LOCAL MUSIC
 sLocalMusic="/media/local_music"		# symlink to /home/hu/music
@@ -84,39 +92,150 @@ sLocalMusicMPD="local_music"			# directory from a MPD pov.
 #MPC
 arMpcPlaylistDirs = [ ]
 
-def load_settings():
-	global dSettings
-	
-	print('Loading previous settings')
+def beep():
+	call(["gpio", "write", "6", "1"])
+	time.sleep(0.05)
+	call(["gpio", "write", "6", "0"])
 
+# ********************************************************************************
+# ALSA, using python-alsaaudio
+#
+
+def alsa_init():
+	global oAlsaMixer
+	print("[ALSA] Initializing mixer")
+	
 	try:
-		dSettings = pickle.load( open( "headunit.p", "rb" ) )
-		#iVolumePct = pickle.load( open( "headunit.p", "rb" ) )
-	except:
-		#assume: first time, so no settings saved yet? Setting default
-		pickle.dump( dSettings, open( "headunit.p", "wb" ) )
+		oAlsaMixer = alsaaudio.Mixer('Master', cardindex=0)
+	except alsaaudio.ALSAAudioError:
+		print('No such mixer')
 
-	#VOLUME
+def alsa_unmute():
+	print('[ALSA] Unmuting...')
+	#TODO
+
+def alsa_get_volume():
+	global oAlsaMixer
+	print("[ALSA] Retrieving volume from mixer")
 	
-	#check if the value is valid
-	if dSettings['volume'] < 0 or dSettings['volume'] > 100:
-		dSettings['volume'] = 20
-		pickle.dump( dSettings, open( "headunit.p", "wb" ) )
+	volumes = oAlsaMixer.getvolume()
+	for i in range(len(volumes)):
+		print("Channel %i volume: %i%" % (i,volumes[i]))
+
+	#We're keeping L&R in sync, so just return the first channel.
+	return volumes[0]
+	
+def alsa_set_volume( volume ):
+	print('[ALSA] Setting volume to{0:d}%'.format(volume))
+	oAlsaMixer.setvolume(volume, alsaaudio.MIXER_CHANNEL_ALL)
+
+def alsa_play_fx( fx ):
+	print('Playing effect')
+	#TODO
+
+# ********************************************************************************
+# Volume wrappers
+#
+
+def volume_att_toggle():
+	global dSettings
+	global iAtt
+	print('Toggling ATT volume')
+	
+	if iAtt == 1:
+		print('Restoring previous volume')
+		iAtt = 0
+		volpct = str(dSettings['volume'])+'%'
+		alsa_set_volume( dSettings['volume'] )
 		
-	volume_set( dSettings['volume'] )
+	elif iAtt == 0:
+		print('Setting att volume (25%)')
+		# We're not saving this volume level, as it is temporary.
+		# ATT will be reset by pressing ATT again, or changing the volume
+		iAtt = 1
+		alsa_set_volume( 25 )
+		
+	else:
+		print('Uhmmm.. this shouldn\'t have happened')
+		iAtt = 0
+
+def volume_up():
+	global dSettings
+	global iAtt
+	global iDoSave
+
+	print('Volume up; +5%')
+	volume_new = alsa_get_volume()+5
+	alsa_set_volume(volume_new)
+	#call(["amixer", "-q", "-c", "0", "set", "Master", "5+", "unmute"])
+	dSettings['volume'] = volume_new
+
+	# always reset Att. state at manual vol. change
+	iAtt = 0
+
+	# Save volume change
+	#pipe = subprocess.check_output("amixer get Master | awk '$0~/%/{print $5}' | tr -d '[]%'", shell=True)
+	#pipe = subprocess.check_output("amixer get Master | awk '$0~/%/{print $4}' | tr -d '[]%'", shell=True)
+	#dSettings['volume'] = int(pipe.splitlines()[0]) #LEFT CHANNEL	
 	
-	#SOURCE
+	# Delayed save
+	#save_settings() #too slow
+	iDoSave = 1
+
+def volume_down():
+	global dSettings
+	global iAtt
+	global iDoSave
+
+	print('Volume down; 5%')
+	volume_new = alsa_get_volume()-5
+	alsa_set_volume(volume_new)
+	dSettings['volume'] = volume_new
 	
-	#RANDOM
-	#POS.
+	# always reset Att. state at manual vol. change
+	iAtt = 0
+	
+	# Delayed save
+	iDoSave = 1
+	
+# ********************************************************************************
+# Save & Load settings, using pickle
+#
 
 def save_settings():
 	global dSettings
-	
-	print('Saving settings')
+	print('[PICKLE] Saving settings')
 	pickle.dump( dSettings, open( "headunit.p", "wb" ) )
-	#pickle.dump( iVolumePct, open( "headunit.p", "wb" ) )
+
+def load_settings():
+	global dSettings
+	print('[PICKLE] Loading previous settings')
+
+	try:
+		dSettings = pickle.load( open( "headunit.p", "rb" ) )
+	except:
+		#assume: fails because it's the first time and no settings saved yet? Setting default:
+		pickle.dump( dSettings, open( "headunit.p", "wb" ) )
+
+	# Apply settings:
 	
+	#VOLUME
+	#check if the value is valid
+	if dSettings['volume'] < 0 or dSettings['volume'] > 100:
+		dSettings['volume'] = 40
+		pickle.dump( dSettings, open( "headunit.p", "wb" ) )
+	alsa_set_volume( dSettings['volume'] )
+	print('  ... Volume: {0:d}%'.format(dSettings['volume']))
+	
+	#SOURCE
+	if dSettings['source'] < 0 or dSettings['source']:
+		print(' ... Source: not available')
+	else:
+		print(' ... Source: {0:s}%'.format(arSource[dSettings['source']]))
+
+# ********************************************************************************
+# Remote control
+#
 def button_press ( func ):
 	# Feedback beep
 	beep()
@@ -135,10 +254,10 @@ def button_press ( func ):
 		volume_att_toggle()
 	elif func == 'VOL_UP':
 		print('VOL_UP')
-		volume_up(1000)
+		volume_up()
 	elif func == 'VOL_DOWN':
 		print('VOL_DOWN')
-		volume_down(1000)
+		volume_down()
 	elif func == 'SEEK_NEXT':
 		print('Seek/Next')
 		seek_next()
@@ -173,75 +292,9 @@ def button_press ( func ):
 			break
 	"""
 
-def beep():
-	call(["gpio", "write", "6", "1"])
-	time.sleep(0.05)
-	call(["gpio", "write", "6", "0"])
 
-def alsa_play_fx( fx ):
-	print('Playing effect')
-	#TODO
 
-def volume_att_toggle():
-	global dSettings
-	global iAtt
 
-	print('Toggling ATT volume')
-	if iAtt == 1:
-		print('Restoring previous volume')
-		iAtt = 0
-		volpct = str(dSettings['volume'])+'%'
-		call(["amixer", "-q", "-c", "0", "set", "Master", volpct, "unmute"])
-	elif iAtt == 0:
-		print('Setting att volume (20%)')
-		iAtt = 1
-		# We're not saving this volume level, as it is temporary.
-		# ATT will be reset by pressing ATT again, or changing the volume
-		call(["amixer", "-q", "-c", "0", "set", "Master", "20%", "unmute"])
-	else:
-		print('Uhmmm.. this shouldn\'t have happened')
-		iAtt = 0
-
-def volume_set( percentage ):
-	volpct = str(percentage)+'%'
-	print('Setting volume to {0:s}'.format(volpct))
-	call(["amixer", "-q", "-c", "0", "set", "Master", volpct, "unmute"])
-
-def volume_up( step ):
-	global dSettings
-	global iAtt
-	global iDoSave
-
-	print('Volume up')
-	
-	# reset Att. state
-	iAtt = 0
-	call(["amixer", "-q", "-c", "0", "set", "Master", "5+", "unmute"])
-
-	# Save volume change
-	#pipe = subprocess.check_output("amixer get Master | awk '$0~/%/{print $5}' | tr -d '[]%'", shell=True)
-	pipe = subprocess.check_output("amixer get Master | awk '$0~/%/{print $4}' | tr -d '[]%'", shell=True)
-	dSettings['volume'] = int(pipe.splitlines()[0]) #LEFT CHANNEL
-	#save_settings() #too slow
-	iDoSave = 1
-
-def volume_down( step ):
-	global dSettings
-	global iAtt
-	global iDoSave
-
-	print('Volume down')
-	
-	# reset Att. state
-	iAtt = 0
-	call(["amixer", "-q", "-c", "0", "set", "Master", "5-", "unmute"])
-
-	# Save volume change
-	#pipe = subprocess.check_output("amixer get Master | awk '$0~/%/{print $5}' | tr -d '[]%'", shell=True)
-	pipe = subprocess.check_output("amixer get Master | awk '$0~/%/{print $4}' | tr -d '[]%'", shell=True)
-	dSettings['volume'] = int(pipe.splitlines()[0]) #LEFT CHANNEL
-	#save_settings() #too slow
-	iDoSave = 1
 
 def seek_next():
 	global dSettings
@@ -254,7 +307,11 @@ def seek_prev():
 	global dSettings
 	if dSettings['source'] == 1 or dSettings['source'] == 2:
 		mpc_prev_track()
-	
+
+def mpc_init():
+	call(["mpc", "random", "off"])
+	call(["mpc", "repeat", "on"])
+
 def mpc_get_PlaylistDirs():
 	global arMpcPlaylistDirs
 	dirname_current = ''
@@ -679,6 +736,11 @@ def source_play():
 		linein_play()
 	else:
 		print('ERROR: Invalid source.')
+
+def latesystemstuff():
+	print('Starting less important system services')
+	call(["", "write", "6", "0"])
+	
 				
 def init():
 	print('Initializing ...')
@@ -687,6 +749,9 @@ def init():
 	print('Enabling GPIO output on pin 6 (beeper)')
 	call(["gpio", "write", "6", "0"])
 	call(["gpio", "mode", "6", "out"])
+
+	# initialize ALSA
+	alsa_init()
 	
     # load previous state
     #source /home/hu/hu_settings.sh
