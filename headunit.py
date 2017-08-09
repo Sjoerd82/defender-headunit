@@ -460,7 +460,7 @@ def mpc_lkp( label ):
 
 	for x in playlist:
 			if x['file'] == current_file:
-					return x['pos']
+					return int(x['pos'])+1
 
 	
 # updates arSourceAvailable[0] (fm) --- TODO
