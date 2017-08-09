@@ -126,7 +126,7 @@ def alsa_get_volume():
 	return volumes[0]
 	
 def alsa_set_volume( volume ):
-	print('[ALSA] Setting volume to{0:d}%'.format(volume))
+	print('[ALSA] Setting volume to {0:d}%'.format(volume))
 	oAlsaMixer.setvolume(volume, alsaaudio.MIXER_CHANNEL_ALL)
 
 def alsa_play_fx( fx ):
@@ -214,6 +214,7 @@ def load_settings():
 	try:
 		dSettings = pickle.load( open( "headunit.p", "rb" ) )
 	except:
+		print('[PICKLE] Loading headunit.p failed!')
 		#assume: fails because it's the first time and no settings saved yet? Setting default:
 		pickle.dump( dSettings, open( "headunit.p", "wb" ) )
 
@@ -225,13 +226,13 @@ def load_settings():
 		dSettings['volume'] = 40
 		pickle.dump( dSettings, open( "headunit.p", "wb" ) )
 	alsa_set_volume( dSettings['volume'] )
-	print('  ... Volume: {0:d}%'.format(dSettings['volume']))
+	print('[PICKLE] Volume: {0:d}%'.format(dSettings['volume']))
 	
 	#SOURCE
 	if dSettings['source'] < 0 or dSettings['source']:
-		print(' ... Source: not available')
+		print('[PICKLE] Source: not available')
 	else:
-		print(' ... Source: {0:s}%'.format(arSource[dSettings['source']]))
+		print('[PICKLE] Source: {0:s}%'.format(arSource[dSettings['source']]))
 
 # ********************************************************************************
 # Remote control
@@ -407,9 +408,9 @@ def mpc_save_pos ( label ):
 
 	
 def mpc_lkp( lkp_file ):
-	print('Retrieving last known position from lkp file: {0:s}'.format(lkp_file))
+	print('[MPC] Retrieving last known position from lkp file: {0:s}'.format(lkp_file))
 
-	lkp="1" # Last Known Position
+	lkp=1 # Last Known Position
 	lkf=""  # Last Known File
 
 	# try to continue playing where left.
@@ -427,6 +428,7 @@ def mpc_lkp( lkp_file ):
 	#lkp=$(mpc -f "%position% %file%" playlist | grep "$lkf" | cut -d' ' -f1)
 	#TODO: only use this if it yields a result, otherwise use the lkp
 
+	print('[MPC] Lookup found last known position: {0:d}'.format(lkp))
 	return lkp
 	
 # updates arSourceAvailable[0] (fm) --- TODO
