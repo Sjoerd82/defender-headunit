@@ -37,6 +37,10 @@ from tendo import singleton
 import pickle
 import alsaaudio
 
+# python-mpd2 0.5.1 (not sure if this is the forked mpd2)
+# used mainly for getting the current song for lookup on reload
+from mpd import MPDClient
+
 # Import the ADS1x15 module.
 import Adafruit_ADS1x15
 
@@ -89,8 +93,10 @@ oAlsaMixer = None
 sLocalMusic="/media/local_music"		# symlink to /home/hu/music
 sLocalMusicMPD="local_music"			# directory from a MPD pov.
 
-#MPC
+#MPD-client (MPC)
+oMpdClient = None
 arMpcPlaylistDirs = [ ]
+iMPC_OK = 0
 
 def beep():
 	call(["gpio", "write", "6", "1"])
@@ -319,7 +325,19 @@ def seek_prev():
 	if dSettings['source'] == 1 or dSettings['source'] == 2:
 		mpc_prev_track()
 
+# ********************************************************************************
+# MPC
+
 def mpc_init():
+	global oMpdClient
+	print('Initializing MPD client')
+	oMpdClient = MPDClient() 
+
+	oMpdClient.timeout = 10                # network timeout in seconds (floats allowed), default: None
+	oMpdClient.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
+	oMpdClient.connect("localhost", 6600)  # connect to localhost:6600
+	print(oMpdClient.mpd_version)          # print the MPD version
+	
 	call(["mpc", "random", "off"])
 	call(["mpc", "repeat", "on"])
 
@@ -407,44 +425,43 @@ def mpc_stop():
 	call(["mpc", "pause"])
 
 def mpc_save_pos ( label ):
+	global oMpdClient
+	print('[MPC] Saving playlist position')
 
-	print('Saving playlist position')
-	# save position and current file name for this drive
-	mp_filename = '/home/hu/mp_' + label + '.txt'
-	print mp_filename
+	# get current song
+	oMpdClient.command_list_ok_begin()
+	oMpdClient.status()
+	results = oMpdClient.command_list_end()
+
+	# I find this a very stupid way ... i mean a dict in a list? really? anyway...
+	for r in results:
+			songid = r['songid']
+
+	current_song_listdick = oMpdClient.playlistid(songid)
+	for f in current_song_listdick:
+			current_file = f['file']
 	
-	cmd1 = "mpc | sed -n 2p | grep -Po '(?<=#)[^/]*' > " + mp_filename
-	cmd2 = "mpc -f %file% current >> " + mp_filename
+	pickle_file = "~/mp_" + label + ".p"
+	pickle.dump( current_file, open( pickle_file, "wb" ) )
+
+def mpc_lkp( label ):
+	global oMpdClient
 	
-	#subprocess.check_output("mpc | sed -n 2p | grep -Po '(?<=#)[^/]*' > /home/hu/mp_locmus.txt")
-	#subprocess.check_output("mpc -f %file% current >> /home/hu/mp_locmus.txt")
-	pipe1 = Popen(cmd1, shell=True, stdout=PIPE)
-	pipe2 = Popen(cmd2, shell=True, stdout=PIPE)
+	pickle_file = "~/mp_" + label + ".p"
+	print('[MPC] Retrieving last known position from lkp file: {0:s}'.format(pickle_file))
 
+	try:
+		current_file = pickle.load( open( pickle_file, "rb" ) )
+	except:
+		print('[PICKLE] Loading {0:s} failed!'.format(pickle_file))
+		return 1
 	
-def mpc_lkp( lkp_file ):
-	print('[MPC] Retrieving last known position from lkp file: {0:s}'.format(lkp_file))
+	playlist = oMpdClient.playlistid()
 
-	lkp=1 # Last Known Position
-	lkf=""  # Last Known File
+	for x in playlist:
+			if x['file'] == current_file:
+					return x['pos']
 
-	# try to continue playing where left.
-	# First line is the original position
-	#bladiebla = "head -n1 /home/hu/mp_locmus.txt" #+lkp_file
-	lkpOut = subprocess.check_output("head -n1 /home/hu/mp_locmus.txt", shell=True)
-	
-	lkp = int(lkpOut.splitlines()[0])
-	#print lkpOut.splitlines()[0]
-
-	# Second line is the file name
-	#lkf=$(tail -n1 /home/hu/mp_locmus.txt)
-
-	# Derive position from file name
-	#lkp=$(mpc -f "%position% %file%" playlist | grep "$lkf" | cut -d' ' -f1)
-	#TODO: only use this if it yields a result, otherwise use the lkp
-
-	print('[MPC] Lookup found last known position: {0:d}'.format(lkp))
-	return lkp
 	
 # updates arSourceAvailable[0] (fm) --- TODO
 def fm_check():
@@ -613,7 +630,7 @@ def locmus_play():
 			#TODO: remove the trailing line feed..
 
 			#Get last known position
-			playslist_pos = mpc_lkp('/home/hu/mp_locmus.txt')
+			playslist_pos = mpc_lkp('locmus')
 			
 			print('Starting playback')
 			call(["mpc", "-q" , "stop"])
@@ -754,8 +771,47 @@ def source_play():
 def latesystemstuff():
 	print('Starting less important system services')
 	call(["", "write", "6", "0"])
+
+# WORKS, but replaced by the python-mpd library
+def OLD_mpc_save_pos ( label ):
+
+	print('Saving playlist position')
+	# save position and current file name for this drive
+	mp_filename = '/home/hu/mp_' + label + '.txt'
+	print mp_filename
 	
+	cmd1 = "mpc | sed -n 2p | grep -Po '(?<=#)[^/]*' > " + mp_filename
+	cmd2 = "mpc -f %file% current >> " + mp_filename
+	
+	#subprocess.check_output("mpc | sed -n 2p | grep -Po '(?<=#)[^/]*' > /home/hu/mp_locmus.txt")
+	#subprocess.check_output("mpc -f %file% current >> /home/hu/mp_locmus.txt")
+	pipe1 = Popen(cmd1, shell=True, stdout=PIPE)
+	pipe2 = Popen(cmd2, shell=True, stdout=PIPE)	
 				
+def OLD_mpc_lkp( lkp_file ):
+	print('[MPC] Retrieving last known position from lkp file: {0:s}'.format(lkp_file))
+
+	lkp=1 # Last Known Position
+	lkf=""  # Last Known File
+
+	# try to continue playing where left.
+	# First line is the original position
+	#bladiebla = "head -n1 /home/hu/mp_locmus.txt" #+lkp_file
+	lkpOut = subprocess.check_output("head -n1 /home/hu/mp_locmus.txt", shell=True)
+	
+	lkp = int(lkpOut.splitlines()[0])
+	#print lkpOut.splitlines()[0]
+
+	# Second line is the file name
+	#lkf=$(tail -n1 /home/hu/mp_locmus.txt)
+
+	# Derive position from file name
+	#lkp=$(mpc -f "%position% %file%" playlist | grep "$lkf" | cut -d' ' -f1)
+	#TODO: only use this if it yields a result, otherwise use the lkp
+
+	print('[MPC] Lookup found last known position: {0:d}'.format(lkp))
+	return lkp
+
 def init():
 	print('Initializing ...')
 
