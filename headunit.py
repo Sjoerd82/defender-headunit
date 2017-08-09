@@ -25,8 +25,10 @@
 # - Pi Zero hat
 # - Line-In hardware control
 
-# Known issues
+# Known issues/limitations
 # - Audio channels don't seem to mute on start, but if they do, we don't have anything implemented to unmute them.
+# - Only one USB drive at a time
+# - Long/Short press buttons
 
 import os
 import time
@@ -76,7 +78,7 @@ arSourceAvailable = [0,0,0,0,0]              # corresponds to arSource; 1=availa
 iAtt = 0									 # Att mode toggle
 iRandom = 0									 # We're keeping track of it within the script, not checking with MPD
 iDoSave	= 0									 # Indicator to do a save anytime soon
-
+sUsbLabel = ''
 dSettings = {'source': -1, 'volume': 20}	 # No need to save random, thats done by MPC/MPD itself.
 
 #ALSA
@@ -329,7 +331,7 @@ def seek_prev():
 
 def mpc_init():
 	global oMpdClient
-	print('Initializing MPD client')
+	print('[MPC] Initializing MPD client')
 	oMpdClient = MPDClient() 
 
 	oMpdClient.timeout = 10                # network timeout in seconds (floats allowed), default: None
@@ -514,7 +516,8 @@ def linein_play():
 
 # updates arSourceAvailable[1] (mpc)
 def usb_check():
-	print('Checking if USB is available')
+	global sUsbLabel
+	print('[USB] Checking if USB is available')
 
 	print('  Check if anything is mounted on /media...')
 	arSourceAvailable[1]=1 # Available, unless:
@@ -541,13 +544,19 @@ def usb_check():
 		else:
 			print('  Found {0:s} tracks'.format(mpcOut))
 			#TODO: remove the trailing line feed..
+			
+			#good way to get the label, only we can't be sure that the flash is always mounted on /dev/sda1
+			#findmnt -o TARGET -n /dev/sda1
+			mountpoint = subprocess.check_output("mount | egrep media | cut -d ' ' -f 3")
+			sUsbLabel = os.path.dirname(mountpoint)
+			print('[USB] label = {0:s}'.format(sUsbLabel))
 
 	else:
 		print('  Nothing mounted on /media.')
 	
 
 def usb_play():
-	print('[PLAY] USB (MPD)')
+	print('[USB] Play (MPD)')
 
 	print('Checking if source is still good')
 	usb_check()
