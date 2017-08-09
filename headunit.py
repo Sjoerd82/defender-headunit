@@ -522,6 +522,7 @@ def usb_check():
 		else:
 			print('  Found {0:s} tracks'.format(mpcOut))
 			#TODO: remove the trailing line feed..
+
 	else:
 		print('  Nothing mounted on /media.')
 	
@@ -822,6 +823,9 @@ def init():
 
 	# initialize ALSA
 	alsa_init()
+
+	# initialize MPD client
+	mpc_init()
 	
     # load previous state
     #source /home/hu/hu_settings.sh
