@@ -233,12 +233,16 @@ def load_settings():
 		dSettings['volume'] = 40
 		pickle.dump( dSettings, open( "headunit.p", "wb" ) )
 		print('[PICKLE] No setting found, defaulting to 40%')
+	# also don't restore a too low volume
+	elif dSettings['volume'] < 30:
+		print('[PICKLE] Volume too low, defaulting to 30%')
+		dSettings['volume'] = 30
 	else:
 		print('[PICKLE] Volume: {0:d}%'.format(dSettings['volume']))
 	alsa_set_volume( dSettings['volume'] )
 	
 	#SOURCE
-	if dSettings['source'] < 0 or dSettings['source']:
+	if dSettings['source'] < 0:
 		print('[PICKLE] Source: not available')
 	else:
 		print('[PICKLE] Source: {0:s}%'.format(arSource[dSettings['source']]))
@@ -639,8 +643,9 @@ def locmus_stop():
 
 		
 # updates arSourceAvailable
-def source_updateAvailable():
+def source_check():
 	global dSettings
+	print('Checking sources')
 
 	# 0; fm
 	fm_check()
@@ -671,10 +676,6 @@ def source_updateAvailable():
 		i += 1
 	
 	print('---------------------------------')
-
-def source_check():
-	print('Checking sources')
-	source_updateAvailable()
 
 def source_next():
 	global dSettings
@@ -770,24 +771,19 @@ def init():
 
 	# check available sources
 	source_check()
-	source_next()
+	
+	if dSettings['source'] == -1:
+		#No current source, go to the first available
+		source_next()
+	elif arSourceAvailable[dSettings['source']] == 0:
+		#Saved source not available, go to the first available
+		source_next()
+	
+	# Start playback
 	source_play()
-
-	# initialize sources
-	#bt_init
-	#mpc_init
-	#get_state
-	#source_play
-
-	#not the best place...
-	#mpc_get_PlaylistDirs
-
-	# Play/Pause button may not be implemented on control panel,
-	# therefore, always try to play if a source becomes avaiable.
 	
 	print('Initialization finished')
 	beep()
-
 	
 #-------------------------------------------------------------------------------
 # Main loop
