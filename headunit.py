@@ -126,6 +126,13 @@ def alsa_get_volume():
 	return volumes[0]
 	
 def alsa_set_volume( volume ):
+	#Only allow volume 5-100%
+	if volume > 100:
+		volume = 100
+		
+	if volume < 5:
+		volume = 5
+		
 	print('[ALSA] Setting volume to {0:d}%'.format(volume))
 	oAlsaMixer.setvolume(volume, alsaaudio.MIXER_CHANNEL_ALL)
 
@@ -294,9 +301,6 @@ def button_press ( func ):
 		elif func == 'TRACK_PREV'  and press_count == 10:
 			break
 	"""
-
-
-
 
 
 def seek_next():
