@@ -74,7 +74,7 @@ BUTTON10_HI = 1100
 arSource = ['fm','usb','locmus','bt','alsa'] # source types; add new sources in the end
 arSourceAvailable = [0,0,0,0,0]              # corresponds to arSource; 1=available
 iAtt = 0									 # Att mode toggle
-#iVolumePct = 20							 # Default volume
+iRandom = 0									 # We're keeping track of it within the script, not checking with MPD
 iDoSave	= 0									 # Indicator to do a save anytime soon
 
 dSettings = {'source': -1, 'volume': 20}	 # No need to save random, thats done by MPC/MPD itself.
@@ -262,9 +262,8 @@ def button_press ( func ):
 
 	# Handle button
 	if func == 'SHUFFLE':
-		print('Toggling shuffle')
-		call(["mpc", "random"])
-		#TODO: FUTURE: IF SWITHCHING *TO* RANDOM, THEN ALSO DO A NEXT_TRACK..
+		print('Shuffle')
+		mpc_random()
 	elif func == 'SOURCE':
 		print('Next source')
 		source_next()
@@ -340,6 +339,27 @@ def mpc_init():
 	
 	call(["mpc", "random", "off"])
 	call(["mpc", "repeat", "on"])
+
+def mpc_random():
+	global iRandom
+	print('[MPC] Toggling random')
+	
+	if dSettings['source'] < 1 or dSettings['source'] > 2:
+		print(' Random is only available for MPD sources ... aborting.')
+		break
+	
+	# Random is ON, turning it OFF
+	if iRandom == 1:
+		print('[MPC] Turning random: off')
+		iRandom = 0
+		call(["mpc", "random", "off"])
+
+	# Random is OFF, turning it ON + putting it in effect.
+	else:
+		print('[MPC] Turning random: on')
+		iRandom = 1
+		call(["mpc", "random", "on"])
+		call(["mpc", "next"])
 
 def mpc_get_PlaylistDirs():
 	global arMpcPlaylistDirs
