@@ -379,7 +379,6 @@ def mpc_prev_folder_pos():
 def mpc_next_track():
 	print('Next track')
 	call(["mpc", "next"])
-	#todo save to pos.file
 	#TODO: handle usb/locmus
 	mpc_save_pos( 'locmus' )
 
@@ -387,15 +386,21 @@ def mpc_next_track():
 def mpc_prev_track():
 	print('Prev. track')
 	call(["mpc", "prev"])
-	#todo save to pos.file
+	#TODO: handle usb/locmus
+	mpc_save_pos( 'locmus' )
+
 
 def mpc_next_folder():
 	print('Next folder')
 	call(["mpc", "play", str(mpc_next_folder_pos())])
+	#TODO: handle usb/locmus
+	mpc_save_pos( 'locmus' )
 
 def mpc_prev_folder():
 	print('Prev folder')
 	call(["mpc", "play", str(mpc_prev_folder_pos())])
+	#TODO: handle usb/locmus
+	mpc_save_pos( 'locmus' )
 	
 def mpc_stop():
 	print('Stopping MPC [pause]')
