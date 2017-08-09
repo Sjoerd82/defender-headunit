@@ -245,7 +245,7 @@ def load_settings():
 	if dSettings['source'] < 0:
 		print('[PICKLE] Source: not available')
 	else:
-		print('[PICKLE] Source: {0:s}%'.format(arSource[dSettings['source']]))
+		print('[PICKLE] Source: {0:s}'.format(arSource[dSettings['source']]))
 
 # ********************************************************************************
 # Remote control
@@ -844,6 +844,14 @@ while True:
 	if iLoopCounter % 100 == 0  and iDoSave == 1:
 		iDoSave = 0
 		save_settings()
+
+	# In case of a dirty exit, we want to be able to continue close to where we left before crashing
+	# Every x seconds, check where we're at in the playlist and save it to disk
+	if dSettings['source'] == 1 and iLoopCounter %5000 == 0:
+		mpc_save_pos('SJOERD')
+
+	if dSettings['source'] == 2 and iLoopCounter %5000 == 0:
+		mpc_save_pos('locmus')
 	
 	time.sleep(0.1)
 	iLoopCounter += 1
