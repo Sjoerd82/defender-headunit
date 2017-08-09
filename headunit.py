@@ -547,7 +547,7 @@ def usb_check():
 			
 			#good way to get the label, only we can't be sure that the flash is always mounted on /dev/sda1
 			#findmnt -o TARGET -n /dev/sda1
-			mountpoint = subprocess.check_output("mount | egrep media | cut -d ' ' -f 3")
+			mountpoint = subprocess.check_output("mount | egrep media | cut -d ' ' -f 3", shell=True)
 			sUsbLabel = os.path.dirname(mountpoint)
 			print('[USB] label = {0:s}'.format(sUsbLabel))
 
