@@ -441,13 +441,13 @@ def mpc_save_pos ( label ):
 	for f in current_song_listdick:
 			current_file = f['file']
 	
-	pickle_file = "~/mp_" + label + ".p"
+	pickle_file = "/home/hu/mp_" + label + ".p"
 	pickle.dump( current_file, open( pickle_file, "wb" ) )
 
 def mpc_lkp( label ):
 	global oMpdClient
 	
-	pickle_file = "~/mp_" + label + ".p"
+	pickle_file = "/home/hu/mp_" + label + ".p"
 	print('[MPC] Retrieving last known position from lkp file: {0:s}'.format(pickle_file))
 
 	try:
