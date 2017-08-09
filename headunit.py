@@ -120,7 +120,7 @@ def alsa_get_volume():
 	
 	volumes = oAlsaMixer.getvolume()
 	for i in range(len(volumes)):
-		print("Channel %i volume: %i%" % (i,volumes[i]))
+		print("Channel {0:d} volume: {1:d}%".format(i,volumes[i]))
 
 	#We're keeping L&R in sync, so just return the first channel.
 	return volumes[0]
@@ -225,8 +225,10 @@ def load_settings():
 	if dSettings['volume'] < 0 or dSettings['volume'] > 100:
 		dSettings['volume'] = 40
 		pickle.dump( dSettings, open( "headunit.p", "wb" ) )
+		print('[PICKLE] No setting found, defaulting to 40%')
+	else:
+		print('[PICKLE] Volume: {0:d}%'.format(dSettings['volume']))
 	alsa_set_volume( dSettings['volume'] )
-	print('[PICKLE] Volume: {0:d}%'.format(dSettings['volume']))
 	
 	#SOURCE
 	if dSettings['source'] < 0 or dSettings['source']:
