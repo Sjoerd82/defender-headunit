@@ -450,6 +450,7 @@ def mpc_save_pos ( label ):
 	print('[MPC] Saving playlist position')
 
 	# get current song
+	mpc_init
 	oMpdClient.command_list_ok_begin()
 	oMpdClient.status()
 	results = oMpdClient.command_list_end()
@@ -534,7 +535,8 @@ def usb_check():
 	
 	if arSourceAvailable[1] == 1:
 		print('  Media is mounted. Continuing to check if there''s music...')	
-		task = subprocess.Popen("mpc listall SJOERD | wc -l", shell=True, stdout=subprocess.PIPE)
+		taskcmd = "mpc listall "+sUsbLabel+" | wc -l"
+		task = subprocess.Popen(taskcmd, shell=True, stdout=subprocess.PIPE)
 		mpcOut = task.stdout.read()
 		assert task.wait() == 0
 		
@@ -574,7 +576,7 @@ def usb_play():
 		#todo: how about cropping, populating, and removing the first? item .. for faster continuity???
 
 		print('Populating playlist')
-		p1 = subprocess.Popen(["mpc", "listall", "SJOERD"], stdout=subprocess.PIPE)
+		p1 = subprocess.Popen(["mpc", "listall", sUsbLabel], stdout=subprocess.PIPE)
 		p2 = subprocess.Popen(["mpc", "add"], stdin=p1.stdout, stdout=subprocess.PIPE)
 		p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
 		output,err = p2.communicate()
@@ -941,7 +943,7 @@ while True:
 	# In case of a dirty exit, we want to be able to continue close to where we left before crashing
 	# Every x seconds, check where we're at in the playlist and save it to disk
 	if dSettings['source'] == 1 and iLoopCounter %5000 == 0:
-		mpc_save_pos('SJOERD')
+		mpc_save_pos(sUsbLabel)
 
 	if dSettings['source'] == 2 and iLoopCounter %5000 == 0:
 		mpc_save_pos('locmus')
