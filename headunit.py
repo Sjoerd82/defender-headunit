@@ -346,20 +346,19 @@ def mpc_random():
 	
 	if dSettings['source'] < 1 or dSettings['source'] > 2:
 		print(' Random is only available for MPD sources ... aborting.')
-		break
-	
-	# Random is ON, turning it OFF
-	if iRandom == 1:
-		print('[MPC] Turning random: off')
-		iRandom = 0
-		call(["mpc", "random", "off"])
+	else:	
+		# Random is ON, turning it OFF
+		if iRandom == 1:
+			print('[MPC] Turning random: off')
+			iRandom = 0
+			call(["mpc", "random", "off"])
 
-	# Random is OFF, turning it ON + putting it in effect.
-	else:
-		print('[MPC] Turning random: on')
-		iRandom = 1
-		call(["mpc", "random", "on"])
-		call(["mpc", "next"])
+		# Random is OFF, turning it ON + putting it in effect.
+		else:
+			print('[MPC] Turning random: on')
+			iRandom = 1
+			call(["mpc", "random", "on"])
+			call(["mpc", "next"])
 
 def mpc_get_PlaylistDirs():
 	global arMpcPlaylistDirs
