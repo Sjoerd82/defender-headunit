@@ -473,6 +473,9 @@ def mpc_save_pos ( label ):
 def mpc_lkp( label ):
 	global oMpdClient
 	
+	#default
+	pos = 1
+	
 	pickle_file = "/home/hu/mp_" + label + ".p"
 	print('[MPC] Retrieving last known position from lkp file: {0:s}'.format(pickle_file))
 
@@ -480,14 +483,15 @@ def mpc_lkp( label ):
 		current_file = pickle.load( open( pickle_file, "rb" ) )
 	except:
 		print('[PICKLE] Loading {0:s} failed!'.format(pickle_file))
-		return 1
+		return pos
 	
 	playlist = oMpdClient.playlistid()
 
 	for x in playlist:
 			if x['file'] == current_file:
-					return int(x['pos'])+1
+					pos = int(x['pos'])+1
 
+	return pos
 	
 # updates arSourceAvailable[0] (fm) --- TODO
 def fm_check():
