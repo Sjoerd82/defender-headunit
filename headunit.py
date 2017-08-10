@@ -450,7 +450,7 @@ def mpc_save_pos ( label ):
 	print('[MPC] Saving playlist position')
 
 	# get current song
-	mpc_init
+	#mpc_init()
 	oMpdClient.command_list_ok_begin()
 	oMpdClient.status()
 	results = oMpdClient.command_list_end()
@@ -535,7 +535,8 @@ def usb_check():
 	
 	if arSourceAvailable[1] == 1:
 		print('  Media is mounted. Continuing to check if there''s music...')	
-		taskcmd = "mpc listall "+sUsbLabel+" | wc -l"
+		#taskcmd = "mpc listall "+sUsbLabel+" | wc -l" #TODO - FIX
+		taskcmd = "mpc listall SJOERD | wc -l"
 		task = subprocess.Popen(taskcmd, shell=True, stdout=subprocess.PIPE)
 		mpcOut = task.stdout.read()
 		assert task.wait() == 0
