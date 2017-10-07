@@ -35,7 +35,7 @@ import time
 import subprocess
 from subprocess import call
 from subprocess import Popen, PIPE
-from tendo import singleton
+#from tendo import singleton -- not available in Buildroot, disabling for now
 import pickle
 import alsaaudio
 
@@ -114,7 +114,7 @@ def alsa_init():
 	print("[ALSA] Initializing mixer")
 	
 	try:
-		oAlsaMixer = alsaaudio.Mixer('Master', cardindex=0)
+		oAlsaMixer = alsaaudio.Mixer(sAlsaMixer, cardindex=0)
 	except alsaaudio.ALSAAudioError:
 		print('No such mixer')
 
@@ -892,7 +892,7 @@ def init():
 #-------------------------------------------------------------------------------
 # Main loop
 print('Checking if we\'re already runnning')
-me = singleton.SingleInstance() # will sys.exit(-1) if other instance is running
+#me = singleton.SingleInstance() # will sys.exit(-1) if other instance is running # uncomment when tendo available
 
 # Initialize
 init()
