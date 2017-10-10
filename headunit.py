@@ -353,14 +353,14 @@ def mpc_random():
 		if iRandom == 1:
 			print('[MPC] Turning random: off')
 			iRandom = 0
-			call(["mpc", "random", "off"])
+			call(["mpc", "-q", "random", "off"])
 
 		# Random is OFF, turning it ON + putting it in effect.
 		else:
 			print('[MPC] Turning random: on')
 			iRandom = 1
-			call(["mpc", "random", "on"])
-			call(["mpc", "next"])
+			call(["mpc", "-q", "random", "on"])
+			call(["mpc", "-q", "next"])
 
 def mpc_get_PlaylistDirs():
 	global arMpcPlaylistDirs
