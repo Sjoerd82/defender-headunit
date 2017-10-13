@@ -350,9 +350,18 @@ def mpc_init():
 	oMpdClient.connect("localhost", 6600)  # connect to localhost:6600
 	print(oMpdClient.mpd_version)          # print the MPD version
 	
+	print('[MPC] Subscribing to channel: media_ready')
+	oMpdClient.subscribe("media_ready")
+
+	print('[MPC] Subscribing to channel: media_removed')
+	oMpdClient.subscribe("media_removed")
+	
 	print('[MPC] Random: OFF, Repeat: ON')
 	call(["mpc", "-q", "random", "off"])
 	call(["mpc", "-q", "repeat", "on"])
+	
+	print('[MPC-debug] send_idle()')
+	oMpdClient.send_idle()
 
 def mpc_random():
 	global iRandom
@@ -557,7 +566,7 @@ def usb_check():
 		print(' ... /media has mounted filesystems... continuing to check mpd database for music...')	
 
 		mountpoint = subprocess.check_output("mount | egrep media | cut -d ' ' -f 3", shell=True)
-		sUsbLabel = os.path.basename(mountpoint)
+		sUsbLabel = os.path.basename(mountpoint).rstrip('\n')
 		print(' ... label of this filesystem: {0:s}'.format(sUsbLabel))
 		
 		taskcmd = "mpc listall "+sUsbLabel+" | wc -l"
@@ -967,6 +976,36 @@ while True:
 
 	if dSettings['source'] == 2 and iLoopCounter %5000 == 0:
 		mpc_save_pos('locmus')
+	
+	# Check for mpd database update (this message is sent AFTER the update) -- for new music over SMB
+	# TODO
+	
+	# Check for /media inserts or removals
+	
+	canRead = select([oMpdClient], [], [], 0)[0]
+	if canRead:
+		mpdChanges = oMpdClient.fetch_idle()
+		
+		for c in mpdChanges:
+			print('[MPD] {0}'.format(c))
+			if c == 'message':
+				mpdMessages = oMpdClient.readmessages()
+				for m in mpdMessages:
+					print('[MPD] Channel {0} sends message: {1}'.format(m['channel'],m['message']))
+					if m['channel'] == 'media_ready':
+						print 'TODO'
+						# switch to source: USB
+					elif m['channel'] == 'media_removed':
+						print 'TODO'
+						# switch to next source
+
+		oMpdClient.send_idle() # continue idling
+	
+	# Tenzij local music... (misschien ook USB uitsluiten?)
+	# Check if MPD database has changed
+	# if database has changed, then start playing that specific root folder
+	# root folder can either be local_music or a usb drive. What if we're already playing that folder?
+	# ALWAYS wait until database update has finished
 	
 	time.sleep(0.1)
 	iLoopCounter += 1
