@@ -560,8 +560,8 @@ def usb_check():
 		sUsbLabel = os.path.basename(mountpoint)
 		print(' ... label of this filesystem: {0:s}'.format(sUsbLabel))
 		
-		#taskcmd = "mpc listall "+sUsbLabel+" | wc -l" #TODO - FIX
-		taskcmd = "mpc listall SJOERD | wc -l"
+		taskcmd = "mpc listall "+sUsbLabel+" | wc -l"
+		#taskcmd = "mpc listall SJOERD | wc -l"
 		task = subprocess.Popen(taskcmd, shell=True, stdout=subprocess.PIPE)
 		mpcOut = task.stdout.read()
 		assert task.wait() == 0
@@ -570,14 +570,7 @@ def usb_check():
 			print(' ... nothing in the database for this source.')
 			arSourceAvailable[1]=0
 		else:
-			print(' ... found {0:s} tracks'.format(mpcOut.rstrip('\n')))
-			#TODO: remove the trailing line feed..
-			
-			#good way to get the label, only we can't be sure that the flash is always mounted on /dev/sda1
-			#findmnt -o TARGET -n /dev/sda1
-			mountpoint = subprocess.check_output("mount | egrep media | cut -d ' ' -f 3", shell=True)
-			sUsbLabel = os.path.basename(mountpoint)
-			print(' ... label of this filesystem: {0:s}'.format(sUsbLabel))
+			print(' ... found {0:s} tracks'.format(mpcOut.rstrip('\n')))		
 
 	else:
 		print(' ... nothing mounted on /media.')

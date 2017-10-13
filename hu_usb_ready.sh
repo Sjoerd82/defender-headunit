@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # ---------------------------------------------------------------------------
 #
 
@@ -9,20 +9,20 @@ typeset lkp="1" # Last Known Position
 typeset lkf=""  # Last Known File
 
 # todo test parameter is there..
-
+folder_x='/root/defender-headunit'
 root_folder=$(basename $1)
 
 
 # the mp_ file is created by the hu_usb_removed.sh script.
 
 # First line is the original position
-lkp=$(head -n1 /home/hu/mp_$root_folder.txt)
+lkp=$(head -n1 $(folder_x)/mp_$(root_folder).txt)
 
 # Second line is the file name
-lkf=$(tail -n1 /home/hu/mp_$root_folder.txt)
+lkf=$(tail -n1 $(folder_x)/mp_$(root_folder).txt)
 
 # debugging stuff
-#echo $1 > /home/hu/test.txt
+echo $1 > /root/test.txt
 #echo $root_folder >> /home/hu/test.txt
 #ls $1 >> /home/hu/test.txt
 #echo $lkp > /home/hu/test.txt
