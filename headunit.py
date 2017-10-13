@@ -38,6 +38,7 @@ from subprocess import Popen, PIPE
 #from tendo import singleton -- not available in Buildroot, disabling for now
 import pickle
 import alsaaudio
+from select import select
 
 # python-mpd2 0.5.1 (not sure if this is the forked mpd2)
 # used mainly for getting the current song for lookup on reload
@@ -526,7 +527,7 @@ def fm_play():
 	
 # updates arSourceAvailable[3] (bt) -- TODO
 def bt_check():
-	print('[BT] CHECK availability... not avaiable.')
+	print('[BT] CHECK availability... not available.')
 	arSourceAvailable[3]=0 # NOT Available
 	#TODO: How to check???? When to decide it's avaiable?
 
