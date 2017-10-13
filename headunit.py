@@ -82,7 +82,6 @@ sUsbLabel = ''
 dSettings = {'source': -1, 'volume': 20}	 # No need to save random, thats done by MPC/MPD itself.
 
 #ALSA
-bAlsaMixer = false
 sAlsaMixer = "Master"	# Pi without Phat DAC = "Master" or "PCM" ?
 						# Pi with Phat DAC geen mixer?
 iAlsaMixerStep=1000
