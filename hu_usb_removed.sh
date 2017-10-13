@@ -15,5 +15,7 @@ root_folder=$(basename $1)
 mpc | sed -n 2p | grep -Po '(?<=#)[^/]*' > $folder_x/mp_$root_folder.txt
 mpc -f %file% current >> $folder_x/mp_$root_folder.txt
 
+mpc $params_mpc sendmessage media_removed $root_folder
+
 mpc $params_mpc -q stop
 mpc $params_mpc -q clear
