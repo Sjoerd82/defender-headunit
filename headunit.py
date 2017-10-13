@@ -522,8 +522,11 @@ def fm_check():
 	#echo "Source 0 Unavailable; FM"
 
 def fm_play():
-	print('Start playing FM radio...')
+	print('[FM] Start playing FM radio...')
 	#TODO
+
+def fm_stop():
+	print('[FM] Stop')
 	
 # updates arSourceAvailable[3] (bt) -- TODO
 def bt_check():
@@ -544,6 +547,9 @@ def linein_check():
 def linein_play():
 	print('Start playing from line-in...')
 	#TODO
+
+def linein_stop():
+	print('[LINE] Stop')
 
 # updates arSourceAvailable[1] (mpc)
 def usb_check():
@@ -634,6 +640,8 @@ def usb_play():
 			print('Loading directory structure')
 			mpc_get_PlaylistDirs()
 
+def usb_stop():
+	print('[USB] Stop')
 
 # updates arSourceAvailable[2] (locmus)
 def locmus_check():
@@ -829,6 +837,23 @@ def source_play():
 	else:
 		print('ERROR: Invalid source.')
 
+def source_stop():
+	global dSettings
+
+	print('Stopping playback: {0:s}'.format(arSource[dSettings['source']]))
+	if dSettings['source'] == 0:
+		fm_stop()
+	elif dSettings['source'] == 1:
+		usb_stop()
+	elif dSettings['source'] == 2:
+		locmus_stop()
+	elif dSettings['source'] == 3:
+		bt_stop()
+	elif dSettings['source'] == 4:
+		linein_stop()
+	else:
+		print('ERROR: Invalid source.')
+		
 def latesystemstuff():
 	print('Starting less important system services')
 	call(["", "write", "6", "0"])
@@ -994,10 +1019,14 @@ while True:
 				for m in mpdMessages:
 					print('[MPD] Channel {0} sends message: {1}'.format(m['channel'],m['message']))
 					if m['channel'] == 'media_ready':
-						print 'TODO'
+						source_stop()
 						# switch to source: USB
+						# TODO: check availability, but this is a bit redundant...
+						dSettings['source'] = 1
+						source_play()
 					elif m['channel'] == 'media_removed':
 						print 'TODO'
+						#if source = 1 source_stop()
 						# switch to next source
 
 		oMpdClient.send_idle() # continue idling
