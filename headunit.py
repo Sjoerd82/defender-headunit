@@ -131,7 +131,7 @@ def alsa_get_volume():
 	if oAlsaMixer is None:
 		print("ALSA mixer unavailable")
 		volumes = 0
-	else
+	else:
 		volumes = oAlsaMixer.getvolume()
 		for i in range(len(volumes)):
 			print("Channel {0:d} volume: {1:d}%".format(i,volumes[i]))
@@ -150,7 +150,7 @@ def alsa_set_volume( volume ):
 
 	if oAlsaMixer is None:
 		print("[ALSA] Mixer unavailable, cannot set volume")
-	else
+	else:
 		print('[ALSA] Setting volume to {0:d}%'.format(volume))
 		oAlsaMixer.setvolume(volume, alsaaudio.MIXER_CHANNEL_ALL)
 
