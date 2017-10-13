@@ -554,7 +554,7 @@ def usb_check():
 	# So, let's check if there's anything in the database for this source:
 	
 	if arSourceAvailable[1] == 1:
-		print(' ... Media is mounted. Continuing to check if there''s music...')	
+		print(' ... /media has mounted filesystems... Continuing to check if there''s music...')	
 		#taskcmd = "mpc listall "+sUsbLabel+" | wc -l" #TODO - FIX
 		taskcmd = "mpc listall SJOERD | wc -l"
 		task = subprocess.Popen(taskcmd, shell=True, stdout=subprocess.PIPE)
@@ -562,20 +562,20 @@ def usb_check():
 		assert task.wait() == 0
 		
 		if mpcOut == 0:
-			print(' ... Nothing in the database for this source.')
+			print(' ... nothing in the database for this source.')
 			arSourceAvailable[1]=0
 		else:
-			print('  Found {0:s} tracks'.format(mpcOut))
+			print(' ... found {0:s} tracks'.format(mpcOut.rstrip('\n')))
 			#TODO: remove the trailing line feed..
 			
 			#good way to get the label, only we can't be sure that the flash is always mounted on /dev/sda1
 			#findmnt -o TARGET -n /dev/sda1
 			mountpoint = subprocess.check_output("mount | egrep media | cut -d ' ' -f 3", shell=True)
 			sUsbLabel = os.path.basename(mountpoint)
-			print('[USB] label = {0:s}'.format(sUsbLabel))
+			print(' ... label of this filesystem: {0:s}'.format(sUsbLabel))
 
 	else:
-		print(' ... Nothing mounted on /media.')
+		print(' ... nothing mounted on /media.')
 	
 
 def usb_play():
@@ -739,7 +739,7 @@ def source_check():
 	linein_check()
 
 	# Display source availability.
-	print('---------------------------------')
+	print('- Summary ------------------------')
 	print('Current source: {0:d}'.format(dSettings['source']))
 	
 	i = 0
@@ -750,7 +750,7 @@ def source_check():
 			print('{0:d} {1:6}\033[91mnot available \033[00m'.format(i,source))
 		i += 1
 	
-	print('---------------------------------')
+	print('----------------------------------')
 
 def source_next():
 	global dSettings
