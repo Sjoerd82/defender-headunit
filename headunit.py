@@ -92,6 +92,8 @@ oAlsaMixer = None
 ## this replaces:
 ## call(["amixer", "-q", "-c", "0", "set", "Master", volpct, "unmute"])
 
+#PULSEAUDIO
+
 #LOCAL MUSIC
 sLocalMusic="/media/local_music"		# symlink to /home/hu/music
 sLocalMusicMPD="local_music"			# directory from a MPD pov.
@@ -238,7 +240,7 @@ def load_settings():
 	try:
 		dSettings = pickle.load( open( "headunit.p", "rb" ) )
 	except:
-		print('[PICKLE] Loading headunit.p failed!')
+		print('[PICKLE] Loading headunit.p failed. First run? - Creating headunit.p with default values.')
 		#assume: fails because it's the first time and no settings saved yet? Setting default:
 		pickle.dump( dSettings, open( "headunit.p", "wb" ) )
 
@@ -348,8 +350,9 @@ def mpc_init():
 	oMpdClient.connect("localhost", 6600)  # connect to localhost:6600
 	print(oMpdClient.mpd_version)          # print the MPD version
 	
-	call(["mpc", "random", "off"])
-	call(["mpc", "repeat", "on"])
+	print('[MPC] Random: OFF, Repeat: ON')
+	call(["mpc", "-q", "random", "off"])
+	call(["mpc", "-q", "repeat", "on"])
 
 def mpc_random():
 	global iRandom
@@ -504,7 +507,7 @@ def mpc_lkp( label ):
 	
 # updates arSourceAvailable[0] (fm) --- TODO
 def fm_check():
-	print('Checking if FM is available')
+	print('[FM] CHECK availability... not available.')
 	arSourceAvailable[0]=0 # not available
 	#echo "Source 0 Unavailable; FM"
 
@@ -514,8 +517,8 @@ def fm_play():
 	
 # updates arSourceAvailable[3] (bt) -- TODO
 def bt_check():
-	print('Checking if Bluetooth is available')
-	arSourceAvailable[3]=1 # Available
+	print('[BT] CHECK availability... not avaiable.')
+	arSourceAvailable[3]=0 # NOT Available
 	#TODO: How to check???? When to decide it's avaiable?
 
 def bt_play():
@@ -535,9 +538,9 @@ def linein_play():
 # updates arSourceAvailable[1] (mpc)
 def usb_check():
 	global sUsbLabel
-	print('[USB] Checking if USB is available')
+	print('[USB] CHECK availability...')
 
-	print('  Check if anything is mounted on /media...')
+	print(' ... Check if anything is mounted on /media...')
 	arSourceAvailable[1]=1 # Available, unless:
 	
 	# Check if there's anything mounted:
@@ -551,7 +554,7 @@ def usb_check():
 	# So, let's check if there's anything in the database for this source:
 	
 	if arSourceAvailable[1] == 1:
-		print('  Media is mounted. Continuing to check if there''s music...')	
+		print(' ... Media is mounted. Continuing to check if there''s music...')	
 		#taskcmd = "mpc listall "+sUsbLabel+" | wc -l" #TODO - FIX
 		taskcmd = "mpc listall SJOERD | wc -l"
 		task = subprocess.Popen(taskcmd, shell=True, stdout=subprocess.PIPE)
@@ -559,7 +562,7 @@ def usb_check():
 		assert task.wait() == 0
 		
 		if mpcOut == 0:
-			print('  Nothing in the database for this source.')
+			print(' ... Nothing in the database for this source.')
 			arSourceAvailable[1]=0
 		else:
 			print('  Found {0:s} tracks'.format(mpcOut))
@@ -572,7 +575,7 @@ def usb_check():
 			print('[USB] label = {0:s}'.format(sUsbLabel))
 
 	else:
-		print('  Nothing mounted on /media.')
+		print(' ... Nothing mounted on /media.')
 	
 
 def usb_play():
@@ -627,14 +630,16 @@ def usb_play():
 # updates arSourceAvailable[2] (locmus)
 def locmus_check():
 
+	print('[LOCMUS] CHECK availability...')
+
 	# THIS WILL FAIL IF DIRECTORY IS NOT PRESENT
 	# TODO: CHECK FOR PRESENCE..
 	
 	if not os.listdir(sLocalMusic):
-		print("Local music directory is empty.")
+		print(" ... Local music directory is empty.")
 		arSourceAvailable[2]=0
 	else:
-		print("Local music directory present and has files.")
+		print(" ... Local music directory present and has files.")
 		arSourceAvailable[2]=1
 
 
@@ -716,7 +721,7 @@ def locmus_stop():
 # updates arSourceAvailable
 def source_check():
 	global dSettings
-	print('Checking sources')
+	print('\033[96mCHECKING SOURCE AVAILABILITY\033[00m')
 
 	# 0; fm
 	fm_check()
@@ -739,11 +744,10 @@ def source_check():
 	
 	i = 0
 	for source in arSource:
-		print(source)
 		if arSourceAvailable[i] == 1:
-			print(' ...Available')
+			print('{0:d} {1:6}\033[92mavailable \033[00m'.format(i,source))
 		else:
-			print(' ...Not available')
+			print('{0:d} {1:6}\033[91mnot available \033[00m'.format(i,source))
 		i += 1
 	
 	print('---------------------------------')
