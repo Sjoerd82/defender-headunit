@@ -82,7 +82,9 @@ sUsbLabel = ''
 dSettings = {'source': -1, 'volume': 20}	 # No need to save random, thats done by MPC/MPD itself.
 
 #ALSA
-sAlsaMixer = "Master"
+bAlsaMixer = false
+sAlsaMixer = "Master"	# Pi without Phat DAC = "Master" or "PCM" ?
+						# Pi with Phat DAC geen mixer?
 iAlsaMixerStep=1000
 params_amixer="-q" #-c card -D device, etc.
 
@@ -125,12 +127,17 @@ def alsa_unmute():
 def alsa_get_volume():
 	global oAlsaMixer
 	print("[ALSA] Retrieving volume from mixer")
-	
-	volumes = oAlsaMixer.getvolume()
-	for i in range(len(volumes)):
-		print("Channel {0:d} volume: {1:d}%".format(i,volumes[i]))
 
-	#We're keeping L&R in sync, so just return the first channel.
+	if oAlsaMixer is None:
+		print("ALSA mixer unavailable")
+		volumes = 0
+	else
+		volumes = oAlsaMixer.getvolume()
+		for i in range(len(volumes)):
+			print("Channel {0:d} volume: {1:d}%".format(i,volumes[i]))
+
+		#We're keeping L&R in sync, so just return the first channel.
+		
 	return volumes[0]
 	
 def alsa_set_volume( volume ):
@@ -140,9 +147,12 @@ def alsa_set_volume( volume ):
 		
 	if volume < 5:
 		volume = 5
-		
-	print('[ALSA] Setting volume to {0:d}%'.format(volume))
-	oAlsaMixer.setvolume(volume, alsaaudio.MIXER_CHANNEL_ALL)
+
+	if oAlsaMixer is None:
+		print("[ALSA] Mixer unavailable, cannot set volume")
+	else
+		print('[ALSA] Setting volume to {0:d}%'.format(volume))
+		oAlsaMixer.setvolume(volume, alsaaudio.MIXER_CHANNEL_ALL)
 
 def alsa_play_fx( fx ):
 	print('Playing effect')
