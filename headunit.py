@@ -844,7 +844,7 @@ def source_next():
 				#stay within USB source, by move to next media
 				print('Switching to next available media')
 				dSettings['mediasource'] = dSettings['mediasource']+1
-				media_play()
+				#media_play()
 				# we can stop now, no need to switch to next source
 				return
 			else:
