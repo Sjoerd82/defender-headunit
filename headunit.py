@@ -491,7 +491,7 @@ def mpc_save_pos ( label ):
 		for f in current_song_listdick:
 				current_file = f['file']
 		
-		pickle_file = "/home/hu/mp_" + label + ".p"
+		pickle_file = sRootFolder + "/mp_" + label + ".p"
 		pickle.dump( current_file, open( pickle_file, "wb" ) )
 	except:
 		print('DEBUG -- FIX ME')
@@ -502,7 +502,7 @@ def mpc_lkp( label ):
 	#default
 	pos = 1
 	
-	pickle_file = "/home/hu/mp_" + label + ".p"
+	pickle_file = sRootFolder + "/mp_" + label + ".p"
 	print('[MPC] Retrieving last known position from lkp file: {0:s}'.format(pickle_file))
 
 	try:
@@ -690,29 +690,39 @@ def locmus_check():
 
 
 def locmus_play():
-	print('[PLAY] LOCAL (MPD)')
+	print('[LOCMUS] Play (MPD)')
 
-	print('Checking if source is still good')
+	print(' ... Checking if source is still good')
 	locmus_check()
 	
 	if arSourceAvailable[2] == 0:
-		print('Aborting playback, trying next source.')
+		print('Aborting playback, trying next source.') #TODO red color
 		source_next()
 		source_play()
 		#TODO: error sound
 		
 	else:
 		# mpc --wait $params_mpc update $sLocalMusicMPD # <<<< -----  do this outside of this script using inotifywait ....
-		print('Emptying playlist')
-		call(["mpc", "stop"])
-		call(["mpc", "clear"])
+		print(' ... Emptying playlist')
+		call(["mpc", "-q", "stop"])
+		call(["mpc", "-q", "clear"])
 		#todo: how about cropping, populating, and removing the first? item .. for faster continuity???
 
-		print('Populating playlist')
-		p1 = subprocess.Popen(["mpc", "listall", sLocalMusicMPD], stdout=subprocess.PIPE)
-		p2 = subprocess.Popen(["mpc", "add"], stdin=p1.stdout, stdout=subprocess.PIPE)
-		p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
-		output,err = p2.communicate()
+		# MPD playlist for local music *should* be updated by inotifywait.. but, it's a bit tricky, so test for it..
+		print(' ... Populating playlist')
+		try
+			p1 = subprocess.Popen(["mpc", "listall", sLocalMusicMPD], stdout=subprocess.PIPE)
+			p2 = subprocess.Popen(["mpc", "add"], stdin=p1.stdout, stdout=subprocess.PIPE)
+			p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
+			output,err = p2.communicate()
+		except:
+			print(' SOMETHING WENT WRONG -- DB NOT UPDATED?')
+			call(["mpc", "--wait", "update"])
+			# TRY AGAIN
+			p1 = subprocess.Popen(["mpc", "listall", sLocalMusicMPD], stdout=subprocess.PIPE)
+			p2 = subprocess.Popen(["mpc", "add"], stdin=p1.stdout, stdout=subprocess.PIPE)
+			p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
+			output,err = p2.communicate()
 
 		print('Checking playlist')
 		task = subprocess.Popen("mpc playlist | wc -l", shell=True, stdout=subprocess.PIPE)
@@ -911,7 +921,7 @@ def OLD_mpc_save_pos ( label ):
 
 	print('Saving playlist position')
 	# save position and current file name for this drive
-	mp_filename = '/home/hu/mp_' + label + '.txt'
+	mp_filename = sRootFolder + '/mp_' + label + '.txt'
 	print mp_filename
 	
 	cmd1 = "mpc | sed -n 2p | grep -Po '(?<=#)[^/]*' > " + mp_filename
@@ -962,7 +972,6 @@ def init():
 	mpc_init()
 	
     # load previous state
-    #source /home/hu/hu_settings.sh
 	load_settings()
 
 	# play startup sound
