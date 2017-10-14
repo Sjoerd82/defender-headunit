@@ -2,21 +2,13 @@
 # ---------------------------------------------------------------------------
 #
 
-#MPC
-typeset params_mpc=""
-typeset root_folder=""
-
-# todo test parameter is there..
-folder_x='/root/defender-headunit'
-root_folder=$(basename $1)
+mpcParams = ""
+rootFolder = os.path.dirname(os.path.abspath(__file__))
+mountFolder=$(basename $1)
 
 
 # save position and current file name for this drive
-mpc | sed -n 2p | grep -Po '(?<=#)[^/]*' > $folder_x/mp_$root_folder.txt
-mpc -f %file% current >> $folder_x/mp_$root_folder.txt
+mpc | sed -n 2p | grep -Po '(?<=#)[^/]*' > $rootFolder/mp_$mountFolder.txt
+mpc -f %file% current >> $rootFolder/mp_$mountFolder.txt
 
-mpc $params_mpc sendmessage media_removed $root_folder
-
-# don't! we might be playing from a different media
-#mpc $params_mpc -q stop
-#mpc $params_mpc -q clear
+mpc $mpcParams sendmessage media_removed $mountFolder

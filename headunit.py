@@ -74,15 +74,14 @@ BUTTON10_LO = 1050
 BUTTON10_HI = 1100
 
 # Global variables
-#arSource = ['fm','usb','locmus','bt','alsa'] # source types; add new sources in the end --> renamed usb to media
 arSource = ['fm','media','locmus','bt','alsa'] # source types; add new sources in the end
 arSourceAvailable = [0,0,0,0,0]              # corresponds to arSource; 1=available
 arMediaWithMusic = []						 # list of mountpoints that contains music, according to MPD
 iAtt = 0									 # Att mode toggle
 iRandom = 0									 # We're keeping track of it within the script, not checking with MPD
 iDoSave	= 0									 # Indicator to do a save anytime soon
-sUsbLabel = ''
 dSettings = {'source': -1, 'volume': 20, 'mediasource': -1, 'medialabel': ''}	 # No need to save random, we don't want to save that (?)
+sRootFolder = os.path.dirname(os.path.abspath(__file__))
 
 #ALSA
 sAlsaMixer = "Master"	# Pi without Phat DAC = "Master" or "PCM" ?
@@ -96,6 +95,7 @@ oAlsaMixer = None
 ## call(["amixer", "-q", "-c", "0", "set", "Master", volpct, "unmute"])
 
 #PULSEAUDIO
+#TODO
 
 #LOCAL MUSIC
 sLocalMusic="/media/local_music"		# symlink to /home/hu/music
@@ -557,7 +557,6 @@ def linein_stop():
 
 # updates arSourceAvailable[1] (mpc)
 def media_check():
-	global sUsbLabel
 	global arMediaWithMusic
 	
 	print('[USB] CHECK availability...')
@@ -1050,7 +1049,7 @@ while True:
 	# In case of a dirty exit, we want to be able to continue close to where we left before crashing
 	# Every x seconds, check where we're at in the playlist and save it to disk
 	if dSettings['source'] == 1 and iLoopCounter %5000 == 0:
-		mpc_save_pos(sUsbLabel)
+		mpc_save_pos(dSettings['medialabel'])
 
 	if dSettings['source'] == 2 and iLoopCounter %5000 == 0:
 		mpc_save_pos('locmus')
