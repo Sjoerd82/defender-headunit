@@ -475,7 +475,7 @@ def mpc_stop():
 
 def mpc_save_pos ( label ):
 
-	print('[MPC] Saving playlist position')
+	print('[MPC] Saving playlist position for label {0}'.format(label))
 	oMpdClient = MPDClient() 
 	oMpdClient.timeout = 10                # network timeout in seconds (floats allowed), default: None
 	oMpdClient.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
@@ -1199,9 +1199,13 @@ while True:
 
 			if c == 'player':
 				if dSettings['source'] == 1:
+					print('wwwwaaaa?')
+					print dSettings['source']
 					mpc_save_pos(dSettings['medialabel'])
 
 				if dSettings['source'] == 2:
+					print('wwwoooo?')
+					print dSettings['source']
 					mpc_save_pos('locmus')
 				
 		oMpdClient.send_idle() # continue idling
