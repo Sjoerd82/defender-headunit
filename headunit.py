@@ -870,19 +870,19 @@ def source_play():
 	global dSettings
 
 	print('Start playback: {0:s}'.format(arSource[dSettings['source']]))
-	if dSettings['source'] == 0:
+	if dSettings['source'] == 0 and arSourceAvailable[0] == 1:
 		fm_play()
-	elif dSettings['source'] == 1:
+	elif dSettings['source'] == 1 and arSourceAvailable[1] == 1:
 		media_play()
-	elif dSettings['source'] == 2:
+	elif dSettings['source'] == 2 and arSourceAvailable[2] == 1:
 		locmus_play()
-	elif dSettings['source'] == 3:
+	elif dSettings['source'] == 3 and arSourceAvailable[3] == 1:
 		locmus_stop()
 		bt_play()
-	elif dSettings['source'] == 4:
+	elif dSettings['source'] == 4 and arSourceAvailable[4] == 1:
 		linein_play()
 	else:
-		print('ERROR: Invalid source.')
+		print('ERROR: Invalid source or no sources available')
 
 def source_stop():
 	global dSettings
@@ -1099,12 +1099,6 @@ while True:
 
 
 		oMpdClient.send_idle() # continue idling
-	
-	# Tenzij local music... (misschien ook USB uitsluiten?)
-	# Check if MPD database has changed
-	# if database has changed, then start playing that specific root folder
-	# root folder can either be local_music or a usb drive. What if we're already playing that folder?
-	# ALWAYS wait until database update has finished
-	
+		
 	time.sleep(0.1)
 	iLoopCounter += 1
