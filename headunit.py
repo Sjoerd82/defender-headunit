@@ -626,7 +626,7 @@ def media_play():
 	global arMediaWithMusic
 	print('[USB] Play (MPD)')
 
-	if dSettings['mediasource'] = -1:
+	if dSettings['mediasource'] == -1:
 		print('First go, doing a media check...')
 		media_check()
 	
