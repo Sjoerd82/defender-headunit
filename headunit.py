@@ -972,15 +972,16 @@ def init():
 	# check available sources
 	source_check()
 	
-	if dSettings['source'] == -1:
+	if dSettings['source'] == -1 and sum(arSourceAvailable) > 0:
 		#No current source, go to the first available
 		source_next()
-	elif arSourceAvailable[dSettings['source']] == 0:
+		# Start playback
+		source_play()
+	elif arSourceAvailable[dSettings['source']] == 1:
 		#Saved source not available, go to the first available
 		source_next()
-	
-	# Start playback
-	source_play()
+		# Start playback
+		source_play()
 	
 	print('Initialization finished')
 	beep()
