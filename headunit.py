@@ -74,8 +74,11 @@ BUTTON10_LO = 1050
 BUTTON10_HI = 1100
 
 # Global variables
-arSource = ['fm','usb','locmus','bt','alsa'] # source types; add new sources in the end
+#arSource = ['fm','usb','locmus','bt','alsa'] # source types; add new sources in the end --> renamed usb to media
+arSource = ['fm','media','locmus','bt','alsa'] # source types; add new sources in the end
 arSourceAvailable = [0,0,0,0,0]              # corresponds to arSource; 1=available
+arMedia = []								 # list of mountpoints on /media
+arMediaWithMusic[]							 # list of mountpoints that contains music, according to MPD
 iAtt = 0									 # Att mode toggle
 iRandom = 0									 # We're keeping track of it within the script, not checking with MPD
 iDoSave	= 0									 # Indicator to do a save anytime soon
@@ -355,7 +358,7 @@ def mpc_init():
 	oMpdClient.subscribe("media_ready")
 
 	print('[MPC] Subscribing to channel: media_removed')
-	oMpdClient.subscribe("media_removed")
+	oMpdClient.subscribe("media_removed")¡
 	
 	print('[MPC] Random: OFF, Repeat: ON')
 	call(["mpc", "-q", "random", "off"])
@@ -552,7 +555,7 @@ def linein_stop():
 	print('[LINE] Stop')
 
 # updates arSourceAvailable[1] (mpc)
-def usb_check():
+def media_check():
 	global sUsbLabel
 	print('[USB] CHECK availability...')
 
@@ -560,43 +563,66 @@ def usb_check():
 	arSourceAvailable[1]=1 # Available, unless:
 	
 	# Check if there's anything mounted:
+	#try:
+	#	#grepOut = subprocess.check_output("mount | grep -q /media", shell=True)
+	#	proc = subprocess.Popen("mount | grep /media | cut -d' ' -f1",stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+	#	for x in proc.stdout:
+	#		print x
+	#except subprocess.CalledProcessError as grepexc:                                                                                                   
+	#	arSourceAvailable[1]=0
+	
 	try:
-		grepOut = subprocess.check_output("mount | grep -q /media", shell=True)
-	except subprocess.CalledProcessError as grepexc:                                                                                                   
+		# do a -f1 for devices, -f3 for mountpoints
+		grepOut = subprocess.check_output(
+			"mount | grep /media | cut -d' ' -f3",
+			shell=True,
+			stderr=subprocess.STDOUT,
+		)
+	except subprocess.CalledProcessError as err:
+		print('ERROR:', err)
 		arSourceAvailable[1]=0
-
+	else:
+		arMedia = output.split()
+		
 	# playlist loading is handled by scripts that trigger on mount/removing of media
 	# mpd database is updated on mount by same script.
 	# So, let's check if there's anything in the database for this source:
 	
 	if arSourceAvailable[1] == 1:
-		print(' ... /media has mounted filesystems... continuing to check mpd database for music...')	
-
-		mountpoint = subprocess.check_output("mount | egrep media | cut -d ' ' -f 3", shell=True)
-		sUsbLabel = os.path.basename(mountpoint).rstrip('\n')
-		print(' ... label of this filesystem: {0:s}'.format(sUsbLabel))
+		print(' ... /media has mounted filesystems: ')
+		for mountpoint in arMedia:
+			print(' ... . {0}'.format(mountpoint))
 		
-		taskcmd = "mpc listall "+sUsbLabel+" | wc -l"
-		#taskcmd = "mpc listall SJOERD | wc -l"
-		task = subprocess.Popen(taskcmd, shell=True, stdout=subprocess.PIPE)
-		mpcOut = task.stdout.read()
-		assert task.wait() == 0
-		
-		if mpcOut == 0:
-			print(' ... nothing in the database for this source.')
-			arSourceAvailable[1]=0
-		else:
-			print(' ... found {0:s} tracks'.format(mpcOut.rstrip('\n')))		
+		print(' ... continuing to crosscheck with mpd database for music...')
+		i = 0
+		for mountpoint in arMedia:	
+			#mountpoint = subprocess.check_output("mount | egrep media | cut -d ' ' -f 3", shell=True)
+			sUsbLabel = os.path.basename(mountpoint).rstrip('\n')
+			print(' ... . label of this filesystem: {0:s}'.format(sUsbLabel))
+			
+			taskcmd = "mpc listall "+sUsbLabel+" | wc -l"
+			#taskcmd = "mpc listall SJOERD | wc -l"
+			task = subprocess.Popen(taskcmd, shell=True, stdout=subprocess.PIPE)
+			mpcOut = task.stdout.read()
+			assert task.wait() == 0
+			
+			if mpcOut == 0:
+				print(' ... . nothing in the database for this source.')
+				arSourceAvailable[1]=0
+			else:
+				print(' ... . found {0:s} tracks'.format(mpcOut.rstrip('\n')))		
+				arMediaWithMusic[i] = mountpoint
+			i += 1
 
 	else:
 		print(' ... nothing mounted on /media.')
 	
 
-def usb_play():
+def media_play():
 	print('[USB] Play (MPD)')
 
 	print('Checking if source is still good')
-	usb_check()
+	media_check()
 	
 	if arSourceAvailable[1] == 0:
 		print('Aborting playback, trying next source.')
@@ -640,7 +666,7 @@ def usb_play():
 			print('Loading directory structure')
 			mpc_get_PlaylistDirs()
 
-def usb_stop():
+def media_stop():
 	print('[USB] Stop')
 
 # updates arSourceAvailable[2] (locmus)
@@ -743,7 +769,7 @@ def source_check():
 	fm_check()
 
 	# 1; mpc, USB
-	usb_check()
+	media_check()
 	
 	# 2; locmus, local music
 	locmus_check()
@@ -826,7 +852,7 @@ def source_play():
 	if dSettings['source'] == 0:
 		fm_play()
 	elif dSettings['source'] == 1:
-		usb_play()
+		media_play()
 	elif dSettings['source'] == 2:
 		locmus_play()
 	elif dSettings['source'] == 3:
@@ -844,7 +870,7 @@ def source_stop():
 	if dSettings['source'] == 0:
 		fm_stop()
 	elif dSettings['source'] == 1:
-		usb_stop()
+		media_stop()
 	elif dSettings['source'] == 2:
 		locmus_stop()
 	elif dSettings['source'] == 3:
