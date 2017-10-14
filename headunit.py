@@ -477,7 +477,12 @@ def mpc_save_pos ( label ):
 	print('[MPC] Saving playlist position')
 
 	# get current song
-	oMpdClient.noidle()
+	try:
+		oMpdClient.noidle()
+	except:
+		print('debug: idle not set')
+		#can't we do this nicerly?
+		
 	oMpdClient.command_list_ok_begin()
 	oMpdClient.status()
 	results = oMpdClient.command_list_end()
@@ -512,7 +517,12 @@ def mpc_lkp( label ):
 		return pos
 	
 	#otherwise continue:
-	oMpdClient.noidle()
+	try:
+		oMpdClient.noidle()
+	except:
+		print('debug: idle not set')
+		#can't we do this nicerly?
+		
 	playlist = oMpdClient.playlistid()
 	oMpdClient.send_idle() # continue idling
 
