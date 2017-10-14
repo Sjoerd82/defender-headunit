@@ -471,7 +471,30 @@ def mpc_stop():
 	print('Stopping MPC [pause]')
 	call(["mpc", "pause"])
 
-def mpc_save_pos ( label ):
+def mpc_save_pos ( label, pos )
+	global oMpdClient
+	print('[MPC] Saving playlist position')
+
+	#TODO : REFINE THIS -- I THINK IT GETS EXECUTED SOMETIMES WITHOUT A PLAYLIST LOADED -- WHICH FAILS...
+	# get current song
+	#mpc_init()
+	oMpdClient.command_list_ok_begin()
+	oMpdClient.status()
+	results = oMpdClient.command_list_end()
+
+	# I find this a very stupid way ... i mean a dict in a list? really? anyway...
+	for r in results:
+			songid = r['songid']
+
+	current_song_listdick = oMpdClient.playlistid(songid)
+	for f in current_song_listdick:
+			current_file = f['file']
+	
+	print current_file
+	#pickle_file = sRootFolder + "/mp_" + label + ".p"
+	#pickle.dump( current_file, open( pickle_file, "wb" ) )
+
+def mpc_save_posX ( label ):
 	global oMpdClient
 	print('[MPC] Saving playlist position')
 
@@ -743,23 +766,7 @@ def locmus_play():
 		else:
 			print(' ... . Found {0:s} tracks'.format(playlistCount))
 
-		
-#			print('Checking playlist')
-#			task = subprocess.Popen("mpc playlist | wc -l", shell=True, stdout=subprocess.PIPE)
-#			mpcOut = task.stdout.read()
-#			assert task.wait() == 0
-			
-#			if mpcOut == 0:
-#				print('Nothing in the playlist, marking source unavailable.')
-#				arSourceAvailable[2]=0
-#				source_next()
-#				source_play()
-				#TODO: error sound
-#			else:
-#				print('Found {0:s} tracks'.format(mpcOut))
-				#TODO: remove the trailing line feed..
-
-		#Get last known position
+		# continue where left
 		playslist_pos = mpc_lkp('locmus')
 		
 		print('Starting playback')
@@ -1077,11 +1084,11 @@ while True:
 
 	# In case of a dirty exit, we want to be able to continue close to where we left before crashing
 	# Every x seconds, check where we're at in the playlist and save it to disk
-	if dSettings['source'] == 1 and iLoopCounter %5000 == 0:
-		mpc_save_pos(dSettings['medialabel'])
-
-	if dSettings['source'] == 2 and iLoopCounter %5000 == 0:
-		mpc_save_pos('locmus')
+	#if dSettings['source'] == 1 and iLoopCounter %5000 == 0:
+	#	mpc_save_pos(dSettings['medialabel'])
+	#
+	#if dSettings['source'] == 2 and iLoopCounter %5000 == 0:
+	#	mpc_save_pos('locmus')
 	
 	# Check for mpd database update (this message is sent AFTER the update) -- for new music over SMB
 	# TODO
@@ -1137,7 +1144,13 @@ while True:
 						#	# update media
 						#	media_check()
 
+			if c == 'player':
+				if dSettings['source'] == 1 and iLoopCounter %5000 == 0:
+					mpc_save_pos(dSettings['medialabel'])
 
+				if dSettings['source'] == 2 and iLoopCounter %5000 == 0:
+					mpc_save_pos('locmus')
+				
 		oMpdClient.send_idle() # continue idling
 		
 	time.sleep(0.1)
