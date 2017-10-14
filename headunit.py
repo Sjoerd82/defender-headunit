@@ -837,15 +837,18 @@ def source_next():
 				#start at next source in line
 				i = dSettings['source']+1
 			elif dSettings['mediasource'] == -1:
+				print 'CASE 1'
 				#should not be the case, just to cover, if so, move to the next source
 				i = dSettings['source']+1
 			elif dSettings['mediasource'] == len(arMediaWithMusic)-1:
+				print 'CASE 2'
 				#are we at the last media?
 				i = dSettings['source']+1
 			elif dSettings['mediasource'] < len(arMediaWithMusic)-1:
+				print 'CASE 3'
 				#should be covered by all of the above, but just in case
 				#stay within USB source, by move to next media
-				print('Switching to next media')
+				print('Switching to next available media')
 				dSettings['mediasource'] = dSettings['mediasource']+1
 				media_play()
 			else:
