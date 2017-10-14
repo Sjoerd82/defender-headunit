@@ -519,6 +519,19 @@ def mpc_lkp( label ):
 
 	return pos
 	
+
+def mpc_populate_playlist ( label ):
+	p1 = subprocess.Popen(["mpc", "listall", label], stdout=subprocess.PIPE)
+	p2 = subprocess.Popen(["mpc", "add"], stdin=p1.stdout, stdout=subprocess.PIPE)
+	p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
+	output,err = p2.communicate()
+
+def mpc_playlist_is_populated():
+	task = subprocess.Popen("mpc playlist | wc -l", shell=True, stdout=subprocess.PIPE)
+	mpcOut = task.stdout.read()
+	assert task.wait() == 0
+	return mpcOut.rstrip('\n')
+
 # updates arSourceAvailable[0] (fm) --- TODO
 def fm_check():
 	print('[FM] CHECK availability... not available.')
@@ -639,11 +652,9 @@ def media_play():
 
 		sUsbLabel = os.path.basename(arMediaWithMusic[dSettings['mediasource']])
 		dSettings['medialabel'] = sUsbLabel
+
 		print(' ... Populating playlist, media: {0}'.format(sUsbLabel))
-		p1 = subprocess.Popen(["mpc", "listall", sUsbLabel], stdout=subprocess.PIPE)
-		p2 = subprocess.Popen(["mpc", "add"], stdin=p1.stdout, stdout=subprocess.PIPE)
-		p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
-		output,err = p2.communicate()
+		mpc_populate_playlist(sUsbLabel)
 
 		print(' ... Checking if playlist is populated')
 		task = subprocess.Popen("mpc playlist | wc -l", shell=True, stdout=subprocess.PIPE)
@@ -702,7 +713,6 @@ def locmus_play():
 		#TODO: error sound
 		
 	else:
-		# mpc --wait $params_mpc update $sLocalMusicMPD # <<<< -----  do this outside of this script using inotifywait ....
 		print(' ... Emptying playlist')
 		call(["mpc", "-q", "stop"])
 		call(["mpc", "-q", "clear"])
@@ -710,47 +720,51 @@ def locmus_play():
 
 		# MPD playlist for local music *should* be updated by inotifywait.. but, it's a bit tricky, so test for it..
 		print(' ... Populating playlist')
-		p1 = subprocess.Popen(["mpc", "listall", sLocalMusicMPD], stdout=subprocess.PIPE)
-		p2 = subprocess.Popen(["mpc", "add"], stdin=p1.stdout, stdout=subprocess.PIPE)
-		p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
-		output,err = p2.communicate()
-
-		print('OUTPUT: {0}'.format(output))
-		print('ERROR: {0}'.format(err))
-		
-#		if (...):
-#			print(' SOMETHING WENT WRONG -- DB NOT UPDATED?')
-#			call(["mpc", "--wait", "update"])
-#			# TRY AGAIN
-#			p1 = subprocess.Popen(["mpc", "listall", sLocalMusicMPD], stdout=subprocess.PIPE)
-#			p2 = subprocess.Popen(["mpc", "add"], stdin=p1.stdout, stdout=subprocess.PIPE)
-#			p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
-#			output,err = p2.communicate()
-
-		print('Checking playlist')
-		task = subprocess.Popen("mpc playlist | wc -l", shell=True, stdout=subprocess.PIPE)
-		mpcOut = task.stdout.read()
-		assert task.wait() == 0
-		
-		if mpcOut == 0:
-			print('Nothing in the playlist, marking source unavailable.')
-			arSourceAvailable[2]=0
-			source_next()
-			source_play()
-			#TODO: error sound
+		mpc_populate_playlist(sLocalMusicMPD)
+	
+		print(' ... Checking if playlist is populated')
+		playlistCount = mpc_playlist_is_populated
+		if playlistCount == "0":
+			print(' ... . Nothing in the playlist, trying to update database...')
+			call(["mpc", "--wait", "update"])
+			playlistCount = mpc_populate_playlist(sLocalMusicMPD)
+			if playlistCount == "0":
+				print(' ... . Nothing in the playlist, giving up. Marking source unavailable.')
+				arSourceAvailable[2]=0
+				source_next()
+				source_play()
+				#TODO: error sound
+				return
+			else:
+				print(' ... . Found {0:s} tracks'.format(playlistCount))
 		else:
-			print('Found {0:s} tracks'.format(mpcOut))
-			#TODO: remove the trailing line feed..
+			print(' ... . Found {0:s} tracks'.format(playlistCount))
 
-			#Get last known position
-			playslist_pos = mpc_lkp('locmus')
-			
-			print('Starting playback')
-			call(["mpc", "-q" , "stop"])
-			call(["mpc", "-q" , "play", str(playslist_pos)])
 		
-			print('Loading directory structure')
-			mpc_get_PlaylistDirs()
+#			print('Checking playlist')
+#			task = subprocess.Popen("mpc playlist | wc -l", shell=True, stdout=subprocess.PIPE)
+#			mpcOut = task.stdout.read()
+#			assert task.wait() == 0
+			
+#			if mpcOut == 0:
+#				print('Nothing in the playlist, marking source unavailable.')
+#				arSourceAvailable[2]=0
+#				source_next()
+#				source_play()
+				#TODO: error sound
+#			else:
+#				print('Found {0:s} tracks'.format(mpcOut))
+				#TODO: remove the trailing line feed..
+
+		#Get last known position
+		playslist_pos = mpc_lkp('locmus')
+		
+		print('Starting playback')
+		call(["mpc", "-q" , "stop"])
+		call(["mpc", "-q" , "play", str(playslist_pos)])
+	
+		print('Loading directory structure')
+		mpc_get_PlaylistDirs()
 		
 def locmus_update():
 	print('Updating local database')
