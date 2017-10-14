@@ -9,16 +9,16 @@ mountFolder=$(basename $1)
 
 
 #MPC
-typeset lkp="1" # Last Known Position
-typeset lkf=""  # Last Known File
+#typeset lkp="1" # Last Known Position
+#typeset lkf=""  # Last Known File
 
 # the mp_ file is created by the hu_usb_removed.sh script.
 
 # First line is the original position
-lkp=$(head -n1 $(rootFolder)/mp_$(mountFolder).txt)
+#lkp=$(head -n1 $(rootFolder)/mp_$(mountFolder).txt)
 
 # Second line is the file name
-lkf=$(tail -n1 $(rootFolder)/mp_$(mountFolder).txt)
+#lkf=$(tail -n1 $(rootFolder)/mp_$(mountFolder).txt)
 
 # debugging stuff
 #echo $1 > /root/test.txt
@@ -28,7 +28,7 @@ lkf=$(tail -n1 $(rootFolder)/mp_$(mountFolder).txt)
 #echo $lkf > /home/hu/test.txt
 
 # Derive position from file name
-lkp=$(mpc -f "%position% %file%" playlist | grep "$lkf" | cut -d' ' -f1)
+#lkp=$(mpc -f "%position% %file%" playlist | grep "$lkf" | cut -d' ' -f1)
 #TODO: only use this if it yields a result, otherwise use the lkp
 
 # Update the mpd database
