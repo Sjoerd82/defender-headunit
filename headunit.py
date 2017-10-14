@@ -82,7 +82,7 @@ iAtt = 0									 # Att mode toggle
 iRandom = 0									 # We're keeping track of it within the script, not checking with MPD
 iDoSave	= 0									 # Indicator to do a save anytime soon
 sUsbLabel = ''
-dSettings = {'source': -1, 'volume': 20, 'mediasource': -1}	 # No need to save random, we don't want to save that (?)
+dSettings = {'source': -1, 'volume': 20, 'mediasource': -1, 'medialabel': ''}	 # No need to save random, we don't want to save that (?)
 
 #ALSA
 sAlsaMixer = "Master"	# Pi without Phat DAC = "Master" or "PCM" ?
@@ -638,7 +638,8 @@ def media_play():
 		call(["mpc", "-q", "clear"])
 		#todo: how about cropping, populating, and removing the first? item .. for faster continuity???
 
-		sUsbLabel = os.path.basename(arMediaWithMusic[dSettings['mediasource']])	
+		sUsbLabel = os.path.basename(arMediaWithMusic[dSettings['mediasource']])
+		dSettings['medialabel'] = sUsbLabel
 		print(' ... Populating playlist, media: {0}'.format(sUsbLabel))
 		p1 = subprocess.Popen(["mpc", "listall", sUsbLabel], stdout=subprocess.PIPE)
 		p2 = subprocess.Popen(["mpc", "add"], stdin=p1.stdout, stdout=subprocess.PIPE)
@@ -1085,7 +1086,8 @@ while True:
 						
 					elif m['channel'] == 'media_removed':
 						# check if we're on USB and currently playing this...
-						if dSettings['source'] == 1 and m['message'] == os.path.basename(arMediaWithMusic[dSettings['mediasource']]):
+						if dSettings['source'] == 1 and m['message'] == dSettings['medialabel']:
+							print('[INFO] Currently played media removed.')
 							# fall back to the unknown (there could be no media left)
 							dSettings['mediasource'] = -1
 							# stop playing
@@ -1097,6 +1099,7 @@ while True:
 							# only remove source from arMediaWithMusic
 							mountpoint = '/media/'+m['message']
 							arMediaWithMusic.remove(mountpoint)
+							print('[INFO] Media removed; available sources updated.')
 							
 						# redundant...:
 						#else:
