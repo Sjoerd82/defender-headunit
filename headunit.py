@@ -1087,6 +1087,8 @@ while True:
 					elif m['channel'] == 'media_removed':
 						# check if we're on USB and currently playing this...
 						if dSettings['source'] == 1 and m['message'] == os.path.basename(arMediaWithMusic[dSettings['mediasource']]):
+							# fall back to the unknown (there could be no media left)
+							dSettings['mediasource'] = -1
 							# stop playing
 							source_stop()
 							media_check()
