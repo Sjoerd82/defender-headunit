@@ -686,7 +686,7 @@ def media_stop():
 
 # updates arSourceAvailable[2] (locmus)
 def locmus_check():
-
+	global arSourceAvailable
 	print('[LOCMUS] CHECK availability...')
 
 	# THIS WILL FAIL IF DIRECTORY IS NOT PRESENT
@@ -701,6 +701,8 @@ def locmus_check():
 
 
 def locmus_play():
+	global sLocalMusicMPD
+	global arSourceAvailable
 	print('[LOCMUS] Play (MPD)')
 
 	print(' ... Checking if source is still good')
@@ -726,7 +728,7 @@ def locmus_play():
 		playlistCount = mpc_playlist_is_populated()
 		if playlistCount == "0":
 			print(' ... . Nothing in the playlist, trying to update database...')
-			call(["mpc", "--wait", "update"])
+			call(["mpc", "-q", "--wait", "update"])
 			playlistCount = mpc_populate_playlist(sLocalMusicMPD)
 			if playlistCount == "0":
 				print(' ... . Nothing in the playlist, giving up. Marking source unavailable.')
