@@ -723,7 +723,7 @@ def locmus_play():
 		mpc_populate_playlist(sLocalMusicMPD)
 	
 		print(' ... Checking if playlist is populated')
-		playlistCount = mpc_playlist_is_populated
+		playlistCount = mpc_playlist_is_populated()
 		if playlistCount == "0":
 			print(' ... . Nothing in the playlist, trying to update database...')
 			call(["mpc", "--wait", "update"])
