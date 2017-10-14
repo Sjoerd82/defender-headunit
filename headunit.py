@@ -1176,7 +1176,7 @@ while True:
 							source_stop()
 							media_check()
 							source_play()
-						elif dSettings['source'] == 1:
+						else:
 							# don't call media_check(), it will stop playing the current usb that was not removed
 							# only remove source from arMediaWithMusic
 							mountpoint = '/media/'+m['message']
