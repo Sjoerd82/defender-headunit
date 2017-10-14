@@ -603,13 +603,16 @@ def media_check():
 			
 			if mpcOut.rstrip('\n') == '0':
 				print(' ... . {0}: nothing in the database for this source.'.format(sUsbLabel))
-				arSourceAvailable[1]=0
 			else:
 				print(' ... . {0}: found {1:s} tracks'.format(sUsbLabel,mpcOut.rstrip('\n')))		
 				arMediaWithMusic.append(mountpoint)
 				#default to found media, if not set yet
 				if dSettings['mediasource'] == -1:
 					dSettings['mediasource'] = 0
+
+		# if nothing useful found, then mark source as unavailable
+		if len(arMediaWithMusic) = 0:
+			arSourceAvailable[1]=0
 
 	else:
 		print(' ... nothing mounted on /media.')
