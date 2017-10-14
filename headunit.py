@@ -734,10 +734,12 @@ def media_play():
 			print(' ... . Found {0:s} tracks'.format(mpcOut.rstrip('\n')))
 
 			#TODO: get latest position..	
+			# continue where left
+			playslist_pos = mpc_lkp(sUsbLabel)
+
 			print(' ... Starting playback')
 			call(["mpc", "-q" , "stop"])
-			#mpc $params_mpc -q play $lkp
-			call(["mpc", "-q" , "play"])
+			call(["mpc", "-q" , "play", str(playslist_pos)])
 
 			# Load playlist directories, to enable folder up/down browsing.
 			mpc_get_PlaylistDirs()
