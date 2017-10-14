@@ -358,7 +358,7 @@ def mpc_init():
 	oMpdClient.subscribe("media_ready")
 
 	print('[MPC] Subscribing to channel: media_removed')
-	oMpdClient.subscribe("media_removed")¡
+	oMpdClient.subscribe("media_removed")
 	
 	print('[MPC] Random: OFF, Repeat: ON')
 	call(["mpc", "-q", "random", "off"])
