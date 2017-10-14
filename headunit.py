@@ -124,6 +124,7 @@ def alsa_init():
 	except alsaaudio.ALSAAudioError:
 		print('No such mixer')
 
+
 def alsa_unmute():
 	print('[ALSA] Unmuting...')
 	#TODO
@@ -518,8 +519,7 @@ def mpc_lkp( label ):
 	for x in playlist:
 			if x['file'] == current_file:
 					pos = int(x['pos'])+1
-					
-	print pos
+					print('[MPC] Match found! Continuing playback at #{0}'.format(pos))
 
 	return pos
 	
@@ -993,10 +993,13 @@ def init():
 		source_next()
 		# Start playback
 		source_play()
-	elif arSourceAvailable[dSettings['source']] == 1:
+	elif arSourceAvailable[dSettings['source']] == 0:
 		#Saved source not available, go to the first available
 		source_next()
 		# Start playback
+		source_play()
+	else:
+		# Source available
 		source_play()
 	
 	print('\033[96mInitialization finished\033[00m')
@@ -1126,10 +1129,10 @@ while True:
 						#	media_check()
 
 			if c == 'player':
-				if dSettings['source'] == 1 and iLoopCounter %5000 == 0:
+				if dSettings['source'] == 1:
 					mpc_save_pos(dSettings['medialabel'])
 
-				if dSettings['source'] == 2 and iLoopCounter %5000 == 0:
+				if dSettings['source'] == 2:
 					mpc_save_pos('locmus')
 				
 		oMpdClient.send_idle() # continue idling
