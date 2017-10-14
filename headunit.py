@@ -597,7 +597,6 @@ def media_check():
 			print(' ... . {0}'.format(mountpoint))
 		
 		print(' ... Continuing to crosscheck with mpd database for music...')
-		#i = 0
 		for mountpoint in arMedia:	
 			#mountpoint = subprocess.check_output("mount | egrep media | cut -d ' ' -f 3", shell=True)
 			sUsbLabel = os.path.basename(mountpoint).rstrip('\n')
@@ -615,7 +614,9 @@ def media_check():
 			else:
 				print(' ... . {0}: found {1:s} tracks'.format(sUsbLabel,mpcOut.rstrip('\n')))		
 				arMediaWithMusic.append(mountpoint)
-				#i += 1
+				#default to found media, if not set yet
+				if dSettings['mediasource'] == -1:
+					dSettings['mediasource'] = 0
 
 	else:
 		print(' ... nothing mounted on /media.')
