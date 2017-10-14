@@ -478,6 +478,7 @@ def mpc_save_pos ( label ):
 	#TODO : REFINE THIS -- I THINK IT GETS EXECUTED SOMETIMES WITHOUT A PLAYLIST LOADED -- WHICH FAILS...
 	# get current song
 	#mpc_init()
+	oMpdClient.noidle()
 	oMpdClient.command_list_ok_begin()
 	oMpdClient.status()
 	results = oMpdClient.command_list_end()
@@ -489,6 +490,8 @@ def mpc_save_pos ( label ):
 	current_song_listdick = oMpdClient.playlistid(songid)
 	for f in current_song_listdick:
 			current_file = f['file']
+	
+	oMpdClient.send_idle() # continue idling
 	
 	print current_file
 	#pickle_file = sRootFolder + "/mp_" + label + ".p"
