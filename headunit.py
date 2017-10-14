@@ -593,10 +593,8 @@ def media_check():
 		for mountpoint in arMedia:	
 			#mountpoint = subprocess.check_output("mount | egrep media | cut -d ' ' -f 3", shell=True)
 			sUsbLabel = os.path.basename(mountpoint).rstrip('\n')
-			#print(' ... . label of this filesystem: {0:s}'.format(sUsbLabel))
 			
 			taskcmd = "mpc listall "+sUsbLabel+" | wc -l"
-			#taskcmd = "mpc listall SJOERD | wc -l"
 			task = subprocess.Popen(taskcmd, shell=True, stdout=subprocess.PIPE)
 			mpcOut = task.stdout.read()
 			assert task.wait() == 0
@@ -835,10 +833,11 @@ def source_next():
 				#should not be the case, just to cover, if so, move to the next source
 				i = dSettings['source']+1
 			elif dSettings['mediasource'] == len(arMediaWithMusic)-1:
+				#we are we at the last media, looping back to first
 				print 'CASE 2'
+				dSettings['mediasource'] = 0
 				print dSettings['mediasource']
 				print len(arMediaWithMusic)
-				#are we at the last media?
 				i = dSettings['source']+1
 			elif dSettings['mediasource'] < len(arMediaWithMusic)-1:
 				print 'CASE 3'
@@ -846,11 +845,11 @@ def source_next():
 				#stay within USB source, by move to next media
 				print('Switching to next available media')
 				dSettings['mediasource'] = dSettings['mediasource']+1
-			
-				print dSettings['mediasource']
-				print len(arMediaWithMusic)
-				print arMediaWithMusic[0]
-				print arMediaWithMusic[1]
+				
+				print dSettings['mediasource']	# 1 first run
+				print len(arMediaWithMusic) 	# 2
+				print arMediaWithMusic[0]		# /media/ESD-USB
+				print arMediaWithMusic[1]		# /media/SJOERD
 
 				# we can stop now, no need to switch to next source
 				return
