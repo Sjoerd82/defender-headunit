@@ -480,13 +480,14 @@ def mpc_save_pos ( label ):
 	oMpdClient.command_list_ok_begin()
 	oMpdClient.status()
 	results = oMpdClient.command_list_end()
-	oMpdClient.send_idle() # continue idling
 
 	# I find this a very stupid way ... i mean a dict in a list? really? anyway...
 	for r in results:
 			songid = r['songid']
 
 	current_song_listdick = oMpdClient.playlistid(songid)
+	oMpdClient.send_idle() # continue idling
+
 	for f in current_song_listdick:
 			current_file = f['file']
 	
