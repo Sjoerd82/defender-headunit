@@ -611,7 +611,7 @@ def media_check():
 					dSettings['mediasource'] = 0
 
 		# if nothing useful found, then mark source as unavailable
-		if len(arMediaWithMusic) = 0:
+		if len(arMediaWithMusic) == 0:
 			arSourceAvailable[1]=0
 
 	else:
