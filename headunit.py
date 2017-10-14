@@ -601,7 +601,7 @@ def media_check():
 			mpcOut = task.stdout.read()
 			assert task.wait() == 0
 			
-			if mpcOut == '0':
+			if mpcOut.rstrip('\n') == '0':
 				print(' ... . {0}: nothing in the database for this source.'.format(sUsbLabel))
 				arSourceAvailable[1]=0
 			else:
@@ -649,7 +649,7 @@ def media_play():
 		mpcOut = task.stdout.read()
 		assert task.wait() == 0
 		
-		if mpcOut == "0":
+		if mpcOut.rstrip('\n') == "0":
 			print(' ... . Nothing in the playlist, marking source unavailable.')
 			arSourceAvailable[1]=0
 			source_next()
