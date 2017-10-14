@@ -710,19 +710,22 @@ def locmus_play():
 
 		# MPD playlist for local music *should* be updated by inotifywait.. but, it's a bit tricky, so test for it..
 		print(' ... Populating playlist')
-		try:
-			p1 = subprocess.Popen(["mpc", "listall", sLocalMusicMPD], stdout=subprocess.PIPE)
-			p2 = subprocess.Popen(["mpc", "add"], stdin=p1.stdout, stdout=subprocess.PIPE)
-			p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
-			output,err = p2.communicate()
-		except:
-			print(' SOMETHING WENT WRONG -- DB NOT UPDATED?')
-			call(["mpc", "--wait", "update"])
-			# TRY AGAIN
-			p1 = subprocess.Popen(["mpc", "listall", sLocalMusicMPD], stdout=subprocess.PIPE)
-			p2 = subprocess.Popen(["mpc", "add"], stdin=p1.stdout, stdout=subprocess.PIPE)
-			p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
-			output,err = p2.communicate()
+		p1 = subprocess.Popen(["mpc", "listall", sLocalMusicMPD], stdout=subprocess.PIPE)
+		p2 = subprocess.Popen(["mpc", "add"], stdin=p1.stdout, stdout=subprocess.PIPE)
+		p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
+		output,err = p2.communicate()
+
+		print('OUTPUT: {0}'.format(output))
+		print('ERROR: {0}'.format(err))
+		
+#		if (...):
+#			print(' SOMETHING WENT WRONG -- DB NOT UPDATED?')
+#			call(["mpc", "--wait", "update"])
+#			# TRY AGAIN
+#			p1 = subprocess.Popen(["mpc", "listall", sLocalMusicMPD], stdout=subprocess.PIPE)
+#			p2 = subprocess.Popen(["mpc", "add"], stdin=p1.stdout, stdout=subprocess.PIPE)
+#			p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
+#			output,err = p2.communicate()
 
 		print('Checking playlist')
 		task = subprocess.Popen("mpc playlist | wc -l", shell=True, stdout=subprocess.PIPE)
