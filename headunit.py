@@ -614,7 +614,7 @@ def media_check():
 				arSourceAvailable[1]=0
 			else:
 				print(' ... . {0}: found {1:s} tracks'.format(sUsbLabel,mpcOut.rstrip('\n')))		
-				arMediaWithMusic[i].append(mountpoint)
+				arMediaWithMusic.append(mountpoint)
 				#i += 1
 
 	else:
