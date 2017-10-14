@@ -557,6 +557,9 @@ def linein_stop():
 # updates arSourceAvailable[1] (mpc)
 def media_check():
 	global sUsbLabel
+	global arMedia
+	global arMediaWithMusic
+	
 	print('[USB] CHECK availability...')
 
 	print(' ... Check if anything is mounted on /media...')
