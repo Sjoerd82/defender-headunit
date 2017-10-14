@@ -585,7 +585,7 @@ def media_check():
 		print('ERROR:', err)
 		arSourceAvailable[1]=0
 	else:
-		arMedia = output.split()
+		arMedia = grepOut.split()
 		
 	# playlist loading is handled by scripts that trigger on mount/removing of media
 	# mpd database is updated on mount by same script.
