@@ -853,7 +853,7 @@ def source_next():
 				dSettings['mediasource'] = dSettings['mediasource']+1
 				media_play()
 				# we can stop now, no need to switch to next source
-				break
+				return
 			else:
 				print('ERROR switching source! Hier hadden we geen rekening mee gehouden...!? FIX ME')
 				
