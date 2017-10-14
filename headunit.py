@@ -966,9 +966,6 @@ def source_play():
 		linein_play()
 	else:
 		print('ERROR: Invalid source or no sources available')
-		#TODO
-		print('going one more round...')
-		source_next()
 
 def source_stop():
 	global dSettings
@@ -1180,9 +1177,9 @@ while True:
 							dSettings['mediasource'] = -1
 							# stop playing
 							source_stop()
+							media_check()
 							source_next()
-							#media_check()
-							#source_play()
+							source_play()
 						else:
 							# don't call media_check(), it will stop playing the current usb that was not removed
 							# only remove source from arMediaWithMusic
