@@ -36,9 +36,9 @@ mpc --wait $mpcParams update $mountFolder
 
 # Put the new stuff into the playlist.
 # We have to do it here, because in the main script we don't have $root_folder
-mpc $mpcParams -q stop
-mpc $mpcParams -q clear
-mpc $mpcParams listall $mountFolder | mpc $mpcParams add
+#mpc $mpcParams -q stop
+#mpc $mpcParams -q clear
+#mpc $mpcParams listall $mountFolder | mpc $mpcParams add
 mpc $mpcParams sendmessage media_ready $mountFolder
 
 # Leave this to the main headunit script, because you only want to start playing if not in bluetooth, or line-in mode.
