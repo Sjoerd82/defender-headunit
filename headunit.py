@@ -83,7 +83,7 @@ iAtt = 0									 # Att mode toggle
 iRandom = 0									 # We're keeping track of it within the script, not checking with MPD
 iDoSave	= 0									 # Indicator to do a save anytime soon
 sUsbLabel = ''
-dSettings = {'source': -1, 'volume': 20}	 # No need to save random, thats done by MPC/MPD itself.
+dSettings = {'source': -1, 'volume': 20, 'mediasource': -1}	 # No need to save random, we don't want to save that (?)
 
 #ALSA
 sAlsaMixer = "Master"	# Pi without Phat DAC = "Master" or "PCM" ?
@@ -543,7 +543,7 @@ def bt_play():
 	
 # updates arSourceAvailable[4] (alsa) -- TODO
 def linein_check():
-	print('Checking if Line-In is available')
+	print('[LINE] Checking if Line-In is available... not available')
 	arSourceAvailable[4]=0 # not available
 	#echo "Source 4 Unavailable; Line-In / ALSA"
 
@@ -622,10 +622,13 @@ def media_check():
 	
 
 def media_play():
+	global dSettings
+	global arMediaWithMusic
 	print('[USB] Play (MPD)')
 
-	print('Checking if source is still good')
-	media_check()
+	if dSettings['mediasource'] = -1:
+		print('First go, doing a media check...')
+		media_check()
 	
 	if arSourceAvailable[1] == 0:
 		print('Aborting playback, trying next source.')
@@ -634,11 +637,15 @@ def media_play():
 		#TODO: error sound
 		
 	else:
+
 		print('Emptying playlist')
 		call(["mpc", "stop"])
 		call(["mpc", "clear"])
 		#todo: how about cropping, populating, and removing the first? item .. for faster continuity???
 
+		sUsbLabel = os.path.basename(arMediaWithMusic[dSettings['mediasource']])
+		print sUsbLabel
+		
 		print('Populating playlist')
 		p1 = subprocess.Popen(["mpc", "listall", sUsbLabel], stdout=subprocess.PIPE)
 		p2 = subprocess.Popen(["mpc", "add"], stdin=p1.stdout, stdout=subprocess.PIPE)
@@ -799,6 +806,7 @@ def source_check():
 
 def source_next():
 	global dSettings
+	global arMediaWithMusic
 	
 	print('Switching to next source')
 	
@@ -824,8 +832,25 @@ def source_next():
 		if dSettings['source'] == len(arSource)-1:
 			i = 0
 		else:
-			#start at next source in line
-			i = dSettings['source']+1
+			#only advance to next source, if not USB (source=1) or not at last avaiable media
+			if dSettings['source'] <> 1:
+				#start at next source in line
+				i = dSettings['source']+1
+			elif dSettings['mediasource'] == -1
+				#should not be the case, just to cover, if so, move to the next source
+				i = dSettings['source']+1
+			elif dSettings['mediasource'] == len(arMediaWithMusic)-1
+				#are we at the last media?
+				i = dSettings['source']+1
+			elif dSettings['mediasource'] < len(arMediaWithMusic)-1
+				#should be covered by all of the above, but just in case
+				#stay within USB source, by move to next media
+				print('Switching to next media')
+				dSettings['mediasource'] = dSettings['mediasource']+1
+				media_play()
+			else
+				print('ERROR switching source! Hier hadden we geen rekening mee gehouden...!? FIX ME')
+				
 		
 		for source in arSource[i:]:
 			print(source)
