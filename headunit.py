@@ -471,7 +471,7 @@ def mpc_stop():
 	print('Stopping MPC [pause]')
 	call(["mpc", "pause"])
 
-def mpc_save_pos ( label )
+def mpc_save_pos ( label ):
 	global oMpdClient
 	print('[MPC] Saving playlist position')
 
