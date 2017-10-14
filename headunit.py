@@ -77,7 +77,6 @@ BUTTON10_HI = 1100
 #arSource = ['fm','usb','locmus','bt','alsa'] # source types; add new sources in the end --> renamed usb to media
 arSource = ['fm','media','locmus','bt','alsa'] # source types; add new sources in the end
 arSourceAvailable = [0,0,0,0,0]              # corresponds to arSource; 1=available
-arMedia = []								 # list of mountpoints on /media
 arMediaWithMusic = []						 # list of mountpoints that contains music, according to MPD
 iAtt = 0									 # Att mode toggle
 iRandom = 0									 # We're keeping track of it within the script, not checking with MPD
@@ -559,13 +558,13 @@ def linein_stop():
 # updates arSourceAvailable[1] (mpc)
 def media_check():
 	global sUsbLabel
-	global arMedia
 	global arMediaWithMusic
 	
 	print('[USB] CHECK availability...')
 
-	arSourceAvailable[1]=1 # Available, unless proven otherwise in this procedure
-	arMediaWithMusic = []  # Reset (will be rebuild in this procedure)
+	arSourceAvailable[1]=1 	# Available, unless proven otherwise in this procedure
+	arMedia = []			# list of mountpoints on /media
+	arMediaWithMusic = []  	# Reset (will be rebuild in this procedure)
 	
 	try:
 		print(' ... Check if anything is mounted on /media...')
@@ -1093,9 +1092,20 @@ while True:
 							source_stop()
 							media_check()
 							source_play()
-						else:
-							# update media
-							media_check()
+						elif dSettings['source'] == 1:
+							# don't call media_check(), it will stop playing the current usb that was not removed
+							# only remove source from arMediaWithMusic
+							mountpoint = '/media'+m['message']
+							print mountpoint
+							print arMediaWithMusic
+							arMediaWithMusic.remove(mountpoint)
+							print arMediaWithMusic
+							
+						# redundant...:
+						#else:
+						#	# we're currently not playing USB, so go ahead and update
+						#	# update media
+						#	media_check()
 
 
 		oMpdClient.send_idle() # continue idling
