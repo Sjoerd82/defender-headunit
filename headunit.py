@@ -279,38 +279,38 @@ def button_press ( func ):
 
 	# Handle button
 	if func == 'SHUFFLE':
-		print('\033[94m[BUTTON] Shuffle\033[00m')
+		print('\033[95m[BUTTON] Shuffle\033[00m')
 		mpc_random()
 	elif func == 'SOURCE':
-		print('\033[94m[BUTTON] Next source\033[00m')
+		print('\033[95m[BUTTON] Next source\033[00m')
 		source_next()
 		source_play()
 	elif func == 'ATT':
-		print('\033[94m[BUTTON] ATT\033[00m')
+		print('\033[95m[BUTTON] ATT\033[00m')
 		volume_att_toggle()
 	elif func == 'VOL_UP':
-		print('\033[94m[BUTTON] VOL_UP\033[00m')
+		print('\033[95m[BUTTON] VOL_UP\033[00m')
 		volume_up()
 	elif func == 'VOL_DOWN':
-		print('\033[94m[BUTTON] VOL_DOWN\033[00m')
+		print('\033[95m[BUTTON] VOL_DOWN\033[00m')
 		volume_down()
 	elif func == 'SEEK_NEXT':
-		print('\033[94m[BUTTON] Seek/Next\033[00m')
+		print('\033[95m[BUTTON] Seek/Next\033[00m')
 		seek_next()
 	elif func == 'SEEK_PREV':
-		print('\033[94m[BUTTON] Seek/Prev.\033[00m')
+		print('\033[95m[BUTTON] Seek/Prev.\033[00m')
 		seek_prev()
 	elif func == 'DIR_NEXT':
-		print('\033[94m[BUTTON] Next directory\033[00m')
+		print('\033[95m[BUTTON] Next directory\033[00m')
 		mpc_next_folder()		
 	elif func == 'DIR_PREV':
-		print('\033[94m[BUTTON] Prev directory\033[00m')
+		print('\033[95m[BUTTON] Prev directory\033[00m')
 		mpc_prev_folder()
 	elif func == 'UPDATE_LOCAL':
-		print('\033[94m[BUTTON] Updating local MPD database\033[00m')
+		print('\033[95m[BUTTON] Updating local MPD database\033[00m')
 		locmus_update()
 	elif func == 'OFF':
-		print('\033[94m[BUTTON] Shutting down\033[00m')
+		print('\033[95m[BUTTON] Shutting down\033[00m')
 		save_settings()
 		call(["halt"])
 		#call(["systemctl", "poweroff", "-i"])
@@ -964,6 +964,9 @@ def source_play():
 		linein_play()
 	else:
 		print('ERROR: Invalid source or no sources available')
+		#TODO
+		print('going one more round...')
+		source_next()
 
 def source_stop():
 	global dSettings
@@ -1175,8 +1178,9 @@ while True:
 							dSettings['mediasource'] = -1
 							# stop playing
 							source_stop()
-							media_check()
-							source_play()
+							source_next()
+							#media_check()
+							#source_play()
 						else:
 							# don't call media_check(), it will stop playing the current usb that was not removed
 							# only remove source from arMediaWithMusic
