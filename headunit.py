@@ -1075,7 +1075,7 @@ while True:
 						# set newly loaded media
 						i = 0
 						for mountpoint in arMediaWithMusic:
-							if mountpoint == m['message']:
+							if os.path.basename(mountpoint) == m['message']:
 								dSettings['mediasource'] = i
 							i += 1
 						
