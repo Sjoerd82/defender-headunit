@@ -671,6 +671,8 @@ def media_play():
 
 def media_stop():
 	print('[USB] Stop')
+	call(["mpc", "-q" , "stop"])
+	
 
 # updates arSourceAvailable[2] (locmus)
 def locmus_check():
