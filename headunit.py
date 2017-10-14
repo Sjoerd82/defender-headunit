@@ -393,6 +393,8 @@ def mpc_get_PlaylistDirs():
 	dirname_prev = ''
 	iPos = 1
 
+	print('[DEBUG] Loading directory structure; mpc_get_PlaylistDirs')
+	
 	pipe = Popen('mpc -f %file% playlist', shell=True, stdout=PIPE)
 
 	#del arMpcPlaylistDirs
@@ -562,19 +564,10 @@ def media_check():
 	
 	print('[USB] CHECK availability...')
 
-	print(' ... Check if anything is mounted on /media...')
 	arSourceAvailable[1]=1 # Available, unless:
 	
-	# Check if there's anything mounted:
-	#try:
-	#	#grepOut = subprocess.check_output("mount | grep -q /media", shell=True)
-	#	proc = subprocess.Popen("mount | grep /media | cut -d' ' -f1",stdout=subprocess.PIPE,stderr=subprocess.PIPE)
-	#	for x in proc.stdout:
-	#		print x
-	#except subprocess.CalledProcessError as grepexc:                                                                                                   
-	#	arSourceAvailable[1]=0
-	
 	try:
+		print(' ... Check if anything is mounted on /media...')
 		# do a -f1 for devices, -f3 for mountpoints
 		grepOut = subprocess.check_output(
 			"mount | grep /media | cut -d' ' -f3",
@@ -627,9 +620,9 @@ def media_play():
 	global arMediaWithMusic
 	print('[USB] Play (MPD)')
 
-	if dSettings['mediasource'] == -1:
-		print('First go, doing a media check...')
-		media_check()
+	#if dSettings['mediasource'] == -1:
+	#	print('First go, doing a media check...')
+	#	media_check()
 	
 	if arSourceAvailable[1] == 0:
 		print('Aborting playback, trying next source.')
@@ -639,42 +632,39 @@ def media_play():
 		
 	else:
 
-		print('Emptying playlist')
-		call(["mpc", "stop"])
-		call(["mpc", "clear"])
+		print(' ... Emptying playlist')
+		call(["mpc", "-q", "stop"])
+		call(["mpc", "-q", "clear"])
 		#todo: how about cropping, populating, and removing the first? item .. for faster continuity???
 
-		sUsbLabel = os.path.basename(arMediaWithMusic[dSettings['mediasource']])
-		print sUsbLabel
-		
-		print('Populating playlist')
+		sUsbLabel = os.path.basename(arMediaWithMusic[dSettings['mediasource']])	
+		print(' ... Populating playlist, media: {0}'.format(sUsbLabel))
 		p1 = subprocess.Popen(["mpc", "listall", sUsbLabel], stdout=subprocess.PIPE)
 		p2 = subprocess.Popen(["mpc", "add"], stdin=p1.stdout, stdout=subprocess.PIPE)
 		p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
 		output,err = p2.communicate()
 
-		print('Checking playlist')
+		print(' ... Checking if playlist is populated')
 		task = subprocess.Popen("mpc playlist | wc -l", shell=True, stdout=subprocess.PIPE)
 		mpcOut = task.stdout.read()
 		assert task.wait() == 0
 		
 		if mpcOut == 0:
-			print('Nothing in the playlist, marking source unavailable.')
+			print(' ... . Nothing in the playlist, marking source unavailable.')
 			arSourceAvailable[1]=0
 			source_next()
 			source_play()
 			#TODO: error sound
 		else:
-			print('Found {0:s} tracks'.format(mpcOut))
-			#TODO: remove the trailing line feed..
+			print(' ... . Found {0:s} tracks'.format(mpcOut).rstrip('\n'))
 
 			#TODO: get latest position..	
-			print('Starting playback')
+			print(' ... Starting playback')
 			call(["mpc", "-q" , "stop"])
 			#mpc $params_mpc -q play $lkp
 			call(["mpc", "-q" , "play"])
 
-			print('Loading directory structure')
+			# Load playlist directories, to enable folder up/down browsing.
 			mpc_get_PlaylistDirs()
 
 def media_stop():
