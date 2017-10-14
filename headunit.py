@@ -564,7 +564,8 @@ def media_check():
 	
 	print('[USB] CHECK availability...')
 
-	arSourceAvailable[1]=1 # Available, unless:
+	arSourceAvailable[1]=1 # Available, unless proven otherwise in this procedure
+	arMediaWithMusic = []  # Reset (will be rebuild in this procedure)
 	
 	try:
 		print(' ... Check if anything is mounted on /media...')
@@ -829,33 +830,20 @@ def source_next():
 				#start at next source in line
 				i = dSettings['source']+1
 			elif dSettings['mediasource'] == -1:
-				print 'CASE 1'
 				#should not be the case, just to cover, if so, move to the next source
 				i = dSettings['source']+1
 			elif dSettings['mediasource'] == len(arMediaWithMusic)-1:
-				#we are we at the last media, looping back to first
-				print 'CASE 2'
+				#we are we at the last media, looping media back to first, but advance to next source
 				dSettings['mediasource'] = 0
-				print dSettings['mediasource']
-				print len(arMediaWithMusic)
 				i = dSettings['source']+1
 			elif dSettings['mediasource'] < len(arMediaWithMusic)-1:
-				print 'CASE 3'
-				#should be covered by all of the above, but just in case
-				#stay within USB source, by move to next media
-				print('Switching to next available media')
+				#more media sources left, move to the next. Do not advance to next source
 				dSettings['mediasource'] = dSettings['mediasource']+1
-				
-				print dSettings['mediasource']	# 1 first run
-				print len(arMediaWithMusic) 	# 2
-				print arMediaWithMusic[0]		# /media/ESD-USB
-				print arMediaWithMusic[1]		# /media/SJOERD
-
+				print('Staying with USB. Switching to {0}'.format(arMediaWithMusic[dSettings['mediasource']]))		
 				# we can stop now, no need to switch to next source
 				return
 			else:
-				print('ERROR switching source! Hier hadden we geen rekening mee gehouden...!? FIX ME')
-				
+				print('ERROR switching source! FIX ME!')
 		
 		for source in arSource[i:]:
 			print(source)
@@ -992,7 +980,8 @@ def init():
 		# Start playback
 		source_play()
 	
-	print('Initialization finished')
+	print('\033[96mInitialization finished\033[00m')
+	print('--------------------------------------------------------------------------------')
 	beep()
 	
 #-------------------------------------------------------------------------------
@@ -1079,13 +1068,24 @@ while True:
 				for m in mpdMessages:
 					print('[MPD] Channel {0} sends message: {1}'.format(m['channel'],m['message']))
 					if m['channel'] == 'media_ready':
-						source_stop()
+						media_check()
 						# switch to source: USB
-						# TODO: check availability, but this is a bit redundant...
 						dSettings['source'] = 1
+						
+						# set newly loaded media
+						i = 0
+						for mountpoint in arMediaWithMusic:
+							if mountpoint == m['message']:
+								dSettings['mediasource'] = i
+							i += 1
+						
+						# play
+						source_stop()
 						source_play()
+						
 					elif m['channel'] == 'media_removed':
 						print 'TODO'
+						media_check()
 						#if source = 1 source_stop()
 						# switch to next source
 
