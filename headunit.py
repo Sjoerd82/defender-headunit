@@ -901,7 +901,9 @@ def source_next():
 			print('No sources available!')
 
 	else:
-	
+		#TODO; hier klopt iets niet
+		i = dSettings['source']
+		
 		#start at beginning, if we're at the end of the list
 		if dSettings['source'] == len(arSource)-1:
 			i = 0
