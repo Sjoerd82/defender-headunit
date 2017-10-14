@@ -472,7 +472,66 @@ def mpc_stop():
 	print('Stopping MPC [pause]')
 	call(["mpc", "pause"])
 
+
 def mpc_save_pos ( label ):
+
+	print('[MPC] Saving playlist position')
+	oMpdClient = MPDClient() 
+	oMpdClient.timeout = 10                # network timeout in seconds (floats allowed), default: None
+	oMpdClient.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
+	oMpdClient.connect("localhost", 6600)  # connect to localhost:6600
+
+	oMpdClient.command_list_ok_begin()
+	oMpdClient.status()
+	results = oMpdClient.command_list_end()
+
+	# I find this a very stupid way ... i mean a dict in a list? really? anyway...
+	for r in results:
+			songid = r['songid']
+
+	current_song_listdick = oMpdClient.playlistid(songid)
+	oMpdClient.close()
+	oMpdClient.disconnect()
+
+	for f in current_song_listdick:
+			current_file = f['file']
+	
+	print current_file
+	pickle_file = sRootFolder + "/mp_" + label + ".p"
+	pickle.dump( current_file, open( pickle_file, "wb" ) )
+
+def mpc_lkp( label ):
+
+	#default
+	pos = 1
+	
+	pickle_file = sRootFolder + "/mp_" + label + ".p"
+	print('[MPC] Retrieving last known position from lkp file: {0:s}'.format(pickle_file))
+
+	try:
+		current_file = pickle.load( open( pickle_file, "rb" ) )
+	except:
+		print('[PICKLE] Loading {0:s} failed!'.format(pickle_file))
+		return pos
+	
+	#otherwise continue:
+	oMpdClient = MPDClient() 
+	oMpdClient.timeout = 10                # network timeout in seconds (floats allowed), default: None
+	oMpdClient.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
+	oMpdClient.connect("localhost", 6600)  # connect to localhost:6600
+	playlist = oMpdClient.playlistid()
+	oMpdClient.close()
+	oMpdClient.disconnect()
+
+	for x in playlist:
+			if x['file'] == current_file:
+					pos = int(x['pos'])+1
+					print('[MPC] Match found! Continuing playback at #{0}'.format(pos))
+
+	return pos
+
+
+def mpc_save_posX ( label ):
 	global oMpdClient
 	print('[MPC] Saving playlist position')
 
@@ -501,7 +560,7 @@ def mpc_save_pos ( label ):
 	pickle_file = sRootFolder + "/mp_" + label + ".p"
 	pickle.dump( current_file, open( pickle_file, "wb" ) )
 
-def mpc_lkp( label ):
+def mpc_lkpX( label ):
 	global oMpdClient
 	
 	#default
