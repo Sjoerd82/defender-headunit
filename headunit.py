@@ -946,6 +946,7 @@ def OLD_mpc_lkp( lkp_file ):
 	return lkp
 
 def init():
+	print('--------------------------------------------------------------------------------')
 	print('Initializing ...')
 
 	# initialize gpio (beep)
@@ -1084,10 +1085,16 @@ while True:
 						source_play()
 						
 					elif m['channel'] == 'media_removed':
-						print 'TODO'
-						media_check()
-						#if source = 1 source_stop()
-						# switch to next source
+						# check if we're on USB and currently playing this...
+						if dSettings['source'] == 1 and m['message'] == os.path.basename(arMediaWithMusic[dSettings['mediasource']]):
+							# stop playing
+							source_stop()
+							media_check()
+							source_play()
+						else:
+							# update media
+							media_check()
+
 
 		oMpdClient.send_idle() # continue idling
 	
