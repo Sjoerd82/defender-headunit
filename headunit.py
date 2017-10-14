@@ -78,7 +78,7 @@ BUTTON10_HI = 1100
 arSource = ['fm','media','locmus','bt','alsa'] # source types; add new sources in the end
 arSourceAvailable = [0,0,0,0,0]              # corresponds to arSource; 1=available
 arMedia = []								 # list of mountpoints on /media
-arMediaWithMusic[]							 # list of mountpoints that contains music, according to MPD
+arMediaWithMusic = []						 # list of mountpoints that contains music, according to MPD
 iAtt = 0									 # Att mode toggle
 iRandom = 0									 # We're keeping track of it within the script, not checking with MPD
 iDoSave	= 0									 # Indicator to do a save anytime soon
@@ -598,7 +598,7 @@ def media_check():
 		for mountpoint in arMedia:	
 			#mountpoint = subprocess.check_output("mount | egrep media | cut -d ' ' -f 3", shell=True)
 			sUsbLabel = os.path.basename(mountpoint).rstrip('\n')
-			print(' ... . label of this filesystem: {0:s}'.format(sUsbLabel))
+			#print(' ... . label of this filesystem: {0:s}'.format(sUsbLabel))
 			
 			taskcmd = "mpc listall "+sUsbLabel+" | wc -l"
 			#taskcmd = "mpc listall SJOERD | wc -l"
@@ -607,10 +607,10 @@ def media_check():
 			assert task.wait() == 0
 			
 			if mpcOut == 0:
-				print(' ... . nothing in the database for this source.')
+				print(' ... . {0} nothing in the database for this source.'.format(sUsbLabel))
 				arSourceAvailable[1]=0
 			else:
-				print(' ... . found {0:s} tracks'.format(mpcOut.rstrip('\n')))		
+				print(' ... . {0} found {1:s} tracks'.format(sUsbLabel,mpcOut.rstrip('\n')))		
 				arMediaWithMusic[i] = mountpoint
 			i += 1
 
