@@ -2,8 +2,9 @@
 # ---------------------------------------------------------------------------
 #
 
-mpcParams = ""
-rootFolder = os.path.dirname(os.path.abspath(__file__))
+mpcParams=""
+#os.path.dirname(os.path.abspath(__file__))
+rootFolder="/root/defender-headunit"
 mountFolder=$(basename $1)
 
 
