@@ -279,40 +279,41 @@ def button_press ( func ):
 
 	# Handle button
 	if func == 'SHUFFLE':
-		print('Shuffle')
+		print('\033[94m[BUTTON] Shuffle\033[00m')
 		mpc_random()
 	elif func == 'SOURCE':
-		print('Next source')
+		print('\033[94m[BUTTON] Next source\033[00m')
 		source_next()
 		source_play()
 	elif func == 'ATT':
-		print('ATT')
+		print('\033[94m[BUTTON] ATT\033[00m')
 		volume_att_toggle()
 	elif func == 'VOL_UP':
-		print('VOL_UP')
+		print('\033[94m[BUTTON] VOL_UP\033[00m')
 		volume_up()
 	elif func == 'VOL_DOWN':
-		print('VOL_DOWN')
+		print('\033[94m[BUTTON] VOL_DOWN\033[00m')
 		volume_down()
 	elif func == 'SEEK_NEXT':
-		print('Seek/Next')
+		print('\033[94m[BUTTON] Seek/Next\033[00m')
 		seek_next()
 	elif func == 'SEEK_PREV':
-		print('Seek/Prev.')
+		print('\033[94m[BUTTON] Seek/Prev.\033[00m')
 		seek_prev()
 	elif func == 'DIR_NEXT':
-		print('Next directory')
+		print('\033[94m[BUTTON] Next directory\033[00m')
 		mpc_next_folder()		
 	elif func == 'DIR_PREV':
-		print('Prev directory')
+		print('\033[94m[BUTTON] Prev directory\033[00m')
 		mpc_prev_folder()
 	elif func == 'UPDATE_LOCAL':
-		print('Updating local MPD database')
+		print('\033[94m[BUTTON] Updating local MPD database\033[00m')
 		locmus_update()
 	elif func == 'OFF':
-		print('Shutting down')
+		print('\033[94m[BUTTON] Shutting down\033[00m')
 		save_settings()
-		call(["systemctl", "poweroff", "-i"])
+		call(["halt"])
+		#call(["systemctl", "poweroff", "-i"])
 
 	# Wait until button is released
 	""" why did we do this again??
