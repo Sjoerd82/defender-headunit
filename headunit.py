@@ -729,7 +729,8 @@ def locmus_play():
 		if playlistCount == "0":
 			print(' ... . Nothing in the playlist, trying to update database...')
 			call(["mpc", "-q", "--wait", "update"])
-			playlistCount = mpc_populate_playlist(sLocalMusicMPD)
+			mpc_populate_playlist(sLocalMusicMPD)
+			playlistCount = mpc_playlist_is_populated()
 			if playlistCount == "0":
 				print(' ... . Nothing in the playlist, giving up. Marking source unavailable.')
 				arSourceAvailable[2]=0
