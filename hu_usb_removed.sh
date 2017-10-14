@@ -17,5 +17,6 @@ mpc -f %file% current >> $folder_x/mp_$root_folder.txt
 
 mpc $params_mpc sendmessage media_removed $root_folder
 
-mpc $params_mpc -q stop
-mpc $params_mpc -q clear
+# don't! we might be playing from a different media
+#mpc $params_mpc -q stop
+#mpc $params_mpc -q clear
