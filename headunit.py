@@ -495,31 +495,6 @@ def mpc_save_pos ( label ):
 	pickle_file = sRootFolder + "/mp_" + label + ".p"
 	pickle.dump( current_file, open( pickle_file, "wb" ) )
 
-def mpc_save_posX ( label ):
-	global oMpdClient
-	print('[MPC] Saving playlist position')
-
-	#TODO : REFINE THIS -- I THINK IT GETS EXECUTED SOMETIMES WITHOUT A PLAYLIST LOADED -- WHICH FAILS...
-	try:
-		# get current song
-		#mpc_init()
-		oMpdClient.command_list_ok_begin()
-		oMpdClient.status()
-		results = oMpdClient.command_list_end()
-
-		# I find this a very stupid way ... i mean a dict in a list? really? anyway...
-		for r in results:
-				songid = r['songid']
-
-		current_song_listdick = oMpdClient.playlistid(songid)
-		for f in current_song_listdick:
-				current_file = f['file']
-		
-		pickle_file = sRootFolder + "/mp_" + label + ".p"
-		pickle.dump( current_file, open( pickle_file, "wb" ) )
-	except:
-		print('DEBUG -- FIX ME')
-
 def mpc_lkp( label ):
 	global oMpdClient
 	
@@ -535,11 +510,16 @@ def mpc_lkp( label ):
 		print('[PICKLE] Loading {0:s} failed!'.format(pickle_file))
 		return pos
 	
+	#otherwise continue:
+	oMpdClient.noidle()
 	playlist = oMpdClient.playlistid()
+	oMpdClient.send_idle() # continue idling
 
 	for x in playlist:
 			if x['file'] == current_file:
 					pos = int(x['pos'])+1
+					
+	print pos
 
 	return pos
 	
