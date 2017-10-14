@@ -445,28 +445,18 @@ def mpc_prev_folder_pos():
 def mpc_next_track():
 	print('Next track')
 	call(["mpc", "next"])
-	#TODO: handle usb/locmus
-	mpc_save_pos( 'locmus' )
-
 	
 def mpc_prev_track():
 	print('Prev. track')
 	call(["mpc", "prev"])
-	#TODO: handle usb/locmus
-	mpc_save_pos( 'locmus' )
-
 
 def mpc_next_folder():
 	print('Next folder')
 	call(["mpc", "play", str(mpc_next_folder_pos())])
-	#TODO: handle usb/locmus
-	mpc_save_pos( 'locmus' )
 
 def mpc_prev_folder():
 	print('Prev folder')
 	call(["mpc", "play", str(mpc_prev_folder_pos())])
-	#TODO: handle usb/locmus
-	mpc_save_pos( 'locmus' )
 	
 def mpc_stop():
 	print('Stopping MPC [pause]')
@@ -1199,13 +1189,9 @@ while True:
 
 			if c == 'player':
 				if dSettings['source'] == 1:
-					print('wwwwaaaa?')
-					print dSettings['source']
 					mpc_save_pos(dSettings['medialabel'])
 
 				if dSettings['source'] == 2:
-					print('wwwoooo?')
-					print dSettings['source']
 					mpc_save_pos('locmus')
 				
 		oMpdClient.send_idle() # continue idling
