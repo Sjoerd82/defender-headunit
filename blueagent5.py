@@ -20,6 +20,8 @@ from pid import PidFile
 import os
 from optparse import OptionParser
 
+sRootFolder = os.path.dirname(os.path.abspath(__file__))
+
 SERVICE_NAME = "org.bluez"
 AGENT_IFACE = SERVICE_NAME + '.Agent1'
 ADAPTER_IFACE = SERVICE_NAME + ".Adapter1"
@@ -29,7 +31,7 @@ PLAYER_IFACE = SERVICE_NAME + '.MediaPlayer1'
 LOG_LEVEL = logging.INFO
 #LOG_FILE = "/var/log/syslog"
 #LOG_LEVEL = logging.DEBUG
-LOG_FILE = "/home/hu/blueagent5.log"
+LOG_FILE = sRootFolder+"/blueagent5.log"
 LOG_FORMAT = "%(asctime)s %(levelname)s [%(module)s] %(message)s"
 
 """Utility functions from bluezutils.py"""
