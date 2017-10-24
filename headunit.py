@@ -1283,8 +1283,8 @@ bus.add_signal_receiver(properties_changed,
 		arg0 = "org.bluez.Device1",
 		path_keyword = "path")
 
-mainloop = GObject.MainLoop()
-mainloop.run()
+#mainloop = GObject.MainLoop()
+#mainloop.run()
 	
 # Main loop
 while True:
@@ -1414,7 +1414,5 @@ while True:
 	time.sleep(0.1)
 	iLoopCounter += 1
 	
-	#dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
-	
-	#mainloop = gobject.MainLoop()
-	#mainloop.run()
+	mainloop = gobject.MainLoop()
+	mainloop.run()
