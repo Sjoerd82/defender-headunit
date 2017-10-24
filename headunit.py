@@ -415,7 +415,7 @@ class BluePlayer(dbus.service.Object):
 class BlueAgent(dbus.service.Object):
     AGENT_PATH = "/blueagent5/agent"
     #CAPABILITY = "DisplayOnly"
-	CAPABILITY = "NoInputNoOutput"
+    CAPABILITY = "NoInputNoOutput"
     pin_code = None
 
     def __init__(self, pin_code):
