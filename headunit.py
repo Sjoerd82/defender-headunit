@@ -183,10 +183,232 @@ def properties_changed(interface, changed, invalidated, path):
 	else:
 		print_normal(address, devices[path])
 
+class bzPlayer(dbus.service.Object):
+    AGENT_PATH = "/blueplayer/agent"
+#    CAPABILITY = "DisplayOnly"
+    CAPABILITY = "NoInputNoOutput"
+
+    lcd = None
+    bus = None
+    adapter = None
+    device = None
+    deviceAlias = None
+    player = None
+    transport = None
+    connected = None
+    state = None
+    status = None
+    discoverable = None
+    track = None
+    mainloop = None
+
+    def __init__(self, lcd):
+        self.lcd = lcd
+
+
+    def start(self):
+        """Initialize gobject, start the LCD, and find any current media players"""
+        gobject.threads_init()
+        dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
+
+        self.bus = dbus.SystemBus()
+        dbus.service.Object.__init__(self, dbus.SystemBus(), BluePlayer.AGENT_PATH)
+
+        self.bus.add_signal_receiver(self.playerHandler,
+                bus_name="org.bluez",
+                dbus_interface="org.freedesktop.DBus.Properties",
+                signal_name="PropertiesChanged",
+                path_keyword="path")
+
+        self.registerAgent()
+
+        adapter_path = findAdapter().object_path
+        self.bus.add_signal_receiver(self.adapterHandler,
+                bus_name = "org.bluez",
+                path = adapter_path,
+                dbus_interface = "org.freedesktop.DBus.Properties",
+                signal_name = "PropertiesChanged",
+                path_keyword = "path")
+
+
+        self.findPlayer()
+        self.updateDisplay()
+
+        """Start the BluePlayer by running the gobject mainloop()"""
+        self.mainloop = gobject.MainLoop()
+        self.mainloop.run()
+
+    def findPlayer(self):
+        """Find any current media players and associated device"""
+        manager = dbus.Interface(self.bus.get_object("org.bluez", "/"), "org.freedesktop.DBus.ObjectManager")
+        objects = manager.GetManagedObjects()
+
+        player_path = None
+        transport_path = None
+        for path, interfaces in objects.iteritems():
+            if PLAYER_IFACE in interfaces:
+                player_path = path
+            if TRANSPORT_IFACE in interfaces:
+                transport_path = path
+
+        if player_path:
+            logging.debug("Found player on path [{}]".format(player_path))
+            self.connected = True
+            self.getPlayer(player_path)
+            player_properties = self.player.GetAll(PLAYER_IFACE, dbus_interface="org.freedesktop.DBus.Properties")
+            if "Status" in player_properties:
+                self.status = player_properties["Status"]
+            if "Track" in player_properties:
+                self.track = player_properties["Track"]
+        else:
+            logging.debug("Could not find player")
+
+        if transport_path:
+            logging.debug("Found transport on path [{}]".format(player_path))
+            self.transport = self.bus.get_object("org.bluez", transport_path)
+            logging.debug("Transport [{}] has been set".format(transport_path))
+            transport_properties = self.transport.GetAll(TRANSPORT_IFACE, dbus_interface="org.freedesktop.DBus.Properties")
+            if "State" in transport_properties:
+                self.state = transport_properties["State"]
+
+    def getPlayer(self, path):
+        """Get a media player from a dbus path, and the associated device"""
+        self.player = self.bus.get_object("org.bluez", path)
+        logging.debug("Player [{}] has been set".format(path))
+        device_path = self.player.Get("org.bluez.MediaPlayer1", "Device", dbus_interface="org.freedesktop.DBus.Properties")
+        self.getDevice(device_path)
+
+    def getDevice(self, path):
+        """Get a device from a dbus path"""
+        self.device = self.bus.get_object("org.bluez", path)
+        self.deviceAlias = self.device.Get(DEVICE_IFACE, "Alias", dbus_interface="org.freedesktop.DBus.Properties")
+
+    def playerHandler(self, interface, changed, invalidated, path):
+        """Handle relevant property change signals"""
+        logging.debug("Interface [{}] changed [{}] on path [{}]".format(interface, changed, path))
+        iface = interface[interface.rfind(".") + 1:]
+
+        if iface == "Device1":
+            if "Connected" in changed:
+                self.connected = changed["Connected"]
+        if iface == "MediaControl1":
+            if "Connected" in changed:
+                self.connected = changed["Connected"]
+                if changed["Connected"]:
+                    logging.debug("MediaControl is connected [{}] and interface [{}]".format(path, iface))
+                    self.findPlayer()
+        elif iface == "MediaTransport1":
+            if "State" in changed:
+                logging.debug("State has changed to [{}]".format(changed["State"]))
+                self.state = (changed["State"])
+            if "Connected" in changed:
+                self.connected = changed["Connected"]
+        elif iface == "MediaPlayer1":
+            if "Track" in changed:
+                logging.debug("Track has changed to [{}]".format(changed["Track"]))
+                self.track = changed["Track"]
+            if "Status" in changed:
+                logging.debug("Status has changed to [{}]".format(changed["Status"]))
+                self.status = (changed["Status"])
+    
+        self.updateDisplay()
+
+    def adapterHandler(self, interface, changed, invalidated, path):
+        """Handle relevant property change signals"""
+        if "Discoverable" in changed:
+                logging.debug("Adapter dicoverable is [{}]".format(self.discoverable))
+                self.discoverable = changed["Discoverable"]
+                self.updateDisplay()
+
+    def updateDisplay(self):
+        """Display the current status of the device on the LCD"""
+        logging.debug("Updating display for connected: [{}]; state: [{}]; status: [{}]; discoverable [{}]".format(self.connected, self.state, self.status, self.discoverable))
+        if self.discoverable:
+            self.wake()
+            self.showDiscoverable()
+        else:
+            if self.connected:
+                if self.state == "idle":
+                    self.sleep()
+                else:
+                    self.wake()
+                    if self.status == "paused":
+                        self.showPaused()
+                    else:
+                        self.showTrack()
+            else:
+                self.sleep()
+
+    def showDevice(self):
+        """Display the device connection info on the LCD"""
+        self.lcd.clear()
+        self.lcd.writeLn("Connected to:", 0)
+        self.lcd.writeLn(self.deviceAlias, 1)
+        time.sleep(2)
+
+    def showTrack(self):
+        """Display track info on the LCD"""
+        lines = []
+        if "Artist" in self.track:
+            lines.append(self.track["Artist"])
+            if self.track["Title"]:
+                lines.append(self.track["Title"])
+        elif "Title" in self.track:
+            lines = self.lcd.wrap(self.track["Title"])
+
+        self.lcd.clear()
+        for i, line in enumerate(lines):
+            if i >= self.lcd.numlines: break
+            self.lcd.writeLn(lines[i], i)
+
+    def showPaused(self):
+        self.lcd.clear()
+        self.lcd.writeLn("Device is paused", 0)
+
+    def showDiscoverable(self):
+        self.lcd.clear()
+        self.lcd.writeLn("Waiting to pair", 0)
+        self.lcd.writeLn("with device", 1)
+
+
+    def next(self):
+        self.player.Next(dbus_interface=PLAYER_IFACE)
+
+    def previous(self):
+        self.player.Previous(dbus_interface=PLAYER_IFACE)
+
+    def play(self):
+        self.player.Play(dbus_interface=PLAYER_IFACE)
+
+    def pause(self):
+        self.player.Pause(dbus_interface=PLAYER_IFACE)
+
+    def volumeUp(self):
+        self.control.VolumeUp(dbus_interface=CONTROL_IFACE)
+        self.transport.VolumeUp(dbus_interface=TRANSPORT_IFACE)
+
+    def wake(self):
+        """Wake up the LCD"""
+        self.lcd.backlight(Lcd.TEAL)
+
+    def shutdown(self):
+        logging.debug("Shutting down BluePlayer")
+        self.lcd.end()
+        if self.mainloop:
+            self.mainloop.quit()
+
+    def sleep(self):
+        """Put the LCD to sleep"""
+        self.lcd.clear()
+        self.lcd.backlight(Lcd.OFF)
+
+    def getStatus(self):
+        return self.status
+
+
 # ********************************************************************************
 # BlueAgent5
 #
-
 class BlueAgent(dbus.service.Object):
     AGENT_PATH = "/blueagent5/agent"
     CAPABILITY = "DisplayOnly"
@@ -488,13 +710,16 @@ def seek_next():
 	global dSettings
 	if dSettings['source'] == 1 or dSettings['source'] == 2:
 		mpc_next_track()
-	#elif source == then
+	elif dSettings['source'] == 3:
+		bt_next()
 	#fm_next ofzoiets
 
 def seek_prev():
 	global dSettings
 	if dSettings['source'] == 1 or dSettings['source'] == 2:
 		mpc_prev_track()
+	elif dSettings['source'] == 3:
+		bt_prev()
 
 # ********************************************************************************
 # MPC
@@ -810,6 +1035,26 @@ def bt_check():
 def bt_play():
 	print('Start playing Bluetooth...')
 	#TODO
+
+def bt_next():
+
+	bus = dbus.SystemBus()
+	manager = dbus.Interface(bus.get_object("org.bluez", "/"), "org.freedesktop.DBus.ObjectManager")
+	objects = manager.GetManagedObjects()
+
+	print('NOT IMPLEMENTED!!')
+	# TODO
+	# https://kernel.googlesource.com/pub/scm/bluetooth/bluez/+/5.43/doc/media-api.txt
+	# 
+	# MediaPlayer1 hierarchy
+	# ======================
+	# Service		org.bluez (Controller role)
+	# Interface	org.bluez.MediaPlayer1
+	# Object path	[variable prefix]/{hci0,hci1,...}/dev_XX_XX_XX_XX_XX_XX/playerX
+
+def bt_prev():
+	print('NOT IMPLEMENTED!!')
+
 	
 # updates arSourceAvailable[4] (alsa) -- TODO
 def linein_check():
@@ -1273,19 +1518,22 @@ print('Checking if we\'re already runnning')
 # Initialize
 init()
 
-dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
-bus = dbus.SystemBus()
+#dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
+#bus = dbus.SystemBus()
 
 #bus.add_signal_receiver(property_changed, dbus_interface = "org.bluez.Adapter1", signal_name = "PropertyChanged")
-bus.add_signal_receiver(properties_changed,
-		dbus_interface = "org.freedesktop.DBus.Properties",
-		signal_name = "PropertiesChanged",
-		arg0 = "org.bluez.Device1",
-		path_keyword = "path")
+#bus.add_signal_receiver(properties_changed,
+#		dbus_interface = "org.freedesktop.DBus.Properties",
+#		signal_name = "PropertiesChanged",
+#		arg0 = "org.bluez.Device1",
+#		path_keyword = "path")
 
 #mainloop = GObject.MainLoop()
 #mainloop.run()
-	
+
+bus = dbus.SystemBus()
+player = bzPlayer(bus) #, '/org/bluez/hci0/dev_78_6A_89_FA_1C_95/player0')
+
 # Main loop
 while True:
 
@@ -1313,6 +1561,7 @@ while True:
 	elif BUTTON05_LO <= value_0 <= BUTTON05_HI:
 		if value_1 < 300:
 			button_press('SEEK_NEXT')
+			bzPlayer.next()
 		else:
 			button_press('DIR_NEXT')
 
@@ -1414,5 +1663,5 @@ while True:
 	time.sleep(0.1)
 	iLoopCounter += 1
 	
-	mainloop = gobject.MainLoop()
-	mainloop.run()
+	#mainloop = gobject.MainLoop()
+	#mainloop.run()
