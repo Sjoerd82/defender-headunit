@@ -1250,10 +1250,9 @@ print('Checking if we\'re already runnning')
 init()
 
 # Main loop
-if __name__ == "__main__":
+while True:
 
 	iLoopCounter = 0
-	#while True:
 	# Read channel 0
 	value_0 = adc.read_adc(0, gain=GAIN)
 	value_1 = adc.read_adc(1, gain=GAIN)
@@ -1380,5 +1379,5 @@ if __name__ == "__main__":
 	
 	#dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 	
-	mainloop = gobject.MainLoop()
-	mainloop.run()
+	#mainloop = gobject.MainLoop()
+	#mainloop.run()
