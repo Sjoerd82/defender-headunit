@@ -35,6 +35,8 @@
 # - Audio channels don't seem to mute on start, but if they do, we don't have anything implemented to unmute them.
 # - Long/Short press buttons
 
+# dbus-send --system --type=method_call --dest=org.bluez /org/bluez/hci0/dev_78_6A_89_FA_1C_95/player0 org.bluez.MediaPlayer1.Next
+
 import os
 import time
 import subprocess
@@ -412,7 +414,8 @@ class BluePlayer(dbus.service.Object):
 #
 class BlueAgent(dbus.service.Object):
     AGENT_PATH = "/blueagent5/agent"
-    CAPABILITY = "DisplayOnly"
+    #CAPABILITY = "DisplayOnly"
+	CAPABILITY = "NoInputNoOutput"
     pin_code = None
 
     def __init__(self, pin_code):
@@ -1014,6 +1017,14 @@ def bt_init():
 				properties = interfaces[interface]
 				for key in properties.keys():
 					print(' ..  .. .. {0:19} = {1}'.format(key, properties[key]))
+			if interface == 'org.bluez.MediaPlayer1':
+				print(' ..  .. TEST! MediaPlayer:')
+				properties = interfaces[interface]
+				for key in properties.keys():
+					print(' ..  .. .. {0:19} = {1}'.format(key, properties[key]))
+				#player = dbus.Interface(bus.get_object("org.bluez", "/org/bluez/hci0/dev_78_6A_89_FA_1C_95/player0"), "org.freedesktop.DBus.Properties")
+				#player.
+				
 
 	# continue init, if interface is found
 	if arSourceAvailable[3] == 1:
@@ -1025,7 +1036,11 @@ def bt_init():
 		print(' ..  Turning on Bluetooth')
 		adapter.Set("org.bluez.Adapter1", "Powered", dbus.Boolean(1))
 		#if #TODO
-		#print "Powered ", adapter.Get("org.bluez.Adapter1", "Powered") 	
+		#print "Powered ", adapter.Get("org.bluez.Adapter1", "Powered")
+		
+		# Test NEXT
+		#PLAYER_IFACE
+		
 
 # updates arSourceAvailable[3] (bt) -- TODO
 def bt_check():
