@@ -769,7 +769,7 @@ def bt_init():
 	if arSourceAvailable[3] == 1:
 	
 		# Get the device
-		adapter = dbus.Interface(bus.get_object("org.bluez", "/org/bluez/" + ADAPTER_DEV), "org.freedesktop.DBus.Properties")
+		adapter = dbus.Interface(bus.get_object("org.bluez", "/org/bluez/" + sBluetoothDev), "org.freedesktop.DBus.Properties")
 
 		# Make sure the device is powered on
 		print(' ..  Turning on Bluetooth')
