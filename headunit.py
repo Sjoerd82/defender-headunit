@@ -1017,18 +1017,23 @@ def bt_init():
 				properties = interfaces[interface]
 				for key in properties.keys():
 					print(' ..  .. .. {0:19} = {1}'.format(key, properties[key]))
-			if interface == 'org.bluez.MediaControl1':
+			elif interface == 'org.bluez.MediaControl1':
 				print(' ..  .. MediaControl1 (deprecated):')
 				properties = interfaces[interface]
 				for key in properties.keys():
 					print(' ..  .. .. {0:19} = {1}'.format(key, properties[key]))				
-			if interface == 'org.bluez.MediaPlayer1':
+			elif interface == 'org.bluez.MediaPlayer1':
 				print(' ..  .. TEST! MediaPlayer:')
 				properties = interfaces[interface]
 				for key in properties.keys():
 					print(' ..  .. .. {0:19} = {1}'.format(key, properties[key]))
 				#player = dbus.Interface(bus.get_object("org.bluez", "/org/bluez/hci0/dev_78_6A_89_FA_1C_95/player0"), "org.freedesktop.DBus.Properties")
 				#player.
+			else
+				print(' ..  .. Interface: {0}'.format(interface))
+				properties = interfaces[interface]
+				for key in properties.keys():
+					print(' ..  .. .. {0:19} = {1}'.format(key, properties[key]))
 				
 
 	# continue init, if interface is found
