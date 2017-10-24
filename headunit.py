@@ -184,7 +184,7 @@ def properties_changed(interface, changed, invalidated, path):
 	else:
 		print_normal(address, devices[path])
 
-class bzPlayer(dbus.service.Object):
+class BluePlayer(dbus.service.Object):
     AGENT_PATH = "/blueplayer/agent"
 #    CAPABILITY = "DisplayOnly"
     CAPABILITY = "NoInputNoOutput"
@@ -1533,7 +1533,7 @@ init()
 #mainloop.run()
 
 bus = dbus.SystemBus()
-player = bzPlayer(bus) #, '/org/bluez/hci0/dev_78_6A_89_FA_1C_95/player0')
+player = BluePlayer(bus) #, '/org/bluez/hci0/dev_78_6A_89_FA_1C_95/player0')
 player.start()
 
 # Main loop
