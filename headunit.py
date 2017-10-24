@@ -6,7 +6,13 @@
 #
 # Author: Sjoerd Venema
 # License: MIT
-# 
+#
+# Contains parts of "blueagent5.py"
+#
+# Dependencies: python-gobject, ...
+#
+
+#
 # Available sources:
 # - Local music folder
 # - Flash drive
@@ -27,7 +33,6 @@
 
 # Known issues/limitations
 # - Audio channels don't seem to mute on start, but if they do, we don't have anything implemented to unmute them.
-# - Only one USB drive at a time
 # - Long/Short press buttons
 
 import os
@@ -43,6 +48,17 @@ from select import select
 # python-mpd2 0.5.1 (not sure if this is the forked mpd2)
 # used mainly for getting the current song for lookup on reload
 from mpd import MPDClient
+
+# DBus, currently only used for Bluez5 bluetooth
+import dbus
+
+# from blueagent5.py
+import dbus.service
+import dbus.mainloop.glib
+import gobject
+import logging
+from pid import PidFile
+from optparse import OptionParser
 
 # Import the ADS1x15 module.
 import Adafruit_ADS1x15
@@ -105,6 +121,120 @@ sLocalMusicMPD="local_music"			# directory from a MPD pov.
 oMpdClient = None
 arMpcPlaylistDirs = [ ]
 iMPC_OK = 0
+
+#BLUETOOTH
+sBluetoothDev = "hci0"						#TODO
+sBluetoothAdapter = "org.bluez.Adapter1"	#TODO
+
+#BLUAGENT5
+SERVICE_NAME = "org.bluez"
+AGENT_IFACE = SERVICE_NAME + '.Agent1'
+ADAPTER_IFACE = SERVICE_NAME + ".Adapter1"
+DEVICE_IFACE = SERVICE_NAME + ".Device1"
+PLAYER_IFACE = SERVICE_NAME + '.MediaPlayer1'
+
+LOG_LEVEL = logging.INFO
+#LOG_FILE = "/var/log/syslog"
+#LOG_LEVEL = logging.DEBUG
+LOG_FILE = sRootFolder+"/blueagent5.log"
+LOG_FORMAT = "%(asctime)s %(levelname)s [%(module)s] %(message)s"
+
+# ********************************************************************************
+# bluezutils5.py
+#
+
+def getManagedObjects():
+    bus = dbus.SystemBus()
+    manager = dbus.Interface(bus.get_object("org.bluez", "/"), "org.freedesktop.DBus.ObjectManager")
+    return manager.GetManagedObjects()
+
+def findAdapter():
+    objects = getManagedObjects();
+    bus = dbus.SystemBus()
+    for path, ifaces in objects.iteritems():
+        adapter = ifaces.get(ADAPTER_IFACE)
+        if adapter is None:
+            continue
+        obj = bus.get_object(SERVICE_NAME, path)
+        return dbus.Interface(obj, ADAPTER_IFACE)
+    raise Exception("Bluetooth adapter not found")
+
+# ********************************************************************************
+# BlueAgent5
+#
+
+class BlueAgent(dbus.service.Object):
+    AGENT_PATH = "/blueagent5/agent"
+    CAPABILITY = "DisplayOnly"
+    pin_code = None
+
+    def __init__(self, pin_code):
+        dbus.service.Object.__init__(self, dbus.SystemBus(), BlueAgent.AGENT_PATH)
+        self.pin_code = pin_code
+
+        logging.basicConfig(filename=LOG_FILE, format=LOG_FORMAT, level=LOG_LEVEL)
+        logging.info("Starting BlueAgent with PIN [{}]".format(self.pin_code))
+        
+    @dbus.service.method(AGENT_IFACE, in_signature="os", out_signature="")
+    def DisplayPinCode(self, device, pincode):
+        logging.debug("BlueAgent DisplayPinCode invoked")
+
+    @dbus.service.method(AGENT_IFACE, in_signature="ouq", out_signature="")
+    def DisplayPasskey(self, device, passkey, entered):
+        logging.debug("BlueAgent DisplayPasskey invoked")
+
+    @dbus.service.method(AGENT_IFACE, in_signature="o", out_signature="s")
+    def RequestPinCode(self, device):
+        logging.info("BlueAgent is pairing with device [{}]".format(device))
+        self.trustDevice(device)
+        return self.pin_code
+
+    @dbus.service.method(AGENT_IFACE, in_signature="ou", out_signature="")
+    def RequestConfirmation(self, device, passkey):
+        """Always confirm"""
+        logging.info("BlueAgent is pairing with device [{}]".format(device))
+        self.trustDevice(device)
+        return
+
+    @dbus.service.method(AGENT_IFACE, in_signature="os", out_signature="")
+    def AuthorizeService(self, device, uuid):
+        """Always authorize"""
+        logging.debug("BlueAgent AuthorizeService method invoked")
+        return
+
+    @dbus.service.method(AGENT_IFACE, in_signature="o", out_signature="u")
+    def RequestPasskey(self, device):
+        logging.debug("RequestPasskey returns 0")
+        return dbus.UInt32(0)
+
+    @dbus.service.method(AGENT_IFACE, in_signature="o", out_signature="")
+    def RequestAuthorization(self, device):
+        """Always authorize"""
+        logging.info("BlueAgent is authorizing device [{}]".format(self.device))
+        return
+
+    @dbus.service.method(AGENT_IFACE, in_signature="", out_signature="")
+    def Cancel(self):
+        logging.info("BlueAgent pairing request canceled from device [{}]".format(self.device))
+
+    def trustDevice(self, path):
+        bus = dbus.SystemBus()
+        device_properties = dbus.Interface(bus.get_object(SERVICE_NAME, path), "org.freedesktop.DBus.Properties")
+        device_properties.Set(DEVICE_IFACE, "Trusted", True)
+
+    def registerAsDefault(self):
+        bus = dbus.SystemBus()
+        manager = dbus.Interface(bus.get_object(SERVICE_NAME, "/org/bluez"), "org.bluez.AgentManager1")
+        manager.RegisterAgent(BlueAgent.AGENT_PATH, BlueAgent.CAPABILITY)
+        manager.RequestDefaultAgent(BlueAgent.AGENT_PATH)
+
+    def startPairing(self):
+        bus = dbus.SystemBus()
+        adapter_path = findAdapter().object_path
+        adapter = dbus.Interface(bus.get_object(SERVICE_NAME, adapter_path), "org.freedesktop.DBus.Properties")
+        adapter.Set(ADAPTER_IFACE, "Discoverable", True)
+        
+        logging.info("BlueAgent is waiting to pair with device")
 
 def beep():
 	call(["gpio", "write", "6", "1"])
@@ -609,11 +739,49 @@ def fm_play():
 def fm_stop():
 	print('[FM] Stop')
 	
+# ********************************************************************************
+# BLUETOOTH
+def bt_init():
+	global arSourceAvailable
+
+	# default to not available
+	arSourceAvailable[3]=0
+	
+	print('[BT] Initializing')
+	print(' ..  Getting on the DBUS')
+	bus = dbus.SystemBus()
+	manager = dbus.Interface(bus.get_object("org.bluez", "/"), "org.freedesktop.DBus.ObjectManager")
+	objects = manager.GetManagedObjects()
+	print(' ..  Bluetooth devices:')
+	for path in objects.keys():
+		print(' ..  .. {0}'.format(path))
+		interfaces = objects[path]
+		for interface in interfaces.keys():
+			if interface == 'org.bluez.Adapter1':
+				print(' ..  .. Required interface (org.bluez.Adapter1) found!')
+				arSourceAvailable[3]=1
+				print(' ..  .. Properties:')
+				properties = interfaces[interface]
+				for key in properties.keys():
+					print(' ..  .. .. {0:19} = {1}'.format(key, properties[key]))
+
+	# continue init, if interface is found
+	if arSourceAvailable[3]=1:
+	
+		# Get the device
+		adapter = dbus.Interface(bus.get_object("org.bluez", "/org/bluez/" + ADAPTER_DEV), "org.freedesktop.DBus.Properties")
+
+		# Make sure the device is powered on
+		print(' ..  Turning on Bluetooth')
+		adapter.Set("org.bluez.Adapter1", "Powered", dbus.Boolean(1))
+		#if #TODO
+		#print "Powered ", adapter.Get("org.bluez.Adapter1", "Powered") 	
+
 # updates arSourceAvailable[3] (bt) -- TODO
 def bt_check():
-	print('[BT] CHECK availability... not available.')
-	arSourceAvailable[3]=0 # NOT Available
-	#TODO: How to check???? When to decide it's avaiable?
+	print('[BT] CHECK availability... ')
+	#arSourceAvailable[3]=0 # NOT Available
+	#done at bt_init()
 
 def bt_play():
 	print('Start playing Bluetooth...')
@@ -1042,6 +1210,9 @@ def init():
 
 	# initialize MPD client
 	mpc_init()
+
+	# initialize BT
+	bt_init()
 	
     # load previous state
 	load_settings()
@@ -1078,7 +1249,7 @@ print('Checking if we\'re already runnning')
 # Initialize
 init()
 
-# Loop
+# Main loop
 iLoopCounter = 0
 while True:
 	# Read channel 0
