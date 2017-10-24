@@ -1534,6 +1534,7 @@ init()
 
 bus = dbus.SystemBus()
 player = bzPlayer(bus) #, '/org/bluez/hci0/dev_78_6A_89_FA_1C_95/player0')
+player.start()
 
 # Main loop
 while True:
