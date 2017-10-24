@@ -766,7 +766,7 @@ def bt_init():
 					print(' ..  .. .. {0:19} = {1}'.format(key, properties[key]))
 
 	# continue init, if interface is found
-	if arSourceAvailable[3]=1:
+	if arSourceAvailable[3] == 1:
 	
 		# Get the device
 		adapter = dbus.Interface(bus.get_object("org.bluez", "/org/bluez/" + ADAPTER_DEV), "org.freedesktop.DBus.Properties")
