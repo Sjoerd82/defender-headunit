@@ -132,6 +132,7 @@ AGENT_IFACE = SERVICE_NAME + '.Agent1'
 ADAPTER_IFACE = SERVICE_NAME + ".Adapter1"
 DEVICE_IFACE = SERVICE_NAME + ".Device1"
 PLAYER_IFACE = SERVICE_NAME + '.MediaPlayer1'
+TRANSPORT_IFACE = SERVICE_NAME + '.MediaTransport1'
 
 LOG_LEVEL = logging.INFO
 #LOG_FILE = "/var/log/syslog"
@@ -1561,7 +1562,7 @@ while True:
 	elif BUTTON05_LO <= value_0 <= BUTTON05_HI:
 		if value_1 < 300:
 			button_press('SEEK_NEXT')
-			bzPlayer.next()
+			player.next()
 		else:
 			button_press('DIR_NEXT')
 
