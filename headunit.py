@@ -1377,8 +1377,8 @@ if __name__ == "__main__":
 		
 	time.sleep(0.1)
 	iLoopCounter += 1
-
-	dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
+	
+	#dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 	
 	mainloop = gobject.MainLoop()
-    mainloop.run()
+	mainloop.run()
