@@ -1029,7 +1029,7 @@ def bt_init():
 					print(' ..  .. .. {0:19} = {1}'.format(key, properties[key]))
 				#player = dbus.Interface(bus.get_object("org.bluez", "/org/bluez/hci0/dev_78_6A_89_FA_1C_95/player0"), "org.freedesktop.DBus.Properties")
 				#player.
-			else
+			else:
 				print(' ..  .. Interface: {0}'.format(interface))
 				properties = interfaces[interface]
 				for key in properties.keys():
