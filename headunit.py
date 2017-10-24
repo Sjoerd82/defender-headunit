@@ -159,6 +159,30 @@ def findAdapter():
         return dbus.Interface(obj, ADAPTER_IFACE)
     raise Exception("Bluetooth adapter not found")
 
+
+def properties_changed(interface, changed, invalidated, path):
+	if interface != "org.bluez.Device1":
+		return
+
+	if path in devices:
+		dev = devices[path]
+
+		if compact and skip_dev(dev, changed):
+			return
+		devices[path] = dict(devices[path].items() + changed.items())
+	else:
+		devices[path] = changed
+
+	if "Address" in devices[path]:
+		address = devices[path]["Address"]
+	else:
+		address = "<unknown>"
+
+	if compact:
+		print_compact(address, devices[path])
+	else:
+		print_normal(address, devices[path])
+
 # ********************************************************************************
 # BlueAgent5
 #
@@ -1249,6 +1273,19 @@ print('Checking if we\'re already runnning')
 # Initialize
 init()
 
+dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
+bus = dbus.SystemBus()
+
+#bus.add_signal_receiver(property_changed, dbus_interface = "org.bluez.Adapter1", signal_name = "PropertyChanged")
+bus.add_signal_receiver(properties_changed,
+		dbus_interface = "org.freedesktop.DBus.Properties",
+		signal_name = "PropertiesChanged",
+		arg0 = "org.bluez.Device1",
+		path_keyword = "path")
+
+mainloop = GObject.MainLoop()
+mainloop.run()
+	
 # Main loop
 while True:
 
