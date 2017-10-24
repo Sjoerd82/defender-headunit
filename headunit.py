@@ -1042,6 +1042,8 @@ def bt_init():
 		# Get the device
 		adapter = dbus.Interface(bus.get_object("org.bluez", "/org/bluez/" + sBluetoothDev), "org.freedesktop.DBus.Properties")
 
+		adapter.Set("org.bluez.Adapter1", "Name", "Land Rover Defender")
+		
 		# Make sure the device is powered on
 		print(' ..  Turning on Bluetooth')
 		adapter.Set("org.bluez.Adapter1", "Powered", dbus.Boolean(1))
@@ -1557,9 +1559,9 @@ init()
 #mainloop = GObject.MainLoop()
 #mainloop.run()
 
-bus = dbus.SystemBus()
-player = BluePlayer(bus) #, '/org/bluez/hci0/dev_78_6A_89_FA_1C_95/player0')
-player.start()
+#bus = dbus.SystemBus()
+#player = BluePlayer(bus) #, '/org/bluez/hci0/dev_78_6A_89_FA_1C_95/player0')
+#player.start()
 
 # Main loop
 while True:
