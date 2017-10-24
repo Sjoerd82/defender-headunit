@@ -1017,6 +1017,11 @@ def bt_init():
 				properties = interfaces[interface]
 				for key in properties.keys():
 					print(' ..  .. .. {0:19} = {1}'.format(key, properties[key]))
+			if interface == 'org.bluez.MediaControl1':
+				print(' ..  .. MediaControl1 (deprecated):')
+				properties = interfaces[interface]
+				for key in properties.keys():
+					print(' ..  .. .. {0:19} = {1}'.format(key, properties[key]))				
 			if interface == 'org.bluez.MediaPlayer1':
 				print(' ..  .. TEST! MediaPlayer:')
 				properties = interfaces[interface]
