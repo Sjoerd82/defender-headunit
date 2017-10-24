@@ -1251,131 +1251,134 @@ init()
 
 # Main loop
 if __name__ == "__main__":
+
 	iLoopCounter = 0
-	while True:
-		# Read channel 0
-		value_0 = adc.read_adc(0, gain=GAIN)
-		value_1 = adc.read_adc(1, gain=GAIN)
-		#print(value_0)
+	#while True:
+	# Read channel 0
+	value_0 = adc.read_adc(0, gain=GAIN)
+	value_1 = adc.read_adc(1, gain=GAIN)
+	#print(value_0)
 
-		if BUTTON01_LO <= value_0 <= BUTTON01_HI:
-			#Bottom button
-			print('BUTTON01')
-			button_press('UPDATE_LOCAL')
+	if BUTTON01_LO <= value_0 <= BUTTON01_HI:
+		#Bottom button
+		print('BUTTON01')
+		button_press('UPDATE_LOCAL')
 
-		elif BUTTON02_LO <= value_0 <= BUTTON02_HI:
-			#Side button, met streepje
-			print('BUTTON02')
+	elif BUTTON02_LO <= value_0 <= BUTTON02_HI:
+		#Side button, met streepje
+		print('BUTTON02')
 
-		elif BUTTON03_LO <= value_0 <= BUTTON03_HI:
-			button_press('VOL_UP')
-			
-		elif BUTTON04_LO <= value_0 <= BUTTON04_HI:
-			button_press('VOL_DOWN')
-			
-		elif BUTTON05_LO <= value_0 <= BUTTON05_HI:
-			if value_1 < 300:
-				button_press('SEEK_NEXT')
-			else:
-				button_press('DIR_NEXT')
-
-		elif BUTTON06_LO <= value_0 <= BUTTON06_HI:
-			if value_1 < 300:
-				button_press('SEEK_PREV')
-			else:
-				button_press('DIR_PREV')
-
-		elif BUTTON07_LO <= value_0 <= BUTTON07_HI:
-			button_press('SHUFFLE')
-
-		elif BUTTON08_LO <= value_0 <= BUTTON08_HI:
-			button_press('ATT')
-
-		elif BUTTON09_LO <= value_0 <= BUTTON09_HI:
-			button_press('SOURCE')
-
-		elif BUTTON10_LO <= value_0 <= BUTTON10_HI:
-			button_press('OFF')
-
-		# Check if there's a change in settings that we want to save.
-		if iLoopCounter % 100 == 0  and iDoSave == 1:
-			iDoSave = 0
-			save_settings()
-
-		# In case of a dirty exit, we want to be able to continue close to where we left before crashing
-		# Every x seconds, check where we're at in the playlist and save it to disk
-		#if dSettings['source'] == 1 and iLoopCounter %5000 == 0:
-		#	mpc_save_pos(dSettings['medialabel'])
-		#
-		#if dSettings['source'] == 2 and iLoopCounter %5000 == 0:
-		#	mpc_save_pos('locmus')
+	elif BUTTON03_LO <= value_0 <= BUTTON03_HI:
+		button_press('VOL_UP')
 		
-		# Check for mpd database update (this message is sent AFTER the update) -- for new music over SMB
-		# TODO
+	elif BUTTON04_LO <= value_0 <= BUTTON04_HI:
+		button_press('VOL_DOWN')
 		
-		# Check for /media inserts or removals
+	elif BUTTON05_LO <= value_0 <= BUTTON05_HI:
+		if value_1 < 300:
+			button_press('SEEK_NEXT')
+		else:
+			button_press('DIR_NEXT')
+
+	elif BUTTON06_LO <= value_0 <= BUTTON06_HI:
+		if value_1 < 300:
+			button_press('SEEK_PREV')
+		else:
+			button_press('DIR_PREV')
+
+	elif BUTTON07_LO <= value_0 <= BUTTON07_HI:
+		button_press('SHUFFLE')
+
+	elif BUTTON08_LO <= value_0 <= BUTTON08_HI:
+		button_press('ATT')
+
+	elif BUTTON09_LO <= value_0 <= BUTTON09_HI:
+		button_press('SOURCE')
+
+	elif BUTTON10_LO <= value_0 <= BUTTON10_HI:
+		button_press('OFF')
+
+	# Check if there's a change in settings that we want to save.
+	if iLoopCounter % 100 == 0  and iDoSave == 1:
+		iDoSave = 0
+		save_settings()
+
+	# In case of a dirty exit, we want to be able to continue close to where we left before crashing
+	# Every x seconds, check where we're at in the playlist and save it to disk
+	#if dSettings['source'] == 1 and iLoopCounter %5000 == 0:
+	#	mpc_save_pos(dSettings['medialabel'])
+	#
+	#if dSettings['source'] == 2 and iLoopCounter %5000 == 0:
+	#	mpc_save_pos('locmus')
+	
+	# Check for mpd database update (this message is sent AFTER the update) -- for new music over SMB
+	# TODO
+	
+	# Check for /media inserts or removals
+	
+	canRead = select([oMpdClient], [], [], 0)[0]
+	if canRead:
+		mpdChanges = oMpdClient.fetch_idle()
 		
-		canRead = select([oMpdClient], [], [], 0)[0]
-		if canRead:
-			mpdChanges = oMpdClient.fetch_idle()
-			
-			for c in mpdChanges:
-				print('[MPD] {0}'.format(c))
-				if c == 'message':
-					mpdMessages = oMpdClient.readmessages()
-					for m in mpdMessages:
-						print('[MPD] Channel {0} sends message: {1}'.format(m['channel'],m['message']))
-						if m['channel'] == 'media_ready':
-							media_check()
-							# switch to source: USB
-							dSettings['source'] = 1
-							
-							# set newly loaded media
-							i = 0
-							for mountpoint in arMediaWithMusic:
-								if os.path.basename(mountpoint) == m['message']:
-									dSettings['mediasource'] = i
-								i += 1
-							
-							# play
+		for c in mpdChanges:
+			print('[MPD] {0}'.format(c))
+			if c == 'message':
+				mpdMessages = oMpdClient.readmessages()
+				for m in mpdMessages:
+					print('[MPD] Channel {0} sends message: {1}'.format(m['channel'],m['message']))
+					if m['channel'] == 'media_ready':
+						media_check()
+						# switch to source: USB
+						dSettings['source'] = 1
+						
+						# set newly loaded media
+						i = 0
+						for mountpoint in arMediaWithMusic:
+							if os.path.basename(mountpoint) == m['message']:
+								dSettings['mediasource'] = i
+							i += 1
+						
+						# play
+						source_stop()
+						source_play()
+						
+					elif m['channel'] == 'media_removed':
+						# check if we're on USB and currently playing this...
+						if dSettings['source'] == 1 and m['message'] == dSettings['medialabel']:
+							print('[INFO] Currently played media removed.')
+							# fall back to the unknown (there could be no media left)
+							dSettings['mediasource'] = -1
+							# stop playing
 							source_stop()
+							media_check()
+							source_next()
 							source_play()
+						else:
+							# don't call media_check(), it will stop playing the current usb that was not removed
+							# only remove source from arMediaWithMusic
+							mountpoint = '/media/'+m['message']
+							arMediaWithMusic.remove(mountpoint)
+							print('[INFO] Media removed; available sources updated.')
 							
-						elif m['channel'] == 'media_removed':
-							# check if we're on USB and currently playing this...
-							if dSettings['source'] == 1 and m['message'] == dSettings['medialabel']:
-								print('[INFO] Currently played media removed.')
-								# fall back to the unknown (there could be no media left)
-								dSettings['mediasource'] = -1
-								# stop playing
-								source_stop()
-								media_check()
-								source_next()
-								source_play()
-							else:
-								# don't call media_check(), it will stop playing the current usb that was not removed
-								# only remove source from arMediaWithMusic
-								mountpoint = '/media/'+m['message']
-								arMediaWithMusic.remove(mountpoint)
-								print('[INFO] Media removed; available sources updated.')
-								
-							# redundant...:
-							#else:
-							#	# we're currently not playing USB, so go ahead and update
-							#	# update media
-							#	media_check()
+						# redundant...:
+						#else:
+						#	# we're currently not playing USB, so go ahead and update
+						#	# update media
+						#	media_check()
 
-				if c == 'player':
-					if dSettings['source'] == 1:
-						mpc_save_pos(dSettings['medialabel'])
+			if c == 'player':
+				if dSettings['source'] == 1:
+					mpc_save_pos(dSettings['medialabel'])
 
-					if dSettings['source'] == 2:
-						mpc_save_pos('locmus')
-					
-			oMpdClient.send_idle() # continue idling
-			
-		time.sleep(0.1)
-		iLoopCounter += 1
+				if dSettings['source'] == 2:
+					mpc_save_pos('locmus')
+				
+		oMpdClient.send_idle() # continue idling
 		
+	time.sleep(0.1)
+	iLoopCounter += 1
+
+	dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
+	
 	mainloop = gobject.MainLoop()
     mainloop.run()
