@@ -567,7 +567,7 @@ def alsa_get_volume():
 
 		#We're keeping L&R in sync, so just return the first channel.
 	return volumes[0]
-	"""	
+	"""
 	
 def alsa_set_volume( volume ):
 	global oAlsaMixer
@@ -1045,7 +1045,7 @@ def bt_init():
 		
 		# Test NEXT
 		#PLAYER_IFACE
-"""		
+
 
 # updates arSourceAvailable[3] (bt) -- TODO
 def bt_check():
