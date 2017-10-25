@@ -103,6 +103,9 @@ iDoSave	= 0									 # Indicator to do a save anytime soon
 dSettings = {'source': -1, 'volume': 20, 'mediasource': -1, 'medialabel': ''}	 # No need to save random, we don't want to save that (?)
 sRootFolder = os.path.dirname(os.path.abspath(__file__))
 
+#DBUS
+bus = None
+
 #ALSA
 sAlsaMixer = "Master"	# Pi without Phat DAC = "Master" or "PCM" ?
 						# Pi with Phat DAC geen mixer?
@@ -1004,16 +1007,17 @@ def fm_stop():
 # BLUETOOTH
 def bt_init():
 	global arSourceAvailable
+	global bus
 
 	# default to not available
 	arSourceAvailable[3]=0
 
 	print('[BT] Initializing')
 	print(' ..  Getting on the DBUS')
-	btbus = dbus.SystemBus()
-"""
-	manager = dbus.Interface(btbus.get_object("org.bluez", "/"), "org.freedesktop.DBus.ObjectManager")
-	objects = manager.GetManagedObjects()
+	#bus = dbus.SystemBus()
+	manager = dbus.Interface(bus.get_object("org.bluez", "/"), "org.freedesktop.DBus.ObjectManager")
+	
+""" 	objects = manager.GetManagedObjects()
 	print(' ..  Bluetooth devices:')
 	for path in objects.keys():
 		print(' ..  .. {0}'.format(path))
@@ -1563,12 +1567,13 @@ def init():
 print('Checking if we\'re already runnning')
 #me = singleton.SingleInstance() # will sys.exit(-1) if other instance is running # uncomment when tendo available
 
+DBusGMainLoop(set_as_default=True)
+bus = dbus.SystemBus()
+
 # Initialize
 init()
 
 # Initialize a main loop
-DBusGMainLoop(set_as_default=True)
-bus = dbus.SystemBus()
 
 mainloop = gobject.MainLoop()
 bus.add_signal_receiver(button_press, dbus_interface = "com.larry_price.test.RemoteControl")
