@@ -64,35 +64,6 @@ import logging
 from pid import PidFile
 from optparse import OptionParser
 
-# Import the ADS1x15 module.
-import Adafruit_ADS1x15
-
-# Or create an ADS1015 ADC (12-bit) instance.
-adc = Adafruit_ADS1x15.ADS1015()
-
-# ADC remote variables
-GAIN = 2/3
-BUTTON01_LO = 180
-BUTTON01_HI = 190
-BUTTON02_LO = 220
-BUTTON02_HI = 260
-BUTTON03_LO = 310
-BUTTON03_HI = 330
-BUTTON04_LO = 380
-BUTTON04_HI = 410
-BUTTON05_LO = 460
-BUTTON05_HI = 490
-BUTTON06_LO = 560
-BUTTON06_HI = 580
-BUTTON07_LO = 640
-BUTTON07_HI = 670
-BUTTON08_LO = 740
-BUTTON08_HI = 770
-BUTTON09_LO = 890
-BUTTON09_HI = 910
-BUTTON10_LO = 1050
-BUTTON10_HI = 1100
-
 # Global variables
 arSource = ['fm','media','locmus','bt','alsa'] # source types; add new sources in the end
 arSourceAvailable = [0,0,0,0,0]              # corresponds to arSource; 1=available
@@ -592,7 +563,7 @@ def alsa_get_volume():
 			print("Channel {0:d} volume: {1:d}%".format(i,volumes[i]))
 
 		#We're keeping L&R in sync, so just return the first channel.
-"""		
+"""	
 	return volumes[0]
 	
 def alsa_set_volume( volume ):
