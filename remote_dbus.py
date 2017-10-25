@@ -7,7 +7,8 @@ import dbus, dbus.service, dbus.exceptions
 import sys
 
 from dbus.mainloop.glib import DBusGMainLoop
-from gi.repository import GLib
+#from gi.repository import GLib
+import gobject
 
 # Initialize a main loop
 DBusGMainLoop(set_as_default=True)
