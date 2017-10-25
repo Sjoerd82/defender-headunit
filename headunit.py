@@ -555,10 +555,11 @@ def alsa_get_volume():
 	global oAlsaMixer
 	print("[ALSA] Retrieving volume from mixer")
 
-	volumes[0] = 0
+	volumes = []
+	
 	if oAlsaMixer is None:
 		print("ALSA mixer unavailable")
-		#volumes[0] = 0
+		volumes[0] = 0
 	else:
 		volumes = oAlsaMixer.getvolume()
 		for i in range(len(volumes)):
