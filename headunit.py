@@ -1020,8 +1020,7 @@ def bt_init():
 	print(' ..  Getting on the DBUS')
 	#bus = dbus.SystemBus()
 	manager = dbus.Interface(bus.get_object("org.bluez", "/"), "org.freedesktop.DBus.ObjectManager")
-	
-""" 	objects = manager.GetManagedObjects()
+ 	objects = manager.GetManagedObjects()
 	print(' ..  Bluetooth devices:')
 	for path in objects.keys():
 		print(' ..  .. {0}'.format(path))
@@ -1044,7 +1043,7 @@ def bt_init():
 				properties = interfaces[interface]
 				for key in properties.keys():
 					print(' ..  .. .. {0:19} = {1}'.format(key, properties[key]))
-				#player = dbus.Interface(btbus.get_object("org.bluez", "/org/bluez/hci0/dev_78_6A_89_FA_1C_95/player0"), "org.freedesktop.DBus.Properties")
+				#player = dbus.Interface(bus.get_object("org.bluez", "/org/bluez/hci0/dev_78_6A_89_FA_1C_95/player0"), "org.freedesktop.DBus.Properties")
 				#player.
 			else:
 				print(' ..  .. Interface: {0}'.format(interface))
@@ -1057,7 +1056,7 @@ def bt_init():
 	if arSourceAvailable[3] == 1:
 	
 		# Get the device
-		adapter = dbus.Interface(btbus.get_object("org.bluez", "/org/bluez/" + sBluetoothDev), "org.freedesktop.DBus.Properties")
+		adapter = dbus.Interface(bus.get_object("org.bluez", "/org/bluez/" + sBluetoothDev), "org.freedesktop.DBus.Properties")
 
 		#dbus.exceptions.DBusException: org.freedesktop.DBus.Error.PropertyReadOnly: Property 'Name' is not writable
 		#vi /var/lib/bluetooth/B8\:27\:EB\:96\:88\:67/config
