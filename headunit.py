@@ -1554,13 +1554,19 @@ print('Checking if we\'re already runnning')
 init()
 
 # Initialize a main loop
+gobject.threads_init()
+dbus.mainloop.glib.threads_init()
+mainloop = dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 
-DBusGMainLoop(set_as_default=True)
-mainloop = gobject.MainLoop()
+bus = dbus.SystemBus()
 
-dbus.set_default_main_loop(mainloop)
-bus = dbus.SystemBus(mainloop=mainloop)
-bus.add_signal_receiver(button_press, dbus_interface = "com.larry_price.test.RemoteControl") #, signal_name = "button_press")
+
+#DBusGMainLoop(set_as_default=True)
+#mainloop = gobject.MainLoop()
+
+#bus.set_default_main_loop(mainloop)
+#bus = dbus.SystemBus(mainloop=mainloop)
+#bus.add_signal_receiver(button_press, dbus_interface = "com.larry_price.test.RemoteControl") #, signal_name = "button_press")
 
 
 #bus.add_signal_receiver(property_changed, dbus_interface = "org.bluez.Adapter1", signal_name = "PropertyChanged")
