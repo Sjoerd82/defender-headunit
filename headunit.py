@@ -556,15 +556,18 @@ def alsa_get_volume():
 	if oAlsaMixer is None:
 		print("ALSA mixer unavailable")
 		volumes = 0
-"""
+	
+	return volumes[0]
+	
+	"""
 	else:
 		volumes = oAlsaMixer.getvolume()
 		for i in range(len(volumes)):
 			print("Channel {0:d} volume: {1:d}%".format(i,volumes[i]))
 
 		#We're keeping L&R in sync, so just return the first channel.
-"""	
 	return volumes[0]
+	"""	
 	
 def alsa_set_volume( volume ):
 	global oAlsaMixer
