@@ -1434,7 +1434,7 @@ def source_play():
 
 	if dSettings['source'] == -1:
 		print('[SOURCE] Cannot start playback, no source available.')
-	else
+	else:
 		print('[SOURCE] Start playback: {0:s}'.format(arSource[dSettings['source']]))
 		if dSettings['source'] == 0 and arSourceAvailable[0] == 1:
 			fm_play()
