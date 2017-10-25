@@ -1577,7 +1577,7 @@ bus = dbus.SystemBus()
 #		path_keyword = "path")
 
 #mainloop = GObject.MainLoop()
-mainloop.run()
+#mainloop.run()
 
 #bus = dbus.SystemBus()
 #player = BluePlayer(bus) #, '/org/bluez/hci0/dev_78_6A_89_FA_1C_95/player0')
