@@ -1554,11 +1554,10 @@ print('Checking if we\'re already runnning')
 init()
 
 # Initialize a main loop
-gobject.threads_init()
-dbus.mainloop.glib.threads_init()
-mainloop = dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
-
+dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
 bus = dbus.SystemBus()
+mainloop = GLib.MainLoop()
+mainloop.run()
 
 
 #DBusGMainLoop(set_as_default=True)
