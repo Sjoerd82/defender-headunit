@@ -1556,7 +1556,7 @@ init()
 # Initialize a main loop
 
 DBusGMainLoop(set_as_default=True)
-loop = GLib.MainLoop()
+loop = gobject.MainLoop()
 
 bus = dbus.SystemBus()
 

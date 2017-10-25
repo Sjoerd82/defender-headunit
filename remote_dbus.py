@@ -12,7 +12,7 @@ import gobject
 
 # Initialize a main loop
 DBusGMainLoop(set_as_default=True)
-loop = GLib.MainLoop()
+loop = gobject.MainLoop()
 
 # Declare a name where our service can be reached
 try:
