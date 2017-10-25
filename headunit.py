@@ -1006,7 +1006,8 @@ def bt_init():
 
 	# default to not available
 	arSourceAvailable[3]=0
-	
+
+"""
 	print('[BT] Initializing')
 	print(' ..  Getting on the DBUS')
 	btbus = dbus.SystemBus()
@@ -1042,7 +1043,7 @@ def bt_init():
 				for key in properties.keys():
 					print(' ..  .. .. {0:19} = {1}'.format(key, properties[key]))
 				
-"""
+
 	# continue init, if interface is found
 	if arSourceAvailable[3] == 1:
 	
