@@ -489,9 +489,11 @@ def button_press ( func ):
 	elif func == 'VOL_UP':
 		print('\033[95m[BUTTON] VOL_UP\033[00m')
 		volume_up()
+		return 0
 	elif func == 'VOL_DOWN':
 		print('\033[95m[BUTTON] VOL_DOWN\033[00m')
 		volume_down()
+		return 0
 	elif func == 'SEEK_NEXT':
 		print('\033[95m[BUTTON] Seek/Next\033[00m')
 		seek_next()
@@ -571,10 +573,10 @@ def alsa_set_volume( volume ):
 	#Only allow volume 5-100%
 	if volume > 100:
 		volume = 100
-		
+	
 	if volume < 5:
 		volume = 5
-
+	
 	if oAlsaMixer is None:
 		print("[ALSA] Mixer unavailable, cannot set volume")
 	else:
@@ -617,8 +619,8 @@ def volume_up():
 	global iDoSave
 
 	print('Volume up; +5%')
-	volume_new = alsa_get_volume() #+5
-	#alsa_set_volume(volume_new)
+	volume_new = alsa_get_volume()+5
+	alsa_set_volume(volume_new)
 	#call(["amixer", "-q", "-c", "0", "set", "Master", "5+", "unmute"])
 	dSettings['volume'] = volume_new
 
@@ -640,8 +642,8 @@ def volume_down():
 	global iDoSave
 
 	print('Volume down; 5%')
-	volume_new = alsa_get_volume() #-5
-	#alsa_set_volume(volume_new)
+	volume_new = alsa_get_volume()-5
+	alsa_set_volume(volume_new)
 	dSettings['volume'] = volume_new
 	
 	# always reset Att. state at manual vol. change
