@@ -555,7 +555,7 @@ def alsa_get_volume():
 
 	if oAlsaMixer is None:
 		print("ALSA mixer unavailable")
-		volumes = 0
+		volumes[0] = 0
 	
 	else:
 		volumes = oAlsaMixer.getvolume()
