@@ -617,7 +617,7 @@ def volume_up():
 	global iDoSave
 
 	print('Volume up; +5%')
-	volume_new = alsa_get_volume()+5
+	volume_new = alsa_get_volume() #+5
 	#alsa_set_volume(volume_new)
 	#call(["amixer", "-q", "-c", "0", "set", "Master", "5+", "unmute"])
 	dSettings['volume'] = volume_new
@@ -640,7 +640,7 @@ def volume_down():
 	global iDoSave
 
 	print('Volume down; 5%')
-	volume_new = alsa_get_volume()-5
+	volume_new = alsa_get_volume() #-5
 	#alsa_set_volume(volume_new)
 	dSettings['volume'] = volume_new
 	
