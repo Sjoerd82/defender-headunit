@@ -497,6 +497,70 @@ def beep():
 	call(["gpio", "write", "6", "0"])
 
 # ********************************************************************************
+# Remote control
+#
+def button_press ( func ):
+	# Feedback beep
+	beep()
+
+	# Handle button
+	if func == 'SHUFFLE':
+		print('\033[95m[BUTTON] Shuffle\033[00m')
+		if dSettings['source'] == 1 or dSettings['source'] == 2:
+			mpc_random()
+	elif func == 'SOURCE':
+		print('\033[95m[BUTTON] Next source\033[00m')
+		source_next()
+		source_play()
+	elif func == 'ATT':
+		print('\033[95m[BUTTON] ATT\033[00m')
+		volume_att_toggle()
+	elif func == 'VOL_UP':
+		print('\033[95m[BUTTON] VOL_UP\033[00m')
+		volume_up()
+	elif func == 'VOL_DOWN':
+		print('\033[95m[BUTTON] VOL_DOWN\033[00m')
+		volume_down()
+	elif func == 'SEEK_NEXT':
+		print('\033[95m[BUTTON] Seek/Next\033[00m')
+		seek_next()
+	elif func == 'SEEK_PREV':
+		print('\033[95m[BUTTON] Seek/Prev.\033[00m')
+		seek_prev()
+	elif func == 'DIR_NEXT':
+		print('\033[95m[BUTTON] Next directory\033[00m')
+		if dSettings['source'] == 1 or dSettings['source'] == 2:
+			mpc_next_folder()		
+	elif func == 'DIR_PREV':
+		print('\033[95m[BUTTON] Prev directory\033[00m')
+		if dSettings['source'] == 1 or dSettings['source'] == 2:
+			mpc_prev_folder()
+	elif func == 'UPDATE_LOCAL':
+		print('\033[95m[BUTTON] Updating local MPD database\033[00m')
+		locmus_update()
+	elif func == 'OFF':
+		print('\033[95m[BUTTON] Shutting down\033[00m')
+		save_settings()
+		call(["halt"])
+		#call(["systemctl", "poweroff", "-i"])
+	else:
+		print('Unknown button function')
+
+	# Wait until button is released
+	""" why did we do this again??
+	value_0 = adc.read_adc(0)
+	press_count = 0
+	while value_0 > 600:
+		value_0 = adc.read_adc(0)
+		time.sleep(0.1)
+		press_count+=1
+		if func == 'TRACK_NEXT' and press_count == 10:
+			break
+		elif func == 'TRACK_PREV'  and press_count == 10:
+			break
+	"""
+	
+# ********************************************************************************
 # ALSA, using python-alsaaudio
 #
 
@@ -521,13 +585,14 @@ def alsa_get_volume():
 	if oAlsaMixer is None:
 		print("ALSA mixer unavailable")
 		volumes = 0
+"""
 	else:
 		volumes = oAlsaMixer.getvolume()
 		for i in range(len(volumes)):
 			print("Channel {0:d} volume: {1:d}%".format(i,volumes[i]))
 
 		#We're keeping L&R in sync, so just return the first channel.
-		
+"""		
 	return volumes[0]
 	
 def alsa_set_volume( volume ):
@@ -541,9 +606,11 @@ def alsa_set_volume( volume ):
 
 	if oAlsaMixer is None:
 		print("[ALSA] Mixer unavailable, cannot set volume")
+"""
 	else:
 		print('[ALSA] Setting volume to {0:d}%'.format(volume))
 		oAlsaMixer.setvolume(volume, alsaaudio.MIXER_CHANNEL_ALL)
+"""
 
 def alsa_play_fx( fx ):
 	print('Playing effect')
@@ -656,69 +723,6 @@ def load_settings():
 	else:
 		print('[PICKLE] Source: {0:s}'.format(arSource[dSettings['source']]))
 
-# ********************************************************************************
-# Remote control
-#
-def button_press ( func ):
-	# Feedback beep
-	beep()
-
-	# Handle button
-	if func == 'SHUFFLE':
-		print('\033[95m[BUTTON] Shuffle\033[00m')
-		if dSettings['source'] == 1 or dSettings['source'] == 2:
-			mpc_random()
-	elif func == 'SOURCE':
-		print('\033[95m[BUTTON] Next source\033[00m')
-		source_next()
-		source_play()
-	elif func == 'ATT':
-		print('\033[95m[BUTTON] ATT\033[00m')
-		volume_att_toggle()
-	elif func == 'VOL_UP':
-		print('\033[95m[BUTTON] VOL_UP\033[00m')
-		#volume_up()
-	elif func == 'VOL_DOWN':
-		print('\033[95m[BUTTON] VOL_DOWN\033[00m')
-		#volume_down()
-	elif func == 'SEEK_NEXT':
-		print('\033[95m[BUTTON] Seek/Next\033[00m')
-		seek_next()
-	elif func == 'SEEK_PREV':
-		print('\033[95m[BUTTON] Seek/Prev.\033[00m')
-		seek_prev()
-	elif func == 'DIR_NEXT':
-		print('\033[95m[BUTTON] Next directory\033[00m')
-		if dSettings['source'] == 1 or dSettings['source'] == 2:
-			mpc_next_folder()		
-	elif func == 'DIR_PREV':
-		print('\033[95m[BUTTON] Prev directory\033[00m')
-		if dSettings['source'] == 1 or dSettings['source'] == 2:
-			mpc_prev_folder()
-	elif func == 'UPDATE_LOCAL':
-		print('\033[95m[BUTTON] Updating local MPD database\033[00m')
-		locmus_update()
-	elif func == 'OFF':
-		print('\033[95m[BUTTON] Shutting down\033[00m')
-		save_settings()
-		call(["halt"])
-		#call(["systemctl", "poweroff", "-i"])
-	else:
-		print('Unknown button function')
-
-	# Wait until button is released
-	""" why did we do this again??
-	value_0 = adc.read_adc(0)
-	press_count = 0
-	while value_0 > 600:
-		value_0 = adc.read_adc(0)
-		time.sleep(0.1)
-		press_count+=1
-		if func == 'TRACK_NEXT' and press_count == 10:
-			break
-		elif func == 'TRACK_PREV'  and press_count == 10:
-			break
-	"""
 
 
 def seek_next():
