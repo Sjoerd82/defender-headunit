@@ -54,7 +54,6 @@ from mpd import MPDClient
 # DBus, currently only used for Bluez5 bluetooth
 import dbus
 from dbus.mainloop.glib import DBusGMainLoop
-from gi.repository import GLib
 
 # from blueagent5.py
 import dbus.service
