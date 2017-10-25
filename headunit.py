@@ -1516,7 +1516,7 @@ def init():
 	mpc_init()
 
 	# initialize BT
-	bt_init()
+	#bt_init()
 	
     # load previous state
 	load_settings()
