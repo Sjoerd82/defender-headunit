@@ -1042,7 +1042,7 @@ def bt_init():
 				for key in properties.keys():
 					print(' ..  .. .. {0:19} = {1}'.format(key, properties[key]))
 				
-
+"""
 	# continue init, if interface is found
 	if arSourceAvailable[3] == 1:
 	
@@ -1062,7 +1062,7 @@ def bt_init():
 		
 		# Test NEXT
 		#PLAYER_IFACE
-		
+"""		
 
 # updates arSourceAvailable[3] (bt) -- TODO
 def bt_check():
