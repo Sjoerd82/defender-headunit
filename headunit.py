@@ -1564,11 +1564,11 @@ bus = dbus.SystemBus(mainloop=mainloop)
 
 
 #bus.add_signal_receiver(property_changed, dbus_interface = "org.bluez.Adapter1", signal_name = "PropertyChanged")
-#bus.add_signal_receiver(properties_changed,
-#		dbus_interface = "org.freedesktop.DBus.Properties",
-#		signal_name = "PropertiesChanged",
-#		arg0 = "org.bluez.Device1",
-#		path_keyword = "path")
+bus.add_signal_receiver(properties_changed,
+		dbus_interface = "org.freedesktop.DBus.Properties",
+		signal_name = "PropertiesChanged",
+		arg0 = "org.bluez.Device1",
+		path_keyword = "path")
 
 #mainloop = GObject.MainLoop()
 mainloop.run()
