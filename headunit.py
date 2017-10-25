@@ -1556,11 +1556,12 @@ init()
 # Initialize a main loop
 
 DBusGMainLoop(set_as_default=True)
-loop = gobject.MainLoop()
+
 
 bus = dbus.SystemBus()
-
 bus.add_signal_receiver(button_press, dbus_interface = "com.larry_price.test.RemoteControl") #, signal_name = "button_press")
+
+loop = gobject.MainLoop()
 
 #bus.add_signal_receiver(property_changed, dbus_interface = "org.bluez.Adapter1", signal_name = "PropertyChanged")
 #bus.add_signal_receiver(properties_changed,
