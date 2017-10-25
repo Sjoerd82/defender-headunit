@@ -677,10 +677,10 @@ def button_press ( func ):
 		volume_att_toggle()
 	elif func == 'VOL_UP':
 		print('\033[95m[BUTTON] VOL_UP\033[00m')
-		volume_up()
+		#volume_up()
 	elif func == 'VOL_DOWN':
 		print('\033[95m[BUTTON] VOL_DOWN\033[00m')
-		volume_down()
+		#volume_down()
 	elif func == 'SEEK_NEXT':
 		print('\033[95m[BUTTON] Seek/Next\033[00m')
 		seek_next()
@@ -1574,7 +1574,7 @@ bus = dbus.SystemBus()
 init()
 
 # Initialize a main loop
-
 mainloop = gobject.MainLoop()
 bus.add_signal_receiver(button_press, dbus_interface = "com.larry_price.test.RemoteControl")
 mainloop.run()
+
