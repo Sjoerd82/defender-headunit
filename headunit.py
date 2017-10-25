@@ -1551,7 +1551,7 @@ print('Checking if we\'re already runnning')
 #me = singleton.SingleInstance() # will sys.exit(-1) if other instance is running # uncomment when tendo available
 
 # Initialize
-#init()
+init()
 
 # Initialize a main loop
 DBusGMainLoop(set_as_default=True)
