@@ -19,7 +19,7 @@
 # - FM radio
 # - Bluetooth
 # - Airplay (future plan)
-# - Line-In (passive)
+# - Line-In (detection via ADC -- TODO)
 #
 # Remote control:
 # - Sony RM-X2S, RM-X4S via ADS1x15 ADC module
@@ -694,6 +694,8 @@ def button_press ( func ):
 		save_settings()
 		call(["halt"])
 		#call(["systemctl", "poweroff", "-i"])
+	else:
+		print('Unknown button function')
 
 	# Wait until button is released
 	""" why did we do this again??
@@ -1042,6 +1044,9 @@ def bt_init():
 		# Get the device
 		adapter = dbus.Interface(bus.get_object("org.bluez", "/org/bluez/" + sBluetoothDev), "org.freedesktop.DBus.Properties")
 
+		#dbus.exceptions.DBusException: org.freedesktop.DBus.Error.PropertyReadOnly: Property 'Name' is not writable
+		#vi /var/lib/bluetooth/B8\:27\:EB\:96\:88\:67/config
+		#name LandRoverDefender
 		adapter.Set("org.bluez.Adapter1", "Name", "Land Rover Defender")
 		
 		# Make sure the device is powered on
@@ -1546,8 +1551,12 @@ print('Checking if we\'re already runnning')
 # Initialize
 init()
 
-#dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
-#bus = dbus.SystemBus()
+# Initialize a main loop
+
+dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
+bus = dbus.SystemBus()
+
+bus.add_signal_receiver(button_press, dbus_interface = "com.larry_price.test.RemoteControl") #, signal_name = "button_press")
 
 #bus.add_signal_receiver(property_changed, dbus_interface = "org.bluez.Adapter1", signal_name = "PropertyChanged")
 #bus.add_signal_receiver(properties_changed,
@@ -1564,7 +1573,7 @@ init()
 #player.start()
 
 # Main loop
-while True:
+while False:
 
 	iLoopCounter = 0
 	# Read channel 0
