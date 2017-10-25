@@ -1559,16 +1559,15 @@ DBusGMainLoop(set_as_default=True)
 mainloop = gobject.MainLoop()
 
 bus = dbus.SystemBus(mainloop=mainloop)
-#bus.add_signal_receiver(button_press, dbus_interface = "com.larry_price.test.RemoteControl") #, signal_name = "button_press")
-
+bus.add_signal_receiver(button_press, dbus_interface = "com.larry_price.test.RemoteControl") #, signal_name = "button_press")
 
 
 #bus.add_signal_receiver(property_changed, dbus_interface = "org.bluez.Adapter1", signal_name = "PropertyChanged")
-bus.add_signal_receiver(properties_changed,
-		dbus_interface = "org.freedesktop.DBus.Properties",
-		signal_name = "PropertiesChanged",
-		arg0 = "org.bluez.Device1",
-		path_keyword = "path")
+#bus.add_signal_receiver(properties_changed,
+#		dbus_interface = "org.freedesktop.DBus.Properties",
+#		signal_name = "PropertiesChanged",
+#		arg0 = "org.bluez.Device1",
+#		path_keyword = "path")
 
 #mainloop = GObject.MainLoop()
 mainloop.run()
