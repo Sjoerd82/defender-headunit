@@ -1047,7 +1047,7 @@ def bt_init():
 		#dbus.exceptions.DBusException: org.freedesktop.DBus.Error.PropertyReadOnly: Property 'Name' is not writable
 		#vi /var/lib/bluetooth/B8\:27\:EB\:96\:88\:67/config
 		#name LandRoverDefender
-		adapter.Set("org.bluez.Adapter1", "Name", "Land Rover Defender")
+		#adapter.Set("org.bluez.Adapter1", "Name", "Land Rover Defender")
 		
 		# Make sure the device is powered on
 		print(' ..  Turning on Bluetooth')
