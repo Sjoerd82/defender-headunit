@@ -557,17 +557,15 @@ def alsa_get_volume():
 		print("ALSA mixer unavailable")
 		volumes = 0
 	
-	return volumes[0]
-	
-	"""
 	else:
 		volumes = oAlsaMixer.getvolume()
 		for i in range(len(volumes)):
 			print("Channel {0:d} volume: {1:d}%".format(i,volumes[i]))
 
 		#We're keeping L&R in sync, so just return the first channel.
+	
 	return volumes[0]
-	"""
+
 	
 def alsa_set_volume( volume ):
 	global oAlsaMixer
@@ -580,11 +578,9 @@ def alsa_set_volume( volume ):
 
 	if oAlsaMixer is None:
 		print("[ALSA] Mixer unavailable, cannot set volume")
-"""
 	else:
 		print('[ALSA] Setting volume to {0:d}%'.format(volume))
 		oAlsaMixer.setvolume(volume, alsaaudio.MIXER_CHANNEL_ALL)
-"""
 
 def alsa_play_fx( fx ):
 	print('Playing effect')
@@ -622,8 +618,8 @@ def volume_up():
 	global iDoSave
 
 	print('Volume up; +5%')
-	volume_new = alsa_get_volume()+5
-	alsa_set_volume(volume_new)
+	#volume_new = alsa_get_volume()+5
+	#alsa_set_volume(volume_new)
 	#call(["amixer", "-q", "-c", "0", "set", "Master", "5+", "unmute"])
 	dSettings['volume'] = volume_new
 
@@ -645,8 +641,8 @@ def volume_down():
 	global iDoSave
 
 	print('Volume down; 5%')
-	volume_new = alsa_get_volume()-5
-	alsa_set_volume(volume_new)
+	#volume_new = alsa_get_volume()-5
+	#alsa_set_volume(volume_new)
 	dSettings['volume'] = volume_new
 	
 	# always reset Att. state at manual vol. change
