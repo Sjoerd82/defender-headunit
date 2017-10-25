@@ -528,6 +528,7 @@ def alsa_get_volume():
 	return volumes[0]
 	
 def alsa_set_volume( volume ):
+	global oAlsaMixer
 	#Only allow volume 5-100%
 	if volume > 100:
 		volume = 100
@@ -1007,10 +1008,10 @@ def bt_init():
 	# default to not available
 	arSourceAvailable[3]=0
 
-"""
 	print('[BT] Initializing')
 	print(' ..  Getting on the DBUS')
 	btbus = dbus.SystemBus()
+"""
 	manager = dbus.Interface(btbus.get_object("org.bluez", "/"), "org.freedesktop.DBus.ObjectManager")
 	objects = manager.GetManagedObjects()
 	print(' ..  Bluetooth devices:')
