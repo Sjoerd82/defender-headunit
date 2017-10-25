@@ -53,11 +53,14 @@ from mpd import MPDClient
 
 # DBus, currently only used for Bluez5 bluetooth
 import dbus
+from dbus.mainloop.glib import DBusGMainLoop
+from gi.repository import GLib
 
 # from blueagent5.py
 import dbus.service
 import dbus.mainloop.glib
 import gobject
+
 import logging
 from pid import PidFile
 from optparse import OptionParser
@@ -1553,7 +1556,9 @@ init()
 
 # Initialize a main loop
 
-dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
+DBusGMainLoop(set_as_default=True)
+loop = GLib.MainLoop()
+
 bus = dbus.SystemBus()
 
 bus.add_signal_receiver(button_press, dbus_interface = "com.larry_price.test.RemoteControl") #, signal_name = "button_press")
