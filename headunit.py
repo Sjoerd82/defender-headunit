@@ -556,6 +556,7 @@ def alsa_get_volume():
 	print("[ALSA] Retrieving volume from mixer")
 
 	volumes = []
+	volumes.append(0)
 	
 	if oAlsaMixer is None:
 		print("ALSA mixer unavailable")
