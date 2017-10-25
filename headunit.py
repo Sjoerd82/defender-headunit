@@ -662,7 +662,8 @@ def button_press ( func ):
 	# Handle button
 	if func == 'SHUFFLE':
 		print('\033[95m[BUTTON] Shuffle\033[00m')
-		mpc_random()
+		if dSettings['source'] == 1 or dSettings['source'] == 2:
+			mpc_random()
 	elif func == 'SOURCE':
 		print('\033[95m[BUTTON] Next source\033[00m')
 		source_next()
@@ -684,10 +685,12 @@ def button_press ( func ):
 		seek_prev()
 	elif func == 'DIR_NEXT':
 		print('\033[95m[BUTTON] Next directory\033[00m')
-		mpc_next_folder()		
+		if dSettings['source'] == 1 or dSettings['source'] == 2:
+			mpc_next_folder()		
 	elif func == 'DIR_PREV':
 		print('\033[95m[BUTTON] Prev directory\033[00m')
-		mpc_prev_folder()
+		if dSettings['source'] == 1 or dSettings['source'] == 2:
+			mpc_prev_folder()
 	elif func == 'UPDATE_LOCAL':
 		print('\033[95m[BUTTON] Updating local MPD database\033[00m')
 		locmus_update()
@@ -1006,8 +1009,8 @@ def bt_init():
 	
 	print('[BT] Initializing')
 	print(' ..  Getting on the DBUS')
-	bus = dbus.SystemBus()
-	manager = dbus.Interface(bus.get_object("org.bluez", "/"), "org.freedesktop.DBus.ObjectManager")
+	btbus = dbus.SystemBus()
+	manager = dbus.Interface(btbus.get_object("org.bluez", "/"), "org.freedesktop.DBus.ObjectManager")
 	objects = manager.GetManagedObjects()
 	print(' ..  Bluetooth devices:')
 	for path in objects.keys():
@@ -1031,7 +1034,7 @@ def bt_init():
 				properties = interfaces[interface]
 				for key in properties.keys():
 					print(' ..  .. .. {0:19} = {1}'.format(key, properties[key]))
-				#player = dbus.Interface(bus.get_object("org.bluez", "/org/bluez/hci0/dev_78_6A_89_FA_1C_95/player0"), "org.freedesktop.DBus.Properties")
+				#player = dbus.Interface(btbus.get_object("org.bluez", "/org/bluez/hci0/dev_78_6A_89_FA_1C_95/player0"), "org.freedesktop.DBus.Properties")
 				#player.
 			else:
 				print(' ..  .. Interface: {0}'.format(interface))
@@ -1044,7 +1047,7 @@ def bt_init():
 	if arSourceAvailable[3] == 1:
 	
 		# Get the device
-		adapter = dbus.Interface(bus.get_object("org.bluez", "/org/bluez/" + sBluetoothDev), "org.freedesktop.DBus.Properties")
+		adapter = dbus.Interface(btbus.get_object("org.bluez", "/org/bluez/" + sBluetoothDev), "org.freedesktop.DBus.Properties")
 
 		#dbus.exceptions.DBusException: org.freedesktop.DBus.Error.PropertyReadOnly: Property 'Name' is not writable
 		#vi /var/lib/bluetooth/B8\:27\:EB\:96\:88\:67/config
@@ -1313,9 +1316,8 @@ def locmus_stop():
 	# stop playback
 	mpc_stop()
 	#mpc $params_mpc -q stop
-	#mpc $params_mpc -q clear
-
-		
+	#mpc $params_mpc -q clear	
+	
 # updates arSourceAvailable
 def source_check():
 	global dSettings
@@ -1353,8 +1355,14 @@ def source_check():
 def source_next():
 	global dSettings
 	global arMediaWithMusic
-	
-	print('Switching to next source')
+
+	if sum(arSourceAvailable) == 0:
+		# we can stop now, no sources are available
+		print('[SOURCE] No available sources.')
+		dSettings['source'] = -1
+		return
+
+	print('[SOURCE] Switching to next source...')
 	
 	# TODO: sources may have become (un)available -> check this!
 	
@@ -1363,7 +1371,7 @@ def source_next():
 		i = 0
 		for source in arSource:		
 			if arSourceAvailable[i] == 1:
-				print('Switching to {0:s}'.format(source))
+				print('[SOURCE] Switching to {0:s}'.format(source))
 				dSettings['source'] = i
 				save_settings()
 				break
@@ -1424,20 +1432,23 @@ def source_next():
 def source_play():
 	global dSettings
 
-	print('Start playback: {0:s}'.format(arSource[dSettings['source']]))
-	if dSettings['source'] == 0 and arSourceAvailable[0] == 1:
-		fm_play()
-	elif dSettings['source'] == 1 and arSourceAvailable[1] == 1:
-		media_play()
-	elif dSettings['source'] == 2 and arSourceAvailable[2] == 1:
-		locmus_play()
-	elif dSettings['source'] == 3 and arSourceAvailable[3] == 1:
-		locmus_stop()
-		bt_play()
-	elif dSettings['source'] == 4 and arSourceAvailable[4] == 1:
-		linein_play()
-	else:
-		print('ERROR: Invalid source or no sources available')
+	if dSettings['source'] == -1:
+		print('[SOURCE] Cannot start playback, no source available.')
+	else
+		print('[SOURCE] Start playback: {0:s}'.format(arSource[dSettings['source']]))
+		if dSettings['source'] == 0 and arSourceAvailable[0] == 1:
+			fm_play()
+		elif dSettings['source'] == 1 and arSourceAvailable[1] == 1:
+			media_play()
+		elif dSettings['source'] == 2 and arSourceAvailable[2] == 1:
+			locmus_play()
+		elif dSettings['source'] == 3 and arSourceAvailable[3] == 1:
+			locmus_stop()
+			bt_play()
+		elif dSettings['source'] == 4 and arSourceAvailable[4] == 1:
+			linein_play()
+		else:
+			print('ERROR: Invalid source or no sources available')
 
 def source_stop():
 	global dSettings
@@ -1516,7 +1527,7 @@ def init():
 	mpc_init()
 
 	# initialize BT
-	#bt_init()
+	bt_init()
 	
     # load previous state
 	load_settings()
