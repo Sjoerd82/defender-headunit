@@ -1554,11 +1554,12 @@ print('Checking if we\'re already runnning')
 init()
 
 # Initialize a main loop
-dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
+DBusGMainLoop(set_as_default=True)
 bus = dbus.SystemBus()
-mainloop = GLib.MainLoop()
-mainloop.run()
 
+mainloop = gobject.MainLoop()
+bus.add_signal_receiver(button_press, dbus_interface = "com.larry_price.test.RemoteControl")
+mainloop.run()
 
 #DBusGMainLoop(set_as_default=True)
 #mainloop = gobject.MainLoop()
