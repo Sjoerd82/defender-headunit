@@ -1558,8 +1558,8 @@ init()
 DBusGMainLoop(set_as_default=True)
 mainloop = gobject.MainLoop()
 
+dbus.set_default_main_loop(mainloop)
 bus = dbus.SystemBus(mainloop=mainloop)
-bus.set_default_main_loop(mainloop)
 bus.add_signal_receiver(button_press, dbus_interface = "com.larry_price.test.RemoteControl") #, signal_name = "button_press")
 
 
