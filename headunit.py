@@ -555,6 +555,8 @@ def alsa_get_volume():
 	global oAlsaMixer
 	print("[ALSA] Retrieving volume from mixer")
 
+	# TODO --- UNTESTED WITH ACTUAL ALSA MIXER !!!!
+	
 	volumes = []
 	volumes.append(0)
 	
