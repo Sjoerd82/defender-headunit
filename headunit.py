@@ -1550,7 +1550,7 @@ def init():
 	
 #-------------------------------------------------------------------------------
 # Main loop
-print('Headunit v0.1 2017-10-28')
+print('Headunit v0.1 2017-10-29')
 print('Checking if we\'re already runnning')
 #me = singleton.SingleInstance() # will sys.exit(-1) if other instance is running # uncomment when tendo available
 
