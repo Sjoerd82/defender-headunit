@@ -1,3 +1,8 @@
+#!/usr/bin/python
+
+# Remote control DBus service
+# Based on https://github.com/larryprice/python-dbus-blog-series/blob/part3/service
+
 import dbus.service
 import random
 import time
@@ -7,49 +12,6 @@ import threading
 # Import the ADS1x15 module.
 import Adafruit_ADS1x15
 
-class SlowThread(object):
-    def __init__(self, bits, callback):
-        self._callback = callback
-        self.result = ''
-
-        self.thread = threading.Thread(target=self.work, args=(bits,))
-        self.thread.start()
-        self.thread_id = str(self.thread.ident)
-
-    def work(self, bits):
-        num = ''
-
-        while True:
-            num += str(random.randint(0, 1))
-            bits -= 1
-            time.sleep(1)
-
-            if bits <= 0:
-                break
-
-        self._callback(self.thread_id, str(int(num, 2)))
-
-class RandomData(dbus.service.Object):
-    def __init__(self, bus_name):
-        super(RandomData,self).__init__(bus_name, "/com/larry_price/test/RandomData")
-
-        random.seed()
-
-    @dbus.service.method("com.larry_price.test.RandomData",
-                         in_signature='i', out_signature='s')
-    def quick(self, bits=8):
-        return str(random.getrandbits(bits))
-
-    @dbus.service.method("com.larry_price.test.RandomData",
-                         in_signature='i', out_signature='s')
-    def slow(self, bits=8):
-        thread = SlowThread(bits, self.slow_result)
-        return thread.thread_id
-
-    @dbus.service.signal("com.larry_price.test.RandomData", signature='ss')
-    def slow_result(self, thread_id, result):
-        pass
-		
 class RemoteControl(dbus.service.Object):
 	# ADC remote variables
 	GAIN = 2/3
@@ -75,7 +37,7 @@ class RemoteControl(dbus.service.Object):
 	BUTTON10_HI = 1100
 
 	def __init__(self, bus_name):
-		super(RemoteControl,self).__init__(bus_name, "/com/larry_price/test/RemoteControl")
+		super(RemoteControl,self).__init__(bus_name, "/com/arctura/remote")
 		adc = Adafruit_ADS1x15.ADS1015()
 
 		while True:
@@ -121,6 +83,36 @@ class RemoteControl(dbus.service.Object):
 				
 			time.sleep(0.1)
 
-	@dbus.service.signal("com.larry_price.test.RemoteControl", signature='s')
+	@dbus.service.signal("com.arctura.remote", signature='s')
 	def button_press(self, button):
 		print("Button was pressed")
+		pass
+		
+if __name__ == '__main__':
+	# using gobject
+	#from dbus.mainloop.glib import DBusGMainLoop
+	import dbus.mainloop.glib
+	import gobject
+	
+	# Initialize a main loop
+	DBusGMainLoop(set_as_default=True)
+	loop = gobject.MainLoop()
+	
+	object = RemoteControl()
+	#loop.run()
+
+	# Run the loop
+	try:
+		# Create our initial objects
+		#from dbustest.random_data import RandomData
+		#RandomData(bus_name)
+		#from random_data import RemoteControl
+		#RemoteControl(bus_name)
+		
+		loop.run()
+	except KeyboardInterrupt:
+		print("keyboard interrupt received")
+	except Exception as e:
+		print("Unexpected exception occurred: '{}'".format(str(e)))
+	finally:
+		#loop.quit()

@@ -1217,8 +1217,6 @@ def locmus_check():
 	global sLocalMusic
 	print('[LOCMUS] CHECK availability...')
 
-	# THIS WILL FAIL IF DIRECTORY IS NOT PRESENT
-	# TODO: CHECK FOR PRESENCE..
 	try:
 		if not os.listdir(sLocalMusic):
 			print(" ... Local music directory is empty.")
@@ -1548,6 +1546,7 @@ def init():
 	
 #-------------------------------------------------------------------------------
 # Main loop
+print('Headunit v0.1 2017-10-28')
 print('Checking if we\'re already runnning')
 #me = singleton.SingleInstance() # will sys.exit(-1) if other instance is running # uncomment when tendo available
 
