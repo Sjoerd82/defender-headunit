@@ -1,4 +1,6 @@
 #!/bin/sh
 
-git --git-dir=git fetch --all
-git --git-dir=git reset --hard origin/master
+GIT_DIR="/root/defender-headunit/git"
+
+git --git-dir=$GIT_DIR fetch --all
+git --git-dir=$GIT_DIR --hard origin/master
