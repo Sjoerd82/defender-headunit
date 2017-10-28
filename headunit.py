@@ -92,7 +92,8 @@ oAlsaMixer = None
 #TODO
 
 #LOCAL MUSIC
-sLocalMusic="/media/local_music"		# symlink to /home/hu/music
+#sLocalMusic="/media/local_music"		# symlink to /home/hu/music
+sLocalMusic="/media/PIHU_DATA"
 sLocalMusicMPD="local_music"			# directory from a MPD pov.
 
 #MPD-client (MPC)
@@ -1213,18 +1214,22 @@ def media_stop():
 # updates arSourceAvailable[2] (locmus)
 def locmus_check():
 	global arSourceAvailable
+	global sLocalMusic
 	print('[LOCMUS] CHECK availability...')
 
 	# THIS WILL FAIL IF DIRECTORY IS NOT PRESENT
 	# TODO: CHECK FOR PRESENCE..
-	
-	if not os.listdir(sLocalMusic):
-		print(" ... Local music directory is empty.")
+	try:
+		if not os.listdir(sLocalMusic):
+			print(" ... Local music directory is empty.")
+			arSourceAvailable[2]=0
+		else:
+			print(" ... Local music directory present and has files.")
+			arSourceAvailable[2]=1
+	except:
+		print(" ... Error checking for local music directory {0} ".format(sLocalMusic))
 		arSourceAvailable[2]=0
-	else:
-		print(" ... Local music directory present and has files.")
-		arSourceAvailable[2]=1
-
+		
 
 def locmus_play():
 	global sLocalMusicMPD
