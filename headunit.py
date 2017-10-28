@@ -468,6 +468,12 @@ def beep():
 	time.sleep(0.05)
 	call(["gpio", "write", "6", "0"])
 
+def shutdown():
+	save_settings()
+	source_stop()
+	call(["halt"])
+	#call(["systemctl", "poweroff", "-i"])
+
 # ********************************************************************************
 # Remote control
 #
@@ -514,9 +520,7 @@ def button_press ( func ):
 		locmus_update()
 	elif func == 'OFF':
 		print('\033[95m[BUTTON] Shutting down\033[00m')
-		save_settings()
-		call(["halt"])
-		#call(["systemctl", "poweroff", "-i"])
+		shutdown()
 	else:
 		print('Unknown button function')
 
