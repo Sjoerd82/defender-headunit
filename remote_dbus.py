@@ -25,7 +25,7 @@ except dbus.exceptions.NameExistsException:
 # Run the loop
 try:
     # Create our initial objects
-    from random_data import RemoteControl
+    from remote import RemoteControl
     RemoteControl(bus_name)
     loop.run()
 except KeyboardInterrupt:
