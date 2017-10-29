@@ -1562,6 +1562,6 @@ init()
 
 # Initialize a main loop
 mainloop = gobject.MainLoop()
-bus.add_signal_receiver(button_press, dbus_interface = "com.larry_price.test.RemoteControl")
+bus.add_signal_receiver(button_press, dbus_interface = "com.arctura.remote")
 mainloop.run()
 
