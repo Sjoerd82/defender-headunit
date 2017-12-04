@@ -55,6 +55,7 @@ class RemoteControl(dbus.service.Object):
 				self.button_press('VOL_UP')
 				
 			elif self.BUTTON04_LO <= value_0 <= self.BUTTON04_HI:
+				pavol.vol_down()
 				self.button_press('VOL_DOWN')
 				
 			elif self.BUTTON05_LO <= value_0 <= self.BUTTON05_HI:
