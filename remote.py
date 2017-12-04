@@ -18,8 +18,9 @@ from pa_volume import pa_volume_handler
 class RemoteControl(dbus.service.Object):
 	# ADC remote variables
 	GAIN = 2/3
+	BUTTON_LO   = 100
 	BUTTON01_LO = 180
-	BUTTON01_HI = 190
+	BUTTON01_HI = 190	# starts at around 185, but then spikes to around 278
 	BUTTON02_LO = 220
 	BUTTON02_HI = 260
 	BUTTON03_LO = 310
@@ -47,22 +48,11 @@ class RemoteControl(dbus.service.Object):
 		while True:
 			value_0 = adc.read_adc(0, gain=self.GAIN)
 			value_1 = adc.read_adc(1, gain=self.GAIN)
-			if value_0 > 5:
-				print(value_0)
 			if self.BUTTON01_LO <= value_0 <= self.BUTTON01_HI:
 				#Bottom button
 				self.button_press('UPDATE_LOCAL')
-				print(value_0)
 				#Wait until button is released (no need to continue updating...)
-				value_0 = adc.read_adc(0)
-				print(value_0)
-				#while self.BUTTON01_LO <= value_0 <= self.BUTTON01_HI:
-				while value_0 > self.BUTTON01_LO:
-					value_0 = adc.read_adc(0)
-					print("down")
-					print(value_0)
-					time.sleep(0.1)
-				print('----RELEASED----')
+				button_down_wait()			
 
 			elif self.BUTTON02_LO <= value_0 <= self.BUTTON02_HI:
 				#Side button, met streepje
@@ -90,12 +80,18 @@ class RemoteControl(dbus.service.Object):
 
 			elif self.BUTTON07_LO <= value_0 <= self.BUTTON07_HI:
 				self.button_press('SHUFFLE')
+				#Wait until button is released
+				button_down_wait()
 
 			elif self.BUTTON08_LO <= value_0 <= self.BUTTON08_HI:
 				self.button_press('ATT')
+				#Wait until button is released
+				button_down_wait()
 
 			elif self.BUTTON09_LO <= value_0 <= self.BUTTON09_HI:
 				self.button_press('SOURCE')
+				#Wait until button is released
+				button_down_wait()
 
 			elif self.BUTTON10_LO <= value_0 <= self.BUTTON10_HI:
 				self.button_press('OFF')
@@ -119,3 +115,11 @@ class RemoteControl(dbus.service.Object):
 	@dbus.service.signal("com.arctura.remote", signature='s')
 	def button_press(self, button):
 		print("Button was pressed")
+		
+	def button_down_wait(self):
+		print("Waiting for button to be released...")
+		value_0 = adc.read_adc(0)
+		while value_0 > self.BUTTON_LO:
+			value_0 = adc.read_adc(0)
+			time.sleep(0.1)
+			
