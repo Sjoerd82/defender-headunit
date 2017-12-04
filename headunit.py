@@ -596,7 +596,7 @@ def alsa_play_fx( fx ):
 #
 def pa_init():
 	print('[PULSE] Loading sound effects')
-	call(["pactl","upload-sample","/root/defender-headunit/sfx/b166.wav", "b166"])
+	call(["pactl","upload-sample","/root/defender-headunit/sfx/b1_66.wav", "b166"])
 
 # ********************************************************************************
 # Volume wrappers
