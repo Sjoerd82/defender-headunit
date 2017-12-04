@@ -8,7 +8,7 @@ import threading
 import Adafruit_ADS1x15
 
 # Import pulseaudio volume handler
-#import pa_volume
+import pa_volume
 
 class RemoteControl(dbus.service.Object):
 	# ADC remote variables
