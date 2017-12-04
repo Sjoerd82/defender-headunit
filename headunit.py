@@ -47,6 +47,9 @@ import pickle
 import alsaaudio
 from select import select
 
+# Import pulseaudio volume handler
+from pa_volume import pa_volume_handler
+
 # python-mpd2 0.5.1 (not sure if this is the forked mpd2)
 # used mainly for getting the current song for lookup on reload
 from mpd import MPDClient
@@ -482,6 +485,8 @@ def button_press ( func ):
 	# Feedback beep
 	beep()
 
+	pavol = pa_volume_handler('alsa_output.platform-soc_sound.analog-stereo')
+	
 	# Handle button
 	if func == 'SHUFFLE':
 		print('\033[95m[BUTTON] Shuffle\033[00m')
@@ -496,11 +501,13 @@ def button_press ( func ):
 		volume_att_toggle()
 	elif func == 'VOL_UP':
 		print('\033[95m[BUTTON] VOL_UP\033[00m')
-		volume_up()
+		pavol.vol_up()
+		#volume_up()
 		return 0
 	elif func == 'VOL_DOWN':
 		print('\033[95m[BUTTON] VOL_DOWN\033[00m')
-		volume_down()
+		pavol.vol_down()
+		#volume_down()
 		return 0
 	elif func == 'SEEK_NEXT':
 		print('\033[95m[BUTTON] Seek/Next\033[00m')
@@ -524,21 +531,6 @@ def button_press ( func ):
 		shutdown()
 	else:
 		print('Unknown button function')
-
-"""
-	# Wait until button is released
-	# xX why did we do this again??
-	value_0 = adc.read_adc(0)
-	press_count = 0
-	while value_0 > 600:
-		value_0 = adc.read_adc(0)
-		time.sleep(0.1)
-		press_count+=1
-		if func == 'TRACK_NEXT' and press_count == 10:
-			break
-		elif func == 'TRACK_PREV'  and press_count == 10:
-			break
-"""
 	
 # ********************************************************************************
 # ALSA, using python-alsaaudio

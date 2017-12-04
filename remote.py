@@ -13,7 +13,7 @@ import threading
 import Adafruit_ADS1x15
 
 # Import pulseaudio volume handler
-from pa_volume import pa_volume_handler
+#from pa_volume import pa_volume_handler
 
 class RemoteControl(dbus.service.Object):
 	# ADC remote variables
@@ -43,7 +43,7 @@ class RemoteControl(dbus.service.Object):
 	def __init__(self, bus_name):
 		super(RemoteControl,self).__init__(bus_name, "/com/arctura/remote")
 		adc = Adafruit_ADS1x15.ADS1015()
-		pavol = pa_volume_handler('alsa_output.platform-soc_sound.analog-stereo')
+		#pavol = pa_volume_handler('alsa_output.platform-soc_sound.analog-stereo')
 
 		while True:
 			value_0 = adc.read_adc(0, gain=self.GAIN)
@@ -59,11 +59,11 @@ class RemoteControl(dbus.service.Object):
 				print('BUTTON02')
 
 			elif self.BUTTON03_LO <= value_0 <= self.BUTTON03_HI:
-				pavol.vol_up()
+				#pavol.vol_up()
 				self.button_press('VOL_UP')
 				
 			elif self.BUTTON04_LO <= value_0 <= self.BUTTON04_HI:
-				pavol.vol_down()
+				#pavol.vol_down()
 				self.button_press('VOL_DOWN')
 				
 			elif self.BUTTON05_LO <= value_0 <= self.BUTTON05_HI:
@@ -100,21 +100,7 @@ class RemoteControl(dbus.service.Object):
 			elif self.BUTTON10_LO <= value_0 <= self.BUTTON10_HI:
 				self.button_press('OFF')
 				
-			time.sleep(0.1)
-			
-			# Depending on which button is pressed, we may want to wait until button is released..
-			"""
-			value_0 = adc.read_adc(0)
-			press_count = 0
-			while value_0 > BUTTON01_LO:
-				value_0 = adc.read_adc(0)
-				time.sleep(0.1)
-				press_count+=1
-				if func == 'TRACK_NEXT' and press_count == 10:
-					break
-				elif func == 'TRACK_PREV'  and press_count == 10:
-					break
-			"""
+			time.sleep(0.1)		
 
 	@dbus.service.signal("com.arctura.remote", signature='s')
 	def button_press(self, button):
@@ -138,7 +124,7 @@ class RemoteControl(dbus.service.Object):
 		
 		print("Waiting for button to be released/or max. press count reached")
 		value_0 = adc.read_adc(0)
-		while value_0 > self.BUTTON_LO and press_count < 3:
+		while value_0 > self.BUTTON_LO and press_count < 2:
 			press_count+=1
 			print(press_count)
 			value_0 = adc.read_adc(0)
