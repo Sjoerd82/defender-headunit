@@ -138,7 +138,7 @@ class RemoteControl(dbus.service.Object):
 		
 		print("Waiting for button to be released/or max. press count reached")
 		value_0 = adc.read_adc(0)
-		while value_0 > self.BUTTON_LO and press_count < 10:
+		while value_0 > self.BUTTON_LO and press_count < 3:
 			press_count+=1
 			print(press_count)
 			value_0 = adc.read_adc(0)
