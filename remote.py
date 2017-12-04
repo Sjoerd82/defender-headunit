@@ -50,11 +50,16 @@ class RemoteControl(dbus.service.Object):
 			if self.BUTTON01_LO <= value_0 <= self.BUTTON01_HI:
 				#Bottom button
 				self.button_press('UPDATE_LOCAL')
+				print(value_0)
 				#Wait until button is released (no need to continue updating...)
 				value_0 = adc.read_adc(0)
+				print(value_0)
 				while self.BUTTON01_LO <= value_0 <= self.BUTTON01_HI:
 					value_0 = adc.read_adc(0)
+					print("down")
+					print(value_0)
 					time.sleep(0.1)
+				print('----RELEASED----')
 
 			elif self.BUTTON02_LO <= value_0 <= self.BUTTON02_HI:
 				#Side button, met streepje
