@@ -477,7 +477,7 @@ def shutdown():
 # ********************************************************************************
 # Remote control
 #
-"""
+
 def button_press ( func ):
 	# Feedback beep
 	beep()
@@ -525,6 +525,7 @@ def button_press ( func ):
 	else:
 		print('Unknown button function')
 
+"""
 	# Wait until button is released
 	# xX why did we do this again??
 	value_0 = adc.read_adc(0)
