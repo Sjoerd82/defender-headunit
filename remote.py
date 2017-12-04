@@ -1,3 +1,5 @@
+# Loaded by: remote_dbus.py
+
 import dbus.service
 import random
 import time
@@ -83,6 +85,18 @@ class RemoteControl(dbus.service.Object):
 				self.button_press('OFF')
 				
 			time.sleep(0.1)
+			
+			# Depending on which button is pressed, we may want to wait until button is released..
+			value_0 = adc.read_adc(0)
+			press_count = 0
+			while value_0 > 100:
+				value_0 = adc.read_adc(0)
+				time.sleep(0.1)
+				press_count+=1
+				if func == 'TRACK_NEXT' and press_count == 10:
+					break
+				elif func == 'TRACK_PREV'  and press_count == 10:
+					break
 
 	@dbus.service.signal("com.arctura.remote", signature='s')
 	def button_press(self, button):
