@@ -71,12 +71,16 @@ class RemoteControl(dbus.service.Object):
 					self.button_press('SEEK_NEXT')
 				else:
 					self.button_press('DIR_NEXT')
-
+				#Wait a little...
+				self.button_down_delay()
+				
 			elif self.BUTTON06_LO <= value_0 <= self.BUTTON06_HI:
 				if value_1 < 300:
 					self.button_press('SEEK_PREV')
 				else:
 					self.button_press('DIR_PREV')
+				#Wait a little...
+				self.button_down_delay()
 
 			elif self.BUTTON07_LO <= value_0 <= self.BUTTON07_HI:
 				self.button_press('SHUFFLE')
@@ -126,4 +130,16 @@ class RemoteControl(dbus.service.Object):
 			value_0 = adc.read_adc(0)
 			time.sleep(0.1)
 		print("...released")
+		
+	def button_down_delay(self):
+	
+		adc = Adafruit_ADS1x15.ADS1015()
+		press_count = 0
+		
+		print("Waiting for button to be released/or max. press count reached")
+		value_0 = adc.read_adc(0)
+		while value_0 > self.BUTTON_LO or press_count < 10:
+			value_0 = adc.read_adc(0)
+			time.sleep(0.1)
+		print("...released/max. delay reached")
 			
