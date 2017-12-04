@@ -1,4 +1,7 @@
 # Loaded by: remote_dbus.py
+# Button presses are NOT asynchronous!! i.e. wait until a button press is handled before the next button can be handled.
+# TODO: Consider making them asynchronous, or at least the update lib (long) / volume (short) buttons
+
 
 import dbus.service
 import random
@@ -47,6 +50,11 @@ class RemoteControl(dbus.service.Object):
 			if self.BUTTON01_LO <= value_0 <= self.BUTTON01_HI:
 				#Bottom button
 				self.button_press('UPDATE_LOCAL')
+				#Wait until button is released (no need to continue updating...)
+				value_0 = adc.read_adc(0)
+				while self.BUTTON01_LO <= value_0 <= self.BUTTON01_HI:
+					value_0 = adc.read_adc(0)
+					time.sleep(0.1)
 
 			elif self.BUTTON02_LO <= value_0 <= self.BUTTON02_HI:
 				#Side button, met streepje
@@ -84,15 +92,17 @@ class RemoteControl(dbus.service.Object):
 			elif self.BUTTON10_LO <= value_0 <= self.BUTTON10_HI:
 				self.button_press('OFF')
 				
-			time.sleep(0.1)
+			#time.sleep(0.1)
 			
 			# Depending on which button is pressed, we may want to wait until button is released..
+			"""
 			value_0 = adc.read_adc(0)
 			press_count = 0
-			while value_0 > 100:
+			while value_0 > BUTTON01_LO:
 				value_0 = adc.read_adc(0)
 				time.sleep(0.1)
 				press_count+=1
+			"""
 				"""
 				if func == 'TRACK_NEXT' and press_count == 10:
 					break
