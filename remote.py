@@ -37,7 +37,7 @@ class RemoteControl(dbus.service.Object):
 	def __init__(self, bus_name):
 		super(RemoteControl,self).__init__(bus_name, "/com/arctura/remote")
 		adc = Adafruit_ADS1x15.ADS1015()
-		pavol = pa_volume_handler()
+		pavol = pa_volume_handler('alsa_output.platform-soc_sound.analog-stereo')
 
 		while True:
 			value_0 = adc.read_adc(0, gain=self.GAIN)
