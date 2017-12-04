@@ -93,10 +93,12 @@ class RemoteControl(dbus.service.Object):
 				value_0 = adc.read_adc(0)
 				time.sleep(0.1)
 				press_count+=1
+				"""
 				if func == 'TRACK_NEXT' and press_count == 10:
 					break
 				elif func == 'TRACK_PREV'  and press_count == 10:
 					break
+				"""
 
 	@dbus.service.signal("com.arctura.remote", signature='s')
 	def button_press(self, button):
