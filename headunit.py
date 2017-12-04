@@ -477,6 +477,7 @@ def shutdown():
 # ********************************************************************************
 # Remote control
 #
+"""
 def button_press ( func ):
 	# Feedback beep
 	beep()
@@ -523,7 +524,7 @@ def button_press ( func ):
 		shutdown()
 	else:
 		print('Unknown button function')
-
+"""
 	# Wait until button is released
 	""" why did we do this again??
 	value_0 = adc.read_adc(0)
@@ -537,6 +538,7 @@ def button_press ( func ):
 		elif func == 'TRACK_PREV'  and press_count == 10:
 			break
 	"""
+
 	
 # ********************************************************************************
 # ALSA, using python-alsaaudio
