@@ -117,6 +117,9 @@ class RemoteControl(dbus.service.Object):
 		print("Button was pressed")
 		
 	def button_down_wait(self):
+	
+		adc = Adafruit_ADS1x15.ADS1015()
+		
 		print("Waiting for button to be released...")
 		value_0 = adc.read_adc(0)
 		while value_0 > self.BUTTON_LO:
