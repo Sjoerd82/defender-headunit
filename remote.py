@@ -52,7 +52,7 @@ class RemoteControl(dbus.service.Object):
 				#Bottom button
 				self.button_press('UPDATE_LOCAL')
 				#Wait until button is released (no need to continue updating...)
-				button_down_wait()			
+				self.button_down_wait()			
 
 			elif self.BUTTON02_LO <= value_0 <= self.BUTTON02_HI:
 				#Side button, met streepje
@@ -81,17 +81,17 @@ class RemoteControl(dbus.service.Object):
 			elif self.BUTTON07_LO <= value_0 <= self.BUTTON07_HI:
 				self.button_press('SHUFFLE')
 				#Wait until button is released
-				button_down_wait()
+				self.button_down_wait()
 
 			elif self.BUTTON08_LO <= value_0 <= self.BUTTON08_HI:
 				self.button_press('ATT')
 				#Wait until button is released
-				button_down_wait()
+				self.button_down_wait()
 
 			elif self.BUTTON09_LO <= value_0 <= self.BUTTON09_HI:
 				self.button_press('SOURCE')
 				#Wait until button is released
-				button_down_wait()
+				self.button_down_wait()
 
 			elif self.BUTTON10_LO <= value_0 <= self.BUTTON10_HI:
 				self.button_press('OFF')
