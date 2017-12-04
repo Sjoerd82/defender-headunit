@@ -47,7 +47,8 @@ class RemoteControl(dbus.service.Object):
 		while True:
 			value_0 = adc.read_adc(0, gain=self.GAIN)
 			value_1 = adc.read_adc(1, gain=self.GAIN)
-			print(value_0)
+			if value_0 > 5:
+				print(value_0)
 			if self.BUTTON01_LO <= value_0 <= self.BUTTON01_HI:
 				#Bottom button
 				self.button_press('UPDATE_LOCAL')
