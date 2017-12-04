@@ -125,4 +125,5 @@ class RemoteControl(dbus.service.Object):
 		while value_0 > self.BUTTON_LO:
 			value_0 = adc.read_adc(0)
 			time.sleep(0.1)
+		print("...released")
 			

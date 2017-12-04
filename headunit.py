@@ -524,9 +524,9 @@ def button_press ( func ):
 		shutdown()
 	else:
 		print('Unknown button function')
-"""
+
 	# Wait until button is released
-	""" why did we do this again??
+	# xX why did we do this again??
 	value_0 = adc.read_adc(0)
 	press_count = 0
 	while value_0 > 600:
@@ -537,8 +537,7 @@ def button_press ( func ):
 			break
 		elif func == 'TRACK_PREV'  and press_count == 10:
 			break
-	"""
-
+"""
 	
 # ********************************************************************************
 # ALSA, using python-alsaaudio
