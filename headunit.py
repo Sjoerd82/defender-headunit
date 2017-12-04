@@ -598,6 +598,13 @@ def alsa_play_fx( fx ):
 	#TODO
 
 # ********************************************************************************
+# PulseAudio
+#
+def pa_init():
+	print('Loading sound effects')
+	call(["pactl","upload-sample","/root/defender-headunit/sfx/b166.wav", "b166"])
+
+# ********************************************************************************
 # Volume wrappers
 #
 
@@ -1292,7 +1299,8 @@ def locmus_update():
 	#Remember position and/or track in playlist
 	#or.. also cool, start playing at the first next new track
 	#TODO
-
+	call(["pactl", "play-sample", "b166", "alsa_output.platform-soc_sound.analog-stereo"])
+	
 	#Update
 	call(["mpc", "--wait", "update", sLocalMusicMPD])
 	
@@ -1515,6 +1523,9 @@ def init():
 	# initialize ALSA
 	alsa_init()
 
+	# initialize PulseAudio
+	pa_init()
+	
 	# initialize MPD client
 	mpc_init()
 
