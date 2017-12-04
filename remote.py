@@ -7,6 +7,9 @@ import threading
 # Import the ADS1x15 module.
 import Adafruit_ADS1x15
 
+# Import pulseaudio volume handler
+import pa_volume
+
 class RemoteControl(dbus.service.Object):
 	# ADC remote variables
 	GAIN = 2/3
@@ -34,6 +37,7 @@ class RemoteControl(dbus.service.Object):
 	def __init__(self, bus_name):
 		super(RemoteControl,self).__init__(bus_name, "/com/arctura/remote")
 		adc = Adafruit_ADS1x15.ADS1015()
+		pavol = pa_volume()
 
 		while True:
 			value_0 = adc.read_adc(0, gain=self.GAIN)
@@ -47,6 +51,7 @@ class RemoteControl(dbus.service.Object):
 				print('BUTTON02')
 
 			elif self.BUTTON03_LO <= value_0 <= self.BUTTON03_HI:
+				pavol.vol_up()
 				self.button_press('VOL_UP')
 				
 			elif self.BUTTON04_LO <= value_0 <= self.BUTTON04_HI:
