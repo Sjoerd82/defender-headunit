@@ -1658,9 +1658,12 @@ def init():
 	print('--------------------------------------------------------------------------------')
 	beep()
 	
+def test1( iets ):
+	print('testing1')
+	print(iets)
 
-def test( iets ):
-	print('testing')
+def test2( iets ):
+	print('testing2')
 	print(iets)
 	
 #-------------------------------------------------------------------------------
@@ -1679,6 +1682,7 @@ init()
 mainloop = gobject.MainLoop()
 bus.add_signal_receiver(button_press, dbus_interface = "com.arctura.remote")
 bus.add_signal_receiver(mpd_control, dbus_interface = "com.arctura.mpd")
-bus.add_signal_receiver(test, dbus_interface = "org.freedesktop.DBus.ObjectManager")
+bus.add_signal_receiver(test1, signal_name='InterfacesAdded', dbus_interface='org.freedesktop.DBus.ObjectManager')
+bus.add_signal_receiver(test2, signal_name='InterfacesRemoved', dbus_interface='org.freedesktop.DBus.ObjectManager')
 mainloop.run()
 
