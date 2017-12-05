@@ -784,9 +784,14 @@ def mpc_init():
 	print('[MPC-debug] send_idle()')
 	oMpdClient.send_idle()
 
-def mpd_control( func ):
-	print('!!!!!!!!!!!!')
-	print(func)
+def mpd_control( changes ):
+	print('[MPD] Change event received:')
+	print(changes)
+	for k in changes:
+		print(k)
+	
+	for k, v in changes.items():
+		print(k,v)
 
 	
 def mpc_random():
