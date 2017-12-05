@@ -788,7 +788,7 @@ def mpd_control( event ):
 	print('[MPD] Change event received:')
 	print(event)
 
-	for k in changes:
+	for k in event:
 		print(k)
 	
 	"""
