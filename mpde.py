@@ -79,7 +79,7 @@ class mpdControl(dbus.service.Object):
 					print m
 					for x in m:
 						print x
-						#print('Channel: {0}'.format(m["channel"]))
+						print('Channel: {0}'.format(x['channel']))
 						#print('Message: {0}'.format(m["message"]))
 				
 				
