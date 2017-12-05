@@ -1658,17 +1658,18 @@ def init():
 	print('--------------------------------------------------------------------------------')
 	beep()
 	
-def test1( iets ):
-	print('testing1')
-	print(iets)
+def udisk_device_added( device ):
+	print("Test")
+	#print('[UDISK] Device added: {0}'.format(str(device)))
+	#udisk_device_dump( device )
+	
+def udisk_device_removed( device ):
+	print('[UDISK] Device removed: {0}'.format(str(device)))
+	#udisk_device_dump( device )
 
-def test2( iets ):
-	print('testing2')
-	print(iets)
-
-def test3( iets ):
-	print('testing3')
-	print(iets)
+def udisk_device_dump( device ):
+	print('[UDISK] Device details:')
+	
 	
 #-------------------------------------------------------------------------------
 # Main loop
@@ -1686,10 +1687,10 @@ init()
 mainloop = gobject.MainLoop()
 bus.add_signal_receiver(button_press, dbus_interface = "com.arctura.remote")
 bus.add_signal_receiver(mpd_control, dbus_interface = "com.arctura.mpd")
-#bus.add_signal_receiver(test1, signal_name='InterfacesAdded', dbus_interface='org.freedesktop.DBus.ObjectManager')
-#bus.add_signal_receiver(test2, signal_name='InterfacesRemoved', dbus_interface='org.freedesktop.DBus.ObjectManager')
-bus.add_signal_receiver(test3, dbus_interface="org.freedesktop.UDisks")
-bus.add_signal_receiver(test1, signal_name='DeviceAdded', dbus_interface="org.freedesktop.UDisks")
-bus.add_signal_receiver(test2, signal_name='DeviceRemoved', dbus_interface="org.freedesktop.UDisks")
+
+bus.add_signal_receiver(udisk_device_added, signal_name='DeviceAdded', dbus_interface="org.freedesktop.UDisks")
+bus.add_signal_receiver(udisk_device_removed, signal_name='DeviceRemoved', dbus_interface="org.freedesktop.UDisks")
+#bus.add_signal_receiver(udisk_device_changed, signal_name='DeviceChanged', dbus_interface="org.freedesktop.UDisks")
+
 mainloop.run()
 
