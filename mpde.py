@@ -40,7 +40,6 @@ class mpdControl(dbus.service.Object):
 			canRead = select([self.oMpdClient], [], [], 0)[0]
 			if canRead:
 				changes = self.oMpdClient.fetch_idle()
-				self.oMpdClient.send_idle() # continue idling
 				#self.mpd_handle_change(changes)
 				self.mpd_control(changes)
 				
@@ -49,6 +48,7 @@ class mpdControl(dbus.service.Object):
 				messages = self.oMpdClient.command_list_end()
 				print messages
 
+				self.oMpdClient.send_idle() # continue idling
 			
 			time.sleep(0.1)
 
