@@ -75,13 +75,17 @@ class mpdControl(dbus.service.Object):
 				messages = self.oMpdClient.command_list_end()
 				#print messages
 				
-				for m in messages:
-					print m
-					for x in m:
-						print x
-						print('Channel: {0}'.format(x['channel']))
-						#print('Message: {0}'.format(m["message"]))
-				
+				# messages = list of dicts
+				for msg in messages:
+					for m in msg:
+						print('Channel: {0}'.format(m['channel']))
+						print('Message: {0}'.format(m['message']))
+						if m['channel'] == 'media_removed':
+							self.mpd_control('media_removed')
+						elif m['channel'] == 'media_ready':
+							self.mpd_control('media_ready')							
+						else:
+							print('ERROR: Channel not supported')
 				
 			elif e == "player" or 'mixer':
 				#oMpdClient.command_list_ok_begin()

@@ -790,10 +790,13 @@ def mpd_control( event ):
 	if event == "save":
 		print(' ...  -> save')
 		mpc_save_pos()
+	if event == "media_removed":
+		print(' ...  -> media removed')
+	if event == "media_ready":
+		print(' ...  -> media ready')		
 	else:
 		print(' ...  Unknown event')
 	
-
 #	global oMpdClient
 #	print('[MPD] Change event(s) received:')
 
