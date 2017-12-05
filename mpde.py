@@ -51,8 +51,8 @@ class mpdControl(dbus.service.Object):
 		for k in changes:
 			print(k)
 		
-		for k, v in changes.items():
-			print(k,v)
+		#for k, v in changes.items():
+		#	print(k,v)
 	
 		mpd_control('test!')
 	
