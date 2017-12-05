@@ -12,10 +12,6 @@ from select import select
 # used mainly for getting the current song for lookup on reload
 from mpd import MPDClient
 
-#MPD-client (MPC)
-arMpcPlaylistDirs = [ ]
-iMPC_OK = 0
-
 class mpdControl(dbus.service.Object):
 
 	oMpdClient = None
@@ -45,7 +41,7 @@ class mpdControl(dbus.service.Object):
 			if canRead:
 				changes = self.oMpdClient.fetch_idle()
 				self.oMpdClient.send_idle() # continue idling
-				self.mpd_control(changes)
+				#self.mpd_control(changes)
 			
 			time.sleep(0.1)
 
@@ -53,5 +49,5 @@ class mpdControl(dbus.service.Object):
 	def mpd_control(self, changes):
 		print("There were changes:")
 		print(changes)
-		
+
 			
