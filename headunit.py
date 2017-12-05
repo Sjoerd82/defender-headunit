@@ -795,18 +795,15 @@ def mpd_control( events ):
 
 	for e in events:
 
-		if e == "message":
-			print(' ...  EVENT: Message')
-			
+		print(' ...  EVENT: {0}'.format(e))
+		if e == "message":	
 			oMpdClient.command_list_ok_begin()
 			oMpdClient.readmessages()
 			messages = oMpdClient.command_list_end()		
 			for m in messages:
 				print(' ...  MESSAGE: {0}'.format(m))
 				
-		elif e == "player":
-			print(' ...  EVENT: Player')
-
+		elif e == "player" or 'mixer':
 			oMpdClient.command_list_ok_begin()
 			oMpdClient.status()
 			results = oMpdClient.command_list_end()		
@@ -814,11 +811,17 @@ def mpd_control( events ):
 			for r in results:
 				print(r)
 			
-		elif e == "mixer":
-			print(' ...  EVENT: Mixer')
-		else:
-			print(' ...  EVENT {0}'.format(e))
+		elif e == "subscription":
+			oMpdClient.command_list_ok_begin()
+			oMpdClient.channels()
+			results = oMpdClient.command_list_end()		
 
+			for r in results:
+				print(r)		
+
+		else:
+			print(' ...  unmanaged event')
+			
 	oMpdClient.close()
 	oMpdClient.disconnect()
 		
