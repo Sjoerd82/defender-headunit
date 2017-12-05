@@ -1668,7 +1668,7 @@ def udisk_device_removed( device ):
 
 def udisk_device_dump( device ):
     print('[UDISK] Device details:')
-    device_obj = system_bus.get_object("org.freedesktop.UDisks", device)
+    device_obj = bus.get_object("org.freedesktop.UDisks", device)
     device_props = dbus.Interface(device_obj, dbus.PROPERTIES_IFACE)
     #
     #  beware.... anything after this may or may not be defined depending on the event and state of the drive. 
