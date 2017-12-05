@@ -10,7 +10,7 @@ class pa_volume_handler():
 		self.pa_sink = sink
 
 	def vol_set_pct(self, volume):
-		vol_pct = volume + "%"
+		vol_pct = str(volume) + "%"
 		call(["pactl", "set-sink-volume", self.pa_sink, vol_pct])
 		
 	def vol_up(self):
