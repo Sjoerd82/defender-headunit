@@ -45,7 +45,7 @@ class mpdControl(dbus.service.Object):
 			
 			time.sleep(0.1)
 
-	@dbus.service.signal("com.arctura.mpd", signature='sv')
+	@dbus.service.signal("com.arctura.mpd", signature='a{ss}')
 	def mpd_control(self, changes):
 		print("There were changes:")
 		print(changes)
