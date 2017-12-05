@@ -6,6 +6,8 @@ import time
 
 import threading
 
+from select import select
+
 # python-mpd2 0.5.1 (not sure if this is the forked mpd2)
 # used mainly for getting the current song for lookup on reload
 from mpd import MPDClient
