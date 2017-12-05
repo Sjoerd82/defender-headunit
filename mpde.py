@@ -37,23 +37,28 @@ class mpdControl(dbus.service.Object):
 		self.oMpdClient.send_idle()
 		
 		while True:			
+
 			canRead = select([self.oMpdClient], [], [], 0)[0]
 			if canRead:
+			
+				# fetch change(s)
 				changes = self.oMpdClient.fetch_idle()
+				
+				# handle/parse the change(s)
 				self.mpd_handle_change(changes)
+				
+				# don't pass on the changes (datatype seems too complicated for dbus)
 				#self.mpd_control(changes)
+				
+				# continue idling
+				self.oMpdClient.send_idle()
 			
-#				self.oMpdClient.command_list_ok_begin()
-#				self.oMpdClient.readmessages()
-#				messages = self.oMpdClient.command_list_end()
-#				print messages
-
-				self.oMpdClient.send_idle() # continue idling
-			
+			# required?????
 			time.sleep(0.1)
 
 	def mpd_handle_change(self, events):
 	
+		# loop over the available event(s)
 		for e in events:
 
 			print(' ...  EVENT: {0}'.format(e))

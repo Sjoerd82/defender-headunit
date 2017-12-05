@@ -784,47 +784,56 @@ def mpc_init():
 	print('[MPC-debug] send_idle()')
 	oMpdClient.send_idle()
 
-def mpd_control( events ):
-	global oMpdClient
-	print('[MPD] Change event(s) received:')
+def mpd_control( event ):
+	print('[MPD] DBUS activity...')
 
-	oMpdClient = MPDClient() 
-	oMpdClient.timeout = 10                # network timeout in seconds (floats allowed), default: None
-	oMpdClient.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
-	oMpdClient.connect("localhost", 6600)  # connect to localhost:6600
+	if event == "save":
+		print(' ...  Saving')
+		mpc_save_pos()
+	else
+		print(' ...  Unknown event')
+	
 
-	for e in events:
+#	global oMpdClient
+#	print('[MPD] Change event(s) received:')
 
-		print(' ...  EVENT: {0}'.format(e))
-		if e == "Xessage":	
-			oMpdClient.subscribe("media_ready")
-			oMpdClient.command_list_ok_begin()
-			oMpdClient.readmessages()
-			messages = oMpdClient.command_list_end()
-			for m in messages:
-				print(' ...  MESSAGE: {0}'.format(m))
-				
-		elif e == "player" or 'mixer':
-			oMpdClient.command_list_ok_begin()
-			oMpdClient.status()
-			results = oMpdClient.command_list_end()		
+#	oMpdClient = MPDClient() 
+#	oMpdClient.timeout = 10                # network timeout in seconds (floats allowed), default: None
+#	oMpdClient.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
+#	oMpdClient.connect("localhost", 6600)  # connect to localhost:6600
 
-			for r in results:
-				print(r)
-			
-		elif e == "subscription":
-			oMpdClient.command_list_ok_begin()
-			oMpdClient.channels()
-			results = oMpdClient.command_list_end()		
-
-			for r in results:
-				print(r)		
-
-		else:
-			print(' ...  unmanaged event')
-			
-	oMpdClient.close()
-	oMpdClient.disconnect()
+#	for e in events:
+#
+#		print(' ...  EVENT: {0}'.format(e))
+#		if e == "Xessage":	
+#			oMpdClient.subscribe("media_ready")
+#			oMpdClient.command_list_ok_begin()
+#			oMpdClient.readmessages()
+#			messages = oMpdClient.command_list_end()
+#			for m in messages:
+#				print(' ...  MESSAGE: {0}'.format(m))
+#				
+#		elif e == "player" or 'mixer':
+#			oMpdClient.command_list_ok_begin()
+#			oMpdClient.status()
+#			results = oMpdClient.command_list_end()		
+#
+#			for r in results:
+#				print(r)
+#			
+#		elif e == "subscription":
+#			oMpdClient.command_list_ok_begin()
+#			oMpdClient.channels()
+#			results = oMpdClient.command_list_end()		
+#
+#			for r in results:
+#				print(r)		
+#
+#		else:
+#			print(' ...  unmanaged event')
+#			
+#	oMpdClient.close()
+#	oMpdClient.disconnect()
 		
 	
 def mpc_random():
@@ -930,7 +939,19 @@ def mpc_update( location ):
 	#Update
 	call(["mpc", "--wait", "update", location])
 
-def mpc_save_pos ( label ):
+def mpc_save_pos():
+	global dSettings
+	print('[MPC] Saving playlist position')
+	if dSettings['source'] == 1:
+		#mpc_save_pos_for_label (?)
+		print dSettings['mediasource']
+		print dSettings['medialabel']
+		print(arMediaWithMusic[0])
+		
+	elif dSettings['source'] == 2:
+		mpc_save_pos_for_label ('locmus')
+
+def mpc_save_pos_for_label ( label ):
 
 	print('[MPC] Saving playlist position for label {0}'.format(label))
 	oMpdClient = MPDClient() 
@@ -1392,7 +1413,7 @@ def locmus_stop():
 	print('Stopping source: locmus. Saving playlist position and clearing playlist.')
 	
 	# save position and current file name for this drive
-	mpc_save_pos( 'locmus' )
+	mpc_save_pos_for_label( 'locmus' )
 	
 	# stop playback
 	mpc_stop()
