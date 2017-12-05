@@ -6,92 +6,44 @@ import time
 
 import threading
 
+# python-mpd2 0.5.1 (not sure if this is the forked mpd2)
+# used mainly for getting the current song for lookup on reload
+from mpd import MPDClient
+
+#MPD-client (MPC)
+arMpcPlaylistDirs = [ ]
+iMPC_OK = 0
+
+
 class mpdControl(dbus.service.Object):
+
+	oMpdClient = None
 
 	def __init__(self, bus_name):
 		super(mpdControl,self).__init__(bus_name, "/com/arctura/mpd")
 
-		while True:
-			value_0 = 0
-			value_1 = 0
-			if self.BUTTON01_LO <= value_0 <= self.BUTTON01_HI:
-				#Bottom button
-				self.button_press('UPDATE_LOCAL')
-				#Wait until button is released (no need to continue updating...)
-				self.button_down_wait()			
+		print('[---] Initializing MPD client')
+		self.oMpdClient = MPDClient() 
 
-			elif self.BUTTON02_LO <= value_0 <= self.BUTTON02_HI:
-				#Side button, met streepje
-				print('BUTTON02')
+		self.oMpdClient.timeout = 10                # network timeout in seconds (floats allowed), default: None
+		self.oMpdClient.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
+		self.oMpdClient.connect("localhost", 6600)  # connect to localhost:6600
+		print(self.oMpdClient.mpd_version)          # print the MPD version
+	
+		print('[---] Subscribing to channel: media_ready')
+		self.oMpdClient.subscribe("media_ready")
 
-			elif self.BUTTON03_LO <= value_0 <= self.BUTTON03_HI:
-				self.button_press('VOL_UP')
-				
-			elif self.BUTTON04_LO <= value_0 <= self.BUTTON04_HI:
-				self.button_press('VOL_DOWN')
-				
-			elif self.BUTTON05_LO <= value_0 <= self.BUTTON05_HI:
-				if value_1 < 300:
-					self.button_press('SEEK_NEXT')
-				else:
-					self.button_press('DIR_NEXT')
-				#Wait a little...
-				self.button_down_delay()
-				
-			elif self.BUTTON06_LO <= value_0 <= self.BUTTON06_HI:
-				if value_1 < 300:
-					self.button_press('SEEK_PREV')
-				else:
-					self.button_press('DIR_PREV')
-				#Wait a little...
-				self.button_down_delay()
-
-			elif self.BUTTON07_LO <= value_0 <= self.BUTTON07_HI:
-				self.button_press('SHUFFLE')
-				#Wait until button is released
-				self.button_down_wait()
-
-			elif self.BUTTON08_LO <= value_0 <= self.BUTTON08_HI:
-				self.button_press('ATT')
-				#Wait until button is released
-				self.button_down_wait()
-
-			elif self.BUTTON09_LO <= value_0 <= self.BUTTON09_HI:
-				self.button_press('SOURCE')
-				#Wait until button is released
-				self.button_down_wait()
-
-			elif self.BUTTON10_LO <= value_0 <= self.BUTTON10_HI:
-				self.button_press('OFF')
-				
+		print('[---] Subscribing to channel: media_removed')
+		self.oMpdClient.subscribe("media_removed")
+	
+		print('[---] send_idle()')
+		self.oMpdClient.send_idle()
+		
+		while True:			
 			time.sleep(0.1)		
 
 	@dbus.service.signal("com.arctura.mpd", signature='s')
-	def button_press(self, button):
+	def mpd_control(self, button):
 		print("Button was pressed")
 		
-	def button_down_wait(self):
-	
-		adc = Adafruit_ADS1x15.ADS1015()
-		
-		print("Waiting for button to be released...")
-		value_0 = adc.read_adc(0)
-		while value_0 > self.BUTTON_LO:
-			value_0 = adc.read_adc(0)
-			time.sleep(0.1)
-		print("...released")
-		
-	def button_down_delay(self):
-	
-		adc = Adafruit_ADS1x15.ADS1015()
-		press_count = 0
-		
-		print("Waiting for button to be released/or max. press count reached")
-		value_0 = adc.read_adc(0)
-		while value_0 > self.BUTTON_LO and press_count < 2:
-			press_count+=1
-			print(press_count)
-			value_0 = adc.read_adc(0)
-			time.sleep(0.1)
-		print("...released/max. delay reached")
 			
