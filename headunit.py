@@ -771,34 +771,38 @@ def mpc_init():
 	oMpdClient.connect("localhost", 6600)  # connect to localhost:6600
 	print(oMpdClient.mpd_version)          # print the MPD version
 	
-	print('[MPC] Subscribing to channel: media_ready')
-	oMpdClient.subscribe("media_ready")
+	#print('[MPC] Subscribing to channel: media_ready')
+	#oMpdClient.subscribe("media_ready")
 
-	print('[MPC] Subscribing to channel: media_removed')
-	oMpdClient.subscribe("media_removed")
+	#print('[MPC] Subscribing to channel: media_removed')
+	#oMpdClient.subscribe("media_removed")
 	
 	print('[MPC] Random: OFF, Repeat: ON')
 	call(["mpc", "-q", "random", "off"])
 	call(["mpc", "-q", "repeat", "on"])
 	
-	print('[MPC-debug] send_idle()')
-	oMpdClient.send_idle()
+	#print('[MPC-debug] send_idle()')
+	#oMpdClient.send_idle()
 
-def mpd_control( event ):
-	print('[MPD] Change event received:')
-	print(event)
+def mpd_control( events ):
+	global oMpdClient
+	print('[MPD] Change event(s) received:')
 
-	for k in event:
-		print(k)
-	
-	"""
-	print(changes)
-	for k in changes:
-		print(k)
-	
-	for k, v in changes.items():
-		print(k,v)
-	"""
+	for e in events:
+
+		if e == "message":
+			print(' ...  EVENT:   Message')
+			messages = oMpdClient.readmessages()
+			for m in messages:
+				print(' ...  MESSAGE: {0}'.format(m))
+		elif e == "player":
+			print(' ...  EVENT: Player')
+		elif e == "mixer":
+			print(' ...  EVENT: Mixer')
+		else:
+			print(' ...  EVENT {0}'.format(e))
+
+		
 	
 def mpc_random():
 	global iRandom
