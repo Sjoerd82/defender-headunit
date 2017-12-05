@@ -796,11 +796,11 @@ def mpd_control( events ):
 	for e in events:
 
 		print(' ...  EVENT: {0}'.format(e))
-		if e == "message":	
+		if e == "Xessage":	
 			oMpdClient.subscribe("media_ready")
 			oMpdClient.command_list_ok_begin()
 			oMpdClient.readmessages()
-			messages = oMpdClient.command_list_end()		
+			messages = oMpdClient.command_list_end()
 			for m in messages:
 				print(' ...  MESSAGE: {0}'.format(m))
 				

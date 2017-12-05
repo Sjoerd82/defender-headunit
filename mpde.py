@@ -43,6 +43,12 @@ class mpdControl(dbus.service.Object):
 				self.oMpdClient.send_idle() # continue idling
 				#self.mpd_handle_change(changes)
 				self.mpd_control(changes)
+				
+				self.oMpdClient.command_list_ok_begin()
+				self.oMpdClient.readmessages()
+				messages = self.oMpdClient.command_list_end()
+				print messages
+
 			
 			time.sleep(0.1)
 
