@@ -77,8 +77,8 @@ class mpdControl(dbus.service.Object):
 				
 				for m in messages:
 					print m
-					print("Channel: {0}".format(m["channel"])
-					print("Message: {0}".format(m["message"])
+					print('Channel: {0}'.format(m["channel"]))
+					print('Message: {0}'.format(m["message"]))
 				
 			elif e == "player" or 'mixer':
 				#oMpdClient.command_list_ok_begin()
