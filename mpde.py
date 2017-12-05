@@ -39,7 +39,13 @@ class mpdControl(dbus.service.Object):
 		self.oMpdClient.send_idle()
 		
 		while True:			
-			time.sleep(0.1)		
+			canRead = select([self.oMpdClient], [], [], 0)[0]
+			if canRead:
+				changes = self.oMpdClient.fetch_idle()
+				print(changes) # handle changes
+				self.oMpdClient.send_idle() # continue idling
+			
+			time.sleep(0.1)
 
 	@dbus.service.signal("com.arctura.mpd", signature='s')
 	def mpd_control(self, button):
