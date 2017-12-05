@@ -76,6 +76,7 @@ iRandom = 0									 # We're keeping track of it within the script, not checking
 iDoSave	= 0									 # Indicator to do a save anytime soon
 dSettings = {'source': -1, 'volume': 20, 'mediasource': -1, 'medialabel': ''}	 # No need to save random, we don't want to save that (?)
 sRootFolder = os.path.dirname(os.path.abspath(__file__))
+bBeep = 0									 # Use hardware beep?
 
 #DBUS
 bus = None
@@ -483,7 +484,10 @@ def shutdown():
 
 def button_press ( func ):
 	# Feedback beep
-	beep()
+	if bBeep:
+		beep()
+	else:
+		pa_sfx('button_feedback')
 
 	pavol = pa_volume_handler('alsa_output.platform-soc_sound.analog-stereo')
 	
@@ -598,6 +602,12 @@ def pa_init():
 	print('[PULSE] Loading sound effects')
 	call(["pactl","upload-sample","/root/defender-headunit/sfx/b1_66.wav", "b166"])
 
+def pa_sfx(sfx):
+	if sfx == 'button_feedback':
+		call(["pactl", "play-sample", "b166", "alsa_output.platform-soc_sound.analog-stereo"])
+	elif sfx == 'mpd_update_db':
+		call(["pactl", "play-sample", "b166", "alsa_output.platform-soc_sound.analog-stereo"])
+	
 # ********************************************************************************
 # Volume wrappers
 #
@@ -1293,7 +1303,7 @@ def locmus_update():
 	#Remember position and/or track in playlist
 	#or.. also cool, start playing at the first next new track
 	#TODO
-	call(["pactl", "play-sample", "b166", "alsa_output.platform-soc_sound.analog-stereo"])
+	pa_sfx('mpd_update_db')
 	
 	#Update
 	call(["mpc", "--wait", "update", sLocalMusicMPD])
