@@ -41,13 +41,24 @@ class mpdControl(dbus.service.Object):
 			if canRead:
 				changes = self.oMpdClient.fetch_idle()
 				self.oMpdClient.send_idle() # continue idling
-				self.mpd_control(changes)
+				self.mpd_handle_change(changes)
 			
 			time.sleep(0.1)
 
-	@dbus.service.signal("com.arctura.mpd", signature='a{ss}')
-	def mpd_control(self, changes):
-		print("There were changes:")
+	def mpd_handle_change(changes):
+		print('[MPD] Change event received:')
 		print(changes)
+		for k in changes:
+			print(k)
+		
+		for k, v in changes.items():
+			print(k,v)
+	
+		mpd_control('test!')
+	
+	#handling variably nested dicts is hard/impossible?
+	@dbus.service.signal("com.arctura.mpd", signature='s')
+	def mpd_control(self, event):
+		print(event)
 
 			
