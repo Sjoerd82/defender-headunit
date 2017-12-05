@@ -24,8 +24,8 @@ except dbus.exceptions.NameExistsException:
 # Run the loop
 try:
     # Create our initial objects
-	# load mpd.py
-    from mpd import mpdControl
+	# load mpde.py
+    from mpde import mpdControl
     mpdControl(bus_name)
     loop.run()
 except KeyboardInterrupt:

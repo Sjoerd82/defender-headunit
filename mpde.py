@@ -14,7 +14,6 @@ from mpd import MPDClient
 arMpcPlaylistDirs = [ ]
 iMPC_OK = 0
 
-
 class mpdControl(dbus.service.Object):
 
 	oMpdClient = None
