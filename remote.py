@@ -2,7 +2,6 @@
 # Button presses are NOT asynchronous!! i.e. wait until a button press is handled before the next button can be handled.
 # TODO: Consider making them asynchronous, or at least the update lib (long) / volume (short) buttons
 
-
 import dbus.service
 import random
 import time
@@ -12,33 +11,30 @@ import threading
 # Import the ADS1x15 module.
 import Adafruit_ADS1x15
 
-# Import pulseaudio volume handler
-#from pa_volume import pa_volume_handler
-
 class RemoteControl(dbus.service.Object):
 	# ADC remote variables
 	GAIN = 2/3
 	BUTTON_LO   = 100
-	BUTTON01_LO = 180
-	BUTTON01_HI = 190	# starts at around 185, but then spikes to around 278
-	BUTTON02_LO = 220
-	BUTTON02_HI = 260
-	BUTTON03_LO = 310
-	BUTTON03_HI = 330
-	BUTTON04_LO = 380
-	BUTTON04_HI = 410
-	BUTTON05_LO = 460
-	BUTTON05_HI = 490
-	BUTTON06_LO = 560
-	BUTTON06_HI = 580
-	BUTTON07_LO = 640
-	BUTTON07_HI = 670
-	BUTTON08_LO = 740
-	BUTTON08_HI = 770
-	BUTTON09_LO = 890
-	BUTTON09_HI = 910
-	BUTTON10_LO = 1050
-	BUTTON10_HI = 1100
+	BUTTON01_LO = 180	# Bottom button
+	BUTTON01_HI = 190	#   starts at around 185, but then spikes to around 278
+	BUTTON02_LO = 220	# Side button, with raised center line
+	BUTTON02_HI = 260	
+	BUTTON03_LO = 310	# 
+	BUTTON03_HI = 330	
+	BUTTON04_LO = 380	# 
+	BUTTON04_HI = 410	
+	BUTTON05_LO = 460	# 
+	BUTTON05_HI = 490	
+	BUTTON06_LO = 560	# 
+	BUTTON06_HI = 580	
+	BUTTON07_LO = 640	# 
+	BUTTON07_HI = 670	
+	BUTTON08_LO = 740	# "ATT"
+	BUTTON08_HI = 770	
+	BUTTON09_LO = 890	# "SOURCE"
+	BUTTON09_HI = 910	
+	BUTTON10_LO = 1050	# "OFF"
+	BUTTON10_HI = 1100	
 
 	def __init__(self, bus_name):
 		super(RemoteControl,self).__init__(bus_name, "/com/arctura/remote")
@@ -59,11 +55,9 @@ class RemoteControl(dbus.service.Object):
 				print('BUTTON02')
 
 			elif self.BUTTON03_LO <= value_0 <= self.BUTTON03_HI:
-				#pavol.vol_up()
 				self.button_press('VOL_UP')
 				
 			elif self.BUTTON04_LO <= value_0 <= self.BUTTON04_HI:
-				#pavol.vol_down()
 				self.button_press('VOL_DOWN')
 				
 			elif self.BUTTON05_LO <= value_0 <= self.BUTTON05_HI:

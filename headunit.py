@@ -93,7 +93,7 @@ oAlsaMixer = None
 ## call(["amixer", "-q", "-c", "0", "set", "Master", volpct, "unmute"])
 
 #PULSEAUDIO
-#TODO
+bPulseVolume = 1		# Use PulseAudio volume control, not ALSA
 
 #LOCAL MUSIC
 #sLocalMusic="/media/local_music"		# symlink to /home/hu/music
@@ -540,6 +540,18 @@ def button_press ( func ):
 # ALSA, using python-alsaaudio
 #
 
+def set_volume( volume ):
+	if bPulseVolume:
+		pa_set_volume(volume)
+	else:
+		alsa_set_volume(volume)
+
+def get_volume( volume ):
+	if bPulseVolume:
+		return pa_get_volume()
+	else:
+		return alsa_get_volume()
+
 def alsa_init():
 	global oAlsaMixer
 	print("[ALSA] Initializing mixer")
@@ -597,12 +609,23 @@ def alsa_play_fx( fx ):
 
 # ********************************************************************************
 # PulseAudio
+# Use 0-100 for volume.
 #
 def pa_init():
 	print('[PULSE] Loading sound effects')
 	call(["pactl","upload-sample","/root/defender-headunit/sfx/beep_60.wav", "beep_60"])
 	call(["pactl","upload-sample","/root/defender-headunit/sfx/beep_70.wav", "beep_70"])
 	call(["pactl","upload-sample","/root/defender-headunit/sfx/beep_60_70.wav", "beep_60_70"])
+
+def pa_set_volume( volume ):
+	print('[PULSE] Setting volume')
+	pavol = pa_volume_handler('alsa_output.platform-soc_sound.analog-stereo')
+	pavol.vol_set_pct(volume)
+
+def pa_get_volume():
+	print('[PULSE] Getting volume')
+	pavol = pa_volume_handler('alsa_output.platform-soc_sound.analog-stereo')
+	return pavol.vol_get()
 
 def pa_sfx(sfx):
 	if sfx == 'button_feedback':
@@ -623,14 +646,14 @@ def volume_att_toggle():
 		print('Restoring previous volume')
 		iAtt = 0
 		volpct = str(dSettings['volume'])+'%'
-		alsa_set_volume( dSettings['volume'] )
+		set_volume( dSettings['volume'] )
 		
 	elif iAtt == 0:
 		print('Setting att volume (25%)')
 		# We're not saving this volume level, as it is temporary.
 		# ATT will be reset by pressing ATT again, or changing the volume
 		iAtt = 1
-		alsa_set_volume( 25 )
+		set_volume( 25 )
 		
 	else:
 		print('Uhmmm.. this shouldn\'t have happened')
@@ -643,7 +666,7 @@ def volume_up():
 
 	print('Volume up; +5%')
 	volume_new = alsa_get_volume()+5
-	alsa_set_volume(volume_new)
+	set_volume(volume_new)
 	#call(["amixer", "-q", "-c", "0", "set", "Master", "5+", "unmute"])
 	dSettings['volume'] = volume_new
 
@@ -666,7 +689,7 @@ def volume_down():
 
 	print('Volume down; 5%')
 	volume_new = alsa_get_volume()-5
-	alsa_set_volume(volume_new)
+	set_volume(volume_new)
 	dSettings['volume'] = volume_new
 	
 	# always reset Att. state at manual vol. change
@@ -709,7 +732,7 @@ def load_settings():
 		dSettings['volume'] = 30
 	else:
 		print('[PICKLE] Volume: {0:d}%'.format(dSettings['volume']))
-	alsa_set_volume( dSettings['volume'] )
+	set_volume( dSettings['volume'] )
 	
 	#SOURCE
 	if dSettings['source'] < 0:

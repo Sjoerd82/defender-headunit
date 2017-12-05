@@ -8,6 +8,10 @@ class pa_volume_handler():
 
 	def __init__(self, sink):
 		self.pa_sink = sink
+
+	def vol_set_pct(self, volume):
+		vol_pct = volume + "%"
+		call(["pactl", "set-sink-volume", self.pa_sink, vol_pct])
 		
 	def vol_up(self):
 		vol_chg = "+" + self.VOL_INCR
@@ -17,3 +21,7 @@ class pa_volume_handler():
 		vol_chg = "-" + self.VOL_INCR
 		call(["pactl", "set-sink-volume", self.pa_sink, vol_chg])
 
+	def vol_get(self):
+		#pipe = Popen("pactl list sinks | grep '^[[:space:]]Volume:' | head -n $(( $SINK + 1 )) | tail -n 1 | sed -e 's,.* \([0-9][0-9]*\)%.*,\1,'")
+		pipe = subprocess.check_output("pactl list sinks | grep '^[[:space:]]Volume:' | head -n $(( $SINK + 1 )) | tail -n 1 | sed -e 's,.* \([0-9][0-9]*\)%.*,\1,'", shell=True)
+		return pipe.splitlines()
