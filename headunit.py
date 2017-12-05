@@ -1665,6 +1665,10 @@ def test1( iets ):
 def test2( iets ):
 	print('testing2')
 	print(iets)
+
+def test3( iets ):
+	print('testing3')
+	print(iets)
 	
 #-------------------------------------------------------------------------------
 # Main loop
@@ -1684,5 +1688,6 @@ bus.add_signal_receiver(button_press, dbus_interface = "com.arctura.remote")
 bus.add_signal_receiver(mpd_control, dbus_interface = "com.arctura.mpd")
 bus.add_signal_receiver(test1, signal_name='InterfacesAdded', dbus_interface='org.freedesktop.DBus.ObjectManager')
 bus.add_signal_receiver(test2, signal_name='InterfacesRemoved', dbus_interface='org.freedesktop.DBus.ObjectManager')
+bus.add_signal_receiver(test3, dbus_interface='org.freedesktop.DBus.ObjectManager')
 mainloop.run()
 
