@@ -788,13 +788,22 @@ def mpd_control( events ):
 	global oMpdClient
 	print('[MPD] Change event(s) received:')
 
+	oMpdClient = MPDClient() 
+	oMpdClient.timeout = 10                # network timeout in seconds (floats allowed), default: None
+	oMpdClient.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
+	oMpdClient.connect("localhost", 6600)  # connect to localhost:6600
+
 	for e in events:
 
 		if e == "message":
-			print(' ...  EVENT:   Message')
-			messages = oMpdClient.readmessages()
+			print(' ...  EVENT: Message')
+			
+			oMpdClient.command_list_ok_begin()
+			oMpdClient.readmessages()
+			messages = oMpdClient.command_list_end()		
 			for m in messages:
 				print(' ...  MESSAGE: {0}'.format(m))
+				
 		elif e == "player":
 			print(' ...  EVENT: Player')
 		elif e == "mixer":
@@ -802,6 +811,8 @@ def mpd_control( events ):
 		else:
 			print(' ...  EVENT {0}'.format(e))
 
+	oMpdClient.close()
+	oMpdClient.disconnect()
 		
 	
 def mpc_random():
