@@ -82,7 +82,7 @@ class mpdControl(dbus.service.Object):
 				#
 				#for r in results:
 				#	print(r)
-				self.mpd_control('player_mixer')
+				self.mpd_control('save')
 				
 			#elif e == "subscription":
 			#	oMpdClient.command_list_ok_begin()

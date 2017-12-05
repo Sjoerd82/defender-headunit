@@ -790,7 +790,7 @@ def mpd_control( event ):
 	if event == "save":
 		print(' ...  Saving')
 		mpc_save_pos()
-	else
+	else:
 		print(' ...  Unknown event')
 	
 
