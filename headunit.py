@@ -941,18 +941,12 @@ def mpc_update( location ):
 
 def mpc_save_pos():
 	global dSettings
-	print('[MPC] Saving playlist position')
 	if dSettings['source'] == 1:
-		#mpc_save_pos_for_label (?)
-		print dSettings['mediasource']
-		print dSettings['medialabel']
-		print(arMediaWithMusic[0])
-		
+		mpc_save_pos_for_label ( dSettings['medialabel'] )	
 	elif dSettings['source'] == 2:
 		mpc_save_pos_for_label ('locmus')
 
 def mpc_save_pos_for_label ( label ):
-
 	print('[MPC] Saving playlist position for label {0}'.format(label))
 	oMpdClient = MPDClient() 
 	oMpdClient.timeout = 10                # network timeout in seconds (floats allowed), default: None
