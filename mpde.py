@@ -96,6 +96,6 @@ class mpdControl(dbus.service.Object):
 	#	print(event)
 		
 	@dbus.service.signal("com.arctura.mpd", signature='s')
-	def mpd_control(self, ding)
+	def mpd_control(self, ding):
 		print
 	
