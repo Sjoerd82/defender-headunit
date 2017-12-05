@@ -709,7 +709,7 @@ def save_settings():
 
 def load_settings():
 	global dSettings
-	print('[PICKLE] Loading previous settings')
+	print('\033[96m[PICKLE] Loading previous settings\033[00m')
 
 	try:
 		dSettings = pickle.load( open( "headunit.p", "rb" ) )
@@ -740,6 +740,7 @@ def load_settings():
 	else:
 		print('[PICKLE] Source: {0:s}'.format(arSource[dSettings['source']]))
 
+	print('\033[96m[PICKLE] DONE\033[00m')
 
 
 def seek_next():
@@ -783,6 +784,10 @@ def mpc_init():
 	print('[MPC-debug] send_idle()')
 	oMpdClient.send_idle()
 
+def mpd_control( func ):
+	print('!!!!!!!!!!!!')
+
+	
 def mpc_random():
 	global iRandom
 	print('[MPC] Toggling random')
@@ -1611,5 +1616,6 @@ init()
 # Initialize a main loop
 mainloop = gobject.MainLoop()
 bus.add_signal_receiver(button_press, dbus_interface = "com.arctura.remote")
+bus.add_signal_receiver(mpd_control, dbus_interface = "com.arctura.mpd")
 mainloop.run()
 

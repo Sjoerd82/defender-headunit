@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
-# Remote control DBus service
-# Based on https://github.com/larryprice/python-dbus-blog-series/blob/part3/service
+# DBus service for handling MPD events
 
 import dbus, dbus.service, dbus.exceptions
 import sys
@@ -15,7 +14,7 @@ loop = gobject.MainLoop()
 
 # Declare a name where our service can be reached
 try:
-    bus_name = dbus.service.BusName("com.arctura.remote",
+    bus_name = dbus.service.BusName("com.arctura.mpd",
                                     bus=dbus.SystemBus(),
                                     do_not_queue=True)
 except dbus.exceptions.NameExistsException:
@@ -25,9 +24,9 @@ except dbus.exceptions.NameExistsException:
 # Run the loop
 try:
     # Create our initial objects
-	# load remote.py
-    from remote import RemoteControl
-    RemoteControl(bus_name)
+	# load mpd.py
+    from mpd import mpdControl
+    mpdControl(bus_name)
     loop.run()
 except KeyboardInterrupt:
     print("keyboard interrupt received")
