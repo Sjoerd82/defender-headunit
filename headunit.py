@@ -806,6 +806,14 @@ def mpd_control( events ):
 				
 		elif e == "player":
 			print(' ...  EVENT: Player')
+
+			oMpdClient.command_list_ok_begin()
+			oMpdClient.status()
+			results = oMpdClient.command_list_end()		
+
+			for r in results:
+				print(r)
+			
 		elif e == "mixer":
 			print(' ...  EVENT: Mixer')
 		else:
