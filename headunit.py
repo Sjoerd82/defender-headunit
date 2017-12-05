@@ -600,13 +600,15 @@ def alsa_play_fx( fx ):
 #
 def pa_init():
 	print('[PULSE] Loading sound effects')
-	call(["pactl","upload-sample","/root/defender-headunit/sfx/b1_66.wav", "b166"])
+	call(["pactl","upload-sample","/root/defender-headunit/sfx/beep_60.wav", "beep_60"])
+	call(["pactl","upload-sample","/root/defender-headunit/sfx/beep_70.wav", "beep_70"])
+	call(["pactl","upload-sample","/root/defender-headunit/sfx/beep_60_70.wav", "beep_60_70"])
 
 def pa_sfx(sfx):
 	if sfx == 'button_feedback':
-		call(["pactl", "play-sample", "b166", "alsa_output.platform-soc_sound.analog-stereo"])
+		call(["pactl", "play-sample", "beep_60", "alsa_output.platform-soc_sound.analog-stereo"])
 	elif sfx == 'mpd_update_db':
-		call(["pactl", "play-sample", "b166", "alsa_output.platform-soc_sound.analog-stereo"])
+		call(["pactl", "play-sample", "beep_60_70", "alsa_output.platform-soc_sound.analog-stereo"])
 	
 # ********************************************************************************
 # Volume wrappers
@@ -853,6 +855,13 @@ def mpc_stop():
 	print('Stopping MPC [pause]')
 	call(["mpc", "pause"])
 
+def mpc_update( location ):
+	#Sound effect
+	pa_sfx('mpd_update_db')
+	#Debug info
+	print('[MPC] Updating database for location: {0}'.format(location))
+	#Update
+	call(["mpc", "--wait", "update", location])
 
 def mpc_save_pos ( label ):
 
@@ -1298,15 +1307,16 @@ def locmus_play():
 		mpc_get_PlaylistDirs()
 		
 def locmus_update():
-	print('Updating local database')
+	global sLocalMusicMPD
+	
+	print('[LOCMUS] Updating local database')
 
 	#Remember position and/or track in playlist
 	#or.. also cool, start playing at the first next new track
 	#TODO
-	pa_sfx('mpd_update_db')
-	
-	#Update
-	call(["mpc", "--wait", "update", sLocalMusicMPD])
+
+	#Update database
+	mpc_update(sLocalMusicMPD)
 	
 	#Reload playlist
 	locmus_play()
