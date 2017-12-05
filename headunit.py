@@ -771,18 +771,18 @@ def mpc_init():
 	oMpdClient.connect("localhost", 6600)  # connect to localhost:6600
 	print(oMpdClient.mpd_version)          # print the MPD version
 	
-	#print('[MPC] Subscribing to channel: media_ready')
-	#oMpdClient.subscribe("media_ready")
+	print('[MPC] Subscribing to channel: media_ready')
+	oMpdClient.subscribe("media_ready")
 
-	#print('[MPC] Subscribing to channel: media_removed')
-	#oMpdClient.subscribe("media_removed")
+	print('[MPC] Subscribing to channel: media_removed')
+	oMpdClient.subscribe("media_removed")
 	
 	print('[MPC] Random: OFF, Repeat: ON')
 	call(["mpc", "-q", "random", "off"])
 	call(["mpc", "-q", "repeat", "on"])
 	
-	#print('[MPC-debug] send_idle()')
-	#oMpdClient.send_idle()
+	print('[MPC-debug] send_idle()')
+	oMpdClient.send_idle()
 
 def mpd_control( events ):
 	global oMpdClient
@@ -797,6 +797,7 @@ def mpd_control( events ):
 
 		print(' ...  EVENT: {0}'.format(e))
 		if e == "message":	
+			oMpdClient.subscribe("media_ready")
 			oMpdClient.command_list_ok_begin()
 			oMpdClient.readmessages()
 			messages = oMpdClient.command_list_end()		
