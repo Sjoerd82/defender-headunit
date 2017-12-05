@@ -45,7 +45,7 @@ class mpdControl(dbus.service.Object):
 			
 			time.sleep(0.1)
 
-	def mpd_handle_change(changes):
+	def mpd_handle_change(self, changes):
 		print('[MPD] Change event received:')
 		print(changes)
 		for k in changes:
