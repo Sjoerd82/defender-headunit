@@ -46,7 +46,7 @@ class mpdControl(dbus.service.Object):
 				changes = self.oMpdClient.fetch_idle()
 				print(changes) # handle changes
 				self.oMpdClient.send_idle() # continue idling
-				mpd_control("test")
+				self.mpd_control("test")
 			
 			time.sleep(0.1)
 
