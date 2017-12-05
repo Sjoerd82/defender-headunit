@@ -1659,17 +1659,78 @@ def init():
 	beep()
 	
 def udisk_device_added( device ):
-	print("Test")
-	#print('[UDISK] Device added: {0}'.format(str(device)))
-	#udisk_device_dump( device )
+	print('[UDISK] Device added: {0}'.format(str(device)))
+	udisk_device_dump( device )
 	
 def udisk_device_removed( device ):
 	print('[UDISK] Device removed: {0}'.format(str(device)))
-	#udisk_device_dump( device )
+	udisk_device_dump( device )
 
 def udisk_device_dump( device ):
-	print('[UDISK] Device details:')
-	
+    print('[UDISK] Device details:')
+    device_obj = system_bus.get_object("org.freedesktop.UDisks", device)
+    device_props = dbus.Interface(device_obj, dbus.PROPERTIES_IFACE)
+    #
+    #  beware.... anything after this may or may not be defined depending on the event and state of the drive. 
+    #  Attempts to get a prop that is no longer set will generate a dbus.connection:Exception
+    #
+    try:
+        print("DeviceFile:" + device_props.Get('org.freedesktop.UDisks.Device',"DeviceFile"))
+    except:
+        print("DeviceFile is unset")
+        
+    try:
+        print("NativePath: " + device_props.Get('org.freedesktop.UDisks.Device',"NativePath"))
+    except:
+        print("NativePath: is unset")
+    
+    try:
+        is_mounted = device_props.Get('org.freedesktop.UDisks.Device', "DeviceIsMounted")
+        if is_mounted:
+            mounted_uid = device_props.Get('org.freedesktop.UDisks.Device', "DeviceMountedByUid")
+            if mounted_uid == uid:
+                print("mounted by me")
+            else:
+                print("mounted by " + str(mounted_uid))
+            mountpaths =  device_props.Get('org.freedesktop.UDisks.Device', "DeviceMountPaths")
+            for test in mountpaths:
+                print("paths: " + test)
+        else:
+            print("unmounted")
+    except:
+        print("DeviceIsMounted is unset")
+    
+    try:    
+        is_media_available = device_props.Get('org.freedesktop.UDisks.Device', "DeviceIsMediaAvailable")
+        if is_media_available:
+            print("media available")
+        else:
+            print("media not available")
+    except:
+        print("DeviceIsMediaAvailable is not set")
+
+    try:        
+        is_partition_table = device_props.Get('org.freedesktop.UDisks.Device', "DeviceIsPartitionTable")
+        if is_partition_table:
+            print("device is partition table")
+    except:
+        print("DeviceIsPartitionTable is not set")
+
+    try:        
+        is_partition = device_props.Get('org.freedesktop.UDisks.Device', "DeviceIsPartition")
+        if is_partition:
+            print("device is partition")
+    except:
+        print("DeviceIsPartition is not set")
+        
+    try:
+        is_removeable = device_props.Get('org.freedesktop.UDisks.Device', "DeviceIsRemovable")
+        if is_removeable:
+            print("device is removable")
+        else:
+            print("device is not removable")
+    except:
+        print("DeviceIsRemovable is not set")
 	
 #-------------------------------------------------------------------------------
 # Main loop
