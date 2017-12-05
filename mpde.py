@@ -54,7 +54,7 @@ class mpdControl(dbus.service.Object):
 		#for k, v in changes.items():
 		#	print(k,v)
 	
-		mpd_control('test!')
+		self.mpd_control('test!')
 	
 	#handling variably nested dicts is hard/impossible?
 	@dbus.service.signal("com.arctura.mpd", signature='s')
