@@ -790,9 +790,9 @@ def mpd_control( event ):
 	if event == "save":
 		print(' ...  -> save')
 		mpc_save_pos()
-	if event == "media_removed":
+	elif event == "media_removed":
 		print(' ...  -> media removed')
-	if event == "media_ready":
+	elif event == "media_ready":
 		print(' ...  -> media ready')		
 	else:
 		print(' ...  Unknown event')
@@ -1658,6 +1658,11 @@ def init():
 	print('--------------------------------------------------------------------------------')
 	beep()
 	
+
+def test( iets ):
+	print('testing')
+	print(iets)
+	
 #-------------------------------------------------------------------------------
 # Main loop
 print('Headunit v0.1 2017-10-28')
@@ -1674,5 +1679,6 @@ init()
 mainloop = gobject.MainLoop()
 bus.add_signal_receiver(button_press, dbus_interface = "com.arctura.remote")
 bus.add_signal_receiver(mpd_control, dbus_interface = "com.arctura.mpd")
+bus.add_signal_receiver(test, dbus_interface = "org.freedesktop.DBus.ObjectManager")
 mainloop.run()
 
