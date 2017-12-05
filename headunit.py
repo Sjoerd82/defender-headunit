@@ -786,6 +786,7 @@ def mpc_init():
 
 def mpd_control( func ):
 	print('!!!!!!!!!!!!')
+	print(func)
 
 	
 def mpc_random():
