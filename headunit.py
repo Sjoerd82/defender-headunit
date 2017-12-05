@@ -787,6 +787,10 @@ def mpc_init():
 def mpd_control( event ):
 	print('[MPD] Change event received:')
 	print(event)
+
+	for k in changes:
+		print(k)
+	
 	"""
 	print(changes)
 	for k in changes:
