@@ -52,7 +52,7 @@ class mpdControl(dbus.service.Object):
 			
 			time.sleep(0.1)
 
-	def mpd_handle_change(events):
+	def mpd_handle_change(self, events):
 	
 		for e in events:
 
