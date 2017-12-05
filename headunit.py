@@ -788,7 +788,7 @@ def mpd_control( event ):
 	print('[MPD] DBUS activity...')
 
 	if event == "save":
-		print(' ...  Saving')
+		print(' ...  -> save')
 		mpc_save_pos()
 	else:
 		print(' ...  Unknown event')
