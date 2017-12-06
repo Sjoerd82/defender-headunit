@@ -75,7 +75,10 @@ iAtt = 0									 # Att mode toggle
 iRandom = 0									 # We're keeping track of it within the script, not checking with MPD
 iDoSave	= 0									 # Indicator to do a save anytime soon
 dSettings = {'source': -1, 'volume': 20, 'mediasource': -1, 'medialabel': ''}	 # No need to save random, we don't want to save that (?)
-sRootFolder = os.path.dirname(os.path.abspath(__file__))
+#sRootFolder = os.path.dirname(os.path.abspath(__file__))
+#sDirSave = "/root"
+sDirRoot = "/mnt/PIHU_APP/defender-headunit"
+sDirSave = "/mnt/PIHU_CONFIG"
 bBeep = 0									 # Use hardware beep?
 
 #DBUS
@@ -120,7 +123,7 @@ TRANSPORT_IFACE = SERVICE_NAME + '.MediaTransport1'
 LOG_LEVEL = logging.INFO
 #LOG_FILE = "/var/log/syslog"
 #LOG_LEVEL = logging.DEBUG
-LOG_FILE = sRootFolder+"/blueagent5.log"
+LOG_FILE = sDirSave+"/blueagent5.log"
 LOG_FORMAT = "%(asctime)s %(levelname)s [%(module)s] %(message)s"
 
 # ********************************************************************************
@@ -613,9 +616,10 @@ def alsa_play_fx( fx ):
 #
 def pa_init():
 	print('[PULSE] Loading sound effects')
-	call(["pactl","upload-sample","/root/defender-headunit/sfx/beep_60.wav", "beep_60"])
-	call(["pactl","upload-sample","/root/defender-headunit/sfx/beep_70.wav", "beep_70"])
-	call(["pactl","upload-sample","/root/defender-headunit/sfx/beep_60_70.wav", "beep_60_70"])
+	call(["pactl","upload-sample",sDirRoot+"/sfx/startup.wav", "startup"])
+	call(["pactl","upload-sample",sDirRoot+"/sfx/beep_60.wav", "beep_60"])
+	call(["pactl","upload-sample",sDirRoot+"/sfx/beep_70.wav", "beep_70"])
+	call(["pactl","upload-sample",sDirRoot+"/sfx/beep_60_70.wav", "beep_60_70"])
 
 def pa_set_volume( volume ):
 	print('[PULSE] Setting volume')
@@ -628,7 +632,9 @@ def pa_get_volume():
 	return pavol.vol_get()
 
 def pa_sfx(sfx):
-	if sfx == 'button_feedback':
+	if sfx == 'startup':
+		call(["pactl", "play-sample", "startup", "alsa_output.platform-soc_sound.analog-stereo"])
+	elif sfx == 'button_feedback':
 		call(["pactl", "play-sample", "beep_60", "alsa_output.platform-soc_sound.analog-stereo"])
 	elif sfx == 'mpd_update_db':
 		call(["pactl", "play-sample", "beep_60_70", "alsa_output.platform-soc_sound.analog-stereo"])
@@ -704,19 +710,26 @@ def volume_down():
 
 def save_settings():
 	global dSettings
+	global sDirSave
 	print('[PICKLE] Saving settings')
-	pickle.dump( dSettings, open( "headunit.p", "wb" ) )
+	pickle.dump( dSettings, open( sDirSave+"/headunit.p", "wb" ) )
+	#TODO: try-except
 
 def load_settings():
 	global dSettings
+	global sDirSave
+
+	sPickleFile = sDirSave+"/headunit.p"
+	
 	print('\033[96m[PICKLE] Loading previous settings\033[00m')
 
+	#TODO: Check if sDirSave exists
 	try:
-		dSettings = pickle.load( open( "headunit.p", "rb" ) )
+		dSettings = pickle.load( open( sPickleFile, "rb" ) )
 	except:
 		print('[PICKLE] Loading headunit.p failed. First run? - Creating headunit.p with default values.')
 		#assume: fails because it's the first time and no settings saved yet? Setting default:
-		pickle.dump( dSettings, open( "headunit.p", "wb" ) )
+		pickle.dump( dSettings, open( sPickleFile, "wb" ) )
 
 	# Apply settings:
 	
@@ -724,7 +737,7 @@ def load_settings():
 	#check if the value is valid
 	if dSettings['volume'] < 0 or dSettings['volume'] > 100:
 		dSettings['volume'] = 40
-		pickle.dump( dSettings, open( "headunit.p", "wb" ) )
+		pickle.dump( dSettings, open( sPickleFile, "wb" ) )
 		print('[PICKLE] No setting found, defaulting to 40%')
 	# also don't restore a too low volume
 	elif dSettings['volume'] < 30:
@@ -972,7 +985,7 @@ def mpc_save_pos_for_label ( label ):
 			current_file = f['file']
 	
 	print current_file
-	pickle_file = sRootFolder + "/mp_" + label + ".p"
+	pickle_file = sDirSave + "/mp_" + label + ".p"
 	pickle.dump( current_file, open( pickle_file, "wb" ) )
 
 def mpc_lkp( label ):
@@ -980,7 +993,7 @@ def mpc_lkp( label ):
 	#default
 	pos = 1
 	
-	pickle_file = sRootFolder + "/mp_" + label + ".p"
+	pickle_file = sDirSave + "/mp_" + label + ".p"
 	print('[MPC] Retrieving last known position from lkp file: {0:s}'.format(pickle_file))
 
 	try:
@@ -1032,7 +1045,7 @@ def mpc_save_posX ( label ):
 			current_file = f['file']
 	
 	print current_file
-	pickle_file = sRootFolder + "/mp_" + label + ".p"
+	pickle_file = sDirSave + "/mp_" + label + ".p"
 	pickle.dump( current_file, open( pickle_file, "wb" ) )
 
 def mpc_lkpX( label ):
@@ -1041,7 +1054,7 @@ def mpc_lkpX( label ):
 	#default
 	pos = 1
 	
-	pickle_file = sRootFolder + "/mp_" + label + ".p"
+	pickle_file = sDirSave + "/mp_" + label + ".p"
 	print('[MPC] Retrieving last known position from lkp file: {0:s}'.format(pickle_file))
 
 	try:
@@ -1575,7 +1588,7 @@ def OLD_mpc_save_pos ( label ):
 
 	print('Saving playlist position')
 	# save position and current file name for this drive
-	mp_filename = sRootFolder + '/mp_' + label + '.txt'
+	mp_filename = sDirSave + '/mp_' + label + '.txt'
 	print mp_filename
 	
 	cmd1 = "mpc | sed -n 2p | grep -Po '(?<=#)[^/]*' > " + mp_filename
@@ -1635,7 +1648,8 @@ def init():
 	load_settings()
 
 	# play startup sound
-	alsa_play_fx( 1 )
+	#alsa_play_fx( 1 )
+	pa_sfx('startup')
 
 	# check available sources
 	source_check()
@@ -1731,6 +1745,9 @@ def udisk_device_dump( device ):
             print("device is not removable")
     except:
         print("DeviceIsRemovable is not set")
+	
+	#TODO, only when mounted and available:
+	media_check()
 	
 #-------------------------------------------------------------------------------
 # Main loop
