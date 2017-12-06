@@ -1248,23 +1248,26 @@ def media_check():
 			print(' ... . {0}'.format(mountpoint))
 		
 		print(' ... Continuing to crosscheck with mpd database for music...')
-		for mountpoint in arMedia:	
+		for mountpoint in arMedia:
 			#mountpoint = subprocess.check_output("mount | egrep media | cut -d ' ' -f 3", shell=True)
 			sUsbLabel = os.path.basename(mountpoint).rstrip('\n')
 			
-			taskcmd = "mpc listall "+sUsbLabel+" | wc -l"
-			task = subprocess.Popen(taskcmd, shell=True, stdout=subprocess.PIPE)
-			mpcOut = task.stdout.read()
-			assert task.wait() == 0
-			
-			if mpcOut.rstrip('\n') == '0':
-				print(' ... . {0}: nothing in the database for this source.'.format(sUsbLabel))
-			else:
-				print(' ... . {0}: found {1:s} tracks'.format(sUsbLabel,mpcOut.rstrip('\n')))		
-				arMediaWithMusic.append(mountpoint)
-				#default to found media, if not set yet
-				if dSettings['mediasource'] == -1:
-					dSettings['mediasource'] = 0
+			if sUsbLabel == sLocalMusicMPD:
+				print(' ...  Ignoring local music directory {0}'.format(sLocalMusicMPD))
+			else:		
+				taskcmd = "mpc listall "+sUsbLabel+" | wc -l"
+				task = subprocess.Popen(taskcmd, shell=True, stdout=subprocess.PIPE)
+				mpcOut = task.stdout.read()
+				assert task.wait() == 0
+				
+				if mpcOut.rstrip('\n') == '0':
+					print(' ... . {0}: nothing in the database for this source.'.format(sUsbLabel))
+				else:
+					print(' ... . {0}: found {1:s} tracks'.format(sUsbLabel,mpcOut.rstrip('\n')))		
+					arMediaWithMusic.append(mountpoint)
+					#default to found media, if not set yet
+					if dSettings['mediasource'] == -1:
+						dSettings['mediasource'] = 0
 
 		# if nothing useful found, then mark source as unavailable
 		if len(arMediaWithMusic) == 0:
