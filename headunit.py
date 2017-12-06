@@ -99,9 +99,8 @@ oAlsaMixer = None
 bPulseVolume = 1		# Use PulseAudio volume control, not ALSA
 
 #LOCAL MUSIC
-#sLocalMusic="/media/local_music"		# symlink to /home/hu/music
-sLocalMusic="/media/PIHU_DATA"
-sLocalMusicMPD="local_music"			# directory from a MPD pov.
+sLocalMusic="/media/PIHU_DATA"		# local music directory
+sLocalMusicMPD="PIHU_DATA"			# directory from a MPD pov. #TODO: derive from sLocalMusic
 
 #MPD-client (MPC)
 oMpdClient = None
@@ -1407,7 +1406,7 @@ def locmus_play():
 def locmus_update():
 	global sLocalMusicMPD
 	
-	print('[LOCMUS] Updating local database')
+	print('[LOCMUS] Updating local database [{0}]'.format(sLocalMusicMPD))
 
 	#Remember position and/or track in playlist
 	#or.. also cool, start playing at the first next new track
@@ -1555,7 +1554,8 @@ def source_play():
 		elif dSettings['source'] == 2 and arSourceAvailable[2] == 1:
 			locmus_play()
 		elif dSettings['source'] == 3 and arSourceAvailable[3] == 1:
-			locmus_stop()
+			#locmus_stop()
+			# TODO: stop anything already playing!?
 			bt_play()
 		elif dSettings['source'] == 4 and arSourceAvailable[4] == 1:
 			linein_play()
