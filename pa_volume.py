@@ -1,6 +1,8 @@
 # To be replaced by a proper lib, or DBUS, or whatever. But the first segfaults, and the latter is unavailable, somehow...
 
 import subprocess
+from subprocess import call
+from subprocess import Popen, PIPE
 
 class pa_volume_handler():
 
