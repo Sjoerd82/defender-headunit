@@ -74,7 +74,6 @@ arSourceAvailable = [0,0,0,0,0]              # corresponds to arSource; 1=availa
 arMediaWithMusic = []						 # list of mountpoints that contains music, according to MPD
 iAtt = 0									 # Att mode toggle
 iRandom = 0									 # We're keeping track of it within the script, not checking with MPD
-iDoSave	= 0									 # Indicator to do a save anytime soon
 dSettings = {'source': -1, 'volume': 20, 'mediasource': -1, 'medialabel': ''}	 # No need to save random, we don't want to save that (?)
 #sRootFolder = os.path.dirname(os.path.abspath(__file__))
 #sDirSave = "/root"
@@ -668,10 +667,12 @@ def volume_att_toggle():
 def volume_up():
 	global dSettings
 	global iAtt
-	global iDoSave
 
 	# PulseAudio volume control
 	pavol = pa_volume_handler('alsa_output.platform-soc_sound.analog-stereo')
+
+	# always reset Att. state at manual vol. change
+	iAtt = 0
 
 	if bPulseVolume:
 		pavol.vol_up()
@@ -687,13 +688,9 @@ def volume_up():
 		#pipe = subprocess.check_output("amixer get Master | awk '$0~/%/{print $5}' | tr -d '[]%'", shell=True)
 		#pipe = subprocess.check_output("amixer get Master | awk '$0~/%/{print $4}' | tr -d '[]%'", shell=True)
 		#dSettings['volume'] = int(pipe.splitlines()[0]) #LEFT CHANNEL	
-
-	# always reset Att. state at manual vol. change
-	iAtt = 0
-		
-	# Delayed save
-	save_settings() #too slow
-	iDoSave = 1
+	
+	# Save new volume level
+	save_settings()
 
 def volume_down():
 	global dSettings
@@ -706,10 +703,6 @@ def volume_down():
 	# always reset Att. state at manual vol. change
 	iAtt = 0
 	
-	# Delayed save
-	iDoSave = 1
-	save_settings() #too slow
-
 	if bPulseVolume:
 		pavol.vol_down()
 		dSettings['volume'] = pavol.vol_get()
@@ -718,6 +711,10 @@ def volume_down():
 		volume_new = alsa_get_volume()-5
 		set_volume(volume_new)
 		dSettings['volume'] = volume_new
+		
+	# Save new volume level
+	save_settings()
+
 			
 # ********************************************************************************
 # Save & Load settings, using pickle
