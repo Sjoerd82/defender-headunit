@@ -1449,49 +1449,21 @@ def locmus_update():
 	
 	print('[LOCMUS] Updating local database [{0}]'.format(sLocalMusicMPD))
 
+	#Remember position and/or track in playlist
+	#or.. also cool, start playing at the first next new track
+	#TODO
+
 	#Update database
 	mpc_update(sLocalMusicMPD)
 	
-	#IF we're already playing local music: Continue playing without interruption
-	# and add new tracks to the playlist
-	# Source 2 = locmus
-	if dSettings['source'] = 2:
-        print(' ......  source is already playing, trying seamless update...')
-		# 1. "crop" playlist (remove everything, except playing track)
-		call(["mpc", "-q" , "crop"])
-		
-		# 2. songid is not unique, get the full filename
-		current_song = oMpdClient.currentsong()
-        curr_file = current_song['file']
-        print(' ......  currently playing file: {0}'.format(curr_file))
-		
-		# 3. reload local music playlist
-		mpc_populate_playlist(sLocalMusicMPD)
-		
-		# 4. find position of song that we are playing, skipping the first position (pos 0) in the playlist, because that's where the currently playing song is
-		delpos = '0'
-        for s in oMpdClient.playlistinfo('1:'):
-                if s['file'] == curr_file:
-                        print(' ......  song found at position {0}'.format(s['pos']))
-                        delpos = s['pos']
-		
-		if delpos != '0':
-			print(' ......  moving currently playing track back in place')
-			oMpdClient.delete(delpos)
-			oMpdClient.move(0,int(delpos)-1)
-		else:
-			print(' ......  ERROR: something went wrong')
-		
-	#IF we were not playing local music: Try to switch to local music, but check if the source is OK.
+	#We cannot check if there's any NEW tracks, but let's check if there's anything to play..
+	locmus_check()
+	
+	if arSourceAvailable[2] == 1:
+		dSettings['source'] = 2
+		source_play()
 	else:
-		#We cannot check if there's any NEW tracks, but let's check if there's anything to play..
-		locmus_check()
-		# Source 2 = locmus
-		if arSourceAvailable[2] == 1:
-			dSettings['source'] = 2
-			source_play()
-		else:
-			print('[LOCMUS] Update requested, but no music available for playing... Doing nothing.')
+		print('[LOCMUS] Update requested, but no music available for playing. Aborting...')
 
 def locmus_stop():
 	print('Stopping source: locmus. Saving playlist position and clearing playlist.')
