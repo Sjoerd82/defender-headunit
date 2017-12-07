@@ -487,16 +487,15 @@ def shutdown():
 # Remote control
 #
 
-def button_press ( func ):
+def cb_remote_btn_press ( func ):
+
 	# Feedback beep
 	if bBeep:
 		beep()
 	else:
 		pa_sfx('button_feedback')
 
-	pavol = pa_volume_handler('alsa_output.platform-soc_sound.analog-stereo')
-	
-	# Handle button
+	# Handle button press
 	if func == 'SHUFFLE':
 		print('\033[95m[BUTTON] Shuffle\033[00m')
 		if dSettings['source'] == 1 or dSettings['source'] == 2:
@@ -509,14 +508,12 @@ def button_press ( func ):
 		print('\033[95m[BUTTON] ATT\033[00m')
 		volume_att_toggle()
 	elif func == 'VOL_UP':
-		print('\033[95m[BUTTON] VOL_UP\033[00m')
-		pavol.vol_up()
-		#volume_up()
+		print('\033[95m[BUTTON] VOL_UP\033[00m')		
+		volume_up()
 		return 0
 	elif func == 'VOL_DOWN':
 		print('\033[95m[BUTTON] VOL_DOWN\033[00m')
-		pavol.vol_down()
-		#volume_down()
+		volume_down()
 		return 0
 	elif func == 'SEEK_NEXT':
 		print('\033[95m[BUTTON] Seek/Next\033[00m')
@@ -672,22 +669,28 @@ def volume_up():
 	global iAtt
 	global iDoSave
 
-	print('Volume up; +5%')
-	volume_new = alsa_get_volume()+5
-	set_volume(volume_new)
-	#call(["amixer", "-q", "-c", "0", "set", "Master", "5+", "unmute"])
-	dSettings['volume'] = volume_new
+	# PulseAudio volume control
+	pavol = pa_volume_handler('alsa_output.platform-soc_sound.analog-stereo')
+
+	if bPulseVolume:
+		pavol.vol_up()
+	else:
+		print('Volume up; +5%')
+		volume_new = alsa_get_volume()+5
+		set_volume(volume_new)
+		#call(["amixer", "-q", "-c", "0", "set", "Master", "5+", "unmute"])
+		dSettings['volume'] = volume_new
+
+		# Save volume change
+		#pipe = subprocess.check_output("amixer get Master | awk '$0~/%/{print $5}' | tr -d '[]%'", shell=True)
+		#pipe = subprocess.check_output("amixer get Master | awk '$0~/%/{print $4}' | tr -d '[]%'", shell=True)
+		#dSettings['volume'] = int(pipe.splitlines()[0]) #LEFT CHANNEL	
 
 	# always reset Att. state at manual vol. change
 	iAtt = 0
-
-	# Save volume change
-	#pipe = subprocess.check_output("amixer get Master | awk '$0~/%/{print $5}' | tr -d '[]%'", shell=True)
-	#pipe = subprocess.check_output("amixer get Master | awk '$0~/%/{print $4}' | tr -d '[]%'", shell=True)
-	#dSettings['volume'] = int(pipe.splitlines()[0]) #LEFT CHANNEL	
-	
+		
 	# Delayed save
-	#save_settings() #too slow
+	save_settings() #too slow
 	iDoSave = 1
 
 def volume_down():
@@ -695,17 +698,24 @@ def volume_down():
 	global iAtt
 	global iDoSave
 
-	print('Volume down; 5%')
-	volume_new = alsa_get_volume()-5
-	set_volume(volume_new)
-	dSettings['volume'] = volume_new
-	
+	# PulseAudio volume control
+	pavol = pa_volume_handler('alsa_output.platform-soc_sound.analog-stereo')
+
 	# always reset Att. state at manual vol. change
 	iAtt = 0
 	
 	# Delayed save
 	iDoSave = 1
-	
+	save_settings() #too slow
+
+	if bPulseVolume:
+		pavol.vol_down()
+	else:
+		print('Volume down; 5%')
+		volume_new = alsa_get_volume()-5
+		set_volume(volume_new)
+		dSettings['volume'] = volume_new
+			
 # ********************************************************************************
 # Save & Load settings, using pickle
 #
@@ -1087,13 +1097,22 @@ def mpc_lkpX( label ):
 	
 
 def mpc_populate_playlist ( label ):
-	global oMpdClient
-	oMpdClient.noidle()
+	#global oMpdClient
+	
+	# Stop idle, in order to send a command
+	#oMpdClient.noidle()
+	
+	xMpdClient = MPDClient() 
+	xMpdClient.connect("localhost", 6600)  # connect to localhost:6600
+		
 	if label == 'locmus':
-		oMpdClient.findadd('base',sLocalMusicMPD)
+		xMpdClient.findadd('base',sLocalMusicMPD)
 	else:
-		oMpdClient.findadd('base',label)
-	oMpdClient.send_idle()
+		xMpdClient.findadd('base',label)
+	
+	xMpdClient.close()
+	
+	#oMpdClient.send_idle()
 
 	# Using the command line:
 	#  ..but this generates some problems with special characters
@@ -1807,7 +1826,7 @@ init()
 
 # Initialize a main loop
 mainloop = gobject.MainLoop()
-bus.add_signal_receiver(button_press, dbus_interface = "com.arctura.remote")
+bus.add_signal_receiver(cb_remote_btn_press, dbus_interface = "com.arctura.remote")
 bus.add_signal_receiver(mpd_control, dbus_interface = "com.arctura.mpd")
 
 bus.add_signal_receiver(cb_udisk_dev_add, signal_name='DeviceAdded', dbus_interface="org.freedesktop.UDisks")
