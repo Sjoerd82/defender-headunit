@@ -1688,7 +1688,7 @@ def init():
 	print('--------------------------------------------------------------------------------')
 	beep()
 	
-def udisk_device_added( device ):
+def cb_udisk_dev_add( device ):
 	print('[UDISK] Device added: {0}'.format(str(device)))
 	device_obj = bus.get_object("org.freedesktop.UDisks", device)
 	device_props = dbus.Interface(device_obj, dbus.PROPERTIES_IFACE)
@@ -1697,9 +1697,11 @@ def udisk_device_added( device ):
 	#  Attempts to get a prop that is no longer set will generate a dbus.connection:Exception
 	#
 
+	data = device_props.GetAll('')
+	for i in data: print i+': '+str(data[i])
+	
 	DeviceFile = ""
 	mountpoint = ""
-	label = ""
 	
 	try:
 		DeviceFile = device_props.Get('org.freedesktop.UDisks.Device',"DeviceFile")
@@ -1708,7 +1710,6 @@ def udisk_device_added( device ):
 	except:
 		print(" .....  DeviceFile is unset... Aborting...")
 		return 1
-
 	
 	# Check if DeviceIsMediaAvailable...
 	try:    
@@ -1717,7 +1718,7 @@ def udisk_device_added( device ):
 			print(" .....  Media available")
 		else:
 			print(" .....  Media not available... Aborting...")
-			return 1
+		return 1
 	except:
 		print(" .....  DeviceIsMediaAvailable is not set... Aborting...")
 		return 1
@@ -1734,9 +1735,11 @@ def udisk_device_added( device ):
 	if not is_partition:
 		print(" .....  DeviceIsPartition is not set... Aborting...")
 		return 1
-		
+	
 	# Find out its mountpoint...
-	mountpoint = subprocess.check_output("mount | egrep "+DeviceFile+" | cut -d ' ' -f 3", shell=True)
+	
+	"""
+	mountpoint = subprocess.check_output("mount | egrep "+DeviceFile+" | cut -d ' ' -f 3", shell=True).rstrip('\n')
 	if mountpoint != "":
 		sUsbLabel = os.path.basename(mountpoint).rstrip('\n')
 		print(" .....  Mounted on: {0} (label: {1})".format(mountpoint,sUsbLabel))
@@ -1746,11 +1749,38 @@ def udisk_device_added( device ):
 	else:
 		print(" .....  No mountpoint found. Stopping.")
 	
-	#udisk_device_dump( device )
+	udisk_handle_dev_change()
+	"""
+
+def cb_udisk_dev_rem( device ):
+	print('[UDISK] Device removed: {0}'.format(str(device)))
+	device_obj = bus.get_object("org.freedesktop.UDisks", device)
+	device_props = dbus.Interface(device_obj, dbus.PROPERTIES_IFACE)
+
+	data = device_props.GetAll('')
+	for i in data: print i+': '+str(data[i])
 	
+	try:
+		MountPoint = device_props.Get('org.freedesktop.UDisks.Device',"DeviceMountPaths")
+		print(" .....  MountPoint: {0}".format(MountPoint))
+		
+	except:
+		print(" .....  MountPoint is unset... Aborting...")
+		return 1
+
+	
+def udisk_handle_dev_change( label, action ):
+	print("TODO")
+
+	
+def udisk_device_added( device ):
+	print('[UDISK] Device added: {0}'.format(str(device)))
+
 def udisk_device_removed( device ):
 	print('[UDISK] Device removed: {0}'.format(str(device)))
-	udisk_device_dump( device )
+	# Determine if we were playing this media (source: usb=1)
+	#if dSettings['source'] == 1 and
+	
 
 def udisk_device_dump( device ):
     print('[UDISK] Device details:')
@@ -1838,8 +1868,8 @@ mainloop = gobject.MainLoop()
 bus.add_signal_receiver(button_press, dbus_interface = "com.arctura.remote")
 bus.add_signal_receiver(mpd_control, dbus_interface = "com.arctura.mpd")
 
-bus.add_signal_receiver(udisk_device_added, signal_name='DeviceAdded', dbus_interface="org.freedesktop.UDisks")
-bus.add_signal_receiver(udisk_device_removed, signal_name='DeviceRemoved', dbus_interface="org.freedesktop.UDisks")
+bus.add_signal_receiver(cb_udisk_dev_add, signal_name='DeviceAdded', dbus_interface="org.freedesktop.UDisks")
+bus.add_signal_receiver(cb_udisk_dev_rem, signal_name='DeviceRemoved', dbus_interface="org.freedesktop.UDisks")
 #bus.add_signal_receiver(udisk_device_changed, signal_name='DeviceChanged', dbus_interface="org.freedesktop.UDisks")
 
 mainloop.run()
