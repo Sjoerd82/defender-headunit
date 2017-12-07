@@ -1446,7 +1446,6 @@ def locmus_play():
 def locmus_update():
 	global dSettings
 	global sLocalMusicMPD
-	global oMpdClient
 	
 	print('[LOCMUS] Updating local database [{0}]'.format(sLocalMusicMPD))
 
@@ -1460,10 +1459,12 @@ def locmus_update():
 		print(' ......  source is already playing, trying seamless update...')
 		# 1. "crop" playlist (remove everything, except playing track)
 		call(["mpc", "-q" , "crop"])
-		
+
+		yMpdClient = MPDClient()
+		yMpdClient.connect("localhost", 6600)
+				
 		# 2. songid is not unique, get the full filename
-		oMpdClient.noidle()
-		current_song = oMpdClient.currentsong()
+		current_song = yMpdClient.currentsong()
 		curr_file = current_song['file']
 		print(' ......  currently playing file: {0}'.format(curr_file))
 		
@@ -1472,19 +1473,19 @@ def locmus_update():
 		
 		# 4. find position of song that we are playing, skipping the first position (pos 0) in the playlist, because that's where the currently playing song is
 		delpos = '0'
-		for s in oMpdClient.playlistinfo('1:'):
+		for s in yMpdClient.playlistinfo('1:'):
 			if s['file'] == curr_file:
 				print(' ......  song found at position {0}'.format(s['pos']))
 				delpos = s['pos']
 		
 		if delpos != '0':
 			print(' ......  moving currently playing track back in place')
-			oMpdClient.delete(delpos)
-			oMpdClient.move(0,int(delpos)-1)
+			yMpdClient.delete(delpos)
+			yMpdClient.move(0,int(delpos)-1)
 		else:
 			print(' ......  ERROR: something went wrong')
 
-		oMpdClient.send_idle()
+		yMpdClient.close()
 		
 	#IF we were not playing local music: Try to switch to local music, but check if the source is OK.
 	else:
