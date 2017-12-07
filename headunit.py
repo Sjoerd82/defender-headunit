@@ -1686,13 +1686,12 @@ def init():
 	
 def udisk_device_added( device ):
 	print('[UDISK] Device added: {0}'.format(str(device)))
-    device_obj = bus.get_object("org.freedesktop.UDisks", device)
-    device_props = dbus.Interface(device_obj, dbus.PROPERTIES_IFACE)
-    #
-    #  beware.... anything after this may or may not be defined depending on the event and state of the drive. 
-    #  Attempts to get a prop that is no longer set will generate a dbus.connection:Exception
-    #
-
+	device_obj = bus.get_object("org.freedesktop.UDisks", device)
+	device_props = dbus.Interface(device_obj, dbus.PROPERTIES_IFACE)
+	#
+	#  beware.... anything after this may or may not be defined depending on the event and state of the drive. 
+	#  Attempts to get a prop that is no longer set will generate a dbus.connection:Exception
+	#
 	udisk_device_dump( device )
 	
 def udisk_device_removed( device ):
