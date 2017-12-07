@@ -1698,6 +1698,8 @@ def udisk_device_added( device ):
 	#
 
 	DeviceFile = ""
+	mountpoint = ""
+	label = ""
 	
 	try:
 		DeviceFile = device_props.Get('org.freedesktop.UDisks.Device',"DeviceFile")
@@ -1729,11 +1731,22 @@ def udisk_device_added( device ):
 		print(" .....  DeviceIsPartition is not set... Aborting...")
 		return 1
 
+	if not is_partition:
+		print(" .....  DeviceIsPartition is not set... Aborting...")
+		return 1
+		
 	# Find out its mountpoint...
-	mountpoint = subprocess.check_output("mount | egrep media | cut -d ' ' -f 3", shell=True)
-	print(" .....  Mounted on: {0}".format(mountpoint))
+	mountpoint = subprocess.check_output("mount | egrep "+DeviceFile+" | cut -d ' ' -f 3", shell=True)
+	if mountpoint != "":
+		sUsbLabel = os.path.basename(mountpoint).rstrip('\n')
+		print(" .....  Mounted on: {0} (label: {1})".format(mountpoint,sUsbLabel))
+		mpc_update(sUsbLabel)
+		media_check()
+		media_play()
+	else:
+		print(" .....  No mountpoint found. Stopping.")
 	
-	udisk_device_dump( device )
+	#udisk_device_dump( device )
 	
 def udisk_device_removed( device ):
 	print('[UDISK] Device removed: {0}'.format(str(device)))
