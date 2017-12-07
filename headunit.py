@@ -1253,7 +1253,7 @@ def media_check():
 			sUsbLabel = os.path.basename(mountpoint).rstrip('\n')
 			
 			if sUsbLabel == sLocalMusicMPD:
-				print(' ...  Ignoring local music directory {0}'.format(sLocalMusicMPD))
+				print(' ... . Ignoring local music directory {0}'.format(sLocalMusicMPD))
 			else:		
 				taskcmd = "mpc listall "+sUsbLabel+" | wc -l"
 				task = subprocess.Popen(taskcmd, shell=True, stdout=subprocess.PIPE)
@@ -1402,11 +1402,14 @@ def locmus_play():
 		print('Starting playback')
 		call(["mpc", "-q" , "stop"])
 		call(["mpc", "-q" , "play", str(playslist_pos)])
-	
+
+		# double check if source is up-to-date
+		
 		print('Loading directory structure')
 		mpc_get_PlaylistDirs()
 		
 def locmus_update():
+	global dSettings
 	global sLocalMusicMPD
 	
 	print('[LOCMUS] Updating local database [{0}]'.format(sLocalMusicMPD))
@@ -1418,8 +1421,9 @@ def locmus_update():
 	#Update database
 	mpc_update(sLocalMusicMPD)
 	
-	#Reload playlist
-	locmus_play()
+	#Play music
+	dSettings['source'] = 2
+	source_play()
 
 def locmus_stop():
 	print('Stopping source: locmus. Saving playlist position and clearing playlist.')
@@ -1654,6 +1658,11 @@ def init():
 	#alsa_play_fx( 1 )
 	pa_sfx('startup')
 
+	# startup USB check
+	# if a USB drive is connected before booting, it will not be captured by a UDisk event, manually checking..
+	# also possible that music has been uploaded offline, so let's do a MPD DB update on the /media
+	call(["mpc", "--wait", "update"])
+	
 	# check available sources
 	source_check()
 	
@@ -1677,6 +1686,13 @@ def init():
 	
 def udisk_device_added( device ):
 	print('[UDISK] Device added: {0}'.format(str(device)))
+    device_obj = bus.get_object("org.freedesktop.UDisks", device)
+    device_props = dbus.Interface(device_obj, dbus.PROPERTIES_IFACE)
+    #
+    #  beware.... anything after this may or may not be defined depending on the event and state of the drive. 
+    #  Attempts to get a prop that is no longer set will generate a dbus.connection:Exception
+    #
+
 	udisk_device_dump( device )
 	
 def udisk_device_removed( device ):
