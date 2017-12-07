@@ -1456,24 +1456,24 @@ def locmus_update():
 	# and add new tracks to the playlist
 	# Source 2 = locmus
 	if dSettings['source'] == 2:
-        print(' ......  source is already playing, trying seamless update...')
+		print(' ......  source is already playing, trying seamless update...')
 		# 1. "crop" playlist (remove everything, except playing track)
 		call(["mpc", "-q" , "crop"])
 		
 		# 2. songid is not unique, get the full filename
 		current_song = oMpdClient.currentsong()
-        curr_file = current_song['file']
-        print(' ......  currently playing file: {0}'.format(curr_file))
+		curr_file = current_song['file']
+		print(' ......  currently playing file: {0}'.format(curr_file))
 		
 		# 3. reload local music playlist
 		mpc_populate_playlist(sLocalMusicMPD)
 		
 		# 4. find position of song that we are playing, skipping the first position (pos 0) in the playlist, because that's where the currently playing song is
 		delpos = '0'
-        for s in oMpdClient.playlistinfo('1:'):
-                if s['file'] == curr_file:
-                        print(' ......  song found at position {0}'.format(s['pos']))
-                        delpos = s['pos']
+		for s in oMpdClient.playlistinfo('1:'):
+			if s['file'] == curr_file:
+				print(' ......  song found at position {0}'.format(s['pos']))
+				delpos = s['pos']
 		
 		if delpos != '0':
 			print(' ......  moving currently playing track back in place')
