@@ -1455,7 +1455,7 @@ def locmus_update():
 	#IF we're already playing local music: Continue playing without interruption
 	# and add new tracks to the playlist
 	# Source 2 = locmus
-	if dSettings['source'] = 2:
+	if dSettings['source'] == 2:
         print(' ......  source is already playing, trying seamless update...')
 		# 1. "crop" playlist (remove everything, except playing track)
 		call(["mpc", "-q" , "crop"])
