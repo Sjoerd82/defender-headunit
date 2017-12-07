@@ -793,22 +793,21 @@ def mpc_init():
 	oMpdClient.subscribe("media_removed")
 	
 	print('[MPC] Random: OFF, Repeat: ON')
-	call(["mpc", "-q", "random", "off"])
-	call(["mpc", "-q", "repeat", "on"])
+	oMpdClient.random(0)
+	oMpdClient.repeat(0)
+	#call(["mpc", "-q", "random", "off"])
+	#call(["mpc", "-q", "repeat", "on"])
 	
 	print('[MPC-debug] send_idle()')
 	oMpdClient.send_idle()
 
 def mpd_control( event ):
-	print('[MPD] DBUS activity...')
+	print('[MPD] DBUS event received: {0}'.format(event))
 
-	if event == "save":
-		print(' ...  -> save')
+	if event == "player":
 		mpc_save_pos()
-	elif event == "media_removed":
-		print(' ...  -> media removed')
-	elif event == "media_ready":
-		print(' ...  -> media ready')		
+	#elif event == "media_removed":
+	#elif event == "media_ready":
 	else:
 		print(' ...  Unknown event')
 	
@@ -956,6 +955,7 @@ def mpc_update( location ):
 	print('[MPC] Updating database for location: {0}'.format(location))
 	#Update
 	call(["mpc", "--wait", "update", location])
+	print(' ...  Update finished')
 
 def mpc_save_pos():
 	global dSettings
@@ -995,31 +995,34 @@ def mpc_lkp( label ):
 	#default
 	pos = 1
 	
+	# open pickle_file, if it exists
 	pickle_file = sDirSave + "/mp_" + label + ".p"
-	print('[MPC] Retrieving last known position from lkp file: {0:s}'.format(pickle_file))
+	if os.path.isfile(pickle_file)
+		print('[MPC] Retrieving last known position from lkp file: {0:s}'.format(pickle_file))
+		try:
+			current_file = pickle.load( open( pickle_file, "rb" ) )
+		except:
+			print('[PICKLE] Loading {0:s} failed!'.format(pickle_file))
+			return pos
 
-	try:
-		current_file = pickle.load( open( pickle_file, "rb" ) )
-	except:
-		print('[PICKLE] Loading {0:s} failed!'.format(pickle_file))
-		return pos
-	
-	#otherwise continue:
-	oMpdClient = MPDClient() 
-	oMpdClient.timeout = 10                # network timeout in seconds (floats allowed), default: None
-	oMpdClient.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
-	oMpdClient.connect("localhost", 6600)  # connect to localhost:6600
-	playlist = oMpdClient.playlistid()
-	oMpdClient.close()
-	oMpdClient.disconnect()
+		#otherwise continue:
+		oMpdClient = MPDClient() 
+		oMpdClient.timeout = 10                # network timeout in seconds (floats allowed), default: None
+		oMpdClient.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
+		oMpdClient.connect("localhost", 6600)  # connect to localhost:6600
+		playlist = oMpdClient.playlistid()
+		oMpdClient.close()
+		oMpdClient.disconnect()
 
-	for x in playlist:
-			if x['file'] == current_file:
-					pos = int(x['pos'])+1
-					print('[MPC] Match found! Continuing playback at #{0}'.format(pos))
+		for x in playlist:
+				if x['file'] == current_file:
+						pos = int(x['pos'])+1
+						print('[MPC] Match found! Continuing playback at #{0}'.format(pos))
+
+	else
+		print('[MPC] No position file available for this medium (first run?)')
 
 	return pos
-
 
 def mpc_save_posX ( label ):
 	global oMpdClient
@@ -1084,10 +1087,16 @@ def mpc_lkpX( label ):
 	
 
 def mpc_populate_playlist ( label ):
-	p1 = subprocess.Popen(["mpc", "listall", label], stdout=subprocess.PIPE)
-	p2 = subprocess.Popen(["mpc", "add"], stdin=p1.stdout, stdout=subprocess.PIPE)
-	p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
-	output,err = p2.communicate()
+	global oMpdClient
+	oMpdClient.findadd('base',label)
+
+	# Using the command line:
+	#  ..but this generates some problems with special characters
+	#
+	#p1 = subprocess.Popen(["mpc", "listall", label], stdout=subprocess.PIPE)
+	#p2 = subprocess.Popen(["mpc", "add"], stdin=p1.stdout, stdout=subprocess.PIPE)
+	#p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
+	#output,err = p2.communicate()
 
 def mpc_playlist_is_populated():
 	task = subprocess.Popen("mpc playlist | wc -l", shell=True, stdout=subprocess.PIPE)
@@ -1255,7 +1264,7 @@ def media_check():
 			sUsbLabel = os.path.basename(mountpoint).rstrip('\n')
 			
 			if sUsbLabel == sLocalMusicMPD:
-				print(' ... . Ignoring local music directory {0}'.format(sLocalMusicMPD))
+				print(' ... . {0}: ignoring local music directory'.format(sLocalMusicMPD))
 			else:		
 				taskcmd = "mpc listall "+sUsbLabel+" | wc -l"
 				task = subprocess.Popen(taskcmd, shell=True, stdout=subprocess.PIPE)
@@ -1766,7 +1775,6 @@ def udisk_details( device, action ):
 		else:
 			print(" .....  No mountpoint found. Stopping.")
 		
-		udisk_handle_dev_change()
 	elif action == 'R':
 		# Find out its mountpoint...
 		#We cannot retrieve many details from dbus about a removed drive, other than the DeviceFile (which at this point is no longer available).

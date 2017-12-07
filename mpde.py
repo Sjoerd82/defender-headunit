@@ -87,14 +87,14 @@ class mpdControl(dbus.service.Object):
 						else:
 							print('ERROR: Channel not supported')
 				
-			elif e == "player" or 'mixer':
+			elif e == "player":
 				#oMpdClient.command_list_ok_begin()
 				#oMpdClient.status()
 				#results = oMpdClient.command_list_end()		
 				#
 				#for r in results:
 				#	print(r)
-				self.mpd_control('save')
+				self.mpd_control('player')
 				
 			#elif e == "subscription":
 			#	oMpdClient.command_list_ok_begin()
