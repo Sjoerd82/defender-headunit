@@ -1731,7 +1731,7 @@ def udisk_details( device, action ):
 			print(" .....  Media available")
 		else:
 			print(" .....  Media not available... Aborting...")
-		return 1
+			return 1
 	except:
 		print(" .....  DeviceIsMediaAvailable is not set... Aborting...")
 		return 1
