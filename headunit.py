@@ -1421,9 +1421,14 @@ def locmus_update():
 	#Update database
 	mpc_update(sLocalMusicMPD)
 	
-	#Play music
-	dSettings['source'] = 2
-	source_play()
+	#We cannot check if there's any NEW tracks, but let's check if there's anything to play..
+	locmus_check()
+	
+	if arSourceAvailable[2] == 1:
+		dSettings['source'] = 2
+		source_play()
+	else:
+		print('[LOCMUS] Update requested, but no music available for playing. Aborting...')
 
 def locmus_stop():
 	print('Stopping source: locmus. Saving playlist position and clearing playlist.')
