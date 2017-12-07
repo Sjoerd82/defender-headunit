@@ -92,7 +92,14 @@ class RemoteControl(dbus.service.Object):
 				self.button_down_wait()
 
 			elif self.BUTTON10_LO <= value_0 <= self.BUTTON10_HI:
-				self.button_press('OFF')
+				print("Waiting for button to be pressed long enough")
+				time.sleep(5)
+				value_0 = adc.read_adc(0)
+				if self.BUTTON10_LO <= value_0 <= self.BUTTON10_HI:
+					print("Long press, really shutting down...")
+					self.button_press('OFF')
+				else:
+					print("Not pressed long enough, not shutting down")
 				
 			time.sleep(0.1)		
 
@@ -124,4 +131,4 @@ class RemoteControl(dbus.service.Object):
 			value_0 = adc.read_adc(0)
 			time.sleep(0.1)
 		print("...released/max. delay reached")
-			
+	

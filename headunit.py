@@ -129,6 +129,82 @@ LOG_FORMAT = "%(asctime)s %(levelname)s [%(module)s] %(message)s"
 #lDevices = [['/dev/sda1','/dev/sdb1']['SJOERD','MUSIC']]
 
 # ********************************************************************************
+# Callback functions
+#
+#  - Remote control
+#  - MPD events
+#  - UDisk add/remove drive
+
+def cb_remote_btn_press ( func ):
+
+	# Feedback beep
+	if bBeep:
+		beep()
+	else:
+		pa_sfx('button_feedback')
+
+	# Handle button press
+	if func == 'SHUFFLE':
+		print('\033[95m[BUTTON] Shuffle\033[00m')
+		if dSettings['source'] == 1 or dSettings['source'] == 2:
+			mpc_random()
+	elif func == 'SOURCE':
+		print('\033[95m[BUTTON] Next source\033[00m')
+		source_next()
+		source_play()
+	elif func == 'ATT':
+		print('\033[95m[BUTTON] ATT\033[00m')
+		volume_att_toggle()
+	elif func == 'VOL_UP':
+		print('\033[95m[BUTTON] VOL_UP\033[00m')		
+		volume_up()
+		return 0
+	elif func == 'VOL_DOWN':
+		print('\033[95m[BUTTON] VOL_DOWN\033[00m')
+		volume_down()
+		return 0
+	elif func == 'SEEK_NEXT':
+		print('\033[95m[BUTTON] Seek/Next\033[00m')
+		seek_next()
+	elif func == 'SEEK_PREV':
+		print('\033[95m[BUTTON] Seek/Prev.\033[00m')
+		seek_prev()
+	elif func == 'DIR_NEXT':
+		print('\033[95m[BUTTON] Next directory\033[00m')
+		if dSettings['source'] == 1 or dSettings['source'] == 2:
+			mpc_next_folder()		
+	elif func == 'DIR_PREV':
+		print('\033[95m[BUTTON] Prev directory\033[00m')
+		if dSettings['source'] == 1 or dSettings['source'] == 2:
+			mpc_prev_folder()
+	elif func == 'UPDATE_LOCAL':
+		print('\033[95m[BUTTON] Updating local MPD database\033[00m')
+		locmus_update()
+	elif func == 'OFF':
+		print('\033[95m[BUTTON] Shutting down\033[00m')
+		shutdown()
+	else:
+		print('Unknown button function')
+
+def cb_mpd_event( event ):
+	print('[MPD] DBUS event received: {0}'.format(event))
+
+	if event == "player":
+		mpc_save_pos()
+	#elif event == "media_removed":
+	#elif event == "media_ready":
+	else:
+		print(' ...  Unknown event')
+
+def cb_udisk_dev_add( device ):
+	print('[UDISK] Device added: {0}'.format(str(device)))
+	udisk_details( device, 'A' )
+
+def cb_udisk_dev_rem( device ):
+	print('[UDISK] Device removed: {0}'.format(str(device)))
+	udisk_details( device, 'R' )
+		
+# ********************************************************************************
 # bluezutils5.py
 #
 
@@ -480,63 +556,9 @@ def beep():
 def shutdown():
 	save_settings()
 	source_stop()
-	call(["halt"])
 	#call(["systemctl", "poweroff", "-i"])
+	call(["halt"])
 
-# ********************************************************************************
-# Remote control
-#
-
-def cb_remote_btn_press ( func ):
-
-	# Feedback beep
-	if bBeep:
-		beep()
-	else:
-		pa_sfx('button_feedback')
-
-	# Handle button press
-	if func == 'SHUFFLE':
-		print('\033[95m[BUTTON] Shuffle\033[00m')
-		if dSettings['source'] == 1 or dSettings['source'] == 2:
-			mpc_random()
-	elif func == 'SOURCE':
-		print('\033[95m[BUTTON] Next source\033[00m')
-		source_next()
-		source_play()
-	elif func == 'ATT':
-		print('\033[95m[BUTTON] ATT\033[00m')
-		volume_att_toggle()
-	elif func == 'VOL_UP':
-		print('\033[95m[BUTTON] VOL_UP\033[00m')		
-		volume_up()
-		return 0
-	elif func == 'VOL_DOWN':
-		print('\033[95m[BUTTON] VOL_DOWN\033[00m')
-		volume_down()
-		return 0
-	elif func == 'SEEK_NEXT':
-		print('\033[95m[BUTTON] Seek/Next\033[00m')
-		seek_next()
-	elif func == 'SEEK_PREV':
-		print('\033[95m[BUTTON] Seek/Prev.\033[00m')
-		seek_prev()
-	elif func == 'DIR_NEXT':
-		print('\033[95m[BUTTON] Next directory\033[00m')
-		if dSettings['source'] == 1 or dSettings['source'] == 2:
-			mpc_next_folder()		
-	elif func == 'DIR_PREV':
-		print('\033[95m[BUTTON] Prev directory\033[00m')
-		if dSettings['source'] == 1 or dSettings['source'] == 2:
-			mpc_prev_folder()
-	elif func == 'UPDATE_LOCAL':
-		print('\033[95m[BUTTON] Updating local MPD database\033[00m')
-		locmus_update()
-	elif func == 'OFF':
-		print('\033[95m[BUTTON] Shutting down\033[00m')
-		shutdown()
-	else:
-		print('Unknown button function')
 	
 # ********************************************************************************
 # ALSA, using python-alsaaudio
@@ -811,57 +833,7 @@ def mpc_init():
 	print('[MPC-debug] send_idle()')
 	oMpdClient.send_idle()
 
-def mpd_control( event ):
-	print('[MPD] DBUS event received: {0}'.format(event))
-
-	if event == "player":
-		mpc_save_pos()
-	#elif event == "media_removed":
-	#elif event == "media_ready":
-	else:
-		print(' ...  Unknown event')
 	
-#	global oMpdClient
-#	print('[MPD] Change event(s) received:')
-
-#	oMpdClient = MPDClient() 
-#	oMpdClient.timeout = 10                # network timeout in seconds (floats allowed), default: None
-#	oMpdClient.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
-#	oMpdClient.connect("localhost", 6600)  # connect to localhost:6600
-
-#	for e in events:
-#
-#		print(' ...  EVENT: {0}'.format(e))
-#		if e == "Xessage":	
-#			oMpdClient.subscribe("media_ready")
-#			oMpdClient.command_list_ok_begin()
-#			oMpdClient.readmessages()
-#			messages = oMpdClient.command_list_end()
-#			for m in messages:
-#				print(' ...  MESSAGE: {0}'.format(m))
-#				
-#		elif e == "player" or 'mixer':
-#			oMpdClient.command_list_ok_begin()
-#			oMpdClient.status()
-#			results = oMpdClient.command_list_end()		
-#
-#			for r in results:
-#				print(r)
-#			
-#		elif e == "subscription":
-#			oMpdClient.command_list_ok_begin()
-#			oMpdClient.channels()
-#			results = oMpdClient.command_list_end()		
-#
-#			for r in results:
-#				print(r)		
-#
-#		else:
-#			print(' ...  unmanaged event')
-#			
-#	oMpdClient.close()
-#	oMpdClient.disconnect()
-		
 	
 def mpc_random():
 	global iRandom
@@ -1034,70 +1006,18 @@ def mpc_lkp( label ):
 
 	return pos
 
-def mpc_save_posX ( label ):
-	global oMpdClient
-	print('[MPC] Saving playlist position')
-
-	# get current song
-	try:
-		oMpdClient.noidle()
-	except:
-		print('debug: idle not set')
-		#can't we do this nicerly?
-		
-	oMpdClient.command_list_ok_begin()
-	oMpdClient.status()
-	results = oMpdClient.command_list_end()
-
-	# I find this a very stupid way ... i mean a dict in a list? really? anyway...
-	for r in results:
-			songid = r['songid']
-
-	current_song_listdick = oMpdClient.playlistid(songid)
-	oMpdClient.send_idle() # continue idling
-
-	for f in current_song_listdick:
-			current_file = f['file']
-	
-	print current_file
-	pickle_file = sDirSave + "/mp_" + label + ".p"
-	pickle.dump( current_file, open( pickle_file, "wb" ) )
-
-def mpc_lkpX( label ):
-	global oMpdClient
-	
-	#default
-	pos = 1
-	
-	pickle_file = sDirSave + "/mp_" + label + ".p"
-	print('[MPC] Retrieving last known position from lkp file: {0:s}'.format(pickle_file))
-
-	try:
-		current_file = pickle.load( open( pickle_file, "rb" ) )
-	except:
-		print('[PICKLE] Loading {0:s} failed!'.format(pickle_file))
-		return pos
-	
-	#otherwise continue:
-	try:
-		oMpdClient.noidle()
-	except:
-		print('debug: idle not set')
-		#can't we do this nicerly?
-		
-	playlist = oMpdClient.playlistid()
-	oMpdClient.send_idle() # continue idling
-
-	for x in playlist:
-			if x['file'] == current_file:
-					pos = int(x['pos'])+1
-					print('[MPC] Match found! Continuing playback at #{0}'.format(pos))
-
-	return pos
-	
-
 def mpc_populate_playlist ( label ):
 	#global oMpdClient
+
+	"""
+	# Using the command line:
+	#  ..but this generates some problems with special characters
+	
+	p1 = subprocess.Popen(["mpc", "listall", label], stdout=subprocess.PIPE)
+	p2 = subprocess.Popen(["mpc", "add"], stdin=p1.stdout, stdout=subprocess.PIPE)
+	p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
+	output,err = p2.communicate()
+	"""
 	
 	# Stop idle, in order to send a command
 	#oMpdClient.noidle()
@@ -1114,13 +1034,6 @@ def mpc_populate_playlist ( label ):
 	
 	#oMpdClient.send_idle()
 
-	# Using the command line:
-	#  ..but this generates some problems with special characters
-	#
-	#p1 = subprocess.Popen(["mpc", "listall", label], stdout=subprocess.PIPE)
-	#p2 = subprocess.Popen(["mpc", "add"], stdin=p1.stdout, stdout=subprocess.PIPE)
-	#p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
-	#output,err = p2.communicate()
 
 def mpc_playlist_is_populated():
 	task = subprocess.Popen("mpc playlist | wc -l", shell=True, stdout=subprocess.PIPE)
@@ -1659,50 +1572,6 @@ def source_stop():
 	else:
 		print('ERROR: Invalid source.')
 		
-def latesystemstuff():
-	print('Starting less important system services')
-	call(["", "write", "6", "0"])
-
-# WORKS, but replaced by the python-mpd library
-def OLD_mpc_save_pos ( label ):
-
-	print('Saving playlist position')
-	# save position and current file name for this drive
-	mp_filename = sDirSave + '/mp_' + label + '.txt'
-	print mp_filename
-	
-	cmd1 = "mpc | sed -n 2p | grep -Po '(?<=#)[^/]*' > " + mp_filename
-	cmd2 = "mpc -f %file% current >> " + mp_filename
-	
-	#subprocess.check_output("mpc | sed -n 2p | grep -Po '(?<=#)[^/]*' > /home/hu/mp_locmus.txt")
-	#subprocess.check_output("mpc -f %file% current >> /home/hu/mp_locmus.txt")
-	pipe1 = Popen(cmd1, shell=True, stdout=PIPE)
-	pipe2 = Popen(cmd2, shell=True, stdout=PIPE)	
-				
-def OLD_mpc_lkp( lkp_file ):
-	print('[MPC] Retrieving last known position from lkp file: {0:s}'.format(lkp_file))
-
-	lkp=1 # Last Known Position
-	lkf=""  # Last Known File
-
-	# try to continue playing where left.
-	# First line is the original position
-	#bladiebla = "head -n1 /home/hu/mp_locmus.txt" #+lkp_file
-	lkpOut = subprocess.check_output("head -n1 /home/hu/mp_locmus.txt", shell=True)
-	
-	lkp = int(lkpOut.splitlines()[0])
-	#print lkpOut.splitlines()[0]
-
-	# Second line is the file name
-	#lkf=$(tail -n1 /home/hu/mp_locmus.txt)
-
-	# Derive position from file name
-	#lkp=$(mpc -f "%position% %file%" playlist | grep "$lkf" | cut -d' ' -f1)
-	#TODO: only use this if it yields a result, otherwise use the lkp
-
-	print('[MPC] Lookup found last known position: {0:d}'.format(lkp))
-	return lkp
-
 def init():
 	print('--------------------------------------------------------------------------------')
 	print('Initializing ...')
@@ -1757,15 +1626,6 @@ def init():
 	print('--------------------------------------------------------------------------------')
 	beep()
 	
-
-def cb_udisk_dev_add( device ):
-	print('[UDISK] Device added: {0}'.format(str(device)))
-	udisk_details( device, 'A' )
-
-def cb_udisk_dev_rem( device ):
-	print('[UDISK] Device removed: {0}'.format(str(device)))
-	udisk_details( device, 'R' )
-
 def udisk_details( device, action ):
 	device_obj = bus.get_object("org.freedesktop.UDisks", device)
 	device_props = dbus.Interface(device_obj, dbus.PROPERTIES_IFACE)
@@ -1862,11 +1722,9 @@ init()
 # Initialize a main loop
 mainloop = gobject.MainLoop()
 bus.add_signal_receiver(cb_remote_btn_press, dbus_interface = "com.arctura.remote")
-bus.add_signal_receiver(mpd_control, dbus_interface = "com.arctura.mpd")
-
+bus.add_signal_receiver(cb_mpd_event, dbus_interface = "com.arctura.mpd")
 bus.add_signal_receiver(cb_udisk_dev_add, signal_name='DeviceAdded', dbus_interface="org.freedesktop.UDisks")
 bus.add_signal_receiver(cb_udisk_dev_rem, signal_name='DeviceRemoved', dbus_interface="org.freedesktop.UDisks")
-#bus.add_signal_receiver(udisk_device_changed, signal_name='DeviceChanged', dbus_interface="org.freedesktop.UDisks")
 
 mainloop.run()
 
