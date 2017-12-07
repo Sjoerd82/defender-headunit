@@ -1853,7 +1853,9 @@ def udisk_details( device, action ):
 print('Headunit v0.1 2017-10-28')
 print('Checking if we\'re already runnning')
 #me = singleton.SingleInstance() # will sys.exit(-1) if other instance is running # uncomment when tendo available
-
+with PIDFile("/var/run/pihu.pid"):
+	pass
+		
 DBusGMainLoop(set_as_default=True)
 bus = dbus.SystemBus()
 
