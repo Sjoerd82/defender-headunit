@@ -794,7 +794,7 @@ def mpc_init():
 	
 	print('[MPC] Random: OFF, Repeat: ON')
 	oMpdClient.random(0)
-	oMpdClient.repeat(0)
+	oMpdClient.repeat(1)
 	#call(["mpc", "-q", "random", "off"])
 	#call(["mpc", "-q", "repeat", "on"])
 	
@@ -965,7 +965,7 @@ def mpc_save_pos():
 		mpc_save_pos_for_label ('locmus')
 
 def mpc_save_pos_for_label ( label ):
-	print('[MPC] Saving playlist position for label {0}'.format(label))
+	print('[MPC] Saving playlist position for label: {0}'.format(label))
 	oMpdClient = MPDClient() 
 	oMpdClient.timeout = 10                # network timeout in seconds (floats allowed), default: None
 	oMpdClient.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
@@ -1089,7 +1089,10 @@ def mpc_lkpX( label ):
 def mpc_populate_playlist ( label ):
 	global oMpdClient
 	oMpdClient.noidle()
-	oMpdClient.findadd('base',label)
+	if label == 'locmus':
+		oMpdClient.findadd('base',sLocalMusicMPD)
+	else:
+		oMpdClient.findadd('base',label)
 	oMpdClient.send_idle()
 
 	# Using the command line:
