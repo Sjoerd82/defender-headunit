@@ -964,7 +964,7 @@ def mpc_update( location ):
 	#Debug info
 	print('[MPC] Updating database for location: {0}'.format(location))
 	#Update
-	call(["mpc", "--wait", "update", location])
+	call(["mpc", "--wait", "-q", "update", location])
 	print(' ...  Update finished')
 
 def mpc_save_pos():
@@ -1446,6 +1446,7 @@ def locmus_play():
 def locmus_update():
 	global dSettings
 	global sLocalMusicMPD
+	global oMpdClient
 	
 	print('[LOCMUS] Updating local database [{0}]'.format(sLocalMusicMPD))
 
@@ -1461,6 +1462,7 @@ def locmus_update():
 		call(["mpc", "-q" , "crop"])
 		
 		# 2. songid is not unique, get the full filename
+		oMpdClient.noidle()
 		current_song = oMpdClient.currentsong()
 		curr_file = current_song['file']
 		print(' ......  currently playing file: {0}'.format(curr_file))
@@ -1481,6 +1483,8 @@ def locmus_update():
 			oMpdClient.move(0,int(delpos)-1)
 		else:
 			print(' ......  ERROR: something went wrong')
+
+		oMpdClient.send_idle()
 		
 	#IF we were not playing local music: Try to switch to local music, but check if the source is OK.
 	else:
