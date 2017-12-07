@@ -1249,7 +1249,6 @@ def media_check():
 		
 		print(' ... Continuing to crosscheck with mpd database for music...')
 		for mountpoint in arMedia:
-			#mountpoint = subprocess.check_output("mount | egrep media | cut -d ' ' -f 3", shell=True)
 			sUsbLabel = os.path.basename(mountpoint).rstrip('\n')
 			
 			if sUsbLabel == sLocalMusicMPD:
@@ -1697,6 +1696,43 @@ def udisk_device_added( device ):
 	#  beware.... anything after this may or may not be defined depending on the event and state of the drive. 
 	#  Attempts to get a prop that is no longer set will generate a dbus.connection:Exception
 	#
+
+	DeviceFile = ""
+	
+	try:
+		DeviceFile = device_props.Get('org.freedesktop.UDisks.Device',"DeviceFile")
+		print(" .....  DeviceFile: {0}".format(DeviceFile))
+		
+	except:
+		print(" .....  DeviceFile is unset... Aborting...")
+		return 1
+
+	
+	# Check if DeviceIsMediaAvailable...
+	try:    
+		is_media_available = device_props.Get('org.freedesktop.UDisks.Device', "DeviceIsMediaAvailable")
+		if is_media_available:
+			print(" .....  Media available")
+		else:
+			print(" .....  Media not available... Aborting...")
+			return 1
+	except:
+		print(" .....  DeviceIsMediaAvailable is not set... Aborting...")
+		return 1
+	
+	# Check if it is a Partition...
+	try:
+		is_partition = device_props.Get('org.freedesktop.UDisks.Device', "DeviceIsPartition")
+		if is_partition:
+			print(" .....  Device is partition")
+	except:
+		print(" .....  DeviceIsPartition is not set... Aborting...")
+		return 1
+
+	# Find out its mountpoint...
+	mountpoint = subprocess.check_output("mount | egrep media | cut -d ' ' -f 3", shell=True)
+	print(" .....  Mounted on: {0}".format(mountpoint))
+	
 	udisk_device_dump( device )
 	
 def udisk_device_removed( device ):
