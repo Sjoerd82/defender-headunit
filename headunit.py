@@ -997,7 +997,7 @@ def mpc_lkp( label ):
 	
 	# open pickle_file, if it exists
 	pickle_file = sDirSave + "/mp_" + label + ".p"
-	if os.path.isfile(pickle_file)
+	if os.path.isfile(pickle_file):
 		print('[MPC] Retrieving last known position from lkp file: {0:s}'.format(pickle_file))
 		try:
 			current_file = pickle.load( open( pickle_file, "rb" ) )
@@ -1019,7 +1019,7 @@ def mpc_lkp( label ):
 						pos = int(x['pos'])+1
 						print('[MPC] Match found! Continuing playback at #{0}'.format(pos))
 
-	else
+	else:
 		print('[MPC] No position file available for this medium (first run?)')
 
 	return pos
