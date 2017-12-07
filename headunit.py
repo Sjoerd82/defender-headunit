@@ -1088,7 +1088,9 @@ def mpc_lkpX( label ):
 
 def mpc_populate_playlist ( label ):
 	global oMpdClient
+	oMpdClient.noidle()
 	oMpdClient.findadd('base',label)
+	oMpdClient.send_idle()
 
 	# Using the command line:
 	#  ..but this generates some problems with special characters
