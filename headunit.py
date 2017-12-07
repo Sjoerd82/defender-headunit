@@ -674,7 +674,7 @@ def volume_up():
 
 	if bPulseVolume:
 		pavol.vol_up()
-		dSettings['volume'] = pavol.volget()
+		dSettings['volume'] = pavol.vol_get()
 	else:
 		print('Volume up; +5%')
 		volume_new = alsa_get_volume()+5
@@ -711,7 +711,7 @@ def volume_down():
 
 	if bPulseVolume:
 		pavol.vol_down()
-		dSettings['volume'] = pavol.volget()
+		dSettings['volume'] = pavol.vol_get()
 	else:
 		print('Volume down; 5%')
 		volume_new = alsa_get_volume()-5
