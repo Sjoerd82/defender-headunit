@@ -333,7 +333,7 @@ class BluePlayer(dbus.service.Object):
                 transport_path = path
 
         if player_path:
-            logging.debug("Found player on path [{}]".format(player_path))
+            print("Found player on path [{}]".format(player_path))
             self.connected = True
             self.getPlayer(player_path)
             player_properties = self.player.GetAll(PLAYER_IFACE, dbus_interface="org.freedesktop.DBus.Properties")
@@ -342,12 +342,12 @@ class BluePlayer(dbus.service.Object):
             if "Track" in player_properties:
                 self.track = player_properties["Track"]
         else:
-            logging.debug("Could not find player")
+            print("Could not find player")
 
         if transport_path:
-            logging.debug("Found transport on path [{}]".format(player_path))
+            print("Found transport on path [{}]".format(player_path))
             self.transport = self.bus.get_object("org.bluez", transport_path)
-            logging.debug("Transport [{}] has been set".format(transport_path))
+            print("Transport [{}] has been set".format(transport_path))
             transport_properties = self.transport.GetAll(TRANSPORT_IFACE, dbus_interface="org.freedesktop.DBus.Properties")
             if "State" in transport_properties:
                 self.state = transport_properties["State"]
@@ -355,7 +355,7 @@ class BluePlayer(dbus.service.Object):
     def getPlayer(self, path):
         """Get a media player from a dbus path, and the associated device"""
         self.player = self.bus.get_object("org.bluez", path)
-        logging.debug("Player [{}] has been set".format(path))
+        print("Player [{}] has been set".format(path))
         device_path = self.player.Get("org.bluez.MediaPlayer1", "Device", dbus_interface="org.freedesktop.DBus.Properties")
         self.getDevice(device_path)
 
@@ -366,7 +366,7 @@ class BluePlayer(dbus.service.Object):
 
     def playerHandler(self, interface, changed, invalidated, path):
         """Handle relevant property change signals"""
-        logging.debug("Interface [{}] changed [{}] on path [{}]".format(interface, changed, path))
+        print("Interface [{}] changed [{}] on path [{}]".format(interface, changed, path))
         iface = interface[interface.rfind(".") + 1:]
 
         if iface == "Device1":
@@ -376,20 +376,20 @@ class BluePlayer(dbus.service.Object):
             if "Connected" in changed:
                 self.connected = changed["Connected"]
                 if changed["Connected"]:
-                    logging.debug("MediaControl is connected [{}] and interface [{}]".format(path, iface))
+                    print("MediaControl is connected [{}] and interface [{}]".format(path, iface))
                     self.findPlayer()
         elif iface == "MediaTransport1":
             if "State" in changed:
-                logging.debug("State has changed to [{}]".format(changed["State"]))
+                print("State has changed to [{}]".format(changed["State"]))
                 self.state = (changed["State"])
             if "Connected" in changed:
                 self.connected = changed["Connected"]
         elif iface == "MediaPlayer1":
             if "Track" in changed:
-                logging.debug("Track has changed to [{}]".format(changed["Track"]))
+                print("Track has changed to [{}]".format(changed["Track"]))
                 self.track = changed["Track"]
             if "Status" in changed:
-                logging.debug("Status has changed to [{}]".format(changed["Status"]))
+                print("Status has changed to [{}]".format(changed["Status"]))
                 self.status = (changed["Status"])
     
         self.updateDisplay()
@@ -397,13 +397,13 @@ class BluePlayer(dbus.service.Object):
     def adapterHandler(self, interface, changed, invalidated, path):
         """Handle relevant property change signals"""
         if "Discoverable" in changed:
-                logging.debug("Adapter dicoverable is [{}]".format(self.discoverable))
+                print("Adapter dicoverable is [{}]".format(self.discoverable))
                 self.discoverable = changed["Discoverable"]
                 self.updateDisplay()
 
     def updateDisplay(self):
         """Display the current status of the device on the LCD"""
-        logging.debug("Updating display for connected: [{}]; state: [{}]; status: [{}]; discoverable [{}]".format(self.connected, self.state, self.status, self.discoverable))
+        print("Updating display for connected: [{}]; state: [{}]; status: [{}]; discoverable [{}]".format(self.connected, self.state, self.status, self.discoverable))
         if self.discoverable:
             self.wake()
             self.showDiscoverable()
@@ -473,7 +473,7 @@ class BluePlayer(dbus.service.Object):
         self.lcd.backlight(Lcd.TEAL)
 
     def shutdown(self):
-        logging.debug("Shutting down BluePlayer")
+        print("Shutting down BluePlayer")
         self.lcd.end()
         if self.mainloop:
             self.mainloop.quit()
