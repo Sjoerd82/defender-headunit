@@ -1140,10 +1140,13 @@ def mpc_lkp( label ):
 			if x['file'] == dSavePosition['file']:
 				pos['pos'] = int(x['pos'])+1
 				timeElapsed,timeTotal = map(int, dSavePosition['time'].split(':'))
-				print('[MPC] Match found! Continuing playback at #{0}'.format(pos))
+				print('[MPC] Match found! Continuing playback at #{0}'.format(pos['pos']))
 				if timeElapsed > 10 and timeTotal > 20:
 					print('EXPERIMENTAL: elapsed time: {0} - {1}'.format(timeElapsed,timeTotal))
 					pos['time'] = str(timeElapsed)
+				else:
+					print('EXPERIMENTAL: elapsed time: {0} - {1}'.format(timeElapsed,timeTotal))
+					print('Start at beginning of track')
 
 	else:
 		print('[MPC] No position file available for this medium (first run?)')
@@ -1471,7 +1474,10 @@ def media_play():
 
 			print(' ... Starting playback')
 			call(["mpc", "-q" , "stop"])
-			call(["mpc", "-q" , "play", str(playslist_pos)])
+			call(["mpc", "-q" , "play", str(playslist_pos['pos'])])
+			if playslist_pos['time'] > 0:
+				print('DEBUG: Seeking to {0}'.format(playslist_pos['time']))
+				call(["mpc", "-q" , "seek", str(playslist_pos['time'])])
 
 			# Load playlist directories, to enable folder up/down browsing.
 			mpc_get_PlaylistDirs()
@@ -1548,7 +1554,7 @@ def locmus_play():
 		
 		print('Starting playback')
 		call(["mpc", "-q" , "stop"])
-		call(["mpc", "-q" , "play", str(playslist_pos)])
+		call(["mpc", "-q" , "play", str(playslist_pos['pos'])])
 
 		# double check if source is up-to-date
 		
@@ -1701,7 +1707,7 @@ def stream_play():
 		playslist_pos = mpc_lkp('stream')
 		
 		print(' .... Starting playback')
-		call(["mpc", "-q" , "play", str(playslist_pos)])
+		call(["mpc", "-q" , "play", str(playslist_pos['pos'])])
 
 		# double check if source is up-to-date
 		
