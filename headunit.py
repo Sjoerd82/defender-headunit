@@ -1279,6 +1279,7 @@ def bt_next():
 	try:
 		player = BluePlayer()
 		player.start()
+		player.next()
 	except KeyboardInterrupt as ex:
 		logging.info("BluePlayer cancelled by user")
 	except Exception as ex:
@@ -1287,7 +1288,6 @@ def bt_next():
 	finally:
 		player.shutdown()
 
-	player.next()
 		
 	print('NOT IMPLEMENTED!!')
 	# TODO
