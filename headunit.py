@@ -1569,7 +1569,7 @@ def stream_play():
 		playlistCount = mpc_playlist_is_populated()
 		if playlistCount == "0":
 			print(' .... . Nothing in the playlist, aborting...')
-			arSourceAvailable[5] == 0:
+			arSourceAvailable[5] = 0
 			source_next()
 			source_play()
 			#TODO: error sound
