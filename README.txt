@@ -17,6 +17,13 @@ Program flow:
 
 
 Button presses:
+ SOURCE
+  -> source_stop()
+     -> xxx_stop()
+  -> source_next()
+     ..
+  -> source_play()
+     ..
  UPDATE
   -> locmus_update()
      -> mpc_update('PIHU_DATA')
@@ -31,6 +38,19 @@ ToDo:
  - add timer, to do:
    - delayed volume save
    - internet connection check
+ - implement url_check()
+ - implement a better udisks drive removal, currently we don't know which drive was removed exactly
+ - BlueTooth:
+   - Retrieve sBtPlayer (now hardcoded)
+   - Clean-Up BluePlayer class
+   - Clean-Up BlueAgent class
+ - Alsa:
+   Not sure what's the exact status of Alsa now that we've implemented PA...
+   - implement alsa_unmute()
+   - alsa_get_volume(): untested with actual alsa mixer
+ - FM, Line-In
+ - Error sound  
+   
 
  * S70headunit:
  - check pid file
@@ -38,4 +58,4 @@ ToDo:
 
  * Linux:
  - Make PulseAudio logs readable in /var/log/messages (switch locale?)
- -
+ - PulseAudio watchdog

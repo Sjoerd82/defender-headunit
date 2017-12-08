@@ -660,10 +660,6 @@ def alsa_set_volume( volume ):
 		print('[ALSA] Setting volume to {0:d}%'.format(volume))
 		oAlsaMixer.setvolume(volume, alsaaudio.MIXER_CHANNEL_ALL)
 
-def alsa_play_fx( fx ):
-	print('Playing effect')
-	#TODO
-
 # ********************************************************************************
 # PulseAudio
 # Use 0-100 for volume.
@@ -834,7 +830,7 @@ def udisk_details( device, action ):
 			sUsbLabel = os.path.basename(mountpoint).rstrip('\n')
 			print(" .....  Mounted on: {0} (label: {1})".format(mountpoint,sUsbLabel))
 			mpc_update(sUsbLabel)
-			media_check()
+			media_check(sUsbLabel)
 			media_play()
 		else:
 			print(" .....  No mountpoint found. Stopping.")
@@ -842,7 +838,7 @@ def udisk_details( device, action ):
 	elif action == 'R':
 		# Find out its mountpoint...
 		#We cannot retrieve many details from dbus about a removed drive, other than the DeviceFile (which at this point is no longer available).
-		media_check()
+		media_check( None )
 		# Determine if we were playing this media (source: usb=1)
 		#if dSettings['source'] == 1 and
 		
@@ -859,8 +855,10 @@ def save_settings():
 	global dSettings
 	global sDirSave
 	print('[PICKLE] Saving settings')
-	pickle.dump( dSettings, open( sDirSave+"/headunit.p", "wb" ) )
-	#TODO: try-except
+	try:
+		pickle.dump( dSettings, open( sDirSave+"/headunit.p", "wb" ) )
+	except:
+		print(' ......  ERROR saving settings')
 
 def load_settings():
 	global dSettings
@@ -870,7 +868,6 @@ def load_settings():
 	
 	print('\033[96m[PICKLE] Loading previous settings\033[00m')
 
-	#TODO: Check if sDirSave exists
 	try:
 		dSettings = pickle.load( open( sPickleFile, "rb" ) )
 	except:
@@ -1279,7 +1276,14 @@ def bt_check():
 
 def bt_play():
 	print('[BT] Start playing Bluetooth...')
-	#TODO
+	print(' ..  Player: {0}'.format(sBtPlayer))
+
+	# dbus-send --system --type=method_call --dest=org.bluez /org/bluez/hci0/dev_78_6A_89_FA_1C_95/player0 org.bluez.MediaPlayer1.Next
+
+	player = bus.get_object('org.bluez',sBtPlayer)
+	BT_Media_iface = dbus.Interface(player, dbus_interface='org.bluez.MediaPlayer1')
+	BT_Media_iface.Play()
+
 
 def bt_next():
 	print('[BT] Next')
@@ -1339,7 +1343,7 @@ def bt_stop():
 
 	player = bus.get_object('org.bluez',sBtPlayer)
 	BT_Media_iface = dbus.Interface(player, dbus_interface='org.bluez.MediaPlayer1')
-	BT_Media_iface.Stop()	#Or Pause?
+	BT_Media_iface.Pause()
 
 def bt_shuffle():
 	print('[BT] Shuffle')
@@ -1367,7 +1371,7 @@ def linein_stop():
 	print('[LINE] Stop')
 
 # updates arSourceAvailable[1] (mpc)
-def media_check():
+def media_check( prefered_label ):
 	global arMediaWithMusic
 	
 	print('[USB] CHECK availability...')
@@ -1417,8 +1421,15 @@ def media_check():
 					print(' ... . {0}: found {1:s} tracks'.format(sUsbLabel,mpcOut.rstrip('\n')))		
 					arMediaWithMusic.append(mountpoint)
 					#default to found media, if not set yet
-					if dSettings['mediasource'] == -1:
+					
+					# Determine the active mediasource
+					if prefered_label == sUsbLabel
+						#pleister
+						dSettings['mediasource'] = len(arMediaWithMusic)-1
+					elif dSettings['mediasource'] == -1:
 						dSettings['mediasource'] = 0
+
+
 
 		# if nothing useful found, then mark source as unavailable
 		if len(arMediaWithMusic) == 0:
@@ -1435,7 +1446,7 @@ def media_play():
 
 	#if dSettings['mediasource'] == -1:
 	#	print('First go, doing a media check...')
-	#	media_check()
+	#	media_check( None )
 	
 	if arSourceAvailable[1] == 0:
 		print('Aborting playback, trying next source.')
@@ -1444,7 +1455,6 @@ def media_play():
 		#TODO: error sound
 		
 	else:
-
 		print(' ... Emptying playlist')
 		call(["mpc", "-q", "stop"])
 		call(["mpc", "-q", "clear"])
@@ -1515,9 +1525,9 @@ def locmus_play():
 	global arSourceAvailable
 	print('[LOCMUS] Play (MPD)')
 
-	#TODO: no need to do it if we have just started
-	print(' ... Checking if source is still good')
-	locmus_check()
+	if bInit == 0:
+		print(' ... Checking if source is still good')
+		locmus_check()
 	
 	if arSourceAvailable[2] == 0:
 		print(' ......  Aborting playback, trying next source.') #TODO red color
@@ -1539,6 +1549,7 @@ def locmus_play():
 		playlistCount = mpc_playlist_is_populated()
 		if playlistCount == "0":
 			print(' ...... . Nothing in the playlist, trying to update database...')
+			pa_sfx('mpd_update_db')
 			call(["mpc", "-q", "--wait", "update"])
 			mpc_populate_playlist(sLocalMusicMPD)
 			playlistCount = mpc_playlist_is_populated()
@@ -1677,9 +1688,9 @@ def stream_check():
 def stream_play():
 	print('[STRM] Play (MPD)')
 
-	#TODO: no need to do it if we have just started
-	print(' ....  Checking if source is still good')
-	stream_check()
+	if bInit == 0:
+		print(' ....  Checking if source is still good')
+		stream_check()
 
 	if arSourceAvailable[5] == 0:
 		print(' ....  Aborting playback, trying next source.') #TODO red color
@@ -1737,7 +1748,7 @@ def source_check():
 	fm_check()
 
 	# 1; mpc, USB
-	media_check()
+	media_check( None )
 	
 	# 2; locmus, local music
 	locmus_check()
@@ -1776,8 +1787,6 @@ def source_next():
 		return
 
 	print('[SOURCE] Switching to next source...')
-	
-	# TODO: sources may have become (un)available -> check this!
 	
 	if dSettings['source'] == -1:
 		#No current source, switch to the first available, starting at 0
@@ -1856,8 +1865,6 @@ def source_play():
 		elif dSettings['source'] == 2 and arSourceAvailable[2] == 1:
 			locmus_play()
 		elif dSettings['source'] == 3 and arSourceAvailable[3] == 1:
-			#locmus_stop()
-			# TODO: stop anything already playing!?
 			pa_sfx('bt')
 			bt_play()
 		elif dSettings['source'] == 4 and arSourceAvailable[4] == 1:
@@ -1914,7 +1921,6 @@ def init():
 	load_settings()
 
 	# play startup sound
-	#alsa_play_fx( 1 )
 	pa_sfx('startup')
 
 	# startup USB check
@@ -1947,7 +1953,7 @@ def init():
 	
 #-------------------------------------------------------------------------------
 # Main loop
-print('Headunit v0.1 2017-10-28')
+print('Headunit v0.2 2017-12-08')
 print('Checking if we\'re already runnning')
 #me = singleton.SingleInstance() # will sys.exit(-1) if other instance is running # uncomment when tendo available
 #with PIDFile("/var/run/pihu.pid"):
