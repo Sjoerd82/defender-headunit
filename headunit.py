@@ -1280,6 +1280,8 @@ def bt_next():
 		player = BluePlayer()
 		player.start()
 		player.next()
+		print player.
+		print "try successful"
 	except KeyboardInterrupt as ex:
 		logging.info("BluePlayer cancelled by user")
 	except Exception as ex:
