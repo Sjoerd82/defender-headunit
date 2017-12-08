@@ -1221,8 +1221,9 @@ def bt_init():
 				properties = interfaces[interface]
 				for key in properties.keys():
 					print(' ..  .. .. {0:19} = {1}'.format(key, properties[key]))
-					if key == 'Player':
-						sBtPlayer = properties[key]
+					#if key == 'Player':
+					#	sBtPlayer = properties[key]
+					# TODO! Seems not to work....!!!
 			elif interface == 'org.bluez.MediaPlayer1':
 				print(' ..  .. MediaPlayer:')
 				properties = interfaces[interface]
