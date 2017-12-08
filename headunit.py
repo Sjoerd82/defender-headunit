@@ -1056,9 +1056,13 @@ def mpc_save_pos_for_label ( label ):
 	results = oMpdClient.command_list_end()
 
 	# Dictionary in List
-	for r in results:
-		songid = r['songid']
-		timeelapsed = r['time']
+	try:
+		for r in results:
+			songid = r['songid']
+			timeelapsed = r['time']
+	except:
+		print(' ...  Error, key not found!')
+		print results
 
 	current_song_listdick = oMpdClient.playlistid(songid)
 	oMpdClient.close()
