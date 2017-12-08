@@ -1105,10 +1105,12 @@ def mpc_save_pos_for_label ( label ):
 	else:	
 		for f in current_song_listdick:
 				current_file = f['file']
-	
+
+	dSavePosition = {'file': current_file, 'time': timeelapsed}
 	print(' ...  file: {0}, time: {1}'.format(current_file,timeelapsed))
+	
 	pickle_file = sDirSave + "/mp_" + label + ".p"
-	pickle.dump( current_file, open( pickle_file, "wb" ) )
+	pickle.dump( dSavePosition, open( pickle_file, "wb" ) )
 
 def mpc_lkp( label ):
 
@@ -1120,7 +1122,7 @@ def mpc_lkp( label ):
 	if os.path.isfile(pickle_file):
 		print('[MPC] Retrieving last known position from lkp file: {0:s}'.format(pickle_file))
 		try:
-			current_file = pickle.load( open( pickle_file, "rb" ) )
+			dSavePosition = pickle.load( open( pickle_file, "rb" ) )
 		except:
 			print('[PICKLE] Loading {0:s} failed!'.format(pickle_file))
 			return pos
@@ -1135,9 +1137,10 @@ def mpc_lkp( label ):
 		oMpdClient.disconnect()
 
 		for x in playlist:
-			if x['file'] == current_file:
+			if x['file'] == dSavePosition['file']:
 				pos = int(x['pos'])+1
 				print('[MPC] Match found! Continuing playback at #{0}'.format(pos))
+				print('EXPERIMENTAL: elapsed time: {0}'.format(dSavePosition['time']))
 
 	else:
 		print('[MPC] No position file available for this medium (first run?)')
