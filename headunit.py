@@ -1423,7 +1423,7 @@ def media_check( prefered_label ):
 					#default to found media, if not set yet
 					
 					# Determine the active mediasource
-					if prefered_label == sUsbLabel
+					if prefered_label == sUsbLabel:
 						#pleister
 						dSettings['mediasource'] = len(arMediaWithMusic)-1
 					elif dSettings['mediasource'] == -1:
