@@ -87,6 +87,7 @@ sDirRoot = "/mnt/PIHU_APP/defender-headunit"
 sDirSave = "/mnt/PIHU_CONFIG"
 bBeep = 0									 # Use hardware beep?
 sInternet = "www.google.com"				 # URL to test internet with
+bInit = 1									 # Are we in init() phase?
 
 #DBUS
 bus = None
@@ -1075,20 +1076,20 @@ def mpc_save_pos_for_label ( label ):
 		print(' ...  Error, key not found!')
 		print results
 
-	print("DEBUG: current song details")
+	#print("DEBUG: current song details")
 	debugging = oMpdClient.currentsong()
-	print debugging
+	#print debugging
+	print debugging['file']
 	
 	oMpdClient.close()
 	oMpdClient.disconnect()
 
 	if songid == None:
-		return 1
+		current_file=debugging['file']
+	else:	
+		for f in current_song_listdick:
+				current_file = f['file']
 	
-	for f in current_song_listdick:
-			current_file = f['file']
-	
-	print current_file
 	print(' ...  file: {0}, time: {1}'.format(current_file,timeelapsed))
 	pickle_file = sDirSave + "/mp_" + label + ".p"
 	pickle.dump( current_file, open( pickle_file, "wb" ) )
@@ -1769,7 +1770,7 @@ def source_play():
 		elif dSettings['source'] == 3 and arSourceAvailable[3] == 1:
 			#locmus_stop()
 			# TODO: stop anything already playing!?
-			pa_sfx( bt )
+			pa_sfx('bt')
 			bt_play()
 		elif dSettings['source'] == 4 and arSourceAvailable[4] == 1:
 			linein_play()
@@ -1798,6 +1799,9 @@ def source_stop():
 		print('ERROR: Invalid source.')
 		
 def init():
+	global dSettings
+	global bInit
+	
 	print('--------------------------------------------------------------------------------')
 	print('Initializing ...')
 
@@ -1850,6 +1854,7 @@ def init():
 	print('\033[96mInitialization finished\033[00m')
 	print('--------------------------------------------------------------------------------')
 	beep()
+	bInit = 0
 
 	
 #-------------------------------------------------------------------------------

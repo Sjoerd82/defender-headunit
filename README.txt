@@ -11,17 +11,23 @@ Program flow:
  - mainloop()
    Listens and acts on dbus signals:
      - cb_remote_btn_press()  com.arctura.remote, from dbus_remote.py
-     - cb_mpd_control()       com.arctura.mpd, from dbus_mpd.py
+     - cb_mpd_event()         com.arctura.mpd, from dbus_mpd.py
      - cb_udisk_device_add()  org.freedesktop.UDisks
      - cb_udisk_device_rem()  org.freedesktop.UDisks
 
 
+Button presses:
+ UPDATE
+  -> locmus_update()
+     -> mpc_update('PIHU_DATA')
+     -> locmus_check
+
 ToDo:
 
  * headunit.py:
- - rename cb_-functions
  - include pid file
- 1 handle udisks usb insert/removal
+ - re-check internet connection
+ - don't double check availability
 
  * S70headunit:
  - check pid file
