@@ -33,9 +33,6 @@
 
 # Known issues/limitations
 # - Audio channels don't seem to mute on start, but if they do, we don't have anything implemented to unmute them.
-# - Long/Short press buttons
-
-# dbus-send --system --type=method_call --dest=org.bluez /org/bluez/hci0/dev_78_6A_89_FA_1C_95/player0 org.bluez.MediaPlayer1.Next
 
 import os
 import time
@@ -1269,12 +1266,19 @@ def bt_play():
 	#TODO
 
 def bt_next():
-	print('[BT] Next!')
+	print('[BT] Next')
 
 	#bus = dbus.SystemBus()
-	manager = dbus.Interface(bus.get_object("org.bluez", "/"), "org.freedesktop.DBus.ObjectManager")
-	objects = manager.GetManagedObjects()
-	print objects
+	#manager = dbus.Interface(bus.get_object("org.bluez", "/"), "org.freedesktop.DBus.ObjectManager")
+	#objects = manager.GetManagedObjects()
+	#print objects
+
+	# dbus-send --system --type=method_call --dest=org.bluez /org/bluez/hci0/dev_78_6A_89_FA_1C_95/player0 org.bluez.MediaPlayer1.Next
+
+	player = bus.get_object('org.bluez','/org/bluez/hci0/dev_78_6A_89_FA_1C_95/player0')
+	#player.Pause(dbus_interface='org.bluez.MediaPlayer1')
+	BT_Media_iface = dbus.Interface(player, dbus_interface='org.bluez.MediaPlayer1')
+	BT_Media_iface.Next()
 	
 	"""
 	player = None
