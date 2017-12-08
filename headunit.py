@@ -1106,7 +1106,7 @@ def mpc_populate_playlist ( label ):
 		
 	if label == 'locmus':
 		xMpdClient.findadd('base',sLocalMusicMPD)
-	elif label = 'streams':
+	elif label == 'streams':
 		# Using the command line:
 		#  ..but this generates some problems with special characters
 		streams_file = sDirSave + "/streams.txt"

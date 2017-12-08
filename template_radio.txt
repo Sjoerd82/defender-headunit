@@ -1,3 +1,5 @@
-[BBC World Service News]
-home: http://bbcworldservice.com/
-stream: http://www.bbc.co.uk/worldservice/meta/tx/nb/live/ennws.pls
+http://icecast.omroep.nl/3fm-bb-mp3
+http://stream.harderwijkfm.nl:8000/HKFM1
+http://icecast-qmusic.cdp.triple-it.nl/Qmusic_nl_live_96.mp3
+http://icecast-bnr.cdp.triple-it.nl/bnr_mp3_96_06
+http://www.bbc.co.uk/worldservice/meta/tx/nb/live/ennws
