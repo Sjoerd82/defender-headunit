@@ -1065,6 +1065,7 @@ def mpc_save_pos_for_label ( label ):
 	results = oMpdClient.command_list_end()
 
 	songid = None
+	testje = None
 	# Dictionary in List
 	try:
 		for r in results:
@@ -1078,14 +1079,23 @@ def mpc_save_pos_for_label ( label ):
 
 	#print("DEBUG: current song details")
 	debugging = oMpdClient.currentsong()
-	#print debugging
-	print debugging['file']
-	
+	try:
+		#print debugging
+		testje = debugging['file']
+		print testje
+	except:
+		print(' ...  Error, key not found!')
+		print debugging
+		
 	oMpdClient.close()
 	oMpdClient.disconnect()
 
+	if testje == None:
+		print('DEBUG: BREAK BREAK')
+		return 1
+
 	if songid == None:
-		current_file=debugging['file']
+		current_file=testje
 	else:	
 		for f in current_song_listdick:
 				current_file = f['file']
@@ -1274,7 +1284,7 @@ def bt_prev():
 
 	
 def bt_stop():
-	print('[BT] Start playing Bluetooth...')
+	print('[BT] Stop playing Bluetooth...')
 	print('NOT IMPLEMENTED!!')
 	#TODO
 
