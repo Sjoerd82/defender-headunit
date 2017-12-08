@@ -1143,12 +1143,12 @@ def mpc_lkp( label ):
 				pos['pos'] = int(x['pos'])+1
 				timeElapsed,timeTotal = map(int, dSavePosition['time'].split(':'))
 				print('[MPC] Match found! Continuing playback at #{0}'.format(pos['pos']))
-				print(' ...  elapsed:total time: {0}:{1}'.format(timeElapsed,timeTotal))
+				print(' ...  Elapsed/Total time: {0}s/{1}s'.format(timeElapsed,timeTotal))
 				if timeElapsed > iThrElapsed and timeTotal > iThrTotal:
 					pos['time'] = str(timeElapsed)
-					print(' ... Elapsed time over threshold: continuing at last position.')
+					print(' ...  Elapsed time over threshold: continuing at last position.')
 				else:
-					print(' ... Elapsed time below threshold or short track: restarting at beginning of track.')
+					print(' ...  Elapsed time below threshold or short track: restarting at beginning of track.')
 
 	else:
 		print('[MPC] No position file available for this medium (first run?)')
@@ -1473,11 +1473,11 @@ def media_play():
 			# continue where left
 			playslist_pos = mpc_lkp(sUsbLabel)
 
-			print(' ... Starting playback')
+			print(' ...  Starting playback')
 			call(["mpc", "-q" , "stop"])
 			call(["mpc", "-q" , "play", str(playslist_pos['pos'])])
 			if playslist_pos['time'] > 0:
-				print(' ... Seeking to {0}'.format(playslist_pos['time']))
+				print(' ...  Seeking to {0} sec.'.format(playslist_pos['time']))
 				call(["mpc", "-q" , "seek", str(playslist_pos['time'])])
 
 			# Load playlist directories, to enable folder up/down browsing.
@@ -1557,11 +1557,11 @@ def locmus_play():
 		# continue where left
 		playslist_pos = mpc_lkp('locmus')
 		
-		print('Starting playback')
+		print(' ...  Starting playback')
 		call(["mpc", "-q" , "stop"])
 		call(["mpc", "-q" , "play", str(playslist_pos['pos'])])
 		if playslist_pos['time'] > 0:
-			print(' ... Seeking to {0}'.format(playslist_pos['time']))
+			print(' ...  Seeking to {0} sec.'.format(playslist_pos['time']))
 			call(["mpc", "-q" , "seek", str(playslist_pos['time'])])
 
 		# double check if source is up-to-date
