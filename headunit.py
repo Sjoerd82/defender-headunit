@@ -116,8 +116,9 @@ arMpcPlaylistDirs = [ ]
 iMPC_OK = 0
 
 #BLUETOOTH
-sBluetoothDev = "hci0"						#TODO
-sBluetoothAdapter = "org.bluez.Adapter1"	#TODO
+sBtPinCode = "0000"
+sBtDev = "hci0"						#TODO
+sBtAdapter = "org.bluez.Adapter1"	#TODO
 
 #BLUAGENT5
 SERVICE_NAME = "org.bluez"
@@ -1240,7 +1241,7 @@ def bt_init():
 	if arSourceAvailable[3] == 1:
 	
 		# Get the device
-		adapter = dbus.Interface(bus.get_object("org.bluez", "/org/bluez/" + sBluetoothDev), "org.freedesktop.DBus.Properties")
+		adapter = dbus.Interface(bus.get_object("org.bluez", "/org/bluez/" + sBtDev), "org.freedesktop.DBus.Properties")
 
 		#dbus.exceptions.DBusException: org.freedesktop.DBus.Error.PropertyReadOnly: Property 'Name' is not writable
 		#vi /var/lib/bluetooth/B8\:27\:EB\:96\:88\:67/config
@@ -1270,10 +1271,24 @@ def bt_play():
 def bt_next():
 	print('[BT] Next')
 
-	bus = dbus.SystemBus()
-	manager = dbus.Interface(bus.get_object("org.bluez", "/"), "org.freedesktop.DBus.ObjectManager")
-	objects = manager.GetManagedObjects()
+	#bus = dbus.SystemBus()
+	#manager = dbus.Interface(bus.get_object("org.bluez", "/"), "org.freedesktop.DBus.ObjectManager")
+	#objects = manager.GetManagedObjects()
 
+	player = None
+	try:
+		player = BluePlayer()
+		player.start()
+	except KeyboardInterrupt as ex:
+		logging.info("BluePlayer cancelled by user")
+	except Exception as ex:
+		logging.error("How embarrassing. The following error occurred {}".format(ex))
+		traceback.print_exc()
+	finally:
+		player.shutdown()
+
+	player.next()
+		
 	print('NOT IMPLEMENTED!!')
 	# TODO
 	# https://kernel.googlesource.com/pub/scm/bluetooth/bluez/+/5.43/doc/media-api.txt
@@ -1894,6 +1909,11 @@ bus = dbus.SystemBus()
 
 # Initialize
 init()
+
+# Bluetooth (can we move this to bt_init?)
+agent = BlueAgent(sBtPinCode)
+agent.registerAsDefault()
+agent.startPairing()
 
 # Initialize a main loop
 mainloop = gobject.MainLoop()
