@@ -72,7 +72,7 @@ from optparse import OptionParser
 import socket
 
 #to check an URL
-import httplib2
+#import httplib2
 
 # Global variables
 arSource = ['fm','media','locmus','bt','alsa','stream'] # source types; add new sources in the end
