@@ -1248,10 +1248,11 @@ def bt_check():
 	#done at bt_init()
 
 def bt_play():
-	print('Start playing Bluetooth...')
+	print('[BT] Start playing Bluetooth...')
 	#TODO
 
 def bt_next():
+	print('[BT] Next')
 
 	bus = dbus.SystemBus()
 	manager = dbus.Interface(bus.get_object("org.bluez", "/"), "org.freedesktop.DBus.ObjectManager")
@@ -1268,9 +1269,16 @@ def bt_next():
 	# Object path	[variable prefix]/{hci0,hci1,...}/dev_XX_XX_XX_XX_XX_XX/playerX
 
 def bt_prev():
+	print('[BT] Prev.')
 	print('NOT IMPLEMENTED!!')
 
 	
+def bt_stop():
+	print('[BT] Start playing Bluetooth...')
+	print('NOT IMPLEMENTED!!')
+	#TODO
+
+
 # updates arSourceAvailable[4] (alsa) -- TODO
 def linein_check():
 	print('[LINE] Checking if Line-In is available... not available')
