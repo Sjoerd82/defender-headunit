@@ -214,7 +214,11 @@ def cb_udisk_dev_add( device ):
 def cb_udisk_dev_rem( device ):
 	print('[UDISK] Device removed: {0}'.format(str(device)))
 	udisk_details( device, 'R' )
-		
+
+def cb_periodically( test ):
+	print('[INT] Interval function')
+	print test
+
 # ********************************************************************************
 # bluezutils5.py
 #
@@ -1053,7 +1057,7 @@ def mpc_save_pos():
 	elif dSettings['source'] == 2:
 		mpc_save_pos_for_label ('locmus')
 	elif dSettings['source'] == 5:
-		mpc_save_pos_for_label ('streams')
+		mpc_save_pos_for_label ('stream')
 
 def mpc_save_pos_for_label ( label ):
 	print('[MPC] Saving playlist position for label: {0}'.format(label))
@@ -1152,7 +1156,7 @@ def mpc_populate_playlist ( label ):
 		
 	if label == 'locmus':
 		xMpdClient.findadd('base',sLocalMusicMPD)
-	elif label == 'streams':
+	elif label == 'stream':
 		# Using the command line:
 		#  ..but this generates some problems with special characters
 		streams_file = sDirSave + "/streams.txt"
@@ -1626,7 +1630,7 @@ def stream_play():
 		#todo: how about cropping, populating, and removing the first? item .. for faster continuity???
 
 		print(' .... Populating playlist')
-		mpc_populate_playlist('streams')
+		mpc_populate_playlist('stream')
 		
 		print(' .... Checking if playlist is populated')
 		playlistCount = mpc_playlist_is_populated()
@@ -1641,7 +1645,7 @@ def stream_play():
 			print(' .... . Found {0:s} tracks'.format(playlistCount))
 			
 		# continue where left
-		playslist_pos = mpc_lkp('streams')
+		playslist_pos = mpc_lkp('stream')
 		
 		print(' .... Starting playback')
 		call(["mpc", "-q" , "play", str(playslist_pos)])
@@ -1897,6 +1901,7 @@ bus.add_signal_receiver(cb_remote_btn_press, dbus_interface = "com.arctura.remot
 bus.add_signal_receiver(cb_mpd_event, dbus_interface = "com.arctura.mpd")
 bus.add_signal_receiver(cb_udisk_dev_add, signal_name='DeviceAdded', dbus_interface="org.freedesktop.UDisks")
 bus.add_signal_receiver(cb_udisk_dev_rem, signal_name='DeviceRemoved', dbus_interface="org.freedesktop.UDisks")
+mainloop.timeout_add(5000,cb_periodically,'foo',123)
 
 mainloop.run()
 

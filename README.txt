@@ -28,6 +28,9 @@ ToDo:
  - include pid file
  - re-check internet connection
  - don't double check availability
+ - add timer, to do:
+   - delayed volume save
+   - internet connection check
 
  * S70headunit:
  - check pid file
