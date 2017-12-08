@@ -1115,7 +1115,7 @@ def mpc_save_pos_for_label ( label ):
 def mpc_lkp( label ):
 
 	#default
-	pos = 1
+	pos = {'pos': 1, 'time': 0}
 	
 	# open pickle_file, if it exists
 	pickle_file = sDirSave + "/mp_" + label + ".p"
@@ -1138,9 +1138,12 @@ def mpc_lkp( label ):
 
 		for x in playlist:
 			if x['file'] == dSavePosition['file']:
-				pos = int(x['pos'])+1
+				pos['pos'] = int(x['pos'])+1
+				timeElapsed,timeTotal = map(int, dSavePosition['time'].split(':'))
 				print('[MPC] Match found! Continuing playback at #{0}'.format(pos))
-				print('EXPERIMENTAL: elapsed time: {0}'.format(dSavePosition['time']))
+				if timeElapsed > 10 and timeTotal > 20:
+					print('EXPERIMENTAL: elapsed time: {0} - {1}'.format(timeElapsed,timeTotal))
+					pos['time'] = str(timeElapsed)
 
 	else:
 		print('[MPC] No position file available for this medium (first run?)')
