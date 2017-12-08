@@ -1555,6 +1555,9 @@ def locmus_play():
 		print('Starting playback')
 		call(["mpc", "-q" , "stop"])
 		call(["mpc", "-q" , "play", str(playslist_pos['pos'])])
+		if playslist_pos['time'] > 0:
+			print('DEBUG: Seeking to {0}'.format(playslist_pos['time']))
+			call(["mpc", "-q" , "seek", str(playslist_pos['time'])])
 
 		# double check if source is up-to-date
 		
