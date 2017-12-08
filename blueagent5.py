@@ -21,6 +21,7 @@ import os
 from optparse import OptionParser
 
 sRootFolder = os.path.dirname(os.path.abspath(__file__))
+sDirSave = "/mnt/PIHU_CONFIG"
 
 SERVICE_NAME = "org.bluez"
 AGENT_IFACE = SERVICE_NAME + '.Agent1'
@@ -31,7 +32,7 @@ PLAYER_IFACE = SERVICE_NAME + '.MediaPlayer1'
 LOG_LEVEL = logging.INFO
 #LOG_FILE = "/var/log/syslog"
 #LOG_LEVEL = logging.DEBUG
-LOG_FILE = sRootFolder+"/blueagent5.log"
+LOG_FILE = sDirSave+"/blueagent5.log"
 LOG_FORMAT = "%(asctime)s %(levelname)s [%(module)s] %(message)s"
 
 """Utility functions from bluezutils.py"""
