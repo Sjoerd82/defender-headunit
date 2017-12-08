@@ -1274,8 +1274,12 @@ def bt_next():
 	#bus = dbus.SystemBus()
 	#manager = dbus.Interface(bus.get_object("org.bluez", "/"), "org.freedesktop.DBus.ObjectManager")
 	#objects = manager.GetManagedObjects()
-
 	player = None
+
+	player = BluePlayer()
+	player.start()
+	player.next()
+	
 	try:
 		player = BluePlayer()
 		player.start()
