@@ -43,7 +43,7 @@ import subprocess
 from subprocess import call
 from subprocess import Popen, PIPE
 #from tendo import singleton -- not available in Buildroot, disabling for now
-from pidfile import PIDfile
+#from pidfile import PIDfile
 import pickle
 import alsaaudio
 from select import select
