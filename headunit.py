@@ -43,7 +43,7 @@ import subprocess
 from subprocess import call
 from subprocess import Popen, PIPE
 #from tendo import singleton -- not available in Buildroot, disabling for now
-from pidfile import pidfile
+from pidfile import PIDfile
 import pickle
 import alsaaudio
 from select import select
@@ -65,12 +65,12 @@ import dbus.mainloop.glib
 import gobject
 
 import logging
-from pid import PidFile
+#from pid import PidFile
 from optparse import OptionParser
 
 # Global variables
-arSource = ['fm','media','locmus','bt','alsa'] # source types; add new sources in the end
-arSourceAvailable = [0,0,0,0,0]              # corresponds to arSource; 1=available
+arSource = ['fm','media','locmus','bt','alsa','stream'] # source types; add new sources in the end
+arSourceAvailable = [0,0,0,0,0,0]            # corresponds to arSource; 1=available
 arMediaWithMusic = []						 # list of mountpoints that contains music, according to MPD
 iAtt = 0									 # Att mode toggle
 iRandom = 0									 # We're keeping track of it within the script, not checking with MPD
@@ -957,9 +957,10 @@ def mpc_save_pos_for_label ( label ):
 	oMpdClient.status()
 	results = oMpdClient.command_list_end()
 
-	# I find this a very stupid way ... i mean a dict in a list? really? anyway...
+	# Dictionary in List
 	for r in results:
-			songid = r['songid']
+		songid = r['songid']
+		timeelapsed = r['time']
 
 	current_song_listdick = oMpdClient.playlistid(songid)
 	oMpdClient.close()
@@ -969,6 +970,7 @@ def mpc_save_pos_for_label ( label ):
 			current_file = f['file']
 	
 	print current_file
+	print(' ...  file: {0}, time: {1}'.format(current_file,timeelapsed))
 	pickle_file = sDirSave + "/mp_" + label + ".p"
 	pickle.dump( current_file, open( pickle_file, "wb" ) )
 
@@ -1710,8 +1712,8 @@ def udisk_details( device, action ):
 print('Headunit v0.1 2017-10-28')
 print('Checking if we\'re already runnning')
 #me = singleton.SingleInstance() # will sys.exit(-1) if other instance is running # uncomment when tendo available
-#with PIDFile("/var/run/pihu.pid"):
-#	pass
+with PIDFile("/var/run/pihu.pid"):
+	pass
 		
 DBusGMainLoop(set_as_default=True)
 bus = dbus.SystemBus()
