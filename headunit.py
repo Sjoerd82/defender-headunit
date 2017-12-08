@@ -85,6 +85,8 @@ sDirSave = "/mnt/PIHU_CONFIG"
 bBeep = 0									 # Use hardware beep?
 sInternet = "www.google.com"				 # URL to test internet with
 bInit = 1									 # Are we in init() phase?
+iThrElapsed = 20							 # Minimal time that must have elapsed into a track in order to resume position
+iThrTotal = 30								 # Minimal track length required in order to resume position
 
 #DBUS
 bus = None
@@ -1141,12 +1143,12 @@ def mpc_lkp( label ):
 				pos['pos'] = int(x['pos'])+1
 				timeElapsed,timeTotal = map(int, dSavePosition['time'].split(':'))
 				print('[MPC] Match found! Continuing playback at #{0}'.format(pos['pos']))
-				if timeElapsed > 10 and timeTotal > 20:
-					print('EXPERIMENTAL: elapsed time: {0} - {1}'.format(timeElapsed,timeTotal))
+				print(' ...  elapsed:total time: {0}:{1}'.format(timeElapsed,timeTotal))
+				if timeElapsed > iThrElapsed and timeTotal > iThrTotal:
 					pos['time'] = str(timeElapsed)
+					print(' ... Elapsed time over threshold: continuing at last position.')
 				else:
-					print('EXPERIMENTAL: elapsed time: {0} - {1}'.format(timeElapsed,timeTotal))
-					print('Start at beginning of track')
+					print(' ... Elapsed time below threshold or short track: restarting at beginning of track.')
 
 	else:
 		print('[MPC] No position file available for this medium (first run?)')
@@ -1468,7 +1470,6 @@ def media_play():
 		else:
 			print(' ... . Found {0:s} tracks'.format(mpcOut.rstrip('\n')))
 
-			#TODO: get latest position..	
 			# continue where left
 			playslist_pos = mpc_lkp(sUsbLabel)
 
@@ -1476,7 +1477,7 @@ def media_play():
 			call(["mpc", "-q" , "stop"])
 			call(["mpc", "-q" , "play", str(playslist_pos['pos'])])
 			if playslist_pos['time'] > 0:
-				print('DEBUG: Seeking to {0}'.format(playslist_pos['time']))
+				print(' ... Seeking to {0}'.format(playslist_pos['time']))
 				call(["mpc", "-q" , "seek", str(playslist_pos['time'])])
 
 			# Load playlist directories, to enable folder up/down browsing.
@@ -1484,9 +1485,13 @@ def media_play():
 
 def media_stop():
 	print('[USB] Stop')
-	call(["mpc", "-q" , "stop"])
 	
-
+	# save playlist position (file name + position)
+	mpc_save_pos()
+	
+	# stop playback
+	mpc_stop()	
+	
 # updates arSourceAvailable[2] (locmus)
 def locmus_check():
 	global arSourceAvailable
@@ -1556,7 +1561,7 @@ def locmus_play():
 		call(["mpc", "-q" , "stop"])
 		call(["mpc", "-q" , "play", str(playslist_pos['pos'])])
 		if playslist_pos['time'] > 0:
-			print('DEBUG: Seeking to {0}'.format(playslist_pos['time']))
+			print(' ... Seeking to {0}'.format(playslist_pos['time']))
 			call(["mpc", "-q" , "seek", str(playslist_pos['time'])])
 
 		# double check if source is up-to-date
@@ -1622,14 +1627,11 @@ def locmus_update():
 def locmus_stop():
 	print('[LOCMUS] Stopping source: locmus. Saving playlist position and clearing playlist.')
 	
-	# save position and current file name for this drive
+	# save playlist position (file name + position)
 	mpc_save_pos_for_label( 'locmus' )
 	
 	# stop playback
-	mpc_stop()
-	#mpc $params_mpc -q stop
-	#mpc $params_mpc -q clear	
-	
+	mpc_stop()	
 
 def stream_check():
 	global arSourceAvailable
