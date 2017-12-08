@@ -71,6 +71,9 @@ from optparse import OptionParser
 #to check for an internet connection
 import socket
 
+#to check an URL
+import httplib2
+
 # Global variables
 arSource = ['fm','media','locmus','bt','alsa','stream'] # source types; add new sources in the end
 arSourceAvailable = [0,0,0,0,0,0]            # corresponds to arSource; 1=available
@@ -571,6 +574,14 @@ def internet():
     except OSError:
         pass
     return False
+
+def url_check( url ):
+	# TODO!!, next build has httplib2
+	#h = httplib2.Http()
+	#resp = h.request(url, 'HEAD')
+	#assert int(resp[0]['status']) < 400
+	return True
+	
 
 # ********************************************************************************
 # ALSA, using python-alsaaudio
@@ -1538,10 +1549,19 @@ def stream_check():
 		return 1
 
 	# Check if at least one stream is good
+	print(' ....  Checking to see we have at least one valid stream')
+
 	streams=open(streams_file,'r')
 	for stream in streams:
-		print(' ....  Stream: {0}'.format(stream))
-		#TODO: check
+		uri = stream.rstrip('\n')
+		uri_OK = url_check(uri)
+		if uri_OK:
+			print(' ....  . Stream OK: {0}'.format(uri))
+			arSourceAvailable[5]=1
+			break
+		else:
+			print(' ....  . Stream FAIL: {0}'.format(uri))
+
 
 def stream_play():
 	print('[STRM] Play (MPD)')
