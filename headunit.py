@@ -1521,7 +1521,7 @@ def stream_check():
 	
 	# Test internet connection
 	connected = internet()
-	if !connected:
+	if not connected:
 		print(' ....  Internet: FAIL')
 		print(' ....  Marking source not available')
 		return 1
