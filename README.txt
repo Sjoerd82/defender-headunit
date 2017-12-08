@@ -49,7 +49,7 @@ ToDo:
    - implement alsa_unmute()
    - alsa_get_volume(): untested with actual alsa mixer
  - FM, Line-In
- - Error sound  
+ - Error sound
    
 
  * S70headunit:

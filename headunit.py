@@ -1343,7 +1343,8 @@ def bt_stop():
 
 	player = bus.get_object('org.bluez',sBtPlayer)
 	BT_Media_iface = dbus.Interface(player, dbus_interface='org.bluez.MediaPlayer1')
-	BT_Media_iface.Pause()
+	#BT_Media_iface.Pause() -- hangs Python!!
+	BT_Media_iface.Stop()
 
 def bt_shuffle():
 	print('[BT] Shuffle')
