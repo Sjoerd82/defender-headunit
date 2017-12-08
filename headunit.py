@@ -157,8 +157,11 @@ def cb_remote_btn_press ( func ):
 			mpc_random()
 	elif func == 'SOURCE':
 		print('\033[95m[BUTTON] Next source\033[00m')
-		source_next()
-		source_play()
+		# if more than one source available...
+		if sum(arSourceAvailable) > 1:
+			source_stop()
+			source_next()
+			source_play()
 	elif func == 'ATT':
 		print('\033[95m[BUTTON] ATT\033[00m')
 		volume_att_toggle()
@@ -573,6 +576,8 @@ def internet():
         return True
     except OSError:
         pass
+	except:
+		pass
     return False
 
 def url_check( url ):
@@ -662,6 +667,7 @@ def pa_init():
 	call(["pactl","upload-sample",sDirRoot+"/sfx/beep_60.wav", "beep_60"])
 	call(["pactl","upload-sample",sDirRoot+"/sfx/beep_70.wav", "beep_70"])
 	call(["pactl","upload-sample",sDirRoot+"/sfx/beep_60_70.wav", "beep_60_70"])
+	call(["pactl","upload-sample",sDirRoot+"/sfx/bt.wav", "bt"])
 
 def pa_set_volume( volume ):
 	print('[PULSE] Setting volume')
@@ -673,13 +679,15 @@ def pa_get_volume():
 	pavol = pa_volume_handler('alsa_output.platform-soc_sound.analog-stereo')
 	return pavol.vol_get()
 
-def pa_sfx(sfx):
+def pa_sfx( sfx ):
 	if sfx == 'startup':
 		call(["pactl", "play-sample", "startup", "alsa_output.platform-soc_sound.analog-stereo"])
 	elif sfx == 'button_feedback':
 		call(["pactl", "play-sample", "beep_60", "alsa_output.platform-soc_sound.analog-stereo"])
 	elif sfx == 'mpd_update_db':
 		call(["pactl", "play-sample", "beep_60_70", "alsa_output.platform-soc_sound.analog-stereo"])
+	elif sfx == 'bt':
+		call(["pactl", "play-sample", "bt", "alsa_output.platform-soc_sound.analog-stereo"])
 	
 # ********************************************************************************
 # Volume wrappers
@@ -1067,6 +1075,10 @@ def mpc_save_pos_for_label ( label ):
 		print(' ...  Error, key not found!')
 		print results
 
+	print("DEBUG: current song details")
+	debugging = oMpdClient.currentsong()
+	print debugging
+	
 	oMpdClient.close()
 	oMpdClient.disconnect()
 
@@ -1757,6 +1769,7 @@ def source_play():
 		elif dSettings['source'] == 3 and arSourceAvailable[3] == 1:
 			#locmus_stop()
 			# TODO: stop anything already playing!?
+			pa_sfx( bt )
 			bt_play()
 		elif dSettings['source'] == 4 and arSourceAvailable[4] == 1:
 			linein_play()
