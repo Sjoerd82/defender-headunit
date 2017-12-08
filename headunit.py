@@ -116,7 +116,8 @@ iMPC_OK = 0
 sBtPinCode = "0000"
 sBtDev = "hci0"						#TODO
 sBtAdapter = "org.bluez.Adapter1"	#TODO
-sBtPlayer = None					#"/org/bluez/hci0/dev_78_6A_89_FA_1C_95/player0"
+#sBtPlayer = None					#TODO
+sBtPlayer = "/org/bluez/hci0/dev_78_6A_89_FA_1C_95/player0"
 
 #BLUAGENT5
 SERVICE_NAME = "org.bluez"
