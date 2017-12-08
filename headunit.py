@@ -1052,6 +1052,8 @@ def mpc_save_pos():
 		mpc_save_pos_for_label ( dSettings['medialabel'] )	
 	elif dSettings['source'] == 2:
 		mpc_save_pos_for_label ('locmus')
+	elif dSettings['source'] == 5:
+		mpc_save_pos_for_label ('streams')
 
 def mpc_save_pos_for_label ( label ):
 	print('[MPC] Saving playlist position for label: {0}'.format(label))
