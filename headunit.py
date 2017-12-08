@@ -1269,11 +1269,14 @@ def bt_play():
 	#TODO
 
 def bt_next():
-	print('[BT] Next')
+	print('[BT] Next!')
 
 	#bus = dbus.SystemBus()
-	#manager = dbus.Interface(bus.get_object("org.bluez", "/"), "org.freedesktop.DBus.ObjectManager")
-	#objects = manager.GetManagedObjects()
+	manager = dbus.Interface(bus.get_object("org.bluez", "/"), "org.freedesktop.DBus.ObjectManager")
+	objects = manager.GetManagedObjects()
+	print objects
+	
+	"""
 	player = None
 
 	player = BluePlayer()
@@ -1292,7 +1295,7 @@ def bt_next():
 		traceback.print_exc()
 	finally:
 		player.shutdown()
-
+	"""
 		
 	print('NOT IMPLEMENTED!!')
 	# TODO
