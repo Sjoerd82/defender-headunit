@@ -68,6 +68,9 @@ import logging
 #from pid import PidFile
 from optparse import OptionParser
 
+#to check for an internet connection
+import socket
+
 # Global variables
 arSource = ['fm','media','locmus','bt','alsa','stream'] # source types; add new sources in the end
 arSourceAvailable = [0,0,0,0,0,0]            # corresponds to arSource; 1=available
@@ -80,6 +83,7 @@ dSettings = {'source': -1, 'volume': 20, 'mediasource': -1, 'medialabel': ''}	 #
 sDirRoot = "/mnt/PIHU_APP/defender-headunit"
 sDirSave = "/mnt/PIHU_CONFIG"
 bBeep = 0									 # Use hardware beep?
+sInternet = "www.google.com"				 # URL to test internet with
 
 #DBUS
 bus = None
@@ -559,7 +563,15 @@ def shutdown():
 	#call(["systemctl", "poweroff", "-i"])
 	call(["halt"])
 
-	
+def internet():
+    try:
+        # connect to the host -- tells us if the host is actually reachable
+        socket.create_connection((sInternet, 80))
+        return True
+    except OSError:
+        pass
+    return False
+
 # ********************************************************************************
 # ALSA, using python-alsaaudio
 #
@@ -585,7 +597,6 @@ def alsa_init():
 	except alsaaudio.ALSAAudioError:
 		print('No such mixer')
 
-
 def alsa_unmute():
 	print('[ALSA] Unmuting...')
 	#TODO
@@ -610,7 +621,6 @@ def alsa_get_volume():
 		#We're keeping L&R in sync, so just return the first channel.
 	
 	return volumes[0]
-
 	
 def alsa_set_volume( volume ):
 	global oAlsaMixer
@@ -737,7 +747,84 @@ def volume_down():
 	# Save new volume level
 	save_settings()
 
-			
+def udisk_details( device, action ):
+	device_obj = bus.get_object("org.freedesktop.UDisks", device)
+	device_props = dbus.Interface(device_obj, dbus.PROPERTIES_IFACE)
+	#
+	#  beware.... anything after this may or may not be defined depending on the event and state of the drive. 
+	#  Attempts to get a prop that is no longer set will generate a dbus.connection:Exception
+	#
+
+	# HANDY DEBUGGING TIP, DISPLAY ALL AVAILABLE PROPERTIES:
+	# WILL *NOT* WORK FOR DEVICE REMOVAL
+	#data = device_props.GetAll('')
+	#for i in data: print i+': '+str(data[i])
+	
+	DeviceFile = ""
+	mountpoint = ""
+	
+	try:
+		DeviceFile = device_props.Get('org.freedesktop.UDisks.Device',"DeviceFile")
+		print(" .....  DeviceFile: {0}".format(DeviceFile))
+		
+	except:
+		print(" .....  DeviceFile is unset... Aborting...")
+		return 1
+	
+	# Check if DeviceIsMediaAvailable...
+	try:    
+		is_media_available = device_props.Get('org.freedesktop.UDisks.Device', "DeviceIsMediaAvailable")
+		if is_media_available:
+			print(" .....  Media available")
+		else:
+			print(" .....  Media not available... Aborting...")
+			return 1
+	except:
+		print(" .....  DeviceIsMediaAvailable is not set... Aborting...")
+		return 1
+	
+	# Check if it is a Partition...
+	try:
+		is_partition = device_props.Get('org.freedesktop.UDisks.Device', "DeviceIsPartition")
+		if is_partition:
+			print(" .....  Device is partition")
+	except:
+		print(" .....  DeviceIsPartition is not set... Aborting...")
+		return 1
+
+	if not is_partition:
+		print(" .....  DeviceIsPartition is not set... Aborting...")
+		return 1
+
+	if action == 'A':
+		# Find out its mountpoint...
+		#IdLabel: SJOERD
+		#DriveSerial: 0014857749DCFD20C7F95F31
+		#DeviceMountPaths: dbus.Array([dbus.String(u'/media/SJOERD')], signature=dbus.Signature('s'), variant_level=1)
+		#DeviceFileById: dbus.Array([dbus.String(u'/dev/disk/by-id/usb-Kingston_DataTraveler_SE9_0014857749DCFD20C7F95F31-0:0-part1'), dbus.String(u'/dev/disk/by-uuid/D2B6-F8B3')], signature=dbus.Signature('s'), variant_level=1)
+		
+		mountpoint = subprocess.check_output("mount | egrep "+DeviceFile+" | cut -d ' ' -f 3", shell=True).rstrip('\n')
+		if mountpoint != "":
+			sUsbLabel = os.path.basename(mountpoint).rstrip('\n')
+			print(" .....  Mounted on: {0} (label: {1})".format(mountpoint,sUsbLabel))
+			mpc_update(sUsbLabel)
+			media_check()
+			media_play()
+		else:
+			print(" .....  No mountpoint found. Stopping.")
+		
+	elif action == 'R':
+		# Find out its mountpoint...
+		#We cannot retrieve many details from dbus about a removed drive, other than the DeviceFile (which at this point is no longer available).
+		media_check()
+		# Determine if we were playing this media (source: usb=1)
+		#if dSettings['source'] == 1 and
+		
+		#TODO!
+		
+	else:
+		print(" .....  ERROR: Invalid action.")
+
 # ********************************************************************************
 # Save & Load settings, using pickle
 #
@@ -1011,16 +1098,6 @@ def mpc_lkp( label ):
 def mpc_populate_playlist ( label ):
 	#global oMpdClient
 
-	"""
-	# Using the command line:
-	#  ..but this generates some problems with special characters
-	
-	p1 = subprocess.Popen(["mpc", "listall", label], stdout=subprocess.PIPE)
-	p2 = subprocess.Popen(["mpc", "add"], stdin=p1.stdout, stdout=subprocess.PIPE)
-	p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
-	output,err = p2.communicate()
-	"""
-	
 	# Stop idle, in order to send a command
 	#oMpdClient.noidle()
 	
@@ -1029,6 +1106,14 @@ def mpc_populate_playlist ( label ):
 		
 	if label == 'locmus':
 		xMpdClient.findadd('base',sLocalMusicMPD)
+	elif label = 'streams':
+		# Using the command line:
+		#  ..but this generates some problems with special characters
+		streams_file = sDirSave + "/streams.txt"
+		p1 = subprocess.Popen(["cat", streams_file], stdout=subprocess.PIPE)
+		p2 = subprocess.Popen(["mpc", "add"], stdin=p1.stdout, stdout=subprocess.PIPE)
+		p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
+		output,err = p2.communicate()		
 	else:
 		xMpdClient.findadd('base',label)
 	
@@ -1308,43 +1393,44 @@ def locmus_play():
 	global arSourceAvailable
 	print('[LOCMUS] Play (MPD)')
 
+	#TODO: no need to do it if we have just started
 	print(' ... Checking if source is still good')
 	locmus_check()
 	
 	if arSourceAvailable[2] == 0:
-		print('Aborting playback, trying next source.') #TODO red color
+		print(' ......  Aborting playback, trying next source.') #TODO red color
 		source_next()
 		source_play()
 		#TODO: error sound
 		
 	else:
-		print(' ... Emptying playlist')
+		print(' ...... Emptying playlist')
 		call(["mpc", "-q", "stop"])
 		call(["mpc", "-q", "clear"])
 		#todo: how about cropping, populating, and removing the first? item .. for faster continuity???
 
 		# MPD playlist for local music *should* be updated by inotifywait.. but, it's a bit tricky, so test for it..
-		print(' ... Populating playlist')
+		print(' ...... Populating playlist')
 		mpc_populate_playlist(sLocalMusicMPD)
 	
-		print(' ... Checking if playlist is populated')
+		print(' ...... Checking if playlist is populated')
 		playlistCount = mpc_playlist_is_populated()
 		if playlistCount == "0":
-			print(' ... . Nothing in the playlist, trying to update database...')
+			print(' ...... . Nothing in the playlist, trying to update database...')
 			call(["mpc", "-q", "--wait", "update"])
 			mpc_populate_playlist(sLocalMusicMPD)
 			playlistCount = mpc_playlist_is_populated()
 			if playlistCount == "0":
-				print(' ... . Nothing in the playlist, giving up. Marking source unavailable.')
+				print(' ...... . Nothing in the playlist, giving up. Marking source unavailable.')
 				arSourceAvailable[2]=0
 				source_next()
 				source_play()
 				#TODO: error sound
 				return
 			else:
-				print(' ... . Found {0:s} tracks'.format(playlistCount))
+				print(' ...... . Found {0:s} tracks'.format(playlistCount))
 		else:
-			print(' ... . Found {0:s} tracks'.format(playlistCount))
+			print(' ...... . Found {0:s} tracks'.format(playlistCount))
 
 		# continue where left
 		playslist_pos = mpc_lkp('locmus')
@@ -1414,7 +1500,7 @@ def locmus_update():
 			print('[LOCMUS] Update requested, but no music available for playing... Doing nothing.')
 
 def locmus_stop():
-	print('Stopping source: locmus. Saving playlist position and clearing playlist.')
+	print('[LOCMUS] Stopping source: locmus. Saving playlist position and clearing playlist.')
 	
 	# save position and current file name for this drive
 	mpc_save_pos_for_label( 'locmus' )
@@ -1424,6 +1510,93 @@ def locmus_stop():
 	#mpc $params_mpc -q stop
 	#mpc $params_mpc -q clear	
 	
+
+def stream_check():
+	global arSourceAvailable
+	
+	print('[STRM] Checking availability...')
+
+	# Default to not available
+	arSourceAvailable[5]=0
+	
+	# Test internet connection
+	connected = internet()
+	if !connected:
+		print(' ....  Internet: FAIL')
+		print(' ....  Marking source not available')
+		return 1
+	else:
+		print(' ....  Internet: OK')
+
+	# See if we have streaming URL's
+	streams_file = sDirSave + "/streams.txt"
+	if os.path.isfile(streams_file):
+		print(' ....  Stream URL\'s: File found')
+	else:
+		print(' ....  Stream URL\'s: File not found')
+		print(' ....  Marking source not available')
+		return 1
+
+	# Check if at least one stream is good
+	streams=open(streams_file,'r')
+	for stream in streams:
+		print(' ....  Stream: {0}'.format(stream))
+		#TODO: check
+
+def stream_play():
+	print('[STRM] Play (MPD)')
+
+	#TODO: no need to do it if we have just started
+	print(' ....  Checking if source is still good')
+	stream_check()
+
+	if arSourceAvailable[5] == 0:
+		print(' ....  Aborting playback, trying next source.') #TODO red color
+		source_next()
+		source_play()
+		#TODO: error sound
+
+	else:
+		print(' .... Emptying playlist')
+		call(["mpc", "-q", "stop"])
+		call(["mpc", "-q", "clear"])
+		#todo: how about cropping, populating, and removing the first? item .. for faster continuity???
+
+		print(' .... Populating playlist')
+		mpc_populate_playlist('streams')
+		
+		print(' .... Checking if playlist is populated')
+		playlistCount = mpc_playlist_is_populated()
+		if playlistCount == "0":
+			print(' .... . Nothing in the playlist, aborting...')
+			arSourceAvailable[5] == 0:
+			source_next()
+			source_play()
+			#TODO: error sound
+			
+		else:
+			print(' .... . Found {0:s} tracks'.format(playlistCount))
+			
+		# continue where left
+		playslist_pos = mpc_lkp('streams')
+		
+		print(' .... Starting playback')
+		call(["mpc", "-q" , "play", str(playslist_pos)])
+
+		# double check if source is up-to-date
+		
+def stream_stop():
+	print('[STRM] Stopping source: stream. Saving playlist position and clearing playlist.')
+	
+	# save position and current file name for this drive
+	mpc_save_pos_for_label( 'stream' )
+	
+	# stop playback
+	mpc_stop()
+	#mpc $params_mpc -q stop
+	#mpc $params_mpc -q clear	
+
+
 # updates arSourceAvailable
 def source_check():
 	global dSettings
@@ -1444,6 +1617,9 @@ def source_check():
 	# 4; alsa, play from aux jack
 	linein_check()
 
+	# 5; internet radio
+	stream_check()
+	
 	# Display source availability.
 	print('-- Summary ------------------------')
 	print('Current source: {0:d}'.format(dSettings['source']))
@@ -1554,6 +1730,8 @@ def source_play():
 			bt_play()
 		elif dSettings['source'] == 4 and arSourceAvailable[4] == 1:
 			linein_play()
+		elif dSettings['source'] == 5 and arSourceAvailable[5] == 1:
+			stream_play()
 		else:
 			print('ERROR: Invalid source or no sources available')
 
@@ -1571,6 +1749,8 @@ def source_stop():
 		bt_stop()
 	elif dSettings['source'] == 4:
 		linein_stop()
+	elif dSettings['source'] == 5:
+		stream_stop()
 	else:
 		print('ERROR: Invalid source.')
 		
@@ -1627,84 +1807,6 @@ def init():
 	print('\033[96mInitialization finished\033[00m')
 	print('--------------------------------------------------------------------------------')
 	beep()
-	
-def udisk_details( device, action ):
-	device_obj = bus.get_object("org.freedesktop.UDisks", device)
-	device_props = dbus.Interface(device_obj, dbus.PROPERTIES_IFACE)
-	#
-	#  beware.... anything after this may or may not be defined depending on the event and state of the drive. 
-	#  Attempts to get a prop that is no longer set will generate a dbus.connection:Exception
-	#
-
-	# HANDY DEBUGGING TIP, DISPLAY ALL AVAILABLE PROPERTIES:
-	# WILL *NOT* WORK FOR DEVICE REMOVAL
-	#data = device_props.GetAll('')
-	#for i in data: print i+': '+str(data[i])
-	
-	DeviceFile = ""
-	mountpoint = ""
-	
-	try:
-		DeviceFile = device_props.Get('org.freedesktop.UDisks.Device',"DeviceFile")
-		print(" .....  DeviceFile: {0}".format(DeviceFile))
-		
-	except:
-		print(" .....  DeviceFile is unset... Aborting...")
-		return 1
-	
-	# Check if DeviceIsMediaAvailable...
-	try:    
-		is_media_available = device_props.Get('org.freedesktop.UDisks.Device', "DeviceIsMediaAvailable")
-		if is_media_available:
-			print(" .....  Media available")
-		else:
-			print(" .....  Media not available... Aborting...")
-			return 1
-	except:
-		print(" .....  DeviceIsMediaAvailable is not set... Aborting...")
-		return 1
-	
-	# Check if it is a Partition...
-	try:
-		is_partition = device_props.Get('org.freedesktop.UDisks.Device', "DeviceIsPartition")
-		if is_partition:
-			print(" .....  Device is partition")
-	except:
-		print(" .....  DeviceIsPartition is not set... Aborting...")
-		return 1
-
-	if not is_partition:
-		print(" .....  DeviceIsPartition is not set... Aborting...")
-		return 1
-
-	if action == 'A':
-		# Find out its mountpoint...
-		#IdLabel: SJOERD
-		#DriveSerial: 0014857749DCFD20C7F95F31
-		#DeviceMountPaths: dbus.Array([dbus.String(u'/media/SJOERD')], signature=dbus.Signature('s'), variant_level=1)
-		#DeviceFileById: dbus.Array([dbus.String(u'/dev/disk/by-id/usb-Kingston_DataTraveler_SE9_0014857749DCFD20C7F95F31-0:0-part1'), dbus.String(u'/dev/disk/by-uuid/D2B6-F8B3')], signature=dbus.Signature('s'), variant_level=1)
-		
-		mountpoint = subprocess.check_output("mount | egrep "+DeviceFile+" | cut -d ' ' -f 3", shell=True).rstrip('\n')
-		if mountpoint != "":
-			sUsbLabel = os.path.basename(mountpoint).rstrip('\n')
-			print(" .....  Mounted on: {0} (label: {1})".format(mountpoint,sUsbLabel))
-			mpc_update(sUsbLabel)
-			media_check()
-			media_play()
-		else:
-			print(" .....  No mountpoint found. Stopping.")
-		
-	elif action == 'R':
-		# Find out its mountpoint...
-		#We cannot retrieve many details from dbus about a removed drive, other than the DeviceFile (which at this point is no longer available).
-		media_check()
-		# Determine if we were playing this media (source: usb=1)
-		#if dSettings['source'] == 1 and
-		
-		#TODO!
-		
-	else:
-		print(" .....  ERROR: Invalid action.")
 
 	
 #-------------------------------------------------------------------------------
