@@ -570,15 +570,15 @@ def shutdown():
 	call(["halt"])
 
 def internet():
-    try:
-        # connect to the host -- tells us if the host is actually reachable
-        socket.create_connection((sInternet, 80))
-        return True
-    #except OSError:
-    #    pass
+	try:
+		# connect to the host -- tells us if the host is actually reachable
+		socket.create_connection((sInternet, 80))
+		return True
+	except OSError:
+		pass
 	except:
 		pass
-    return False
+	return False
 
 def url_check( url ):
 	# TODO!!, next build has httplib2
