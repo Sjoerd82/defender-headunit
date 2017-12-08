@@ -746,7 +746,7 @@ def volume_up():
 		#dSettings['volume'] = int(pipe.splitlines()[0]) #LEFT CHANNEL	
 	
 	# Save new volume level
-	save_settings()
+	#save_settings() -> too slow, eventually add this to the interval function, for now, volume will be saved whenever something else saves the dSettings
 
 def volume_down():
 	global dSettings
@@ -769,7 +769,7 @@ def volume_down():
 		dSettings['volume'] = volume_new
 		
 	# Save new volume level
-	save_settings()
+	#save_settings() -> too slow, eventually add this to the interval function, for now, volume will be saved whenever something else saves the dSettings
 
 def udisk_details( device, action ):
 	device_obj = bus.get_object("org.freedesktop.UDisks", device)
@@ -1901,7 +1901,7 @@ bus.add_signal_receiver(cb_remote_btn_press, dbus_interface = "com.arctura.remot
 bus.add_signal_receiver(cb_mpd_event, dbus_interface = "com.arctura.mpd")
 bus.add_signal_receiver(cb_udisk_dev_add, signal_name='DeviceAdded', dbus_interface="org.freedesktop.UDisks")
 bus.add_signal_receiver(cb_udisk_dev_rem, signal_name='DeviceRemoved', dbus_interface="org.freedesktop.UDisks")
-mainloop.timeout_add(5000,cb_periodically,'foo',123)
+#mainloop.timeout_add(5000,cb_periodically,'foo',123)
 
 mainloop.run()
 
