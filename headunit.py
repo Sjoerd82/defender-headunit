@@ -890,7 +890,7 @@ def load_settings():
 
 def seek_next():
 	global dSettings
-	if dSettings['source'] == 1 or dSettings['source'] == 2:
+	if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 5:
 		mpc_next_track()
 	elif dSettings['source'] == 3:
 		bt_next()
@@ -898,7 +898,7 @@ def seek_next():
 
 def seek_prev():
 	global dSettings
-	if dSettings['source'] == 1 or dSettings['source'] == 2:
+	if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 5:
 		mpc_prev_track()
 	elif dSettings['source'] == 3:
 		bt_prev()
@@ -1097,12 +1097,13 @@ def mpc_lkp( label ):
 		oMpdClient.disconnect()
 
 		for x in playlist:
-				if x['file'] == current_file:
-						pos = int(x['pos'])+1
-						print('[MPC] Match found! Continuing playback at #{0}'.format(pos))
+			if x['file'] == current_file:
+				pos = int(x['pos'])+1
+				print('[MPC] Match found! Continuing playback at #{0}'.format(pos))
 
 	else:
 		print('[MPC] No position file available for this medium (first run?)')
+		mpc_save_pos_for_label (label)
 
 	return pos
 
