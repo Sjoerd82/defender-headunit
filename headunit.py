@@ -116,6 +116,7 @@ iMPC_OK = 0
 sBtPinCode = "0000"
 sBtDev = "hci0"						#TODO
 sBtAdapter = "org.bluez.Adapter1"	#TODO
+sBtPlayer = None					#"/org/bluez/hci0/dev_78_6A_89_FA_1C_95/player0"
 
 #BLUAGENT5
 SERVICE_NAME = "org.bluez"
@@ -1219,9 +1220,11 @@ def bt_init():
 				print(' ..  .. MediaControl1 (deprecated):')
 				properties = interfaces[interface]
 				for key in properties.keys():
-					print(' ..  .. .. {0:19} = {1}'.format(key, properties[key]))				
+					print(' ..  .. .. {0:19} = {1}'.format(key, properties[key]))
+					if key == 'Player':
+						sBtPlayer = properties[key]
 			elif interface == 'org.bluez.MediaPlayer1':
-				print(' ..  .. TEST! MediaPlayer:')
+				print(' ..  .. MediaPlayer:')
 				properties = interfaces[interface]
 				for key in properties.keys():
 					print(' ..  .. .. {0:19} = {1}'.format(key, properties[key]))
@@ -1267,16 +1270,11 @@ def bt_play():
 
 def bt_next():
 	print('[BT] Next')
-
-	#bus = dbus.SystemBus()
-	#manager = dbus.Interface(bus.get_object("org.bluez", "/"), "org.freedesktop.DBus.ObjectManager")
-	#objects = manager.GetManagedObjects()
-	#print objects
+	print(' ..  Player: {0}'.format(sBtPlayer))
 
 	# dbus-send --system --type=method_call --dest=org.bluez /org/bluez/hci0/dev_78_6A_89_FA_1C_95/player0 org.bluez.MediaPlayer1.Next
 
-	player = bus.get_object('org.bluez','/org/bluez/hci0/dev_78_6A_89_FA_1C_95/player0')
-	#player.Pause(dbus_interface='org.bluez.MediaPlayer1')
+	player = bus.get_object('org.bluez',sBtPlayer)
 	BT_Media_iface = dbus.Interface(player, dbus_interface='org.bluez.MediaPlayer1')
 	BT_Media_iface.Next()
 	
@@ -1300,8 +1298,7 @@ def bt_next():
 	finally:
 		player.shutdown()
 	"""
-		
-	print('NOT IMPLEMENTED!!')
+	
 	# TODO
 	# https://kernel.googlesource.com/pub/scm/bluetooth/bluez/+/5.43/doc/media-api.txt
 	# 
@@ -1313,14 +1310,35 @@ def bt_next():
 
 def bt_prev():
 	print('[BT] Prev.')
-	print('NOT IMPLEMENTED!!')
+	print(' ..  Player: {0}'.format(sBtPlayer))
 
+	# dbus-send --system --type=method_call --dest=org.bluez /org/bluez/hci0/dev_78_6A_89_FA_1C_95/player0 org.bluez.MediaPlayer1.Next
+
+	player = bus.get_object('org.bluez',sBtPlayer)
+	BT_Media_iface = dbus.Interface(player, dbus_interface='org.bluez.MediaPlayer1')
+	BT_Media_iface.Previous()
 	
 def bt_stop():
 	print('[BT] Stop playing Bluetooth...')
-	print('NOT IMPLEMENTED!!')
-	#TODO
+	print(' ..  Player: {0}'.format(sBtPlayer))
 
+	# dbus-send --system --type=method_call --dest=org.bluez /org/bluez/hci0/dev_78_6A_89_FA_1C_95/player0 org.bluez.MediaPlayer1.Next
+
+	player = bus.get_object('org.bluez',sBtPlayer)
+	BT_Media_iface = dbus.Interface(player, dbus_interface='org.bluez.MediaPlayer1')
+	BT_Media_iface.Stop()	#Or Pause?
+
+def bt_shuffle():
+	print('[BT] Shuffle')
+	print(' ..  Player: {0}'.format(sBtPlayer))
+	print(' ..  Current value: ?')
+	print(' ..  Change to: ?')
+	#off / alltracks / group
+
+	player = bus.get_object('org.bluez',sBtPlayer)
+	BT_Media_iface = dbus.Interface(player, dbus_interface='org.bluez.MediaPlayer1')
+	print BT_Media_iface.Shuffle
+	
 
 # updates arSourceAvailable[4] (alsa) -- TODO
 def linein_check():
