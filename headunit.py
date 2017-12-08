@@ -574,8 +574,8 @@ def internet():
         # connect to the host -- tells us if the host is actually reachable
         socket.create_connection((sInternet, 80))
         return True
-    except OSError:
-        pass
+    #except OSError:
+    #    pass
 	except:
 		pass
     return False
