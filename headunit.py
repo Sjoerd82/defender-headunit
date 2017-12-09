@@ -962,9 +962,7 @@ def mpc_random():
 	global iRandom
 	print('[MPC] Toggling random')
 	
-	if dSettings['source'] < 1 or dSettings['source'] > 2:
-		print(' Random is only available for MPD sources ... aborting.')
-	else:	
+	if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 5 or dSettings['source'] == 6:
 		# Random is ON, turning it OFF
 		if iRandom == 1:
 			print('[MPC] Turning random: off')
@@ -977,6 +975,9 @@ def mpc_random():
 			iRandom = 1
 			call(["mpc", "-q", "random", "on"])
 			call(["mpc", "-q", "next"])
+	else:
+		print(' ...  Random is only available for MPD sources ... aborting.')
+
 
 def mpc_get_PlaylistDirs():
 	global arMpcPlaylistDirs
@@ -2035,8 +2036,9 @@ def init():
 	# startup USB check
 	# if a USB drive is connected before booting, it will not be captured by a UDisk event, manually checking..
 	# also possible that music has been uploaded offline, so let's do a MPD DB update on the /media
-	print('[INIT] Updating MPD, this may take a while on large music collections...')	
+	print('[INIT] Updating MPD, this may take a while on large music collections... Please wait.')
 	call(["mpc", "--wait", "update"])
+	print(' ....  Done.')	
 	
 	# check available sources
 	source_check()
