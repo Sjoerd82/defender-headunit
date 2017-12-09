@@ -104,6 +104,7 @@ oAlsaMixer = None
 
 #PULSEAUDIO
 bPulseVolume = 1		# Use PulseAudio volume control, not ALSA
+sPaSfxSink = "alsa_output.platform-soc_sound.analog-stereo"
 
 #LOCAL MUSIC
 sLocalMusic="/media/PIHU_DATA"		# local music directory
@@ -683,14 +684,18 @@ def pa_get_volume():
 	return pavol.vol_get()
 
 def pa_sfx( sfx ):
+	global sPaSfxSink
+	
 	if sfx == 'startup':
-		call(["pactl", "play-sample", "startup", "alsa_output.platform-soc_sound.analog-stereo"])
+		call(["pactl", "play-sample", "startup", sPaSfxSink])
 	elif sfx == 'button_feedback':
-		call(["pactl", "play-sample", "beep_60", "alsa_output.platform-soc_sound.analog-stereo"])
+		call(["pactl", "play-sample", "beep_60", sPaSfxSink])
+	elif sfx == 'error':
+		call(["pactl", "play-sample", "error", sPaSfxSink])
 	elif sfx == 'mpd_update_db':
-		call(["pactl", "play-sample", "beep_60_70", "alsa_output.platform-soc_sound.analog-stereo"])
+		call(["pactl", "play-sample", "beep_60_70", sPaSfxSink])
 	elif sfx == 'bt':
-		call(["pactl", "play-sample", "bt", "alsa_output.platform-soc_sound.analog-stereo"])
+		call(["pactl", "play-sample", "bt", sPaSfxSink])
 	
 # ********************************************************************************
 # Volume wrappers
@@ -846,6 +851,7 @@ def udisk_details( device, action ):
 		
 	else:
 		print(" .....  ERROR: Invalid action.")
+		pa_sfx('error')
 
 # ********************************************************************************
 # Save & Load settings, using pickle
@@ -859,6 +865,7 @@ def save_settings():
 		pickle.dump( dSettings, open( sDirSave+"/headunit.p", "wb" ) )
 	except:
 		print(' ......  ERROR saving settings')
+		pa_sfx('error')
 
 def load_settings():
 	global dSettings
@@ -1168,10 +1175,20 @@ def mpc_populate_playlist ( label ):
 		# Using the command line:
 		#  ..but this generates some problems with special characters
 		streams_file = sDirSave + "/streams.txt"
-		p1 = subprocess.Popen(["cat", streams_file], stdout=subprocess.PIPE)
-		p2 = subprocess.Popen(["mpc", "add"], stdin=p1.stdout, stdout=subprocess.PIPE)
-		p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
-		output,err = p2.communicate()		
+		#p1 = subprocess.Popen(["cat", streams_file], stdout=subprocess.PIPE)
+		#p2 = subprocess.Popen(["mpc", "add"], stdin=p1.stdout, stdout=subprocess.PIPE)
+		#p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
+		#output,err = p2.communicate()		
+		streams=open(streams_file,'r')
+		for stream in streams:
+			if not stream == '\n' and not stream[:1] == '#':
+				uri = stream.rstrip('\n')
+				uri_OK = url_check(uri)
+				if uri_OK:
+					print(' ....  . Stream OK: {0}'.format(uri))
+					call(["mpc", "add", uri])
+				else:
+					print(' ....  . Stream FAIL: {0}'.format(uri))
 	else:
 		xMpdClient.findadd('base',label)
 	
@@ -1279,10 +1296,13 @@ def bt_play():
 	print(' ..  Player: {0}'.format(sBtPlayer))
 
 	# dbus-send --system --type=method_call --dest=org.bluez /org/bluez/hci0/dev_78_6A_89_FA_1C_95/player0 org.bluez.MediaPlayer1.Next
-
-	player = bus.get_object('org.bluez',sBtPlayer)
-	BT_Media_iface = dbus.Interface(player, dbus_interface='org.bluez.MediaPlayer1')
-	BT_Media_iface.Play()
+	try
+		player = bus.get_object('org.bluez',sBtPlayer)
+		BT_Media_iface = dbus.Interface(player, dbus_interface='org.bluez.MediaPlayer1')
+		BT_Media_iface.Play()
+	except:
+		print('[BT] FAILED -- TODO!')
+		
 
 
 def bt_next():
@@ -1392,6 +1412,7 @@ def media_check( prefered_label ):
 	except subprocess.CalledProcessError as err:
 		print('ERROR:', err)
 		arSourceAvailable[1]=0
+		pa_sfx('error')
 	else:
 		arMedia = grepOut.split()
 		
@@ -1622,6 +1643,7 @@ def locmus_update():
 			yMpdClient.move(0,int(delpos)-1)
 		else:
 			print(' ......  ERROR: something went wrong')
+			pa_sfx('error')
 
 		yMpdClient.close()
 		
@@ -1676,14 +1698,15 @@ def stream_check():
 
 	streams=open(streams_file,'r')
 	for stream in streams:
-		uri = stream.rstrip('\n')
-		uri_OK = url_check(uri)
-		if uri_OK:
-			print(' ....  . Stream OK: {0}'.format(uri))
-			arSourceAvailable[5]=1
-			break
-		else:
-			print(' ....  . Stream FAIL: {0}'.format(uri))
+		if not stream == '\n' and not stream[:1] == '#':
+			uri = stream.rstrip('\n')
+			uri_OK = url_check(uri)
+			if uri_OK:
+				print(' ....  . Stream OK: {0}'.format(uri))
+				arSourceAvailable[5]=1
+				break
+			else:
+				print(' ....  . Stream FAIL: {0}'.format(uri))
 
 
 def stream_play():
@@ -1830,6 +1853,7 @@ def source_next():
 				return
 			else:
 				print('ERROR switching source! FIX ME!')
+				pa_sfx('error')
 		
 		for source in arSource[i:]:
 			print(source)
@@ -1893,6 +1917,7 @@ def source_stop():
 		stream_stop()
 	else:
 		print('ERROR: Invalid source.')
+		pa_sfx('error')
 		
 def init():
 	global dSettings
