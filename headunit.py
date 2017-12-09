@@ -1996,6 +1996,8 @@ def source_stop():
 		linein_stop()
 	elif dSettings['source'] == 5:
 		stream_stop()
+	elif dSettings['source'] == 6:
+		stream_stop()
 	else:
 		print(' ......  ERROR: Invalid source.')
 		pa_sfx('error')
