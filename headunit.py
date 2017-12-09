@@ -1296,7 +1296,7 @@ def bt_play():
 	print(' ..  Player: {0}'.format(sBtPlayer))
 
 	# dbus-send --system --type=method_call --dest=org.bluez /org/bluez/hci0/dev_78_6A_89_FA_1C_95/player0 org.bluez.MediaPlayer1.Next
-	try
+	try:
 		player = bus.get_object('org.bluez',sBtPlayer)
 		BT_Media_iface = dbus.Interface(player, dbus_interface='org.bluez.MediaPlayer1')
 		BT_Media_iface.Play()
