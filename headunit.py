@@ -1813,27 +1813,27 @@ def source_next():
 	global dSettings
 	global arMediaWithMusic
 
+	# First check if any sources are available.
 	if sum(arSourceAvailable) == 0:
-		# we can stop now, no sources are available
-		print('[SOURCE] No available sources.')
+		print('[SOURCE] NEXT: No available sources.')
 		dSettings['source'] = -1
 		return 1
 	else:
-		print('[SOURCE] Switching to next source...')
+		print('[SOURCE] NEXT: Switching to next source...')
 	
+	#If no current source, switch to the first available, starting at 0
 	if dSettings['source'] == -1:
-		#No current source, switch to the first available, starting at 0
 		i = 0
 		for source in arSource:		
 			if arSourceAvailable[i] == 1:
-				print('[SOURCE] Switching to {0:s}'.format(source))
+				print('[SOURCE] NEXT: Switching to {0:s}'.format(source))
 				dSettings['source'] = i
 				save_settings()
 				break
 			i += 1
 			
 		if dSettings['source'] == -1:
-			print('No sources available!')
+			print('[SOURCE] NEXT: No sources available!')
 
 	else:
 		#TODO; hier klopt iets niet
@@ -1861,7 +1861,8 @@ def source_next():
 				# we can stop now, no need to switch to next source
 				return
 			else:
-				print('ERROR switching source! FIX ME!')
+				print(' ......  ERROR switching source! FIX ME!')
+				pa_sfx('error')
 				pa_sfx('error')
 		
 		for source in arSource[i:]:
@@ -1889,9 +1890,9 @@ def source_play():
 	global dSettings
 
 	if dSettings['source'] == -1:
-		print('[SOURCE] Cannot start playback, no source available.')
+		print('[SOURCE] PLAY: Cannot start playback, no source available.')
 	else:
-		print('[SOURCE] Start playback: {0:s}'.format(arSource[dSettings['source']]))
+		print('[SOURCE] PLAY: {0:s}'.format(arSource[dSettings['source']]))
 		if dSettings['source'] == 0 and arSourceAvailable[0] == 1:
 			fm_play()
 		elif dSettings['source'] == 1 and arSourceAvailable[1] == 1:
@@ -1906,12 +1907,12 @@ def source_play():
 		elif dSettings['source'] == 5 and arSourceAvailable[5] == 1:
 			stream_play()
 		else:
-			print('ERROR: Invalid source or no sources available')
+			print(' ......  ERROR: Invalid source or no sources available')
 
 def source_stop():
 	global dSettings
 
-	print('[SOURCE_STOP] Stopping playback for: {0:s}'.format(arSource[dSettings['source']]))
+	print('[SOURCE] STOP playback for: {0:s}'.format(arSource[dSettings['source']]))
 	if dSettings['source'] == 0:
 		fm_stop()
 	elif dSettings['source'] == 1:
@@ -1925,7 +1926,7 @@ def source_stop():
 	elif dSettings['source'] == 5:
 		stream_stop()
 	else:
-		print('ERROR: Invalid source.')
+		print(' ......  ERROR: Invalid source.')
 		pa_sfx('error')
 		
 def init():
