@@ -163,9 +163,13 @@ def cb_remote_btn_press ( func ):
 		print('\033[95m[BUTTON] Next source\033[00m')
 		# if more than one source available...
 		if sum(arSourceAvailable) > 1:
+			print('debug1')
 			source_stop()
+			print('debug2')
 			source_next()
+			print('debug3')
 			source_play()
+			print('debug4')
 	elif func == 'ATT':
 		print('\033[95m[BUTTON] ATT\033[00m')
 		volume_att_toggle()
@@ -1302,19 +1306,19 @@ def bt_play():
 		BT_Media_iface.Play()
 	except:
 		print('[BT] FAILED -- TODO!')
-		
-
 
 def bt_next():
 	print('[BT] Next')
 	print(' ..  Player: {0}'.format(sBtPlayer))
 
 	# dbus-send --system --type=method_call --dest=org.bluez /org/bluez/hci0/dev_78_6A_89_FA_1C_95/player0 org.bluez.MediaPlayer1.Next
+	try:
+		player = bus.get_object('org.bluez',sBtPlayer)
+		BT_Media_iface = dbus.Interface(player, dbus_interface='org.bluez.MediaPlayer1')
+		BT_Media_iface.Next()
+	except:
+		print('[BT] FAILED -- TODO!')
 
-	player = bus.get_object('org.bluez',sBtPlayer)
-	BT_Media_iface = dbus.Interface(player, dbus_interface='org.bluez.MediaPlayer1')
-	BT_Media_iface.Next()
-	
 	"""
 	player = None
 
@@ -1351,20 +1355,25 @@ def bt_prev():
 
 	# dbus-send --system --type=method_call --dest=org.bluez /org/bluez/hci0/dev_78_6A_89_FA_1C_95/player0 org.bluez.MediaPlayer1.Next
 
-	player = bus.get_object('org.bluez',sBtPlayer)
-	BT_Media_iface = dbus.Interface(player, dbus_interface='org.bluez.MediaPlayer1')
-	BT_Media_iface.Previous()
+	try:
+		player = bus.get_object('org.bluez',sBtPlayer)
+		BT_Media_iface = dbus.Interface(player, dbus_interface='org.bluez.MediaPlayer1')
+		BT_Media_iface.Previous()
+	except:
+		print('[BT] FAILED -- TODO!')
 	
 def bt_stop():
 	print('[BT] Stop playing Bluetooth...')
 	print(' ..  Player: {0}'.format(sBtPlayer))
 
 	# dbus-send --system --type=method_call --dest=org.bluez /org/bluez/hci0/dev_78_6A_89_FA_1C_95/player0 org.bluez.MediaPlayer1.Next
-
-	player = bus.get_object('org.bluez',sBtPlayer)
-	BT_Media_iface = dbus.Interface(player, dbus_interface='org.bluez.MediaPlayer1')
-	#BT_Media_iface.Pause() -- hangs Python!!
-	BT_Media_iface.Stop()
+	try:
+		player = bus.get_object('org.bluez',sBtPlayer)
+		BT_Media_iface = dbus.Interface(player, dbus_interface='org.bluez.MediaPlayer1')
+		#BT_Media_iface.Pause() -- hangs Python!!
+		BT_Media_iface.Stop()
+	except:
+		print('[BT] FAILED -- TODO!')
 
 def bt_shuffle():
 	print('[BT] Shuffle')
@@ -1808,9 +1817,9 @@ def source_next():
 		# we can stop now, no sources are available
 		print('[SOURCE] No available sources.')
 		dSettings['source'] = -1
-		return
-
-	print('[SOURCE] Switching to next source...')
+		return 1
+	else:
+		print('[SOURCE] Switching to next source...')
 	
 	if dSettings['source'] == -1:
 		#No current source, switch to the first available, starting at 0
@@ -1902,7 +1911,7 @@ def source_play():
 def source_stop():
 	global dSettings
 
-	print('Stopping playback: {0:s}'.format(arSource[dSettings['source']]))
+	print('[SOURCE_STOP] Stopping playback for: {0:s}'.format(arSource[dSettings['source']]))
 	if dSettings['source'] == 0:
 		fm_stop()
 	elif dSettings['source'] == 1:
