@@ -1998,13 +1998,13 @@ def init():
 	global bInit
 	
 	print('--------------------------------------------------------------------------------')
-	print('Initializing ...')
 
 	# initialize gpio (beep)
-	print('Enabling GPIO output on pin 6 (beeper)')
+	print('[INIT] Enabling GPIO output on pin 6 (beeper)')
 	call(["gpio", "write", "6", "0"])
 	call(["gpio", "mode", "6", "out"])
 
+	print('[INIT] Initializing subsystems ...')
 	# initialize ALSA
 	alsa_init()
 
@@ -2026,6 +2026,7 @@ def init():
 	# startup USB check
 	# if a USB drive is connected before booting, it will not be captured by a UDisk event, manually checking..
 	# also possible that music has been uploaded offline, so let's do a MPD DB update on the /media
+	print('[INIT] Updating MPD, this may take a while on large music collections, on a first run!')	
 	call(["mpc", "--wait", "update"])
 	
 	# check available sources
@@ -2045,7 +2046,7 @@ def init():
 		# Source available
 		source_play()
 	
-	print('\033[96mInitialization finished\033[00m')
+	print('\033[96m[INIT] Initialization finished\033[00m')
 	print('--------------------------------------------------------------------------------')
 	beep()
 	bInit = 0
