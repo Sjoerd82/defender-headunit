@@ -109,6 +109,7 @@ sPaSfxSink = "alsa_output.platform-soc_sound.analog-stereo"
 #LOCAL MUSIC
 sLocalMusic="/media/PIHU_DATA"		# local music directory
 sLocalMusicMPD="PIHU_DATA"			# directory from a MPD pov. #TODO: derive from sLocalMusic
+sSambaMusic="/media/PIHU_SMB/music"
 sSambaMusicMPD="PIHU_SMB"			# directory from a MPD pov.
 
 #MPD-client (MPC)
@@ -158,7 +159,7 @@ def cb_remote_btn_press ( func ):
 	# Handle button press
 	if func == 'SHUFFLE':
 		print('\033[95m[BUTTON] Shuffle\033[00m')
-		if dSettings['source'] == 1 or dSettings['source'] == 2:
+		if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 5 or dSettings['source'] == 6:
 			mpc_random()
 	elif func == 'SOURCE':
 		print('\033[95m[BUTTON] Next source\033[00m')
@@ -202,14 +203,18 @@ def cb_remote_btn_press ( func ):
 		print('Unknown button function')
 
 def cb_mpd_event( event ):
-	print('[MPD] DBUS event received: {0}'.format(event))
+	global bInit
 
-	if event == "player":
-		mpc_save_pos()
-	#elif event == "media_removed":
-	#elif event == "media_ready":
-	else:
-		print(' ...  Unknown event')
+	if bInit == 0:
+	
+		print('[MPD] DBUS event received: {0}'.format(event))
+
+		if event == "player":
+			mpc_save_pos()
+		#elif event == "media_removed":
+		#elif event == "media_ready":
+		else:
+			print(' ...  Unknown event')
 
 def cb_udisk_dev_add( device ):
 	print('[UDISK] Device added: {0}'.format(str(device)))
@@ -910,7 +915,7 @@ def load_settings():
 
 def seek_next():
 	global dSettings
-	if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 5:
+	if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 5 or dSettings['source'] == 6:
 		mpc_next_track()
 	elif dSettings['source'] == 3:
 		bt_next()
@@ -918,7 +923,7 @@ def seek_next():
 
 def seek_prev():
 	global dSettings
-	if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 5:
+	if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 5 or dSettings['source'] == 6:
 		mpc_prev_track()
 	elif dSettings['source'] == 3:
 		bt_prev()
@@ -1442,6 +1447,8 @@ def media_check( prefered_label ):
 			
 			if sUsbLabel == sLocalMusicMPD:
 				print(' ..... . {0}: ignoring local music directory'.format(sLocalMusicMPD))
+			if sUsbLabel == sSambaMusic:
+				print(' ..... . {0}: ignoring samba music directory'.format(sSambaMusicMPD))
 			else:		
 				taskcmd = "mpc listall "+sUsbLabel+" | wc -l"
 				task = subprocess.Popen(taskcmd, shell=True, stdout=subprocess.PIPE)
@@ -1797,7 +1804,7 @@ def smb_play():
 	print('[SMB] Play (MPD)')
 	if bInit == 0:
 		print(' ...  Checking if source is still good')
-		stream_check()
+		smb_check()
 
 	if arSourceAvailable[6] == 0:
 		print(' ...  Aborting playback, trying next source.') #TODO red color
@@ -2026,7 +2033,7 @@ def init():
 	# startup USB check
 	# if a USB drive is connected before booting, it will not be captured by a UDisk event, manually checking..
 	# also possible that music has been uploaded offline, so let's do a MPD DB update on the /media
-	print('[INIT] Updating MPD, this may take a while on large music collections, on a first run!')	
+	print('[INIT] Updating MPD, this may take a while on large music collections...')	
 	call(["mpc", "--wait", "update"])
 	
 	# check available sources
