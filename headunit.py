@@ -675,6 +675,7 @@ def pa_init():
 	call(["pactl","upload-sample",sDirRoot+"/sfx/beep_60.wav", "beep_60"])
 	call(["pactl","upload-sample",sDirRoot+"/sfx/beep_70.wav", "beep_70"])
 	call(["pactl","upload-sample",sDirRoot+"/sfx/beep_60_70.wav", "beep_60_70"])
+	call(["pactl","upload-sample",sDirRoot+"/sfx/error.wav", "error"])
 	call(["pactl","upload-sample",sDirRoot+"/sfx/bt.wav", "bt"])
 
 def pa_set_volume( volume ):
@@ -1988,7 +1989,7 @@ def init():
 	
 #-------------------------------------------------------------------------------
 # Main loop
-print('Headunit v0.2 2017-12-08')
+print('Headunit v0.2 2017-12-09 1510')
 print('Checking if we\'re already runnning')
 #me = singleton.SingleInstance() # will sys.exit(-1) if other instance is running # uncomment when tendo available
 #with PIDFile("/var/run/pihu.pid"):

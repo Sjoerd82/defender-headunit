@@ -1,0 +1,1 @@
+mount -t cifs -o user=root //172.16.8.11/music/mpd /media/PIHU_SMB/music
