@@ -72,8 +72,8 @@ import socket
 #import httplib2
 
 # Global variables
-arSource = ['fm','media','locmus','bt','alsa','stream'] # source types; add new sources in the end
-arSourceAvailable = [0,0,0,0,0,0]            # corresponds to arSource; 1=available
+arSource = ['fm','media','locmus','bt','alsa','stream','smb'] # source types; add new sources in the end
+arSourceAvailable = [0,0,0,0,0,0,0]          # corresponds to arSource; 1=available
 arMediaWithMusic = []						 # list of mountpoints that contains music, according to MPD
 iAtt = 0									 # Att mode toggle
 iRandom = 0									 # We're keeping track of it within the script, not checking with MPD
@@ -109,6 +109,7 @@ sPaSfxSink = "alsa_output.platform-soc_sound.analog-stereo"
 #LOCAL MUSIC
 sLocalMusic="/media/PIHU_DATA"		# local music directory
 sLocalMusicMPD="PIHU_DATA"			# directory from a MPD pov. #TODO: derive from sLocalMusic
+sSambaMusicMPD="PIHU_SMB"			# directory from a MPD pov.
 
 #MPD-client (MPC)
 oMpdClient = None
@@ -163,13 +164,9 @@ def cb_remote_btn_press ( func ):
 		print('\033[95m[BUTTON] Next source\033[00m')
 		# if more than one source available...
 		if sum(arSourceAvailable) > 1:
-			print('debug1')
 			source_stop()
-			print('debug2')
 			source_next()
-			print('debug3')
 			source_play()
-			print('debug4')
 	elif func == 'ATT':
 		print('\033[95m[BUTTON] ATT\033[00m')
 		volume_att_toggle()
@@ -593,7 +590,6 @@ def internet():
 	return False
 
 def url_check( url ):
-	# TODO!!, next build has httplib2
 	#h = httplib2.Http()
 	#resp = h.request(url, 'HEAD')
 	#assert int(resp[0]['status']) < 400
@@ -1069,6 +1065,8 @@ def mpc_save_pos():
 		mpc_save_pos_for_label ('locmus')
 	elif dSettings['source'] == 5:
 		mpc_save_pos_for_label ('stream')
+	elif dSettings['source'] == 6:
+		mpc_save_pos_for_label ('smb')
 
 def mpc_save_pos_for_label ( label ):
 	print('[MPC] Saving playlist position for label: {0}'.format(label))
@@ -1176,6 +1174,8 @@ def mpc_populate_playlist ( label ):
 		
 	if label == 'locmus':
 		xMpdClient.findadd('base',sLocalMusicMPD)
+	if label == 'smb':
+		xMpdClient.findadd('base',sSambaMusicMPD)
 	elif label == 'stream':
 		# Using the command line:
 		#  ..but this generates some problems with special characters
@@ -1406,14 +1406,14 @@ def linein_stop():
 def media_check( prefered_label ):
 	global arMediaWithMusic
 	
-	print('[USB] CHECK availability...')
+	print('[MEDIA] CHECK availability...')
 
 	arSourceAvailable[1]=1 	# Available, unless proven otherwise in this procedure
 	arMedia = []			# list of mountpoints on /media
 	arMediaWithMusic = []  	# Reset (will be rebuild in this procedure)
 	
 	try:
-		print(' ... Check if anything is mounted on /media...')
+		print(' .....  Check if anything is mounted on /media...')
 		# do a -f1 for devices, -f3 for mountpoints
 		grepOut = subprocess.check_output(
 			"mount | grep /media | cut -d' ' -f3",
@@ -1432,16 +1432,16 @@ def media_check( prefered_label ):
 	# So, let's check if there's anything in the database for this source:
 	
 	if arSourceAvailable[1] == 1:
-		print(' ... /media has mounted filesystems: ')
+		print(' .....  /media has mounted filesystems: ')
 		for mountpoint in arMedia:
 			print(' ... . {0}'.format(mountpoint))
 		
-		print(' ... Continuing to crosscheck with mpd database for music...')
+		print(' .....  Continuing to crosscheck with mpd database for music...')
 		for mountpoint in arMedia:
 			sUsbLabel = os.path.basename(mountpoint).rstrip('\n')
 			
 			if sUsbLabel == sLocalMusicMPD:
-				print(' ... . {0}: ignoring local music directory'.format(sLocalMusicMPD))
+				print(' ..... . {0}: ignoring local music directory'.format(sLocalMusicMPD))
 			else:		
 				taskcmd = "mpc listall "+sUsbLabel+" | wc -l"
 				task = subprocess.Popen(taskcmd, shell=True, stdout=subprocess.PIPE)
@@ -1449,9 +1449,9 @@ def media_check( prefered_label ):
 				assert task.wait() == 0
 				
 				if mpcOut.rstrip('\n') == '0':
-					print(' ... . {0}: nothing in the database for this source.'.format(sUsbLabel))
+					print(' ..... . {0}: nothing in the database for this source.'.format(sUsbLabel))
 				else:
-					print(' ... . {0}: found {1:s} tracks'.format(sUsbLabel,mpcOut.rstrip('\n')))		
+					print(' ..... . {0}: found {1:s} tracks'.format(sUsbLabel,mpcOut.rstrip('\n')))		
 					arMediaWithMusic.append(mountpoint)
 					#default to found media, if not set yet
 					
@@ -1469,13 +1469,13 @@ def media_check( prefered_label ):
 			arSourceAvailable[1]=0
 
 	else:
-		print(' ... nothing mounted on /media.')
+		print(' ..... nothing mounted on /media.')
 	
 
 def media_play():
 	global dSettings
 	global arMediaWithMusic
-	print('[USB] Play (MPD)')
+	print('[MEDIA] Play (MPD)')
 
 	#if dSettings['mediasource'] == -1:
 	#	print('First go, doing a media check...')
@@ -1483,9 +1483,9 @@ def media_play():
 	
 	if arSourceAvailable[1] == 0:
 		print('Aborting playback, trying next source.')
+		pa_sfx('error')
 		source_next()
 		source_play()
-		#TODO: error sound
 		
 	else:
 		print(' ... Emptying playlist')
@@ -1506,10 +1506,10 @@ def media_play():
 		
 		if mpcOut.rstrip('\n') == "0":
 			print(' ... . Nothing in the playlist, marking source unavailable.')
+			pa_sfx('error')
 			arSourceAvailable[1]=0
 			source_next()
 			source_play()
-			#TODO: error sound
 		else:
 			print(' ... . Found {0:s} tracks'.format(mpcOut.rstrip('\n')))
 
@@ -1527,7 +1527,7 @@ def media_play():
 			mpc_get_PlaylistDirs()
 
 def media_stop():
-	print('[USB] Stop')
+	print('[MEDIA] Stop')
 	
 	# save playlist position (file name + position)
 	mpc_save_pos()
@@ -1727,10 +1727,9 @@ def stream_play():
 
 	if arSourceAvailable[5] == 0:
 		print(' ....  Aborting playback, trying next source.') #TODO red color
+		pa_sfx('error')
 		source_next()
 		source_play()
-		#TODO: error sound
-
 	else:
 		print(' .... Emptying playlist')
 		call(["mpc", "-q", "stop"])
@@ -1744,10 +1743,10 @@ def stream_play():
 		playlistCount = mpc_playlist_is_populated()
 		if playlistCount == "0":
 			print(' .... . Nothing in the playlist, aborting...')
+			pa_sfx('error')
 			arSourceAvailable[5] = 0
 			source_next()
 			source_play()
-			#TODO: error sound
 			
 		else:
 			print(' .... . Found {0:s} tracks'.format(playlistCount))
@@ -1771,6 +1770,66 @@ def stream_stop():
 	#mpc $params_mpc -q stop
 	#mpc $params_mpc -q clear	
 
+def smb_check():
+	global arSourceAvailable
+	
+	print('[SMB] Checking availability...')
+
+	#Default to not available
+	arSourceAvailable[6]=0
+	
+	#Check if network up
+	#TODO
+	
+	#See if we have smb location(s)
+	#TODO
+
+	#Check if at least one stream is good
+	#TODO
+
+	#OVERRIDE
+	arSourceAvailable[6]=1
+
+	
+def smb_play():
+	global arSourceAvailable
+	
+	print('[SMB] Play (MPD)')
+	if bInit == 0:
+		print(' ...  Checking if source is still good')
+		stream_check()
+
+	if arSourceAvailable[6] == 0:
+		print(' ...  Aborting playback, trying next source.') #TODO red color
+		pa_sfx('error')
+		source_next()
+		source_play()
+	else:
+		print(' .... Emptying playlist')
+		call(["mpc", "-q", "stop"])
+		call(["mpc", "-q", "clear"])
+		#todo: how about cropping, populating, and removing the first? item .. for faster continuity???
+
+		print(' .... Populating playlist')
+		mpc_populate_playlist('smb')
+		
+		print(' .... Checking if playlist is populated')
+		playlistCount = mpc_playlist_is_populated()
+		if playlistCount == "0":
+			print(' .... . Nothing in the playlist, aborting...')
+			pa_sfx('error')
+			arSourceAvailable[5] = 0
+			source_next()
+			source_play()
+		else:
+			print(' .... . Found {0:s} tracks'.format(playlistCount))
+			
+		# continue where left
+		playslist_pos = mpc_lkp('smb')
+		
+		print(' .... Starting playback')
+		call(["mpc", "-q" , "play", str(playslist_pos['pos'])])
+		# double check if source is up-to-date
 
 # updates arSourceAvailable
 def source_check():
@@ -1794,6 +1853,9 @@ def source_check():
 
 	# 5; internet radio
 	stream_check()
+
+	# 6; smb share(s)
+	smb_check()
 	
 	# Display source availability.
 	print('-- Summary ------------------------')
@@ -1906,6 +1968,8 @@ def source_play():
 			linein_play()
 		elif dSettings['source'] == 5 and arSourceAvailable[5] == 1:
 			stream_play()
+		elif dSettings['source'] == 6 and arSourceAvailable[6] == 1:
+			smb_play()
 		else:
 			print(' ......  ERROR: Invalid source or no sources available')
 

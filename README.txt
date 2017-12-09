@@ -21,7 +21,7 @@ Button presses:
   -> source_stop()
      -> xxx_stop()
   -> source_next()
-     ..
+     -> save_settings()
   -> source_play()
      ..
  UPDATE
@@ -49,8 +49,14 @@ ToDo:
    - implement alsa_unmute()
    - alsa_get_volume(): untested with actual alsa mixer
  - FM, Line-In
- - Error sound
-   
+ - Play sfx at independent volume  
+ - Play sfx continuously for (potentially) long operations: mpd update, ...?
+ - Samba:
+   - Implement properly (now hardcoded)
+ - Internet radio:
+   - Support playlists (currently only URI's)
+   - and fetch up-to-date playlist for a radio station
+   - Move/mark dead stations
 
  * S70headunit:
  - check pid file
@@ -59,3 +65,5 @@ ToDo:
  * Linux:
  - Make PulseAudio logs readable in /var/log/messages (switch locale?)
  - PulseAudio watchdog
+ - Make it work without PhatDAC
+ - 
