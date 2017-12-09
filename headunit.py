@@ -1184,15 +1184,16 @@ def mpc_populate_playlist ( label ):
 		#p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
 		#output,err = p2.communicate()		
 		streams=open(streams_file,'r')
-		for stream in streams:
-			if not stream == '\n' and not stream[:1] == '#':
-				uri = stream.rstrip('\n')
-				uri_OK = url_check(uri)
-				if uri_OK:
-					print(' ....  . Stream OK: {0}'.format(uri))
-					call(["mpc", "add", uri])
-				else:
-					print(' ....  . Stream FAIL: {0}'.format(uri))
+		with open(streams_file,'r') as streams:
+			for l in streams:
+				uri = l.rstrip()
+				if not uri[:1] == '#' and not uri == '':
+					uri_OK = url_check(uri)
+					if uri_OK:
+						print(' ....  . Stream OK: {0}'.format(uri))
+						call(["mpc", "add", uri])
+					else:
+						print(' ....  . Stream FAIL: {0}'.format(uri))
 	else:
 		xMpdClient.findadd('base',label)
 	
@@ -1703,20 +1704,18 @@ def stream_check():
 		return 1
 
 	# Check if at least one stream is good
-	print(' ....  Checking to see we have at least one valid stream')
-
-	streams=open(streams_file,'r')
-	for stream in streams:
-		if not stream == '\n' and not stream[:1] == '#':
-			uri = stream.rstrip('\n')
-			uri_OK = url_check(uri)
-			if uri_OK:
-				print(' ....  . Stream OK: {0}'.format(uri))
-				arSourceAvailable[5]=1
-				break
-			else:
-				print(' ....  . Stream FAIL: {0}'.format(uri))
-
+	print(' ....  Checking to see we have at least one valid stream')			
+	with open(streams_file,'r') as streams:
+		for l in streams:
+			uri = l.rstrip()
+			if not uri[:1] == '#' and not uri == '':
+				uri_OK = url_check(uri)					
+				if uri_OK:
+					print(' ....  . Stream OK: {0}'.format(uri))
+					arSourceAvailable[5]=1
+					break
+				else:
+					print(' ....  . Stream FAIL: {0}'.format(uri))
 
 def stream_play():
 	print('[STRM] Play (MPD)')
