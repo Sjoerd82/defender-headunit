@@ -916,11 +916,11 @@ def settings_load():
 		print(' ......  Volume: {0:d}%'.format(dSettings['volume']))
 	
 	#SOURCE
-	print(' ......  Source: {0:d}%'.format(dSettings['source']))
+	print(' ......  Source: {0}'.format(dSettings['source']))
 	#MEDIASOURCE
-	print(' ......  Media source: {0:d}%'.format(dSettings['mediasource']))
+	print(' ......  Media source: {0}'.format(dSettings['mediasource']))
 	#MEDIALABEL
-	print(' ......  Media label: {0:d}%'.format(dSettings['medialabel']))
+	print(' ......  Media label: {0}'.format(dSettings['medialabel']))
 	
 	print('\033[96m ......  DONE\033[00m')
 	
@@ -1984,7 +1984,8 @@ def init():
 	global bInit
 	
 	print('--------------------------------------------------------------------------------')
-
+	print('[INIT] Starting ...')
+	
     # load previous state (or set defaults, if not previous state)
 	settings_load()
 
