@@ -1231,6 +1231,19 @@ def mpc_playlist_is_populated():
 	assert task.wait() == 0
 	return mpcOut.rstrip('\n')
 
+def mpc_db_label_exist( label ):
+	print('[MPC] Checking if {0} occurs in the MPD database'.format(label))
+	taskcmd = "mpc ls "+label+" | wc -l"
+	task = subprocess.Popen(taskcmd, shell=True, stdout=subprocess.PIPE)
+	mpcOut = task.stdout.read()
+	assert task.wait() == 0
+	
+	if mpcOut.rstrip('\n') == '0':
+		print(' ... directory not found in mpd database')
+		return False
+	else:
+		print(' ... directory found in mpd database')
+
 # updates arSourceAvailable[0] (fm) --- TODO
 def fm_check():
 	print('[FM] CHECK availability... not available.')
@@ -1477,7 +1490,7 @@ def media_check( prefered_label ):
 				if mpcOut.rstrip('\n') == '0':
 					print(' ..... . {0}: nothing in the database for this source.'.format(sUsbLabel))
 				else:
-					print(' ..... . {0}: found {1:s} tracks'.format(sUsbLabel,mpcOut.rstrip('\n')))		
+					print(' ..... . {0}: found {1:s} tracks'.format(sUsbLabel,mpcOut.rstrip('\n')))
 					arMediaWithMusic.append(mountpoint)
 					#default to found media, if not set yet
 					
@@ -1814,7 +1827,6 @@ def smb_check():
 	#OVERRIDE
 	arSourceAvailable[6]=1
 
-	
 def smb_play():
 	global arSourceAvailable
 	
@@ -2066,7 +2078,14 @@ def init():
 		print('[INIT] QUICK-PLAY: Saved source was STREAM, which is available. Continuing playing.')
 	if arSourceAvailable[6] == 1:
 		print('[INIT] QUICK-PLAY: Saved source was SMB, which is available. Continuing playing.')
-		mpc_update( sSambaMusicMPD, True )  # TODO: smart update without WAIT possible?
+		mpc_init()
+		if mpc_db_label_exist( sSambaMusicMPD ):
+			print('[INIT] QUICK-PLAY: Not the first time that we play this source, trying to resume without waiting for a DB update')
+			#has a history.. try resuming without updating the database
+			#smb_hotstart()  # TODO: smart update without WAIT possible?
+			mpc_update( sSambaMusicMPD, False )
+		else:
+			mpc_update( sSambaMusicMPD, True )
 
 	else:
 		print('[INIT] QUICK-PLAY: Saved source is currently not available.')
@@ -2100,22 +2119,23 @@ def init():
 	
 	print('-----------------------------------')
 	
-	if dSettings['source'] == -1 and sum(arSourceAvailable) > 0:
-		#No current source, go to the first available
-		source_next()
-		# Start playback
-		source_play()
-	elif arSourceAvailable[dSettings['source']] == 0:
-		#Saved source not available, go to the first available
-		source_next()
-		# Start playback
-		source_play()
-	else:
-		# Source available
-		source_play()
+#	if dSettings['source'] == -1 and sum(arSourceAvailable) > 0:
+#		#No current source, go to the first available
+#		source_next()
+#		# Start playback
+#		source_play()
+#	elif arSourceAvailable[dSettings['source']] == 0:
+#		#Saved source not available, go to the first available
+#		source_next()
+#		# Start playback
+#		source_play()
+#	else:
+#		# Source available
+#		source_play()
 	
 	print('\033[96m[INIT] Initialization finished\033[00m')
 	print('--------------------------------------------------------------------------------')
+
 	beep()
 	bInit = 0
 
