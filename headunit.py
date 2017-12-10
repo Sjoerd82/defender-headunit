@@ -214,11 +214,19 @@ def cb_mpd_event( event ):
 		elif event == "update":
 			print " ...  database update started or finished (no action)"
 		elif event == "database":
-			print " ...  database updated with new music"
+			print " ...  database updated with new music #TODO"
 		elif event == "playlist":
 			print " ...  playlist changed (no action)"
 		#elif event == "media_removed":
 		#elif event == "media_ready":
+		elif event == "ifup":
+			print " ...  WiFi interface up: checking network related sources"
+			stream_check()
+			smb_check()
+		elif event == "ifdown":
+			print " ...  WiFi interface down: marking network related sources unavailable"
+			arSourceAvailable[5] = 0 #stream
+			arSourceAvailable[6] = 0 #smb
 		else:
 			print(' ...  unknown event (no action)')
 
@@ -1162,13 +1170,14 @@ def mpc_lkp( label ):
 			if x['file'] == dSavePosition['file']:
 				pos['pos'] = int(x['pos'])+1
 				timeElapsed,timeTotal = map(int, dSavePosition['time'].split(':'))
-				print('[MPC] Match found! Continuing playback at #{0}'.format(pos['pos']))
+				print('[MPC] Match found: {0}. Continuing playback at #{1}'.format(x['file'],pos['pos']))
 				print(' ...  Elapsed/Total time: {0}s/{1}s'.format(timeElapsed,timeTotal))
 				if timeElapsed > iThrElapsed and timeTotal > iThrTotal:
 					pos['time'] = str(timeElapsed)
 					print(' ...  Elapsed time over threshold: continuing at last position.')
 				else:
 					print(' ...  Elapsed time below threshold or short track: restarting at beginning of track.')
+				break
 
 	else:
 		print('[MPC] No position file available for this medium (first run?)')
@@ -1846,8 +1855,37 @@ def smb_play():
 		# double check if source is up-to-date
 
 # updates arSourceAvailable
-def source_check():
+def source_init():
 	global dSettings
+
+	print('[INIT] Initializing subsystems ...')
+
+	# initialize ALSA
+	alsa_init()
+
+	# initialize PulseAudio
+	pa_init()
+	
+	# initialize MPD client
+	mpc_init()
+
+	# initialize BT
+	bt_init()
+	
+    # load previous state
+	load_settings()
+
+	# play startup sound
+	pa_sfx('startup')
+
+	# startup USB check
+	# if a USB drive is connected before booting, it will not be captured by a UDisk event, manually checking..
+	# also possible that music has been uploaded offline, so let's do a MPD DB update on the /media
+	print('[INIT] ')
+	print('[INIT] Updating MPD, this may take a while on large music collections... Please wait.')
+	mpc_update( "/", True)
+	print(' ....  Done.')
+	
 	print('\033[96mCHECKING SOURCE AVAILABILITY\033[00m')
 
 	# 0; fm
@@ -2014,41 +2052,13 @@ def init():
 	global bInit
 	
 	print('--------------------------------------------------------------------------------')
-
 	# initialize gpio (beep)
 	print('[INIT] Enabling GPIO output on pin 6 (beeper)')
 	call(["gpio", "write", "6", "0"])
 	call(["gpio", "mode", "6", "out"])
 
-	print('[INIT] Initializing subsystems ...')
-	# initialize ALSA
-	alsa_init()
-
-	# initialize PulseAudio
-	pa_init()
-	
-	# initialize MPD client
-	mpc_init()
-
-	# initialize BT
-	bt_init()
-	
-    # load previous state
-	load_settings()
-
-	# play startup sound
-	pa_sfx('startup')
-
-	# startup USB check
-	# if a USB drive is connected before booting, it will not be captured by a UDisk event, manually checking..
-	# also possible that music has been uploaded offline, so let's do a MPD DB update on the /media
-	print('[INIT] ')
-	print('[INIT] Updating MPD, this may take a while on large music collections... Please wait.')
-	mpc_update( "/", True)
-	print(' ....  Done.')	
-	
 	# check available sources
-	source_check()
+	source_init()
 	
 	if dSettings['source'] == -1 and sum(arSourceAvailable) > 0:
 		#No current source, go to the first available

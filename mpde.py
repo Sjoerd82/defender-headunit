@@ -27,12 +27,24 @@ class mpdControl(dbus.service.Object):
 		self.oMpdClient.connect("localhost", 6600)  # connect to localhost:6600
 		print(self.oMpdClient.mpd_version)          # print the MPD version
 	
-		print('[MPD-DBUS] Subscribing to channel: media_ready')
-		self.oMpdClient.subscribe("media_ready")
+		#Now handled via udisks dbus:
+		#print('[MPD-DBUS] Subscribing to channel: media_ready')
+		#self.oMpdClient.subscribe("media_ready")
 
-		print('[MPD-DBUS] Subscribing to channel: media_removed')
-		self.oMpdClient.subscribe("media_removed")
-	
+		#Now handled via udisks dbus:
+		#print('[MPD-DBUS] Subscribing to channel: media_removed')
+		#self.oMpdClient.subscribe("media_removed")
+
+		#Workaround for not having NetworkManager:
+		# post-up script defined in /etc/network/interface
+		print('[MPD-DBUS] Subscribing to channel: ifup')
+		self.oMpdClient.subscribe("ifup")
+
+		#Workaround for not having NetworkManager:
+		# post-down script defined in /etc/network/interface
+		print('[MPD-DBUS] Subscribing to channel: ifdown')
+		self.oMpdClient.subscribe("ifdown")
+		
 		print('[MPD-DBUS] send_idle()')
 		self.oMpdClient.send_idle()
 		
@@ -83,7 +95,11 @@ class mpdControl(dbus.service.Object):
 						if m['channel'] == 'media_removed':
 							self.mpd_control('media_removed')
 						elif m['channel'] == 'media_ready':
-							self.mpd_control('media_ready')							
+							self.mpd_control('media_ready')
+						elif m['channel'] == 'ifup':
+							self.mpd_control('ifup')
+						elif m['channel'] == 'ifdown':
+							self.mpd_control('ifdown')
 						else:
 							print('ERROR: Channel not supported')
 				

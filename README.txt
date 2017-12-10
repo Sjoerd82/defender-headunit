@@ -53,6 +53,9 @@ ToDo:
  BUGS:
  - MPD:
    - Update, esp. during init() takes *WAY* too long [~10min?----], and, unless it's the first boot, is not crucial.
+ IMPROVEMENTS:
+ - MPD:
+   - mpc_lkp() slow for long playlists (about a minute? for ±6000 tracks on smb share) -- FIXED?
  FUTURE:
  - FM, Line-In
  - Samba:
@@ -71,4 +74,6 @@ ToDo:
  - Make PulseAudio logs readable in /var/log/messages (switch locale?)
  - PulseAudio watchdog
  - Make it work without PhatDAC
- - 
+ 
+ * Considerations
+ - Use NetworkManager + DBus to act on network changes
