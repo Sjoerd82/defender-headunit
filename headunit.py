@@ -2074,11 +2074,11 @@ def init():
 	source_play()
 	
 	# Catch
-	if not bMpcInit
+	if not bMpcInit:
 		# initialize MPD client
 		mpc_init()
 
-	if not bBtInit
+	if not bBtInit:
 		# initialize BT
 		bt_init()
 	
