@@ -87,6 +87,8 @@ sInternet = "www.google.com"				 # URL to test internet with
 bInit = 1									 # Are we in init() phase?
 iThrElapsed = 20							 # Minimal time that must have elapsed into a track in order to resume position
 iThrTotal = 30								 # Minimal track length required in order to resume position
+bMpcInit = False
+bBtInit = False
 
 #DBUS
 bus = None
@@ -592,7 +594,7 @@ def beep():
 	call(["gpio", "write", "6", "0"])
 
 def shutdown():
-	save_settings()
+	settings_save()
 	source_stop()
 	#call(["systemctl", "poweroff", "-i"])
 	call(["halt"])
@@ -769,7 +771,7 @@ def volume_up():
 		#dSettings['volume'] = int(pipe.splitlines()[0]) #LEFT CHANNEL	
 	
 	# Save new volume level
-	#save_settings() -> too slow, eventually add this to the interval function, for now, volume will be saved whenever something else saves the dSettings
+	#settings_save() -> too slow, eventually add this to the interval function, for now, volume will be saved whenever something else saves the dSettings
 
 def volume_down():
 	global dSettings
@@ -792,7 +794,7 @@ def volume_down():
 		dSettings['volume'] = volume_new
 		
 	# Save new volume level
-	#save_settings() -> too slow, eventually add this to the interval function, for now, volume will be saved whenever something else saves the dSettings
+	#settings_save() -> too slow, eventually add this to the interval function, for now, volume will be saved whenever something else saves the dSettings
 
 def udisk_details( device, action ):
 	device_obj = bus.get_object("org.freedesktop.UDisks", device)
@@ -877,7 +879,7 @@ def udisk_details( device, action ):
 # Save & Load settings, using pickle
 #
 
-def save_settings():
+def settings_save()():
 	global dSettings
 	global sDirSave
 	print('[PICKLE] Saving settings')
@@ -887,46 +889,41 @@ def save_settings():
 		print(' ......  ERROR saving settings')
 		pa_sfx('error')
 
-def load_settings():
+def settings_load():
 	global dSettings
 	global sDirSave
 
 	sPickleFile = sDirSave+"/headunit.p"
 	
 	print('\033[96m[PICKLE] Loading previous settings\033[00m')
-
 	try:
 		dSettings = pickle.load( open( sPickleFile, "rb" ) )
 	except:
-		print('[PICKLE] Loading headunit.p failed. First run? - Creating headunit.p with default values.')
+		print(' ......  Loading headunit.p failed. First run? - Creating headunit.p with default values.')
 		#assume: fails because it's the first time and no settings saved yet? Setting default:
 		pickle.dump( dSettings, open( sPickleFile, "wb" ) )
-
-	# Apply settings:
-	
+		
 	#VOLUME
 	#check if the value is valid
 	if dSettings['volume'] < 0 or dSettings['volume'] > 100:
 		dSettings['volume'] = 40
 		pickle.dump( dSettings, open( sPickleFile, "wb" ) )
-		print('[PICKLE] No setting found, defaulting to 40%')
-	# also don't restore a too low volume
+		print(' ......  No setting found, defaulting to 40%')
 	elif dSettings['volume'] < 30:
-		print('[PICKLE] Volume too low, defaulting to 30%')
+		print(' ......  Volume too low, defaulting to 30%')
 		dSettings['volume'] = 30
 	else:
-		print('[PICKLE] Volume: {0:d}%'.format(dSettings['volume']))
-	set_volume( dSettings['volume'] )
+		print(' ......  Volume: {0:d}%'.format(dSettings['volume']))
 	
 	#SOURCE
-	if dSettings['source'] < 0:
-		print('[PICKLE] Source: not available')
-	else:
-		print('[PICKLE] Source: {0:s}'.format(arSource[dSettings['source']]))
-
-	print('\033[96m[PICKLE] DONE\033[00m')
-
-
+	print(' ......  Source: {0:d}%'.format(dSettings['source']))
+	#MEDIASOURCE
+	print(' ......  Media source: {0:d}%'.format(dSettings['mediasource']))
+	#MEDIALABEL
+	print(' ......  Media label: {0:d}%'.format(dSettings['medialabel']))
+	
+	print('\033[96m ......  DONE\033[00m')
+	
 def seek_next():
 	global dSettings
 	if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 5 or dSettings['source'] == 6:
@@ -946,6 +943,7 @@ def seek_prev():
 # MPC
 
 def mpc_init():
+	global bMpcInit
 	global oMpdClient
 	print('[MPC] Initializing MPD client')
 	oMpdClient = MPDClient() 
@@ -969,6 +967,7 @@ def mpc_init():
 	
 	print('[MPC-debug] send_idle()')
 	oMpdClient.send_idle()
+	bMpcInit = True
 
 def mpc_random():
 	global iRandom
@@ -1073,6 +1072,7 @@ def mpc_update( location, wait ):
 	print('[MPC] Updating database for location: {0}'.format(location))
 	#Update
 	if wait:
+		print(' ...  Please wait, this may take some time...')
 		call(["mpc", "--wait", "-q", "update", location])
 	else:
 		call(["mpc", "-q", "update", location])
@@ -1247,6 +1247,7 @@ def fm_stop():
 # ********************************************************************************
 # BLUETOOTH
 def bt_init():
+	global bBtInit
 	global arSourceAvailable
 	global bus
 
@@ -1312,6 +1313,7 @@ def bt_init():
 		# Test NEXT
 		#PLAYER_IFACE
 
+	bBtInit = True
 
 # updates arSourceAvailable[3] (bt) -- TODO
 def bt_check():
@@ -1494,7 +1496,6 @@ def media_check( prefered_label ):
 
 	else:
 		print(' ..... nothing mounted on /media.')
-	
 
 def media_play():
 	global dSettings
@@ -1854,75 +1855,6 @@ def smb_play():
 		call(["mpc", "-q" , "play", str(playslist_pos['pos'])])
 		# double check if source is up-to-date
 
-# updates arSourceAvailable
-def source_init():
-	global dSettings
-
-	print('[INIT] Initializing subsystems ...')
-
-	# initialize ALSA
-	alsa_init()
-
-	# initialize PulseAudio
-	pa_init()
-	
-	# initialize MPD client
-	mpc_init()
-
-	# initialize BT
-	bt_init()
-	
-    # load previous state
-	load_settings()
-
-	# play startup sound
-	pa_sfx('startup')
-
-	# startup USB check
-	# if a USB drive is connected before booting, it will not be captured by a UDisk event, manually checking..
-	# also possible that music has been uploaded offline, so let's do a MPD DB update on the /media
-	print('[INIT] ')
-	print('[INIT] Updating MPD, this may take a while on large music collections... Please wait.')
-	mpc_update( "/", True)
-	print(' ....  Done.')
-	
-	print('\033[96mCHECKING SOURCE AVAILABILITY\033[00m')
-
-	# 0; fm
-	fm_check()
-
-	# 1; mpc, USB
-	media_check( None )
-	
-	# 2; locmus, local music
-	locmus_check()
-	
-	# 3; bt, bluetooth
-	bt_check()
-	
-	# 4; alsa, play from aux jack
-	linein_check()
-
-	# 5; internet radio
-	stream_check()
-
-	# 6; smb share(s)
-	smb_check()
-	
-	# Display source availability.
-	print('-- Summary ------------------------')
-	print('Current source: {0:d}'.format(dSettings['source']))
-	
-	i = 0
-	for source in arSource:
-		if arSourceAvailable[i] == 1:
-			print(' {0:d} {1:8}\033[92mavailable \033[00m'.format(i,source))
-		else:
-			print(' {0:d} {1:8}\033[91mnot available \033[00m'.format(i,source))
-		i += 1
-	
-	print('-----------------------------------')
-
 def source_next():
 	global dSettings
 	global arMediaWithMusic
@@ -1942,7 +1874,7 @@ def source_next():
 			if arSourceAvailable[i] == 1:
 				print('[SOURCE] NEXT: Switching to {0:s}'.format(source))
 				dSettings['source'] = i
-				save_settings()
+				settings_save()
 				break
 			i += 1
 			
@@ -1984,7 +1916,7 @@ def source_next():
 			if arSourceAvailable[i] == 1:
 				print('Switching to {0:s}'.format(source))
 				dSettings['source'] = i
-				save_settings()
+				settings_save()
 				break
 			i += 1
 		
@@ -1996,7 +1928,7 @@ def source_next():
 				if arSourceAvailable[i] == 1:
 					print('Switching to {0:s}'.format(source))
 					dSettings['source'] = i
-					save_settings()
+					settings_save()
 					break
 				i += 1
 
@@ -2052,13 +1984,120 @@ def init():
 	global bInit
 	
 	print('--------------------------------------------------------------------------------')
-	# initialize gpio (beep)
-	print('[INIT] Enabling GPIO output on pin 6 (beeper)')
-	call(["gpio", "write", "6", "0"])
-	call(["gpio", "mode", "6", "out"])
 
-	# check available sources
-	source_init()
+    # load previous state (or set defaults, if not previous state)
+	settings_load()
+
+	print('[INIT] Initializing audio output ...')
+	# initialize ALSA
+	alsa_init()
+	# initialize PulseAudio
+	pa_init()
+	# set volume
+	set_volume( dSettings['volume'] )
+
+	# play startup sound
+	pa_sfx('startup')
+
+	print('[INIT] Initializing subsystems ...')
+	# Waste no time if saved source is FM OR locmus. Continue playing straigth away!
+	# After that, we can initialize other subsystems
+	
+	# Note: if a USB drive is connected before booting, it will not be captured by a UDisk event, but will still be found by media_check()
+	
+	#0; fm
+	if dSettings['source'] == 0:
+		fm_check()
+	# 1; mpc, USB
+	elif dSettings['source'] == 1:
+		media_check( dSettings['medialabel'] ) # try to continue playing back the same media, if possible
+	# 2; locmus, local music
+	elif dSettings['source'] == 2:
+		locmus_check()
+	# 3; bt, bluetooth
+	elif dSettings['source'] == 3:
+		bt_init()
+		bt_check()	
+	# 4; alsa, play from aux jack
+	elif dSettings['source'] == 4:
+		linein_check()
+	# 5; internet radio
+	elif dSettings['source'] == 5:
+		stream_check()
+	# 6; smb share(s)
+	elif dSettings['source'] == 6:
+		smb_check()
+	elif dSettings['source'] == -1:
+		print('[INIT] No saved source available, checking what is available...')
+		#No source saved, Loop through sources
+		if dSettings['source'] == -1:
+			fm_check()
+			if arSourceAvailable[0] == 0:
+				linein_check() #assuming this is a very quick check
+				if arSourceAvailable[4] == 0:
+					locmus_check()
+					if arSourceAvailable[2] == 0:
+						media_check( None )
+						if arSourceAvailable[1] == 0:
+							stream_check()
+							if arSourceAvailable[5] == 0:
+								smb_check()
+								if arSourceAvailable[6] == 0:
+									bt_init()
+									bt_check()
+	else:
+		print('[INIT] ERROR: invalid source')
+		pa_sfx('error')
+
+	if arSourceAvailable[0] == 1:
+		print('[INIT] QUICK-PLAY: Saved source was FM, which is available. Continuing playing.')
+	if arSourceAvailable[1] == 1:
+		print('[INIT] QUICK-PLAY: Saved source was MEDIA, which is available. Continuing playing.')
+	if arSourceAvailable[2] == 1:	
+		print('[INIT] QUICK-PLAY: Saved source was LOCMUS, which is available. Continuing playing.')
+		mpc_init()
+		locmus_update()  # TODO: smart update without WAIT possible?
+	if arSourceAvailable[3] == 1:
+		print('[INIT] QUICK-PLAY: Saved source was BT, which is available. Continuing playing.')
+	if arSourceAvailable[4] == 1:
+		print('[INIT] QUICK-PLAY: Saved source was LINE-IN, which is available. Continuing playing.')
+	if arSourceAvailable[5] == 1:
+		print('[INIT] QUICK-PLAY: Saved source was STREAM, which is available. Continuing playing.')
+	if arSourceAvailable[6] == 1:
+		print('[INIT] QUICK-PLAY: Saved source was SMB, which is available. Continuing playing.')
+		mpc_update( sSambaMusicMPD, True )  # TODO: smart update without WAIT possible?
+
+	else:
+		print('[INIT] QUICK-PLAY: Saved source is currently not available.')
+
+	#Start playback!
+	source_play()
+	
+	# Catch
+	if not bMpcInit
+		# initialize MPD client
+		mpc_init()
+
+	if not bBtInit
+		# initialize BT
+		bt_init()
+	
+	
+	print('\033[96mCHECKING SOURCE AVAILABILITY\033[00m')
+	
+	# Display source availability.
+	print('-- Summary ------------------------')
+	print('Current source: {0:d}'.format(dSettings['source']))
+	
+	i = 0
+	for source in arSource:
+		if arSourceAvailable[i] == 1:
+			print(' {0:d} {1:8}\033[92mavailable \033[00m'.format(i,source))
+		else:
+			print(' {0:d} {1:8}\033[91mnot available \033[00m'.format(i,source))
+		i += 1
+	
+	print('-----------------------------------')
 	
 	if dSettings['source'] == -1 and sum(arSourceAvailable) > 0:
 		#No current source, go to the first available

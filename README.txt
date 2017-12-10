@@ -55,7 +55,7 @@ ToDo:
    - Update, esp. during init() takes *WAY* too long [~10min?----], and, unless it's the first boot, is not crucial.
  IMPROVEMENTS:
  - MPD:
-   - mpc_lkp() slow for long playlists (about a minute? for ±6000 tracks on smb share) -- FIXED?
+   - mpc_lkp() slow for long playlists (about a minute? for ±6000 tracks on smb share)
  FUTURE:
  - FM, Line-In
  - Samba:
