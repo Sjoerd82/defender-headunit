@@ -879,7 +879,7 @@ def udisk_details( device, action ):
 # Save & Load settings, using pickle
 #
 
-def settings_save()():
+def settings_save():
 	global dSettings
 	global sDirSave
 	print('[PICKLE] Saving settings')
