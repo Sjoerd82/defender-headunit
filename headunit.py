@@ -1243,6 +1243,7 @@ def mpc_db_label_exist( label ):
 		return False
 	else:
 		print(' ... directory found in mpd database')
+		return True
 
 # updates arSourceAvailable[0] (fm) --- TODO
 def fm_check():
