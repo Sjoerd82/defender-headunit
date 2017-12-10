@@ -40,7 +40,7 @@ ToDo:
    - internet connection check
  - implement url_check()
  - implement a better udisks drive removal, currently we don't know which drive was removed exactly
- - BlueTooth:
+ - Bluetooth:
    - Retrieve sBtPlayer (now hardcoded)
    - Clean-Up BluePlayer class
    - Clean-Up BlueAgent class
@@ -48,15 +48,20 @@ ToDo:
    Not sure what's the exact status of Alsa now that we've implemented PA...
    - implement alsa_unmute()
    - alsa_get_volume(): untested with actual alsa mixer
- - FM, Line-In
  - Play sfx at independent volume  
  - Play sfx continuously for (potentially) long operations: mpd update, ...?
+ BUGS:
+ - MPD:
+   - Update, esp. during init() takes *WAY* too long [~10min?----], and, unless it's the first boot, is not crucial.
+ FUTURE:
+ - FM, Line-In
  - Samba:
    - Implement properly (now hardcoded)
  - Internet radio:
    - Support playlists (currently only URI's)
    - and fetch up-to-date playlist for a radio station
    - Move/mark dead stations
+   - APP: Search and Add stations
 
  * S70headunit:
  - check pid file

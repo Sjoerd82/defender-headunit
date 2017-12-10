@@ -19,7 +19,7 @@ class mpdControl(dbus.service.Object):
 	def __init__(self, bus_name):
 		super(mpdControl,self).__init__(bus_name, "/com/arctura/mpd")
 
-		print('[---] Initializing MPD client')
+		print('[MPD-DBUS] Initializing MPD client')
 		self.oMpdClient = MPDClient() 
 
 		self.oMpdClient.timeout = 10                # network timeout in seconds (floats allowed), default: None
@@ -27,13 +27,13 @@ class mpdControl(dbus.service.Object):
 		self.oMpdClient.connect("localhost", 6600)  # connect to localhost:6600
 		print(self.oMpdClient.mpd_version)          # print the MPD version
 	
-		print('[---] Subscribing to channel: media_ready')
+		print('[MPD-DBUS] Subscribing to channel: media_ready')
 		self.oMpdClient.subscribe("media_ready")
 
-		print('[---] Subscribing to channel: media_removed')
+		print('[MPD-DBUS] Subscribing to channel: media_removed')
 		self.oMpdClient.subscribe("media_removed")
 	
-		print('[---] send_idle()')
+		print('[MPD-DBUS] send_idle()')
 		self.oMpdClient.send_idle()
 		
 		while True:			
@@ -61,7 +61,7 @@ class mpdControl(dbus.service.Object):
 		# loop over the available event(s)
 		for e in events:
 
-			print(' ...  EVENT: {0}'.format(e))
+			#print(' ...  EVENT: {0}'.format(e))
 			if e == "message":	
 				#oMpdClient.subscribe("media_ready")
 				#oMpdClient.command_list_ok_begin()
@@ -104,8 +104,8 @@ class mpdControl(dbus.service.Object):
 			#	for r in results:
 			#		print(r)		
 
-			else:
-				print(' ...  unmanaged event')
+			#else:
+			#	print(' ...  unmanaged event')
 	
 	#oMpdClient will create a list variable with the change events
 	#@dbus.service.signal("com.arctura.mpd", signature='as')

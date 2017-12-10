@@ -211,10 +211,16 @@ def cb_mpd_event( event ):
 
 		if event == "player":
 			mpc_save_pos()
+		elif event == "update":
+			print " ...  database update started or finished (no action)"
+		elif event == "database":
+			print " ...  database updated with new music"
+		elif event == "playlist":
+			print " ...  playlist changed (no action)"
 		#elif event == "media_removed":
 		#elif event == "media_ready":
 		else:
-			print(' ...  Unknown event')
+			print(' ...  unknown event (no action)')
 
 def cb_udisk_dev_add( device ):
 	print('[UDISK] Device added: {0}'.format(str(device)))
@@ -840,7 +846,7 @@ def udisk_details( device, action ):
 		if mountpoint != "":
 			sUsbLabel = os.path.basename(mountpoint).rstrip('\n')
 			print(" .....  Mounted on: {0} (label: {1})".format(mountpoint,sUsbLabel))
-			mpc_update(sUsbLabel)
+			mpc_update(sUsbLabel, True)
 			media_check(sUsbLabel)
 			media_play()
 		else:
@@ -956,8 +962,6 @@ def mpc_init():
 	print('[MPC-debug] send_idle()')
 	oMpdClient.send_idle()
 
-	
-	
 def mpc_random():
 	global iRandom
 	print('[MPC] Toggling random')
@@ -1054,13 +1058,16 @@ def mpc_stop():
 	print('Stopping MPC [pause]')
 	call(["mpc", "pause"])
 
-def mpc_update( location ):
+def mpc_update( location, wait ):
 	#Sound effect
 	pa_sfx('mpd_update_db')
 	#Debug info
 	print('[MPC] Updating database for location: {0}'.format(location))
 	#Update
-	call(["mpc", "--wait", "-q", "update", location])
+	if wait:
+		call(["mpc", "--wait", "-q", "update", location])
+	else:
+		call(["mpc", "-q", "update", location])
 	print(' ...  Update finished')
 
 def mpc_save_pos():
@@ -1590,8 +1597,7 @@ def locmus_play():
 		playlistCount = mpc_playlist_is_populated()
 		if playlistCount == "0":
 			print(' ...... . Nothing in the playlist, trying to update database...')
-			pa_sfx('mpd_update_db')
-			call(["mpc", "-q", "--wait", "update"])
+			mpc_update( sLocalMusicMPD, True )
 			mpc_populate_playlist(sLocalMusicMPD)
 			playlistCount = mpc_playlist_is_populated()
 			if playlistCount == "0":
@@ -1628,7 +1634,7 @@ def locmus_update():
 	print('[LOCMUS] Updating local database [{0}]'.format(sLocalMusicMPD))
 
 	#Update database
-	mpc_update(sLocalMusicMPD)
+	mpc_update( sLocalMusicMPD, True )
 	
 	#IF we're already playing local music: Continue playing without interruption
 	# and add new tracks to the playlist
@@ -2036,8 +2042,9 @@ def init():
 	# startup USB check
 	# if a USB drive is connected before booting, it will not be captured by a UDisk event, manually checking..
 	# also possible that music has been uploaded offline, so let's do a MPD DB update on the /media
+	print('[INIT] ')
 	print('[INIT] Updating MPD, this may take a while on large music collections... Please wait.')
-	call(["mpc", "--wait", "update"])
+	mpc_update( "/", True)
 	print(' ....  Done.')	
 	
 	# check available sources
