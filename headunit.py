@@ -987,7 +987,7 @@ def seek_prev():
 
 def random( state ):
 	global dSettings
-	print('[---] Random/Shuffle: {0}'.format(state))
+	print('[------] Random/Shuffle: {0}'.format(state))
 	
 	# only for MPD based sources:
 	if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 5 or dSettings['source'] == 6:
@@ -995,12 +995,12 @@ def random( state ):
 			pa_sfx('button_feedback')
 			newState = state
 		elif state == 'off':
-			pa_sfx('shuffle_reset')
+			pa_sfx('reset_shuffle')
 			newState = state
 		else:
 			currMpcRandom = mpc_random_get()
 			if currMpcRandom == "on":
-				pa_sfx('shuffle_reset')
+				pa_sfx('reset_shuffle')
 				newState = 'off'
 			elif currMpcRandom == "off":
 				pa_sfx('button_feedback')
@@ -1057,9 +1057,8 @@ def mpc_random_get():
 			random = r['random']
 	except:
 		print(' ...  Error, key not found!')
-		print results
+		return "unknown"
 	
-	print random
 	if random == '1':
 		return "on"
 	elif random == '0':
@@ -2289,7 +2288,7 @@ def init():
 	
 #-------------------------------------------------------------------------------
 # Main loop
-print('Headunit v0.3 2017-12-11 1745')
+print('Headunit v1.0 2017-12-11 1935')
 print('Checking if we\'re already runnning')
 #me = singleton.SingleInstance() # will sys.exit(-1) if other instance is running # uncomment when tendo available
 #with PIDFile("/var/run/pihu.pid"):
