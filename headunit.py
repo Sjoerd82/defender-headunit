@@ -2158,6 +2158,15 @@ def init():
 		# initialize BT
 		bt_init()
 	
+	# Check unchecked sources
+	# TODO: determine what was already checked by QuickPlay...
+	fm_check()
+	media_check()
+	locmus_check()
+	bt_check()
+	alsa_check()
+	stream_check()
+	smb_check()
 	
 	print('\033[96mCHECKING SOURCE AVAILABILITY\033[00m')
 	
