@@ -159,17 +159,15 @@ def cb_remote_btn_press ( func ):
 	if bBeep:
 		beep()
 	else:
-		pa_sfx('button_feedback')
+
 
 	# Handle button press
 	if func == 'SHUFFLE':
 		print('\033[95m[BUTTON] Shuffle\033[00m')
-		if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 5 or dSettings['source'] == 6:
-			mpc_random()
-		elif dSettings['source'] == 3:
-			bt_shuffle()
+		random( 'toggle' )
 	elif func == 'SOURCE':
 		print('\033[95m[BUTTON] Next source\033[00m')
+		pa_sfx('button_feedback')
 		# if more than one source available...
 		if sum(arSourceAvailable) > 1:
 			source_stop()
@@ -177,37 +175,53 @@ def cb_remote_btn_press ( func ):
 			source_play()
 	elif func == 'ATT':
 		print('\033[95m[BUTTON] ATT\033[00m')
+		pa_sfx('button_feedback')
 		volume_att_toggle()
 	elif func == 'VOL_UP':
 		print('\033[95m[BUTTON] VOL_UP\033[00m')		
+		pa_sfx('button_feedback')
 		volume_up()
 		return 0
 	elif func == 'VOL_DOWN':
 		print('\033[95m[BUTTON] VOL_DOWN\033[00m')
+		pa_sfx('button_feedback')
 		volume_down()
 		return 0
 	elif func == 'SEEK_NEXT':
 		print('\033[95m[BUTTON] Seek/Next\033[00m')
+		pa_sfx('button_feedback')
 		seek_next()
 	elif func == 'SEEK_PREV':
 		print('\033[95m[BUTTON] Seek/Prev.\033[00m')
+		pa_sfx('button_feedback')
 		seek_prev()
 	elif func == 'DIR_NEXT':
 		print('\033[95m[BUTTON] Next directory\033[00m')
 		if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 6:
-			mpc_next_folder()		
+			pa_sfx('button_feedback')
+			mpc_next_folder()
+		else:
+			pa_sfx('error')
+			print(' No function for this button! ')
 	elif func == 'DIR_PREV':
 		print('\033[95m[BUTTON] Prev directory\033[00m')
 		if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 6:
+			pa_sfx('button_feedback')
 			mpc_prev_folder()
+		else:
+			pa_sfx('error')
+			print(' No function for this button! ')
 	elif func == 'UPDATE_LOCAL':
 		print('\033[95m[BUTTON] Updating local MPD database\033[00m')
+		pa_sfx('button_feedback')
 		locmus_update()
 	elif func == 'OFF':
 		print('\033[95m[BUTTON] Shutting down\033[00m')
+		pa_sfx('button_feedback')
 		shutdown()
 	else:
 		print('Unknown button function')
+		pa_sfx('error')
 
 def cb_mpd_event( event ):
 	global bInit
@@ -973,6 +987,38 @@ def seek_prev():
 	elif dSettings['source'] == 3:
 		bt_prev()
 
+def random( state ):
+	global dSettings
+	print('[---] Random/Shuffle: {0}'.format(state))
+	
+	# only for MPD based sources:
+	if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 5 or dSettings['source'] == 6:
+		if state == 'on'
+			pa_sfx('button_feedback')
+			newState = state
+		elif state == 'off':
+			pa_sfx('shuffle_reset')
+			newState = state
+		else:
+			currMpcRandom = mpc_random_get()
+			if currMpcRandom == "on":
+				pa_sfx('shuffle_reset')
+				newState = 'off'
+			elif currMpcRandom == "off"
+				pa_sfx('button_feedback')
+				newState = 'on'
+
+		mpc_random( newState )
+		
+	# bluetooth:
+	elif dSettings['source'] == 3:
+		pa_sfx('button_feedback')
+		bt_shuffle()
+	
+	else:
+		print(' ...  Random/Shuffle not supported for this source.')
+			
+
 # ********************************************************************************
 # MPC
 
@@ -999,28 +1045,57 @@ def mpc_init():
 	oMpdClient.send_idle()
 	bMpcInit = True
 
-def mpc_random():
-	global iRandom
-	print('[MPC] Toggling random')
+def mpc_random_get():
+
+	xMpdClient = MPDClient() 
+	xMpdClient.connect("localhost", 6600)  # connect to localhost:6600
+	xMpdClient.command_list_ok_begin()
+	xMpdClient.status()
+	results = xMpdClient.command_list_end()
+
+	# Dictionary in List
+	try:
+		for r in results:
+			random = r['random']
+	except:
+		print(' ...  Error, key not found!')
+		print results
 	
-	if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 5 or dSettings['source'] == 6:
-		# Random is ON, turning it OFF
-		if iRandom == 1:
-			print('[MPC] Turning random: off')
-			iRandom = 0
-			call(["mpc", "-q", "random", "off"])
-			pa_sfx('reset_shuffle')
-
-		# Random is OFF, turning it ON + putting it in effect.
-		else:
-			print('[MPC] Turning random: on')
-			iRandom = 1
-			call(["mpc", "-q", "random", "on"])
-			call(["mpc", "-q", "next"])
+	print random
+	if random == '1':
+		return "on"
+	elif random == '0':
+		return "off"
 	else:
-		print(' ...  Random is only available for MPD sources ... aborting.')
+		return "unknown"
+	
+	xMpdClient.close()
 
+def mpc_random( state ):
+	global dSettings
+	
+	# check sound
+	if not (dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 5 or dSettings['source'] == 6):
+		print('[MPC] Random: invalid source... aborting...')
+		pa_sfx('error')
+		return 1
+	
+	# on
+	if state == 'on':
+		print('[MPC] Random ON + Next track')
+		call(["mpc", "-q", "random", "on"])
+		call(["mpc", "-q", "next"])
 
+	# off
+	elif state == 'off':
+		print('[MPC] Random OFF')
+		call(["mpc", "-q", "random", "off"])
+
+	# toggle
+	else: 
+		print('[MPC] Toggling random')
+		call(["mpc", "-q", "random"])
+	
 def mpc_get_PlaylistDirs():
 	global arMpcPlaylistDirs
 	dirname_current = ''
@@ -1088,6 +1163,7 @@ def mpc_prev_track():
 def mpc_next_folder():
 	print('[MPC] Next folder')
 	call(["mpc", "play", str(mpc_next_folder_pos())])
+	# Shuffle Off
 
 def mpc_prev_folder():
 	print('[MPC] Prev folder')
