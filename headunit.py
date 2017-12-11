@@ -991,7 +991,7 @@ def random( state ):
 	
 	# only for MPD based sources:
 	if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 5 or dSettings['source'] == 6:
-		if state == 'on'
+		if state == 'on':
 			pa_sfx('button_feedback')
 			newState = state
 		elif state == 'off':
@@ -1002,7 +1002,7 @@ def random( state ):
 			if currMpcRandom == "on":
 				pa_sfx('shuffle_reset')
 				newState = 'off'
-			elif currMpcRandom == "off"
+			elif currMpcRandom == "off":
 				pa_sfx('button_feedback')
 				newState = 'on'
 
