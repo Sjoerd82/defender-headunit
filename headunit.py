@@ -45,6 +45,9 @@ import pickle
 import alsaaudio
 from select import select
 
+#background processes
+import threading
+
 # Import pulseaudio volume handler
 from pa_volume import pa_volume_handler
 
@@ -1105,9 +1108,10 @@ def mpc_get_PlaylistDirs():
 	# clear arMpcPlaylistDirs
 	arMpcPlaylistDirs = []
 
-	# TODO! DETERMINE WHICH IS FASTER...
+	# TODO! DETERMINE WHICH IS FASTER... Commandline seems faster
 	
 	# Via the API
+	"""
 	xMpdClient = MPDClient() 
 	xMpdClient.connect("localhost", 6600)  # connect to localhost:6600
 	playlistitem = xMpdClient.playlistinfo()
@@ -1120,9 +1124,9 @@ def mpc_get_PlaylistDirs():
 			arMpcPlaylistDirs.append(t)
 		dirname_prev = dirname_current
 		iPos += 1
-		
-	# Via the commandline
 	"""
+	
+	# Via the commandline
 	pipe = Popen('mpc -f %file% playlist', shell=True, stdout=PIPE)
 
 	for line in pipe.stdout:
@@ -1132,7 +1136,6 @@ def mpc_get_PlaylistDirs():
 			arMpcPlaylistDirs.append(t)
 		dirname_prev = dirname_current
 		iPos += 1
-	"""
 
 def mpc_current_folder():
 	# Get current folder
@@ -1748,7 +1751,6 @@ def locmus_check():
 		print(" ... Error checking for local music directory {0} ".format(sLocalMusic))
 		arSourceAvailable[2]=0
 		
-
 def locmus_play():
 	global sLocalMusicMPD
 	global arSourceAvailable
@@ -2027,7 +2029,10 @@ def smb_play():
 		# double check if source is up-to-date
 		
 		# Load playlist directories, to enable folder up/down browsing.
-		mpc_get_PlaylistDirs()
+		#mpc_get_PlaylistDirs()
+		mpc_get_PlaylistDirs_thread = threading.Thread(target=mpc_get_PlaylistDirs)
+		mpc_get_PlaylistDirs_thread.start()
+		
 
 def source_next():
 	global dSettings
