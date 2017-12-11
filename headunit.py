@@ -260,7 +260,7 @@ def do_every(period,f,*args):
 
 def cb_periodically( foo ):
 	printc('timed','Every minute','TMR')
-	time.sleep(1)
+	time.sleep(.3)
 	
 # ********************************************************************************
 # bluezutils5.py
@@ -2206,7 +2206,7 @@ bus = dbus.SystemBus()
 init()
 
 # Start 1 minute timer
-do_every(1, cb_periodically, 'foo')
+do_every(60, cb_periodically, 'foo')
 
 # Bluetooth (can we move this to bt_init?)
 agent = BlueAgent(sBtPinCode)
