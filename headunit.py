@@ -2029,9 +2029,9 @@ def smb_play():
 		# double check if source is up-to-date
 		
 		# Load playlist directories, to enable folder up/down browsing.
-		#mpc_get_PlaylistDirs()
-		mpc_get_PlaylistDirs_thread = threading.Thread(target=mpc_get_PlaylistDirs)
-		mpc_get_PlaylistDirs_thread.start()
+		mpc_get_PlaylistDirs()
+		#mpc_get_PlaylistDirs_thread = threading.Thread(target=mpc_get_PlaylistDirs)
+		#mpc_get_PlaylistDirs_thread.start()
 		
 
 def source_next():
