@@ -1081,11 +1081,11 @@ def mpc_prev_track():
 	call(["mpc", "prev"])
 
 def mpc_next_folder():
-	print('Next folder')
+	print('[MPC] Next folder')
 	call(["mpc", "play", str(mpc_next_folder_pos())])
 
 def mpc_prev_folder():
-	print('Prev folder')
+	print('[MPC] Prev folder')
 	call(["mpc", "play", str(mpc_prev_folder_pos())])
 	
 def mpc_stop():
@@ -1915,6 +1915,9 @@ def smb_play():
 		print(' .... Starting playback')
 		call(["mpc", "-q" , "play", str(playslist_pos['pos'])])
 		# double check if source is up-to-date
+		
+		# Load playlist directories, to enable folder up/down browsing.
+		mpc_get_PlaylistDirs()
 
 def source_next():
 	global dSettings
@@ -2207,7 +2210,7 @@ def init():
 	
 #-------------------------------------------------------------------------------
 # Main loop
-print('Headunit v0.3 2017-12-11 1550')
+print('Headunit v0.3 2017-12-11 1745')
 print('Checking if we\'re already runnning')
 #me = singleton.SingleInstance() # will sys.exit(-1) if other instance is running # uncomment when tendo available
 #with PIDFile("/var/run/pihu.pid"):
