@@ -2054,9 +2054,9 @@ def source_next():
 		print('[SOURCE] NEXT: Switching to next source...')
 
 	# Wait for / kill background process
-	if mpc_get_PlaylistDirs_thread.isAlive()
-		#mpc_get_PlaylistDirs_thread.join)()			# Wait
-		mpc_get_PlaylistDirs_thread.join)(timeout=1)	# Kill
+	if mpc_get_PlaylistDirs_thread.isAlive():
+		#mpc_get_PlaylistDirs_thread.join()			# Wait
+		mpc_get_PlaylistDirs_thread.join(timeout=1)	# Kill
 	
 	#If no current source, switch to the first available, starting at 0
 	if dSettings['source'] == -1:
