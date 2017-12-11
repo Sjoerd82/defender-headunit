@@ -2164,7 +2164,7 @@ def init():
 	media_check( None )
 	locmus_check()
 	bt_check()
-	alsa_check()
+	linein_check()
 	stream_check()
 	smb_check()
 	
