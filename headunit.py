@@ -1174,24 +1174,24 @@ def mpc_prev_folder_pos():
 
 def mpc_next_track():
 	print('Next track')
-	call(["mpc", "next"])
+	call(["mpc", "-q", "next"])
 	
 def mpc_prev_track():
 	print('Prev. track')
-	call(["mpc", "prev"])
+	call(["mpc", "-q", "prev"])
 
 def mpc_next_folder():
 	print('[MPC] Next folder')
-	call(["mpc", "play", str(mpc_next_folder_pos())])
+	call(["mpc", "-q", "play", str(mpc_next_folder_pos())])
 	# Shuffle Off
 
 def mpc_prev_folder():
 	print('[MPC] Prev folder')
-	call(["mpc", "play", str(mpc_prev_folder_pos())])
+	call(["mpc", "-q", "play", str(mpc_prev_folder_pos())])
 	
 def mpc_stop():
-	print('Stopping MPC [pause]')
-	call(["mpc", "pause"])
+	print('[MPC] Stopping MPC [pause]')
+	call(["mpc", "-q", "pause"])
 
 def mpc_update( location, wait ):
 	#Sound effect
@@ -1360,7 +1360,7 @@ def mpc_populate_playlist ( label ):
 					uri_OK = url_check(uri)
 					if uri_OK:
 						print(' ....  . Stream OK: {0}'.format(uri))
-						call(["mpc", "add", uri])
+						call(["mpc", "-q", "add", uri])
 					else:
 						print(' ....  . Stream FAIL: {0}'.format(uri))
 	else:
