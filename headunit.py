@@ -2029,7 +2029,7 @@ def init():
 	
 	print('--------------------------------------------------------------------------------')
 	#print('[INIT] Starting ...')
-	printc('INIT','Starting ...')
+	printc('INIT','Starting ...', 'STD')
 	printc('TESTTEST','Starting ...', 'ERR')
 	
     # load previous state (or set defaults, if not previous state)
