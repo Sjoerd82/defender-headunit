@@ -38,7 +38,6 @@ ToDo:
  - add timer, to do:
    - delayed volume save
    - internet connection check
- - implement url_check()
  - implement a better udisks drive removal, currently we don't know which drive was removed exactly
  - Bluetooth:
    - Retrieve sBtPlayer (now hardcoded)
@@ -54,8 +53,10 @@ ToDo:
  - MPD:
    - Update, esp. during init() takes *WAY* too long [~10min?----], and, unless it's the first boot, is not crucial.
  IMPROVEMENTS:
- - MPD:
-   - mpc_lkp() slow for long playlists (about a minute? for ±6000 tracks on smb share)
+ - url_check()
+   - support https
+   - support incomplete url's, eg. missing http://
+ - Use more colors in console
  FUTURE:
  - FM, Line-In
  - Samba:

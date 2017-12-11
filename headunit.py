@@ -69,7 +69,8 @@ from optparse import OptionParser
 import socket
 
 #to check an URL
-#import httplib2
+#import httplib2	# Buildroot is not supporting SSL... somehow...
+import urllib2
 
 # Global variables
 arSource = ['fm','media','locmus','bt','alsa','stream','smb'] # source types; add new sources in the end
@@ -190,11 +191,11 @@ def cb_remote_btn_press ( func ):
 		seek_prev()
 	elif func == 'DIR_NEXT':
 		print('\033[95m[BUTTON] Next directory\033[00m')
-		if dSettings['source'] == 1 or dSettings['source'] == 2:
+		if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 6::
 			mpc_next_folder()		
 	elif func == 'DIR_PREV':
 		print('\033[95m[BUTTON] Prev directory\033[00m')
-		if dSettings['source'] == 1 or dSettings['source'] == 2:
+		if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 6::
 			mpc_prev_folder()
 	elif func == 'UPDATE_LOCAL':
 		print('\033[95m[BUTTON] Updating local MPD database\033[00m')
@@ -594,6 +595,9 @@ def beep():
 	time.sleep(0.05)
 	call(["gpio", "write", "6", "0"])
 
+def printc( title, text, style ):
+	print('[{0:6}] {1}')
+
 def shutdown():
 	settings_save()
 	source_stop()
@@ -612,11 +616,18 @@ def internet():
 	return False
 
 def url_check( url ):
+	# Using httplib2, supporting https (?):
 	#h = httplib2.Http()
 	#resp = h.request(url, 'HEAD')
 	#assert int(resp[0]['status']) < 400
-	return True
 	
+	# Using urllib2:
+	try:
+		urllib2.urlopen(url)
+		return True
+	except:
+		return False
+
 
 # ********************************************************************************
 # ALSA, using python-alsaaudio
@@ -641,7 +652,7 @@ def alsa_init():
 	try:
 		oAlsaMixer = alsaaudio.Mixer(sAlsaMixer, cardindex=0)
 	except alsaaudio.ALSAAudioError:
-		print('No such mixer')
+		print(' ....  No such mixer')
 
 def alsa_unmute():
 	print('[ALSA] Unmuting...')
@@ -2017,7 +2028,9 @@ def init():
 	global bMpdUpdateSmb
 	
 	print('--------------------------------------------------------------------------------')
-	print('[INIT] Starting ...')
+	#print('[INIT] Starting ...')
+	printc('INIT','Starting ...')
+	printc('TESTTEST','Starting ...', 'ERR')
 	
     # load previous state (or set defaults, if not previous state)
 	settings_load()
