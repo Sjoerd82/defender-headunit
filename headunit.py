@@ -1046,11 +1046,11 @@ def mpc_current_folder():
 def mpc_next_folder_pos():
 	global arMpcPlaylistDirs
 	dirname_current = mpc_current_folder()
-	print('Current folder: {0:s}'.format(dirname_current))
+	print(' ...  Current folder: {0:s}'.format(dirname_current))
 	
 	try:
 		iNextPos = arMpcPlaylistDirs[([y[1] for y in arMpcPlaylistDirs].index(dirname_current)+1)][0]
-		print('New folder = {0:s}'.format(arMpcPlaylistDirs[([y[1] for y in arMpcPlaylistDirs].index(dirname_current)+1)][1]))
+		print(' ...  New folder = {0:s}'.format(arMpcPlaylistDirs[([y[1] for y in arMpcPlaylistDirs].index(dirname_current)+1)][1]))
 	except IndexError:
 		# I assume the end of the list has been reached...
 		iNextPos = 1
@@ -1060,14 +1060,14 @@ def mpc_next_folder_pos():
 def mpc_prev_folder_pos():
 	global arMpcPlaylistDirs
 	dirname_current = mpc_current_folder()
-	print('Current folder: {0:s}'.format(dirname_current))
+	print(' ...  Current folder: {0:s}'.format(dirname_current))
 
 	try:
 		iNextPos = arMpcPlaylistDirs[([y[1] for y in arMpcPlaylistDirs].index(dirname_current)-1)][0]
-		print('New folder = {0:s}'.format(arMpcPlaylistDirs[([y[1] for y in arMpcPlaylistDirs].index(dirname_current)-1)][1]))
+		print(' ...  New folder = {0:s}'.format(arMpcPlaylistDirs[([y[1] for y in arMpcPlaylistDirs].index(dirname_current)-1)][1]))
 	except IndexError:
 		# I assume we past the beginning of the list...
-		print len(arMpcPlaylistDirs)
+		print(' ...  ERROR. Debug info = {0}'.format(len(arMpcPlaylistDirs))
 		iNextPos = arMpcPlaylistDirs[len(arMpcPlaylistDirs)][0]
 
 	return iNextPos
