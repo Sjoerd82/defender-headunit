@@ -246,6 +246,22 @@ def cb_periodically( test ):
 	print('[INT] Interval function')
 	print test
 
+def do_every(period,f,*args):
+    def g_tick():
+        t = time.time()
+        count = 0
+        while True:
+            count += 1
+            yield max(t + count*period - time.time(),0)
+    g = g_tick()
+    while True:
+        time.sleep(next(g))
+        f(*args)
+
+def cb_periodically( foo ):
+	printc('timed','Every minute','TMR')
+	time.sleep(1)
+	
 # ********************************************************************************
 # bluezutils5.py
 #
@@ -2188,6 +2204,9 @@ bus = dbus.SystemBus()
 
 # Initialize
 init()
+
+# Start 1 minute timer
+do_every(1, cb_periodically, 'foo')
 
 # Bluetooth (can we move this to bt_init?)
 agent = BlueAgent(sBtPinCode)
