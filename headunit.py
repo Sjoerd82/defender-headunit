@@ -1398,6 +1398,7 @@ def bt_next():
 		player = bus.get_object('org.bluez',sBtPlayer)
 		BT_Media_iface = dbus.Interface(player, dbus_interface='org.bluez.MediaPlayer1')
 		BT_Media_iface.Next()
+		#BT_Media_iface.Shuffle = "alltracks"
 	except:
 		print('[BT] FAILED -- TODO!')
 
@@ -2204,9 +2205,6 @@ bus = dbus.SystemBus()
 
 # Initialize
 init()
-
-# Start 1 minute timer
-do_every(60, cb_periodically, 'foo')
 
 # Bluetooth (can we move this to bt_init?)
 agent = BlueAgent(sBtPinCode)
