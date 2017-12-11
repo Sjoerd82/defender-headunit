@@ -163,7 +163,7 @@ def cb_remote_btn_press ( func ):
 	# Handle button press
 	if func == 'SHUFFLE':
 		print('\033[95m[BUTTON] Shuffle\033[00m')
-		if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 5 or dSettings['source'] == 6:
+		if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 3 or dSettings['source'] == 5 or dSettings['source'] == 6:
 			mpc_random()
 	elif func == 'SOURCE':
 		print('\033[95m[BUTTON] Next source\033[00m')
@@ -1467,7 +1467,7 @@ def bt_shuffle():
 
 	player = bus.get_object('org.bluez',sBtPlayer)
 	BT_Media_iface = dbus.Interface(player, dbus_interface='org.bluez.MediaPlayer1')
-	print BT_Media_iface.Shuffle
+	print(' .. Current shuffle status: {0}'.format(BT_Media_iface.Shuffle))
 	
 
 # updates arSourceAvailable[4] (alsa) -- TODO
