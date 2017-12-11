@@ -163,8 +163,10 @@ def cb_remote_btn_press ( func ):
 	# Handle button press
 	if func == 'SHUFFLE':
 		print('\033[95m[BUTTON] Shuffle\033[00m')
-		if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 3 or dSettings['source'] == 5 or dSettings['source'] == 6:
+		if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 5 or dSettings['source'] == 6:
 			mpc_random()
+		elif dSettings['source'] == 3:
+			bt_shuffle()
 	elif func == 'SOURCE':
 		print('\033[95m[BUTTON] Next source\033[00m')
 		# if more than one source available...
