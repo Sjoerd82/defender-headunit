@@ -1157,7 +1157,7 @@ def mpc_lkp( label ):
 		try:
 			dSavePosition = pickle.load( open( pickle_file, "rb" ) )
 		except:
-			print('[PICKLE] Loading {0:s} failed!'.format(pickle_file))
+			print(' ... PICKLE: Loading {0:s} failed!'.format(pickle_file))
 			return pos
 
 		#otherwise continue:
@@ -1166,14 +1166,23 @@ def mpc_lkp( label ):
 		oMpdClient.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
 		oMpdClient.connect("localhost", 6600)  # connect to localhost:6600
 		#playlist = oMpdClient.playlistid()
-		playlist = oMpdClient.playlistfind('file',dSavePosition['file'])
+		psfind = oMpdClient.playlistfind('filename',dSavePosition['file'])
 		oMpdClient.close()
 		oMpdClient.disconnect()
 		
-		print('!!!DEBUG!!!')
-		print playlist
-		pos['pos'] = 0
-		
+		#in the unlikely case of multiple matches, we'll just take the first
+		if len(psfind) == 0:
+			print(' ...  File not found in loaded playlist')
+		else:
+			pos['pos'] = int(psfind['pos'])+1
+			timeElapsed,timeTotal = map(int, dSavePosition['time'].split(':'))
+			print('[MPC] Match found: {0}. Continuing playback at #{1}'.format(psfind['file'],pos['pos']))
+			print(' ...  Elapsed/Total time: {0}s/{1}s'.format(timeElapsed,timeTotal))
+			if timeElapsed > iThrElapsed and timeTotal > iThrTotal:
+				pos['time'] = str(timeElapsed)
+				print(' ...  Elapsed time over threshold: continuing at last position.')
+			else:
+				print(' ...  Elapsed time below threshold or short track: restarting at beginning of track.')
 		"""
 		for x in playlist:
 			print x['file']
