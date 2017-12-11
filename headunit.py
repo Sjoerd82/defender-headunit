@@ -1067,7 +1067,7 @@ def mpc_prev_folder_pos():
 		print(' ...  New folder = {0:s}'.format(arMpcPlaylistDirs[([y[1] for y in arMpcPlaylistDirs].index(dirname_current)-1)][1]))
 	except IndexError:
 		# I assume we past the beginning of the list...
-		print(' ...  ERROR. Debug info = {0}'.format(len(arMpcPlaylistDirs))
+		print(' ...  ERROR. Debug info = {0}'.format(len(arMpcPlaylistDirs)))
 		iNextPos = arMpcPlaylistDirs[len(arMpcPlaylistDirs)][0]
 
 	return iNextPos
