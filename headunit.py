@@ -1170,13 +1170,13 @@ def mpc_lkp( label ):
 		oMpdClient.close()
 		oMpdClient.disconnect()
 		
-		#in the unlikely case of multiple matches, we'll just take the first
+		#in the unlikely case of multiple matches, we'll just take the first, psfind[0]
 		if len(psfind) == 0:
 			print(' ...  File not found in loaded playlist')
 		else:
-			pos['pos'] = int(psfind['pos'])+1
+			pos['pos'] = int(psfind[0]['pos'])+1
 			timeElapsed,timeTotal = map(int, dSavePosition['time'].split(':'))
-			print('[MPC] Match found: {0}. Continuing playback at #{1}'.format(psfind['file'],pos['pos']))
+			print('[MPC] Match found: {0}. Continuing playback at #{1}'.format(psfind[0]['file'],pos['pos']))
 			print(' ...  Elapsed/Total time: {0}s/{1}s'.format(timeElapsed,timeTotal))
 			if timeElapsed > iThrElapsed and timeTotal > iThrTotal:
 				pos['time'] = str(timeElapsed)
