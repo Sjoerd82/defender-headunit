@@ -126,7 +126,8 @@ sBtPinCode = "0000"
 sBtDev = "hci0"						#TODO
 sBtAdapter = "org.bluez.Adapter1"	#TODO
 #sBtPlayer = None					#TODO
-sBtPlayer = "/org/bluez/hci0/dev_78_6A_89_FA_1C_95/player0"
+sBtPlayer = "/org/bluez/hci0/dev_78_6A_89_FA_1C_95/player0"		# Huawei G700-U10
+sBtPlayer = "/org/bluez/hci0/dev_08_D4_0C_62_08_DF/player0"		# DESKTOP-HUEL5LB
 
 #BLUAGENT5
 SERVICE_NAME = "org.bluez"
@@ -1470,6 +1471,7 @@ def bt_shuffle():
 	player = bus.get_object('org.bluez',sBtPlayer)
 	BT_Media_iface = dbus.Interface(player, dbus_interface='org.bluez.MediaPlayer1')
 	print(' .. Current shuffle status: {0}'.format(BT_Media_iface.Shuffle))
+	
 	
 
 # updates arSourceAvailable[4] (alsa) -- TODO
