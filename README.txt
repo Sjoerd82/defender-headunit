@@ -43,14 +43,14 @@ ToDo:
    - Retrieve sBtPlayer (now hardcoded)
    - Clean-Up BluePlayer class
    - Clean-Up BlueAgent class
- - Alsa:
-   Not sure what's the exact status of Alsa now that we've implemented PA...
-   - implement alsa_unmute()
-   - alsa_get_volume(): untested with actual alsa mixer
  - Play sfx at independent volume  
  - Play sfx continuously for (potentially) long operations: mpd update, ...?
  - SMB:
    - Implement smb_check()
+ - Alsa:
+   Not sure what's the exact status of Alsa now that we've implemented PA...
+   - implement alsa_unmute()
+   - alsa_get_volume(): untested with actual alsa mixer
  BUGS:
  - MPD:
    - Update, esp. during init() takes *WAY* too long [~10min?----], and, unless it's the first boot, is not crucial.
@@ -58,7 +58,7 @@ ToDo:
  - url_check()
    - support https
    - support incomplete url's, eg. missing http://
- - Run mpc_get_PlaylistDirs() in the background for better performance
+ - mpc_get_PlaylistDirs() runs in the background, but we never check .if_alive()..
  - Use more colors in console
  - Move "QuickPlay" mechanism to init.d for "real-early-play"(tm)
  FUTURE:

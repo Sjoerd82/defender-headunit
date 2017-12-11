@@ -1147,11 +1147,15 @@ def mpc_next_folder_pos():
 	dirname_current = mpc_current_folder()
 	print(' ...  Current folder: {0:s}'.format(dirname_current))
 	
+	print(' >>> DEBUG info:')
+	print mpc_get_PlaylistDirs_thread.isAlive()
+	
 	try:
 		iNextPos = arMpcPlaylistDirs[([y[1] for y in arMpcPlaylistDirs].index(dirname_current)+1)][0]
 		print(' ...  New folder = {0:s}'.format(arMpcPlaylistDirs[([y[1] for y in arMpcPlaylistDirs].index(dirname_current)+1)][1]))
 	except IndexError:
 		# I assume the end of the list has been reached...
+		print(' ...  ERROR: IndexError - restart at 1')
 		iNextPos = 1
 
 	return iNextPos
@@ -1160,6 +1164,9 @@ def mpc_prev_folder_pos():
 	global arMpcPlaylistDirs
 	dirname_current = mpc_current_folder()
 	print(' ...  Current folder: {0:s}'.format(dirname_current))
+
+	print(' >>> DEBUG info:')
+	print mpc_get_PlaylistDirs_thread.isAlive()
 
 	try:
 		iNextPos = arMpcPlaylistDirs[([y[1] for y in arMpcPlaylistDirs].index(dirname_current)-1)][0]
