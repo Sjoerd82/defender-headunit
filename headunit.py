@@ -155,12 +155,6 @@ LOG_FORMAT = "%(asctime)s %(levelname)s [%(module)s] %(message)s"
 
 def cb_remote_btn_press ( func ):
 
-	# Feedback beep
-	if bBeep:
-		beep()
-	else:
-
-
 	# Handle button press
 	if func == 'SHUFFLE':
 		print('\033[95m[BUTTON] Shuffle\033[00m')
@@ -753,19 +747,23 @@ def pa_get_volume():
 
 def pa_sfx( sfx ):
 	global sPaSfxSink
+	global bBeep
 	
-	if sfx == 'startup':
-		call(["pactl", "play-sample", "startup", sPaSfxSink])
-	elif sfx == 'button_feedback':
-		call(["pactl", "play-sample", "beep_60", sPaSfxSink])
-	elif sfx == 'error':
-		call(["pactl", "play-sample", "error", sPaSfxSink])
-	elif sfx == 'mpd_update_db':
-		call(["pactl", "play-sample", "beep_60_70", sPaSfxSink])
-	elif sfx == 'bt':
-		call(["pactl", "play-sample", "bt", sPaSfxSink])
-	elif sfx == 'reset_shuffle':
-		call(["pactl", "play-sample", "beep_60_x2", sPaSfxSink])
+	if bBeep:
+		beep()
+	else:
+		if sfx == 'startup':
+			call(["pactl", "play-sample", "startup", sPaSfxSink])
+		elif sfx == 'button_feedback':
+			call(["pactl", "play-sample", "beep_60", sPaSfxSink])
+		elif sfx == 'error':
+			call(["pactl", "play-sample", "error", sPaSfxSink])
+		elif sfx == 'mpd_update_db':
+			call(["pactl", "play-sample", "beep_60_70", sPaSfxSink])
+		elif sfx == 'bt':
+			call(["pactl", "play-sample", "bt", sPaSfxSink])
+		elif sfx == 'reset_shuffle':
+			call(["pactl", "play-sample", "beep_60_x2", sPaSfxSink])
 	
 # ********************************************************************************
 # Volume wrappers
