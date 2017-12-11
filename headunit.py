@@ -1723,7 +1723,10 @@ def media_play():
 				call(["mpc", "-q" , "seek", str(playslist_pos['time'])])
 
 			# Load playlist directories, to enable folder up/down browsing.
-			mpc_get_PlaylistDirs()
+			#mpc_get_PlaylistDirs()
+			# Run in the background... it seems the thread stays active relatively long, even after the playlistdir array has already been filled.
+			mpc_get_PlaylistDirs_thread = threading.Thread(target=mpc_get_PlaylistDirs)
+			mpc_get_PlaylistDirs_thread.start()
 
 def media_stop():
 	print('[MEDIA] Stop')
@@ -1807,8 +1810,11 @@ def locmus_play():
 
 		# double check if source is up-to-date
 		
-		print('Loading directory structure')
-		mpc_get_PlaylistDirs()
+		# Load playlist directories, to enable folder up/down browsing.
+		#mpc_get_PlaylistDirs()
+		# Run in the background... it seems the thread stays active relatively long, even after the playlistdir array has already been filled.
+		mpc_get_PlaylistDirs_thread = threading.Thread(target=mpc_get_PlaylistDirs)
+		mpc_get_PlaylistDirs_thread.start()
 		
 def locmus_update():
 	global dSettings
@@ -2030,6 +2036,7 @@ def smb_play():
 		
 		# Load playlist directories, to enable folder up/down browsing.
 		#mpc_get_PlaylistDirs()
+		# Run in the background... it seems the thread stays active relatively long, even after the playlistdir array has already been filled.
 		mpc_get_PlaylistDirs_thread = threading.Thread(target=mpc_get_PlaylistDirs)
 		mpc_get_PlaylistDirs_thread.start()
 		
@@ -2045,6 +2052,11 @@ def source_next():
 		return 1
 	else:
 		print('[SOURCE] NEXT: Switching to next source...')
+
+	# Wait for / kill background process
+	if mpc_get_PlaylistDirs_thread.isAlive()
+		#mpc_get_PlaylistDirs_thread.join)()			# Wait
+		mpc_get_PlaylistDirs_thread.join)(timeout=1)	# Kill
 	
 	#If no current source, switch to the first available, starting at 0
 	if dSettings['source'] == -1:
