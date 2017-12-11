@@ -1095,16 +1095,35 @@ def mpc_random( state ):
 	
 def mpc_get_PlaylistDirs():
 	global arMpcPlaylistDirs
+	print('[MPC] Building playlist directory structure...')
+
+	# local variables
 	dirname_current = ''
 	dirname_prev = ''
 	iPos = 1
 
-	print('[DEBUG] Loading directory structure; mpc_get_PlaylistDirs')
-	
-	pipe = Popen('mpc -f %file% playlist', shell=True, stdout=PIPE)
-
-	#del arMpcPlaylistDirs
+	# clear arMpcPlaylistDirs
 	arMpcPlaylistDirs = []
+
+	# TODO! DETERMINE WHICH IS FASTER...
+	
+	# Via the API
+	xMpdClient = MPDClient() 
+	xMpdClient.connect("localhost", 6600)  # connect to localhost:6600
+	playlistitem = xMpdClient.playlistinfo()
+	xMpdClient.close()
+	
+	for line in playlistitem:
+		dirname_current=os.path.dirname(line['filename'].strip())
+		t = iPos, dirname_current
+		if dirname_prev != dirname_current:
+			arMpcPlaylistDirs.append(t)
+		dirname_prev = dirname_current
+		iPos += 1
+		
+	# Via the commandline
+	"""
+	pipe = Popen('mpc -f %file% playlist', shell=True, stdout=PIPE)
 
 	for line in pipe.stdout:
 		dirname_current=os.path.dirname(line.strip())
@@ -1113,6 +1132,7 @@ def mpc_get_PlaylistDirs():
 			arMpcPlaylistDirs.append(t)
 		dirname_prev = dirname_current
 		iPos += 1
+	"""
 
 def mpc_current_folder():
 	# Get current folder
