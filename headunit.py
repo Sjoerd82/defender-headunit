@@ -723,6 +723,7 @@ def pa_init():
 	call(["pactl","upload-sample",sDirRoot+"/sfx/beep_60.wav", "beep_60"])
 	call(["pactl","upload-sample",sDirRoot+"/sfx/beep_70.wav", "beep_70"])
 	call(["pactl","upload-sample",sDirRoot+"/sfx/beep_60_70.wav", "beep_60_70"])
+	call(["pactl","upload-sample",sDirRoot+"/sfx/beep_60_x2.wav", "beep_60_x2"])
 	call(["pactl","upload-sample",sDirRoot+"/sfx/error.wav", "error"])
 	call(["pactl","upload-sample",sDirRoot+"/sfx/bt.wav", "bt"])
 
@@ -749,6 +750,8 @@ def pa_sfx( sfx ):
 		call(["pactl", "play-sample", "beep_60_70", sPaSfxSink])
 	elif sfx == 'bt':
 		call(["pactl", "play-sample", "bt", sPaSfxSink])
+	elif sfx == 'reset_shuffle':
+		call(["pactl", "play-sample", "beep_60_x2", sPaSfxSink])
 	
 # ********************************************************************************
 # Volume wrappers
@@ -1006,6 +1009,7 @@ def mpc_random():
 			print('[MPC] Turning random: off')
 			iRandom = 0
 			call(["mpc", "-q", "random", "off"])
+			pa_sfx('reset_shuffle')
 
 		# Random is OFF, turning it ON + putting it in effect.
 		else:
@@ -1069,6 +1073,7 @@ def mpc_prev_folder_pos():
 		# I assume we past the beginning of the list...
 		print(' ...  ERROR. Debug info = {0}'.format(len(arMpcPlaylistDirs)))
 		iNextPos = arMpcPlaylistDirs[len(arMpcPlaylistDirs)][0]
+		pa_sfx('error')
 
 	return iNextPos
 
