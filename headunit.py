@@ -191,11 +191,11 @@ def cb_remote_btn_press ( func ):
 		seek_prev()
 	elif func == 'DIR_NEXT':
 		print('\033[95m[BUTTON] Next directory\033[00m')
-		if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 6::
+		if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 6:
 			mpc_next_folder()		
 	elif func == 'DIR_PREV':
 		print('\033[95m[BUTTON] Prev directory\033[00m')
-		if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 6::
+		if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 6:
 			mpc_prev_folder()
 	elif func == 'UPDATE_LOCAL':
 		print('\033[95m[BUTTON] Updating local MPD database\033[00m')
