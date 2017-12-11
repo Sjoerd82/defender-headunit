@@ -59,6 +59,7 @@ ToDo:
    - support https
    - support incomplete url's, eg. missing http://
  - Use more colors in console
+ - Move "QuickPlay" mechanism to init.d for "real-early-play"(tm)
  FUTURE:
  - FM, Line-In
  - Samba:
