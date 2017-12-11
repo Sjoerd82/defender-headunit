@@ -49,6 +49,8 @@ ToDo:
    - alsa_get_volume(): untested with actual alsa mixer
  - Play sfx at independent volume  
  - Play sfx continuously for (potentially) long operations: mpd update, ...?
+ - SMB:
+   - Implement smb_check()
  BUGS:
  - MPD:
    - Update, esp. during init() takes *WAY* too long [~10min?----], and, unless it's the first boot, is not crucial.

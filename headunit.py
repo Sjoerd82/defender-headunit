@@ -596,7 +596,7 @@ def beep():
 	call(["gpio", "write", "6", "0"])
 
 def printc( title, text, style ):
-	print('[{0:6}] {1}')
+	print('[{0:6}] {1}'.format(title, text))
 
 def shutdown():
 	settings_save()
@@ -963,21 +963,17 @@ def mpc_init():
 	oMpdClient.timeout = 10                # network timeout in seconds (floats allowed), default: None
 	oMpdClient.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
 	oMpdClient.connect("localhost", 6600)  # connect to localhost:6600
-	print(oMpdClient.mpd_version)          # print the MPD version
+	print(' ...  Version: {0}'.format(oMpdClient.mpd_version))          # print the MPD version
 	
-	print('[MPC] Subscribing to channel: media_ready')
+	print(' ...  Subscribing to channel: media_ready')
 	oMpdClient.subscribe("media_ready")
 
-	print('[MPC] Subscribing to channel: media_removed')
+	print(' ...  Subscribing to channel: media_removed')
 	oMpdClient.subscribe("media_removed")
 	
-	print('[MPC] Random: OFF, Repeat: ON')
+	print(' ...  Random: OFF, Repeat: ON')
 	oMpdClient.random(0)
-	oMpdClient.repeat(1)
-	#call(["mpc", "-q", "random", "off"])
-	#call(["mpc", "-q", "repeat", "on"])
-	
-	print('[MPC-debug] send_idle()')
+	oMpdClient.repeat(1)	
 	oMpdClient.send_idle()
 	bMpcInit = True
 
@@ -1187,7 +1183,7 @@ def mpc_lkp( label ):
 		else:
 			pos['pos'] = int(psfind[0]['pos'])+1
 			timeElapsed,timeTotal = map(int, dSavePosition['time'].split(':'))
-			print('[MPC] Match found: {0}. Continuing playback at #{1}'.format(psfind[0]['file'],pos['pos']))
+			print('[MPC] Match found: {0}. Continuing playback at #{1}'.format(dSavePosition['file'],pos['pos']))
 			print(' ...  Elapsed/Total time: {0}s/{1}s'.format(timeElapsed,timeTotal))
 			if timeElapsed > iThrElapsed and timeTotal > iThrTotal:
 				pos['time'] = str(timeElapsed)
@@ -1269,10 +1265,10 @@ def mpc_db_label_exist( label ):
 	assert task.wait() == 0
 	
 	if mpcOut.rstrip('\n') == '0':
-		print(' ... directory not found in mpd database')
+		print(' ...  directory not found in mpd database')
 		return False
 	else:
-		print(' ... directory found in mpd database')
+		print(' ...  directory found in mpd database')
 		return True
 
 # updates arSourceAvailable[0] (fm) --- TODO
@@ -1856,6 +1852,7 @@ def smb_check():
 	#TODO
 
 	#OVERRIDE
+	print(' ...  Not implemented yet, presenting source as available')
 	arSourceAvailable[6]=1
 
 def smb_play():
@@ -2051,6 +2048,9 @@ def init():
 	# After that, we can initialize other subsystems
 	
 	# Note: if a USB drive is connected before booting, it will not be captured by a UDisk event, but will still be found by media_check()
+
+	if not dSettings['source'] == -1:
+		print(' ....  QUICKPLAY: Previous source was {0}, trying to continue playing...'.format(arSource[dSettings['source']]))
 	
 	#0; fm
 	if dSettings['source'] == 0:
@@ -2177,7 +2177,7 @@ def init():
 	
 #-------------------------------------------------------------------------------
 # Main loop
-print('Headunit v0.2 2017-12-09 1510')
+print('Headunit v0.3 2017-12-11 1550')
 print('Checking if we\'re already runnning')
 #me = singleton.SingleInstance() # will sys.exit(-1) if other instance is running # uncomment when tendo available
 #with PIDFile("/var/run/pihu.pid"):
