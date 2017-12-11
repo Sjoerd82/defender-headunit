@@ -89,6 +89,7 @@ iThrElapsed = 20							 # Minimal time that must have elapsed into a track in or
 iThrTotal = 30								 # Minimal track length required in order to resume position
 bMpcInit = False
 bBtInit = False
+bMpdUpdateSmb = False
 
 #DBUS
 bus = None
@@ -1074,9 +1075,11 @@ def mpc_update( location, wait ):
 	if wait:
 		print(' ...  Please wait, this may take some time...')
 		call(["mpc", "--wait", "-q", "update", location])
+		print(' ...  Update finished')
 	else:
 		call(["mpc", "-q", "update", location])
-	print(' ...  Update finished')
+		#bMpdUpdateSmb
+	
 
 def mpc_save_pos():
 	global dSettings
@@ -1162,11 +1165,18 @@ def mpc_lkp( label ):
 		oMpdClient.timeout = 10                # network timeout in seconds (floats allowed), default: None
 		oMpdClient.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
 		oMpdClient.connect("localhost", 6600)  # connect to localhost:6600
-		playlist = oMpdClient.playlistid()
+		#playlist = oMpdClient.playlistid()
+		playlist = oMpdClient.playlistfind('file',dSavePosition['file'])
 		oMpdClient.close()
 		oMpdClient.disconnect()
-
+		
+		print('!!!DEBUG!!!')
+		print playlist
+		pos['pos'] = 0
+		
+		"""
 		for x in playlist:
+			print x['file']
 			if x['file'] == dSavePosition['file']:
 				pos['pos'] = int(x['pos'])+1
 				timeElapsed,timeTotal = map(int, dSavePosition['time'].split(':'))
@@ -1178,7 +1188,7 @@ def mpc_lkp( label ):
 				else:
 					print(' ...  Elapsed time below threshold or short track: restarting at beginning of track.')
 				break
-
+		"""
 	else:
 		print('[MPC] No position file available for this medium (first run?)')
 		mpc_save_pos_for_label (label)
@@ -1995,6 +2005,7 @@ def source_stop():
 def init():
 	global dSettings
 	global bInit
+	global bMpdUpdateSmb
 	
 	print('--------------------------------------------------------------------------------')
 	print('[INIT] Starting ...')
@@ -2084,6 +2095,7 @@ def init():
 			print('[INIT] QUICK-PLAY: Not the first time that we play this source, trying to resume without waiting for a DB update')
 			#has a history.. try resuming without updating the database
 			#smb_hotstart()  # TODO: smart update without WAIT possible?
+			bMpdUpdateSmb = True
 			mpc_update( sSambaMusicMPD, False )
 		else:
 			mpc_update( sSambaMusicMPD, True )
