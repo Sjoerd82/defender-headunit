@@ -2161,7 +2161,7 @@ def init():
 	# Check unchecked sources
 	# TODO: determine what was already checked by QuickPlay...
 	fm_check()
-	media_check()
+	media_check( None )
 	locmus_check()
 	bt_check()
 	alsa_check()
