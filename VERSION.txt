@@ -1,0 +1,71 @@
+----------------------------------------------------------------
+ Version v0.1.0 (ALPHA)		2017-12-22
+ > First release to save all development before major code changes.
+
+ Version v0.2.0 (ALPHA)
+ > Mostly rewritten in better code
+ - CODE: Added SOURCE class, handling sources
+ - CODE: SOURCE plugins
+ - CODE: CONTROL plugins
+ - CODE: Plugins automatically loaded
+ - CODE: added logging to file and ANSI logging to console
+ - Added online/offline scrobbling (last.fm)
+
+PLANNED RELEASES
+----------------
+
+ Version v0.2.0 (ALPHA)
+ - CODE: Static Plugin-Style code -- DBus
+ - CODE: Use DBus to do a single-instance check (fast enough?)
+ - CODE: Add DBus based watchdog
+ - CODE: "Proper" BT implementation
+ -   BT: Add ATT mode on incoming call (when BT connected)
+ - OUTPUT: SPI/I2C Display support
+ * Add audio feedback when on long operations
+
+ Version v0.3.0 ALPHA
+ - INPUT: Add IR
+ - Add ALSA and/or PulseAudio equalizer
+ * CODE: More stable MPD database update handling
+ - Add HTTP server (API) - REST?
+
+ Version v0.3.0 ALPHA
+ * Add basic priority support (only reading)
+ - SMB: Read from shares list file (similar to streams.txt) -- !PER SSID/NETWORK!.
+ - INPUT: Add Keyboard
+ 
+ Version v0.4.0 ALPHA
+ - Last.fm loader / priority bridge
+ - SMB: Automatic discovery of shares containing the string "music".
+ - Play genre: Read genre.txt
+
+ Version v0.5.0 ALPHA
+ - INPUT: Add Volume knob, pot. meter (hmm, use existing ADC?)
+ - INPUT: Add Bass and Treble, pot. meter (hmm, use existing ADC?)
+ - INPUT: Line in with detection
+ - Soft Shutdown, on power switch
+ - Change SSH password (init script)
+ * Crossfaders
+
+ Version v0.6.x -v0.9.9 BETA
+ - Write/Support control app
+
+ Version v?.?.?
+ - Add Battery support (batt. level, etc.)
+ - INPUT: GPIO buttons
+
+ Version v?.?.?
+ - Add Source: Spotify, Deezer, Last.fm, ...
+ - Add Source: Podcast?
+ - Add Ethernet support (use a Raspberry Pi with Eth)
+
+ Version v?.?.?
+ - Add CAN bus hardware; CAN transceiver to SPI
+ - INPUT: CAN bus
+ - OUTPUT: CAN bus
+
+ Version v0.1.0
+ - Support dynamic plugin loading (ie. user created plugins)
+
+
+

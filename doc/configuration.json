@@ -1,0 +1,31 @@
+{
+	"directories" : {
+		"app-root": "D://Python",
+		"config": "D:\\Python",
+		"log": "D://Python//log",
+		"plugin-sources": "D:\\Python\\plugin_sources\\",
+		"plugin-other": "D:\\Python\\plugin_other\\"
+	},
+	"files": {
+		"log": "headunit",
+		"settings": "dSettings.json"
+	},
+	"default_settings": {
+		"source": -1,
+		"volume": 20,
+		"mediasource": -1,
+		"medialabel": "",
+		"runcount": 0
+	},
+	"source_config": {
+		"locmus": [ { "musicdir": "/media/PIHU_DATA", "musicdir_mpd": "PIHU_DATA" } ]
+	},
+	"plugins_other": {
+		"scrobbler": {
+			"lastfm_api_key": "6aec32f8c9d6e39aefdb9606d45ae8a0",
+			"lastfm_api_secret": "e7377c56280a4edec2442c3d1a8ee0ce",
+			"lastfm_username": "SjoerdVenema",
+			"lastfm_password_hash": "64828e435bff400260a0d8f595644544"
+		}
+	}
+}

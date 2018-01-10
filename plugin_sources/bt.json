@@ -1,0 +1,12 @@
+{ "name": "bt",
+  "displayname": "Bluetooth",
+  "order": 3,
+  "available": false,
+  "type": "bt",
+  "depNetwork": false,
+  "controls": {"ffwd": false, "rwnd": false, "prev": true, "next": true},
+  "sourceCheck": ["plugin_sources.bt", "bt_check"],
+  "sourcePlay":  ["plugin_sources.bt", "bt_play"],
+  "sourceStop":  ["plugin_sources.bt", "bt_stop"],
+  "template": false
+}
