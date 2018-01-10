@@ -60,7 +60,7 @@ from hu_volume import *
 from hu_settings import *
 from hu_logger import *
 from hu_mpd import *
-from hu_menu import *
+#from hu_menu import *
 
 Sources = SourceController()
 VolPulse = VolumeController('alsa_output.platform-soc_sound.analog-stereo')
@@ -282,10 +282,10 @@ myprint('Headunit.py version {0}'.format(VERSION),tag='SYSTEM')
 # create menu structure
 #
 #print configuration[
-huMenu = Menu()
-testentry = { "entry": "Browse tracks",
-  "entry_name": "browse_track"}
-huMenu.add( testentry )
+#huMenu = Menu()
+#testentry = { "entry": "Browse tracks",
+#  "entry_name": "browse_track"}
+#huMenu.add( testentry )
 
 
 #
@@ -300,9 +300,9 @@ sPluginDirSources = configuration['directories']['plugin-sources']
 loadSourcePlugins(sPluginDirSources)
 
 #debug
-huMenu.menuDisplay( header=True )
-huMenu.menuDisplay( entry=1, header=True )
-print huMenu.getMenu( [1,0] )
+#huMenu.menuDisplay( header=True )
+#huMenu.menuDisplay( entry=1, header=True )
+#print huMenu.getMenu( [1,0] )
 
 #
 # import control plugins
