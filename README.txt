@@ -1,3 +1,50 @@
+The "Hidden Headless Headunit" until a better name comes to mind..
+
+Software for easy control of a headless head unit (car radio).
+ 
+Designed to be intuitive and easy to control without display.
+Designed for "hidden" applications, such as classic- or custom cars, yachts, suitcase boomboxes or bookshelve audio.
+Designed to support a (simple) display, but this is completely optional.
+
+ + Intended for Raspberry Pi embedded Linux, and largely build around MPD.
+ + Supports a wide range of music sources.
+ + Supports a wide range of input controls.
+ + Supports a very wide range of music formats.
+ + Supports a wide range of music sources out of the box.
+ + Supports third-party plugins to support additional sources or input controls.
+ PLANNED:
+ + Supports character displays and CAN-bus output.
+
+ List of supported sources:
+ + FM radio (based on ... chipset)
+ + Internet radio
+ + Internal SD card
+ + USB drive
+ + Bluetooth
+ + Windows network shares (SMB/CIFS)
+ PLANNED:
+ + Aux In
+ + NFS (low prio)
+ ? AirPlay (does this still exist?)
+
+ List of supported input methods:
+ + Resistor network style remote controls, Sony RM-X2S pre-configured.
+ + Android/iPhone: MPD client
+ PLANNED:
+ - Keyboard (via USB,BT)
+ - Infrared, LIRC (via GPIO(TSSOP),USB,MIC)
+ - RF remote (USB)
+ - REST HTTP/API
+ - CAN-bus controls
+ - GPIO button
+ - Pot meter controls for Volume, Bass, Treble and/or balance (via ADC) (not recommended, unless it's the only control*)
+ - Incremental Encoder for Volume, Bass, Treble and/or balance (via GPIO)
+ - Incremental Encoder w/button(s) (BMW iDrive style) (via GPIO)
+ - Android/iPhone (full control, beyond only MPD)
+
+
+
+--old--
 Program flow:
 
  - init()

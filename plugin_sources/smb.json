@@ -1,0 +1,12 @@
+{ "name": "smb",
+  "displayname": "Network Share",
+  "order": 6,
+  "available": false,
+  "type": "mpd",
+  "depNetwork": true,
+  "controls": {"ffwd": false, "rwnd": false, "prev": true, "next": true},
+  "sourceCheck": ["sources.smb", "smb_check"],
+  "sourcePlay":  ["sources.smb", "smb_play"],
+  "sourceStop":  ["sources.smb", "smb_stop"],
+  "template": false
+}

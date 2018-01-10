@@ -1,0 +1,21 @@
+{ "name": "fm",
+  "displayname": "FM",
+  "order": 0,
+  "available": true,
+  "type": "fmtools",
+  "depNetwork": false,
+  "controls": {"ffwd": false, "rwnd": false, "prev": true, "next": true},
+  "sourceCheck": ["sources.fm", "fm_check"],
+  "sourcePlay": ["sources.fm", "fm_play"],
+  "sourceStop": ["sources.fm", "fm_stop"],
+  "template": false,
+  "defaultconfig": { "frq_lo" : 80 },
+  "menuitems" : [
+	{	"entry": "Tune to radio station",
+		"entry_name": "fm",
+		"sub": "!fm_popMenu",
+		"order": 0,
+		"dependencies": { "current_source":"fm" }
+	}
+	]
+}

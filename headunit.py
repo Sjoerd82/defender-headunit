@@ -34,6 +34,12 @@
 # Known issues/limitations
 # - Audio channels don't seem to mute on start, but if they do, we don't have anything implemented to unmute them.
 
+# Instructions for running on Windows:
+# - Python 2 (latest = 2.7)
+# - Cygwin
+# - pip install python-mpd2 	( current = 0.5.5 2017/12/24, but Buildroot is still at 0.5.1 )
+#
+
 import os
 import time
 import subprocess
@@ -49,7 +55,8 @@ from select import select
 import threading
 
 # Import pulseaudio volume handler
-from pa_volume import pa_volume_handler
+#from pa_volume import pa_volume_handler
+from core import volume
 
 # python-mpd2 0.5.1 (not sure if this is the forked mpd2)
 # used mainly for getting the current song for lookup on reload
@@ -75,9 +82,11 @@ import socket
 #import httplib2	# Buildroot is not supporting SSL... somehow...
 import urllib2
 
+# Source class
+from source import Source
+
 # Global variables
-arSource = ['fm','media','locmus','bt','alsa','stream','smb'] # source types; add new sources in the end
-arSourceAvailable = [0,0,0,0,0,0,0]          # corresponds to arSource; 1=available
+Sources = Source()							 # Sources, new style
 arMediaWithMusic = []						 # list of mountpoints that contains music, according to MPD
 iAtt = 0									 # Att mode toggle
 iRandom = 0									 # We're keeping track of it within the script, not checking with MPD
@@ -113,7 +122,7 @@ oAlsaMixer = None
 bPulseVolume = 1		# Use PulseAudio volume control, not ALSA
 sPaSfxSink = "alsa_output.platform-soc_sound.analog-stereo"
 
-#LOCAL MUSIC
+#LOCAL MUSIC (now also in locmus.py)
 sLocalMusic="/media/PIHU_DATA"		# local music directory
 sLocalMusicMPD="PIHU_DATA"			# directory from a MPD pov. #TODO: derive from sLocalMusic
 sSambaMusic="/media/PIHU_SMB/music"
@@ -124,7 +133,7 @@ oMpdClient = None
 arMpcPlaylistDirs = [ ]
 iMPC_OK = 0
 
-#BLUETOOTH
+#BLUETOOTH (now also in bt.py)
 sBtPinCode = "0000"
 sBtDev = "hci0"						#TODO
 sBtAdapter = "org.bluez.Adapter1"	#TODO
@@ -149,6 +158,7 @@ LOG_FORMAT = "%(asctime)s %(levelname)s [%(module)s] %(message)s"
 #UDISKS
 #lDevices = [['/dev/sda1','/dev/sdb1']['SJOERD','MUSIC']]
 
+
 # ********************************************************************************
 # Callback functions
 #
@@ -158,6 +168,8 @@ LOG_FORMAT = "%(asctime)s %(levelname)s [%(module)s] %(message)s"
 
 def cb_remote_btn_press ( func ):
 
+	global Sources
+
 	# Handle button press
 	if func == 'SHUFFLE':
 		print('\033[95m[BUTTON] Shuffle\033[00m')
@@ -166,9 +178,10 @@ def cb_remote_btn_press ( func ):
 		print('\033[95m[BUTTON] Next source\033[00m')
 		pa_sfx('button_feedback')
 		# if more than one source available...
-		if sum(arSourceAvailable) > 1:
+		if Sources.getAvailableCnt() > 1:
 			source_stop()
-			source_next()
+			#source_next()
+			Sources.sourceNext()
 			source_play()
 	elif func == 'ATT':
 		print('\033[95m[BUTTON] ATT\033[00m')
@@ -222,6 +235,7 @@ def cb_remote_btn_press ( func ):
 
 def cb_mpd_event( event ):
 	global bInit
+	global Sources
 
 	if bInit == 0:
 	
@@ -243,8 +257,9 @@ def cb_mpd_event( event ):
 			smb_check()
 		elif event == "ifdown":
 			print " ...  WiFi interface down: marking network related sources unavailable"
-			arSourceAvailable[5] = 0 #stream
-			arSourceAvailable[6] = 0 #smb
+			Sources.setAvailable('depNetwork',True,False)
+			#arSourceAvailable[5] = 0 #stream
+			#arSourceAvailable[6] = 0 #smb
 		else:
 			print(' ...  unknown event (no action)')
 
@@ -1021,417 +1036,15 @@ def random( state ):
 			
 
 # ********************************************************************************
-# MPC
-
-def mpc_init():
-	global bMpcInit
-	global oMpdClient
-	print('[MPC] Initializing MPD client')
-	oMpdClient = MPDClient() 
-
-	oMpdClient.timeout = 10                # network timeout in seconds (floats allowed), default: None
-	oMpdClient.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
-	oMpdClient.connect("localhost", 6600)  # connect to localhost:6600
-	print(' ...  Version: {0}'.format(oMpdClient.mpd_version))          # print the MPD version
-	
-	print(' ...  Subscribing to channel: media_ready')
-	oMpdClient.subscribe("media_ready")
-
-	print(' ...  Subscribing to channel: media_removed')
-	oMpdClient.subscribe("media_removed")
-	
-	print(' ...  Random: OFF, Repeat: ON')
-	oMpdClient.random(0)
-	oMpdClient.repeat(1)	
-	oMpdClient.send_idle()
-	bMpcInit = True
-
-def mpc_random_get():
-
-	xMpdClient = MPDClient() 
-	xMpdClient.connect("localhost", 6600)  # connect to localhost:6600
-	xMpdClient.command_list_ok_begin()
-	xMpdClient.status()
-	results = xMpdClient.command_list_end()
-
-	# Dictionary in List
-	try:
-		for r in results:
-			random = r['random']
-	except:
-		print(' ...  Error, key not found!')
-		return "unknown"
-	
-	if random == '1':
-		return "on"
-	elif random == '0':
-		return "off"
-	else:
-		return "unknown"
-	
-	xMpdClient.close()
-
-def mpc_random( state ):
-	global dSettings
-	
-	# check sound
-	if not (dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 5 or dSettings['source'] == 6):
-		print('[MPC] Random: invalid source... aborting...')
-		pa_sfx('error')
-		return 1
-	
-	# on
-	if state == 'on':
-		print('[MPC] Random ON + Next track')
-		call(["mpc", "-q", "random", "on"])
-		call(["mpc", "-q", "next"])
-
-	# off
-	elif state == 'off':
-		print('[MPC] Random OFF')
-		call(["mpc", "-q", "random", "off"])
-
-	# toggle
-	else: 
-		print('[MPC] Toggling random')
-		call(["mpc", "-q", "random"])
-	
-def mpc_get_PlaylistDirs():
-	global arMpcPlaylistDirs
-	print('[MPC] Building playlist directory structure...')
-
-	# local variables
-	dirname_current = ''
-	dirname_prev = ''
-	iPos = 1
-
-	# clear arMpcPlaylistDirs
-	arMpcPlaylistDirs = []
-
-	# TODO! DETERMINE WHICH IS FASTER... Commandline seems faster
-	
-	# Via the API
-	"""
-	xMpdClient = MPDClient() 
-	xMpdClient.connect("localhost", 6600)  # connect to localhost:6600
-	playlistitem = xMpdClient.playlistinfo()
-	xMpdClient.close()
-	
-	for line in playlistitem:
-		dirname_current=os.path.dirname(line['filename'].strip())
-		t = iPos, dirname_current
-		if dirname_prev != dirname_current:
-			arMpcPlaylistDirs.append(t)
-		dirname_prev = dirname_current
-		iPos += 1
-	"""
-	
-	# Via the commandline
-	pipe = Popen('mpc -f %file% playlist', shell=True, stdout=PIPE)
-
-	for line in pipe.stdout:
-		dirname_current=os.path.dirname(line.strip())
-		t = iPos, dirname_current
-		if dirname_prev != dirname_current:
-			arMpcPlaylistDirs.append(t)
-		dirname_prev = dirname_current
-		iPos += 1
-
-def mpc_current_folder():
-	# Get current folder
-	pipe = subprocess.check_output("mpc -f %file%", shell=True)
-	return os.path.dirname(pipe.splitlines()[0])
-
-def mpc_next_folder_pos():
-	global arMpcPlaylistDirs
-	dirname_current = mpc_current_folder()
-	print(' ...  Current folder: {0:s}'.format(dirname_current))
-	
-	print(' >>> DEBUG info:')
-	print mpc_get_PlaylistDirs_thread.isAlive()
-	
-	try:
-		iNextPos = arMpcPlaylistDirs[([y[1] for y in arMpcPlaylistDirs].index(dirname_current)+1)][0]
-		print(' ...  New folder = {0:s}'.format(arMpcPlaylistDirs[([y[1] for y in arMpcPlaylistDirs].index(dirname_current)+1)][1]))
-	except IndexError:
-		# I assume the end of the list has been reached...
-		print(' ...  ERROR: IndexError - restart at 1')
-		iNextPos = 1
-
-	return iNextPos
-
-def mpc_prev_folder_pos():
-	global arMpcPlaylistDirs
-	dirname_current = mpc_current_folder()
-	print(' ...  Current folder: {0:s}'.format(dirname_current))
-
-	print(' >>> DEBUG info:')
-	print mpc_get_PlaylistDirs_thread.isAlive()
-
-	try:
-		iNextPos = arMpcPlaylistDirs[([y[1] for y in arMpcPlaylistDirs].index(dirname_current)-1)][0]
-		print(' ...  New folder = {0:s}'.format(arMpcPlaylistDirs[([y[1] for y in arMpcPlaylistDirs].index(dirname_current)-1)][1]))
-	except IndexError:
-		# I assume we past the beginning of the list...
-		print(' ...  ERROR. Debug info = {0}'.format(len(arMpcPlaylistDirs)))
-		iNextPos = arMpcPlaylistDirs[len(arMpcPlaylistDirs)][0]
-		pa_sfx('error')
-
-	return iNextPos
-
-def mpc_next_track():
-	print('Next track')
-	call(["mpc", "-q", "next"])
-	
-def mpc_prev_track():
-	print('Prev. track')
-	call(["mpc", "-q", "prev"])
-
-def mpc_next_folder():
-	print('[MPC] Next folder')
-	call(["mpc", "-q", "play", str(mpc_next_folder_pos())])
-	# Shuffle Off
-
-def mpc_prev_folder():
-	print('[MPC] Prev folder')
-	call(["mpc", "-q", "play", str(mpc_prev_folder_pos())])
-	
-def mpc_stop():
-	print('[MPC] Stopping MPC [pause]')
-	call(["mpc", "-q", "pause"])
-
-def mpc_update( location, wait ):
-	#Sound effect
-	pa_sfx('mpd_update_db')
-	#Debug info
-	print('[MPC] Updating database for location: {0}'.format(location))
-	#Update
-	if wait:
-		print(' ...  Please wait, this may take some time...')
-		call(["mpc", "--wait", "-q", "update", location])
-		print(' ...  Update finished')
-	else:
-		call(["mpc", "-q", "update", location])
-		#bMpdUpdateSmb
-	
-
-def mpc_save_pos():
-	global dSettings
-	if dSettings['source'] == 1:
-		mpc_save_pos_for_label ( dSettings['medialabel'] )	
-	elif dSettings['source'] == 2:
-		mpc_save_pos_for_label ('locmus')
-	elif dSettings['source'] == 5:
-		mpc_save_pos_for_label ('stream')
-	elif dSettings['source'] == 6:
-		mpc_save_pos_for_label ('smb')
-
-def mpc_save_pos_for_label ( label ):
-	print('[MPC] Saving playlist position for label: {0}'.format(label))
-	oMpdClient = MPDClient() 
-	oMpdClient.timeout = 10                # network timeout in seconds (floats allowed), default: None
-	oMpdClient.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
-	oMpdClient.connect("localhost", 6600)  # connect to localhost:6600
-
-	oMpdClient.command_list_ok_begin()
-	oMpdClient.status()
-	results = oMpdClient.command_list_end()
-
-	songid = None
-	testje = None
-	# Dictionary in List
-	try:
-		for r in results:
-			songid = r['songid']
-			timeelapsed = r['time']
-		
-		current_song_listdick = oMpdClient.playlistid(songid)
-	except:
-		print(' ...  Error, key not found!')
-		print results
-
-	#print("DEBUG: current song details")
-	debugging = oMpdClient.currentsong()
-	try:
-		#print debugging
-		testje = debugging['file']
-		print testje
-	except:
-		print(' ...  Error, key not found!')
-		print debugging
-		
-	oMpdClient.close()
-	oMpdClient.disconnect()
-
-	if testje == None:
-		print('DEBUG: BREAK BREAK')
-		return 1
-
-	if songid == None:
-		current_file=testje
-	else:	
-		for f in current_song_listdick:
-				current_file = f['file']
-
-	dSavePosition = {'file': current_file, 'time': timeelapsed}
-	print(' ...  file: {0}, time: {1}'.format(current_file,timeelapsed))
-	
-	pickle_file = sDirSave + "/mp_" + label + ".p"
-	pickle.dump( dSavePosition, open( pickle_file, "wb" ) )
-
-def mpc_lkp( label ):
-
-	#default
-	pos = {'pos': 1, 'time': 0}
-	
-	# open pickle_file, if it exists
-	pickle_file = sDirSave + "/mp_" + label + ".p"
-	if os.path.isfile(pickle_file):
-		print('[MPC] Retrieving last known position from lkp file: {0:s}'.format(pickle_file))
-		try:
-			dSavePosition = pickle.load( open( pickle_file, "rb" ) )
-		except:
-			print(' ... PICKLE: Loading {0:s} failed!'.format(pickle_file))
-			return pos
-
-		#otherwise continue:
-		oMpdClient = MPDClient() 
-		oMpdClient.timeout = 10                # network timeout in seconds (floats allowed), default: None
-		oMpdClient.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
-		oMpdClient.connect("localhost", 6600)  # connect to localhost:6600
-		#playlist = oMpdClient.playlistid()
-		psfind = oMpdClient.playlistfind('filename',dSavePosition['file'])
-		oMpdClient.close()
-		oMpdClient.disconnect()
-		
-		#in the unlikely case of multiple matches, we'll just take the first, psfind[0]
-		if len(psfind) == 0:
-			print(' ...  File not found in loaded playlist')
-		else:
-			pos['pos'] = int(psfind[0]['pos'])+1
-			timeElapsed,timeTotal = map(int, dSavePosition['time'].split(':'))
-			print('[MPC] Match found: {0}. Continuing playback at #{1}'.format(dSavePosition['file'],pos['pos']))
-			print(' ...  Elapsed/Total time: {0}s/{1}s'.format(timeElapsed,timeTotal))
-			if timeElapsed > iThrElapsed and timeTotal > iThrTotal:
-				pos['time'] = str(timeElapsed)
-				print(' ...  Elapsed time over threshold: continuing at last position.')
-			else:
-				print(' ...  Elapsed time below threshold or short track: restarting at beginning of track.')
-		"""
-		for x in playlist:
-			print x['file']
-			if x['file'] == dSavePosition['file']:
-				pos['pos'] = int(x['pos'])+1
-				timeElapsed,timeTotal = map(int, dSavePosition['time'].split(':'))
-				print('[MPC] Match found: {0}. Continuing playback at #{1}'.format(x['file'],pos['pos']))
-				print(' ...  Elapsed/Total time: {0}s/{1}s'.format(timeElapsed,timeTotal))
-				if timeElapsed > iThrElapsed and timeTotal > iThrTotal:
-					pos['time'] = str(timeElapsed)
-					print(' ...  Elapsed time over threshold: continuing at last position.')
-				else:
-					print(' ...  Elapsed time below threshold or short track: restarting at beginning of track.')
-				break
-		"""
-	else:
-		print('[MPC] No position file available for this medium (first run?)')
-		mpc_save_pos_for_label (label)
-
-	return pos
-
-def mpc_populate_playlist ( label ):
-	#global oMpdClient
-
-	# Stop idle, in order to send a command
-	#oMpdClient.noidle()
-	
-	xMpdClient = MPDClient() 
-	xMpdClient.connect("localhost", 6600)  # connect to localhost:6600
-		
-	if label == 'locmus':
-		xMpdClient.findadd('base',sLocalMusicMPD)
-	if label == 'smb':
-		xMpdClient.findadd('base',sSambaMusicMPD)
-	elif label == 'stream':
-		# Using the command line:
-		#  ..but this generates some problems with special characters
-		streams_file = sDirSave + "/streams.txt"
-		#p1 = subprocess.Popen(["cat", streams_file], stdout=subprocess.PIPE)
-		#p2 = subprocess.Popen(["mpc", "add"], stdin=p1.stdout, stdout=subprocess.PIPE)
-		#p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
-		#output,err = p2.communicate()		
-		streams=open(streams_file,'r')
-		with open(streams_file,'r') as streams:
-			for l in streams:
-				uri = l.rstrip()
-				if not uri[:1] == '#' and not uri == '':
-					uri_OK = url_check(uri)
-					if uri_OK:
-						print(' ....  . Stream OK: {0}'.format(uri))
-						call(["mpc", "-q", "add", uri])
-					else:
-						print(' ....  . Stream FAIL: {0}'.format(uri))
-	else:
-		xMpdClient.findadd('base',label)
-	
-	xMpdClient.close()
-	
-	#oMpdClient.send_idle()
-
-
-def mpc_playlist_is_populated():
-	# Old method using mpc on the commandline:
-	"""
-	task = subprocess.Popen("mpc playlist | wc -l", shell=True, stdout=subprocess.PIPE)
-	mpcOut = task.stdout.read()
-	assert task.wait() == 0
-	return mpcOut.rstrip('\n')
-	"""
-	# New method, using mpd status
-	xMpdClient = MPDClient() 
-	xMpdClient.connect("localhost", 6600)  # connect to localhost:6600
-	xMpdClient.command_list_ok_begin()
-	xMpdClient.status()
-	results = xMpdClient.command_list_end()
-	xMpdClient.close()
-	return results[0]['playlistlength']
-	
-
-def mpc_db_label_exist( label ):
-	print('[MPC] Checking if {0} occurs in the MPD database'.format(label))
-	taskcmd = "mpc ls "+label+" | wc -l"
-	task = subprocess.Popen(taskcmd, shell=True, stdout=subprocess.PIPE)
-	mpcOut = task.stdout.read()
-	assert task.wait() == 0
-	
-	if mpcOut.rstrip('\n') == '0':
-		print(' ...  directory not found in mpd database')
-		return False
-	else:
-		print(' ...  directory found in mpd database')
-		return True
-
-# updates arSourceAvailable[0] (fm) --- TODO
-def fm_check():
-	print('[FM] CHECK availability... not available.')
-	arSourceAvailable[0]=0 # not available
-	#echo "Source 0 Unavailable; FM"
-
-def fm_play():
-	print('[FM] Start playing FM radio...')
-	#TODO
-
-def fm_stop():
-	print('[FM] Stop')
-	
-# ********************************************************************************
 # BLUETOOTH
 def bt_init():
 	global bBtInit
-	global arSourceAvailable
+	global Sources
 	global bus
 
 	# default to not available
-	arSourceAvailable[3]=0
+	#arSourceAvailable[3]=0
+	Sources.setAvailable('name','bt',False) # not available
 
 	print('[BT] Initializing')
 	print(' ..  Getting on the DBUS')
@@ -1445,7 +1058,8 @@ def bt_init():
 		for interface in interfaces.keys():
 			if interface == 'org.bluez.Adapter1':
 				print(' ..  .. Required interface (org.bluez.Adapter1) found!')
-				arSourceAvailable[3]=1
+				#arSourceAvailable[3]=1
+				Sources.setAvailable('name','bt',True) # available
 				print(' ..  .. Properties:')
 				properties = interfaces[interface]
 				for key in properties.keys():
@@ -1473,7 +1087,8 @@ def bt_init():
 				
 
 	# continue init, if interface is found
-	if arSourceAvailable[3] == 1:
+	#if arSourceAvailable[3] == 1:
+	if Sources.getAvailable('name','bt'):
 	
 		# Get the device
 		adapter = dbus.Interface(bus.get_object("org.bluez", "/org/bluez/" + sBtDev), "org.freedesktop.DBus.Properties")
@@ -1493,24 +1108,6 @@ def bt_init():
 		#PLAYER_IFACE
 
 	bBtInit = True
-
-# updates arSourceAvailable[3] (bt) -- TODO
-def bt_check():
-	print('[BT] CHECK availability... ')
-	#arSourceAvailable[3]=0 # NOT Available
-	#done at bt_init()
-
-def bt_play():
-	print('[BT] Start playing Bluetooth...')
-	print(' ..  Player: {0}'.format(sBtPlayer))
-
-	# dbus-send --system --type=method_call --dest=org.bluez /org/bluez/hci0/dev_78_6A_89_FA_1C_95/player0 org.bluez.MediaPlayer1.Next
-	try:
-		player = bus.get_object('org.bluez',sBtPlayer)
-		BT_Media_iface = dbus.Interface(player, dbus_interface='org.bluez.MediaPlayer1')
-		BT_Media_iface.Play()
-	except:
-		print('[BT] FAILED -- TODO!')
 
 def bt_next():
 	print('[BT] Next')
@@ -1568,18 +1165,6 @@ def bt_prev():
 	except:
 		print('[BT] FAILED -- TODO!')
 	
-def bt_stop():
-	print('[BT] Stop playing Bluetooth...')
-	print(' ..  Player: {0}'.format(sBtPlayer))
-
-	# dbus-send --system --type=method_call --dest=org.bluez /org/bluez/hci0/dev_78_6A_89_FA_1C_95/player0 org.bluez.MediaPlayer1.Next
-	try:
-		player = bus.get_object('org.bluez',sBtPlayer)
-		BT_Media_iface = dbus.Interface(player, dbus_interface='org.bluez.MediaPlayer1')
-		#BT_Media_iface.Pause() -- hangs Python!!
-		BT_Media_iface.Stop()
-	except:
-		print('[BT] FAILED -- TODO!')
 
 def bt_shuffle():
 	print('[BT] Shuffle')
@@ -1594,26 +1179,17 @@ def bt_shuffle():
 	
 	
 
-# updates arSourceAvailable[4] (alsa) -- TODO
-def linein_check():
-	print('[LINE] Checking if Line-In is available... not available')
-	arSourceAvailable[4]=0 # not available
-	#echo "Source 4 Unavailable; Line-In / ALSA"
-
-def linein_play():
-	print('Start playing from line-in...')
-	#TODO
-
-def linein_stop():
-	print('[LINE] Stop')
-
 # updates arSourceAvailable[1] (mpc)
 def media_check( prefered_label ):
 	global arMediaWithMusic
+	global Sources
 	
 	print('[MEDIA] CHECK availability...')
 
-	arSourceAvailable[1]=1 	# Available, unless proven otherwise in this procedure
+	#arSourceAvailable[1]=1 	# Available, unless proven otherwise in this procedure
+	#Sources.setAvailable('name','media',True)
+	# Media sources will be added when we find valid ones...
+	
 	arMedia = []			# list of mountpoints on /media
 	arMediaWithMusic = []  	# Reset (will be rebuild in this procedure)
 	
@@ -1627,16 +1203,18 @@ def media_check( prefered_label ):
 		)
 	except subprocess.CalledProcessError as err:
 		print('ERROR:', err)
-		arSourceAvailable[1]=0
+		#arSourceAvailable[1]=0
 		pa_sfx('error')
-	else:
-		arMedia = grepOut.split()
+		return False
+	
+	arMedia = grepOut.split()
 		
 	# playlist loading is handled by scripts that trigger on mount/removing of media
 	# mpd database is updated on mount by same script.
 	# So, let's check if there's anything in the database for this source:
 	
-	if arSourceAvailable[1] == 1:
+	#if arSourceAvailable[1] == 1:
+	if len(arMedia) > 0:
 		print(' .....  /media has mounted filesystems: ')
 		for mountpoint in arMedia:
 			print(' ... . {0}'.format(mountpoint))
@@ -1659,6 +1237,20 @@ def media_check( prefered_label ):
 					print(' ..... . {0}: nothing in the database for this source.'.format(sUsbLabel))
 				else:
 					print(' ..... . {0}: found {1:s} tracks'.format(sUsbLabel,mpcOut.rstrip('\n')))
+					
+					# Adding source
+					Sources.addSource({'name': 'media',
+									   'displayname': 'Removable Media',
+									   'order': 1,
+									   'available': True,
+									   'type': 'mpd',
+									   'depNetwork': False,
+									   'controls': ctrlsMedia,
+									   'mountpoint': mountpoint,
+									   'label': sUsbLabel,
+									   'uuid': None }
+					)
+					#REMOVE:
 					arMediaWithMusic.append(mountpoint)
 					#default to found media, if not set yet
 					
@@ -1672,8 +1264,8 @@ def media_check( prefered_label ):
 
 
 		# if nothing useful found, then mark source as unavailable
-		if len(arMediaWithMusic) == 0:
-			arSourceAvailable[1]=0
+		#if len(arMediaWithMusic) == 0:
+		#	arSourceAvailable[1]=0
 
 	else:
 		print(' ..... nothing mounted on /media.')
@@ -1681,16 +1273,19 @@ def media_check( prefered_label ):
 def media_play():
 	global dSettings
 	global arMediaWithMusic
+	global Sources
 	print('[MEDIA] Play (MPD)')
 
 	#if dSettings['mediasource'] == -1:
 	#	print('First go, doing a media check...')
 	#	media_check( None )
 	
-	if arSourceAvailable[1] == 0:
+	#if arSourceAvailable[1] == 0:
+	if not mySources.getAvailable('name','media'):
 		print('Aborting playback, trying next source.')
 		pa_sfx('error')
-		source_next()
+		#source_next()
+		Sources.sourceNext()
 		source_play()
 		
 	else:
@@ -1713,8 +1308,10 @@ def media_play():
 		if mpcOut.rstrip('\n') == "0":
 			print(' ... . Nothing in the playlist, marking source unavailable.')
 			pa_sfx('error')
-			arSourceAvailable[1]=0
-			source_next()
+			#arSourceAvailable[1]=0
+			Sources.setAvailable('label',sUsbLabel,False)
+			#source_next()
+			Sources.sourceNext()
 			source_play()
 		else:
 			print(' ... . Found {0:s} tracks'.format(mpcOut.rstrip('\n')))
@@ -1744,88 +1341,11 @@ def media_stop():
 	# stop playback
 	mpc_stop()	
 	
-# updates arSourceAvailable[2] (locmus)
-def locmus_check():
-	global arSourceAvailable
-	global sLocalMusic
-	print('[LOCMUS] CHECK availability...')
-
-	try:
-		if not os.listdir(sLocalMusic):
-			print(" ... Local music directory is empty.")
-			arSourceAvailable[2]=0
-		else:
-			print(" ... Local music directory present and has files.")
-			arSourceAvailable[2]=1
-	except:
-		print(" ... Error checking for local music directory {0} ".format(sLocalMusic))
-		arSourceAvailable[2]=0
-		
-def locmus_play():
-	global sLocalMusicMPD
-	global arSourceAvailable
-	print('[LOCMUS] Play (MPD)')
-
-	if bInit == 0:
-		print(' ... Checking if source is still good')
-		locmus_check()
-	
-	if arSourceAvailable[2] == 0:
-		print(' ......  Aborting playback, trying next source.') #TODO red color
-		source_next()
-		source_play()
-		#TODO: error sound
-		
-	else:
-		print(' ...... Emptying playlist')
-		call(["mpc", "-q", "stop"])
-		call(["mpc", "-q", "clear"])
-		#todo: how about cropping, populating, and removing the first? item .. for faster continuity???
-
-		# MPD playlist for local music *should* be updated by inotifywait.. but, it's a bit tricky, so test for it..
-		print(' ...... Populating playlist')
-		mpc_populate_playlist(sLocalMusicMPD)
-	
-		print(' ...... Checking if playlist is populated')
-		playlistCount = mpc_playlist_is_populated()
-		if playlistCount == "0":
-			print(' ...... . Nothing in the playlist, trying to update database...')
-			mpc_update( sLocalMusicMPD, True )
-			mpc_populate_playlist(sLocalMusicMPD)
-			playlistCount = mpc_playlist_is_populated()
-			if playlistCount == "0":
-				print(' ...... . Nothing in the playlist, giving up. Marking source unavailable.')
-				arSourceAvailable[2]=0
-				source_next()
-				source_play()
-				#TODO: error sound
-				return
-			else:
-				print(' ...... . Found {0:s} tracks'.format(playlistCount))
-		else:
-			print(' ...... . Found {0:s} tracks'.format(playlistCount))
-
-		# continue where left
-		playslist_pos = mpc_lkp('locmus')
-		
-		print(' ...  Starting playback')
-		call(["mpc", "-q" , "stop"])
-		call(["mpc", "-q" , "play", str(playslist_pos['pos'])])
-		if playslist_pos['time'] > 0:
-			print(' ...  Seeking to {0} sec.'.format(playslist_pos['time']))
-			call(["mpc", "-q" , "seek", str(playslist_pos['time'])])
-
-		# double check if source is up-to-date
-		
-		# Load playlist directories, to enable folder up/down browsing.
-		#mpc_get_PlaylistDirs()
-		# Run in the background... it seems the thread stays active relatively long, even after the playlistdir array has already been filled.
-		mpc_get_PlaylistDirs_thread = threading.Thread(target=mpc_get_PlaylistDirs)
-		mpc_get_PlaylistDirs_thread.start()
 		
 def locmus_update():
 	global dSettings
 	global sLocalMusicMPD
+	global Source
 	
 	print('[LOCMUS] Updating local database [{0}]'.format(sLocalMusicMPD))
 
@@ -1873,182 +1393,16 @@ def locmus_update():
 		#We cannot check if there's any NEW tracks, but let's check if there's anything to play..
 		locmus_check()
 		# Source 2 = locmus
-		if arSourceAvailable[2] == 1:
+		#if arSourceAvailable[2] == 1:
+		if Sources.getAvailable('name','locmus')
 			dSettings['source'] = 2
 			source_play()
 		else:
 			print('[LOCMUS] Update requested, but no music available for playing... Doing nothing.')
 
-def locmus_stop():
-	print('[LOCMUS] Stopping source: locmus. Saving playlist position and clearing playlist.')
-	
-	# save playlist position (file name + position)
-	mpc_save_pos_for_label( 'locmus' )
-	
-	# stop playback
-	mpc_stop()	
-
-def stream_check():
-	global arSourceAvailable
-	
-	print('[STRM] Checking availability...')
-
-	# Default to not available
-	arSourceAvailable[5]=0
-	
-	# Test internet connection
-	connected = internet()
-	if not connected:
-		print(' ....  Internet: FAIL')
-		print(' ....  Marking source not available')
-		return 1
-	else:
-		print(' ....  Internet: OK')
-
-	# See if we have streaming URL's
-	streams_file = sDirSave + "/streams.txt"
-	if os.path.isfile(streams_file):
-		print(' ....  Stream URL\'s: File found')
-	else:
-		print(' ....  Stream URL\'s: File not found')
-		print(' ....  Marking source not available')
-		return 1
-
-	# Check if at least one stream is good
-	print(' ....  Checking to see we have at least one valid stream')			
-	with open(streams_file,'r') as streams:
-		for l in streams:
-			uri = l.rstrip()
-			if not uri[:1] == '#' and not uri == '':
-				uri_OK = url_check(uri)					
-				if uri_OK:
-					print(' ....  . Stream OK: {0}'.format(uri))
-					arSourceAvailable[5]=1
-					break
-				else:
-					print(' ....  . Stream FAIL: {0}'.format(uri))
-
-def stream_play():
-	print('[STRM] Play (MPD)')
-
-	if bInit == 0:
-		print(' ....  Checking if source is still good')
-		stream_check()
-
-	if arSourceAvailable[5] == 0:
-		print(' ....  Aborting playback, trying next source.') #TODO red color
-		pa_sfx('error')
-		source_next()
-		source_play()
-	else:
-		print(' .... Emptying playlist')
-		call(["mpc", "-q", "stop"])
-		call(["mpc", "-q", "clear"])
-		#todo: how about cropping, populating, and removing the first? item .. for faster continuity???
-
-		print(' .... Populating playlist')
-		mpc_populate_playlist('stream')
-		
-		print(' .... Checking if playlist is populated')
-		playlistCount = mpc_playlist_is_populated()
-		if playlistCount == "0":
-			print(' .... . Nothing in the playlist, aborting...')
-			pa_sfx('error')
-			arSourceAvailable[5] = 0
-			source_next()
-			source_play()
-			
-		else:
-			print(' .... . Found {0:s} tracks'.format(playlistCount))
-			
-		# continue where left
-		playslist_pos = mpc_lkp('stream')
-		
-		print(' .... Starting playback')
-		call(["mpc", "-q" , "play", str(playslist_pos['pos'])])
-
-		# double check if source is up-to-date
-		
-def stream_stop():
-	print('[STRM] Stopping source: stream. Saving playlist position and clearing playlist.')
-	
-	# save position and current file name for this drive
-	mpc_save_pos_for_label( 'stream' )
-	
-	# stop playback
-	mpc_stop()
-	#mpc $params_mpc -q stop
-	#mpc $params_mpc -q clear	
-
-def smb_check():
-	global arSourceAvailable
-	
-	print('[SMB] Checking availability...')
-
-	#Default to not available
-	arSourceAvailable[6]=0
-	
-	#Check if network up
-	#TODO
-	
-	#See if we have smb location(s)
-	#TODO
-
-	#Check if at least one stream is good
-	#TODO
-
-	#OVERRIDE
-	print(' ...  Not implemented yet, presenting source as available')
-	arSourceAvailable[6]=1
-
-def smb_play():
-	global arSourceAvailable
-	
-	print('[SMB] Play (MPD)')
-	if bInit == 0:
-		print(' ...  Checking if source is still good')
-		smb_check()
-
-	if arSourceAvailable[6] == 0:
-		print(' ...  Aborting playback, trying next source.') #TODO red color
-		pa_sfx('error')
-		source_next()
-		source_play()
-	else:
-		print(' .... Emptying playlist')
-		call(["mpc", "-q", "stop"])
-		call(["mpc", "-q", "clear"])
-		#todo: how about cropping, populating, and removing the first? item .. for faster continuity???
-
-		print(' .... Populating playlist')
-		mpc_populate_playlist('smb')
-		
-		print(' .... Checking if playlist is populated')
-		playlistCount = mpc_playlist_is_populated()
-		if playlistCount == "0":
-			print(' .... . Nothing in the playlist, aborting...')
-			pa_sfx('error')
-			arSourceAvailable[5] = 0
-			source_next()
-			source_play()
-		else:
-			print(' .... . Found {0:s} tracks'.format(playlistCount))
-			
-		# continue where left
-		playslist_pos = mpc_lkp('smb')
-		
-		print(' .... Starting playback')
-		call(["mpc", "-q" , "play", str(playslist_pos['pos'])])
-		# double check if source is up-to-date
-		
-		# Load playlist directories, to enable folder up/down browsing.
-		#mpc_get_PlaylistDirs()
-		# Run in the background... it seems the thread stays active relatively long, even after the playlistdir array has already been filled.
-		mpc_get_PlaylistDirs_thread = threading.Thread(target=mpc_get_PlaylistDirs)
-		mpc_get_PlaylistDirs_thread.start()
 		
 
-def source_next():
+def old_source_next():
 	global dSettings
 	global arMediaWithMusic
 
@@ -2132,11 +1486,14 @@ def source_next():
 
 def source_play():
 	global dSettings
+	global Sources
 
 	if dSettings['source'] == -1:
 		print('[SOURCE] PLAY: Cannot start playback, no source available.')
 	else:
-		print('[SOURCE] PLAY: {0:s}'.format(arSource[dSettings['source']]))
+		#print('[SOURCE] PLAY: {0:s}'.format(arSource[dSettings['source']]))
+		print('[SOURCE] PLAY: {0:s}'.format('#TODO!'))
+		#TODO!
 		if dSettings['source'] == 0 and arSourceAvailable[0] == 1:
 			fm_play()
 		elif dSettings['source'] == 1 and arSourceAvailable[1] == 1:
@@ -2177,15 +1534,101 @@ def source_stop():
 		print(' ......  ERROR: Invalid source.')
 		pa_sfx('error')
 		
+
+def initSources():
+	global Sources
+	global sLocalMusic
+
+	ctrlsFm = {'next': True,
+			   'prev': True,
+		       'ffwd': False,
+		       'rwnd': False }
+			   
+	ctrlsMedia = {'next': True,
+			   'prev': True,
+		       'ffwd': False,
+		       'rwnd': False }
+			   
+	ctrlsBt = {'next': True,
+			   'prev': True,
+		       'ffwd': False,
+		       'rwnd': False }
+
+	ctrlsStream = {'next': True,
+			   'prev': True,
+		       'ffwd': False,
+		       'rwnd': False }
+			   
+	print('[INIT] Setting up sources')
+	#arSource = ['fm','media','locmus','bt','alsa','stream','smb'] # source types; add new sources in the end
+	#arSourceAvailable = [0,0,0,0,0,0,0]          # corresponds to arSource; 1=available
+
+	#Removable media will be added on the fly
+	Sources.addSource({'name': 'fm',
+					   'displayname': 'FM',
+				       'order': 0,
+	        	       'available': False,
+		               'type': 'other',
+					   'depNetwork': False,
+		               'controls': ctrlsFm }
+	)
+	Sources.addSource({'name': 'locmus',
+					   'displayname': 'Local Media',
+				       'order': 2,
+	        	       'available':  False,
+		               'type': 'mpd',
+					   'depNetwork': False,
+		               'controls': ctrlsMedia,
+                       'mountpoint': sLocalMusic,
+				       'label': 'PIHU_DATA',
+				       'uuid': None }
+	)
+	Sources.addSource({'name': 'bt',
+					   'displayname': 'Bluetooth',
+				       'order': 3,
+	        	       'available': False,
+		               'type': 'other',
+					   'depNetwork': False,
+		               'controls': ctrlsBt }
+	)
+	Sources.addSource({'name': 'alsa',
+					   'displayname': 'AUX',
+				       'order': 4,
+	        	       'available': False,
+		               'type': 'other',
+					   'depNetwork': False,
+		               'controls': None }
+	)
+	Sources.addSource({'name': 'stream',
+					   'displayname': 'Internet Radio',
+				       'order': 5,
+	        	       'available': False,
+		               'type': 'mpd',
+					   'depNetwork': True,
+		               'controls': ctrlsStream }
+	)
+	Sources.addSource({'name': 'smb',
+					   'displayname': 'Network Share',
+				       'order': 6,
+	        	       'available': False,
+		               'type': 'mpd',
+					   'depNetwork': True,
+		               'controls': ctrlsMedia }
+	)
+	
 def init():
 	global dSettings
 	global bInit
 	global bMpdUpdateSmb
+	global Sources
 	
 	print('--------------------------------------------------------------------------------')
 	#print('[INIT] Starting ...')
 	printc('INIT','Starting ...', 'STD')
 	printc('TESTTEST','Starting ...', 'ERR')
+
+	# Configure sources
+	initSources()
 	
     # load previous state (or set defaults, if not previous state)
 	settings_load()
@@ -2349,6 +1792,7 @@ print('Checking if we\'re already runnning')
 #me = singleton.SingleInstance() # will sys.exit(-1) if other instance is running # uncomment when tendo available
 #with PIDFile("/var/run/pihu.pid"):
 #	pass
+
 		
 DBusGMainLoop(set_as_default=True)
 bus = dbus.SystemBus()
