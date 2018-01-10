@@ -66,7 +66,7 @@ Sources = SourceController()
 VolPulse = VolumeController('alsa_output.platform-soc_sound.analog-stereo')
 
 # CONSTANTS
-CONFIG_FILE = 'D://Python/configuration.json'
+CONFIG_FILE = '/mnt/PIHU_APP/defender-headunit/configuration.json'
 VERSION = "1.0.0"
 
 # Initiate logging.
