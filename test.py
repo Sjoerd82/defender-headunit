@@ -75,6 +75,10 @@ def init_logging( logdir, logfile, runcount ):
 
 	global logger
 
+	# create the log dir, if it doesn't exist yet
+	if not os.path.exists(logdir):
+		os.makedirs(logdir)
+	
 	iCounterLen = 6
 	currlogfile = os.path.join(logdir, logfile+'.'+str(runcount).rjust(iCounterLen,'0')+'.log')
 	
