@@ -46,8 +46,9 @@ def configuration_load( configfile, defaultconfig=None ):
 		printer('Restoring default configuration')
 		configuration_restore( configfile, defaultconfig )
 		jsConfigFile = open(configfile)
-		config=json.load(jsConfigFile)
-		return config
+		#config=json.load(jsConfigFile)
+		#return config
+		return None
 	
 	# check if loading/parsing failed
 	if config == None:
