@@ -268,12 +268,13 @@ def loadSourcePlugins( plugindir ):
 	global Sources
 	global configuration
 
+	#todo, obviously this is bad..
+	lookforthingy = '/mnt/PIHU_APP/defender-headunit/plugin_sources/'
+	
 	for k, v in sys.modules.iteritems():
-		print k
-		print v
 		if k[0:15] == 'plugin_sources.':
 			sourcePluginName = k[15:]
-			if not str(v).find('D:\\Python\\plugin_sources\\') == -1:
+			if not str(v).find(lookforthingy) == -1:
 				jsConfigFile = open(plugindir+'//'+sourcePluginName+'.json')	#TODO make more stable, given trailing // or not.. also add try/ or test for folder/file existence
 				config=json.load(jsConfigFile)
 				sourceModule = sys.modules['plugin_sources.'+sourcePluginName]
