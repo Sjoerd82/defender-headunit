@@ -300,7 +300,8 @@ def loadSourcePlugins( plugindir ):
 								func = menuitem['sub'].lstrip('!')
 								menuitem['sub'] = getattr(sourceModule,func)()
 								#menuitem['uuid']
-						huMenu.add( menuitem )
+						#TODO: re-enable
+						#huMenu.add( menuitem )
 				# init source, if successfully added
 				if isAdded:
 					indexAdded = Sources.getIndex('name',config['name'], template=None)
