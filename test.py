@@ -66,7 +66,8 @@ Sources = SourceController()
 VolPulse = VolumeController('alsa_output.platform-soc_sound.analog-stereo')
 
 # CONSTANTS
-CONFIG_FILE = '/mnt/PIHU_APP/defender-headunit/configuration.json'
+#CONFIG_FILE = '/mnt/PIHU_APP/defender-headunit/configuration.json'
+CONFIG_FILE = '/mnt/PIHU_CONFIG/configuration.json'
 VERSION = "1.0.0"
 
 # Initiate logging.
@@ -265,6 +266,7 @@ configuration = configuration_load( CONFIG_FILE )
 # Load operational settings
 #
 sFileSettings = configuration['directories']['config']+'\\'+configuration['files']['settings']
+#os.path.join
 dDefaultSettings = configuration['default_settings']
 dSettings = settings_load( sFileSettings, dDefaultSettings )
 dSettings['runcount']+=1

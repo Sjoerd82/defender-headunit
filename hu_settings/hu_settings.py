@@ -7,7 +7,7 @@ import pickle
 # Output wrapper
 #
 
-def printer( message, level=20, continuation=False, tag='PICKLE' ):
+def printer( message, level=20, continuation=False, tag='STTNGS' ):
 	#TODO: test if headunit logger exist...
 	if continuation:
 		myprint( message, level, '.'+tag )
@@ -76,12 +76,12 @@ def settings_load( sJsonFile, dDefaultSettings ):
 	return dSettings
 
 def getSourceConfig( sourceName ):
-	CONFIG_FILE = 'D://Python/configuration.json'
+	CONFIG_FILE = '/mnt/PIHU_CONFIG/configuration.json'
 	configuration = configuration_load( CONFIG_FILE )
 	return configuration['source_config'][sourceName]
 
 def getPluginConfig( pluginName ):
-	CONFIG_FILE = 'D://Python/configuration.json'
+	CONFIG_FILE = '/mnt/PIHU_CONFIG/configuration.json'
 	configuration = configuration_load( CONFIG_FILE )
 	return configuration['plugins_other'][pluginName]
 
