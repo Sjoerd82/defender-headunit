@@ -70,6 +70,30 @@ CONFIG_FILE_DEFAULT = '/mnt/PIHU_APP/defender-headunit/config/configuration.json
 CONFIG_FILE = '/mnt/PIHU_CONFIG/configuration.json'
 VERSION = "1.0.0"
 
+def init_logging_console():
+
+	global logger
+
+	# logging is global
+	logger = logging.getLogger('headunit')
+	logger.setLevel(logging.DEBUG)
+
+	# create console handler
+	ch = logging.StreamHandler()
+	ch.setLevel(logging.INFO)
+
+	# create formatters
+	fmtr_ch = ColoredFormatter("%(tag)s%(message)s")
+
+	# add formatter to handlers
+	ch.setFormatter(fmtr_ch)
+
+	# add ch to logger
+	logger.addHandler(ch)
+	
+	logger.info('Logging started',extra={'tag':'log'})
+
+
 # Initiate logging.
 # Use logger.info instead of print.
 def init_logging( logdir, logfile, runcount ):
@@ -256,11 +280,17 @@ logging.info('Hello, log')
 #
 # Initialization
 #
-#def init():
+
+#
+# Start logging to console
+#
+init_logging_console()
+
 #
 # Load main configuration
 #
 configuration = configuration_load( CONFIG_FILE, CONFIG_FILE_DEFAULT )
+exit()
 
 #
 # Load operational settings
