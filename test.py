@@ -386,26 +386,30 @@ logger.warning('Another WARNING', extra={'tag':'test'})
 #settings_save( sFileSettings, dSettings1 )
 
 #********************************************************************************
+#
+# Initialize the mainloop
+#
+DBusGMainLoop(set_as_default=True)
+mainloop = gobject.MainLoop()
+#bus = dbus.SystemBus()
+
 
 try:
-    bus_name = dbus.service.BusName("com.arctura.remote",
-                                    bus=dbus.SystemBus(),
-                                    do_not_queue=True)
+	remote_bus_name = dbus.service.BusName("com.arctura.remote",
+                                           bus=dbus.SystemBus(),
+                                           do_not_queue=True)
 except dbus.exceptions.NameExistsException:
-    printer("service is already running")
-    sys.exit(1)
+	printer("service is already running")
+	sys.exit(1)
 
 
-DBusGMainLoop(set_as_default=True)
-bus = dbus.SystemBus()
-
-# Initialize a main loop
-mainloop = gobject.MainLoop()
 #bus.add_signal_receiver(cb_remote_btn_press, dbus_interface = "com.arctura.remote")
 #bus.add_signal_receiver(cb_mpd_event, dbus_interface = "com.arctura.mpd")
 #bus.add_signal_receiver(cb_udisk_dev_add, signal_name='DeviceAdded', dbus_interface="org.freedesktop.UDisks")
 #bus.add_signal_receiver(cb_udisk_dev_rem, signal_name='DeviceRemoved', dbus_interface="org.freedesktop.UDisks")
 
-dbus_ads1x15.RemoteControl(bus)
-
-mainloop.run()
+try:
+	dbus_ads1x15.RemoteControl(remote_bus_name)
+	mainloop.run()
+finally:
+	mainloop.quit()
