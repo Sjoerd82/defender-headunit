@@ -262,7 +262,7 @@ logging.info('Hello, log')
 #
 configuration = configuration_load( CONFIG_FILE, CONFIG_FILE_DEFAULT )
 print configuration
-exit
+exit()
 #
 # Load operational settings
 #
