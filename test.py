@@ -70,13 +70,20 @@ CONFIG_FILE_DEFAULT = '/mnt/PIHU_APP/defender-headunit/config/configuration.json
 CONFIG_FILE = '/mnt/PIHU_CONFIG/configuration.json'
 VERSION = "1.0.0"
 
-def init_logging_console():
+# Initiate logger.
+def init_logging():
 
 	global logger
 
 	# logging is global
 	logger = logging.getLogger('headunit')
 	logger.setLevel(logging.DEBUG)
+
+# Initiate logging to console.
+# Use logger.info instead of print.
+def init_logging_c():
+
+	global logger
 
 	# create console handler
 	ch = logging.StreamHandler()
@@ -93,10 +100,9 @@ def init_logging_console():
 	
 	logger.info('Logging started',extra={'tag':'log'})
 
-
-# Initiate logging.
+# Initiate logging to log file.
 # Use logger.info instead of print.
-def init_logging( logdir, logfile, runcount ):
+def init_logging_f( logdir, logfile, runcount ):
 
 	global logger
 
@@ -107,28 +113,17 @@ def init_logging( logdir, logfile, runcount ):
 	iCounterLen = 6
 	currlogfile = os.path.join(logdir, logfile+'.'+str(runcount).rjust(iCounterLen,'0')+'.log')
 	
-	# logging is global
-	logger = logging.getLogger('headunit')
-	logger.setLevel(logging.DEBUG)
-
-	# create console handler
-	ch = logging.StreamHandler()
-	ch.setLevel(logging.INFO)
-
 	# create file handler
 	fh = logging.FileHandler(currlogfile)
 	fh.setLevel(logging.DEBUG)
 
 	# create formatters
-	fmtr_ch = ColoredFormatter("%(tag)s%(message)s")
 	fmtr_fh = RemAnsiFormatter("%(asctime)-9s [%(levelname)-8s] %(tag)s %(message)s")
 		
 	# add formatter to handlers
-	ch.setFormatter(fmtr_ch)
 	fh.setFormatter(fmtr_fh)
 
-	# add ch to logger
-	logger.addHandler(ch)
+	# add fh to logger
 	logger.addHandler(fh)
 	
 	logger.info('Logging started',extra={'tag':'log'})
@@ -284,6 +279,7 @@ logging.info('Hello, log')
 #
 # Start logging to console
 #
+init_logging()
 init_logging_console()
 
 #
@@ -297,15 +293,22 @@ if configuration == None:
 #
 # Load operational settings
 #
-sFileSettings = configuration['directories']['config']+'\\'+configuration['files']['settings']
-#os.path.join
+
+# load default settings
 dDefaultSettings = configuration['default_settings']
+# operational settings file (e.g. dSettings.json)
+sFileSettings = os.path.join(configuration['directories']['config'],configuration['files']['settings'])
+# load into dSettings
 dSettings = settings_load( sFileSettings, dDefaultSettings )
+
+# increase the run counter (used for logging to file)
 dSettings['runcount']+=1
+
+# save run counter
 settings_save( sFileSettings, dSettings )
 
 #
-# Initiate logging
+# Start logging to file
 #
 sLogDir = configuration['directories']['log']
 sLogFile = configuration['files']['log']

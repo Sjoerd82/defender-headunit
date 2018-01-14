@@ -63,18 +63,6 @@ def configuration_load( configfile, defaultconfig=None ):
 			return None
 
 	return config
-	# The Try-Except does not always trigger on all Parse fails (true?)
-	# check if loading/parsing failed
-	"""
-	if config == None:
-		# overwrite the faulty config with the default
-		configuration_restore( configfile, defaultconfig )
-		jsConfigFile = open(configfile)
-		config=json.load(jsConfigFile)		
-	else:
-		return config
-	
-	"""
 
 def configuration_save( configfile, configuration ):
 	printer('Saving Configuration')
