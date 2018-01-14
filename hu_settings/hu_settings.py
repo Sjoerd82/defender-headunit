@@ -39,6 +39,18 @@ def configuration_load( configfile, defaultconfig=None ):
 		configuration_restore( configfile, defaultconfig )
 
 	jsConfigFile = open(configfile)
+	config=json.load(jsConfigFile)
+	
+	# check if loading/parsing failed
+	if config == None:
+		# overwrite the faulty config with the default
+		configuration_restore( configfile, defaultconfig )
+		jsConfigFile = open(configfile)
+		config=json.load(jsConfigFile)		
+	else:
+		return config
+	
+	"""
 	try:
 		config=json.load(jsConfigFile)
 		return config
@@ -46,6 +58,7 @@ def configuration_load( configfile, defaultconfig=None ):
 		printer('Loading/parsing {0}: [FAIL]'.format(configfile),LL_CRITICAL)
 		printer('Restoring default configuration')
 		configuration_restore( configfile, defaultconfig )
+	"""
 
 def configuration_save( configfile, configuration ):
 	printer('Saving Configuration')
