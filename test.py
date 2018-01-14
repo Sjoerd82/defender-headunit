@@ -352,9 +352,7 @@ loadSourcePlugins(sPluginDirSources)
 # import control plugins
 #
 myprint('Loading Control Plugins...',tag='SYSTEM')
-#from plugin_control import *
-import plugin_control
-
+from plugin_control import *
 
 #
 # load other plugins
@@ -408,7 +406,6 @@ mainloop = gobject.MainLoop()
 #bus.add_signal_receiver(cb_udisk_dev_add, signal_name='DeviceAdded', dbus_interface="org.freedesktop.UDisks")
 #bus.add_signal_receiver(cb_udisk_dev_rem, signal_name='DeviceRemoved', dbus_interface="org.freedesktop.UDisks")
 
-RemoteControl(bus)
-#plugin_control.dbus_ads-1x15.RemoteControl(bus)
+dbus_ads1x15.RemoteControl(bus)
 
 mainloop.run()
