@@ -158,6 +158,7 @@ class RemoteControl(dbus.service.Object):
 
 printer('Starting Resistor Network Remote Control')
 
+"""
 try:
     bus_name = dbus.service.BusName("com.arctura.remote",
                                     bus=dbus.SystemBus(),
@@ -167,6 +168,7 @@ except dbus.exceptions.NameExistsException:
     sys.exit(1)
 	
 RemoteControl(bus_name)
+"""
 
 """
 # Initialize a main loop
