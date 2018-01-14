@@ -269,6 +269,8 @@ def loadSourcePlugins( plugindir ):
 	global configuration
 
 	for k, v in sys.modules.iteritems():
+		print k
+		print v
 		if k[0:15] == 'plugin_sources.':
 			sourcePluginName = k[15:]
 			if not str(v).find('D:\\Python\\plugin_sources\\') == -1:
@@ -363,6 +365,7 @@ myprint('Loading Source Plugins...',tag='SYSTEM')
 
 # import sources directory
 import plugin_sources
+#from plugin_source import *
 
 # read source config files and start source inits
 sPluginDirSources = configuration['directories']['plugin-sources']
