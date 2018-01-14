@@ -20,17 +20,23 @@ def printer( message, level=20, continuation=False, tag='STTNGS' ):
 	else:
 		myprint( message, level, tag )
 
+
+# ********************************************************************************
+# Restore default configuration
+#
+def configuration_restore( configfile, defaultconfig ):
+	if not os.path.exists(configfile) and os.path.exists(defaultconfig):
+		shutil.copy(defaultconfig,configfile)
+
 # ********************************************************************************
 # Load JSON configuration
 #
 def configuration_load( configfile, defaultconfig=None ):
 
 	# use the default from the config dir, if not found
-	#not defaultconfig==None and
 	if not os.path.exists(configfile) and os.path.exists(defaultconfig):
 		printer('Configuration not present (first run?); copying default')
-		shutil.copyfile(defaultconfig,configfile)
-		shutil.copy(defaultconfig,'/mnt/PIHU_CONFIG/testje.txt')
+		configuration_restore( configfile, defaultconfig )
 
 	try:
 		jsConfigFile = open(configfile)
@@ -38,6 +44,8 @@ def configuration_load( configfile, defaultconfig=None ):
 		return config
 	except:
 		printer('Loading/parsing {0}: [FAIL]'.format(configfile),LL_CRITICAL)
+		printer('Restoring default configuration')
+		configuration_restore( configfile, defaultconfig )
 
 def configuration_save( configfile, configuration ):
 	printer('Saving Configuration')
