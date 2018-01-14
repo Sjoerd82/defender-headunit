@@ -280,7 +280,7 @@ logging.info('Hello, log')
 # Start logging to console
 #
 init_logging()
-init_logging_console()
+init_logging_c()
 
 #
 # Load main configuration
@@ -312,7 +312,7 @@ settings_save( sFileSettings, dSettings )
 #
 sLogDir = configuration['directories']['log']
 sLogFile = configuration['files']['log']
-init_logging(sLogDir,sLogFile,dSettings['runcount'])
+init_logging_f( sLogDir, sLogFile, dSettings['runcount'] )
 myprint('Headunit.py version {0}'.format(VERSION),tag='SYSTEM')
 
 #
