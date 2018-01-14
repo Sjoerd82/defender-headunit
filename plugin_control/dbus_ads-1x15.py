@@ -27,7 +27,7 @@ import threading
 import Adafruit_ADS1x15
 
 # Wrapper for "myprint"
-def printer( message, level=LL_INFO, continuation=False, tag=sourceName ):
+def printer( message, level=LL_INFO, continuation=False, tag=controlName ):
 	if continuation:
 		myprint( message, level, '.'+tag )
 	else:

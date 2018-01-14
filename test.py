@@ -286,7 +286,6 @@ init_logging_c()
 # Load main configuration
 #
 configuration = configuration_load( CONFIG_FILE, CONFIG_FILE_DEFAULT )
-print configuration
 if configuration == None:
 	exit()
 
@@ -328,6 +327,7 @@ myprint('Headunit.py version {0}'.format(VERSION),tag='SYSTEM')
 #
 # App. Init
 #
+myprint('Loading Source Plugins...',tag='SYSTEM')
 
 # import sources directory
 import plugin_sources
@@ -344,12 +344,14 @@ loadSourcePlugins(sPluginDirSources)
 #
 # import control plugins
 #
+myprint('Loading Control Plugins...',tag='SYSTEM')
 from plugin_control import *
 
 
 #
 # load other plugins
 #
+myprint('Loading Other Plugins...',tag='SYSTEM')
 from plugin_other import *
 
 
