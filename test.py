@@ -422,7 +422,7 @@ logger.warning('Another WARNING', extra={'tag':'test'})
 #
 DBusGMainLoop(set_as_default=True)
 mainloop = gobject.MainLoop()
-#bus = dbus.SystemBus()
+bus = dbus.SystemBus()
 
 
 try:
