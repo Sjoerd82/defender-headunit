@@ -22,7 +22,8 @@ def configuration_load( configfile, defaultconfig=None ):
 
 	# use the default from the config dir, if not found
 	#not defaultconfig==None and
-	if not os.path.exists(configfile) and os.path.exists(defaultconfigconfigfile):
+	if not os.path.exists(configfile) and os.path.exists(defaultconfig):
+		printer('Configuration not present (first run?); copying default')
 		os.copy(defaultconfig,configfile)
 
 	try:
