@@ -77,6 +77,88 @@ CONFIG_FILE_DEFAULT = '/mnt/PIHU_APP/defender-headunit/config/configuration.json
 CONFIG_FILE = '/mnt/PIHU_CONFIG/configuration.json'
 VERSION = "1.0.0"
 
+def pa_sfx( dummy ):
+	return None
+
+def random( dummy ):
+	return None
+
+def volume_att_toggle():
+	return None
+
+def volume_up():
+	return None
+
+def volume_down():
+	return None
+
+#
+def cb_remote_btn_press ( func ):
+
+	global Sources
+
+	# Handle button press
+	if func == 'SHUFFLE':
+		print('\033[95m[BUTTON] Shuffle\033[00m')
+		random( 'toggle' )
+	elif func == 'SOURCE':
+		print('\033[95m[BUTTON] Next source\033[00m')
+		pa_sfx('button_feedback')
+		# if more than one source available...
+		if Sources.getAvailableCnt() > 1:
+			Sources.sourceStop()
+			Sources.sourceNext()
+			Sources.sourcePlay()
+	elif func == 'ATT':
+		print('\033[95m[BUTTON] ATT\033[00m')
+		pa_sfx('button_feedback')
+		volume_att_toggle()
+	elif func == 'VOL_UP':
+		print('\033[95m[BUTTON] VOL_UP\033[00m')		
+		pa_sfx('button_feedback')
+		volume_up()
+		return 0
+	elif func == 'VOL_DOWN':
+		print('\033[95m[BUTTON] VOL_DOWN\033[00m')
+		pa_sfx('button_feedback')
+		volume_down()
+		return 0
+	elif func == 'SEEK_NEXT':
+		print('\033[95m[BUTTON] Seek/Next\033[00m')
+		pa_sfx('button_feedback')
+		#seek_next()
+	elif func == 'SEEK_PREV':
+		print('\033[95m[BUTTON] Seek/Prev.\033[00m')
+		pa_sfx('button_feedback')
+		#seek_prev()
+	elif func == 'DIR_NEXT':
+		print('\033[95m[BUTTON] Next directory\033[00m')
+		if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 6:
+			pa_sfx('button_feedback')
+			#mpc_next_folder()
+		else:
+			pa_sfx('error')
+			print(' No function for this button! ')
+	elif func == 'DIR_PREV':
+		print('\033[95m[BUTTON] Prev directory\033[00m')
+		if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 6:
+			pa_sfx('button_feedback')
+			#mpc_prev_folder()
+		else:
+			pa_sfx('error')
+			print(' No function for this button! ')
+	elif func == 'UPDATE_LOCAL':
+		print('\033[95m[BUTTON] Updating local MPD database\033[00m')
+		pa_sfx('button_feedback')
+		#locmus_update()
+	elif func == 'OFF':
+		print('\033[95m[BUTTON] Shutting down\033[00m')
+		pa_sfx('button_feedback')
+		#shutdown()
+	else:
+		print('Unknown button function')
+		pa_sfx('error')
+
 # Initiate logger.
 def init_logging():
 
@@ -221,62 +303,6 @@ def loadSourcePlugins( plugindir ):
 					indexAdded = Sources.getIndex('name',config['name'], template=None)
 					Sources.sourceInit(indexAdded)
 
-				
-#####
-"""
-DEFAULT_LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': { 
-        'standard': { 
-            'format': '%(asctime)s - %(message)s'
-        },
-		'custom': {
-			
-		},
-        'complete': {
-            'format': '%(asctime)s - PID: %(process)d - PNAME: %(processName)s' \
-                      ' - TID: %(thread)d - TNAME: %(threadName)s' \
-                      ' - %(levelname)s - %(filename)s - %(message)s',
-        },
-    },
-    'handlers': { 
-        'default': { 
-            'level': LL_INFO,
-            'formatter': 'standard',
-            'class': 'logging.StreamHandler',
-        },
-        'file': { 
-            'level': LL_INFO,
-            'formatter': 'standard',
-            'class': 'logging.FileHandler',
-            'filename': datetime.datetime.now().strftime('%Y%m%d.log'),
-        },
-        'rewrite': { 
-            'level': LL_INFO,
-            'formatter': 'complete',
-            'class': 'logging.FileHandler',
-            'filename': datetime.datetime.now().strftime('%Y%m%d2.log'),
-            'mode': 'w',
-        },
-    },
-    'loggers': {
-        '': {
-            'handlers': ['default', 'file', 'rewrite'],
-            'level': LL_INFO,
-            'propagate': True
-        },
-        'another.module': {
-            'level': 'DEBUG',
-        },
-    }
-}
- 
-logging.config.dictConfig(DEFAULT_LOGGING)
-logging.info('Hello, log')
-
-#####
-"""
 
 #********************************************************************************
 #
@@ -299,7 +325,6 @@ if configuration == None:
 #
 # Load operational settings
 #
-
 # load default settings
 dDefaultSettings = configuration['default_settings']
 # operational settings file (e.g. dSettings.json)
@@ -363,6 +388,12 @@ from plugin_other import *
 
 myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 
+#
+# end of initialization
+#
+#********************************************************************************
+
+
 #********************************************************************************
 #
 # Mainloop
@@ -410,6 +441,7 @@ except dbus.exceptions.NameExistsException:
 
 try:
 	dbus_ads1x15.RemoteControl(remote_bus_name)
+	bus.add_signal_receiver(cb_remote_btn_press, dbus_interface = "com.arctura.remote")
 	mainloop.run()
 finally:
 	mainloop.quit()

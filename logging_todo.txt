@@ -1,0 +1,51 @@
+DEFAULT_LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': { 
+        'standard': { 
+            'format': '%(asctime)s - %(message)s'
+        },
+		'custom': {
+			
+		},
+        'complete': {
+            'format': '%(asctime)s - PID: %(process)d - PNAME: %(processName)s' \
+                      ' - TID: %(thread)d - TNAME: %(threadName)s' \
+                      ' - %(levelname)s - %(filename)s - %(message)s',
+        },
+    },
+    'handlers': { 
+        'default': { 
+            'level': LL_INFO,
+            'formatter': 'standard',
+            'class': 'logging.StreamHandler',
+        },
+        'file': { 
+            'level': LL_INFO,
+            'formatter': 'standard',
+            'class': 'logging.FileHandler',
+            'filename': datetime.datetime.now().strftime('%Y%m%d.log'),
+        },
+        'rewrite': { 
+            'level': LL_INFO,
+            'formatter': 'complete',
+            'class': 'logging.FileHandler',
+            'filename': datetime.datetime.now().strftime('%Y%m%d2.log'),
+            'mode': 'w',
+        },
+    },
+    'loggers': {
+        '': {
+            'handlers': ['default', 'file', 'rewrite'],
+            'level': LL_INFO,
+            'propagate': True
+        },
+        'another.module': {
+            'level': 'DEBUG',
+        },
+    }
+}
+ 
+logging.config.dictConfig(DEFAULT_LOGGING)
+logging.info('Hello, log')
+
