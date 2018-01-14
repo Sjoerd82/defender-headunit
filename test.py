@@ -261,7 +261,8 @@ logging.info('Hello, log')
 # Load main configuration
 #
 configuration = configuration_load( CONFIG_FILE, CONFIG_FILE_DEFAULT )
-
+print configuration
+exit
 #
 # Load operational settings
 #
