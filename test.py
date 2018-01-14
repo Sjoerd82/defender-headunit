@@ -439,9 +439,10 @@ except dbus.exceptions.NameExistsException:
 #bus.add_signal_receiver(cb_udisk_dev_add, signal_name='DeviceAdded', dbus_interface="org.freedesktop.UDisks")
 #bus.add_signal_receiver(cb_udisk_dev_rem, signal_name='DeviceRemoved', dbus_interface="org.freedesktop.UDisks")
 
+bus.add_signal_receiver(cb_remote_btn_press, dbus_interface = "com.arctura.remote")
+dbus_ads1x15.RemoteControl(remote_bus_name)
+
 try:
-	dbus_ads1x15.RemoteControl(remote_bus_name)
-	bus.add_signal_receiver(cb_remote_btn_press, dbus_interface = "com.arctura.remote")
 	mainloop.run()
 finally:
 	mainloop.quit()
