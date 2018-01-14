@@ -38,8 +38,8 @@ def configuration_load( configfile, defaultconfig=None ):
 		printer('Configuration not present (first run?); copying default')
 		configuration_restore( configfile, defaultconfig )
 
+	jsConfigFile = open(configfile)
 	try:
-		jsConfigFile = open(configfile)
 		config=json.load(jsConfigFile)
 	except:
 		printer('Loading/parsing {0}: [FAIL]'.format(configfile),LL_CRITICAL)
