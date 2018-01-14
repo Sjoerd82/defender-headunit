@@ -290,7 +290,8 @@ init_logging_console()
 # Load main configuration
 #
 configuration = configuration_load( CONFIG_FILE, CONFIG_FILE_DEFAULT )
-exit()
+if configuration == None:
+	exit()
 
 #
 # Load operational settings

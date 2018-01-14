@@ -25,32 +25,46 @@ def printer( message, level=20, continuation=False, tag='STTNGS' ):
 # Restore default configuration
 #
 def configuration_restore( configfile, defaultconfig ):
-	if not os.path.exists(configfile) and os.path.exists(defaultconfig):
+	if os.path.exists(defaultconfig):
 		shutil.copy(defaultconfig,configfile)
+		return True
 
 # ********************************************************************************
 # Load JSON configuration
 #
 def configuration_load( configfile, defaultconfig=None ):
 
-	# use the default from the config dir, if not found
+	# keep track if we restored the config file
+	restored = False
+	
+	# use the default from the config dir, in case the configfile is not found (first run)
 	if not os.path.exists(configfile) and os.path.exists(defaultconfig):
 		printer('Configuration not present (first run?); copying default')
-		configuration_restore( configfile, defaultconfig )
+		restored = configuration_restore( configfile, defaultconfig )
+		if not restored:
+			printer('Restoring configuration {0}: [FAIL]'.format(defaultconfig),LL_CRITICAL)
+			return None
 
+	# open configuration file (restored or original) and Try to parse it
 	jsConfigFile = open(configfile)
 	try:
 		config=json.load(jsConfigFile)
 	except:
 		printer('Loading/parsing {0}: [FAIL]'.format(configfile),LL_CRITICAL)
 		printer('Restoring default configuration')
-		configuration_restore( configfile, defaultconfig )
-		jsConfigFile = open(configfile)
-		#config=json.load(jsConfigFile)
-		#return config
-		return None
+		# if we had not previously restored it, try that and parse again
+		if not restored:
+			configuration_restore( configfile, defaultconfig )
+			jsConfigFile = open(configfile)
+			config=json.load(jsConfigFile)
+			return config
+		else:
+			printer('Loading/parsing restored configuration failed!'.format(configfile),LL_CRITICAL)
+			return None
 	
+	# The Try-Except does not always trigger on all Parse fails (true?)
 	# check if loading/parsing failed
+	"""
 	if config == None:
 		# overwrite the faulty config with the default
 		configuration_restore( configfile, defaultconfig )
@@ -59,14 +73,6 @@ def configuration_load( configfile, defaultconfig=None ):
 	else:
 		return config
 	
-	"""
-	try:
-		config=json.load(jsConfigFile)
-		return config
-	except:
-		printer('Loading/parsing {0}: [FAIL]'.format(configfile),LL_CRITICAL)
-		printer('Restoring default configuration')
-		configuration_restore( configfile, defaultconfig )
 	"""
 
 def configuration_save( configfile, configuration ):
