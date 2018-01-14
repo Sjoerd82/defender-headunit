@@ -1,6 +1,11 @@
 
 from hu_utils import *
+
+#file operations:
 import os
+import shutil
+
+#json and pickle:
 import json
 import pickle
 
@@ -24,7 +29,8 @@ def configuration_load( configfile, defaultconfig=None ):
 	#not defaultconfig==None and
 	if not os.path.exists(configfile) and os.path.exists(defaultconfig):
 		printer('Configuration not present (first run?); copying default')
-		os.copy(defaultconfig,configfile)
+		shutil.copyfile(defaultconfig,configfile)
+		shutil.copy(defaultconfig,'/mnt/PIHU_CONFIG/testje.txt')
 
 	try:
 		jsConfigFile = open(configfile)
