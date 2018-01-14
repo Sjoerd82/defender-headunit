@@ -156,7 +156,7 @@ class RemoteControl(dbus.service.Object):
 		print("...released/max. delay reached")
 	
 
-printer('Starting Resistor Network Remote Control')
+printer('Starting Remote Control: Resistor Network')
 
 """
 try:
