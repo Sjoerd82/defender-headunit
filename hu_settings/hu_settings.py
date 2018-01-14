@@ -27,6 +27,7 @@ def printer( message, level=20, continuation=False, tag='STTNGS' ):
 def configuration_restore( configfile, defaultconfig ):
 	if os.path.exists(defaultconfig):
 		shutil.copy(defaultconfig,configfile)
+		printer('COPIED')
 		return True
 
 # ********************************************************************************
@@ -51,13 +52,14 @@ def configuration_load( configfile, defaultconfig=None ):
 		config=json.load(jsConfigFile)
 	except:
 		printer('Loading/parsing {0}: [FAIL]'.format(configfile),LL_CRITICAL)
-		printer('Restoring default configuration')
 		# if we had not previously restored it, try that and parse again
 		if not restored:
+			printer('Restoring default configuration')
 			configuration_restore( configfile, defaultconfig )
-			jsConfigFile = open(configfile)
-			config=json.load(jsConfigFile)
-			return config
+			#jsConfigFile = open(configfile)
+			#config=json.load(jsConfigFile)
+			#return config
+			return None
 		else:
 			printer('Loading/parsing restored configuration failed!'.format(configfile),LL_CRITICAL)
 			return None
