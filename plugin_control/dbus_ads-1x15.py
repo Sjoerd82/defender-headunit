@@ -11,7 +11,7 @@ import gobject
 
 from hu_utils import *
 
-controlName='ads1x15'
+controlName='ad1x15'
 
 #############################
 # Loaded by: remote_dbus.py
@@ -157,6 +157,9 @@ class RemoteControl(dbus.service.Object):
 	
 
 printer('Starting Resistor Network Remote Control')
+RemoteControl(bus_name)
+
+"""
 # Initialize a main loop
 DBusGMainLoop(set_as_default=True)
 loop = gobject.MainLoop()
@@ -184,3 +187,4 @@ except Exception as e:
 finally:
     printer("quitting...")
     loop.quit()
+"""

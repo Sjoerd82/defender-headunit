@@ -379,3 +379,16 @@ logger.warning('Another WARNING', extra={'tag':'test'})
 #dSettings1 = {"source": -1, 'volume': 99, 'mediasource': -1, 'medialabel': ''}	 # No need to save random, we don't want to save that (?)
 #settings_save( sFileSettings, dSettings1 )
 
+
+DBusGMainLoop(set_as_default=True)
+bus = dbus.SystemBus()
+
+# Initialize a main loop
+mainloop = gobject.MainLoop()
+#bus.add_signal_receiver(cb_remote_btn_press, dbus_interface = "com.arctura.remote")
+#bus.add_signal_receiver(cb_mpd_event, dbus_interface = "com.arctura.mpd")
+#bus.add_signal_receiver(cb_udisk_dev_add, signal_name='DeviceAdded', dbus_interface="org.freedesktop.UDisks")
+#bus.add_signal_receiver(cb_udisk_dev_rem, signal_name='DeviceRemoved', dbus_interface="org.freedesktop.UDisks")
+
+mainloop.run()
+
