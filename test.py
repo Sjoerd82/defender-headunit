@@ -92,6 +92,9 @@ def volume_up():
 def volume_down():
 	return None
 
+def cb_remote_btn_press2 ( func ):
+	print "cb_remote_btn_press2 {0}".format(func))
+
 #
 def cb_remote_btn_press ( func ):
 
@@ -445,6 +448,7 @@ except dbus.exceptions.NameExistsException:
 #bus.add_signal_receiver(cb_udisk_dev_rem, signal_name='DeviceRemoved', dbus_interface="org.freedesktop.UDisks")
 
 bus.add_signal_receiver(cb_remote_btn_press, dbus_interface = "com.arctura.remote")
+bus.add_signal_receiver(cb_remote_btn_press2, dbus_interface = "com.arctura.keyboard")
 dbus_ads1x15.RemoteControl(remote_bus_name)
 
 try:
