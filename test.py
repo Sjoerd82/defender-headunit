@@ -406,6 +406,6 @@ mainloop = gobject.MainLoop()
 #bus.add_signal_receiver(cb_mpd_event, dbus_interface = "com.arctura.mpd")
 #bus.add_signal_receiver(cb_udisk_dev_add, signal_name='DeviceAdded', dbus_interface="org.freedesktop.UDisks")
 #bus.add_signal_receiver(cb_udisk_dev_rem, signal_name='DeviceRemoved', dbus_interface="org.freedesktop.UDisks")
-dbus_ads-1x15.RemoteControl(bus_name)
+plugin_control.dbus_ads-1x15.RemoteControl(bus)
 
 mainloop.run()
