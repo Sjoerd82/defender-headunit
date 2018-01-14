@@ -157,6 +157,15 @@ class RemoteControl(dbus.service.Object):
 	
 
 printer('Starting Resistor Network Remote Control')
+
+try:
+    bus_name = dbus.service.BusName("com.arctura.remote",
+                                    bus=dbus.SystemBus(),
+                                    do_not_queue=True)
+except dbus.exceptions.NameExistsException:
+    printer("service is already running")
+    sys.exit(1)
+	
 RemoteControl(bus_name)
 
 """
