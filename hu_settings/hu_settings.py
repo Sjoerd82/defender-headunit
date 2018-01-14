@@ -61,7 +61,8 @@ def configuration_load( configfile, defaultconfig=None ):
 		else:
 			printer('Loading/parsing restored configuration failed!'.format(configfile),LL_CRITICAL)
 			return None
-	
+
+	return config
 	# The Try-Except does not always trigger on all Parse fails (true?)
 	# check if loading/parsing failed
 	"""
