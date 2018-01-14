@@ -128,7 +128,7 @@ class RemoteControl(dbus.service.Object):
 
 	@dbus.service.signal("com.arctura.remote", signature='s')
 	def button_press(self, button):
-		print("Button was pressed")
+		print("Button was pressed: {0}".format(button))
 		
 	def button_down_wait(self):
 	
