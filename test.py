@@ -62,6 +62,13 @@ from hu_logger import *
 from hu_mpd import *
 #from hu_menu import *
 
+# DBUS STUUF,, ALL REQUIRED???
+import dbus, dbus.service, dbus.exceptions
+import sys
+from dbus.mainloop.glib import DBusGMainLoop
+import gobject
+
+
 Sources = SourceController()
 VolPulse = VolumeController('alsa_output.platform-soc_sound.analog-stereo')
 
