@@ -17,7 +17,13 @@ def printer( message, level=20, continuation=False, tag='STTNGS' ):
 # ********************************************************************************
 # Load JSON configuration
 #
-def configuration_load( configfile ):
+def configuration_load( configfile, defaultconfig=None ):
+
+	# use the default from the config dir, if not found
+	#not defaultconfig==None and
+	if not os.path.exists(configfile) and os.path.exists(defaultconfigconfigfile):
+		os.copy(defaultconfig,configfile)
+
 	try:
 		jsConfigFile = open(configfile)
 		config=json.load(jsConfigFile)
