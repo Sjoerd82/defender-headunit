@@ -93,7 +93,7 @@ def volume_down():
 	return None
 
 def cb_remote_btn_press2 ( func ):
-	print "cb_remote_btn_press2 {0}".format(func))
+	print "cb_remote_btn_press2 {0}".format(func)
 
 #
 def cb_remote_btn_press ( func ):
