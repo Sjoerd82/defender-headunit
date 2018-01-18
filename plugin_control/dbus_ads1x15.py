@@ -11,6 +11,8 @@ import gobject
 
 from hu_utils import *
 
+import os
+
 controlName='ad1x15'
 
 #############################
@@ -157,6 +159,11 @@ class RemoteControl(dbus.service.Object):
 	
 
 printer('Starting Remote Control: Resistor Network')
+
+#execute dbus_ads1x15_tsr.py
+os.system('python dbus_ads1x15_tsr.py')
+
+
 
 """
 try:
