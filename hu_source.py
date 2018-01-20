@@ -258,7 +258,7 @@ class SourceController():
 		if not checkResult:
 			self.__printer('PLAY: failed, marking source unavailable, playing next source...',LL_ERROR)
 			self.setAvailableIx(self.iCurrent,False)
-			self.sourceNext()
+			self.next()
 			self.sourcePlay()
 	
 	# execute a stop() for current source
