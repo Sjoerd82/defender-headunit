@@ -312,7 +312,7 @@ def loadSourcePlugins( plugindir ):
 
 def worker( script ):
 	print('Starting Plugin under new thread')
-	os.system('python /mnt/PIHU_APP/defender-headunit/plugin/control/'+script)
+	os.system('python /mnt/PIHU_APP/defender-headunit/plugins/control/'+script)
 
 #********************************************************************************
 #
@@ -391,7 +391,7 @@ myprint('Loading Control Plugins...',tag='SYSTEM')
 from plugin_control import *
 
 # loop through the control plugin dir
-for filename in os.listdir('/mnt/PIHU_APP/defender-headunit/plugin/control/'):
+for filename in os.listdir('/mnt/PIHU_APP/defender-headunit/plugins/control/'):
 		#if filename.startswith('') and
 		if filename.endswith('.py'):
 			print filename
