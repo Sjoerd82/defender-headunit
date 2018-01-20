@@ -144,7 +144,6 @@ class SourceController():
 
 	# overload using decorators?
 	def setAvailable( self, key, value, available ):
-		index = -1 #todo
 		for source in self.lSource:
 			if key in source and source[key] == value and not source['template']:
 				source['available'] = available
@@ -152,7 +151,7 @@ class SourceController():
 					availableText = colorize('[available    ]','light_green')
 				else:
 					availableText = colorize('[not available]','light_red')
-				self.__printer('Source {0} availability set to: {1} - {2}'.format(index,availableText,source['displayname']))
+				self.__printer('Source availability set to: {0} - {1}'.format(availableText,source['displayname']))
 
 	def setAvailableIx( self, index, available ):
 		if self.lSource[index]['template']:
