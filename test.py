@@ -170,11 +170,11 @@ def cb_remote_btn_press ( func ):
 		pa_sfx('error')
 
 def cb_udisk_dev_add( device ):
-	print('[UDISK] Device added: {0}'.format(str(device)))
+	printer('Device added: {0}'.format(str(device)),tag='UDISKS')
 	udisk_details( device, 'A' )
 
 def cb_udisk_dev_rem( device ):
-	print('[UDISK] Device removed: {0}'.format(str(device)))
+	printer('Device removed: {0}'.format(str(device)),tag='UDISKS')
 	udisk_details( device, 'R' )
 
 def udisk_details( device, action ):
@@ -196,35 +196,35 @@ def udisk_details( device, action ):
 	
 	try:
 		DeviceFile = device_props.Get('org.freedesktop.UDisks.Device',"DeviceFile")
-		printer(" .....  DeviceFile: {0}".format(DeviceFile),tag=mytag)
+		printer("   DeviceFile: {0}".format(DeviceFile),tag=mytag)
 		
 	except:
-		printer(" .....  DeviceFile is unset... Aborting...",tag=mytag)
+		printer("   DeviceFile is unset... Aborting...",tag=mytag)
 		return 1
 	
 	# Check if DeviceIsMediaAvailable...
 	try:    
 		is_media_available = device_props.Get('org.freedesktop.UDisks.Device', "DeviceIsMediaAvailable")
 		if is_media_available:
-			printer(" .....  Media available",tag=mytag)
+			printer("   Media available",tag=mytag)
 		else:
-			printer(" .....  Media not available... Aborting...",tag=mytag)
+			printer("   Media not available... Aborting...",tag=mytag)
 			return 1
 	except:
-		printer(" .....  DeviceIsMediaAvailable is not set... Aborting...",tag=mytag)
+		printer("   DeviceIsMediaAvailable is not set... Aborting...",tag=mytag)
 		return 1
 	
 	# Check if it is a Partition...
 	try:
 		is_partition = device_props.Get('org.freedesktop.UDisks.Device', "DeviceIsPartition")
 		if is_partition:
-			printer(" .....  Device is partition",tag=mytag)
+			printer("   Device is partition",tag=mytag)
 	except:
-		printer(" .....  DeviceIsPartition is not set... Aborting...",tag=mytag)
+		printer("   DeviceIsPartition is not set... Aborting...",tag=mytag)
 		return 1
 
 	if not is_partition:
-		printer(" .....  DeviceIsPartition is not set... Aborting...",tag=mytag)
+		printer("   DeviceIsPartition is not set... Aborting...",tag=mytag)
 		return 1
 
 	if action == 'A':
@@ -237,12 +237,12 @@ def udisk_details( device, action ):
 		mountpoint = subprocess.check_output("mount | egrep "+DeviceFile+" | cut -d ' ' -f 3", shell=True).rstrip('\n')
 		if mountpoint != "":
 			sUsbLabel = os.path.basename(mountpoint).rstrip('\n')
-			printer(" .....  Mounted on: {0} (label: {1})".format(mountpoint,sUsbLabel),tag=mytag)
+			printer("   Mounted on: {0} (label: {1})".format(mountpoint,sUsbLabel),tag=mytag)
 			mpc_update(sUsbLabel, True)
 			media_check(sUsbLabel)
 			media_play()
 		else:
-			printer(" .....  No mountpoint found. Stopping.",tag=mytag)
+			printer("   No mountpoint found. Stopping.",tag=mytag)
 		
 	elif action == 'R':
 		# Find out its mountpoint...
@@ -254,7 +254,7 @@ def udisk_details( device, action ):
 		#TODO!
 		
 	else:
-		printer(" .....  ERROR: Invalid action.",tag=mytag)
+		printer("   ERROR: Invalid action.",tag=mytag)
 		pa_sfx('error')
 	
 # Initiate logger.
