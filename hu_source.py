@@ -146,16 +146,13 @@ class SourceController():
 	def setAvailable( self, key, value, available ):
 		index = -1 #todo
 		for source in self.lSource:
-			try:
-				if source[key] == value and not source['template']:
-					source['available'] = available
-					if available:
-						availableText = colorize('[available    ]','light_green')
-					else:
-						availableText = colorize('[not available]','light_red')
-					self.__printer('Source {0} availability set to: {1} - {2}'.format(index,availableText,source['displayname']))
-			except:
-				self.__printer('Key {0} not available for source {1} {2}'.format(key,index,source['displayname']),LL_WARNING)
+			if key in source and source[key] == value and not source['template']:
+				source['available'] = available
+				if available:
+					availableText = colorize('[available    ]','light_green')
+				else:
+					availableText = colorize('[not available]','light_red')
+				self.__printer('Source {0} availability set to: {1} - {2}'.format(index,availableText,source['displayname']))
 
 	def setAvailableIx( self, index, available ):
 		if self.lSource[index]['template']:
