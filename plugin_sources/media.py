@@ -144,6 +144,7 @@ def media_check( label=None ):
 	"""
 
 def media_play():
+	printer('PLAY',tag=sourceName)
 	return True
  
 def media_stop():
