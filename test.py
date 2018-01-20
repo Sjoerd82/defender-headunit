@@ -239,9 +239,10 @@ def udisk_details( device, action ):
 			sUsbLabel = os.path.basename(mountpoint).rstrip('\n')
 			printer(" > Mounted on: {0} (label: {1})".format(mountpoint,sUsbLabel),tag=mytag)
 			mpc_update(sUsbLabel, True)
-			add_a_source(sPluginDirSources, 'media')
+			#add_a_source(sPluginDirSources, 'media')
 			#media_check(sUsbLabel)
 			#media_play()
+			plugin_sources.media.media_add('/media/SJOERD', Sources)
 			printSummary()
 		else:
 			printer(" > No mountpoint found. Stopping.",tag=mytag)
