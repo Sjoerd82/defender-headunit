@@ -63,6 +63,7 @@ from hu_volume import *
 from hu_settings import *
 from hu_logger import *
 from hu_mpd import *
+from hu_udisk import *
 #from hu_menu import *
 
 # DBUS STUUF,, ALL REQUIRED???
@@ -115,6 +116,10 @@ def cb_remote_btn_press ( func ):
 			Sources.sourceStop()
 			Sources.next()
 			Sources.sourcePlay()
+		elif Sources.getAvailableCnt() == 1:
+			print('Only one source availble. Ignoring button.')
+		elif Sources.getAvailableCnt() == 0:
+			print('No available sources.')
 	elif func == 'ATT':
 		print('\033[95m[BUTTON] ATT\033[00m')
 		pa_sfx('button_feedback')
@@ -164,6 +169,14 @@ def cb_remote_btn_press ( func ):
 	else:
 		print('Unknown button function')
 		pa_sfx('error')
+
+def cb_udisk_dev_add( device ):
+	print('[UDISK] Device added: {0}'.format(str(device)))
+	udisk_details( device, 'A' )
+
+def cb_udisk_dev_rem( device ):
+	print('[UDISK] Device removed: {0}'.format(str(device)))
+	udisk_details( device, 'R' )
 
 # Initiate logger.
 def init_logging():
@@ -449,13 +462,12 @@ mainloop = gobject.MainLoop()
 bus = dbus.SystemBus()
 
 
-#bus.add_signal_receiver(cb_remote_btn_press, dbus_interface = "com.arctura.remote")
-#bus.add_signal_receiver(cb_mpd_event, dbus_interface = "com.arctura.mpd")
-#bus.add_signal_receiver(cb_udisk_dev_add, signal_name='DeviceAdded', dbus_interface="org.freedesktop.UDisks")
-#bus.add_signal_receiver(cb_udisk_dev_rem, signal_name='DeviceRemoved', dbus_interface="org.freedesktop.UDisks")
 
 bus.add_signal_receiver(cb_remote_btn_press, dbus_interface = "com.arctura.remote")
-bus.add_signal_receiver(cb_remote_btn_press2, dbus_interface = "com.arctura.keyboard")
+#bus.add_signal_receiver(cb_mpd_event, dbus_interface = "com.arctura.mpd")
+#bus.add_signal_receiver(cb_remote_btn_press2, dbus_interface = "com.arctura.keyboard")
+bus.add_signal_receiver(cb_udisk_dev_add, signal_name='DeviceAdded', dbus_interface="org.freedesktop.UDisks")
+bus.add_signal_receiver(cb_udisk_dev_rem, signal_name='DeviceRemoved', dbus_interface="org.freedesktop.UDisks")
 
 try:
 	mainloop.run()
