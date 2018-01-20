@@ -1,7 +1,7 @@
 # MISC (self.__printer, colorize)
 from hu_utils import *
 
-def udisk_details( device, action ):
+def udisk_details( device, action, bus ):
 	device_obj = bus.get_object("org.freedesktop.UDisks", device)
 	device_props = dbus.Interface(device_obj, dbus.PROPERTIES_IFACE)
 	#
