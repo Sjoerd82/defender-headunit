@@ -53,6 +53,9 @@ logger = None
 #dynamic module loading
 import sys, inspect
 
+#starting plugins in separate thread
+import threading
+
 # support modules
 from hu_utils import *
 from hu_source import SourceController
