@@ -95,7 +95,7 @@ class SourceController():
 
 			# If no current source, we'll loop through the sources until we find one
 			if self.iCurrent == None:
-				self.__printer('NEXT: No active source. Searching for first available ...','DEBUG')
+				self.__printer('NEXT: No active source. Searching for first available ...',LL_DEBUG)
 				i=0
 				for source in self.lSource:
 					if source['available']:
