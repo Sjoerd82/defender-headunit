@@ -192,38 +192,39 @@ def udisk_details( device, action ):
 	
 	DeviceFile = ""
 	mountpoint = ""
+	mytag = ".UDISKS"
 	
 	try:
 		DeviceFile = device_props.Get('org.freedesktop.UDisks.Device',"DeviceFile")
-		print(" .....  DeviceFile: {0}".format(DeviceFile))
+		printer(" .....  DeviceFile: {0}".format(DeviceFile),tag=mytag)
 		
 	except:
-		print(" .....  DeviceFile is unset... Aborting...")
+		printer(" .....  DeviceFile is unset... Aborting...",tag=mytag)
 		return 1
 	
 	# Check if DeviceIsMediaAvailable...
 	try:    
 		is_media_available = device_props.Get('org.freedesktop.UDisks.Device', "DeviceIsMediaAvailable")
 		if is_media_available:
-			print(" .....  Media available")
+			printer(" .....  Media available",tag=mytag)
 		else:
-			print(" .....  Media not available... Aborting...")
+			printer(" .....  Media not available... Aborting...",tag=mytag)
 			return 1
 	except:
-		print(" .....  DeviceIsMediaAvailable is not set... Aborting...")
+		printer(" .....  DeviceIsMediaAvailable is not set... Aborting...",tag=mytag)
 		return 1
 	
 	# Check if it is a Partition...
 	try:
 		is_partition = device_props.Get('org.freedesktop.UDisks.Device', "DeviceIsPartition")
 		if is_partition:
-			print(" .....  Device is partition")
+			printer(" .....  Device is partition",tag=mytag)
 	except:
-		print(" .....  DeviceIsPartition is not set... Aborting...")
+		printer(" .....  DeviceIsPartition is not set... Aborting...",tag=mytag)
 		return 1
 
 	if not is_partition:
-		print(" .....  DeviceIsPartition is not set... Aborting...")
+		printer(" .....  DeviceIsPartition is not set... Aborting...",tag=mytag)
 		return 1
 
 	if action == 'A':
@@ -236,12 +237,12 @@ def udisk_details( device, action ):
 		mountpoint = subprocess.check_output("mount | egrep "+DeviceFile+" | cut -d ' ' -f 3", shell=True).rstrip('\n')
 		if mountpoint != "":
 			sUsbLabel = os.path.basename(mountpoint).rstrip('\n')
-			print(" .....  Mounted on: {0} (label: {1})".format(mountpoint,sUsbLabel))
+			printer(" .....  Mounted on: {0} (label: {1})".format(mountpoint,sUsbLabel),tag=mytag)
 			mpc_update(sUsbLabel, True)
 			media_check(sUsbLabel)
 			media_play()
 		else:
-			print(" .....  No mountpoint found. Stopping.")
+			printer(" .....  No mountpoint found. Stopping.",tag=mytag)
 		
 	elif action == 'R':
 		# Find out its mountpoint...
@@ -253,7 +254,7 @@ def udisk_details( device, action ):
 		#TODO!
 		
 	else:
-		print(" .....  ERROR: Invalid action.")
+		printer(" .....  ERROR: Invalid action.",tag=mytag)
 		pa_sfx('error')
 	
 # Initiate logger.
