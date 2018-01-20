@@ -56,13 +56,12 @@ def media_check( label=None ):
 	label_found = False
 	for mountpoint in arMedia:
 		sUsbLabel = os.path.basename(mountpoint).rstrip('\n')
-		print sUsbLabel
 		if sUsbLabel == label:
 			label_found = True
 			break
 
 	# Requested label is not mounted
-	if label_found == False:
+	if not label_found:
 		print(' .....  label {0} is not mounted.'.format(label))
 		return False
 	

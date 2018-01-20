@@ -242,7 +242,7 @@ def udisk_details( device, action ):
 			#add_a_source(sPluginDirSources, 'media')
 			#media_check(sUsbLabel)
 			#media_play()
-			plugin_sources.media.media_add(mountpoint, Sources)
+			plugin_sources.media.media_add(sUsbLabel, Sources)
 			plugin_sources.media.media_check(mountpoint)
 			printSummary()
 		else:
