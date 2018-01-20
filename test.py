@@ -113,8 +113,8 @@ def cb_remote_btn_press ( func ):
 		# if more than one source available...
 		if Sources.getAvailableCnt() > 1:
 			Sources.sourceStop()
-			Sources.sourceNext()
-			Sources.sourcePlay()
+			#Sources.sourceNext()
+			#Sources.sourcePlay()
 	elif func == 'ATT':
 		print('\033[95m[BUTTON] ATT\033[00m')
 		pa_sfx('button_feedback')
@@ -398,12 +398,10 @@ threads = []
 for filename in os.listdir('/mnt/PIHU_APP/defender-headunit/plugins/control/'):
 		#if filename.startswith('') and
 		if filename.endswith('.py'):
-			print filename
 			t = threading.Thread(target=worker, args=(filename,))
 			t.setDaemon(True)
 			threads.append(t)
 			t.start()
-			#worker(filename)
 
 #
 # load other plugins
