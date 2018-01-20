@@ -160,11 +160,6 @@ class RemoteControl(dbus.service.Object):
 
 printer('Starting Remote Control: Resistor Network')
 
-#execute dbus_ads1x15_tsr.py
-os.system('python dbus_ads1x15_tsr.py')
-
-
-
 """
 try:
     bus_name = dbus.service.BusName("com.arctura.remote",
