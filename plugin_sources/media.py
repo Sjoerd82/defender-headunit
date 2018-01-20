@@ -144,7 +144,67 @@ def media_check( label=None ):
 	"""
 
 def media_play():
-	printer('PLAY',tag=sourceName)
+	printer('Play (MPD)',tag=sourceName)
+
+	#debug/test:
+	sUsbLabel = "SJOERD"
+	
+	"""
+	global dSettings
+	global arMediaWithMusic
+	global Sources
+
+	if not mySources.getAvailable('name','media'):
+		print('Aborting playback, trying next source.')
+		pa_sfx('error')
+		#source_next()
+		Sources.sourceNext()
+		source_play()
+		
+	else:
+	"""
+	print(' ... Emptying playlist')
+	call(["mpc", "-q", "stop"])
+	call(["mpc", "-q", "clear"])
+	#todo: how about cropping, populating, and removing the first? item .. for faster continuity???
+
+#	sUsbLabel = os.path.basename(arMediaWithMusic[dSettings['mediasource']])
+#	dSettings['medialabel'] = sUsbLabel
+
+	print(' ... Populating playlist, media: {0}'.format(sUsbLabel))
+	mpc_populate_playlist(sUsbLabel)
+
+	print(' ... Checking if playlist is populated')
+	task = subprocess.Popen("mpc playlist | wc -l", shell=True, stdout=subprocess.PIPE)
+	mpcOut = task.stdout.read()
+	assert task.wait() == 0
+	
+	if mpcOut.rstrip('\n') == "0":
+		print(' ... . Nothing in the playlist, marking source unavailable.')
+		pa_sfx('error')
+		Sources.setAvailable('label',sUsbLabel,False)
+		#source_next()
+		Sources.sourceNext()
+		source_play()
+	else:
+		print(' ... . Found {0:s} tracks'.format(mpcOut.rstrip('\n')))
+
+		# continue where left
+		playslist_pos = mpc_lkp(sUsbLabel)
+
+		print(' ...  Starting playback')
+		call(["mpc", "-q" , "stop"])
+		call(["mpc", "-q" , "play", str(playslist_pos['pos'])])
+		if playslist_pos['time'] > 0:
+			print(' ...  Seeking to {0} sec.'.format(playslist_pos['time']))
+			call(["mpc", "-q" , "seek", str(playslist_pos['time'])])
+
+		# Load playlist directories, to enable folder up/down browsing.
+		#mpc_get_PlaylistDirs()
+		# Run in the background... it seems the thread stays active relatively long, even after the playlistdir array has already been filled.
+#		mpc_get_PlaylistDirs_thread = threading.Thread(target=mpc_get_PlaylistDirs)
+#		mpc_get_PlaylistDirs_thread.start()
+
 	return True
  
 def media_stop():
