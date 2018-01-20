@@ -6,6 +6,9 @@ from hu_utils import *
 from subprocess import call
 from mpd import MPDClient
 
+#TODO
+sDirSave = "/mnt/PIHU_CONFIG"
+
 class mpdController():
 
 	mpdc = MPDClient()
