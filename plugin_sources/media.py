@@ -41,7 +41,7 @@ def media_check( label=None ):
 	arMedia = grepOut.split()
 
 	# Return True/False for general check (when label is None)
-	if label == None
+	if label == None:
 		if len(arMedia) > 0:
 			print(' .....  /media has mounted filesystems.')
 			return True
