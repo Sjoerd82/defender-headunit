@@ -313,8 +313,8 @@ def loadSourcePlugins( plugindir ):
 					indexAdded = Sources.getIndex('name',config['name'], template=None)
 					Sources.sourceInit(indexAdded)
 
-#def worker( script ):
-def worker():
+def worker( script ):
+	#def worker():
 	print('Starting Plugin under new thread')
 	os.system('python /mnt/PIHU_APP/defender-headunit/plugins/control/dbus_ads1x15.py')
 
@@ -400,8 +400,8 @@ for filename in os.listdir('/mnt/PIHU_APP/defender-headunit/plugins/control/'):
 		#if filename.startswith('') and
 		if filename.endswith('.py'):
 			print filename
-			#t = threading.Thread(target=worker(filename))
-			t = threading.Thread(target=worker)
+			t = threading.Thread(target=worker(filename))
+			#t = threading.Thread(target=worker)
 			threads.append(t)
 			t.start()
 			#worker(filename)
