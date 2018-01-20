@@ -1,9 +1,10 @@
 # ********************************************************************************
 # Wrapper for python-mpd2
 #
+import os
+from subprocess import call
 
 from hu_utils import *
-from subprocess import call
 from mpd import MPDClient
 
 #TODO
