@@ -113,8 +113,8 @@ def cb_remote_btn_press ( func ):
 		# if more than one source available...
 		if Sources.getAvailableCnt() > 1:
 			Sources.sourceStop()
-			#Sources.sourceNext()
-			#Sources.sourcePlay()
+			Sources.next()
+			Sources.sourcePlay()
 	elif func == 'ATT':
 		print('\033[95m[BUTTON] ATT\033[00m')
 		pa_sfx('button_feedback')
@@ -448,15 +448,6 @@ DBusGMainLoop(set_as_default=True)
 mainloop = gobject.MainLoop()
 bus = dbus.SystemBus()
 
-"""
-try:
-	remote_bus_name = dbus.service.BusName("com.arctura.remote",
-                                           bus=dbus.SystemBus(),
-                                           do_not_queue=True)
-except dbus.exceptions.NameExistsException:
-	printer("service is already running")
-	sys.exit(1)
-"""
 
 #bus.add_signal_receiver(cb_remote_btn_press, dbus_interface = "com.arctura.remote")
 #bus.add_signal_receiver(cb_mpd_event, dbus_interface = "com.arctura.mpd")
@@ -466,10 +457,10 @@ except dbus.exceptions.NameExistsException:
 bus.add_signal_receiver(cb_remote_btn_press, dbus_interface = "com.arctura.remote")
 bus.add_signal_receiver(cb_remote_btn_press2, dbus_interface = "com.arctura.keyboard")
 
-#This is interfering! :(
-#dbus_ads1x15.RemoteControl(remote_bus_name)
-
 try:
 	mainloop.run()
 finally:
 	mainloop.quit()
+
+
+

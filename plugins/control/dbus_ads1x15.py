@@ -117,45 +117,45 @@ class RemoteControl(dbus.service.Object):
 				self.button_down_wait()
 
 			elif self.BUTTON10_LO <= value_0 <= self.BUTTON10_HI:
-				print("Waiting for button to be pressed long enough")
+				printer("Waiting for button to be pressed long enough")
 				time.sleep(3)
 				value_0 = adc.read_adc(0, gain=self.GAIN)
 				if self.BUTTON10_LO <= value_0 <= self.BUTTON10_HI:
-					print("Long press, really shutting down...")
+					printer("Long press, really shutting down...")
 					self.button_press('OFF')
 				else:
-					print("Not pressed long enough, not shutting down")
+					printer("Not pressed long enough, not shutting down")
 				
 			time.sleep(0.1)		
 
 	@dbus.service.signal("com.arctura.remote", signature='s')
 	def button_press(self, button):
-		print("Button was pressed: {0}".format(button))
+		printer("Button was pressed: {0}".format(button))
 		
 	def button_down_wait(self):
 	
 		adc = Adafruit_ADS1x15.ADS1015()
 		
-		print("Waiting for button to be released...")
+		printer("Waiting for button to be released...")
 		value_0 = adc.read_adc(0)
 		while value_0 > self.BUTTON_LO:
 			value_0 = adc.read_adc(0)
 			time.sleep(0.1)
-		print("...released")
+		printer("...released")
 		
 	def button_down_delay(self):
 	
 		adc = Adafruit_ADS1x15.ADS1015()
 		press_count = 0
 		
-		print("Waiting for button to be released/or max. press count reached")
+		printer("Waiting for button to be released/or max. press count reached")
 		value_0 = adc.read_adc(0)
 		while value_0 > self.BUTTON_LO and press_count < 2:
 			press_count+=1
-			print(press_count)
+			printer(press_count)
 			value_0 = adc.read_adc(0)
 			time.sleep(0.1)
-		print("...released/max. delay reached")
+		printer("...released/max. delay reached")
 	
 
 printer('Starting Remote Control: Resistor Network')
