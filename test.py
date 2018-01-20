@@ -239,19 +239,21 @@ def udisk_details( device, action ):
 			sUsbLabel = os.path.basename(mountpoint).rstrip('\n')
 			printer(" > Mounted on: {0} (label: {1})".format(mountpoint,sUsbLabel),tag=mytag)
 			mpc_update(sUsbLabel, True)
-			media_check(sUsbLabel)
-			media_play()
+			add_a_source(sPluginDirSources, 'media')
+			#media_check(sUsbLabel)
+			#media_play()
 		else:
 			printer(" > No mountpoint found. Stopping.",tag=mytag)
 		
 	elif action == 'R':
 		# Find out its mountpoint...
 		#We cannot retrieve many details from dbus about a removed drive, other than the DeviceFile (which at this point is no longer available).
-		media_check( None )
+# ->	media_check( None )
 		# Determine if we were playing this media (source: usb=1)
 		#if dSettings['source'] == 1 and
 		
 		#TODO!
+		print('todo!')
 		
 	else:
 		printer(" > ERROR: Invalid action.",tag=mytag)
@@ -361,6 +363,39 @@ def printSummary():
 		i += 1
 	logger.info('----------------------------------------------------------------------', extra={'tag':''})
 
+def add_a_source( plugindir, sourcePluginName ):
+	jsConfigFile = open(plugindir+'//'+sourcePluginName+'.json')	#TODO make more stable, given trailing // or not.. also add try/ or test for folder/file existence
+	config=json.load(jsConfigFile)
+	sourceModule = sys.modules['plugin_sources.'+sourcePluginName]
+	for execFunction in ('sourceInit','sourceCheck','sourcePlay','sourceStop'):
+		if execFunction in config:
+			#overwrite string with reference to module
+			config[execFunction][0] = sys.modules['plugin_sources.'+sourcePluginName]
+	# register the source
+	isAdded = Sources.add(config)
+	# check if the source has a configuration
+	if 'defaultconfig' in config:
+		# check if configuration is present in the main configuration file
+		if not sourcePluginName in configuration['source_config']:
+			# insert defaultconfig
+			configuration['source_config'][sourcePluginName] = config['defaultconfig']
+			configuration_save( CONFIG_FILE, configuration )
+	# check if the source has menu items
+	if 'menuitems' in config:
+		for menuitem in config['menuitems']:
+			# do we have a sub menu that needs to be populated?
+			if 'sub' in menuitem:
+				if menuitem['sub'].startswith('!'):
+					func = menuitem['sub'].lstrip('!')
+					menuitem['sub'] = getattr(sourceModule,func)()
+					#menuitem['uuid']
+			#TODO: re-enable
+			#huMenu.add( menuitem )
+	# init source, if successfully added
+	if isAdded:
+		indexAdded = Sources.getIndex('name',config['name'], template=None)
+		Sources.sourceInit(indexAdded)
+
 # Load Source Plugins
 def loadSourcePlugins( plugindir ):
 	global Sources
@@ -373,37 +408,7 @@ def loadSourcePlugins( plugindir ):
 		if k[0:15] == 'plugin_sources.':
 			sourcePluginName = k[15:]
 			if not str(v).find(lookforthingy) == -1:
-				jsConfigFile = open(plugindir+'//'+sourcePluginName+'.json')	#TODO make more stable, given trailing // or not.. also add try/ or test for folder/file existence
-				config=json.load(jsConfigFile)
-				sourceModule = sys.modules['plugin_sources.'+sourcePluginName]
-				for execFunction in ('sourceInit','sourceCheck','sourcePlay','sourceStop'):
-					if execFunction in config:
-						#overwrite string with reference to module
-						config[execFunction][0] = sys.modules['plugin_sources.'+sourcePluginName]
-				# register the source
-				isAdded = Sources.add(config)
-				# check if the source has a configuration
-				if 'defaultconfig' in config:
-					# check if configuration is present in the main configuration file
-					if not sourcePluginName in configuration['source_config']:
-						# insert defaultconfig
-						configuration['source_config'][sourcePluginName] = config['defaultconfig']
-						configuration_save( CONFIG_FILE, configuration )
-				# check if the source has menu items
-				if 'menuitems' in config:
-					for menuitem in config['menuitems']:
-						# do we have a sub menu that needs to be populated?
-						if 'sub' in menuitem:
-							if menuitem['sub'].startswith('!'):
-								func = menuitem['sub'].lstrip('!')
-								menuitem['sub'] = getattr(sourceModule,func)()
-								#menuitem['uuid']
-						#TODO: re-enable
-						#huMenu.add( menuitem )
-				# init source, if successfully added
-				if isAdded:
-					indexAdded = Sources.getIndex('name',config['name'], template=None)
-					Sources.sourceInit(indexAdded)
+				add_a_source(plugindir, sourcePluginName)
 
 def worker( script ):
 	print('Starting Plugin under new thread')
