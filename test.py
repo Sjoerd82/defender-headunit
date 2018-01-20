@@ -242,6 +242,7 @@ def udisk_details( device, action ):
 			add_a_source(sPluginDirSources, 'media')
 			#media_check(sUsbLabel)
 			#media_play()
+			printSummary()
 		else:
 			printer(" > No mountpoint found. Stopping.",tag=mytag)
 		
