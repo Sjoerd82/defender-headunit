@@ -2,6 +2,7 @@
 # Wrapper for python-mpd2
 #
 
+from hu_utils import *
 from mpd import MPDClient
 
 class mpdController():
