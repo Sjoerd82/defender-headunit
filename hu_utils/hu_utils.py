@@ -26,3 +26,26 @@ def myprint( message, level=LL_INFO, tag=""):
 def colorize ( string, foreground, background='black' ):
 	colorized = fg(foreground) + bg(background) + string + attr('reset')
 	return colorized
+
+def pa_sfx( sfx ):
+
+	#global sPaSfxSink
+	#global bBeep
+	sPaSfxSink = "alsa_output.platform-soc_sound.analog-stereo"
+	bBeep = False
+	
+	if bBeep:
+		beep()
+	else:
+		if sfx == 'startup':
+			call(["pactl", "play-sample", "startup", sPaSfxSink])
+		elif sfx == 'button_feedback':
+			call(["pactl", "play-sample", "beep_60", sPaSfxSink])
+		elif sfx == 'error':
+			call(["pactl", "play-sample", "error", sPaSfxSink])
+		elif sfx == 'mpd_update_db':
+			call(["pactl", "play-sample", "beep_60_70", sPaSfxSink])
+		elif sfx == 'bt':
+			call(["pactl", "play-sample", "bt", sPaSfxSink])
+		elif sfx == 'reset_shuffle':
+			call(["pactl", "play-sample", "beep_60_x2", sPaSfxSink])

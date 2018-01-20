@@ -88,7 +88,7 @@ def mpc_random( state ):
 	# check sound
 	if not (dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 5 or dSettings['source'] == 6):
 		print('[MPC] Random: invalid source... aborting...')
-		pa_sfx(LL_ERROR)
+		pa_sfx('error')
 		return 1
 	
 	# on
@@ -186,7 +186,7 @@ def mpc_prev_folder_pos():
 		# I assume we past the beginning of the list...
 		print(' ...  ERROR. Debug info = {0}'.format(len(arMpcPlaylistDirs)))
 		iNextPos = arMpcPlaylistDirs[len(arMpcPlaylistDirs)][0]
-		pa_sfx(LL_ERROR)
+		pa_sfx('error')
 
 	return iNextPos
 
