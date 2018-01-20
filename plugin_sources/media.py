@@ -1,6 +1,8 @@
 
-from hu_utils import *
+import os
 import subprocess
+
+from hu_utils import *
 
 # Logging
 sourceName='media'
