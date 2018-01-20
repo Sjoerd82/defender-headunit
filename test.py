@@ -310,6 +310,9 @@ def loadSourcePlugins( plugindir ):
 					indexAdded = Sources.getIndex('name',config['name'], template=None)
 					Sources.sourceInit(indexAdded)
 
+def worker( script ):
+	print('Starting Plugin under new thread')
+	os.system('python /mnt/PIHU_APP/defender-headunit/plugin/control/'+script)
 
 #********************************************************************************
 #
@@ -386,6 +389,17 @@ loadSourcePlugins(sPluginDirSources)
 #
 myprint('Loading Control Plugins...',tag='SYSTEM')
 from plugin_control import *
+
+# loop through the control plugin dir
+for filename in os.listdir('/mnt/PIHU_APP/defender-headunit/plugin/control/'):
+		#if filename.startswith('') and
+		if filename.endswith('.py'):
+			print filename
+			threads = []
+			t = threading.Thread(target=worker(filename))
+			threads.append(t)
+			t.start()
+			#worker(filename)
 
 #
 # load other plugins
