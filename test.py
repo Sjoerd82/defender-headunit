@@ -399,8 +399,8 @@ for filename in os.listdir('/mnt/PIHU_APP/defender-headunit/plugins/control/'):
 		#if filename.startswith('') and
 		if filename.endswith('.py'):
 			print filename
-			t = threading.Thread(target=worker, target=daemon, arg=(filename,))
-			#t = threading.Thread(target=worker)
+			t = threading.Thread(target=worker, arg=(filename,))
+			t.setDaemon(True)
 			threads.append(t)
 			t.start()
 			#worker(filename)
