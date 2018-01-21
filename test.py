@@ -61,15 +61,10 @@ from hu_logger import *
 import argparse
 
 parser = argparse.ArgumentParser(description='Uhmmmsssszzz...')
-parser.add_argument('--loglevel', action='store', default=LL_INFO, type=int, choices=[LL_DEBUG, LL_INFO, LL_CRITICAL], help="log level (0-99)", metavar=LL_INFO)
+parser.add_argument('--loglevel', action='store', default=LL_INFO, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)
 args = parser.parse_args()
 
-#print args
-#Namespace(debuglevel=20)
-
-print args.loglevel
-log_level = args.loglevel
-print log_level
+arg_loglevel = args.loglevel
 
 #********************************************************************************
 #
@@ -322,7 +317,7 @@ def init_logging_c():
 
 	# create console handler
 	ch = logging.StreamHandler()
-	ch.setLevel(logging.INFO)
+	ch.setLevel(arg_loglevel)
 
 	# create formatters
 	fmtr_ch = ColoredFormatter("%(tag)s%(message)s")
