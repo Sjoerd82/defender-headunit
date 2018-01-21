@@ -371,7 +371,7 @@ def init_load_config():
 	else:
 		printer('Directory configuration missing!!', level=LL_CRITICAL)
 
-	if files in configuration:
+	if 'files' in configuration:
 		if 'log' in configuration['files']:
 			pass
 		else:
