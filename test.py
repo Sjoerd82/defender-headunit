@@ -384,7 +384,7 @@ def init_load_config():
 
 	def test_config( key, dict, descr="" ):
 		if key in dict:
-			printer('{0} {1}:     {2}'.format(key,descr,dict[key]), level=LL_DEBUG, tag="CONFIG")
+			printer('{0:20}:     {1}'.format(key+' '+descr,dict[key]), level=LL_DEBUG, tag="CONFIG")
 		else:
 			printer('{0} {1} missing in configuration!!'.format(key,descr), level=LL_CRITICAL, tag="CONFIG")
 	
@@ -449,7 +449,12 @@ def printSummary():
 	logger.info('----------------------------------------------------------------------', extra={'tag':''})
 
 def add_a_source( plugindir, sourcePluginName ):
-	jsConfigFile = open(plugindir+'//'+sourcePluginName+'.json')	#TODO make more stable, given trailing // or not.. also add try/ or test for folder/file existence
+	configFileName = os.path.join(plugindir,sourcePluginName+'.json')
+	if not os.path.exists( configFileName )
+		printer('Configuration not found: {0}'.format(configFileName))
+		return False
+		
+	jsConfigFile = open( configFileName )
 	config=json.load(jsConfigFile)
 	sourceModule = sys.modules['sources.'+sourcePluginName]
 	for execFunction in ('sourceInit','sourceCheck','sourcePlay','sourceStop'):
@@ -634,9 +639,9 @@ bus = dbus.SystemBus()
 
 
 
-bus.add_signal_receiver(cb_remote_btn_press, dbus_interface = "com.arctura.remote")
 #bus.add_signal_receiver(cb_mpd_event, dbus_interface = "com.arctura.mpd")
-#bus.add_signal_receiver(cb_remote_btn_press2, dbus_interface = "com.arctura.keyboard")
+bus.add_signal_receiver(cb_remote_btn_press, dbus_interface = "com.arctura.remote")
+bus.add_signal_receiver(cb_remote_btn_press2, dbus_interface = "com.arctura.keyboard")
 bus.add_signal_receiver(cb_udisk_dev_add, signal_name='DeviceAdded', dbus_interface="org.freedesktop.UDisks")
 bus.add_signal_receiver(cb_udisk_dev_rem, signal_name='DeviceRemoved', dbus_interface="org.freedesktop.UDisks")
 
