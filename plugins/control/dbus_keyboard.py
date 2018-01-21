@@ -78,7 +78,7 @@ try:
     # Create our initial objects
 	# load remote.py
     #from remote import RemoteControl
-    RemoteControl(bus_name)
+    rc_Keyboard(bus_name)
     loop.run()
 except KeyboardInterrupt:
     printer("keyboard interrupt received")
