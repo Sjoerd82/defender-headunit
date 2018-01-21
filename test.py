@@ -450,7 +450,7 @@ def printSummary():
 
 def add_a_source( plugindir, sourcePluginName ):
 	configFileName = os.path.join(plugindir,sourcePluginName+'.json')
-	if not os.path.exists( configFileName )
+	if not os.path.exists( configFileName ):
 		printer('Configuration not found: {0}'.format(configFileName))
 		return False
 		
