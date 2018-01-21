@@ -32,13 +32,16 @@
 #
 # Automatically loaded:
 #
-# ./plugin_sources/* 	Source plugins
+# ./sources/* 			Source plugins
 # ./plugin_control/*	Controller plugins
 # ./plugin_other/*		Other plugins
 #
 # ./hu_utils.py			Misc. handy functions
 # ./hu_volume.py		Volume control
 # ./hu_....py
+
+#parse command line arguments
+import argparse
 
 #load json source configuration
 import json
@@ -485,6 +488,15 @@ def worker( script ):
 #
 # Initialization
 #
+
+#
+# Parse command line arguments
+#
+#
+parser = argparse.ArgumentParser(description='Uhmmmsssszzz...')
+parser.add_argument('--debuglevel', action='store', default=LL_INFO, type=int, choices=[LL_DEBUG, LL_INFO, LL_CRITICAL], help="log level", metavar=LL_INFO)
+args = parser.parse_args()
+print args
 
 #
 # Start logging to console
