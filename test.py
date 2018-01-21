@@ -42,6 +42,16 @@
 
 #********************************************************************************
 #
+# Logging
+#
+import logging
+import logging.config
+import datetime
+import os
+logger = None
+
+#********************************************************************************
+#
 # Parse command line arguments
 #
 #
@@ -56,8 +66,8 @@ args = parser.parse_args()
 #Namespace(debuglevel=20)
 
 print args.integers
-LOG_LEVEL = args.integers
-print LOG_LEVEL
+log_level = args.integers
+print log_level
 
 #********************************************************************************
 #
@@ -67,12 +77,6 @@ print LOG_LEVEL
 #load json source configuration
 import json
 
-#logging
-import logging
-import logging.config
-import datetime
-import os
-logger = None
 
 #dynamic module loading
 import sys, inspect
