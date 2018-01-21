@@ -367,6 +367,7 @@ def init_load_config():
 	# Print summary of loaded config TODO: output level = debug
 	if 'directories' in configuration:
 		test_config('log', configuration['directories'])
+		test_config('mypr0n', configuration['directories'])
 		#if key in dict:
 		#	printer('Log dir:     {0}'.format(configuration['directories']['log']))
 		#else:
@@ -483,8 +484,8 @@ def loadSourcePlugins( plugindir ):
 	lookforthingy = plugindir
 	
 	for k, v in sys.modules.iteritems():
-		if k[0:15] == 'plugin_sources.':
-			sourcePluginName = k[15:]
+		if k[0:8] == 'sources.':
+			sourcePluginName = k[8:]
 			if not str(v).find(lookforthingy) == -1:
 				add_a_source(plugindir, sourcePluginName)
 
