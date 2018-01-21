@@ -46,9 +46,11 @@
 #
 import logging
 import logging.config
+#from logging import Formatter
 import datetime
 import os
 logger = None
+from hu_logger import *
 
 #********************************************************************************
 #
@@ -89,7 +91,6 @@ from hu_utils import *
 from hu_source import SourceController
 from hu_volume import *
 from hu_settings import *
-from hu_logger import *
 from hu_mpd import *
 #from hu_menu import *
 
