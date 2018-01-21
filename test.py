@@ -358,24 +358,16 @@ def init_load_config():
 	if configuration == None:
 		exit()
 
-	def test_config( key, dict ):
+	def test_config( key, dict, descr="" ):
 		if key in dict:
-			printer('{0}:     {1}'.format(key,dict[key]))
+			printer('{0} {1]:     {2}'.format(key,descr,dict[key]), level=LL_DEBUG, tag="CONFIG")
 		else:
-			printer('{0} missing in configuration!!'.format(key), level=LL_CRITICAL)
+			printer('{0} {1} missing in configuration!!'.format(key,descr), level=LL_CRITICAL, tag="CONFIG")
 	
 	# Print summary of loaded config TODO: output level = debug
 	if 'directories' in configuration:
-		test_config('log', configuration['directories'])
-		test_config('mypr0n', configuration['directories'])
-		#if key in dict:
-		#	printer('Log dir:     {0}'.format(configuration['directories']['log']))
-		#else:
-		#	printer('Log dir missing in configuration!!', level=LL_CRITICAL)
-		if 'plugin-sources' in configuration['directories']:
-			printer('Sources dir: {0}'.format(configuration['directories']['plugin-sources']))
-		else:
-			printer('Plugin-sources directory missing in configuration!!', level=LL_CRITICAL)
+		test_config('log', configuration['directories'], "directory")
+		test_config('config', configuration['directories'], "directory")
 	else:
 		printer('Directory configuration missing!!', level=LL_CRITICAL)
 
@@ -384,11 +376,7 @@ def init_load_config():
 			pass
 		else:
 			printer('Log file missing in configuration!!', level=LL_CRITICAL)
-		
-		if 'settings' in configuration['files']:
-			printer('Settings:    {0}'.format(configuration['files']['settings']))
-		else:
-			printer('Settings file missing in configuration!!', level=LL_CRITICAL)
+		test_config('settings', configuration['files'], "file")		
 
 	return configuration
 
@@ -443,7 +431,7 @@ def add_a_source( plugindir, sourcePluginName ):
 	for execFunction in ('sourceInit','sourceCheck','sourcePlay','sourceStop'):
 		if execFunction in config:
 			#overwrite string with reference to module
-			config[execFunction][0] = sys.modules['plugin_sources.'+sourcePluginName]
+			config[execFunction][0] = sys.modules['sources.'+sourcePluginName]
 	# register the source
 	isAdded = Sources.add(config)
 	# check if the source has a configuration
