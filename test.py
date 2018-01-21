@@ -352,18 +352,25 @@ def init_logging_f( logdir, logfile, runcount ):
 				os.remove(os.path.join(logdir, filename))
 				logger.debug('Removing old log file: {0}'.format(filename),extra={'tag':'log'})
 
+
 def init_load_config():
 	configuration = configuration_load( CONFIG_FILE, CONFIG_FILE_DEFAULT )
 	if configuration == None:
 		exit()
 
+	def test_config( key, dict ):
+		if key in dict:
+			printer('{0}:     {1}'.format(key,dict[key]))
+		else:
+			printer('{0} missing in configuration!!'.format(key), level=LL_CRITICAL)
+	
 	# Print summary of loaded config TODO: output level = debug
 	if 'directories' in configuration:
-		if 'log' in configuration['directories']:
-			printer('Log dir:     {0}'.format(configuration['directories']['log']))
-		else:
-			printer('Log dir missing in configuration!!', level=LL_CRITICAL)
-			
+		test_config('log', configuration['directories'])
+		#if key in dict:
+		#	printer('Log dir:     {0}'.format(configuration['directories']['log']))
+		#else:
+		#	printer('Log dir missing in configuration!!', level=LL_CRITICAL)
 		if 'plugin-sources' in configuration['directories']:
 			printer('Sources dir: {0}'.format(configuration['directories']['plugin-sources']))
 		else:
@@ -431,7 +438,7 @@ def printSummary():
 def add_a_source( plugindir, sourcePluginName ):
 	jsConfigFile = open(plugindir+'//'+sourcePluginName+'.json')	#TODO make more stable, given trailing // or not.. also add try/ or test for folder/file existence
 	config=json.load(jsConfigFile)
-	sourceModule = sys.modules['plugin_sources.'+sourcePluginName]
+	sourceModule = sys.modules['sources.'+sourcePluginName]
 	for execFunction in ('sourceInit','sourceCheck','sourcePlay','sourceStop'):
 		if execFunction in config:
 			#overwrite string with reference to module
