@@ -39,10 +39,10 @@ def configuration_load( configfile, defaultconfig=None ):
 	
 	# use the default from the config dir, in case the configfile is not found (first run)
 	if not os.path.exists(configfile) and os.path.exists(defaultconfig):
-		printer('Configuration not present (first run?); copying default')
+		printer('Configuration not present (first run?); copying default', tag='CONFIG')
 		restored = configuration_restore( configfile, defaultconfig )
 		if not restored:
-			printer('Restoring configuration {0}: [FAIL]'.format(defaultconfig),LL_CRITICAL)
+			printer('Restoring configuration {0}: [FAIL]'.format(defaultconfig), tag='CONFIG', LL_CRITICAL)
 			return None
 
 	# open configuration file (restored or original) and Try to parse it
@@ -50,18 +50,24 @@ def configuration_load( configfile, defaultconfig=None ):
 	try:
 		config=json.load(jsConfigFile)
 	except:
-		printer('Loading/parsing {0}: [FAIL]'.format(configfile),LL_CRITICAL)
+		printer('Loading/parsing {0}: [FAIL]'.format(configfile), tag='CONFIG' ,LL_CRITICAL)
 		# if we had not previously restored it, try that and parse again
 		if not restored:
-			printer('Restoring default configuration')
+			printer('Restoring default configuration', tag='CONFIG')
 			configuration_restore( configfile, defaultconfig )
 			jsConfigFile = open(configfile)
 			config=json.load(jsConfigFile)
 			return config
 		else:
-			printer('Loading/parsing restored configuration failed!'.format(configfile),LL_CRITICAL)
+			printer('Loading/parsing restored configuration failed!'.format(configfile), tag='CONFIG' ,LL_CRITICAL)
 			return None
 
+	# not sure if this is still possible, but let's check it..
+	if config == None:
+		printer('Loading configuration failed!'.format(configfile), tag='CONFIG' ,LL_CRITICAL)
+	else:
+		printer('Loading configuration OK'.format(configfile), tag='CONFIG')
+	
 	return config
 
 def configuration_save( configfile, configuration ):

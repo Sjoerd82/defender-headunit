@@ -1,0 +1,32 @@
+
+Initialization:
+
+ - Configuration is loaded (and created, if first run)
+   [CONFIG] shows status
+   Program will quit if this fails somehow --> TODO: Make it fail, and design a possible cure
+
+ - Operation settings are loaded (and created, if first run)
+   [STTNGS] displays some loaded settings
+
+ - Check logging to file @ log/headunit.(#).log:
+   [LOG] Logging started: Console
+   [LOG] Logging started: File
+
+tail -f /mnt/PIHU_CONFIG/log/headunit.00049.log
+
+ - Sources are initialized
+   [SOURCE] Check if all sources at plugin_sources are shown
+
+ - Controls are initialized
+   [CONTRL] 
+
+ - Other plugins are initialized
+   [PLUGIN]
+
+Message "[SYSTEM] Initialization finished" will appear after finishing this stage.
+
+
+Startup:
+
+
+Main program:

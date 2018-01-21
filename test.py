@@ -291,7 +291,7 @@ def init_logging_c():
 	# add ch to logger
 	logger.addHandler(ch)
 	
-	logger.info('Logging started',extra={'tag':'log'})
+	logger.info('Logging started: Console',extra={'tag':'log'})
 
 # Initiate logging to log file.
 # Use logger.info instead of print.
@@ -319,7 +319,7 @@ def init_logging_f( logdir, logfile, runcount ):
 	# add fh to logger
 	logger.addHandler(fh)
 	
-	logger.info('Logging started',extra={'tag':'log'})
+	logger.info('Logging started: File ({0})'.format(currlogfile),extra={'tag':'log'})
 	
 	#
 	# housekeeping
@@ -534,8 +534,8 @@ myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 Sources.sourceCheckAll()
 printSummary()
 
-myprint('A WARNING', level=logging.WARNING, tag="test")
-logger.warning('Another WARNING', extra={'tag':'test'})
+#myprint('A WARNING', level=logging.WARNING, tag="test")
+#logger.warning('Another WARNING', extra={'tag':'test'})
 
 # Save operational settings
 #dSettings1 = {"source": -1, 'volume': 99, 'mediasource': -1, 'medialabel': ''}	 # No need to save random, we don't want to save that (?)

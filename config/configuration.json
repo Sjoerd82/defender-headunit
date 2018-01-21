@@ -1,1 +1,13 @@
-{"files": {"log": "headunit", "settings": "dSettings.json"}, "default_settings": {"volume": 20, "source": -1, "medialabel": "", "mediasource": -1, "runcount": 0}, "directories": {"plugin-sources": "/mnt/PIHU_APP/defender-headunit/plugin_sources/", "app-root": "/mnt/PIHU_APP/defender-headunit", "plugin-other": "/mnt/PIHU_APP/defender-headunit/plugin_other/", "config": "/mnt/PIHU_CONFIG", "log": "/mnt/PIHU_CONFIG/log"}, "source_config": {"locmus": [{"musicdir_mpd": "PIHU_DATA", "musicdir": "/media/PIHU_DATA"}], "fm": {"frq_lo": 80}}, "plugins_other": {"scrobbler": {"lastfm_password_hash": "64828e435bff400260a0d8f595644544", "lastfm_api_secret": "e7377c56280a4edec2442c3d1a8ee0ce", "lastfm_api_key": "6aec32f8c9d6e39aefdb9606d45ae8a0", "lastfm_username": "SjoerdVenema"}}}
+{
+	"files": {
+		"log": "headunit",
+		"settings": "dSettings.json"
+	},
+	"default_settings": {
+		  "volume": 20
+		, "source": -1
+		, "medialabel": ""
+		, "mediasource": -1
+		, "runcount": 0
+	},
+	"directories": {"plugin-sources": "/mnt/PIHU_APP/defender-headunit/plugin_sources/", "app-root": "/mnt/PIHU_APP/defender-headunit", "plugin-other": "/mnt/PIHU_APP/defender-headunit/plugin_other/", "config": "/mnt/PIHU_CONFIG", "log": "/mnt/PIHU_CONFIG/log"}, "source_config": {"locmus": [{"musicdir_mpd": "PIHU_DATA", "musicdir": "/media/PIHU_DATA"}], "fm": {"frq_lo": 80}}, "plugins_other": {"scrobbler": {"lastfm_password_hash": "64828e435bff400260a0d8f595644544", "lastfm_api_secret": "e7377c56280a4edec2442c3d1a8ee0ce", "lastfm_api_key": "6aec32f8c9d6e39aefdb9606d45ae8a0", "lastfm_username": "SjoerdVenema"}}}
