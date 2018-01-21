@@ -381,9 +381,10 @@ def init_load_config():
 			printer('Settings:    {0}'.format(configuration['files']['settings']))
 		else:
 			printer('Settings file missing in configuration!!', level=LL_CRITICAL)
-			
 
-def init_load_ops():
+	return configuration
+
+def init_load_ops( configuration ):
 	# load default settings
 	dDefaultSettings = configuration['default_settings']
 	# operational settings file (e.g. dSettings.json)
@@ -396,6 +397,8 @@ def init_load_ops():
 
 	# save run counter
 	settings_save( sFileSettings, dSettings )
+	
+	return dSettings
 
 # print a source summary
 def printSummary():
@@ -499,14 +502,14 @@ init_logging_c()
 # Load main configuration
 #
 #
-init_load_config()
+configuration = init_load_config()
 
 	
 #
 # Load operational settings
 #
 #
-init_load_ops()
+settings = init_load_ops( configuration )
 
 
 #
@@ -515,7 +518,7 @@ init_load_ops()
 #
 init_logging_f( configuration['directories']['log'],
                 configuration['files']['log'],
- 				dSettings['runcount'] )
+ 				settings['runcount'] )
 
 #
 # Display version
