@@ -39,7 +39,7 @@ def configuration_load( configfile, defaultconfig=None ):
 	
 	# use the default from the config dir, in case the configfile is not found (first run)
 	if not os.path.exists(configfile) and os.path.exists(defaultconfig):
-		printer('Configuration not present (first run?); copying default', tag='CONFIG')
+		printer('Configuration not present (first run?); trying default: {0}'.format( defaultconfig ), tag='CONFIG')
 		restored = configuration_restore( configfile, defaultconfig )
 		if not restored:
 			printer('Restoring configuration {0}: [FAIL]'.format(defaultconfig), LL_CRITICAL, tag='CONFIG')
@@ -66,8 +66,8 @@ def configuration_load( configfile, defaultconfig=None ):
 	if config == None:
 		printer('Loading configuration failed!'.format(configfile) ,LL_CRITICAL, tag='CONFIG')
 	else:
-		printer('Loading configuration OK'.format(configfile), tag='CONFIG')
-	
+		printer('Loading configuration [OK]'.format(configfile), tag='CONFIG')
+		
 	return config
 
 def configuration_save( configfile, configuration ):
@@ -87,7 +87,7 @@ def settings_save( sJsonFile, dSettings ):
 		pa_sfx(LL_ERROR)
 	
 def settings_load( sJsonFile, dDefaultSettings ):
-	printer('Loading previous settings')
+	printer('Loading previous settings...')
 	try:
 		jsConfigFile = open(sJsonFile)
 		jSettings = json.load(jsConfigFile)

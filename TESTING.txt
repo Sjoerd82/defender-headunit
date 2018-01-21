@@ -1,6 +1,9 @@
 
 Initialization:
 
+ - The program starts with:
+   > [LOG] Logging started: Console
+
  - Configuration is loaded (and created, if first run)
    [CONFIG] shows status
    Program will quit if this fails somehow --> TODO: Make it fail, and design a possible cure
@@ -9,7 +12,6 @@ Initialization:
    [STTNGS] displays some loaded settings
 
  - Check logging to file @ log/headunit.(#).log:
-   [LOG] Logging started: Console
    [LOG] Logging started: File
 
 tail -f /mnt/PIHU_CONFIG/log/headunit.00049.log

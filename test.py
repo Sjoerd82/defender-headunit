@@ -80,6 +80,8 @@ CONFIG_FILE_DEFAULT = '/mnt/PIHU_APP/defender-headunit/config/configuration.json
 CONFIG_FILE = '/mnt/PIHU_CONFIG/configuration.json'
 VERSION = "1.0.0"
 
+
+		
 def pa_sfx( dummy ):
 	return None
 
@@ -95,6 +97,17 @@ def volume_up():
 def volume_down():
 	return None
 
+# ********************************************************************************
+# Output wrapper
+#
+def printer( message, level=20, continuation=False, tag='SYSTEM' ):
+	#TODO: test if headunit logger exist...
+	if continuation:
+		myprint( message, level, '.'+tag )
+	else:
+		myprint( message, level, tag )
+
+	
 def cb_remote_btn_press2 ( func ):
 	print "cb_remote_btn_press2 {0}".format(func)
 
@@ -339,6 +352,51 @@ def init_logging_f( logdir, logfile, runcount ):
 				os.remove(os.path.join(logdir, filename))
 				logger.debug('Removing old log file: {0}'.format(filename),extra={'tag':'log'})
 
+def init_load_config():
+	configuration = configuration_load( CONFIG_FILE, CONFIG_FILE_DEFAULT )
+	if configuration == None:
+		exit()
+
+	# Print summary of loaded config TODO: output level = debug
+	if 'directories' in configuration:
+		if 'log' in configuration['directories']:
+			printer('Log dir:     {0}'.format(configuration['directories']['log']))
+		else:
+			printer('Log dir missing in configuration!!', level=LL_CRITICAL)
+			
+		if 'plugin-sources' in configuration['directories']:
+			printer('Sources dir: {0}'.format(configuration['directories']['plugin-sources']))
+		else:
+			printer('Plugin-sources directory missing in configuration!!', level=LL_CRITICAL)
+	else:
+		printer('Directory configuration missing!!', level=LL_CRITICAL)
+
+	if files in configuration:
+		if 'log' in configuration['files']:
+			pass
+		else:
+			printer('Log file missing in configuration!!', level=LL_CRITICAL)
+		
+		if 'settings' in configuration['files']:
+			printer('Settings:    {0}'.format(configuration['files']['settings']))
+		else:
+			printer('Settings file missing in configuration!!', level=LL_CRITICAL)
+			
+
+def init_load_ops():
+	# load default settings
+	dDefaultSettings = configuration['default_settings']
+	# operational settings file (e.g. dSettings.json)
+	sFileSettings = os.path.join(configuration['directories']['config'],configuration['files']['settings'])
+	# load into dSettings
+	dSettings = settings_load( sFileSettings, dDefaultSettings )
+
+	# increase the run counter (used for logging to file)
+	dSettings['runcount']+=1
+
+	# save run counter
+	settings_save( sFileSettings, dSettings )
+
 # print a source summary
 def printSummary():
 	global Sources
@@ -426,38 +484,37 @@ def worker( script ):
 #
 # Start logging to console
 #
+#
 init_logging()
 init_logging_c()
+
 
 #
 # Load main configuration
 #
-configuration = configuration_load( CONFIG_FILE, CONFIG_FILE_DEFAULT )
-if configuration == None:
-	exit()
+#
+init_load_config()
 
+	
 #
 # Load operational settings
 #
-# load default settings
-dDefaultSettings = configuration['default_settings']
-# operational settings file (e.g. dSettings.json)
-sFileSettings = os.path.join(configuration['directories']['config'],configuration['files']['settings'])
-# load into dSettings
-dSettings = settings_load( sFileSettings, dDefaultSettings )
+#
+init_load_ops()
 
-# increase the run counter (used for logging to file)
-dSettings['runcount']+=1
-
-# save run counter
-settings_save( sFileSettings, dSettings )
 
 #
 # Start logging to file
 #
-sLogDir = configuration['directories']['log']
-sLogFile = configuration['files']['log']
-init_logging_f( sLogDir, sLogFile, dSettings['runcount'] )
+#
+init_logging_f( configuration['directories']['log'],
+                configuration['files']['log'],
+ 				dSettings['runcount'] )
+
+#
+# Display version
+#
+#
 myprint('Headunit.py version {0}'.format(VERSION),tag='SYSTEM')
 
 #
@@ -473,15 +530,16 @@ myprint('Headunit.py version {0}'.format(VERSION),tag='SYSTEM')
 #
 # App. Init
 #
+#
 myprint('Loading Source Plugins...',tag='SYSTEM')
 
 # import sources directory
-import plugin_sources
+#import plugin_sources
+import /mnt/PIHU_APP/defender-headunit/plugin_sources
 #from plugin_source import *
 
 # read source config files and start source inits
-sPluginDirSources = configuration['directories']['plugin-sources']
-loadSourcePlugins(sPluginDirSources)
+loadSourcePlugins( configuration['directories']['plugin-sources'] )
 
 #debug
 #huMenu.menuDisplay( header=True )
