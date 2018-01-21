@@ -67,8 +67,8 @@ args = parser.parse_args()
 #print args
 #Namespace(debuglevel=20)
 
-print args.integers
-log_level = args.integers
+print args.loglevel
+log_level = args.loglevel
 print log_level
 
 #********************************************************************************
