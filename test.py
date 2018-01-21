@@ -463,8 +463,14 @@ def loadSourcePlugins( plugindir ):
 	global Sources
 	global configuration
 
+	if not os.path.exists(plugindir):
+		printer('Source path not found: {0}'.format(plugindir), level=LL_CRITICAL)
+		exit()
+	
 	#todo, obviously this is bad..
-	lookforthingy = '/mnt/PIHU_APP/defender-headunit/plugin_sources/'
+	print plugindir
+	#lookforthingy = '/mnt/PIHU_APP/defender-headunit/sources/'
+	lookforthingy = plugindir
 	
 	for k, v in sys.modules.iteritems():
 		if k[0:15] == 'plugin_sources.':
@@ -532,14 +538,10 @@ myprint('Headunit.py version {0}'.format(VERSION),tag='SYSTEM')
 #
 #
 myprint('Loading Source Plugins...',tag='SYSTEM')
-
 # import sources directory
-#import plugin_sources
-import /mnt/PIHU_APP/defender-headunit/plugin_sources
-#from plugin_source import *
-
+import sources
 # read source config files and start source inits
-loadSourcePlugins( configuration['directories']['plugin-sources'] )
+loadSourcePlugins(os.path.join( os.path.dirname(os.path.abspath(__file__)), 'sources'))
 
 #debug
 #huMenu.menuDisplay( header=True )
