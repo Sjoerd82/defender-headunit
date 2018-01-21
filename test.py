@@ -360,7 +360,7 @@ def init_load_config():
 
 	def test_config( key, dict, descr="" ):
 		if key in dict:
-			printer('{0} {1]:     {2}'.format(key,descr,dict[key]), level=LL_DEBUG, tag="CONFIG")
+			printer('{0} {1}:     {2}'.format(key,descr,dict[key]), level=LL_DEBUG, tag="CONFIG")
 		else:
 			printer('{0} {1} missing in configuration!!'.format(key,descr), level=LL_CRITICAL, tag="CONFIG")
 	
