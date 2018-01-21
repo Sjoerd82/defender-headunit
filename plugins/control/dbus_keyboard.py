@@ -60,3 +60,30 @@ class rc_Keyboard(dbus.service.Object):
 		
 printer('Starting Remote Control: Keyboard')
 
+# Initialize a main loop
+DBusGMainLoop(set_as_default=True)
+loop = gobject.MainLoop()
+
+# Declare a name where our service can be reached
+try:
+    bus_name = dbus.service.BusName("com.arctura.keyboard",
+                                    bus=dbus.SystemBus(),
+                                    do_not_queue=True)
+except dbus.exceptions.NameExistsException:
+    printer("service is already running")
+    sys.exit(1)
+
+# Run the loop
+try:
+    # Create our initial objects
+	# load remote.py
+    #from remote import RemoteControl
+    RemoteControl(bus_name)
+    loop.run()
+except KeyboardInterrupt:
+    printer("keyboard interrupt received")
+except Exception as e:
+    printer("Unexpected exception occurred: '{}'".format(str(e)))
+finally:
+    printer("quitting...")
+    loop.quit()
