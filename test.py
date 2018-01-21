@@ -40,8 +40,29 @@
 # ./hu_volume.py		Volume control
 # ./hu_....py
 
-#parse command line arguments
+#********************************************************************************
+#
+# Parse command line arguments
+#
+#
+
 import argparse
+
+parser = argparse.ArgumentParser(description='Uhmmmsssszzz...')
+parser.add_argument('--loglevel', action='store', default=LL_INFO, type=int, choices=[LL_DEBUG, LL_INFO, LL_CRITICAL], help="log level (0-99)", metavar=LL_INFO)
+args = parser.parse_args()
+
+#print args
+#Namespace(debuglevel=20)
+
+print args.integers
+LOG_LEVEL = args.integers
+print LOG_LEVEL
+
+#********************************************************************************
+#
+#
+#
 
 #load json source configuration
 import json
@@ -488,15 +509,6 @@ def worker( script ):
 #
 # Initialization
 #
-
-#
-# Parse command line arguments
-#
-#
-parser = argparse.ArgumentParser(description='Uhmmmsssszzz...')
-parser.add_argument('--debuglevel', action='store', default=LL_INFO, type=int, choices=[LL_DEBUG, LL_INFO, LL_CRITICAL], help="log level", metavar=LL_INFO)
-args = parser.parse_args()
-print args
 
 #
 # Start logging to console
