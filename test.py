@@ -508,8 +508,8 @@ def loadSourcePlugins( plugindir ):
 
 def plugin_execute( script ):
 	printer('Starting Plugin: {0}'.format(script))
-	os.system( 'python '+script )
-	#os.system('python /mnt/PIHU_APP/defender-headunit/plugins/control/dbus_ads1x15.py')
+	#os.system( 'python '+script )
+	os.system('python /mnt/PIHU_APP/defender-headunit/plugins/control/dbus_ads1x15.py')
 
 
 #********************************************************************************
