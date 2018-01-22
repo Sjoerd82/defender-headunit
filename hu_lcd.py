@@ -227,7 +227,10 @@ class lcd_mgr():
 	def set_fb_str( self, row, col, txt ):
 		self.framebuffer[row] = self.framebuffer[row][:col] + txt + self.framebuffer[row][col+len(txt)+1:]
 		
-	
+	def lcd_text( self, txt ):
+		self.set_fb_str(0,1,txt)
+		self.write_to_lcd()
+		
 	def lcd_ding( self, bla ):
 
 		if bla == 'random_on':
