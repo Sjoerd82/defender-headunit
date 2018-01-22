@@ -8,7 +8,7 @@ def myprint( message, level, tag ):
 	print("[{0}] {1}".format(tag,message))
 
 # Wrapper for "myprint"
-def printer( message, level=LL_INFO, continuation=False, tag=controlName ):
+def printer( message, level=LL_INFO, continuation=False, tag=pluginName ):
 	if continuation:
 		myprint( message, level, '.'+tag )
 	else:
