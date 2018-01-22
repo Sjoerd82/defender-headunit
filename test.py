@@ -233,6 +233,8 @@ def cb_mpd_event( event ):
 		#mpcStatus = mpdc.mpc_get_status()
 		mpcTrackTotal = mpdc.mpc_get_trackcount()
 		
+		print mpcSong
+		
 		if 'artist' in mpcSong:
 			artist = mpcSong['artist']
 		else:
@@ -248,7 +250,7 @@ def cb_mpd_event( event ):
 		else:
 			track = None
 		
-		disp.lcd_play( artist, title, track, mpcTrackTotal )
+		disp.lcd_play( artist, title, title, track, mpcTrackTotal )
 		
 				
 	elif event == "update":
