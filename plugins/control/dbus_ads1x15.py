@@ -28,6 +28,10 @@ import threading
 # Import the ADS1x15 module.
 import Adafruit_ADS1x15
 
+# TODO!!! the "headunit"-logger is no longer accessible once this script is started "on its own"..
+def myprint( message, level, tag ):
+	print("[{0}] {1}".format(tag,message))
+
 # Wrapper for "myprint"
 def printer( message, level=LL_INFO, continuation=False, tag=controlName ):
 	if continuation:
