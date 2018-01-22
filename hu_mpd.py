@@ -12,7 +12,7 @@ from hu_utils import *
 # Output wrapper
 #
 
-def printer( message, level=20, continuation=False, tag='STTNGS' ):
+def printer( message, level=20, continuation=False, tag='MPD' ):
 	#TODO: test if headunit logger exist...
 	if continuation:
 		myprint( message, level, '.'+tag )
@@ -73,6 +73,9 @@ class mpdController():
 
 	def mpc_get_PlaylistDirs():
 		print('todo')
+		
+	def mpc_get_Details():
+		return 'Black Keys - Something'
 
 
 

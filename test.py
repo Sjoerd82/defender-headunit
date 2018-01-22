@@ -104,6 +104,8 @@ CONFIG_FILE_DEFAULT = '/mnt/PIHU_APP/defender-headunit/config/configuration.json
 CONFIG_FILE = '/mnt/PIHU_CONFIG/configuration.json'
 VERSION = "1.0.0"
 
+hu_details = { 'track':None }
+
 
 def random( dummy ):
 	disp.lcd_ding( 'random_on' )
@@ -211,6 +213,7 @@ def cb_mpd_event( event ):
 #?	global bInit
 	global Sources
 	global settings
+	global mpdc
 
 #?if bInit == 0:
 	
@@ -218,18 +221,16 @@ def cb_mpd_event( event ):
 
 	if event == "player":
 		currSrc = Sources.get( None )
-		printer("XXDEBUGXX: {0}".format(currSrc))
 		
 		if not currSrc == None:
 			if 'label' in currSrc:
-				printer("DEBUG: save pos for label: {0}".format(currSrc['label']))
 				mpc_save_pos_for_label( currSrc['label'], "/mnt/PIHU_CONFIG" )
 			else:
-				printer("DEBUG: save pos for label: {0}".format(currSrc['name']))
 				mpc_save_pos_for_label( currSrc['name'], "/mnt/PIHU_CONFIG" )
-		else:
-			printer("DEBUG: {0}".format(currSrc))
-			
+
+	#hu_details
+	print mpdc.mpc_get_Details()
+				
 	elif event == "update":
 		printer(" ...  database update started or finished (no action)", tag='MPD')
 	elif event == "database":
@@ -682,6 +683,9 @@ for t in threads:
 from hu_lcd import *
 disp = lcd_mgr()
 disp.lcd_text('Welcome v0.1.4.8')
+
+# MPD
+mpdc = mpdController()
 
 myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 
