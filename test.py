@@ -210,13 +210,22 @@ def cb_remote_btn_press ( func ):
 def cb_mpd_event( event ):
 #?	global bInit
 	global Sources
+	global settings
 
 #?if bInit == 0:
 	
 	printer('DBUS event received: {0}'.format(event), tag='MPD')
 
 	if event == "player":
-		mpc_save_pos()
+		#mpc_save_pos( settings['source'] )
+		currSrc = Sources.get()['label']
+		if label in currSrc:
+			print "DEBUG: save pos for label: {0}".format(currSrc['label'])
+			mpc_save_pos_for_label( currSrc['label'], "/mnt/PIHU_CONFIG" )
+		else:
+			print "DEBUG: save pos for label: {0}".format(currSrc['name'])
+			mpc_save_pos_for_label( currSrc['name'], "/mnt/PIHU_CONFIG" )
+			
 	elif event == "update":
 		printer(" ...  database update started or finished (no action)", tag='MPD')
 	elif event == "database":

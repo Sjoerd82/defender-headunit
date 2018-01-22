@@ -134,8 +134,8 @@ class SourceController():
 	def getAll( self ):
 		return copy.copy(self.lSource)
 
-	# return source for given index
-	def get( self, index ):
+	# return source for given index, returns current source, if no index provided
+	def get( self, index=iCurrent ):
 		return copy.copy(self.lSource[index])
 
 	# return controls for given index ## do we need this

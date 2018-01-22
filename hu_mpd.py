@@ -7,6 +7,9 @@ from subprocess import call
 from hu_utils import *
 from mpd import MPDClient
 
+# save settings
+from hu_settings import *
+
 #TODO
 sDirSave = "/mnt/PIHU_CONFIG"
 
@@ -231,19 +234,20 @@ def mpc_update( location, wait ):
 		call(["mpc", "-q", "update", location])
 		#bMpdUpdateSmb
 	
-
-def mpc_save_pos():
+"""
+def mpc_save_pos( source ):
 	global dSettings
-	if dSettings['source'] == 1:
+	if source == 1:
 		mpc_save_pos_for_label ( dSettings['medialabel'] )	
-	elif dSettings['source'] == 2:
+	elif source == 2:
 		mpc_save_pos_for_label ('locmus')
-	elif dSettings['source'] == 5:
+	elif source == 5:
 		mpc_save_pos_for_label ('stream')
-	elif dSettings['source'] == 6:
+	elif source == 6:
 		mpc_save_pos_for_label ('smb')
+"""
 
-def mpc_save_pos_for_label ( label ):
+def mpc_save_pos_for_label ( label, pcklPath ):
 	print('[MPC] Saving playlist position for label: {0}'.format(label))
 	oMpdClient = MPDClient() 
 	oMpdClient.timeout = 10                # network timeout in seconds (floats allowed), default: None
@@ -293,7 +297,7 @@ def mpc_save_pos_for_label ( label ):
 	dSavePosition = {'file': current_file, 'time': timeelapsed}
 	print(' ...  file: {0}, time: {1}'.format(current_file,timeelapsed))
 	
-	pickle_file = sDirSave + "/mp_" + label + ".p"
+	pickle_file = pcklPath + "/mp_" + label + ".p"
 	pickle.dump( dSavePosition, open( pickle_file, "wb" ) )
 
 def mpc_lkp( label ):
