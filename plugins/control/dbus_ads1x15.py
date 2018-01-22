@@ -3,6 +3,8 @@
 # Remote control DBus service
 # Based on https://github.com/larryprice/python-dbus-blog-series/blob/part3/service
 
+print('debug!!')
+
 import dbus, dbus.service, dbus.exceptions
 import sys
 

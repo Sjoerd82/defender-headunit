@@ -512,6 +512,11 @@ def plugin_execute( script ):
 	#os.system( 'python '+script )
 	os.system('python /mnt/PIHU_APP/defender-headunit/plugins/control/dbus_ads1x15.py')
 
+def worker( script ):
+	printer('Starting Plugin')
+	os.system('python /mnt/PIHU_APP/defender-headunit/plugins/control/dbus_ads1x15.py')
+
+	
 #********************************************************************************
 #
 # Initialization
@@ -592,7 +597,8 @@ for filename in os.listdir( '/mnt/PIHU_APP/defender-headunit/plugins/control/' )
 		if filename.endswith('.py'):
 			#pathfilename = os.path.join( configuration['directories']['controls'], filename )
 			#t = threading.Thread(target=plugin_execute, args=(pathfilename,))
-			t = threading.Thread(target=plugin_execute, args=(filename,))
+			#t = threading.Thread(target=plugin_execute, args=(filename,))
+			t = threading.Thread(target=worker, args=(filename,))
 			t.setDaemon(True)
 			threads.append(t)
 			t.start()
