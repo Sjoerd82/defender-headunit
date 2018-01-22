@@ -37,13 +37,6 @@ def marquee(string, lcd, framebuffer, row, num_cols, delay=0.3):
       write_to_lcd(lcd, framebuffer, num_cols)
       time.sleep(delay)
 
-def loop_string(string, lcd, framebuffer, row, num_cols, postfix='', delay=0.3):
-   padding = ' ' * num_cols
-   s = string
-   for i in range(len(s) - num_cols + 1 + len(postfix)):
-      framebuffer[row] = s[i:i+num_cols-len(postfix)] + postfix
-      write_to_lcd(lcd, framebuffer, num_cols)
-      time.sleep(delay)
 
 def loop_return(string, lcd, framebuffer, row, num_cols):
    framebuffer[row] = string[0:16]
@@ -184,11 +177,12 @@ class lcd_mgr():
 		
 	def lcd_play( self, artist, track, tracknumber, tracktotal ):
 		#self.lcd_text( '{1}{2}/{3}'.format('\x00',tracknumber,tracktotal) )
-		teststring = '{0}{1}/{2}'.format('\x00',tracknumber,tracktotal)
-		print teststring
-		self.set_fb_str(1,0,teststring)
-		#self.set_fb_str(1,0,'\x00')
-		self.lcd_text( '{0} - {1}'.format(artist, track) )
+		self.set_fb_str(1,0,'{0}{1}/{2}'.format('\x00',tracknumber,tracktotal))
+		testtxt = '{0} - {1}'.format(artist, track)
+		self.lcd_text( testtxt )
+		if len(testtxt) > 16:
+			#todo run under separate thread! (or atleast async..)
+			loop_string( testtxt, 0, delay=0 )
 	
 	def lcd_ding( self, bla ):
 
@@ -204,7 +198,15 @@ class lcd_mgr():
 		elif bla == 'att_on':	 
 			self.set_fb_str(1,13,'ATT')
 			self.write_to_lcd()
-		
+
+	def loop_string(string, row, postfix='', delay=0.3):
+		padding = ' ' * self.num_cols
+		s = string
+		for i in range(len(s) - self.num_cols + 1 + len(postfix)):
+			self.framebuffer[row] = s[i:i+self.num_cols-len(postfix)] + postfix
+			write_to_lcd()
+			time.sleep(delay)
+	  
 	def charset( self ):
 		chr_play = (
 				0b10000,
