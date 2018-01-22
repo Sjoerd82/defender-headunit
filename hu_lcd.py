@@ -206,29 +206,29 @@ class lcd_mgr():
 
 	def __init__(self):
 	
-		lcd = CharLCD(i2c_expander='PCF8574', address=0x27, port=1,
-              cols=16, rows=2, dotsize=8,
-              charmap='A00',
-              auto_linebreaks=True,
-              backlight_enabled=True)
+		self.lcd = CharLCD(i2c_expander='PCF8574', address=0x27, port=1,
+                   cols=16, rows=2, dotsize=8,
+                   charmap='A00',
+                   auto_linebreaks=True,
+                   backlight_enabled=True)
 	
-		lcd.clear()
+		self.lcd.clear()
 		
-	def write_to_lcd(lcd, framebuffer, num_cols):
+	def write_to_lcd( self, framebuffer, num_cols ):
 	   """Write the framebuffer out to the specified LCD."""
-	   lcd.home()
+	   self.lcd.home()
 	   for row in framebuffer:
-		 lcd.write_string(row.ljust(num_cols)[:num_cols])
-		 lcd.write_string('\r\n')
+		 self.lcd.write_string(row.ljust(num_cols)[:num_cols])
+		 self.lcd.write_string('\r\n')
 
 	def set_fb_char( row, col, char ):
 		self.framebuffer[row] = self.framebuffer[row][:col] + char + self.framebuffer[row][col+2:]
 		
 	
-	def lcd_mgr( bla ):
+	def lcd_mgr( sefl, bla ):
 
 		if bla == 'random_on':
-			set_fb_char(1,10,'R')
+			self.set_fb_char(1,10,'R')
 		
 		
 		
