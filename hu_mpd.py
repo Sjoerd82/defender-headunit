@@ -74,8 +74,13 @@ class mpdController():
 	def mpc_get_PlaylistDirs( self ):
 		print('todo')
 		
-	def mpc_get_Details( self ):
-		return 'Black Keys - Something'
+	def mpc_get_currentsong( self ):
+		return self.mpdc.currentsong()
+		#return 'Black Keys - Something'
+
+	def mpc_get_status( self ):
+		return self.mpdc.status()
+		#return 'Black Keys - Something'
 
 
 

@@ -229,7 +229,8 @@ def cb_mpd_event( event ):
 				mpc_save_pos_for_label( currSrc['name'], "/mnt/PIHU_CONFIG" )
 
 		#hu_details
-		print mpdc.mpc_get_Details()
+		print mpdc.mpc_get_currentsong()
+		print mpdc.mpc_get_status()
 				
 	elif event == "update":
 		printer(" ...  database update started or finished (no action)", tag='MPD')

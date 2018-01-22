@@ -139,15 +139,11 @@ class SourceController():
 	def get( self, index ):
 		if index == None:
 			if self.iCurrent == None:
-				print "Debug 1"
 				return None
 			else:
-				print "Debug 2 {0}".format(self.iCurrent)
 				return copy.copy(self.lSource[self.iCurrent])
 		else:
-			print "Debug 3 {0}".format(index)
-			return copy.copy(self.lSource[index])
-			
+			return copy.copy(self.lSource[index])			
 
 	# return controls for given index ## do we need this
 	def getSourceControls( self, index ):
