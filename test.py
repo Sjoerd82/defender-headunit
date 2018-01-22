@@ -217,14 +217,14 @@ def cb_mpd_event( event ):
 	printer('DBUS event received: {0}'.format(event), tag='MPD')
 
 	if event == "player":
-		#mpc_save_pos( settings['source'] )
-		currSrc = Sources.get()['label']
-		if label in currSrc:
-			print "DEBUG: save pos for label: {0}".format(currSrc['label'])
-			mpc_save_pos_for_label( currSrc['label'], "/mnt/PIHU_CONFIG" )
-		else:
-			print "DEBUG: save pos for label: {0}".format(currSrc['name'])
-			mpc_save_pos_for_label( currSrc['name'], "/mnt/PIHU_CONFIG" )
+		currSrc = Sources.get()
+		if not currSrc == None:
+			if label in currSrc:
+				print "DEBUG: save pos for label: {0}".format(currSrc['label'])
+				mpc_save_pos_for_label( currSrc['label'], "/mnt/PIHU_CONFIG" )
+			else:
+				print "DEBUG: save pos for label: {0}".format(currSrc['name'])
+				mpc_save_pos_for_label( currSrc['name'], "/mnt/PIHU_CONFIG" )
 			
 	elif event == "update":
 		printer(" ...  database update started or finished (no action)", tag='MPD')
@@ -700,9 +700,8 @@ myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 #
 # TODO!! QUICKPLAY!!
 #
-Sources.next()
-
 Sources.sourceCheckAll()
+Sources.next()
 printSummary()
 
 #myprint('A WARNING', level=logging.WARNING, tag="test")
