@@ -139,10 +139,13 @@ class SourceController():
 	def get( self, index ):
 		if index == None:
 			if self.iCurrent == None:
+				print "Debug 1"
 				return None
 			else:
+				print "Debug 2"
 				return copy.copy(self.lSource[self.iCurrent])
 		else:
+			print "Debug 3"
 			return copy.copy(self.lSource[index])
 			
 
