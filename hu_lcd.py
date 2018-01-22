@@ -59,56 +59,6 @@ def loop_string1(string, lcd, framebuffer, row, num_cols, delay=0.3):
       write_to_lcd(lcd, framebuffer, num_cols)
       time.sleep(delay)
 
-def charset( charset ):
-        chr_up = (
-                0b00000,
-                0b00100,
-                0b01110,
-                0b11111,
-                0b00100,
-                0b00100,
-                0b00100,
-                0b00000
-        )
-        chr_down = (
-                0b00000,
-                0b00100,
-                0b00100,
-                0b00100,
-                0b11111,
-                0b01110,
-                0b00100,
-                0b00000
-        )
-
-        chr_left = (
-                0b00000,
-                0b00000,
-                0b00100,
-                0b01100,
-                0b11111,
-                0b01100,
-                0b00100,
-                0b00000
-        )
-
-        chr_right = (
-                0b00000,
-                0b00000,
-                0b00100,
-                0b00110,
-                0b11111,
-                0b00110,
-                0b00100,
-                0b00000
-        )
-
-        #lcd.create_char(0, chr_play)
-        #lcd.create_char(1, chr_pause)
-        lcd.create_char(4, chr_up)
-        lcd.create_char(5, chr_down)
-        lcd.create_char(6, chr_left)
-        lcd.create_char(7, chr_right)
 
 def lcd_menu( entry, counter, hasSub=False, isFirst=False, isLast=False, showCount=True, isHeader=False ):
 
@@ -216,7 +166,8 @@ class lcd_mgr():
 		self.framebuffer[0] = '                '
 		self.framebuffer[1] = '                '
 		self.lcd.clear()
-		
+		self.lcd_charset()
+	
 	def write_to_lcd( self ):
 	   """Write the framebuffer out to the specified LCD."""
 	   self.lcd.home()
@@ -225,26 +176,99 @@ class lcd_mgr():
 		 self.lcd.write_string('\r\n')
 
 	def set_fb_str( self, row, col, txt ):
-		self.framebuffer[row] = self.framebuffer[row][:col] + txt + self.framebuffer[row][col+len(txt)+1:]
-		
+		self.framebuffer[row] = self.framebuffer[row][:col] + txt + self.framebuffer[row][col+len(txt):]
+	
 	def lcd_text( self, txt ):
 		self.set_fb_str(0,0,txt)
 		self.write_to_lcd()
 		
+	def lcd_play( self, artist, track, tracknumber ):
+		self.set_fb_str(1,0,'\x01')
+		self.lcd_text( '01 Dare - Waves' )
+	
 	def lcd_ding( self, bla ):
 
-		if bla == 'random_on':
-			self.set_fb_str(1,10,'RND')
-			self.write_to_lcd()
-		elif bla == 'att_on':	 
-			self.set_fb_str(1,13,'ATT')
+		if bla == 'src_usb':	 
+			self.set_fb_str(1,1,'USB')
 			self.write_to_lcd()
 		elif bla == 'update_on':	 
 			self.set_fb_str(1,5,'UPD')
 			self.write_to_lcd()
-		elif bla == 'src_usb':	 
-			self.set_fb_str(1,0,'USB')
+		elif bla == 'random_on':
+			self.set_fb_str(1,9,'RND')
+			self.write_to_lcd()
+		elif bla == 'att_on':	 
+			self.set_fb_str(1,13,'ATT')
 			self.write_to_lcd()
 		
-		
+	def charset():
+		chr_play = (
+				0b00000,
+				0b10000,
+				0b11000,
+				0b11100,
+				0b11110,
+				0b11100,
+				0b11000,
+				0b10000
+		)
+		chr_pause = (
+				0b00000,
+				0b11011,
+				0b11011,
+				0b11011,
+				0b11011,
+				0b11011,
+				0b11011,
+				0b11011
+		)
+		chr_up = (
+				0b00000,
+				0b00100,
+				0b01110,
+				0b11111,
+				0b00100,
+				0b00100,
+				0b00100,
+				0b00000
+		)
+		chr_down = (
+				0b00000,
+				0b00100,
+				0b00100,
+				0b00100,
+				0b11111,
+				0b01110,
+				0b00100,
+				0b00000
+		)
+
+		chr_left = (
+				0b00000,
+				0b00000,
+				0b00100,
+				0b01100,
+				0b11111,
+				0b01100,
+				0b00100,
+				0b00000
+		)
+
+		chr_right = (
+				0b00000,
+				0b00000,
+				0b00100,
+				0b00110,
+				0b11111,
+				0b00110,
+				0b00100,
+				0b00000
+		)
+
+		lcd.create_char(0, chr_play)
+		lcd.create_char(1, chr_pause)
+		lcd.create_char(4, chr_up)
+		lcd.create_char(5, chr_down)
+		lcd.create_char(6, chr_left)
+		lcd.create_char(7, chr_right)
 		

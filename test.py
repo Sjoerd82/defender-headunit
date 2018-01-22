@@ -113,7 +113,7 @@ def random( dummy ):
 def volume_att_toggle():
 	disp.lcd_ding( 'att_on' )
 	disp.lcd_ding( 'src_usb' )
-	disp.lcd_text( '01. Dare - Waves' )
+	disp.lcd_play( 'Dare', 'Waves', 1 )
 	return None
 
 def volume_up():
