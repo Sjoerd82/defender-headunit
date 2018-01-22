@@ -106,6 +106,7 @@ VERSION = "1.0.0"
 
 
 def random( dummy ):
+	disp.lcd_mgr( 'random_on' )
 	return None
 
 def volume_att_toggle():
@@ -621,6 +622,9 @@ from plugin_other import *
 for t in threads:
 	t.start()
 
+# LCD (TODO: move to plugins)
+from hu_lcd import *
+disp = lcd_mgr()
 
 myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 
