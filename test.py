@@ -227,12 +227,11 @@ def cb_mpd_event( event ):
 		#elif event == "media_ready":
 		elif event == "ifup":
 			printer(" ...  WiFi interface up: checking network related sources", tag='MPD')
-#TODO?		stream_check()
+			stream_check()
 			smb_check()
 		elif event == "ifdown":
-			printer(" ...  WiFi interface down: marking network related sources unavailable", tag='MPD'
-#TODO?		sources.setAvailable('depNetwork',True,False)
-
+			printer(" ...  WiFi interface down: marking network related sources unavailable", tag='MPD')
+			Sources.setAvailable('depNetwork',True,False)
 		else:
 			printer(' ...  unknown event (no action)', tag='MPD')
 		
