@@ -82,6 +82,9 @@ class mpdController():
 		return self.mpdc.status()
 		#return 'Black Keys - Something'
 
+	def mpc_get_trackcount( self ):
+		#TODO
+		return 12
 
 
 

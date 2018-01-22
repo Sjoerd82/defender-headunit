@@ -182,9 +182,11 @@ class lcd_mgr():
 		self.set_fb_str(0,0,txt)
 		self.write_to_lcd()
 		
-	def lcd_play( self, artist, track, tracknumber ):
-		self.set_fb_str(1,0,'\x00')
-		self.lcd_text( '{0} {1} - {2}'.format(tracknumber, artist, track) )
+	def lcd_play( self, artist, track, tracknumber, tracktotal ):
+		#self.lcd_text( '{1}{2}/{3}'.format('\x00',tracknumber,tracktotal) )
+		set_fb_str(1,0,'{1}{2}/{3}'.format('\x00',tracknumber,tracktotal)
+		#self.set_fb_str(1,0,'\x00')
+		self.lcd_text( '{1} - {2}'.format(artist, track) )
 	
 	def lcd_ding( self, bla ):
 
