@@ -390,6 +390,7 @@ def init_load_config():
 		test_config('controls', configuration['directories'], "directory")
 		test_config('config', configuration['directories'], "directory")
 		test_config('log', configuration['directories'], "directory")
+		test_config('sfx', configuration['directories'], "directory")
 	else:
 		printer('Directory configuration missing!!', level=LL_CRITICAL)
 
@@ -523,16 +524,16 @@ init_logging()
 init_logging_c()
 
 #
-# Load PulseAudio SFX
-#
-#
-pa_sfx_load()
-
-#
 # Load main configuration
 #
 #
 configuration = init_load_config()
+
+#
+# Load PulseAudio SFX
+#
+#
+pa_sfx_load( configuration['directories']['sfx'] )
 
 	
 #

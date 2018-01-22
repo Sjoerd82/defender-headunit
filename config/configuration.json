@@ -16,6 +16,7 @@
 		, "plugin-other": "/mnt/PIHU_APP/defender-headunit/plugin_other/"
 		, "config": "/mnt/PIHU_CONFIG"
 		, "log": "/mnt/PIHU_CONFIG/log"
+		, "sfx": "/mnt/PIHU_APP/defender-headunit/sfx"
 	}
 	, "source_config": {
 		  "locmus": [{"musicdir_mpd": "PIHU_DATA", "musicdir": "/media/PIHU_DATA"}]

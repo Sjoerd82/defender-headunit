@@ -4,14 +4,14 @@ Initialization:
  - The program starts with:
    > [LOG] Logging started: Console
 
- - PulseAudio SFX' are loaded
-   [PULSE]
-
  - Configuration is loaded (and created, if first run)
    [CONFIG] shows status
    Program will quit if this fails somehow --> TODO: Make it fail, and design a possible cure
 
- - Operation settings are loaded (and created, if first run)
+ - PulseAudio SFX' are loaded
+   [PULSE]
+
+ - Operational settings are loaded (and created, if first run)
    [STTNGS] displays some loaded settings
 
  - Check logging to file @ log/headunit.(#).log:
