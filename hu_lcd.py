@@ -166,7 +166,7 @@ class lcd_mgr():
 		self.framebuffer[0] = '                '
 		self.framebuffer[1] = '                '
 		self.lcd.clear()
-		self.lcd_charset()
+		self.charset()
 	
 	def write_to_lcd( self ):
 	   """Write the framebuffer out to the specified LCD."""
