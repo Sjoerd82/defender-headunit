@@ -595,15 +595,21 @@ for filename in os.listdir( configuration['directories']['controls'] ):
 			t = threading.Thread(target=plugin_execute, args=(pathfilename,))
 			t.setDaemon(True)
 			threads.append(t)
-			#t.start()
+			#t.start()	WORKAROUND
 
 # NOTE: Plugins are now loading in the background, in parallel to code below.
-			
+# NOTE: This can really interfere, in a way I don't understand.. executing the threads later helps... somehow..
+# NOTE: For NOW, we'll just execute the threads after the loading of the "other" plugins...
+
 #
 # load other plugins
 #
 myprint('Loading Other Plugins...',tag='SYSTEM')
 from plugin_other import *
+
+# WORKAROUND...
+for t in threads:
+	t.start()
 
 
 myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
@@ -641,7 +647,6 @@ printSummary()
 # Initialize the mainloop
 #
 
-t.start()
 
 DBusGMainLoop(set_as_default=True)
 mainloop = gobject.MainLoop()
