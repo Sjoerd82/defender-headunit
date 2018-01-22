@@ -184,7 +184,7 @@ class lcd_mgr():
 		if len(testtxt) > 16:
 			#todo run under separate thread! (or atleast async..)
 			#self.loop_string( testtxt, 0, delay=0 )
-			t = threading.Thread(target=worker, args=(testtxt,))
+			t = threading.Thread(target=self.worker, args=(testtxt,))
 			t.start()
 			#self.worker( testtxt, 0, delay=0 )
 	
