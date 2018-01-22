@@ -19,20 +19,21 @@ class VolumeController():
 		#pipe = subprocess.check_output("pactl list sinks | grep '^[[:space:]]Volume:' | head -n $(( $SINK + 1 )) | tail -n 1 | sed -e 's,.* \([0-9][0-9]*\)%.*,\1,'", shell=True)
 		#pipe = subprocess.check_output("pactl list sinks | grep '^[[:space:]]Volume:' | sed -e 's,.* \([0-9][0-9]*\)%.*,\1,'", shell=True)
 		try:
-			vol = subprocess.check_output("/root/pa_volume.sh")
+			vol = subprocess.check_output("/mnt/PIHU_APP/defender-headunit/pa_volume.sh")
 			self.iVolume = int(vol.splitlines()[0])
 		except:
-			print('[VOLUME] ERROR running /root/pa_volume.sh')
+			print('[VOLUME] ERROR running /mnt/PIHU_APP/defender-headunit/pa_volume.sh')
 		
 
 	def get( self ):
-		vol = subprocess.check_output("/root/pa_volume.sh")
+		vol = subprocess.check_output("/mnt/PIHU_APP/defender-headunit/pa_volume.sh")
 		self.iVolume = int(vol.splitlines()[0])
 		return self.iVolume
 	
 	def set( self, volpct, sink=sSink ):
 		#vol_pct = str(self.iVolume) + "%"
 		volpct = str(volpct) + "%"
+		printer('Setting volume: {0}'.format(volpct))
 		call(["pactl", "set-sink-volume", sink, volpct])
 
 	#set Att volume

@@ -565,7 +565,6 @@ VolPulse.set( settings['volume'] )
 myprint('Headunit.py version {0}'.format(VERSION),tag='SYSTEM')
 pa_sfx('startup')
 
-
 #
 # create menu structure
 #
@@ -602,7 +601,6 @@ threads = []
 for filename in os.listdir( configuration['directories']['controls'] ):
 		#if filename.startswith('') and
 		if filename.endswith('.py'):
-			print(filename)
 			pathfilename = os.path.join( configuration['directories']['controls'], filename )
 			t = threading.Thread(target=plugin_execute, args=(pathfilename,))
 			t.setDaemon(True)
