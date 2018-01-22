@@ -65,6 +65,7 @@ class RemoteControl(dbus.service.Object):
 		super(RemoteControl,self).__init__(bus_name, "/com/arctura/remote")
 		adc = Adafruit_ADS1x15.ADS1015()
 		#pavol = pa_volume_handler('alsa_output.platform-soc_sound.analog-stereo')
+		printer('Initialized [OK]')
 
 		while True:
 			value_0 = adc.read_adc(0, gain=self.GAIN)
@@ -181,8 +182,9 @@ try:
     bus_name = dbus.service.BusName("com.arctura.remote",
                                     bus=dbus.SystemBus(),
                                     do_not_queue=True)
+	printer('DBus OK: com.arctura.remote')
 except dbus.exceptions.NameExistsException:
-    printer("service is already running")
+    printer("DBus: Service is already running")
     sys.exit(1)
 
 # Run the loop

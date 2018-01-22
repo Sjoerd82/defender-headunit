@@ -39,7 +39,7 @@ def configuration_load( configfile, defaultconfig=None ):
 	
 	# use the default from the config dir, in case the configfile is not found (first run)
 	if not os.path.exists(configfile) and os.path.exists(defaultconfig):
-		printer('Configuration not present (first run?); trying default: {0}'.format( defaultconfig ), tag='CONFIG')
+		printer('Configuration not present (first run?); loading default: {0}'.format( defaultconfig ), tag='CONFIG')
 		restored = configuration_restore( configfile, defaultconfig )
 		if not restored:
 			printer('Restoring configuration {0}: [FAIL]'.format(defaultconfig), LL_CRITICAL, tag='CONFIG')
