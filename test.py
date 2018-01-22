@@ -624,7 +624,7 @@ for t in threads:
 
 # LCD (TODO: move to plugins)
 from hu_lcd import *
-#disp = lcd_mgr()
+disp = lcd_mgr()
 
 myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 
