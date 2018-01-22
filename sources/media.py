@@ -15,9 +15,10 @@ def printer( message, level=LL_INFO, continuation=False, tag=sourceName ):
 	else:
 		myprint( message, level, tag )
 
-def media_add( dir, sourceCtrl ):
+def media_add( dir, label, sourceCtrl ):
 	ix = sourceCtrl.getIndex('name','media',True)
 	template = sourceCtrl.get(ix)
+	template['label'] = label
 	template['template'] = False
 	template['mountpoint'] = dir
 	sourceCtrl.add(template)
