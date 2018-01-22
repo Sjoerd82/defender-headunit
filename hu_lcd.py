@@ -178,10 +178,17 @@ class lcd_mgr():
 		self.set_fb_str(0,0,txt)
 		self.write_to_lcd()
 		
-	def lcd_play( self, artist, track, tracknumber, tracktotal ):
+	def lcd_play( self, artist, track, filename, tracknumber, tracktotal ):
 		#self.lcd_text( '{1}{2}/{3}'.format('\x00',tracknumber,tracktotal) )
 		self.set_fb_str(1,0,'{0}{1}/{2}'.format('\x00',tracknumber,tracktotal))
-		testtxt = '{0} - {1}'.format(artist, track)
+		
+		# Various display modes:
+		# 1) Artist - Trackname
+		if not artist == None and not track == None:
+			testtxt = '{0} - {1}'.format(artist, track)
+		else:
+			testtxt = filename
+		
 		self.lcd_text( testtxt )
 
 		#not the right place to stop... stop at every display change... hmm, write_to_lcd??
