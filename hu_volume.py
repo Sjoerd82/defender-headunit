@@ -3,6 +3,19 @@ import subprocess
 from subprocess import call
 from subprocess import Popen, PIPE
 
+from hu_utils import *
+
+# ********************************************************************************
+# Output wrapper
+#
+
+def printer( message, level=20, continuation=False, tag='PULSE' ):
+	#TODO: test if headunit logger exist...
+	if continuation:
+		myprint( message, level, '.'+tag )
+	else:
+		myprint( message, level, tag )
+
 class VolumeController():
 
 	#Percentage to increase the volume with, if no increment given
