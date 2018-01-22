@@ -20,6 +20,7 @@ def printer( message, level=20, continuation=False, tag='STTNGS' ):
 		
 import time
 from RPLCD.i2c import CharLCD
+import threading
 
 def write_framebuffer(lcd, framebuffer):
         lcd.home()
@@ -182,7 +183,10 @@ class lcd_mgr():
 		self.lcd_text( testtxt )
 		if len(testtxt) > 16:
 			#todo run under separate thread! (or atleast async..)
-			self.loop_string( testtxt, 0, delay=0 )
+			#self.loop_string( testtxt, 0, delay=0 )
+			t = threading.Thread(target=worker, args=(testtxt,))
+			t.start()
+			#self.worker( testtxt, 0, delay=0 )
 	
 	def lcd_ding( self, bla ):
 
@@ -198,6 +202,13 @@ class lcd_mgr():
 		elif bla == 'att_on':	 
 			self.set_fb_str(1,13,'ATT')
 			self.write_to_lcd()
+
+	def worker( self, string ):
+		while True:
+			self.loop_string( string, 0, delay=0 )
+			time.sleep(2)
+			self.lcd_text( string )
+			ime.sleep(2)
 
 	def loop_string( self, string, row, postfix='', delay=0.3 ):
 		padding = ' ' * self.num_cols
