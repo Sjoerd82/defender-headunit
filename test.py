@@ -84,9 +84,9 @@ import subprocess
 
 # support modules
 from hu_pulseaudio import *
+from hu_volume import *
 from hu_utils import *
 from hu_source import SourceController
-from hu_volume import *
 from hu_settings import *
 from hu_mpd import *
 #from hu_menu import *
@@ -98,7 +98,6 @@ from dbus.mainloop.glib import DBusGMainLoop
 import gobject
 
 Sources = SourceController()
-VolPulse = VolumeController('alsa_output.platform-soc_sound.analog-stereo')
 
 # CONSTANTS
 CONFIG_FILE_DEFAULT = '/mnt/PIHU_APP/defender-headunit/config/configuration.json'
@@ -555,7 +554,8 @@ init_logging_f( configuration['directories']['log'],
 # Set/Restore volume level
 #
 #
-set_volume( settings['volume'] )
+VolPulse = VolumeController('alsa_output.platform-soc_sound.analog-stereo')
+VolPulse.set( settings['volume'] )
 
 
 #
