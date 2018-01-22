@@ -135,7 +135,7 @@ class SourceController():
 		return copy.copy(self.lSource)
 
 	# return source for given index, returns current source, if no index provided
-	def get( self, index=iCurrent ):
+	def get( self, index=self.iCurrent ):
 		if index is None:
 			return None
 		else:

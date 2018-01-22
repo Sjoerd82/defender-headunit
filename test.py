@@ -225,6 +225,8 @@ def cb_mpd_event( event ):
 			else:
 				printer("DEBUG: save pos for label: {0}".format(currSrc['name']))
 				mpc_save_pos_for_label( currSrc['name'], "/mnt/PIHU_CONFIG" )
+		else:
+			printer("DEBUG: {0}".format(currSrc))
 			
 	elif event == "update":
 		printer(" ...  database update started or finished (no action)", tag='MPD')
