@@ -1,11 +1,23 @@
-# register somehow...
-# hook on.. ?
 
-# will not work on Windows
-#from gi.repository import GObject
+pluginName='lastfm'
+
+from hu_utils import *
+
+# TODO!!! the "headunit"-logger is no longer accessible once this script is started "on its own"..
+def myprint( message, level, tag ):
+	print("[{0}] {1}".format(tag,message))
+
+# Wrapper for "myprint"
+def printer( message, level=LL_INFO, continuation=False, tag=controlName ):
+	if continuation:
+		myprint( message, level, '.'+tag )
+	else:
+		myprint( message, level, tag )
+
+printer('Starting Plugin {0}'.format(pluginName))
+
 
 # headunit stuff
-from hu_utils import *
 from hu_settings import *
 
 # required here
@@ -39,6 +51,8 @@ username = pluginConfig['lastfm_username']
 password_hash = pluginConfig['lastfm_password_hash']
 scrobble_dir = 'D://Python/'
 tracks_file = 'scrobble.csv'
+
+print('!debug!')
 
 def plugin_init():
 	print('[PLUGIN] Scrobbler_lastfm loading...')

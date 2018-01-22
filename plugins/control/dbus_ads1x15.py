@@ -3,17 +3,33 @@
 # Remote control DBus service
 # Based on https://github.com/larryprice/python-dbus-blog-series/blob/part3/service
 
+controlName='ad1x15'
+
+from hu_utils import *
+
+# TODO!!! the "headunit"-logger is no longer accessible once this script is started "on its own"..
+def myprint( message, level, tag ):
+	print("[{0}] {1}".format(tag,message))
+
+# Wrapper for "myprint"
+def printer( message, level=LL_INFO, continuation=False, tag=controlName ):
+	if continuation:
+		myprint( message, level, '.'+tag )
+	else:
+		myprint( message, level, tag )
+
+printer('Starting Remote Control: Resistor Network')
+
+
+
 import dbus, dbus.service, dbus.exceptions
 import sys
 
 from dbus.mainloop.glib import DBusGMainLoop
 import gobject
 
-from hu_utils import *
-
 import os
 
-controlName='ad1x15'
 
 #############################
 # Loaded by: remote_dbus.py
@@ -27,17 +43,6 @@ import threading
 
 # Import the ADS1x15 module.
 import Adafruit_ADS1x15
-
-# TODO!!! the "headunit"-logger is no longer accessible once this script is started "on its own"..
-def myprint( message, level, tag ):
-	print("[{0}] {1}".format(tag,message))
-
-# Wrapper for "myprint"
-def printer( message, level=LL_INFO, continuation=False, tag=controlName ):
-	if continuation:
-		myprint( message, level, '.'+tag )
-	else:
-		myprint( message, level, tag )
 
 
 class RemoteControl(dbus.service.Object):
@@ -162,20 +167,6 @@ class RemoteControl(dbus.service.Object):
 			time.sleep(0.1)
 		printer("...released/max. delay reached")
 	
-printer('Starting Remote Control: Resistor Network')
-
-"""
-try:
-    bus_name = dbus.service.BusName("com.arctura.remote",
-                                    bus=dbus.SystemBus(),
-                                    do_not_queue=True)
-except dbus.exceptions.NameExistsException:
-    printer("service is already running")
-    sys.exit(1)
-	
-RemoteControl(bus_name)
-"""
-
 # Initialize a main loop
 DBusGMainLoop(set_as_default=True)
 loop = gobject.MainLoop()
