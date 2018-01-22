@@ -183,17 +183,17 @@ def lcd_menu( entry, counter, hasSub=False, isFirst=False, isLast=False, showCou
 
         if len(entry) > 16:
 			while True:
-                        time.sleep(1)
-                        loop_string(entry,lcd,framebuffer,0,16,postfix='\x07',delay=0)
-                        time.sleep(1)
-                        # reset to beginning
+				time.sleep(1)
+				loop_string(entry,lcd,framebuffer,0,16,postfix='\x07',delay=0)
+				time.sleep(1)
+				# reset to beginning
 
-                        if hasSub:
-                                framebuffer[0] = "{0}{1}".format( entry[0:15].ljust(15), '\x07' )
-                        else:
-                                framebuffer[0] = entry[0:16].ljust(16)
+				if hasSub:
+						framebuffer[0] = "{0}{1}".format( entry[0:15].ljust(15), '\x07' )
+				else:
+						framebuffer[0] = entry[0:16].ljust(16)
 
-                        write_framebuffer(lcd, framebuffer)
+				write_framebuffer(lcd, framebuffer)
 
                 #loop_string1(entry,lcd,framebuffer,0,16,delay=0)
 
