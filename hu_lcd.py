@@ -183,8 +183,8 @@ class lcd_mgr():
 		self.write_to_lcd()
 		
 	def lcd_play( self, artist, track, tracknumber ):
-		self.set_fb_str(1,0,'\x01')
-		self.lcd_text( '01 Dare - Waves' )
+		self.set_fb_str(1,0,'\x00')
+		self.lcd_text( '01 Dare - Waves ' )
 	
 	def lcd_ding( self, bla ):
 
@@ -203,24 +203,24 @@ class lcd_mgr():
 		
 	def charset( self ):
 		chr_play = (
-				0b00000,
 				0b10000,
 				0b11000,
 				0b11100,
 				0b11110,
 				0b11100,
 				0b11000,
-				0b10000
+				0b10000,
+				0b00000
 		)
 		chr_pause = (
-				0b00000,
 				0b11011,
 				0b11011,
 				0b11011,
 				0b11011,
 				0b11011,
 				0b11011,
-				0b11011
+				0b11011,
+				0b00000
 		)
 		chr_up = (
 				0b00000,
