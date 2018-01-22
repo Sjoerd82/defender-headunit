@@ -4,6 +4,18 @@ from subprocess import Popen, PIPE
 
 from hu_utils import *
 
+# ********************************************************************************
+# Output wrapper
+#
+
+def printer( message, level=20, continuation=False, tag='PULSE' ):
+	#TODO: test if headunit logger exist...
+	if continuation:
+		myprint( message, level, '.'+tag )
+	else:
+		myprint( message, level, tag )
+
+
 class pa_volume_handler():
 
 	VOL_INCR = "5%"
@@ -36,7 +48,7 @@ class pa_volume_handler():
 # Use 0-100 for volume.
 #
 def pa_sfx_load():
-	printer('Loading sound effects', tag="PULSE")
+	printer('Loading sound effects')
 	call(["pactl","upload-sample",sDirRoot+"/sfx/startup.wav", "startup"])
 	call(["pactl","upload-sample",sDirRoot+"/sfx/beep_60.wav", "beep_60"])
 	call(["pactl","upload-sample",sDirRoot+"/sfx/beep_70.wav", "beep_70"])
@@ -50,12 +62,12 @@ def pa_sfx_load():
 # in hu_utils...
 
 def pa_set_volume( volume ):
-	printer('Setting volume', tag="PULSE")
+	printer('Setting volume')
 	pavol = pa_volume_handler('alsa_output.platform-soc_sound.analog-stereo')
 	pavol.vol_set_pct(volume)
 
 def pa_get_volume():
-	printer('Getting volume', tag="PULSE")
+	printer('Getting volume')
 	pavol = pa_volume_handler('alsa_output.platform-soc_sound.analog-stereo')
 	return pavol.vol_get()
 
