@@ -604,7 +604,6 @@ for filename in os.listdir( '/mnt/PIHU_APP/defender-headunit/plugins/control/' )
 			threads.append(t)
 			t.start()
 
-exit()
 #
 # load other plugins
 #
