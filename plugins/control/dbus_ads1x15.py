@@ -162,8 +162,6 @@ class RemoteControl(dbus.service.Object):
 			time.sleep(0.1)
 		printer("...released/max. delay reached")
 	
-print('debug!!')
-printer('debug!!')
 printer('Starting Remote Control: Resistor Network')
 
 """

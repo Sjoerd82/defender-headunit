@@ -95,8 +95,6 @@ import sys
 from dbus.mainloop.glib import DBusGMainLoop
 import gobject
 
-import time
-
 Sources = SourceController()
 VolPulse = VolumeController('alsa_output.platform-soc_sound.analog-stereo')
 
@@ -510,12 +508,8 @@ def loadSourcePlugins( plugindir ):
 
 def plugin_execute( script ):
 	printer('Starting Plugin: {0}'.format(script))
-	#os.system( 'python '+script )
-	os.system('python /mnt/PIHU_APP/defender-headunit/plugins/control/dbus_ads1x15.py')
-
-def worker( script ):
-	printer('Starting Plugin')
-	os.system('python /mnt/PIHU_APP/defender-headunit/plugins/control/dbus_ads1x15.py')
+	os.system( 'python '+script )
+	#os.system('python /mnt/PIHU_APP/defender-headunit/plugins/control/dbus_ads1x15.py')
 
 
 #********************************************************************************
@@ -592,8 +586,8 @@ from plugin_control import *
 
 threads = []
 # loop through the control plugin dir
-#for filename in os.listdir( configuration['directories']['controls'] ):
-for filename in os.listdir( '/mnt/PIHU_APP/defender-headunit/plugins/control/' ):
+for filename in os.listdir( configuration['directories']['controls'] ):
+#for filename in os.listdir( '/mnt/PIHU_APP/defender-headunit/plugins/control/' ):
 		#if filename.startswith('') and
 		if filename.endswith('.py'):
 			print(filename)
@@ -605,7 +599,8 @@ for filename in os.listdir( '/mnt/PIHU_APP/defender-headunit/plugins/control/' )
 			threads.append(t)
 			t.start()
 
-time.sleep(1000)
+# NOTE: Plugins are now loading in the background, in parallel to code below.
+			
 #
 # load other plugins
 #
