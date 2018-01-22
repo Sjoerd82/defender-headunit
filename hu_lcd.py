@@ -234,13 +234,16 @@ class lcd_mgr():
 	def lcd_ding( self, bla ):
 
 		if bla == 'random_on':
-			self.set_fb_str(1,9,'RND')
+			self.set_fb_str(1,10,'RND')
 			self.write_to_lcd()
 		elif bla == 'att_on':	 
 			self.set_fb_str(1,13,'ATT')
 			self.write_to_lcd()
 		elif bla == 'update_on':	 
 			self.set_fb_str(1,5,'UPD')
+			self.write_to_lcd()
+		elif bla == 'src_usb':	 
+			self.set_fb_str(1,0,'USB')
 			self.write_to_lcd()
 		
 		
