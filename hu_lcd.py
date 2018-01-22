@@ -184,11 +184,11 @@ class lcd_mgr():
 		
 	def lcd_play( self, artist, track, tracknumber, tracktotal ):
 		#self.lcd_text( '{1}{2}/{3}'.format('\x00',tracknumber,tracktotal) )
-		teststring = '{1}{2}/{3}'.format('\x00',tracknumber,tracktotal)
+		teststring = '{0}{1}/{2}'.format('\x00',tracknumber,tracktotal)
 		print teststring
 		self.set_fb_str(1,0,teststring)
 		#self.set_fb_str(1,0,'\x00')
-		self.lcd_text( '{1} - {2}'.format(artist, track) )
+		self.lcd_text( '{0} - {1}'.format(artist, track) )
 	
 	def lcd_ding( self, bla ):
 
