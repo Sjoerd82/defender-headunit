@@ -184,7 +184,7 @@ class lcd_mgr():
 		
 	def lcd_play( self, artist, track, tracknumber ):
 		self.set_fb_str(1,0,'\x00')
-		self.lcd_text( '01 Dare - Waves ' )
+		self.lcd_text( '{0} {1} - {2}'.format(tracknumber, artist, track) )
 	
 	def lcd_ding( self, bla ):
 
