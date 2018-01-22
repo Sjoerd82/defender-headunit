@@ -83,6 +83,7 @@ import threading
 import subprocess
 
 # support modules
+from hu_pulseaudio import *
 from hu_utils import *
 from hu_source import SourceController
 from hu_volume import *
@@ -104,10 +105,6 @@ CONFIG_FILE_DEFAULT = '/mnt/PIHU_APP/defender-headunit/config/configuration.json
 CONFIG_FILE = '/mnt/PIHU_CONFIG/configuration.json'
 VERSION = "1.0.0"
 
-
-		
-def pa_sfx( dummy ):
-	return None
 
 def random( dummy ):
 	return None
@@ -525,6 +522,11 @@ def plugin_execute( script ):
 init_logging()
 init_logging_c()
 
+#
+# Load PulseAudio SFX
+#
+#
+pa_sfx_load()
 
 #
 # Load main configuration
@@ -549,10 +551,19 @@ init_logging_f( configuration['directories']['log'],
  				settings['runcount'] )
 
 #
-# Display version
+# Set/Restore volume level
+#
+#
+set_volume( settings['volume'] )
+
+
+#
+# "Splash Screen": Display version and play startup tune
 #
 #
 myprint('Headunit.py version {0}'.format(VERSION),tag='SYSTEM')
+pa_sfx('startup')
+
 
 #
 # create menu structure

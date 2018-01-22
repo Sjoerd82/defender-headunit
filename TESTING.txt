@@ -1,8 +1,11 @@
-
+*********************************************************************************
 Initialization:
 
  - The program starts with:
    > [LOG] Logging started: Console
+
+ - PulseAudio SFX' are loaded
+   [PULSE]
 
  - Configuration is loaded (and created, if first run)
    [CONFIG] shows status
@@ -16,6 +19,10 @@ Initialization:
 
 tail -f /mnt/PIHU_CONFIG/log/headunit.00049.log
 
+ - Volume level is set/restored
+ - Version is displayed
+ - Startup tune is played
+
  - Sources are initialized
    [SOURCE] Check if all sources at plugin_sources are shown
 
@@ -26,9 +33,15 @@ tail -f /mnt/PIHU_CONFIG/log/headunit.00049.log
    [PLUGIN]
 
 Message "[SYSTEM] Initialization finished" will appear after finishing this stage.
+*Sources are all checked
+Summary of available sources is printed
 
-
-Startup:
-
-
+*********************************************************************************
 Main program:
+
+ - Call backs for:
+   - Remote control: Resistor, Keyboard
+   - MPD
+   - Udisks
+
+
