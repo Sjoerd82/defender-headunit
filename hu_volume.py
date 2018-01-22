@@ -32,8 +32,8 @@ class VolumeController():
 	
 	def set( self, volpct, sink=sSink ):
 		#vol_pct = str(self.iVolume) + "%"
-		vol_pct = str(vol_pct) + "%"
-		call(["pactl", "set-sink-volume", sink, vol_pct])
+		volpct = str(volpct) + "%"
+		call(["pactl", "set-sink-volume", sink, volpct])
 
 	#set Att volume
 	def setAtt( self, volpct, sink=sSink ):
