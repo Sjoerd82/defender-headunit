@@ -95,6 +95,7 @@ import sys
 from dbus.mainloop.glib import DBusGMainLoop
 import gobject
 
+import time
 
 Sources = SourceController()
 VolPulse = VolumeController('alsa_output.platform-soc_sound.analog-stereo')
@@ -604,6 +605,7 @@ for filename in os.listdir( '/mnt/PIHU_APP/defender-headunit/plugins/control/' )
 			threads.append(t)
 			t.start()
 
+time.sleep(1000)
 #
 # load other plugins
 #
