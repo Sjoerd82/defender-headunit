@@ -148,6 +148,8 @@ class lcd_mgr():
 			'',
 			'']
 	num_cols = 16
+	#threads = []
+	t = None
 
 	def __init__(self):
 	
@@ -181,11 +183,18 @@ class lcd_mgr():
 		self.set_fb_str(1,0,'{0}{1}/{2}'.format('\x00',tracknumber,tracktotal))
 		testtxt = '{0} - {1}'.format(artist, track)
 		self.lcd_text( testtxt )
+
+		#not the right place to stop... stop at every display change... hmm, write_to_lcd??
+		#threads[0].stop()
+		#self.t.stop() 			THREADS CAN'T BE STOPPED IN PYTHON!!! ---- multiprocessing ? asyncio ?
+		
 		if len(testtxt) > 16:
 			#todo run under separate thread! (or atleast async..)
-			#self.loop_string( testtxt, 0, delay=0 )
-			t = threading.Thread(target=self.worker, args=(testtxt,))
-			t.start()
+			self.loop_string( testtxt, 0, delay=0 )
+			self.lcd_text( testtxt )
+			#self.t = threading.Thread(target=self.worker, args=(testtxt,))
+			#threads.append(t)
+			#self.t.start()
 			#self.worker( testtxt, 0, delay=0 )
 	
 	def lcd_ding( self, bla ):
@@ -208,7 +217,7 @@ class lcd_mgr():
 			self.loop_string( string, 0, delay=0 )
 			time.sleep(2)
 			self.lcd_text( string )
-			ime.sleep(2)
+			time.sleep(2)
 
 	def loop_string( self, string, row, postfix='', delay=0.3 ):
 		padding = ' ' * self.num_cols
