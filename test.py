@@ -697,6 +697,11 @@ myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 # on demand...
 #plugin_sources.media.media_add('/media/USBDRIVE', Sources)
 
+#
+# TODO!! QUICKPLAY!!
+#
+Sources.next()
+
 Sources.sourceCheckAll()
 printSummary()
 
