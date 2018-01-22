@@ -135,11 +135,18 @@ class SourceController():
 		return copy.copy(self.lSource)
 
 	# return source for given index, returns current source, if no index provided
-	def get( self, index=self.iCurrent ):
-		if index is None:
-			return None
-		else:
+	#def get( self, index=self.iCurrent ):	syntax not allowed?
+	def get( self, index=iCurrent ):
+		if isdecimal(index):
 			return copy.copy(self.lSource[index])
+		elif isdecimal(self.iCurrent):
+			return copy.copy(self.lSource[self.iCurrent])
+		else:
+			return None
+		#if index == None and self.iCurrent == None:
+		#return None
+		#else:
+			
 
 	# return controls for given index ## do we need this
 	def getSourceControls( self, index ):
