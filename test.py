@@ -217,7 +217,7 @@ def cb_mpd_event( event ):
 	printer('DBUS event received: {0}'.format(event), tag='MPD')
 
 	if event == "player":
-		currSrc = Sources.get()
+		currSrc = Sources.get( None )
 		if not currSrc == None:
 			if label in currSrc:
 				printer("DEBUG: save pos for label: {0}".format(currSrc['label']))
