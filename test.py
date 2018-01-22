@@ -218,6 +218,8 @@ def cb_mpd_event( event ):
 
 	if event == "player":
 		currSrc = Sources.get( None )
+		printer("XXDEBUGXX: {0}".format(currSrc))
+		
 		if not currSrc == None:
 			if 'label' in currSrc:
 				printer("DEBUG: save pos for label: {0}".format(currSrc['label']))
