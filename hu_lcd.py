@@ -198,6 +198,7 @@ class lcd_mgr():
 		if len(testtxt) > 16:
 			#todo run under separate thread! (or atleast async..)
 			self.loop_string( testtxt, 0, delay=0 )
+			time.sleep(2)
 			self.lcd_text( testtxt )
 			#self.t = threading.Thread(target=self.worker, args=(testtxt,))
 			#threads.append(t)
@@ -235,6 +236,7 @@ class lcd_mgr():
 			time.sleep(delay)
 	  
 	def charset( self ):
+		"""
 		chr_play = (
 				0b10000,
 				0b11000,
@@ -243,6 +245,17 @@ class lcd_mgr():
 				0b11100,
 				0b11000,
 				0b10000,
+				0b00000
+		)
+		"""
+		chr_play = (
+				0b00000,
+				0b10000,
+				0b11000,
+				0b11100,
+				0b11000,
+				0b10000,
+				0b00000,
 				0b00000
 		)
 		chr_pause = (
