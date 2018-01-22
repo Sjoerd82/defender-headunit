@@ -467,10 +467,12 @@ def printSummary():
 	#logger = logging.getLogger('headunit')
 	logger.info('-- Summary -----------------------------------------------------------', extra={'tag':''})
 	iCurrent = Sources.getIndexCurrent()
-	if iCurrent == None:	
-		logger.info('Current source: None', extra={'tag':''})
-	else:
-		logger.info('Current source: {0:d} {1}'.format(iCurrent,Sources[iCurrent]['displayname']), extra={'tag':''})
+	print iCurrent
+#TODO fix
+#	if iCurrent == None:	
+#		logger.info('Current source: None', extra={'tag':''})
+#	else:
+#		logger.info('Current source: {0:d} {1}'.format(iCurrent,Sources[iCurrent]['displayname']), extra={'tag':''})
 	i = 0
 	for source in Sources.getAll():
 		if not source['template']:
