@@ -208,32 +208,32 @@ def cb_remote_btn_press ( func ):
 		pa_sfx('error')
 
 def cb_mpd_event( event ):
-	global bInit
+#?	global bInit
 	global Sources
 
-	if bInit == 0:
+#?if bInit == 0:
 	
-		printer('DBUS event received: {0}'.format(event), tag='MPD')
+	printer('DBUS event received: {0}'.format(event), tag='MPD')
 
-		if event == "player":
-			mpc_save_pos()
-		elif event == "update":
-			printer(" ...  database update started or finished (no action)", tag='MPD')
-		elif event == "database":
-			printer(" ...  database updated with new music #TODO", tag='MPD')
-		elif event == "playlist":
-			priner(" ...  playlist changed (no action)", tag='MPD')
-		#elif event == "media_removed":
-		#elif event == "media_ready":
-		elif event == "ifup":
-			printer(" ...  WiFi interface up: checking network related sources", tag='MPD')
-			stream_check()
-			smb_check()
-		elif event == "ifdown":
-			printer(" ...  WiFi interface down: marking network related sources unavailable", tag='MPD')
-			Sources.setAvailable('depNetwork',True,False)
-		else:
-			printer(' ...  unknown event (no action)', tag='MPD')
+	if event == "player":
+		mpc_save_pos()
+	elif event == "update":
+		printer(" ...  database update started or finished (no action)", tag='MPD')
+	elif event == "database":
+		printer(" ...  database updated with new music #TODO", tag='MPD')
+	elif event == "playlist":
+		priner(" ...  playlist changed (no action)", tag='MPD')
+	#elif event == "media_removed":
+	#elif event == "media_ready":
+	elif event == "ifup":
+		printer(" ...  WiFi interface up: checking network related sources", tag='MPD')
+		stream_check()
+		smb_check()
+	elif event == "ifdown":
+		printer(" ...  WiFi interface down: marking network related sources unavailable", tag='MPD')
+		Sources.setAvailable('depNetwork',True,False)
+	else:
+		printer(' ...  unknown event (no action)', tag='MPD')
 		
 def cb_udisk_dev_add( device ):
 	printer('Device added: {0}'.format(str(device)),tag='UDISKS')
