@@ -181,13 +181,13 @@ loop = gobject.MainLoop()
 
 # Declare a name where our service can be reached
 try:
-    bus_name = dbus.service.BusName("com.arctura.remote",
+	bus_name = dbus.service.BusName("com.arctura.remote",
                                     bus=dbus.SystemBus(),
                                     do_not_queue=True)
 	printer('DBus OK: com.arctura.remote')
 except dbus.exceptions.NameExistsException:
-    printer("DBus: Service is already running")
-    sys.exit(1)
+	printer("DBus: Service is already running")
+	sys.exit(1)
 
 # Run the loop
 try:
