@@ -221,11 +221,11 @@ class lcd_mgr():
 		 self.lcd.write_string(row.ljust(num_cols)[:num_cols])
 		 self.lcd.write_string('\r\n')
 
-	def set_fb_char( row, col, char ):
+	def set_fb_char( self, row, col, char ):
 		self.framebuffer[row] = self.framebuffer[row][:col] + char + self.framebuffer[row][col+2:]
 		
 	
-	def lcd_mgr( sefl, bla ):
+	def lcd_mgr( self, bla ):
 
 		if bla == 'random_on':
 			self.set_fb_char(1,10,'R')
