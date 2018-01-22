@@ -201,7 +201,7 @@ class lcd_mgr():
 			self.set_fb_str(1,13,'ATT')
 			self.write_to_lcd()
 		
-	def charset():
+	def charset( self ):
 		chr_play = (
 				0b00000,
 				0b10000,
@@ -265,10 +265,10 @@ class lcd_mgr():
 				0b00000
 		)
 
-		lcd.create_char(0, chr_play)
-		lcd.create_char(1, chr_pause)
-		lcd.create_char(4, chr_up)
-		lcd.create_char(5, chr_down)
-		lcd.create_char(6, chr_left)
-		lcd.create_char(7, chr_right)
+		self.lcd.create_char(0, chr_play)
+		self.lcd.create_char(1, chr_pause)
+		self.lcd.create_char(4, chr_up)
+		self.lcd.create_char(5, chr_down)
+		self.lcd.create_char(6, chr_left)
+		self.lcd.create_char(7, chr_right)
 		
