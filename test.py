@@ -220,10 +220,10 @@ def cb_mpd_event( event ):
 		currSrc = Sources.get()
 		if not currSrc == None:
 			if label in currSrc:
-				print "DEBUG: save pos for label: {0}".format(currSrc['label'])
+				printer("DEBUG: save pos for label: {0}".format(currSrc['label']))
 				mpc_save_pos_for_label( currSrc['label'], "/mnt/PIHU_CONFIG" )
 			else:
-				print "DEBUG: save pos for label: {0}".format(currSrc['name'])
+				printer("DEBUG: save pos for label: {0}".format(currSrc['name']))
 				mpc_save_pos_for_label( currSrc['name'], "/mnt/PIHU_CONFIG" )
 			
 	elif event == "update":

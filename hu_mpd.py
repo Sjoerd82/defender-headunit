@@ -4,11 +4,21 @@
 import os
 from subprocess import call
 
-from hu_utils import *
 from mpd import MPDClient
 
-# save settings
-from hu_settings import *
+from hu_utils import *
+# ********************************************************************************
+# Output wrapper
+#
+
+def printer( message, level=20, continuation=False, tag='STTNGS' ):
+	#TODO: test if headunit logger exist...
+	if continuation:
+		myprint( message, level, '.'+tag )
+	else:
+		myprint( message, level, tag )
+
+
 
 #TODO
 sDirSave = "/mnt/PIHU_CONFIG"
@@ -248,7 +258,7 @@ def mpc_save_pos( source ):
 """
 
 def mpc_save_pos_for_label ( label, pcklPath ):
-	print('[MPC] Saving playlist position for label: {0}'.format(label))
+	printer('Saving playlist position for label: {0}'.format(label))
 	oMpdClient = MPDClient() 
 	oMpdClient.timeout = 10                # network timeout in seconds (floats allowed), default: None
 	oMpdClient.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
