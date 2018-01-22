@@ -586,11 +586,13 @@ from plugin_control import *
 
 threads = []
 # loop through the control plugin dir
-for filename in os.listdir( configuration['directories']['controls'] ):
+#for filename in os.listdir( configuration['directories']['controls'] ):
+for filename in os.listdir( '/mnt/PIHU_APP/defender-headunit/plugins/control/' ):
 		#if filename.startswith('') and
 		if filename.endswith('.py'):
-			pathfilename = os.path.join( configuration['directories']['controls'], filename )
-			t = threading.Thread(target=plugin_execute, args=(pathfilename,))
+			#pathfilename = os.path.join( configuration['directories']['controls'], filename )
+			#t = threading.Thread(target=plugin_execute, args=(pathfilename,))
+			t = threading.Thread(target=plugin_execute, args=(filename,))
 			t.setDaemon(True)
 			threads.append(t)
 			t.start()
