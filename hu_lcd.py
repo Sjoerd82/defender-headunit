@@ -204,7 +204,7 @@ class lcd_mgr():
 		s = string
 		for i in range(len(s) - self.num_cols + 1 + len(postfix)):
 			self.framebuffer[row] = s[i:i+self.num_cols-len(postfix)] + postfix
-			write_to_lcd()
+			self.write_to_lcd()
 			time.sleep(delay)
 	  
 	def charset( self ):
