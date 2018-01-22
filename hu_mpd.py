@@ -306,7 +306,8 @@ def mpc_save_pos_for_label ( label, pcklPath ):
 
 	dSavePosition = {'file': current_file, 'time': timeelapsed}
 	print(' ...  file: {0}, time: {1}'.format(current_file,timeelapsed))
-	
+
+	#if os.path.isfile(pickle_file):
 	pickle_file = pcklPath + "/mp_" + label + ".p"
 	pickle.dump( dSavePosition, open( pickle_file, "wb" ) )
 
@@ -363,9 +364,10 @@ def mpc_lkp( label ):
 					print(' ...  Elapsed time below threshold or short track: restarting at beginning of track.')
 				break
 		"""
-	else:
-		print('[MPC] No position file available for this medium (first run?)')
-		mpc_save_pos_for_label (label)
+# TODO --- NOT REQUIRED? IT WILL BE CREATED THE NEXT TIME THERE'S A PLAYER EVENT ANYWAY...
+#	else:
+#		print('[MPC] No position file available for this medium (first run?)')
+#		mpc_save_pos_for_label (label)
 
 	return pos
 
