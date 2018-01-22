@@ -28,7 +28,7 @@ class mpdController():
 
 	mpdc = MPDClient()
 
-	def __init__(self):
+	def __init__( self ):
 		# Connect to MPD
 		try:
 			print('[MPC] Initializing MPD client')
@@ -43,7 +43,7 @@ class mpdController():
 			print('[MPD] Failed to connect to MPD server')
 			#return False	# __init__() should return None  (?)
 
-	def playlistClear():
+	def playlistClear( self ):
 		print(' ...... Emptying playlist')
 		#todo: how about cropping, populating, and removing the first? item .. for faster continuity???
 		self.mpcd.stop()
@@ -52,29 +52,29 @@ class mpdController():
 		#call(["mpc", "-q", "clear"])
 		#self.mpcd.close()
 
-	def channelSubscribe( channel ):
+	def channelSubscribe( self, channel ):
 		self.mpcd.subscribe(channel)
 		
-	def mpc_populate_playlist(sLocalMusicMPD):
+	def mpc_populate_playlist( self, sLocalMusicMPD ):
 		print('todo')
 		
-	def mpc_playlist_is_populated():
+	def mpc_playlist_is_populated( self ):
 		print('todo')
 
-	def mpc_update():
+	def mpc_update( self ):
 		print('todo')
 
-	def mpc_lkp(locmus):
+	def mpc_lkp( self, locmus):
 		print('todo')
 		
 #	def playStart( str(playslist_pos['pos']), playslist_pos['time'] ):
-	def playStart( pos, time ):
+	def playStart( self, pos, time ):
 		print('todo')
 
-	def mpc_get_PlaylistDirs():
+	def mpc_get_PlaylistDirs( self ):
 		print('todo')
 		
-	def mpc_get_Details():
+	def mpc_get_Details( self ):
 		return 'Black Keys - Something'
 
 
