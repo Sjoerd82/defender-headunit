@@ -271,6 +271,7 @@ def mpc_save_pos_for_label ( label, pcklPath ):
 
 	songid = None
 	testje = None
+	current_song_listdick = None
 	# Dictionary in List
 	try:
 		for r in results:
