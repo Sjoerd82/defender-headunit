@@ -508,8 +508,8 @@ def loadSourcePlugins( plugindir ):
 				add_a_source(plugindir, sourcePluginName)
 
 def plugin_execute( script ):
-	printer('Starting Plugin (new thread): {0}'.format(script))
-	os.system("".join('python', script)
+	printer('Starting Plugin: {0}'.format(script))
+	os.system( 'python '+script )
 
 #********************************************************************************
 #
