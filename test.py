@@ -207,6 +207,36 @@ def cb_remote_btn_press ( func ):
 		print('Unknown button function')
 		pa_sfx('error')
 
+def cb_mpd_event( event ):
+	global bInit
+	global Sources
+
+	if bInit == 0:
+	
+		printer('DBUS event received: {0}'.format(event), tag='MPD')
+
+		if event == "player":
+			mpc_save_pos()
+		elif event == "update":
+			printer(" ...  database update started or finished (no action)", tag='MPD')
+		elif event == "database":
+			printer(" ...  database updated with new music #TODO", tag='MPD')
+		elif event == "playlist":
+			priner(" ...  playlist changed (no action)", tag='MPD')
+		#elif event == "media_removed":
+		#elif event == "media_ready":
+		elif event == "ifup":
+			printer(" ...  WiFi interface up: checking network related sources", tag='MPD')
+			stream_check()
+			smb_check()
+		elif event == "ifdown":
+			printer(" ...  WiFi interface down: marking network related sources unavailable", tag='MPD'
+			Sources.setAvailable('depNetwork',True,False)
+			#arSourceAvailable[5] = 0 #stream
+			#arSourceAvailable[6] = 0 #smb
+		else:
+			printer(' ...  unknown event (no action)', tag='MPD')
+		
 def cb_udisk_dev_add( device ):
 	printer('Device added: {0}'.format(str(device)),tag='UDISKS')
 	udisk_details( device, 'A' )
@@ -611,10 +641,19 @@ for filename in os.listdir( configuration['directories']['controls'] ):
 			t.setDaemon(True)
 			threads.append(t)
 			#t.start()	WORKAROUND
-
+			
 # NOTE: Plugins are now loading in the background, in parallel to code below.
 # NOTE: This can really interfere, in a way I don't understand.. executing the threads later helps... somehow..
 # NOTE: For NOW, we'll just execute the threads after the loading of the "other" plugins...
+
+#
+# Load mpd dbus listener
+#
+#
+t = threading.Thread(target=plugin_execute, args=('/mnt/PIHU_APP/defender-headunit/dbus_mpd.py',))
+t.setDaemon(True)
+threads.append(t)
+
 
 #
 # load other plugins
@@ -671,9 +710,10 @@ DBusGMainLoop(set_as_default=True)
 mainloop = gobject.MainLoop()
 bus = dbus.SystemBus()
 
-
-
-#bus.add_signal_receiver(cb_mpd_event, dbus_interface = "com.arctura.mpd")
+#
+# Connect Callback functions to DBus Signals
+#
+bus.add_signal_receiver(cb_mpd_event, dbus_interface = "com.arctura.mpd")
 bus.add_signal_receiver(cb_remote_btn_press, dbus_interface = "com.arctura.remote")
 bus.add_signal_receiver(cb_remote_btn_press2, dbus_interface = "com.arctura.keyboard")
 bus.add_signal_receiver(cb_udisk_dev_add, signal_name='DeviceAdded', dbus_interface="org.freedesktop.UDisks")
