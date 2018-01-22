@@ -199,11 +199,19 @@ def lcd_menu( entry, counter, hasSub=False, isFirst=False, isLast=False, showCou
 
 class lcd_mgr():
 
+	lcd = None
 	framebuffer = [
 			'',
 			'']
 
 	def __init__(self):
+	
+		lcd = CharLCD(i2c_expander='PCF8574', address=0x27, port=1,
+              cols=16, rows=2, dotsize=8,
+              charmap='A00',
+              auto_linebreaks=True,
+              backlight_enabled=True)
+	
 		lcd.clear()
 		
 	def write_to_lcd(lcd, framebuffer, num_cols):
