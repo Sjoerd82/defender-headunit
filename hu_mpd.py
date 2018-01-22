@@ -41,7 +41,7 @@ class mpdController():
 			self.mpdc.send_idle()
 		except:
 			print('[MPD] Failed to connect to MPD server')
-			return False
+			#return False	# __init__() should return None  (?)
 
 	def playlistClear():
 		print(' ...... Emptying playlist')
