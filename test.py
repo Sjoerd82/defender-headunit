@@ -390,8 +390,9 @@ def init_load_config():
 	
 	# Print summary of loaded config TODO: output level = debug
 	if 'directories' in configuration:
-		test_config('log', configuration['directories'], "directory")
+		test_config('controls', configuration['directories'], "directory")
 		test_config('config', configuration['directories'], "directory")
+		test_config('log', configuration['directories'], "directory")
 	else:
 		printer('Directory configuration missing!!', level=LL_CRITICAL)
 
@@ -506,9 +507,9 @@ def loadSourcePlugins( plugindir ):
 			if not str(v).find(lookforthingy) == -1:
 				add_a_source(plugindir, sourcePluginName)
 
-def worker( script ):
-	print('Starting Plugin under new thread')
-	os.system('python /mnt/PIHU_APP/defender-headunit/plugins/control/dbus_ads1x15.py')
+def plugin_execute( script ):
+	printer('Starting Plugin (new thread): {0}'.format(script))
+	os.system("".join('python', script)
 
 #********************************************************************************
 #
@@ -584,10 +585,11 @@ from plugin_control import *
 
 threads = []
 # loop through the control plugin dir
-for filename in os.listdir('/mnt/PIHU_APP/defender-headunit/plugins/control/'):
+for filename in os.listdir( configuration['directories']['controls'] ):
 		#if filename.startswith('') and
 		if filename.endswith('.py'):
-			t = threading.Thread(target=worker, args=(filename,))
+			pathfilename = os.path.join( configuration['directories']['controls'], filename )
+			t = threading.Thread(target=plugin_execute, args=(pathfilename,))
 			t.setDaemon(True)
 			threads.append(t)
 			t.start()

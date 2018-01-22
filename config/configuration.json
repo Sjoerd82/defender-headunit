@@ -11,7 +11,7 @@
 		, "runcount": 0
 	},
 	"directories": {
-		  "plugin-sources": "/mnt/PIHU_APP/defender-headunit/plugin_sources/"
+		  "controls": "/mnt/PIHU_APP/defender-headunit/plugins/control/"
 		, "app-root": "/mnt/PIHU_APP/defender-headunit"
 		, "plugin-other": "/mnt/PIHU_APP/defender-headunit/plugin_other/"
 		, "config": "/mnt/PIHU_CONFIG"
