@@ -80,6 +80,7 @@ import sys, inspect
 
 #starting plugins in separate thread
 import threading
+import subprocess
 
 # support modules
 from hu_utils import *
@@ -508,9 +509,9 @@ def loadSourcePlugins( plugindir ):
 
 def plugin_execute( script ):
 	printer('Starting Plugin: {0}'.format(script))
-	os.system( 'python '+script )
-	time.sleep(100)
-
+	#os.system( 'python '+script )
+	call(['python',script])
+	
 
 #********************************************************************************
 #
