@@ -3,6 +3,7 @@
 #
 import os
 from subprocess import call
+import pickle
 
 from mpd import MPDClient
 
