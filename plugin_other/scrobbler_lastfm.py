@@ -52,8 +52,6 @@ password_hash = pluginConfig['lastfm_password_hash']
 scrobble_dir = 'D://Python/'
 tracks_file = 'scrobble.csv'
 
-print('!debug!')
-
 def plugin_init():
 	print('[PLUGIN] Scrobbler_lastfm loading...')
 
