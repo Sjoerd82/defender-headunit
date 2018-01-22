@@ -219,7 +219,7 @@ def cb_mpd_event( event ):
 	if event == "player":
 		currSrc = Sources.get( None )
 		if not currSrc == None:
-			if label in currSrc:
+			if 'label' in currSrc:
 				printer("DEBUG: save pos for label: {0}".format(currSrc['label']))
 				mpc_save_pos_for_label( currSrc['label'], "/mnt/PIHU_CONFIG" )
 			else:
