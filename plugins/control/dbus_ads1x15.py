@@ -3,8 +3,6 @@
 # Remote control DBus service
 # Based on https://github.com/larryprice/python-dbus-blog-series/blob/part3/service
 
-print('debug!!')
-
 import dbus, dbus.service, dbus.exceptions
 import sys
 
@@ -160,7 +158,8 @@ class RemoteControl(dbus.service.Object):
 			time.sleep(0.1)
 		printer("...released/max. delay reached")
 	
-
+print('debug!!')
+printer('debug!!')
 printer('Starting Remote Control: Resistor Network')
 
 """
