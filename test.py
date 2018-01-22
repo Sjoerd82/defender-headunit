@@ -110,6 +110,7 @@ def random( dummy ):
 	return None
 
 def volume_att_toggle():
+	disp.lcd_ding( 'att_on' )
 	return None
 
 def volume_up():
@@ -625,6 +626,7 @@ for t in threads:
 # LCD (TODO: move to plugins)
 from hu_lcd import *
 disp = lcd_mgr()
+disp.lcd_text('Welcome v0.1.4.8')
 
 myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 

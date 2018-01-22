@@ -213,6 +213,8 @@ class lcd_mgr():
                    auto_linebreaks=True,
                    backlight_enabled=True)
 	
+		self.framebuffer[0] = '                '
+		self.framebuffer[1] = '                '
 		self.lcd.clear()
 		
 	def write_to_lcd( self ):
@@ -222,15 +224,18 @@ class lcd_mgr():
 		 self.lcd.write_string(row.ljust(self.num_cols)[:self.num_cols])
 		 self.lcd.write_string('\r\n')
 
-	def set_fb_char( self, row, col, char ):
-		self.framebuffer[row] = self.framebuffer[row][:col] + char + self.framebuffer[row][col+2:]
+	def set_fb_str( self, row, col, txt ):
+		self.framebuffer[row] = self.framebuffer[row][:col] + txt + self.framebuffer[row][col+len(txt)+1:]
 		
 	
 	def lcd_ding( self, bla ):
 
-		#if bla == 'random_on':
-		self.set_fb_char(1,10,'R')
-		self.write_to_lcd()
+		if bla == 'random_on':
+			self.set_fb_str(1,10,'RND')
+			self.write_to_lcd()
+		elif bla == 'att_on':	 
+			self.set_fb_str(1,14,'ATT')
+			self.write_to_lcd()
 		
 		
 		
