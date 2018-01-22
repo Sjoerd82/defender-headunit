@@ -106,7 +106,7 @@ VERSION = "1.0.0"
 
 
 def random( dummy ):
-	disp.lcd_mgr( 'random_on' )
+	disp.lcd_ding( 'random_on' )
 	return None
 
 def volume_att_toggle():

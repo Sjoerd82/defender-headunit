@@ -203,6 +203,7 @@ class lcd_mgr():
 	framebuffer = [
 			'',
 			'']
+	num_cols = 16
 
 	def __init__(self):
 	
@@ -214,21 +215,22 @@ class lcd_mgr():
 	
 		self.lcd.clear()
 		
-	def write_to_lcd( self, framebuffer, num_cols ):
+	def write_to_lcd( self ):
 	   """Write the framebuffer out to the specified LCD."""
 	   self.lcd.home()
-	   for row in framebuffer:
-		 self.lcd.write_string(row.ljust(num_cols)[:num_cols])
+	   for row in self.framebuffer:
+		 self.lcd.write_string(row.ljust(self.num_cols)[:self.num_cols])
 		 self.lcd.write_string('\r\n')
 
 	def set_fb_char( self, row, col, char ):
 		self.framebuffer[row] = self.framebuffer[row][:col] + char + self.framebuffer[row][col+2:]
 		
 	
-	def lcd_mgr( self, bla ):
+	def lcd_ding( self, bla ):
 
-		if bla == 'random_on':
-			self.set_fb_char(1,10,'R')
+		#if bla == 'random_on':
+		self.set_fb_char(1,10,'R')
+		self.write_to_lcd()
 		
 		
 		
