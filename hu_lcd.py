@@ -199,7 +199,7 @@ class lcd_mgr():
 			self.set_fb_str(1,13,'ATT')
 			self.write_to_lcd()
 
-	def loop_string(string, row, postfix='', delay=0.3):
+	def loop_string( self, string, row, postfix='', delay=0.3 ):
 		padding = ' ' * self.num_cols
 		s = string
 		for i in range(len(s) - self.num_cols + 1 + len(postfix)):
