@@ -593,9 +593,9 @@ for filename in os.listdir( configuration['directories']['controls'] ):
 			print(filename)
 			pathfilename = os.path.join( configuration['directories']['controls'], filename )
 			t = threading.Thread(target=plugin_execute, args=(pathfilename,))
-			#t.setDaemon(True)
+			t.setDaemon(True)
 			threads.append(t)
-			t.start()
+			#t.start()
 
 # NOTE: Plugins are now loading in the background, in parallel to code below.
 			
@@ -640,6 +640,9 @@ printSummary()
 #
 # Initialize the mainloop
 #
+
+t.start()
+
 DBusGMainLoop(set_as_default=True)
 mainloop = gobject.MainLoop()
 bus = dbus.SystemBus()
