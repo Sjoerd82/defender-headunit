@@ -173,7 +173,7 @@ def cb_remote_btn_press ( func ):
 			# next
 			Sources.next()
 			# update settings
-			currSrc = Sources.get()
+			currSrc = Sources.get(None)
 			cSettings.set('source',currSrc['name'])
 			if 'label' in currSrc:
 				cSettings.set('label',currSrc['label'])
