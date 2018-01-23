@@ -670,7 +670,7 @@ pa_sfx_load( configuration['directories']['sfx'] )
 settingsfile = os.path.join(configuration['directories']['config'],configuration['files']['settings'])
 
 Settings = huSettings( os.path.join(configuration['directories']['config'],configuration['files']['settings']),
-                        default=configuration['default_settings'] )
+                        defaultSettings=configuration['default_settings'] )
 
 # increase the run counter (used for logging to file)
 newRunCount = Settings.incrRunCounter()
