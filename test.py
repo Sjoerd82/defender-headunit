@@ -177,6 +177,8 @@ def cb_remote_btn_press ( func ):
 			cSettings.set('source',currSrc['name'])
 			if 'label' in currSrc:
 				cSettings.set('label',currSrc['label'])
+			if 'uuid' in currSrc:
+				cSettings.set('uuid',currSrc['uuid'])
 			# play
 			Sources.sourcePlay()
 
@@ -373,6 +375,7 @@ def udisk_details( device, action ):
 		#DeviceFileById: dbus.Array([dbus.String(u'/dev/disk/by-id/usb-Kingston_DataTraveler_SE9_0014857749DCFD20C7F95F31-0:0-part1'), dbus.String(u'/dev/disk/by-uuid/D2B6-F8B3')], signature=dbus.Signature('s'), variant_level=1)
 		
 		mountpoint = subprocess.check_output("mount | egrep "+DeviceFile+" | cut -d ' ' -f 3", shell=True).rstrip('\n')
+		partuuid = subprocess.check_output("blkid "+DeviceFile+" -s PARTUUID -o value", shell=True).rstrip('\n')
 		if mountpoint != "":
 			sUsbLabel = os.path.basename(mountpoint).rstrip('\n')
 			printer(" > Mounted on: {0} (label: {1})".format(mountpoint,sUsbLabel),tag=mytag)
@@ -380,7 +383,7 @@ def udisk_details( device, action ):
 			#add_a_source(sPluginDirSources, 'media')
 			#media_check(sUsbLabel)
 			#media_play()
-			sources.media.media_add(mountpoint, sUsbLabel, Sources)
+			sources.media.media_add(mountpoint, sUsbLabel, partuuid, Sources)
 			if sources.media.media_check(sUsbLabel):
 				Sources.setAvailable('mountpoint',mountpoint,True)
 			printSummary()
@@ -805,6 +808,9 @@ myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 #Sources.sourceCheckAll()
 print("PREVIOUS SOURCE: {0}".format(cSettings.get_key('source')))
 print("PREVIOUS SOURCE: {0}".format(cSettings.get_key('label')))
+print("PREVIOUS SOURCE: {0}".format(cSettings.get_key('uuid')))
+
+if = "":
 
 Sources.sourceCheckAll()
 Sources.next()
