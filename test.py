@@ -738,8 +738,10 @@ for source in Sources.getAll():
 					print prevSource
 	
 print "DEBUG!"
-prevSource = {'name': 'locmus', 'mountpoint':'/media/PIHU_DATA2'}
+prevSource = {'name': 'locmus'}
+prevSourceSub = {'mountpoint':'/media/PIHU_DATA2'}
 print prevSource
+bFound = False
 
 for source in Sources.getAll():
 	if source['name'] == prevSource['name']:
@@ -753,9 +755,19 @@ for source in Sources.getAll():
 				print "---END--- no suitable source to continue playing... Play first available source."
 			else:
 				print "Previous Source: {0}; is template, and has subsources...>".format(source['name'])
-				for subsource in source['subsources']:
-					print subsource
-					print prevSource
+				for subitem in prevSourceSub:
+					for subsource in source['subsources']:
+						if subitem in source['subsources']
+							bFound = True
+							break
+							
+					if bFound == False:
+						print('NOT FOUND!')
+						break
+					
+					
+					#print subsource
+					#print prevSource
 					
 exit()	
 	
