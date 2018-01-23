@@ -85,13 +85,13 @@ class mpdController():
 		oMpdClient.currentsong()
 		
 		results = oMpdClient.command_list_end()
-		print results
+		print results[0]
 
 		oMpdClient.close()
 		oMpdClient.disconnect()
 	
 		#return self.mpdc.currentsong()
-		return results
+		return results[0]
 
 	def mpc_get_status( self ):
 		oMpdClient = MPDClient() 
@@ -103,13 +103,13 @@ class mpdController():
 		oMpdClient.status()
 
 		results = oMpdClient.command_list_end()
-		print results	
+		print results[0]
 
 		oMpdClient.close()
 		oMpdClient.disconnect()
 	
 		#return self.mpdc.currentsong()
-		return results
+		return results[0]
 		#return self.mpdc.status()
 
 	def mpc_get_trackcount( self ):
