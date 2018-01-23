@@ -328,6 +328,10 @@ def mpc_lkp( label ):
 
 	#default
 	pos = {'pos': 1, 'time': 0}
+
+	#TODO!
+	iThrElapsed = 20							 # Minimal time that must have elapsed into a track in order to resume position
+	iThrTotal = 30								 # Minimal track length required in order to resume position
 	
 	# open pickle_file, if it exists
 	pickle_file = sDirSave + "/mp_" + label + ".p"
