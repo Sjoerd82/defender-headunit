@@ -19,23 +19,28 @@ def printer( message, level=LL_INFO, continuation=False, tag=sourceName ):
 def media_add( dir, label, uuid, sourceCtrl ):
 	ix = sourceCtrl.getIndex('name','media',True)
 	template = sourceCtrl.get(ix)
-	"""
-	template['mountpoint'] = dir
-	template['label'] = label
-	template['uuid'] = uuid
-	template['template'] = False
-	# add additional field:
-	template['_templated'] = True
-	"""
+	
 	subsource = {}
 	subsource['mountpoint'] = dir
 	subsource['label'] = label
 	subsource['uuid'] = uuid
-
 	template['subsources'].append(subsource)
 
 	sourceCtrl.add(template)
 
+# Stuff that needs to run once
+def media_init( sourceCtrl ):
+	printer('Initializing....')
+	
+	# get source configuration from main configuration
+	locmusConfig = getSourceConfig('locmus')
+	# add all locations as configured
+	for location in locmusConfig:
+		locmus_add(location['musicdir'],location['musicdir_mpd'], sourceCtrl)
+
+	return True
+
+	
 # media_check() returns True or False, depending on availability..
 #  media_check without parameters returns if anything (meaningful or not!) is mounted on /media
 #  media_check with a "label" parameter checks specific label on /media

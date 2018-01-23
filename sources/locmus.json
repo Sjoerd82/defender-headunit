@@ -10,8 +10,5 @@
   "sourcePlay":  ["", "locmus_play"],
   "sourceStop":  ["", "locmus_stop"],
   "template": true,
-  "mountpoint": "",
-  "label": "",
-  "uuid": "",
   "defaultconfig": [ { "musicdir": "/media/PIHU_DATA", "musicdir_mpd": "PIHU_DATA" }, { "musicdir": "/media/PIHU_DATA2", "musicdir_mpd": "PIHU_DATA2" } ]
 }

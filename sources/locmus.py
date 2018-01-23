@@ -43,9 +43,13 @@ def printer( message, level=LL_INFO, continuation=False, tag=sourceName ):
 def locmus_add( dir, label, sourceCtrl ):
 	ix = sourceCtrl.getIndex('name','locmus',True)
 	template = sourceCtrl.get(ix)
-	template['template'] = False
-	template['label'] = label
-	template['mountpoint'] = dir
+	
+	subsource = {}
+	subsource['mountpoint'] = dir
+	subsource['label'] = label
+	subsource['uuid'] = None	#TODO
+	template['subsources'].append(subsource)
+
 	sourceCtrl.add(template)
 	
 # Stuff that needs to run once
