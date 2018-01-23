@@ -103,10 +103,10 @@ class huSettings():
 		except:
 			printer('Loading {0} failed!'.format(self.sJsonFile),level=LL_CRITICAL)
 			return None
-
+		
 		#VOLUME
 		#check if the value is valid
-"""
+		"""
 		if dSettings['volume'] < 0 or dSettings['volume'] > 100:
 			dSettings['volume'] = 40
 			pickle.dump( dSettings, open( sPickleFile, "wb" ) )
@@ -123,7 +123,7 @@ class huSettings():
 		printer(' ......  Media source: {0}'.format(dSettings['mediasource']))
 		#MEDIALABEL
 		printer(' ......  Media label: {0}'.format(dSettings['medialabel']))
-"""		
+		"""		
 		printer('\033[96m ......  DONE\033[00m')
 		return dSettings
 		
