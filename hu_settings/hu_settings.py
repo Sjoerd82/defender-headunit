@@ -83,7 +83,7 @@ class huSettings():
 	dSettings = None
 	sJsonFile = None
 	
-	def __init__( self, settingspathfile, defaultSettings=None ):		
+	def __init__( self, settingspathfile, defaultSettings=None ):
 		# Check existence. If not present, create default, if provided.
 		if not os.path.exists(settingspathfile) and not defaultSettings == None:
 			printer('Settings file not found. First run? - Creating {0} with default values:\n ......  {1}'.format(settingspathfile,dDefaultSettings))
@@ -92,6 +92,9 @@ class huSettings():
 		
 		self.sJsonFile = settingspathfile
 		self.dSettings = self.load()
+
+	# return the settings dictionary when creating the class
+	def __new__( self ):
 		return self.dSettings
 		
 	def load( self ):
