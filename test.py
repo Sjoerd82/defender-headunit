@@ -724,7 +724,7 @@ prevSource = {'name': 'fm'}
 print prevSource
 
 for source in Sources.getAll():
-	if source['name'] == prevSource['name']
+	if source['name'] == prevSource['name']:
 		if not source['template']:
 			print "Previous Source: FM; no subsources"
 	
@@ -744,7 +744,7 @@ for source in Sources.getAll():
 				print "---END--- no suitable source to continue playing... Play first available source."
 			else:
 				print "Previous Source: {0}; is template, and has subsources...>".format(source['name'])
-				for subsource in source['subsources']
+				for subsource in source['subsources']:
 					print subsource
 					print prevSource
 					
