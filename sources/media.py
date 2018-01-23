@@ -33,7 +33,7 @@ def media_init( sourceCtrl ):
 	printer('Initializing....')
 
 	# do a general media_check to find any mounted drives
-	media_check( label=None )
+	#media_check( label=None )
 	
 	# add all locations as configured
 	arMedia = media_getAll()
