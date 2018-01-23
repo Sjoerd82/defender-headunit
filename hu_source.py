@@ -51,18 +51,13 @@ class SourceController():
 	#  if template set to False (default), exclude template sources..
 	#  if template set to True, include template sources but exclude template based sources?
 
-	def getIndex( self, key, value, template=False ):
+	def getIndex( self, key, value ):
 		i=0
 		for source in self.lSource:
-			#ehm?
-			if source[key] == value and template == None:
+			if source[key] == value:
 				return i
-			elif source[key] == value and not template and not source['template']:
-				return i
-			#elif source[key] == value and template and not source['_templated']:
-			#	return i
 			i+=1
-				
+
 	# get index of current source
 	def getIndexCurrent( self ):
 		#copy.copy?

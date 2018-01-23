@@ -17,7 +17,7 @@ def printer( message, level=LL_INFO, continuation=False, tag=sourceName ):
 
 # add a media source
 def media_add( dir, label, uuid, sourceCtrl ):
-	ix = sourceCtrl.getIndex('name','media',True)
+	ix = sourceCtrl.getIndex('name','media')
 	template = sourceCtrl.get(ix)
 	
 	subsource = {}

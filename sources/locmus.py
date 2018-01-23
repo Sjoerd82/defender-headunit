@@ -41,7 +41,7 @@ def printer( message, level=LL_INFO, continuation=False, tag=sourceName ):
 		myprint( message, level, tag )
 
 def locmus_add( dir, label, sourceCtrl ):
-	ix = sourceCtrl.getIndex('name','locmus',True)
+	ix = sourceCtrl.getIndex('name','locmus')
 	template = sourceCtrl.get(ix)
 	
 	subsource = {}
