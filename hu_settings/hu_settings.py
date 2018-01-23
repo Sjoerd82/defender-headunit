@@ -138,7 +138,7 @@ class huSettings():
 		return self.dSettings
 		
 	def incrRunCounter( self, max=999999 ):
-		runcounter = self.dSettings['runcount']+=1
+		runcounter = self.dSettings['runcount'] + 1
 		if runcounter > max:
 			runcounter = 0
 		

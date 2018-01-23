@@ -669,7 +669,7 @@ cSettings = huSettings( os.path.join(configuration['directories']['config'],conf
                         defaultSettings=configuration['default_settings'] )
 
 # increase the run counter (used for logging to file)
-newRunCount = cSettings.incrRunCounter()
+newRunCount = cSettings.incrRunCounter( max=999999 )
 
 # Legacy:
 settings = cSettings.get()
