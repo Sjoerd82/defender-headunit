@@ -58,8 +58,10 @@ class SourceController():
 	def getIndex( self, key, value, template=False ):
 		i=0
 		for source in self.lSource:
-			#if source[key] == value and template == None:
-			if source[key] == value and not template and not source['template']:
+			#ehm?
+			if source[key] == value and template == None:
+				return i
+			elif source[key] == value and not template and not source['template']:
 				return i
 			elif source[key] == value and template and not source['_templated']:
 				return i
