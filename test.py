@@ -800,7 +800,7 @@ exit()
 	# No previous source
 	# Check all sources for availability
 
-if not prevSource == ""
+if not prevSource == "":
 	prevSourceIx = Sources.getIndex('name','source',template=True)
 	dPrevSource = Sources.get( prevSourceIx )
 	
@@ -808,21 +808,22 @@ if not prevSource == ""
 	
 if not prevSource == "" and prevSourceAvailable:
 	#play this source..
+	pass()
 
 # First, try previously active source
 
 #Sources.sourceCheckAll()
 
 prevSource = cSettings.get_key('source')
-prevLabel = cSettings.get_key('label'))
-prevUuid = cSettings.get_key('uuid'))
+prevLabel = cSettings.get_key('label')
+prevUuid = cSettings.get_key('uuid')
 #print("PREVIOUS SOURCE: {0}".format(cSettings.get_key('source')))
 #print("PREVIOUS SOURCE: {0}".format(cSettings.get_key('label')))
 #print("PREVIOUS SOURCE: {0}".format(cSettings.get_key('uuid')))
 
 # list of sources:
 
-
+"""
 else:
 	for source in Sources.getAll():
 		if source['name'] == prevSource:
@@ -832,7 +833,7 @@ else:
 			print("!! CHECKING IF IT IS AVAILABLE...")
 			
 			Sources.sourceCheck(
-	
+"""
 # First, try previously active source
 
 
