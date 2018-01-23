@@ -83,7 +83,7 @@ class SourceController():
 			self.__printer('ERROR: Requested source ({0}: {1:s}) cannot be set.'.format(index,self.lSource[index]['displayname']),LL_ERROR)
 			return False
 
-	# make the next available source the current
+	# make the next available source the current, returns the new active source index
 	def next( self ):
 		iSourceCnt = len(self.lSource)
 

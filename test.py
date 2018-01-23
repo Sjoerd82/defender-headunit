@@ -99,8 +99,6 @@ import gobject
 
 # GLOBAL vars
 Sources = SourceController()
-settings = None
-settingsfile = None
 
 # CONSTANTS
 CONFIG_FILE_DEFAULT = '/mnt/PIHU_APP/defender-headunit/config/configuration.json'
@@ -165,8 +163,9 @@ def cb_remote_btn_press ( func ):
 		# if more than one source available...
 		if Sources.getAvailableCnt() > 1:
 			Sources.sourceStop()
-			Sources.next()
+			newSourceIx = Sources.next()
 			Sources.sourcePlay()
+			settings_save
 		elif Sources.getAvailableCnt() == 1:
 			print('Only one source availble. Ignoring button.')
 		elif Sources.getAvailableCnt() == 0:
@@ -285,7 +284,7 @@ def cb_mpd_event( event ):
 		
 # Timer 1: executed every 30 seconds
 def cb_timer1():
-
+	"""
 	global settings
 	global settingsfile
 
@@ -293,7 +292,7 @@ def cb_timer1():
 
 	# save settings (hu_settings)
 	settings_save( settingsfile, settings )
-
+	"""
 	return True
 
 def cb_udisk_dev_add( device ):
@@ -527,13 +526,14 @@ def init_load_config():
 
 	return configuration
 
+"""
 def init_load_ops( configuration ):
 	# load default settings
-	dDefaultSettings = configuration['default_settings']
+#	dDefaultSettings = configuration['default_settings']
 	# operational settings file (e.g. dSettings.json)
-	sFileSettings = os.path.join(configuration['directories']['config'],configuration['files']['settings'])
+#	sFileSettings = os.path.join(configuration['directories']['config'],configuration['files']['settings'])
 	# load into dSettings
-	dSettings = settings_load( sFileSettings, dDefaultSettings )
+#	dSettings = settings_load( sFileSettings, dDefaultSettings )
 
 	# increase the run counter (used for logging to file)
 	dSettings['runcount']+=1
@@ -542,6 +542,7 @@ def init_load_ops( configuration ):
 	settings_save( sFileSettings, dSettings )
 	
 	return dSettings
+"""
 
 # print a source summary
 def printSummary():
@@ -636,9 +637,6 @@ def plugin_execute( script ):
 	#os.system( 'python '+script )
 	call(['python',script])
 
-def hello():
-	print("HELLO WORLD!")
-	return True
 
 #********************************************************************************
 #
@@ -670,7 +668,19 @@ pa_sfx_load( configuration['directories']['sfx'] )
 #
 #
 settingsfile = os.path.join(configuration['directories']['config'],configuration['files']['settings'])
-settings = init_load_ops( configuration )
+
+Settings = huSettings( os.path.join(configuration['directories']['config'],configuration['files']['settings']),
+                        default=configuration['default_settings'] )
+
+# increase the run counter (used for logging to file)
+newRunCount = Settings.incrRunCounter()
+#dSettings['runcount']+=1
+# save run counter
+#settings_save( sFileSettings, dSettings )
+
+#init_load_ops()
+
+#settings = init_load_ops( configuration )
 
 
 #
@@ -679,7 +689,8 @@ settings = init_load_ops( configuration )
 #
 init_logging_f( configuration['directories']['log'],
                 configuration['files']['log'],
- 				settings['runcount'] )
+				newRunCount )
+ 				#settings['runcount'] )
 
 #
 # Set/Restore volume level

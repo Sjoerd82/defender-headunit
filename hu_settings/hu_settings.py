@@ -77,7 +77,60 @@ def configuration_save( configfile, configuration ):
 	except:
 		printer(' > ERROR saving configuration',LL_CRITICAL,True)
 		pa_sfx(LL_ERROR)
-			
+
+class huSettings():
+
+	dSettings = None
+	sJsonFile = None
+	
+	def __init__( self, settingspathfile, defaultSettings=None ):
+		self.dSettings = self.settings_load( sFileSettings, dDefaultSettings )
+		
+		# Check existence. If not present, create default, if provided.
+		if not os.path.exists(settingspathfile) and
+		   not defaultSettings == None:
+			printer('Settings file not found. First run? - Creating {0} with default values:\n ......  {1}'.format(settingspathfile,dDefaultSettings))
+		
+		return self.load()
+		
+	def load( self ):
+		printer('Loading previous settings...')
+		try:
+			jsConfigFile = open(sJsonFile)
+			jSettings = json.load(jsConfigFile)
+			dSettings = jSettings
+		except:
+			printer('Loading {0} failed!'.format(sJsonFile),level=LL_CRITICAL)
+			#assume: fails because it's the first time and no settings saved yet? Setting default:
+			json.dump( dDefaultSettings, open( sJsonFile, "wb" ) )
+			return dDefaultSettings
+
+		#VOLUME
+		#check if the value is valid
+		if dSettings['volume'] < 0 or dSettings['volume'] > 100:
+			dSettings['volume'] = 40
+			pickle.dump( dSettings, open( sPickleFile, "wb" ) )
+			printer(' ......  No setting found, defaulting to 40%')
+		elif dSettings['volume'] < 30:
+			printer(' ......  Volume too low, defaulting to 30%')
+			dSettings['volume'] = 30
+		else:
+			printer(' ......  Volume: {0:d}%'.format(dSettings['volume']))
+		
+		#SOURCE
+		printer(' ......  Source: {0}'.format(dSettings['source']))
+		#MEDIASOURCE
+		printer(' ......  Media source: {0}'.format(dSettings['mediasource']))
+		#MEDIALABEL
+		printer(' ......  Media label: {0}'.format(dSettings['medialabel']))
+		
+		printer('\033[96m ......  DONE\033[00m')
+		return dSettings
+		
+	def incrRunCounter( self ):
+		return 666
+	
+"""
 def settings_save( sJsonFile, dSettings ):
 	printer('Saving settings')
 	try:
@@ -85,7 +138,9 @@ def settings_save( sJsonFile, dSettings ):
 	except:
 		printer(' > ERROR saving settings',LL_CRITICAL,True)
 		pa_sfx(LL_ERROR)
-	
+
+#def settings_save( )
+
 def settings_load( sJsonFile, dDefaultSettings ):
 	printer('Loading previous settings...')
 	try:
@@ -119,6 +174,7 @@ def settings_load( sJsonFile, dDefaultSettings ):
 	
 	printer('\033[96m ......  DONE\033[00m')
 	return dSettings
+"""
 
 def getSourceConfig( sourceName ):
 	CONFIG_FILE = '/mnt/PIHU_CONFIG/configuration.json'
