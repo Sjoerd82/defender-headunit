@@ -24,7 +24,6 @@ def media_add( dir, label, uuid, sourceCtrl ):
 	subsource['mountpoint'] = dir
 	subsource['label'] = label
 	subsource['uuid'] = uuid
-	print template
 	template['subsources'].append(subsource)
 
 	sourceCtrl.add(template)

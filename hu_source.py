@@ -29,6 +29,9 @@ class SourceController():
 		#Availability = False for all new sources, until cleared by the check() function
 		source['available'] = False
 		
+		#Add an empty array for subsources, it it's a template:
+		source['subsources'] = []
+		
 		#All good, add the source:
 		self.__printer('ADD: {0}'.format(source['displayname']))
 		#self.logger.info('ADD: {0}'.format(source['displayname']))
