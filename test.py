@@ -171,10 +171,15 @@ def cb_remote_btn_press ( func ):
 			# stop
 			Sources.sourceStop()
 			# next
-			newSourceIx = Sources.next()
-			cSettings.set('source',newSourceIx)
+			Sources.next()
 			# play
 			Sources.sourcePlay()
+			# update settings
+			currSrc = Sources.get()
+			cSettings.set('source',currSrc['name'])
+			if 'label' in currSrc:
+				cSettings.set('label',currSrc['label'])
+
 		elif Sources.getAvailableCnt() == 1:
 			print('Only one source availble. Ignoring button.')
 		elif Sources.getAvailableCnt() == 0:
@@ -795,7 +800,11 @@ myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 # QuickPlay
 #
 
+# First, try previously active source
+
+#Sources.sourceCheckAll()
 print("PREVIOUS SOURCE: {0}".format(cSettings.get_key('source')))
+print("PREVIOUS SOURCE: {0}".format(cSettings.get_key('label')))
 
 Sources.sourceCheckAll()
 Sources.next()
