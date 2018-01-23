@@ -808,7 +808,7 @@ if not prevSource == "":
 	
 if not prevSource == "" and prevSourceAvailable:
 	#play this source..
-	pass()
+	pass
 
 # First, try previously active source
 
