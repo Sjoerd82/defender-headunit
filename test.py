@@ -97,7 +97,10 @@ import sys
 from dbus.mainloop.glib import DBusGMainLoop
 import gobject
 
+# GLOBAL vars
 Sources = SourceController()
+settings = None
+settingsfile = None
 
 # CONSTANTS
 CONFIG_FILE_DEFAULT = '/mnt/PIHU_APP/defender-headunit/config/configuration.json'
@@ -282,10 +285,14 @@ def cb_mpd_event( event ):
 		
 # Timer 1: executed every 30 seconds
 def cb_timer1():
+
+	global settings
+	global settingsfile
+
 	printer('Interval function [30 second]',tag="TIMER1")# LL_DEBUG
 
 	# save settings (hu_settings)
-	settings_save()
+	settings_save( settingsfile, settings )
 
 	return True
 
@@ -390,9 +397,11 @@ def udisk_details( device, action ):
 # turn off the device
 def shutdown():
 	global configuration
-	
+	global settings
+	global settingsfile
+
 	# save settings (hu_settings)
-	settings_save()
+	settings_save( settingsfile, settings )
 
 	# stop source (hu_source)
 	Source.sourceStop()
@@ -660,6 +669,7 @@ pa_sfx_load( configuration['directories']['sfx'] )
 # Load operational settings
 #
 #
+settingsfile = os.path.join(configuration['directories']['config'],configuration['files']['settings'])
 settings = init_load_ops( configuration )
 
 
