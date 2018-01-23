@@ -86,7 +86,7 @@ class huSettings():
 	def __init__( self, settingspathfile, defaultSettings=None ):
 		# Check existence. If not present, create default, if provided.
 		if not os.path.exists(settingspathfile) and not defaultSettings == None:
-			printer('Settings file not found. First run? - Creating {0} with default values:\n ......  {1}'.format(settingspathfile,dDefaultSettings))
+			printer('Settings file not found. First run? - Creating {0} with default values:\n ......  {1}'.format(settingspathfile,defaultSettings))
 			#assume: fails because it's the first time and no settings saved yet? Setting default:
 			json.dump( defaultSettings, open( settingspathfile, "wb" ) )
 		
