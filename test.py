@@ -296,7 +296,7 @@ def cb_timer1():
 
 	global cSettings
 
-	printer('Interval function [30 second]',tag="TIMER1")# LL_DEBUG
+	printer('Interval function [30 second]', level=LL_DEBUG, tag="TIMER1")
 
 	# save settings (hu_settings)
 	cSettings.save()
@@ -677,9 +677,6 @@ pa_sfx_load( configuration['directories']['sfx'] )
 cSettings = huSettings( os.path.join(configuration['directories']['config'],configuration['files']['settings']),
                         defaultSettings=configuration['default_settings'] )
 
-# increase the run counter (used for logging to file)
-#newRunCount = cSettings.incrRunCounter( max=999999 )
-
 
 #
 # Start logging to file
@@ -690,13 +687,13 @@ init_logging_f( configuration['directories']['log'],
 				cSettings.incrRunCounter( max=999999 ) )
  				#settings['runcount'] )
 
-# Legacy:
-settings = cSettings.get()
 
 #
 # Set/Restore volume level
 #
 #
+# Legacy: #TODO
+settings = cSettings.get()
 VolPulse = VolumeController('alsa_output.platform-soc_sound.analog-stereo')
 VolPulse.set( settings['volume'] )
 
@@ -798,7 +795,7 @@ myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 # QuickPlay
 #
 
-print("PREVIOUS SOURCE: {0}".format(settings['source']))
+print("PREVIOUS SOURCE: {0}".format(cSettings.get_key('source'))
 
 Sources.sourceCheckAll()
 Sources.next()

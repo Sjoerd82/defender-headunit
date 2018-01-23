@@ -96,6 +96,12 @@ class huSettings():
 	def get( self ):
 		return self.dSettings
 
+	def get_key( self, key ):
+		if key in self.dSettings:
+			return self.dSettings[key] 
+		else:
+			return None
+		
 	# sets a setting, but does not save!
 	def set( self, key, value ):
 		if key in self.dSettings:
