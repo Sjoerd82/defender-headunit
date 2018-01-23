@@ -9,5 +9,7 @@
   "sourcePlay":  ["sources.media", "media_play"],
   "sourceStop":  ["sources.media", "media_stop"],
   "template": true,
-  "subsources" : []
+  "mountpoint": "none",
+  "label": "none",
+  "uuid": "none"
 }

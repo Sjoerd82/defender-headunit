@@ -718,6 +718,18 @@ import sources
 # read source config files and start source inits
 loadSourcePlugins(os.path.join( os.path.dirname(os.path.abspath(__file__)), 'sources'))
 
+
+for source in Sources.getAll():
+	print source
+	
+sources.media.media_add('/media/SJOERD', 'SJOERD', 'f9dc11d6-01', Sources)
+
+for source in Sources.getAll():
+	print source
+
+exit()
+
+
 #debug
 #huMenu.menuDisplay( header=True )
 #huMenu.menuDisplay( entry=1, header=True )
@@ -791,9 +803,7 @@ myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 # check all sources..
 # TODO: it's more efficient to only check the previous source now, and check the rest later
 Sources.sourceCheckAll( template=True )
-printSummary()
 
-exit()
 # is there a previous source?
 # if not, check all sources.
 #if prevSource == "":

@@ -15,14 +15,24 @@ def printer( message, level=LL_INFO, continuation=False, tag=sourceName ):
 	else:
 		myprint( message, level, tag )
 
+# add a media source
 def media_add( dir, label, uuid, sourceCtrl ):
 	ix = sourceCtrl.getIndex('name','media',True)
 	template = sourceCtrl.get(ix)
+	"""
 	template['mountpoint'] = dir
 	template['label'] = label
 	template['uuid'] = uuid
 	template['template'] = False
+	# add additional field:
 	template['_templated'] = True
+	"""
+	subsource['mountpoint'] = dir
+	subsource['label'] = label
+	subsource['uuid'] = uuid
+
+	template['subsources'].append(subsource)
+
 	sourceCtrl.add(template)
 
 # media_check() returns True or False, depending on availability..
