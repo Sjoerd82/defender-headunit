@@ -284,15 +284,13 @@ def cb_mpd_event( event ):
 		
 # Timer 1: executed every 30 seconds
 def cb_timer1():
-	"""
-	global settings
-	global settingsfile
+
+	global cSettings
 
 	printer('Interval function [30 second]',tag="TIMER1")# LL_DEBUG
 
 	# save settings (hu_settings)
-	settings_save( settingsfile, settings )
-	"""
+	cSettings.save()
 	return True
 
 def cb_udisk_dev_add( device ):
