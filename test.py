@@ -733,7 +733,7 @@ prevSource = {'name': 'locmus', 'mountpoint':'/media/PIHU_DATA2'}
 print prevSource
 
 for source in Sources.getAll():
-	if source['name'] == prevSource['name']
+	if source['name'] == prevSource['name']:
 		if not source['template']:
 			print "Previous Source: {0}; no subsources".format(source['name'])
 			print "---END--- CONTINUING playback of this source."
