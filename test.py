@@ -7,6 +7,11 @@
 #
 
 #********************************************************************************
+#
+# ISSUES:
+#  - Not all next() source functions update the settings
+
+#********************************************************************************
 # CONFIGURATION
 #
 # configuration.json		Main configuration file
@@ -673,10 +678,7 @@ cSettings = huSettings( os.path.join(configuration['directories']['config'],conf
                         defaultSettings=configuration['default_settings'] )
 
 # increase the run counter (used for logging to file)
-newRunCount = cSettings.incrRunCounter( max=999999 )
-
-# Legacy:
-settings = cSettings.get()
+#newRunCount = cSettings.incrRunCounter( max=999999 )
 
 
 #
@@ -685,8 +687,11 @@ settings = cSettings.get()
 #
 init_logging_f( configuration['directories']['log'],
                 configuration['files']['log'],
-				newRunCount )
+				cSettings.incrRunCounter( max=999999 ) )
  				#settings['runcount'] )
+
+# Legacy:
+settings = cSettings.get()
 
 #
 # Set/Restore volume level
