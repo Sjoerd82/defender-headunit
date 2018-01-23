@@ -21,9 +21,9 @@ class SourceController():
 	# add source
 	def add( self, source ):
 		#Check required fields:
-		if not all (k in source for k in ('name','displayname','order','available','controls','template')):
+		if not all (k in source for k in ('name','displayname','order','controls','template')):
 			self.__printer('ADD: Source NOT added, missing one or more required field(s)...',LL_ERROR)
-			self.__printer('Required fields are: name,displayname,order,available,controls,template',LL_ERROR,True)
+			self.__printer('Required fields are: name,displayname,order,controls,template',LL_ERROR,True)
 			return False
 
 		#Availability = False for all new sources, until cleared by the check() function

@@ -1,7 +1,6 @@
 { "name": "locmus",
   "displayname": "Internal Storage",
   "order": 2,
-  "available": false,
   "type": "mpd",
   "depNetwork": false,
   "controls": {"ffwd": false, "rwnd": false, "prev": true, "next": true},
