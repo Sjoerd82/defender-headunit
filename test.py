@@ -177,8 +177,12 @@ def cb_remote_btn_press ( func ):
 			cSettings.set('source',currSrc['name'])
 			if 'label' in currSrc:
 				cSettings.set('label',currSrc['label'])
+			else:
+				cSettings.set('label',"")
 			if 'uuid' in currSrc:
 				cSettings.set('uuid',currSrc['uuid'])
+			else:
+				cSettings.set('uuid',"")
 			# play
 			Sources.sourcePlay()
 
@@ -811,6 +815,9 @@ print("PREVIOUS SOURCE: {0}".format(cSettings.get_key('label')))
 print("PREVIOUS SOURCE: {0}".format(cSettings.get_key('uuid')))
 
 #if = "":
+
+# First, try previously active source
+
 
 Sources.sourceCheckAll()
 Sources.next()

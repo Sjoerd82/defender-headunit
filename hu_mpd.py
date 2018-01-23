@@ -75,8 +75,22 @@ class mpdController():
 		print('todo')
 		
 	def mpc_get_currentsong( self ):
-		return self.mpdc.currentsong()
-		#return 'Black Keys - Something'
+	
+		oMpdClient = MPDClient() 
+		oMpdClient.timeout = 10                # network timeout in seconds (floats allowed), default: None
+		oMpdClient.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
+		oMpdClient.connect("localhost", 6600)  # connect to localhost:6600
+
+		oMpdClient.command_list_ok_begin()
+		oMpdClient.status()
+		
+		results = oMpdClient.command_list_end()
+
+		oMpdClient.close()
+		oMpdClient.disconnect()
+	
+		#return self.mpdc.currentsong()
+		return results
 
 	def mpc_get_status( self ):
 		return self.mpdc.status()
