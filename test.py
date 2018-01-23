@@ -134,7 +134,16 @@ def printer( message, level=20, continuation=False, tag='SYSTEM' ):
 	else:
 		myprint( message, level, tag )
 
-	
+
+# ********************************************************************************
+# Callback functions
+#
+#  - Remote control
+#  - MPD events
+#  - Timer
+#  - UDisk add/remove drive
+#
+
 def cb_remote_btn_press2 ( func ):
 	print "cb_remote_btn_press2 {0}".format(func)
 
@@ -204,7 +213,7 @@ def cb_remote_btn_press ( func ):
 	elif func == 'OFF':
 		print('\033[95m[BUTTON] Shutting down\033[00m')
 		pa_sfx('button_feedback')
-		#shutdown()
+		shutdown()
 	else:
 		print('Unknown button function')
 		pa_sfx('error')
@@ -271,6 +280,11 @@ def cb_mpd_event( event ):
 	else:
 		printer(' ...  unknown event (no action)', tag='MPD')
 		
+# executed every 30 seconds
+def cb_timer_sec_30():
+	printer('Interval function [30 second]')# LL_DEBUG
+	return True
+
 def cb_udisk_dev_add( device ):
 	printer('Device added: {0}'.format(str(device)),tag='UDISKS')
 	udisk_details( device, 'A' )
@@ -364,7 +378,36 @@ def udisk_details( device, action ):
 	else:
 		printer(" > ERROR: Invalid action.",tag=mytag)
 		pa_sfx('error')
+
+# ********************************************************************************
+# Misc. functions
+#
+
+# turn off the device
+def shutdown():
+	global configuration
 	
+	# save settings (hu_settings)
+	settings_save()
+
+	# stop source (hu_source)
+	Source.sourceStop()
+	
+	# call shutdown command
+	"""  This command may be different on different distributions, therefore it's saved in the configuration
+	     Debian:    call(["systemctl", "poweroff", "-i"])
+	     Buildroot: call(["halt"])
+	"""
+	call(configuration['shutdown_cmd'])
+
+# ********************************************************************************
+# Initialization functions
+#
+#  - Loggers
+#  - Configuration
+#  - Operational settings
+#
+
 # Initiate logger.
 def init_logging():
 
@@ -726,18 +769,19 @@ myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 #
 
 #
-# dbus
+# QuickPlay
 #
+
+print "PREVIOUS SOURCE: {0}".format(settings['source']))
+
+Sources.sourceCheckAll()
+Sources.next()
+printSummary()
+
 
 # on demand...
 #plugin_sources.media.media_add('/media/USBDRIVE', Sources)
 
-#
-# TODO!! QUICKPLAY!!
-#
-Sources.sourceCheckAll()
-Sources.next()
-printSummary()
 
 #myprint('A WARNING', level=logging.WARNING, tag="test")
 #logger.warning('Another WARNING', extra={'tag':'test'})
@@ -753,8 +797,21 @@ printSummary()
 
 
 DBusGMainLoop(set_as_default=True)
-gobject.timeout_add_seconds(1,hello)
+
+#
+# 30 second timer
+#
+gobject.timeout_add_seconds(30,cb_timer_sec_30)
+
+#
+# main loop
+#
 mainloop = gobject.MainLoop()
+
+#
+# DBus: system bus
+# On a root only embedded system there may not be a usable session bus
+#
 bus = dbus.SystemBus()
 
 #
@@ -766,6 +823,9 @@ bus.add_signal_receiver(cb_remote_btn_press2, dbus_interface = "com.arctura.keyb
 bus.add_signal_receiver(cb_udisk_dev_add, signal_name='DeviceAdded', dbus_interface="org.freedesktop.UDisks")
 bus.add_signal_receiver(cb_udisk_dev_rem, signal_name='DeviceRemoved', dbus_interface="org.freedesktop.UDisks")
 
+#
+# Start the blocking main loop...
+#
 try:
 	mainloop.run()
 finally:
