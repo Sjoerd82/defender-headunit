@@ -172,13 +172,13 @@ def cb_remote_btn_press ( func ):
 			Sources.sourceStop()
 			# next
 			Sources.next()
-			# play
-			Sources.sourcePlay()
 			# update settings
 			currSrc = Sources.get()
 			cSettings.set('source',currSrc['name'])
 			if 'label' in currSrc:
 				cSettings.set('label',currSrc['label'])
+			# play
+			Sources.sourcePlay()
 
 		elif Sources.getAvailableCnt() == 1:
 			print('Only one source availble. Ignoring button.')
