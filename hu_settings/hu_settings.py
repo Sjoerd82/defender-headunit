@@ -125,7 +125,7 @@ class huSettings():
 		printer(' ......  Media label: {0}'.format(dSettings['medialabel']))
 		"""		
 		printer('\033[96m ......  DONE\033[00m')
-		return dSettings
+		return self.dSettings
 		
 	def incrRunCounter( self ):
 		return 666
