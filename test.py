@@ -611,7 +611,7 @@ def add_a_source( plugindir, sourcePluginName ):
 			#huMenu.add( menuitem )
 	# init source, if successfully added
 	if isAdded:
-		indexAdded = Sources.getIndex('name',config['name'], template=None)
+		indexAdded = Sources.getIndex('name',config['name'])
 		Sources.sourceInit(indexAdded)
 
 # Load Source Plugins
@@ -840,7 +840,7 @@ Sources.sourceCheckAll( template=True )
 	# Check all sources for availability
 
 if not prevSource == "":
-	prevSourceIx = Sources.getIndex('name','source',template=True)
+	prevSourceIx = Sources.getIndex('name','source')
 	dPrevSource = Sources.get( prevSourceIx )
 	
 	prevSourceAvailable = Sources.getAvailable(PrevSourceIx)
