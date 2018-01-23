@@ -59,8 +59,8 @@ class SourceController():
 				return i
 			elif source[key] == value and not template and not source['template']:
 				return i
-			elif source[key] == value and template and not source['_templated']:
-				return i
+			#elif source[key] == value and template and not source['_templated']:
+			#	return i
 			i+=1
 				
 	# get index of current source
@@ -241,8 +241,8 @@ class SourceController():
 			if not template and not source['template']:
 				self.sourceCheck(i)
 					
-			if template and not source['_templated']:
-				self.sourceCheck(i)
+			#if template and not source['_templated']:
+			#	self.sourceCheck(i)
 					
 			i+=1
 	
