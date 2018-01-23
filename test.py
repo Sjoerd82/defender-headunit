@@ -719,15 +719,23 @@ import sources
 loadSourcePlugins(os.path.join( os.path.dirname(os.path.abspath(__file__)), 'sources'))
 
 print "DEBUG!"
-#prevSource = "fm"
 prevSource = {'name': 'fm'}
-print prevSource
 
 for source in Sources.getAll():
-	print source
 	if source['name'] == prevSource['name']:
 		if not source['template']:
-			print "Previous Source: FM; no subsources"
+			print "Previous Source: {0}; no subsources".format(source['name'])
+			print "---END--- CONTINUING playback of this source."
+		else:
+			print "Previous Source: {0}; is template, checking for subsources...>".format(source['name'])
+			if not 'subsources' in source:
+				print "Previous Source: {0}; is template, but has no subsources.".format(source['name'])
+				print "---END--- no suitable source to continue playing... Play first available source."
+			else:
+				print "Previous Source: {0}; is template, and has subsources...>".format(source['name'])
+				for subsource in source['subsources']:
+					print subsource
+					print prevSource
 	
 print "DEBUG!"
 prevSource = {'name': 'locmus', 'mountpoint':'/media/PIHU_DATA2'}

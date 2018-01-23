@@ -30,7 +30,8 @@ class SourceController():
 		source['available'] = False
 		
 		#Add an empty array for subsources, it it's a template:
-		source['subsources'] = []
+		if 'template' in source:
+			source['subsources'] = []
 		
 		#All good, add the source:
 		self.__printer('ADD: {0}'.format(source['displayname']))
