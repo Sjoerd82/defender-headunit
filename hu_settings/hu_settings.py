@@ -83,29 +83,30 @@ class huSettings():
 	dSettings = None
 	sJsonFile = None
 	
-	def __init__( self, settingspathfile, defaultSettings=None ):
-		self.dSettings = self.settings_load( sFileSettings, dDefaultSettings )
-		
+	def __init__( self, settingspathfile, defaultSettings=None ):		
 		# Check existence. If not present, create default, if provided.
 		if not os.path.exists(settingspathfile) and not defaultSettings == None:
 			printer('Settings file not found. First run? - Creating {0} with default values:\n ......  {1}'.format(settingspathfile,dDefaultSettings))
+			#assume: fails because it's the first time and no settings saved yet? Setting default:
+			json.dump( defaultSettings, open( settingspathfile, "wb" ) )
 		
-		return self.load()
+		self.sJsonFile = settingspathfile
+		self.dSettings = self.load()
+		return self.dSettings
 		
 	def load( self ):
 		printer('Loading previous settings...')
 		try:
-			jsConfigFile = open(sJsonFile)
+			jsConfigFile = open(self.sJsonFile)
 			jSettings = json.load(jsConfigFile)
-			dSettings = jSettings
+			self.dSettings = jSettings
 		except:
-			printer('Loading {0} failed!'.format(sJsonFile),level=LL_CRITICAL)
-			#assume: fails because it's the first time and no settings saved yet? Setting default:
-			json.dump( dDefaultSettings, open( sJsonFile, "wb" ) )
-			return dDefaultSettings
+			printer('Loading {0} failed!'.format(self.sJsonFile),level=LL_CRITICAL)
+			return None
 
 		#VOLUME
 		#check if the value is valid
+"""
 		if dSettings['volume'] < 0 or dSettings['volume'] > 100:
 			dSettings['volume'] = 40
 			pickle.dump( dSettings, open( sPickleFile, "wb" ) )
@@ -122,7 +123,7 @@ class huSettings():
 		printer(' ......  Media source: {0}'.format(dSettings['mediasource']))
 		#MEDIALABEL
 		printer(' ......  Media label: {0}'.format(dSettings['medialabel']))
-		
+"""		
 		printer('\033[96m ......  DONE\033[00m')
 		return dSettings
 		
