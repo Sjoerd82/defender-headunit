@@ -757,12 +757,12 @@ for source in Sources.getAll():
 				print "Previous Source: {0}; is template, and has subsources...>".format(source['name'])
 				for subitem in prevSourceSub:
 					for subsource in source['subsources']:
-						if subitem in source['subsources']
+						if subitem in source['subsources']:
 							bFound = True
 							break
 							
 					if bFound == False:
-						print('NOT FOUND!')
+						print('NOT FOUND! key: {0}'.format(subitem))
 						break
 					
 					
