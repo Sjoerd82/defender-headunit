@@ -27,6 +27,7 @@ def media_add( dir, label, uuid, sourceCtrl ):
 	# add additional field:
 	template['_templated'] = True
 	"""
+	subsource = {}
 	subsource['mountpoint'] = dir
 	subsource['label'] = label
 	subsource['uuid'] = uuid
