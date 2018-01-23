@@ -6,7 +6,7 @@
 	"default_settings": {
 		  "volume": 20
 		, "source": ""
-		, "medialabel": ""
+		, "label": ""
 		, "mediasource": -1
 		, "runcount": 0
 	},
