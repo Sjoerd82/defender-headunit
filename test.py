@@ -759,12 +759,13 @@ for source in Sources.getAll():
 					for subsource in source['subsources']:
 						print subsource
 						if subitem in source['subsources']:
+							print subitem
 							bFound = True
 							break
 							
-					if bFound == False:
-						print('NOT FOUND! key: {0}'.format(subitem))
-						break
+				if bFound == False:
+					print('NOT FOUND! key: {0}'.format(subitem))
+					break
 					
 					
 					#print subsource
