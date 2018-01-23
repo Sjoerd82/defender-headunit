@@ -38,8 +38,9 @@ def media_init( sourceCtrl ):
 	# add all locations as configured
 	arMedia = media_getAll()
 	for dev_mp in arMedia:
+		mountpoint = dev_mp[0]
 		sUsbLabel = os.path.basename(dev_mp[1]).rstrip('\n')
-		uuid = dev_mp[0]
+		uuid = ""
 		media_add(mountpoint, sUsbLabel, uuid, sourceCtrl)
 
 	return True
