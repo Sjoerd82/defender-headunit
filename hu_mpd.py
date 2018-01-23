@@ -84,8 +84,8 @@ class mpdController():
 		oMpdClient.command_list_ok_begin()
 		oMpdClient.currentsong()
 		
-		print results
 		results = oMpdClient.command_list_end()
+		print results
 
 		oMpdClient.close()
 		oMpdClient.disconnect()
@@ -101,8 +101,9 @@ class mpdController():
 
 		oMpdClient.command_list_ok_begin()
 		oMpdClient.status()
-		print results	
+
 		results = oMpdClient.command_list_end()
+		print results	
 
 		oMpdClient.close()
 		oMpdClient.disconnect()
