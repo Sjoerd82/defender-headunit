@@ -724,6 +724,7 @@ prevSource = {'name': 'fm'}
 print prevSource
 
 for source in Sources.getAll():
+	print source
 	if source['name'] == prevSource['name']:
 		if not source['template']:
 			print "Previous Source: FM; no subsources"

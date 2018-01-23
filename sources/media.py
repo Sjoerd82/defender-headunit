@@ -31,15 +31,39 @@ def media_add( dir, label, uuid, sourceCtrl ):
 # Stuff that needs to run once
 def media_init( sourceCtrl ):
 	printer('Initializing....')
+
+	# do a general media_check to find any mounted drives
+	media_check( label=None )
 	
-	# get source configuration from main configuration
-	locmusConfig = getSourceConfig('locmus')
 	# add all locations as configured
-	for location in locmusConfig:
-		locmus_add(location['musicdir'],location['musicdir_mpd'], sourceCtrl)
+	arMedia = media_getAll()
+	for dev_mp in arMedia:
+		sUsbLabel = os.path.basename(dev_mp[1]).rstrip('\n')
+		uuid = dev_mp[0]
+		media_add(mountpoint, sUsbLabel, uuid, sourceCtrl)
 
 	return True
 
+# Returns a list of everything mounted on /media, but does not check if it has music.
+# Returned is 2-dimension list
+def media_getAll():
+
+	try:
+		print('Check if anything is mounted on /media...')
+		# do a -f1 for devices, -f3 for mountpoints
+		grepOut = subprocess.check_output(
+			"mount | grep /media | cut -d' ' -f1 3",
+			shell=True,
+			stderr=subprocess.STDOUT,
+		)
+	except subprocess.CalledProcessError as err:
+		print('ERROR:', err)
+		pa_sfx('error')
+		return False
+	
+	grepOut = grepOut.rstrip('\n')
+	return [[x for x in ss.split(' ')] for ss in grepOut.split('\n')]
+	
 	
 # media_check() returns True or False, depending on availability..
 #  media_check without parameters returns if anything (meaningful or not!) is mounted on /media
