@@ -280,9 +280,13 @@ def cb_mpd_event( event ):
 	else:
 		printer(' ...  unknown event (no action)', tag='MPD')
 		
-# executed every 30 seconds
-def cb_timer_sec_30():
-	printer('Interval function [30 second]')# LL_DEBUG
+# Timer 1: executed every 30 seconds
+def cb_timer1():
+	printer('Interval function [30 second]',tag="TIMER1")# LL_DEBUG
+
+	# save settings (hu_settings)
+	settings_save()
+
 	return True
 
 def cb_udisk_dev_add( device ):
@@ -801,7 +805,7 @@ DBusGMainLoop(set_as_default=True)
 #
 # 30 second timer
 #
-gobject.timeout_add_seconds(30,cb_timer_sec_30)
+gobject.timeout_add_seconds(30,cb_timer1)
 
 #
 # main loop
