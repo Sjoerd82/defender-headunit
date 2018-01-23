@@ -87,8 +87,7 @@ class huSettings():
 		self.dSettings = self.settings_load( sFileSettings, dDefaultSettings )
 		
 		# Check existence. If not present, create default, if provided.
-		if not os.path.exists(settingspathfile) and
-		   not defaultSettings == None:
+		if not os.path.exists(settingspathfile) and not defaultSettings == None:
 			printer('Settings file not found. First run? - Creating {0} with default values:\n ......  {1}'.format(settingspathfile,dDefaultSettings))
 		
 		return self.load()
