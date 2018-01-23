@@ -93,8 +93,7 @@ class huSettings():
 		self.sJsonFile = settingspathfile
 		self.dSettings = self.load()
 
-	# return the settings dictionary when creating the class
-	def __new__( self ):
+	def get( self ):
 		return self.dSettings
 		
 	def load( self ):
