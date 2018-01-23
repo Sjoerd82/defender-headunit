@@ -52,14 +52,14 @@ def media_getAll():
 		print('Check if anything is mounted on /media...')
 		# do a -f1 for devices, -f3 for mountpoints
 		grepOut = subprocess.check_output(
-			"mount | grep /media | cut -d' ' -f1 3",
+			"mount | grep /media | cut -d' ' -f1,3",
 			shell=True,
 			stderr=subprocess.STDOUT,
 		)
 	except subprocess.CalledProcessError as err:
 		print('ERROR:', err)
 		pa_sfx('error')
-		return False
+		return None
 	
 	grepOut = grepOut.rstrip('\n')
 	return [[x for x in ss.split(' ')] for ss in grepOut.split('\n')]
