@@ -795,7 +795,7 @@ myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 # QuickPlay
 #
 
-print("PREVIOUS SOURCE: {0}".format(cSettings.get_key('source'))
+print("PREVIOUS SOURCE: {0}".format(cSettings.get_key('source')))
 
 Sources.sourceCheckAll()
 Sources.next()
