@@ -579,7 +579,10 @@ def plugin_execute( script ):
 	printer('Starting Plugin: {0}'.format(script))
 	#os.system( 'python '+script )
 	call(['python',script])
-	
+
+def hello():
+	print("HELLO WORLD!")
+	return True
 
 #********************************************************************************
 #
@@ -750,6 +753,7 @@ printSummary()
 
 
 DBusGMainLoop(set_as_default=True)
+gobject.timeout_add_seconds(1,hello)
 mainloop = gobject.MainLoop()
 bus = dbus.SystemBus()
 
