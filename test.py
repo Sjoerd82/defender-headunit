@@ -152,6 +152,7 @@ def cb_remote_btn_press2 ( func ):
 def cb_remote_btn_press ( func ):
 
 	global Sources
+	global cSettings
 
 	# Handle button press
 	if func == 'SHUFFLE':
@@ -162,10 +163,13 @@ def cb_remote_btn_press ( func ):
 		pa_sfx('button_feedback')
 		# if more than one source available...
 		if Sources.getAvailableCnt() > 1:
+			# stop
 			Sources.sourceStop()
+			# next
 			newSourceIx = Sources.next()
+			cSettings.set('source',newSourceIx)
+			# play
 			Sources.sourcePlay()
-			settings_save
 		elif Sources.getAvailableCnt() == 1:
 			print('Only one source availble. Ignoring button.')
 		elif Sources.getAvailableCnt() == 0:

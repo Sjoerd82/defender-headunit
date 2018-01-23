@@ -96,6 +96,13 @@ class huSettings():
 	def get( self ):
 		return self.dSettings
 
+	# sets a setting, but does not save!
+	def set( self, key, value )
+		if key in self.dSettings:
+			self.dSettings[key] = value
+		else:
+			printer('ERROR! Key {0} does not exist!'.format( key ))
+	
 	def save( self ):
 		printer('Saving settings')
 		try:
