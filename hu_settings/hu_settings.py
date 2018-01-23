@@ -95,7 +95,15 @@ class huSettings():
 
 	def get( self ):
 		return self.dSettings
-		
+
+	def save( self ):
+		printer('Saving settings')
+		try:
+			json.dump( self.dSettings, open( self.sJsonFile, "wb" ) )
+		except:
+			printer(' > ERROR saving settings',LL_CRITICAL,True)
+			pa_sfx(LL_ERROR)
+
 	def load( self ):
 		printer('Loading previous settings...')
 		try:
@@ -129,8 +137,15 @@ class huSettings():
 		printer('\033[96m ......  DONE\033[00m')
 		return self.dSettings
 		
-	def incrRunCounter( self ):
-		return 666
+	def incrRunCounter( self, max=999999 ):
+		runcounter = self.dSettings['runcount']+=1
+		if runcounter > max:
+			runcounter = 0
+		
+		self.dSettings['runcount']=runcounter
+		self.save()
+		
+		return runcounter
 	
 """
 def settings_save( sJsonFile, dSettings ):

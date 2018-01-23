@@ -673,14 +673,8 @@ cSettings = huSettings( os.path.join(configuration['directories']['config'],conf
 # increase the run counter (used for logging to file)
 newRunCount = cSettings.incrRunCounter()
 
+# Legacy:
 settings = cSettings.get()
-#dSettings['runcount']+=1
-# save run counter
-#settings_save( sFileSettings, dSettings )
-
-#init_load_ops()
-
-#settings = init_load_ops( configuration )
 
 
 #
