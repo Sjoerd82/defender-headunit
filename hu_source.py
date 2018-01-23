@@ -28,6 +28,10 @@ class SourceController():
 
 		#Availability = False for all new sources, until cleared by the check() function
 		source['available'] = False
+
+		#If no _templated field available, assume it's not based on a template:
+		if not '_templated' in source:
+			source['_templated'] = False
 			
 		#All good, add the source:
 		self.__printer('ADD: {0}'.format(source['displayname']))
@@ -47,12 +51,17 @@ class SourceController():
 			self.__printer('ERROR: Cannot remove active source. Doing nothing.',LL_ERROR,self.mytag)
 
 	# get index based on key-value pair. Set template to True to match only templates, False does not match Templates, None matches regardless of Template status
+
+	#  if template set to False (default), exclude template sources..
+	#  if template set to True, include template sources but exclude template based sources?
+
 	def getIndex( self, key, value, template=False ):
 		i=0
 		for source in self.lSource:
-			if source[key] == value and template == None:
+			#if source[key] == value and template == None:
+			if source[key] == value and not template and not source['template']:
 				return i
-			elif source[key] == value and source['template'] == template:
+			elif source[key] == value and template and not source['_templated']:
 				return i
 			i+=1
 				
@@ -224,12 +233,19 @@ class SourceController():
 			checkResult = getattr(obj,func)()
 		self.setAvailableIx(index,checkResult)
 	
-	# execute a check() for all sources
-	def sourceCheckAll( self ):
+	# execute a check() for all sources..
+	#  if template set to False (default), exclude template sources..
+	#  if template set to True, include template sources but exclude template based sources?
+	def sourceCheckAll( self, template=False ):
 		i=0
 		for source in self.lSource:
-			if not source['template']:
+
+			if not template and not source['template']:
 				self.sourceCheck(i)
+					
+			if template and not source['_templated']:
+				self.sourceCheck(i)
+					
 			i+=1
 	
 	# execute a play() for the current source

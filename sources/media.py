@@ -18,10 +18,11 @@ def printer( message, level=LL_INFO, continuation=False, tag=sourceName ):
 def media_add( dir, label, uuid, sourceCtrl ):
 	ix = sourceCtrl.getIndex('name','media',True)
 	template = sourceCtrl.get(ix)
+	template['mountpoint'] = dir
 	template['label'] = label
 	template['uuid'] = uuid
 	template['template'] = False
-	template['mountpoint'] = dir
+	template['_templated'] = True
 	sourceCtrl.add(template)
 
 # media_check() returns True or False, depending on availability..

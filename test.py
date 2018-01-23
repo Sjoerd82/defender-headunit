@@ -545,23 +545,6 @@ def init_load_config():
 
 	return configuration
 
-"""
-def init_load_ops( configuration ):
-	# load default settings
-#	dDefaultSettings = configuration['default_settings']
-	# operational settings file (e.g. dSettings.json)
-#	sFileSettings = os.path.join(configuration['directories']['config'],configuration['files']['settings'])
-	# load into dSettings
-#	dSettings = settings_load( sFileSettings, dDefaultSettings )
-
-	# increase the run counter (used for logging to file)
-	dSettings['runcount']+=1
-
-	# save run counter
-	settings_save( sFileSettings, dSettings )
-	
-	return dSettings
-"""
 
 # print a source summary
 def printSummary():
@@ -640,9 +623,7 @@ def loadSourcePlugins( plugindir ):
 		printer('Source path not found: {0}'.format(plugindir), level=LL_CRITICAL)
 		exit()
 	
-	#todo, obviously this is bad..
 	print plugindir
-	#lookforthingy = '/mnt/PIHU_APP/defender-headunit/sources/'
 	lookforthingy = plugindir
 	
 	for k, v in sys.modules.iteritems():
@@ -807,15 +788,51 @@ myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 # QuickPlay
 #
 
+# check all sources..
+# TODO: it's more efficient to only check the previous source now, and check the rest later
+Sources.sourceCheckAll( template=True )
+printSummary()
+
+exit()
+# is there a previous source?
+# if not, check all sources.
+#if prevSource == "":
+	# No previous source
+	# Check all sources for availability
+
+if not prevSource == ""
+	prevSourceIx = Sources.getIndex('name','source',template=True)
+	dPrevSource = Sources.get( prevSourceIx )
+	
+	prevSourceAvailable = Sources.getAvailable(PrevSourceIx)
+	
+if not prevSource == "" and prevSourceAvailable:
+	#play this source..
+
 # First, try previously active source
 
 #Sources.sourceCheckAll()
-print("PREVIOUS SOURCE: {0}".format(cSettings.get_key('source')))
-print("PREVIOUS SOURCE: {0}".format(cSettings.get_key('label')))
-print("PREVIOUS SOURCE: {0}".format(cSettings.get_key('uuid')))
 
-#if = "":
+prevSource = cSettings.get_key('source')
+prevLabel = cSettings.get_key('label'))
+prevUuid = cSettings.get_key('uuid'))
+#print("PREVIOUS SOURCE: {0}".format(cSettings.get_key('source')))
+#print("PREVIOUS SOURCE: {0}".format(cSettings.get_key('label')))
+#print("PREVIOUS SOURCE: {0}".format(cSettings.get_key('uuid')))
 
+# list of sources:
+
+
+else:
+	for source in Sources.getAll():
+		if source['name'] == prevSource:
+			print("!! PREVIOUS SOURCE: {0}".format(source['name']))
+			#if 'label' in source:
+			index = Sources.getIndex
+			print("!! CHECKING IF IT IS AVAILABLE...")
+			
+			Sources.sourceCheck(
+	
 # First, try previously active source
 
 
