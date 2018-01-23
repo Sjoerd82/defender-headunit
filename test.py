@@ -810,7 +810,7 @@ print("PREVIOUS SOURCE: {0}".format(cSettings.get_key('source')))
 print("PREVIOUS SOURCE: {0}".format(cSettings.get_key('label')))
 print("PREVIOUS SOURCE: {0}".format(cSettings.get_key('uuid')))
 
-if = "":
+#if = "":
 
 Sources.sourceCheckAll()
 Sources.next()
