@@ -763,10 +763,13 @@ for source in Sources.getAll():
 			else:
 				print "Previous Source: {0}; is template, and has subsources, testing match...>".format(source['name'])
 				for subsource in source['subsources']:
+					print subsource
 					if test_match( prevSourceSub, subsource ):
-						print "---END--- CONTINUING playback of this subsource!"
+						print "..MATCH!"
+						#print "---END--- CONTINUING playback of this subsource!"
 					else:
-						print "---END--- no suitable source or subsource to continue playing... Play first available source."
+						print "..no match on this one"
+						#print "---END--- no suitable source or subsource to continue playing... Play first available source."
 					
 					
 exit()	
