@@ -649,6 +649,45 @@ def test_match( dTest, dMatchAgainst ):
 	else:
 		return False
 
+
+def bla_refactored( prevSource, prevSourceSub ):
+
+	global Sources
+
+	i = 0
+	for source in Sources.getAll():
+		print "{0} Source {1}".format(i,source["name"])
+		print source
+		if source['name'] == prevSource['name']:
+			if not source['template']:
+				print "......... Previous Source: {0}; no subsources".format(source['name'])
+				print "---END--- CONTINUING playback of this source!"
+				return True
+			else:
+				print "......... Previous Source: {0}; is template, checking for subsources...>".format(source['name'])
+				if not 'subsources' in source:
+					print "......... Previous Source: {0}; is template, but has no subsources.".format(source['name'])
+					print "---END--- no suitable source to continue playing... Play first available source."
+					return True
+				else:
+					print "......... Previous Source: {0}; is template, and has subsources, testing match...>".format(source['name'])
+					j = 0
+					for subsource in source['subsources']:
+						print j
+						#print subsource
+						if test_match( prevSourceSub, subsource ):
+							print "> ..MATCH! (todo: stop)"
+							return True
+							#print "---END--- CONTINUING playback of this subsource!"
+						else:
+							print "> ..no match on this one"
+							#print "---END--- no suitable source or subsource to continue playing... Play first available source."
+						j+=1
+		i+=1
+
+	# Nothing matched..
+	return False
+
 #********************************************************************************
 #
 # Initialization
@@ -731,57 +770,18 @@ loadSourcePlugins(os.path.join( os.path.dirname(os.path.abspath(__file__)), 'sou
 
 print "DEBUG!"
 prevSource = {'name': 'fm'}
+prevSourceSub = {}
 
-for source in Sources.getAll():
-	if source['name'] == prevSource['name']:
-		if not source['template']:
-			print "Previous Source: {0}; no subsources".format(source['name'])
-			print "---END--- CONTINUING playback of this source."
-		else:
-			print "Previous Source: {0}; is template, checking for subsources...>".format(source['name'])
-			if not 'subsources' in source:
-				print "Previous Source: {0}; is template, but has no subsources.".format(source['name'])
-				print "---END--- no suitable source to continue playing... Play first available source."
-			else:
-				print "Previous Source: {0}; is template, and has subsources...>".format(source['name'])
-				for subsource in source['subsources']:
-					print subsource
-					print prevSource
+print bla_refactored( prevSource, prevSourceSub )
 	
 print "DEBUG!"
 prevSource = {'name': 'locmus'}
 prevSourceSub = {'mountpoint':'/media/PIHU_DATA'}
 bFound = False
 
-i = 0
-for source in Sources.getAll():
-	print "{0} Source {1}".format(i,source["name"])
-	print source
-	if source['name'] == prevSource['name']:
-		if not source['template']:
-			print "......... Previous Source: {0}; no subsources".format(source['name'])
-			print "---END--- CONTINUING playback of this source!"
-		else:
-			print "......... Previous Source: {0}; is template, checking for subsources...>".format(source['name'])
-			if not 'subsources' in source:
-				print "......... Previous Source: {0}; is template, but has no subsources.".format(source['name'])
-				print "---END--- no suitable source to continue playing... Play first available source."
-			else:
-				print "......... Previous Source: {0}; is template, and has subsources, testing match...>".format(source['name'])
-				j = 0
-				for subsource in source['subsources']:
-					print j
-					#print subsource
-					if test_match( prevSourceSub, subsource ):
-						print "> ..MATCH! (todo: stop)"
-						#print "---END--- CONTINUING playback of this subsource!"
-					else:
-						print "> ..no match on this one"
-						#print "---END--- no suitable source or subsource to continue playing... Play first available source."
-					j+=1
-	i+=1
+print bla_refactored( prevSource, prevSourceSub )
 
-print 
+print "Test"
 	
 exit()
 	
@@ -866,6 +866,12 @@ myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 # check all sources..
 # TODO: it's more efficient to only check the previous source now, and check the rest later
 Sources.sourceCheckAll( template=True )
+
+if not prevSource == "":
+	if PlayPrevSource() == False:
+		Sources.nextSource()
+		
+
 
 # is there a previous source?
 # if not, check all sources.
