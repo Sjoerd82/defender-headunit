@@ -232,8 +232,9 @@ class SourceController():
 			func = self.lSource[index]['sourceInit'][1]
 			if len(self.lSource[index]['sourceInit']) == 3:
 				params = self.lSource[index]['sourceInit'][2]
-				checkResult = getattr(obj,func)(params)
+				checkResult = getattr(obj,func)(self, params)
 			else:
+				# self =  reference to Sources
 				checkResult = getattr(obj,func)(self)
 	
 	# execute a check() for given source and sets availability accordingly
@@ -246,9 +247,10 @@ class SourceController():
 		func = self.lSource[index]['sourceCheck'][1]
 		if len(self.lSource[index]['sourceCheck']) == 3:
 			params = self.lSource[index]['sourceCheck'][2]
-			checkResult = getattr(obj,func)(params)
+			checkResult = getattr(obj,func)(self, params)
 		else:
-			checkResult = getattr(obj,func)()
+			# self =  reference to Sources
+			checkResult = getattr(obj,func)(self)
 		self.setAvailableIx(index,checkResult)
 
 	def sourceCheckParams( self, index, params ):
