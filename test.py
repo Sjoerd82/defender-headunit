@@ -683,9 +683,11 @@ def bla_refactored( prevSource, prevSourceSub ):
 							print "> ..no match on this one"
 							#print "---END--- no suitable source or subsource to continue playing... Play first available source."
 						j+=1
+			# Nothing matched for this source name
+			return False
 		i+=1
 
-	# Nothing matched..
+	# Source name was not found.. (strange situation...)
 	return False
 
 #********************************************************************************
