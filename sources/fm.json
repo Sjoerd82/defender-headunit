@@ -1,7 +1,6 @@
 { "name": "fm",
   "displayname": "FM",
   "order": 0,
-  "available": true,
   "type": "fmtools",
   "depNetwork": false,
   "controls": {"ffwd": false, "rwnd": false, "prev": true, "next": true},

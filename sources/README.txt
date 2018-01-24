@@ -5,6 +5,12 @@ A "source" consists of two files:
 
 Both must have the same name.
 
+Concepts
+------------------
+
+Sub-Source	Source switchable via the "SOURCE" button. Think multiple USB drives.
+		Not suitable for eg. FM stations, which should be swichable via the "NEXT" or "SEEK" button.
+
 JSON configuration
 ------------------
 

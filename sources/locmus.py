@@ -44,15 +44,14 @@ def locmus_add( dir, label, sourceCtrl ):
 
 	# get index (name is unique)
 	ix = sourceCtrl.getIndex('name','locmus')
-	#template = sourceCtrl.get(ix)
-	
+
+	# construct the subsource
 	subsource = {}
 	subsource['displayname'] = dir
 	subsource['order'] = 0		# no ordering
 	subsource['mountpoint'] = dir
 	subsource['label'] = label
-	subsource['uuid'] = None	#TODO
-	#template['subsources'].append(subsource)
+	subsource['uuid'] = None	#TODO (but not relevant for local sources?)
 
 	sourceCtrl.addSub( ix, subsource )
 	
@@ -64,7 +63,6 @@ def locmus_init( sourceCtrl ):
 	locmusConfig = getSourceConfig('locmus')
 	
 	# add all locations as configured
-	print locmusConfig
 	for location in locmusConfig:
 		locmus_add(location['musicdir'],location['musicdir_mpd'], sourceCtrl)
 

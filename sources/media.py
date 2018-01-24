@@ -17,16 +17,19 @@ def printer( message, level=LL_INFO, continuation=False, tag=sourceName ):
 
 # add a media source
 def media_add( dir, label, uuid, sourceCtrl ):
+
+	# get index (name is unique)
 	ix = sourceCtrl.getIndex('name','media')
-	template = sourceCtrl.get(ix)
 	
+	# construct the subsource
 	subsource = {}
+	subsource['displayname'] = dir
+	subsource['order'] = 0		# no ordering
 	subsource['mountpoint'] = dir
 	subsource['label'] = label
 	subsource['uuid'] = uuid
-	template['subsources'].append(subsource)
 
-	sourceCtrl.add(template)
+	sourceCtrl.addSub(ix, subsource)
 
 # Stuff that needs to run once
 def media_init( sourceCtrl ):
@@ -41,7 +44,7 @@ def media_init( sourceCtrl ):
 		mountpoint = dev_mp[0]
 		sUsbLabel = os.path.basename(dev_mp[1]).rstrip('\n')
 		uuid = ""
-		#media_add(mountpoint, sUsbLabel, uuid, sourceCtrl)
+		media_add(mountpoint, sUsbLabel, uuid, sourceCtrl)
 
 	return True
 
