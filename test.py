@@ -746,31 +746,35 @@ for source in Sources.getAll():
 	
 print "DEBUG!"
 prevSource = {'name': 'locmus'}
-prevSourceSub = {'mountpoint':'/media/PIHU_DATA2'}
-print prevSource
+prevSourceSub = {'mountpoint':'/media/PIHU_DATA'}
 bFound = False
 
+i = 0
 for source in Sources.getAll():
+	print i
 	if source['name'] == prevSource['name']:
 		if not source['template']:
-			print "Previous Source: {0}; no subsources".format(source['name'])
+			print "......... Previous Source: {0}; no subsources".format(source['name'])
 			print "---END--- CONTINUING playback of this source!"
 		else:
-			print "Previous Source: {0}; is template, checking for subsources...>".format(source['name'])
+			print "......... Previous Source: {0}; is template, checking for subsources...>".format(source['name'])
 			if not 'subsources' in source:
-				print "Previous Source: {0}; is template, but has no subsources.".format(source['name'])
+				print "......... Previous Source: {0}; is template, but has no subsources.".format(source['name'])
 				print "---END--- no suitable source to continue playing... Play first available source."
 			else:
-				print "Previous Source: {0}; is template, and has subsources, testing match...>".format(source['name'])
+				print "......... Previous Source: {0}; is template, and has subsources, testing match...>".format(source['name'])
+				j = 0
 				for subsource in source['subsources']:
-					print subsource
+					print j
+					#print subsource
 					if test_match( prevSourceSub, subsource ):
-						print "..MATCH!"
+						print "> ..MATCH! (todo: stop)"
 						#print "---END--- CONTINUING playback of this subsource!"
 					else:
-						print "..no match on this one"
+						print "> ..no match on this one"
 						#print "---END--- no suitable source or subsource to continue playing... Play first available source."
-					
+					j+=1
+	i+=1
 					
 exit()	
 	
