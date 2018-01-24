@@ -651,7 +651,7 @@ def bla_refactored( prevSourceName, prevSourceSub, doCheck ):
 
 	global Sources
 
-	#i = 0
+	ix = 0
 	for source in Sources.getAll():
 		#print "{0} Source {1}".format(i,source["name"])
 		#print source
@@ -679,8 +679,8 @@ def bla_refactored( prevSourceName, prevSourceSub, doCheck ):
 								#Sources.sourceCheckParams
 								#Sources.getAvailable()
 								print "uuuuuuuhhh"
-								print source
-								print Sources.sourceCheckParams( source['index'], ['/media/PIHU_DATA'] )
+								#ix = source...
+								print Sources.sourceCheckParams( ix, ['/media/PIHU_DATA'] )
 							else:
 								return True
 							#print "---END--- CONTINUING playback of this subsource!"
@@ -691,7 +691,7 @@ def bla_refactored( prevSourceName, prevSourceSub, doCheck ):
 						#j+=1
 			# Nothing matched for this source name
 			return False
-		#i+=1
+		i+=1
 
 	# Source name was not found.. (strange situation...)
 	return False
