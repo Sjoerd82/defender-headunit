@@ -64,6 +64,7 @@ def locmus_init( sourceCtrl ):
 	locmusConfig = getSourceConfig('locmus')
 	
 	# add all locations as configured
+	print locmusConfig
 	for location in locmusConfig:
 		locmus_add(location['musicdir'],location['musicdir_mpd'], sourceCtrl)
 
