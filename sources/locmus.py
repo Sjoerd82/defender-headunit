@@ -80,7 +80,7 @@ def locmus_check( sourceCtrl, mountpoints=None ):
 	if len(mountpoints) > 1:
 		printer('CHECKING availability...')	
 	else:
-		printer('CHECKING availability of {0}...'.format(mountpoint))
+		printer('CHECKING availability of {0}...'.format(mountpoints[0]))
 
 #	sourceConfig = getSourceConfig(sourceName)
 #	for location in sourceConfig:
