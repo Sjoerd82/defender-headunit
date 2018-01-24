@@ -69,12 +69,20 @@ def locmus_init( sourceCtrl ):
 	return True
 
 # Source Check: Return True/False (available/not available)
-def locmus_check():
+def locmus_check( mountpoints=None ):
 	
-	printer('CHECK availability...')
+	# TODO
+	if mountpoints == None:
+		Return False
+	
+	if len(mountpoints) > 1:
+		printer('CHECKING availability...')	
+	else:
+		printer('CHECKING availability of {0}...'.format(mountpoint))
 
-	sourceConfig = getSourceConfig(sourceName)
-	for location in sourceConfig:
+#	sourceConfig = getSourceConfig(sourceName)
+#	for location in sourceConfig:
+	for location in mountpoints:
 		printer('Local folder: {0}'.format(location['musicdir']))
 		try:
 			if not os.listdir(location['musicdir']):
@@ -86,6 +94,7 @@ def locmus_check():
 		except:
 			printer(" > [FAIL] Error checking for local music directory {0}".format(location['musicdir']),LL_ERROR,True)
 			return False
+	"""
 		
 # Source Play: Return True/False
 def locmus_play():
