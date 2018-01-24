@@ -674,6 +674,7 @@ def bla_refactored( prevSourceName, prevSourceSub, doCheck ):
 						#print subsource
 						if test_match( prevSourceSub, subsource ):
 							#print "> ..MATCH! (todo: stop)"
+							print subsource
 							if doCheck:
 								# Check if REALLY available...
 								# !!! TODO: MAKE THIS MORE UNIVERSAL..... !!!
