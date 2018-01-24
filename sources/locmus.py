@@ -69,11 +69,11 @@ def locmus_init( sourceCtrl ):
 	return True
 
 # Source Check: Return True/False (available/not available)
-def locmus_check( mountpoints=None ):
+def locmus_check( sourceCtrl, mountpoints=None ):
 	
 	# TODO
 	if mountpoints == None:
-		Return False
+		return False
 	
 	if len(mountpoints) > 1:
 		printer('CHECKING availability...')	
