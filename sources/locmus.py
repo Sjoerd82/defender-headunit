@@ -94,7 +94,7 @@ def locmus_check( sourceCtrl, mountpoints=None ):
 		except:
 			printer(" > [FAIL] Error checking for local music directory {0}".format(location['musicdir']),LL_ERROR,True)
 			return False
-	"""
+
 		
 # Source Play: Return True/False
 def locmus_play():
