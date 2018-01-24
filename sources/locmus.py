@@ -81,7 +81,7 @@ def locmus_check( sourceCtrl, subSourceIx=None ):
 		printer('CHECKING availability...')
 		mountpoints = sourceCtrl.getSubSources( ix )
 	else:
-		mountpoint = sourceCtrl.getSubSource( ix )
+		mountpoint = sourceCtrl.getSubSource( ix, subSourceIx )
 		printer('CHECKING availability of {0}...'.format(mountpoint))
 		mountpoints = []
 		mountpoints.append(mountpoint)
