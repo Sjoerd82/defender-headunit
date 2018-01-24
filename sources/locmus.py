@@ -56,7 +56,8 @@ def locmus_add( dir, label, sourceCtrl ):
 	sourceCtrl.addSub( ix, subsource )
 	
 # Stuff that needs to run once
-def locmus_init( sourceCtrl ):
+#def locmus_init( sourceCtrl ):
+def locmus_init():
 	printer('Initializing....')
 	
 	# get source configuration from main configuration
