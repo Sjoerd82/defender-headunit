@@ -679,7 +679,8 @@ def bla_refactored( prevSourceName, prevSourceSub, doCheck ):
 								#Sources.sourceCheckParams
 								#Sources.getAvailable()
 								print "uuuuuuuhhh"
-								print Sources.sourceCheckParams( ['/media/PIHU_DATA'] )
+								print source
+								print Sources.sourceCheckParams( source['index'], ['/media/PIHU_DATA'] )
 							else:
 								return True
 							#print "---END--- CONTINUING playback of this subsource!"
