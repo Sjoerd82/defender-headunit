@@ -756,6 +756,7 @@ bFound = False
 i = 0
 for source in Sources.getAll():
 	print "{0} Source {1}".format(i,source["name"])
+	print source
 	if source['name'] == prevSource['name']:
 		if not source['template']:
 			print "......... Previous Source: {0}; no subsources".format(source['name'])
@@ -779,8 +780,10 @@ for source in Sources.getAll():
 						#print "---END--- no suitable source or subsource to continue playing... Play first available source."
 					j+=1
 	i+=1
-					
-exit()	
+
+print 
+	
+exit()
 	
 sources.media.media_add('/media/SJOERD', 'SJOERD', 'f9dc11d6-01', Sources)
 
