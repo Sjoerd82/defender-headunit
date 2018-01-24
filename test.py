@@ -781,7 +781,15 @@ bFound = False
 
 print bla_refactored( prevSource, prevSourceSub )
 
-print "Test"
+
+print "DEBUG!"
+prevSource = {'name': 'locmus'}
+prevSourceSub = {'mountpoint':'/media/PIHU_DATA3'}
+bFound = False
+
+print bla_refactored( prevSource, prevSourceSub )
+
+
 	
 exit()
 	
