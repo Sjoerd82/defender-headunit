@@ -41,16 +41,20 @@ def printer( message, level=LL_INFO, continuation=False, tag=sourceName ):
 		myprint( message, level, tag )
 
 def locmus_add( dir, label, sourceCtrl ):
+
+	# get index (name is unique)
 	ix = sourceCtrl.getIndex('name','locmus')
-	template = sourceCtrl.get(ix)
+	#template = sourceCtrl.get(ix)
 	
 	subsource = {}
+	subsource['displayname'] = dir
+	subsource['order'] = 0		# no ordering
 	subsource['mountpoint'] = dir
 	subsource['label'] = label
 	subsource['uuid'] = None	#TODO
-	template['subsources'].append(subsource)
+	#template['subsources'].append(subsource)
 
-	sourceCtrl.add(template)
+	sourceCtrl.addSub( ix, subsource )
 	
 # Stuff that needs to run once
 def locmus_init( sourceCtrl ):
@@ -58,6 +62,7 @@ def locmus_init( sourceCtrl ):
 	
 	# get source configuration from main configuration
 	locmusConfig = getSourceConfig('locmus')
+	
 	# add all locations as configured
 	for location in locmusConfig:
 		locmus_add(location['musicdir'],location['musicdir_mpd'], sourceCtrl)

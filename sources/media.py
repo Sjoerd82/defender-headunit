@@ -41,7 +41,7 @@ def media_init( sourceCtrl ):
 		mountpoint = dev_mp[0]
 		sUsbLabel = os.path.basename(dev_mp[1]).rstrip('\n')
 		uuid = ""
-		media_add(mountpoint, sUsbLabel, uuid, sourceCtrl)
+		#media_add(mountpoint, sUsbLabel, uuid, sourceCtrl)
 
 	return True
 

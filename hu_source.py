@@ -22,7 +22,7 @@ class SourceController():
 	def add( self, source ):
 		#Check required fields:
 		if not all (k in source for k in ('name','displayname','order','controls','template')):
-			self.__printer('ADD: Source NOT added, missing one or more required field(s)...',LL_ERROR)
+			self.__printer('ADD: source NOT added, missing one or more required field(s)...',LL_ERROR)
 			self.__printer('Required fields are: name,displayname,order,controls,template',LL_ERROR,True)
 			return False
 
@@ -35,11 +35,31 @@ class SourceController():
 		
 		#All good, add the source:
 		self.__printer('ADD: {0}'.format(source['displayname']))
-		#self.logger.info('ADD: {0}'.format(source['displayname']))
 		self.lSource.append(source)
 		self.lSource.sort( key=lambda k: k['order'] )
 		return True
 
+	def addSub( self, index, subsource ):
+
+		#Check required fields:
+		if not all (k in subsource for k in ('displayname','order')):
+			self.__printer('ADD: sub-source NOT added, missing one or more required field(s)...',LL_ERROR)
+			self.__printer('Required fields are: displayname,order',LL_ERROR,True)
+			return False
+		
+		#Availability = False for all new subsources, until cleared by the check() function
+		# TODO -- not fully implemented yet
+		subsource['available'] = False
+
+		#All good, add the source:
+		self.__printer('ADD: {0}'.format(subsource['displayname']))
+		self.lSource[index]['subsources'].append(subsource)
+		self.lSource[index]['subsources'].sort( key=lambda k: k['order'] )
+		return True
+		
+		
+	
+	
 	# remove source by index. Set force to True to allow removal of active source.
 	def rem( self, index, force ):
 		if not index == self.iCurrent or force:

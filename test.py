@@ -584,6 +584,10 @@ def add_a_source( plugindir, sourcePluginName ):
 		
 	jsConfigFile = open( configFileName )
 	config=json.load(jsConfigFile)
+	
+	# test if name is unique
+	# TODO
+	
 	sourceModule = sys.modules['sources.'+sourcePluginName]
 	for execFunction in ('sourceInit','sourceCheck','sourcePlay','sourceStop'):
 		if execFunction in config:
