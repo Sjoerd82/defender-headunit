@@ -762,10 +762,11 @@ for source in Sources.getAll():
 				print "---END--- no suitable source to continue playing... Play first available source."
 			else:
 				print "Previous Source: {0}; is template, and has subsources, testing match...>".format(source['name'])
-				if test_match( prevSourceSub, subsource ):
-					print "---END--- CONTINUING playback of this subsource!"
-				else:
-					print "---END--- no suitable source or subsource to continue playing... Play first available source."
+				for subsource in source['subsources']:
+					if test_match( prevSourceSub, subsource ):
+						print "---END--- CONTINUING playback of this subsource!"
+					else:
+						print "---END--- no suitable source or subsource to continue playing... Play first available source."
 					
 					
 exit()	
