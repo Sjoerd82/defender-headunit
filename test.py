@@ -676,10 +676,29 @@ def bla_refactored( prevSourceName, prevSourceSub, doCheck ):
 							#print "> ..MATCH! (todo: stop)"
 							if doCheck:
 								# Check if REALLY available...
-								print Sources.sourceCheckParams( ix, ['/media/PIHU_DATA'] )
+								# !!! TODO: MAKE THIS MORE UNIVERSAL..... !!!
+								if source['name'] in ['media','locmus']:
+									#if not Sources.sourceCheckParams( ix, ['/media/PIHU_DATA'] ):
+									if not Sources.sourceCheckParams( ix, subsource['mountpoint'] ):
+										print "directory not present or empty [todo: or no music in mpd]"
+										print "---END--- Play first available source."
+										return False
+									else:
+										print "---END--- CONTINUING playback of this subsource!"
+										return True
+								#TEMPORARY:
+								else:
+									if not Sources.sourceCheck( ix ):
+										print "---END--- Play first available source."
+										return False
+									else:
+										print "---END--- CONTINUING playback of this subsource!"
+										return True
+									
 							else:
+								# No check, clear for available..
+								#print "---END--- CONTINUING playback of this subsource!"
 								return True
-							#print "---END--- CONTINUING playback of this subsource!"
 						else:
 							pass
 							#print "> ..no match on this one"
