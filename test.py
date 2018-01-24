@@ -885,10 +885,12 @@ Sources.sourceCheckAll( template=True )
 
 
 if not prevSource == "":
-	if bla_refactored( prevSource, prevSourceSub ) #PlayPrevSource()
-		Source.play( index... )
+	if bla_refactored( prevSource, prevSourceSub ): #PlayPrevSource()
+		pass
+		#Source.play( index... )
 	else:
-		Sources.nextSource()
+		pass
+		#Sources.nextSource()
 		
 
 
