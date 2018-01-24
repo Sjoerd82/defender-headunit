@@ -866,8 +866,8 @@ myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 # QuickPlay
 #
 testSs = {'mountpoint':'/media/PIHU_DATA'}
-Settings.set('subsource',testSs)
-Settings.save()
+cSettings.set('subsource',testSs)
+cSettings.save()
 
 prevSource = cSettings.get_key('source')
 prevSourceSub = cSettings.get_key('subsource')
