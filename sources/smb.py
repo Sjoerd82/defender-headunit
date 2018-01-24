@@ -16,7 +16,7 @@ def printer( message, level=LL_INFO, continuation=False, tag=sourceName ):
 		myprint( message, level, tag )
 
 
-def smb_check():
+def smb_check( sourceCtrl ):
 	#global arSourceAvailable
 	#global Sources
 	

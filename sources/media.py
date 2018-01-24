@@ -23,7 +23,7 @@ def media_add( dir, label, uuid, sourceCtrl ):
 	
 	# construct the subsource
 	subsource = {}
-	subsource['displayname'] = dir
+	subsource['displayname'] = 'media: ' + dir
 	subsource['order'] = 0		# no ordering
 	subsource['mountpoint'] = dir
 	subsource['label'] = label
@@ -41,9 +41,9 @@ def media_init( sourceCtrl ):
 	# add all locations as configured
 	arMedia = media_getAll()
 	for dev_mp in arMedia:
-		mountpoint = dev_mp[0]
+		mountpoint = dev_mp[1]
 		sUsbLabel = os.path.basename(dev_mp[1]).rstrip('\n')
-		uuid = ""
+		uuid = dev_mp[0]  #use blkid  on this
 		media_add(mountpoint, sUsbLabel, uuid, sourceCtrl)
 
 	return True

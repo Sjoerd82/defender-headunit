@@ -13,7 +13,7 @@ def printer( message, level=LL_INFO, continuation=False, tag=sourceName ):
 		myprint( message, level, tag )
 
 # updates arSourceAvailable[4] (alsa) -- TODO
-def linein_check():
+def linein_check( sourceCtrl ):
 	#global Sources
 	printer('Checking if Line-In is available... not available')
 	#arSourceAvailable[4]=0 # not available
