@@ -8,6 +8,9 @@ Both must have the same name.
 JSON configuration
 ------------------
 
+The JSON configuration contains all kinds of *read-only* details.
+The source can be further configured in the read-write file configuration.json.
+
 Fields:
 name		string
 displayname	string
@@ -20,8 +23,14 @@ sourceCheck	"
 sourcePlay	"
 sourceStop	"
 template	bool
-defaultconfig	list
 
 Added by system:
 available	bool
 subsources	list
+
+Python script
+----------------
+
+Init-function
+Stuff that needs to run once
+
