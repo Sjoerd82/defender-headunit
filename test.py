@@ -647,7 +647,7 @@ def test_match( dTest, dMatchAgainst ):
 		return False
 
 
-def bla_refactored( prevSourceName, prevSourceSub ):
+def bla_refactored( prevSourceName, prevSourceSub, doCheck ):
 
 	global Sources
 
@@ -674,7 +674,14 @@ def bla_refactored( prevSourceName, prevSourceSub ):
 						#print subsource
 						if test_match( prevSourceSub, subsource ):
 							#print "> ..MATCH! (todo: stop)"
-							return True
+							if doCheck:
+								# Check if REALLY available...
+								#Sources.sourceCheckParams
+								#Sources.getAvailable()
+								print "uuuuuuuhhh"
+								print Sources.sourceCheckParams
+							else:
+								return True
 							#print "---END--- CONTINUING playback of this subsource!"
 						else:
 							pass
@@ -872,24 +879,22 @@ prevSourceSub = cSettings.get_key('subsource')
 print("PREVIOUS SOURCE: {0}".format(cSettings.get_key('source')))
 print("PREVIOUS SOURCE: {0}".format(cSettings.get_key('subsource')))
 
-exit()
 
+if not prevSource == "":
+	if bla_refactored( prevSource, prevSourceSub, True ): #PlayPrevSource()
+		print ('CONTINUEING PLAYBACK')
+		#Source.play( index... )
+	else:
+		print ('START AT FIRST AVAILABLE')
+		#Sources.nextSource()
+
+exit()
 
 # check all sources..
 # TODO: it's more efficient to only check the previous source now, and check the rest later
 Sources.sourceCheckAll( template=True )
 
-
-
-
-if not prevSource == "":
-	if bla_refactored( prevSource, prevSourceSub ): #PlayPrevSource()
-		pass
-		#Source.play( index... )
-	else:
-		pass
-		#Sources.nextSource()
-		
+exit()		
 
 
 # is there a previous source?

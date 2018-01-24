@@ -39,6 +39,7 @@ class SourceController():
 		self.lSource.sort( key=lambda k: k['order'] )
 		return True
 
+	# add sub-source
 	def addSub( self, index, subsource ):
 
 		#Check required fields:
@@ -56,9 +57,6 @@ class SourceController():
 		self.lSource[index]['subsources'].append(subsource)
 		self.lSource[index]['subsources'].sort( key=lambda k: k['order'] )
 		return True
-		
-		
-	
 	
 	# remove source by index. Set force to True to allow removal of active source.
 	def rem( self, index, force ):
@@ -70,6 +68,9 @@ class SourceController():
 		else:
 			self.__printer('ERROR: Cannot remove active source. Doing nothing.',LL_ERROR,self.mytag)
 
+	def remSub( self, index, subsource ):
+		#TODO
+		return None
 	# get index based on key-value pair. Set template to True to match only templates, False does not match Templates, None matches regardless of Template status
 
 	#  if template set to False (default), exclude template sources..
@@ -249,6 +250,14 @@ class SourceController():
 		else:
 			checkResult = getattr(obj,func)()
 		self.setAvailableIx(index,checkResult)
+
+	def sourceCheckParams( self, index, params ):
+
+		obj = self.lSource[index]['sourceCheck'][0]
+		func = self.lSource[index]['sourceCheck'][1]
+		checkResult = getattr(obj,func)(params)
+		self.setAvailableIx(index,checkResult)
+		return checkResult
 	
 	# execute a check() for all sources..
 	#  if template set to False (default), exclude template sources..
