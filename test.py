@@ -691,7 +691,7 @@ def bla_refactored( prevSourceName, prevSourceSub, doCheck ):
 						#j+=1
 			# Nothing matched for this source name
 			return False
-		i+=1
+		ix+=1
 
 	# Source name was not found.. (strange situation...)
 	return False
@@ -843,8 +843,8 @@ myprint('Loading Other Plugins...',tag='SYSTEM')
 from plugin_other import *
 
 # WORKAROUND...
-for t in threads:
-	t.start()
+#for t in threads:
+#	t.start()
 
 # LCD (TODO: move to plugins)
 from hu_lcd import *

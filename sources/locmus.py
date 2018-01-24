@@ -47,7 +47,7 @@ def locmus_add( dir, label, sourceCtrl ):
 
 	# construct the subsource
 	subsource = {}
-	subsource['displayname'] = dir
+	subsource['displayname'] = 'local: ' + dir
 	subsource['order'] = 0		# no ordering
 	subsource['mountpoint'] = dir
 	subsource['label'] = label
