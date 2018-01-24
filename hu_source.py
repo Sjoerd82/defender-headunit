@@ -244,19 +244,21 @@ class SourceController():
 				checkResult = getattr(obj,func)(self)
 	
 	# execute a check() for given source and sets availability accordingly
-	def sourceCheck( self, index ):
+	def sourceCheck( self, index, subSourceIx=None ):
 		#if self.iCurrent == None:
 		#	print('[SOURCE] CHECK: No current source')
 		#	return False
 
 		obj = self.lSource[index]['sourceCheck'][0]
 		func = self.lSource[index]['sourceCheck'][1]
-		if len(self.lSource[index]['sourceCheck']) == 3:
-			params = self.lSource[index]['sourceCheck'][2]
-			checkResult = getattr(obj,func)(self, params)
-		else:
-			# self =  reference to Sources
-			checkResult = getattr(obj,func)(self)
+		#if len(self.lSource[index]['sourceCheck']) == 3:
+		#	params = self.lSource[index]['sourceCheck'][2]
+		#	checkResult = getattr(obj,func)(self, params)
+		#if not subSourceIx == None:
+		#	checkResult = getattr(obj,func)(self, subSourceIx)
+		#else:
+		# self =  reference to Sources
+		checkResult = getattr(obj,func)(self,subSourceIx)
 		self.setAvailableIx(index,checkResult)
 
 	def sourceCheckParams( self, index, params ):
