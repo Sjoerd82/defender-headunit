@@ -11,6 +11,8 @@ Concepts
 Sub-Source	Source switchable via the "SOURCE" button. Think multiple USB drives.
 		Not suitable for eg. FM stations, which should be swichable via the "NEXT" or "SEEK" button.
 
+
+
 JSON configuration
 ------------------
 
@@ -37,6 +39,10 @@ subsources	list
 Python script
 ----------------
 
-Init-function
-Stuff that needs to run once
+Functions:
+ Init:		Stuff that needs to run once
+ Check:		Determine availability
+		Parameters:
+			sourceCtrl	Required; Object; Reference to Sources
+			subSourceIx	Optional; int	; If present, check Sub-Source instead
 

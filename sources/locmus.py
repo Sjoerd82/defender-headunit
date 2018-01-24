@@ -71,14 +71,17 @@ def locmus_init( sourceCtrl ):
 
 # Source Check: Return True/False (available/not available)
 # Optionally, provide list of mountpoint(s) to check
-def locmus_check( sourceCtrl, mountpoint=None ):
+#def locmus_check( sourceCtrl, mountpoint=None ):
+def locmus_check( sourceCtrl, subSourceIx=None ):
 	
-	if mountpoint == None:
-		# TODO -- get list of all mountpoints from sourceCtrl
-		print "TOdoooooooooooo!!"
-		return False
+	ix = sourceCtrl.getIndex('name','locmus')
+	
+	#if mountpoint == None:
+	if subSourceIx == None:
 		printer('CHECKING availability...')
+		mountpoints = sourceCtrl.getSubSources( ix )
 	else:
+		mountpoint = sourceCtrl.getSubSource( ix )
 		printer('CHECKING availability of {0}...'.format(mountpoint))
 		mountpoints = []
 		mountpoints.append(mountpoint)

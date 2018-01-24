@@ -668,21 +668,19 @@ def bla_refactored( prevSourceName, prevSourceSub, doCheck ):
 					return True
 				else:
 					#print "......... Previous Source: {0}; is template, and has subsources, testing match...>".format(source['name'])
-					#j = 0
+					ix_ss = 0
 					for subsource in source['subsources']:
 						#print j
 						#print subsource
 						if test_match( prevSourceSub, subsource ):
 							#print "> ..MATCH! (todo: stop)"
-							print subsource
-							print subsource['mountpoint']
 							if doCheck:
 								# Check if REALLY available...
 								# !!! TODO: MAKE THIS MORE UNIVERSAL..... !!!
 								if source['name'] in ['media','locmus']:
 									print "OPTION 1 media/locmus"
 									#if not Sources.sourceCheckParams( ix, ['/media/PIHU_DATA'] ):
-									if not Sources.sourceCheckParams( ix, subsource['mountpoint'] ):
+									if not Sources.sourceCheckParams( ix, ix_ss ) #subsource['mountpoint'] ):
 										print "directory not present or empty [todo: or no music in mpd]"
 										print "---END--- Play first available source."
 										return False
@@ -706,7 +704,7 @@ def bla_refactored( prevSourceName, prevSourceSub, doCheck ):
 							pass
 							#print "> ..no match on this one"
 							#print "---END--- no suitable source or subsource to continue playing... Play first available source."
-						#j+=1
+						ix_ss+=1
 			# Nothing matched for this source name
 			return False
 		ix+=1
