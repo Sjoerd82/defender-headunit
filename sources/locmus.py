@@ -85,16 +85,16 @@ def locmus_check( sourceCtrl, mountpoints=None ):
 #	sourceConfig = getSourceConfig(sourceName)
 #	for location in sourceConfig:
 	for location in mountpoints:
-		printer('Local folder: {0}'.format(location['musicdir']))
+		printer('Local folder: {0}'.format(location))
 		try:
-			if not os.listdir(location['musicdir']):
+			if not os.listdir(location):
 				printer(" > Local music directory is empty.",LL_WARNING,True)
 				return False
 			else:
 				printer(" > Local music directory present and has files.",LL_INFO,True)
 				return True
 		except:
-			printer(" > [FAIL] Error checking for local music directory {0}".format(location['musicdir']),LL_ERROR,True)
+			printer(" > [FAIL] Error checking for local music directory {0}".format(location),LL_ERROR,True)
 			return False
 
 		

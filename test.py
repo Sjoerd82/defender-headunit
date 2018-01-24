@@ -676,10 +676,6 @@ def bla_refactored( prevSourceName, prevSourceSub, doCheck ):
 							#print "> ..MATCH! (todo: stop)"
 							if doCheck:
 								# Check if REALLY available...
-								#Sources.sourceCheckParams
-								#Sources.getAvailable()
-								print "uuuuuuuhhh"
-								#ix = source...
 								print Sources.sourceCheckParams( ix, ['/media/PIHU_DATA'] )
 							else:
 								return True
