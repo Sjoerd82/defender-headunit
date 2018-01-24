@@ -75,16 +75,18 @@ def locmus_init( sourceCtrl ):
 def locmus_check( sourceCtrl, subSourceIx=None ):
 	
 	ix = sourceCtrl.getIndex('name','locmus')
+	mountpoints = []
 	
 	#if mountpoint == None:
 	if subSourceIx == None:
 		printer('CHECKING availability...')
-		mountpoints = sourceCtrl.getSubSources( ix )
+		subsources = sourceCtrl.getSubSources( ix )
+		for subsource in subsources:
+			mountpoints.append(subsource['mountpoint'])
 	else:
-		mountpoint = sourceCtrl.getSubSource( ix, subSourceIx )
-		printer('CHECKING availability of {0}...'.format(mountpoint))
-		mountpoints = []
-		mountpoints.append(mountpoint)
+		subsource = sourceCtrl.getSubSource( ix, subSourceIx )
+		mountpoints.append(subsource['mountpoint'])
+		printer('CHECKING availability of {0}...'.format(mountpoints[0]))
 
 		
 #	sourceConfig = getSourceConfig(sourceName)
