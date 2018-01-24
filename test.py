@@ -638,6 +638,13 @@ def plugin_execute( script ):
 	call(['python',script])
 
 
+def test_match( dTest, dMatchAgainst ):
+	matches = set(dTest.items()) & set(dAgainst.items())
+	if len(matches) == len(dTest):
+		return True
+	else:
+		return False
+
 #********************************************************************************
 #
 # Initialization
@@ -747,29 +754,19 @@ for source in Sources.getAll():
 	if source['name'] == prevSource['name']:
 		if not source['template']:
 			print "Previous Source: {0}; no subsources".format(source['name'])
-			print "---END--- CONTINUING playback of this source."
+			print "---END--- CONTINUING playback of this source!"
 		else:
 			print "Previous Source: {0}; is template, checking for subsources...>".format(source['name'])
 			if not 'subsources' in source:
 				print "Previous Source: {0}; is template, but has no subsources.".format(source['name'])
 				print "---END--- no suitable source to continue playing... Play first available source."
 			else:
-				print "Previous Source: {0}; is template, and has subsources...>".format(source['name'])
-				for subitem in prevSourceSub:
-					for subsource in source['subsources']:
-						print subsource
-						if subitem in source['subsources']:
-							print subitem
-							bFound = True
-							break
-							
-				if bFound == False:
-					print('NOT FOUND! key: {0}'.format(subitem))
-					break
+				print "Previous Source: {0}; is template, and has subsources, testing match...>".format(source['name'])
+				if test_match( prevSourceSub, subsource ):
+					print "---END--- CONTINUING playback of this subsource!"
+				else:
+					print "---END--- no suitable source or subsource to continue playing... Play first available source."
 					
-					
-					#print subsource
-					#print prevSource
 					
 exit()	
 	
