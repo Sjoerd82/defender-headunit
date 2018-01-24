@@ -751,7 +751,7 @@ bFound = False
 
 i = 0
 for source in Sources.getAll():
-	print i
+	print "{0} Source {1}".format(i,source["name"])
 	if source['name'] == prevSource['name']:
 		if not source['template']:
 			print "......... Previous Source: {0}; no subsources".format(source['name'])
