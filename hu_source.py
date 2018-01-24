@@ -266,6 +266,7 @@ class SourceController():
 		func = self.lSource[index]['sourceCheck'][1]
 		checkResult = getattr(obj,func)(self,subSourceIx)
 		self.setAvailableIx(index,checkResult,subSourceIx)
+		return checkResult
 
 	def sourceCheckParams( self, index, params ):
 
