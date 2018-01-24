@@ -73,6 +73,7 @@ def locmus_init( sourceCtrl ):
 # Optionally, provide list of mountpoint(s) to check
 def locmus_check( sourceCtrl, mountpoints=None ):
 	
+	print mountpoints
 	# TODO
 	if mountpoints == None:
 		return False
