@@ -639,7 +639,7 @@ def plugin_execute( script ):
 
 
 def test_match( dTest, dMatchAgainst ):
-	matches = set(dTest.items()) & set(dAgainst.items())
+	matches = set(dTest.items()) & set(dMatchAgainst.items())
 	if len(matches) == len(dTest):
 		return True
 	else:
