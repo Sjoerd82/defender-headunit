@@ -193,20 +193,33 @@ class SourceController():
 					availableText = colorize('[not available]','light_red')
 				self.__printer('Source availability set to: {0} - {1}'.format(availableText,source['displayname']))
 
-	def setAvailableIx( self, index, available ):
-		if self.lSource[index]['template']:
-			self.__printer('Availability: ERROR cannot make templates available.',LL_ERROR)
-			return False
+	def setAvailableIx( self, index, available, subIndex=None ):
+	
+		#TODO: cleanup this code
+		if subIndex == None:
+			if self.lSource[index]['template']:
+				self.__printer('Availability: ERROR cannot make templates available.',LL_ERROR)
+				return False
 		
-		try:
-			self.lSource[index]['available'] = available
-			if available:
-				availableText = colorize('[available    ]','light_green')
-			else:
-				availableText = colorize('[not available]','light_red')
-			self.__printer('Source {0} availability set to {1} - {2}'.format(index,availableText,self.lSource[index]['displayname']))
-		except:
-			self.__printer('Availability: ERROR could not set availability',LL_ERROR)
+			try:
+				self.lSource[index]['available'] = available
+				if available:
+					availableText = colorize('[available    ]','light_green')
+				else:
+					availableText = colorize('[not available]','light_red')
+				self.__printer('Source {0} availability set to {1} - {2}'.format(index,availableText,self.lSource[index]['displayname']))
+			except:
+				self.__printer('Availability: ERROR could not set availability',LL_ERROR)
+		else:
+			try:
+				self.lSource[index]['subsources'][subIndex]['available'] = available
+				if available:
+					availableText = colorize('[available    ]','light_green')
+				else:
+					availableText = colorize('[not available]','light_red')
+				self.__printer('Sub-Source {0} availability set to {1} - {2}'.format(subIndex,availableText,self.lSource[index]['subsources'][subIndex]['displayname']))
+			except:
+				self.__printer('Availability: ERROR could not set availability',LL_ERROR)
 		
 	# return availability true/false
 	# return None if key-value pair didn't exist
@@ -251,15 +264,8 @@ class SourceController():
 
 		obj = self.lSource[index]['sourceCheck'][0]
 		func = self.lSource[index]['sourceCheck'][1]
-		#if len(self.lSource[index]['sourceCheck']) == 3:
-		#	params = self.lSource[index]['sourceCheck'][2]
-		#	checkResult = getattr(obj,func)(self, params)
-		#if not subSourceIx == None:
-		#	checkResult = getattr(obj,func)(self, subSourceIx)
-		#else:
-		# self =  reference to Sources
 		checkResult = getattr(obj,func)(self,subSourceIx)
-		self.setAvailableIx(index,checkResult)
+		self.setAvailableIx(index,checkResult,subSourceIx)
 
 	def sourceCheckParams( self, index, params ):
 
