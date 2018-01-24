@@ -6,8 +6,10 @@
 	"default_settings": {
 		  "volume": 20
 		, "source": ""
-		, "label": ""
-		, "uuid": ""
+		, "subsource": {
+			  "label": ""
+			, "uuid": ""
+		}
 		, "runcount": 0
 	},
 	"directories": {

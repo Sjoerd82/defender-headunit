@@ -650,42 +650,43 @@ def test_match( dTest, dMatchAgainst ):
 		return False
 
 
-def bla_refactored( prevSource, prevSourceSub ):
+def bla_refactored( prevSourceName, prevSourceSub ):
 
 	global Sources
 
-	i = 0
+	#i = 0
 	for source in Sources.getAll():
-		print "{0} Source {1}".format(i,source["name"])
-		print source
-		if source['name'] == prevSource['name']:
+		#print "{0} Source {1}".format(i,source["name"])
+		#print source
+		if source['name'] == prevSourceName:
 			if not source['template']:
-				print "......... Previous Source: {0}; no subsources".format(source['name'])
-				print "---END--- CONTINUING playback of this source!"
+				#print "......... Previous Source: {0}; no subsources".format(source['name'])
+				#print "---END--- CONTINUING playback of this source!"
 				return True
 			else:
-				print "......... Previous Source: {0}; is template, checking for subsources...>".format(source['name'])
+				#print "......... Previous Source: {0}; is template, checking for subsources...>".format(source['name'])
 				if not 'subsources' in source:
-					print "......... Previous Source: {0}; is template, but has no subsources.".format(source['name'])
-					print "---END--- no suitable source to continue playing... Play first available source."
+					#print "......... Previous Source: {0}; is template, but has no subsources.".format(source['name'])
+					#print "---END--- no suitable source to continue playing... Play first available source."
 					return True
 				else:
-					print "......... Previous Source: {0}; is template, and has subsources, testing match...>".format(source['name'])
-					j = 0
+					#print "......... Previous Source: {0}; is template, and has subsources, testing match...>".format(source['name'])
+					#j = 0
 					for subsource in source['subsources']:
-						print j
+						#print j
 						#print subsource
 						if test_match( prevSourceSub, subsource ):
-							print "> ..MATCH! (todo: stop)"
+							#print "> ..MATCH! (todo: stop)"
 							return True
 							#print "---END--- CONTINUING playback of this subsource!"
 						else:
-							print "> ..no match on this one"
+							pass
+							#print "> ..no match on this one"
 							#print "---END--- no suitable source or subsource to continue playing... Play first available source."
-						j+=1
+						#j+=1
 			# Nothing matched for this source name
 			return False
-		i+=1
+		#i+=1
 
 	# Source name was not found.. (strange situation...)
 	return False
@@ -770,6 +771,8 @@ import sources
 # read source config files and start source inits
 loadSourcePlugins(os.path.join( os.path.dirname(os.path.abspath(__file__)), 'sources'))
 
+
+""" DEBUGGING....
 print "DEBUG!"
 prevSource = {'name': 'fm'}
 prevSourceSub = {}
@@ -790,17 +793,7 @@ prevSourceSub = {'mountpoint':'/media/PIHU_DATA3'}
 bFound = False
 
 print bla_refactored( prevSource, prevSourceSub )
-
-
-	
-exit()
-	
-sources.media.media_add('/media/SJOERD', 'SJOERD', 'f9dc11d6-01', Sources)
-
-for source in Sources.getAll():
-	print source
-
-exit()
+"""
 
 
 #debug
@@ -872,13 +865,29 @@ myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 #
 # QuickPlay
 #
+testSs = {'mountpoint':'/media/PIHU_DATA'}
+Settings.set('subsource',testSs)
+Settings.save()
+
+prevSource = cSettings.get_key('source')
+prevSourceSub = cSettings.get_key('subsource')
+print("PREVIOUS SOURCE: {0}".format(cSettings.get_key('source')))
+print("PREVIOUS SOURCE: {0}".format(cSettings.get_key('subsource')))
+
+exit()
+
 
 # check all sources..
 # TODO: it's more efficient to only check the previous source now, and check the rest later
 Sources.sourceCheckAll( template=True )
 
+
+
+
 if not prevSource == "":
-	if PlayPrevSource() == False:
+	if bla_refactored( prevSource, prevSourceSub ) #PlayPrevSource()
+		Source.play( index... )
+	else:
 		Sources.nextSource()
 		
 
