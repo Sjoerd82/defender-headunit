@@ -627,13 +627,10 @@ def loadSourcePlugins( plugindir ):
 		printer('Source path not found: {0}'.format(plugindir), level=LL_CRITICAL)
 		exit()
 	
-	print plugindir
-	lookforthingy = plugindir
-	
 	for k, v in sys.modules.iteritems():
 		if k[0:8] == 'sources.':
 			sourcePluginName = k[8:]
-			if not str(v).find(lookforthingy) == -1:
+			if not str(v).find(plugindir) == -1:
 				add_a_source(plugindir, sourcePluginName)
 
 def plugin_execute( script ):
@@ -866,6 +863,7 @@ myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 # QuickPlay
 #
 testSs = {'mountpoint':'/media/PIHU_DATA'}
+cSettings.set('source','locmus')
 cSettings.set('subsource',testSs)
 cSettings.save()
 
