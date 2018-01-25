@@ -561,7 +561,9 @@ def printSummary():
 		printer('Current source: None', tag='')
 	else:
 #		logger.info('Current source: {0:d} {1}'.format(iCurrent,Sources[iCurrent]['displayname']), extra={'tag':''})
-		printer('Current source: {0:d} {1}'.format(iCurrent,Sources[iCurrent]['displayname']), tag='')
+		#printer('Current source: {0:d} {1}'.format(iCurrent,Sources[iCurrent]['displayname']), tag='')
+		printer('Current source: {0:d} {1}'.format(iCurrent,"todo"), tag='')
+	
 	i = 0
 	for source in Sources.getAll():
 		if source['available']:

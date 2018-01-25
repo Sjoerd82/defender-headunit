@@ -41,7 +41,7 @@ def media_init( sourceCtrl ):
 	# add all locations as configured
 	arMedia = media_getAll()
 	for dev_mp in arMedia:
-		if not dev_mp[1] == 'PIHU_DATA' and not dev_mp[0].startswith('//'):
+		if not dev_mp[1] == '/media/PIHU_DATA' and not dev_mp[0].startswith('//'):
 			mountpoint = dev_mp[1]
 			sUsbLabel = os.path.basename(dev_mp[1]).rstrip('\n')
 			#TODO: try-except for subprocess?
