@@ -298,7 +298,7 @@ class SourceController():
 			i+=1
 	
 	# execute a play() for the current source
-	def sourcePlay( self, subSourceIx=None ):
+	def sourcePlay( self ):
 		if self.iCurrent == None:
 			self.__printer('PLAY: No current source',LL_WARNING)
 			return False
@@ -325,14 +325,14 @@ class SourceController():
 		#	params = self.lSource[self.iCurrent]['sourcePlay'][2]
 		#	checkResult = getattr(obj,func)(params)
 		#else:
-		checkResult = getattr(obj,func)(self,subSourceIx)
-		self.setAvailableIx(index,checkResult,subSourceIx)
+		checkResult = getattr(obj,func)(self,self.iCurrentSS)
+		self.setAvailableIx(index,checkResult,self.iCurrentSS)
 
 		#except:
 		#	print('[SOURCE] ERROR: calling player function')
 		if not checkResult:
 			self.__printer('PLAY: failed, marking source unavailable, playing next source...',LL_ERROR)
-			self.setAvailableIx(self.iCurrent,False)
+			self.setAvailableIx(self.iCurrent,False,self.iCurrentSS)
 			self.next()
 			self.sourcePlay()
 	
