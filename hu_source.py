@@ -87,7 +87,11 @@ class SourceController():
 	# get index of current source
 	def getIndexCurrent( self ):
 		#copy.copy?
-		return self.iCurrent
+		arCurrIx = []
+		arCurrIx.append(self.iCurrent)
+		arCurrIx.append(self.iCurrentSS)
+		#return self.iCurrent
+		return arCurrIx
 
 	# set current source, by index
 	def setCurrent( self, index, subIndex=None ):
