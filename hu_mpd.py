@@ -127,7 +127,7 @@ class mpdController():
 		self.__disconnect()
 		return results[0]['playlistlength']
 
-	def dbCheckDirectory( directory ):
+	def dbCheckDirectory( self, directory ):
 		printer("Checking existance of folder in MPD db..")
 		taskcmd = "mpc listall "+directory+" | wc -l"
 		task = subprocess.Popen(taskcmd, shell=True, stdout=subprocess.PIPE)
