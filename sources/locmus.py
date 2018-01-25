@@ -83,8 +83,8 @@ def locmus_check( sourceCtrl, subSourceIx=None ):
 	
 	ix = sourceCtrl.getIndex('name','locmus')
 	mountpoints = []
-	
-	#if mountpoint == None:
+	mpc = mpdController()
+					
 	if subSourceIx == None:
 		printer('CHECKING availability...')
 		subsources = sourceCtrl.getSubSources( ix )
@@ -95,9 +95,10 @@ def locmus_check( sourceCtrl, subSourceIx=None ):
 		mountpoints.append(subsource['mountpoint'])
 		printer('CHECKING availability of {0}...'.format(mountpoints[0]))
 
-		
-#	sourceConfig = getSourceConfig(sourceName)
-#	for location in sourceConfig:
+	# local dir, relative to MPD
+	sLocalMusicMPD = subsource['mpd_dir']
+
+	# check mountpoint(s)
 	for location in mountpoints:
 		printer('Local folder: {0}'.format(location))
 		try:
@@ -106,11 +107,16 @@ def locmus_check( sourceCtrl, subSourceIx=None ):
 				return False
 			else:
 				printer(" > Local music directory present and has files.",LL_INFO,True)
-				printer(" > Cross-Check with MPD .. TODO")
-				printer(" > Running MPD update for this directory.. ALERT! LONG BLOCKING OPERATION AHEAD...")
-				mpc = mpdController()
-				mpc.update( subsource['mpd_dir'] )
-				return True
+				
+				if not dbCheckDirectory( sLocalMusicMPD ):
+					printer(" > Running MPD update for this directory.. ALERT! LONG BLOCKING OPERATION AHEAD...")
+					mpc.update( sLocalMusicMPD )
+					if not dbCheckDirectory( sLocalMusicMPD ):
+						printer(" > Nothing to play marking unavailable...")
+						return False
+					else:
+						printer(" > Music found after updating")
+						return True
 		except:
 			printer(" > [FAIL] Error checking for local music directory {0}".format(location),LL_ERROR,True)
 			return False

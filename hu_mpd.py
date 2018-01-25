@@ -127,6 +127,20 @@ class mpdController():
 		self.__disconnect()
 		return results[0]['playlistlength']
 
+	def dbCheckDirectory( directory ):
+		printer("Checking existance of folder in MPD db..")
+		taskcmd = "mpc listall "+directory+" | wc -l"
+		task = subprocess.Popen(taskcmd, shell=True, stdout=subprocess.PIPE)
+		mpcOut = task.stdout.read()
+		assert task.wait() == 0
+		
+		if mpcOut.rstrip('\n') == '0':
+			print(' ..... {0}: nothing in the database for this source.'.format(directory))
+			return False
+		else:
+			print(' ..... {0}: found {1:s} tracks'.format(directory,mpcOut.rstrip('\n')))
+			return True
+
 	# location must be a path relative to MPD
 	def update( self, location, wait=True ):
 
