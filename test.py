@@ -918,16 +918,16 @@ if not prevSource == "":
 	prevIx = bla_refactored( prevSource, prevSourceSub, True ) #PlayPrevSource()
 	if len(prevIx) == 1:
 		printer ('Continuing playback', tag='QPLAY')
-		Source.setCurrent(prevIx[0])
-		Source.playSource()
+		Sources.setCurrent(prevIx[0])
+		Sources.playSource()
 	elif len(prevIx) == 2:
 		printer ('Continuing playback (subsource)', tag='QPLAY')
-		Source.setCurrent(prevIx[0],prevIx[1])
-		Source.playSource()
+		Sources.setCurrent(prevIx[0],prevIx[1])
+		Sources.playSource()
 	else:
 		printer ('Continuing playback not available, starting first available source', tag='QPLAY')
 		Sources.next()
-		Source.playSource()
+		Sources.playSource()
 
 exit()
 
