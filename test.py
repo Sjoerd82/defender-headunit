@@ -919,15 +919,15 @@ if not prevSource == "":
 	if len(prevIx) == 1:
 		printer ('Continuing playback', tag='QPLAY')
 		Sources.setCurrent(prevIx[0])
-		Sources.playSource()
+		Sources.sourcePlay()
 	elif len(prevIx) == 2:
 		printer ('Continuing playback (subsource)', tag='QPLAY')
 		Sources.setCurrent(prevIx[0],prevIx[1])
-		Sources.playSource()
+		Sources.sourcePlay()
 	else:
 		printer ('Continuing playback not available, starting first available source', tag='QPLAY')
 		Sources.next()
-		Sources.playSource()
+		Sources.sourcePlay()
 
 exit()
 
