@@ -285,16 +285,10 @@ class SourceController():
 	# execute a check() for all sources..
 	#  if template set to False (default), exclude template sources..
 	#  if template set to True, include template sources but exclude template based sources?
-	def sourceCheckAll( self, template=False ):
+	def sourceCheckAll( self ):
 		i=0
 		for source in self.lSource:
-
-			if not template and not source['template']:
-				self.sourceCheck(i)
-					
-			#if template and not source['_templated']:
-			#	self.sourceCheck(i)
-					
+			self.sourceCheck(i)				
 			i+=1
 	
 	# execute a play() for the current source

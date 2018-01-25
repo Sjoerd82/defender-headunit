@@ -922,7 +922,7 @@ if not prevSource == "":
 		Sources.sourcePlay()
 
 		printer ('Checking other sources...', tag='QPLAY')
-		Sources.sourceCheckAll( template=True )
+		Sources.sourceCheckAll()
 		printSummary()
 		
 	elif len(prevIx) == 2:
@@ -931,12 +931,12 @@ if not prevSource == "":
 		Sources.sourcePlay()
 
 		printer ('Checking other sources...', tag='QPLAY')
-		Sources.sourceCheckAll( template=True )
+		Sources.sourceCheckAll()
 		printSummary()
 
 	else:
 		printer ('Continuing playback not available, checking all sources...', tag='QPLAY')
-		Sources.sourceCheckAll( template=True )
+		Sources.sourceCheckAll()
 		printSummary()
 		printer ('Starting first available source', tag='QPLAY')
 		Sources.next()
