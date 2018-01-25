@@ -47,7 +47,7 @@ class mpdController():
 
 	def connect( self ):
 		try:
-			printer('Initializing MPD client')
+			printer('Connecting to MPD client')
 			self.mpdc.timeout = 10                # network timeout in seconds (floats allowed), default: None
 			self.mpdc.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
 			self.mpdc.connect("localhost", 6600)
@@ -81,6 +81,8 @@ class mpdController():
 		#oMpdClient.noidle()
 		
 		self.connect()
+		print sMpdDir
+		sMpdDir = "PIHU_DATA"
 		
 		if type == 'locmus':
 			self.mpdc.findadd('base',sMpdDir)
