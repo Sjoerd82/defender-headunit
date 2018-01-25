@@ -557,7 +557,7 @@ def printSummary():
 	printer('-- Summary -----------------------------------------------------------', tag='')
 	iCurrent = Sources.getIndexCurrent()
 	#TODO: GET CURRENT SUB-SOURCE
-	sCurrent = Sources.get()
+	sCurrent = Sources.get(None)
 	
 	if iCurrent == None:	
 #		logger.info('Current source: None', extra={'tag':''})
