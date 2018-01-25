@@ -244,7 +244,9 @@ def cb_mpd_event( event ):
 #?	global bInit
 	global Sources
 	global settings
-	global mpdc
+
+	#global mpdc
+	mpdc = mpdController()
 
 #?if bInit == 0:
 	
@@ -887,7 +889,7 @@ disp = lcd_mgr()
 disp.lcd_text('Welcome v0.1.4.8')
 
 # MPD
-#mpdc = mpdController() #NOT USED....
+#mpdc = mpdController()
 
 myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 
