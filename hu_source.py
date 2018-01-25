@@ -208,9 +208,10 @@ class SourceController():
 	
 		#TODO: cleanup this code
 		if subIndex == None:
-			if self.lSource[index]['template']:
-				self.__printer('Availability: ERROR cannot make templates available.',LL_ERROR)
-				return False
+			# NOW ALLOWED:
+			#if self.lSource[index]['template']:
+			#	self.__printer('Availability: ERROR cannot make templates available.',LL_ERROR)
+			#	return False
 		
 			try:
 				self.lSource[index]['available'] = available
