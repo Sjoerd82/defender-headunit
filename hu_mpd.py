@@ -80,7 +80,7 @@ class mpdController():
 		# Stop idle, in order to send a command
 		#oMpdClient.noidle()
 		
-		self.mpdc.connect()
+		self.connect()
 		
 		if type == 'locmus':
 			self.mpdc.findadd('base',sMpdDir)
