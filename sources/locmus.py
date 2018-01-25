@@ -103,6 +103,10 @@ def locmus_check( sourceCtrl, subSourceIx=None ):
 				return False
 			else:
 				printer(" > Local music directory present and has files.",LL_INFO,True)
+				printer(" > Cross-Check with MPD .. TODO")
+				printer(" > Running MPD update for this directory.. ALERT! LONG BLOCKING OPERATION AHEAD...")
+				mpc = mpdController()
+				mpc.update( location )
 				return True
 		except:
 			printer(" > [FAIL] Error checking for local music directory {0}".format(location),LL_ERROR,True)

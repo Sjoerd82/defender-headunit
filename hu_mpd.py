@@ -84,10 +84,11 @@ class mpdController():
 		print sMpdDir
 		sMpdDir = "PIHU_DATA"
 		
-		if type == 'locmus':
-			self.mpdc.findadd('base',sMpdDir)
-		if type == 'smb':
-			self.mpdc.findadd('base',sMpdDir)
+		if type == 'locmus' or type == 'smb':
+			try:
+				self.mpdc.findadd('base',sMpdDir)
+			except:
+				printer('ERROR: folder not in MPD database?')
 		elif type == 'stream':
 			# Using the command line:
 			#  ..but this generates some problems with special characters
@@ -123,8 +124,20 @@ class mpdController():
 		self.mpdc.disconnect()
 		return results[0]['playlistlength']
 
-	def mpc_update( self ):
-		print('todo')
+	def update( self, location ):
+		#Sound effect
+		pa_sfx('mpd_update_db')
+		#Debug info
+		printer('Updating database for location: {0}'.format(location))
+		#Update
+		if wait:
+			printer(' ...  Please wait, this may take some time...')
+			call(["mpc", "--wait", "-q", "update", location])
+			printer(' ...  Update finished')
+		else:
+			call(["mpc", "-q", "update", location])
+			#bMpdUpdateSmb
+
 
 	def mpc_lkp( self, locmus):
 		print('todo')
