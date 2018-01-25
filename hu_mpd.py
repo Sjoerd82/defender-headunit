@@ -74,24 +74,106 @@ class mpdController():
 	def channelSubscribe( self, channel ):
 		self.mpcd.subscribe(channel)
 		
-	def mpc_populate_playlist( self, sLocalMusicMPD ):
-		print('todo')
+	def mpc_populate_playlist( self, type, sMpdDir ):
+		#global oMpdClient
+
+		# Stop idle, in order to send a command
+		#oMpdClient.noidle()
+		
+		self.mpdc.connect()
+		
+		if type == 'locmus':
+			self.mpdc.findadd('base',sMpdDir)
+		if type == 'smb':
+			self.mpdc.findadd('base',sMpdDir)
+		elif type == 'stream':
+			# Using the command line:
+			#  ..but this generates some problems with special characters
+			streams_file = sDirSave + "/streams.txt"
+			#p1 = subprocess.Popen(["cat", streams_file], stdout=subprocess.PIPE)
+			#p2 = subprocess.Popen(["mpc", "add"], stdin=p1.stdout, stdout=subprocess.PIPE)
+			#p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
+			#output,err = p2.communicate()		
+			streams=open(streams_file,'r')
+			with open(streams_file,'r') as streams:
+				for l in streams:
+					uri = l.rstrip()
+					if not uri[:1] == '#' and not uri == '':
+						uri_OK = url_check(uri)
+						if uri_OK:
+							print(' ....  . Stream OK: {0}'.format(uri))
+							call(["mpc", "-q", "add", uri])
+						else:
+							print(' ....  . Stream FAIL: {0}'.format(uri))
+		else:
+			self.mpdc.findadd('base',type)
+		
+		self.mpdc.close()
+		self.mpdc.disconnect()
+		#oMpdClient.send_idle()
 		
 	def mpc_playlist_is_populated( self ):
-		print('todo')
+		self.mpdc.connect()
+		self.mpdc.command_list_ok_begin()
+		self.mpdc.status()
+		results = self.mpdc.command_list_end()
+		self.mpdc.close()
+		self.mpdc.disconnect()
+		return results[0]['playlistlength']
 
 	def mpc_update( self ):
 		print('todo')
 
 	def mpc_lkp( self, locmus):
 		print('todo')
+		return None
 		
 #	def playStart( str(playslist_pos['pos']), playslist_pos['time'] ):
 	def playStart( self, pos, time ):
 		print('todo')
 
 	def mpc_get_PlaylistDirs( self ):
-		print('todo')
+
+		printer('Building playlist directory structure...')
+
+		# local variables
+		dirname_current = ''
+		dirname_prev = ''
+		iPos = 1
+
+		# clear arMpcPlaylistDirs
+		arMpcPlaylistDirs = []
+
+		# TODO! DETERMINE WHICH IS FASTER... Commandline seems faster
+		
+		# Via the API
+		"""
+		xMpdClient = MPDClient() 
+		xMpdClient.connect("localhost", 6600)  # connect to localhost:6600
+		playlistitem = xMpdClient.playlistinfo()
+		xMpdClient.close()
+		
+		for line in playlistitem:
+			dirname_current=os.path.dirname(line['filename'].strip())
+			t = iPos, dirname_current
+			if dirname_prev != dirname_current:
+				arMpcPlaylistDirs.append(t)
+			dirname_prev = dirname_current
+			iPos += 1
+		"""
+		
+		# Via the commandline
+		pipe = Popen('mpc -f %file% playlist', shell=True, stdout=PIPE)
+
+		for line in pipe.stdout:
+			dirname_current=os.path.dirname(line.strip())
+			t = iPos, dirname_current
+			if dirname_prev != dirname_current:
+				arMpcPlaylistDirs.append(t)
+			dirname_prev = dirname_current
+			iPos += 1
+			
+		return arMpcPlaylistDirs
 		
 	def mpc_get_currentsong( self ):
 	

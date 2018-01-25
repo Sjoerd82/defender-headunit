@@ -145,17 +145,15 @@ def locmus_play( sourceCtrl, subSourceIx=None ):
 	
 	# MPD playlist for local music *should* be updated by inotifywait.. but, it's a bit tricky, so test for it..
 	printer(' ...... Populating playlist')
-	print subsource['mountpoint']
-	print subsource['mpd_dir']
 	sLocalMusicMPD = subsource['mpd_dir']
-	mpc.mpc_populate_playlist(sLocalMusicMPD)
+	mpc.mpc_populate_playlist('locmus',sLocalMusicMPD)
 
 	printer(' ...... Checking if playlist is populated')
 	playlistCount = mpc.mpc_playlist_is_populated()
 	if playlistCount == "0":
 		printer(' ...... . Nothing in the playlist, trying to update database...')
 		mpc.mpc_update( sLocalMusicMPD, True )
-		mpc.mpc_populate_playlist(sLocalMusicMPD)
+		mpc.mpc_populate_playlist('locmus',sLocalMusicMPD)
 		playlistCount = mpc.mpc_playlist_is_populated()
 		if playlistCount == "0":
 			printer(' ...... . Nothing in the playlist, giving up. Marking source unavailable.')
@@ -185,8 +183,8 @@ def locmus_play( sourceCtrl, subSourceIx=None ):
 	# Load playlist directories, to enable folder up/down browsing.
 	#mpc_get_PlaylistDirs()
 	# Run in the background... it seems the thread stays active relatively long, even after the playlistdir array has already been filled.
-	mpc_get_PlaylistDirs_thread = threading.Thread(target=mpc.mpc_get_PlaylistDirs)
-	mpc_get_PlaylistDirs_thread.start()
+#	mpc_get_PlaylistDirs_thread = threading.Thread(target=mpc.mpc_get_PlaylistDirs)
+#	mpc_get_PlaylistDirs_thread.start()
 	return True
 
 def locmus_stop():
