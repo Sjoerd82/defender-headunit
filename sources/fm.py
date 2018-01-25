@@ -17,7 +17,7 @@ def printer( message, level=LL_INFO, continuation=False, tag=sourceName ):
 		myprint( message, level, tag )
 
 # Source Check: Return True/False (available/not available)
-def fm_check( sourceCtrl ):
+def fm_check( sourceCtrl, subSourceIx=None  ):
 	#global Sources
 	printer('CHECK availability...')
 	#arSourceAvailable[0]=0 # not available

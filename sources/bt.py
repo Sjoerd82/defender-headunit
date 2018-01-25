@@ -22,7 +22,7 @@ def printer( message, level=LL_INFO, continuation=False, tag=sourceName ):
 
 
 # updates arSourceAvailable[3] (bt) -- TODO
-def bt_check( sourceCtrl ):
+def bt_check( sourceCtrl, subSourceIx=None  ):
 	printer('CHECK availability... ')
 	#arSourceAvailable[3]=0 # NOT Available
 	#done at bt_init()

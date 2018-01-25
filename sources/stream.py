@@ -25,7 +25,7 @@ def internet():
 		pass
 	return False
 
-def stream_check( sourceCtrl ):
+def stream_check( sourceCtrl, subSourceIx=None  ):
 	#global arSourceAvailable
 	#global Sources
 	
