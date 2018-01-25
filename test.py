@@ -915,7 +915,7 @@ prevSourceSub = cSettings.get_key('subsource')
 
 if not prevSource == "":
 	printer("Previous source: {0} {1}".format(prevSource, prevSourceSub), tag='QPLAY' )
-	prevIx = bla_refactored( prevSource, prevSourceSub, True ): #PlayPrevSource()
+	prevIx = bla_refactored( prevSource, prevSourceSub, True ) #PlayPrevSource()
 	if len(prevIx) = 1
 		print ('Continuing playback', tag='QPLAY')
 		Source.setCurrent(prevIx[0])
