@@ -76,7 +76,7 @@ class mpdController():
 		#self.mpcd.close()
 
 	def playlistPop( self, type, sMpdDir ):
-		printer('Populating playlist')
+		printer('Populating playlist, folder: {0}'.format(sMpdDir))
 
 		# Stop idle, in order to send a command
 		#oMpdClient.noidle()

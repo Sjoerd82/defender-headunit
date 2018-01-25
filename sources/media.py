@@ -29,7 +29,6 @@ def media_add( dir, label, uuid, sourceCtrl ):
 	subsource['label'] = label
 	subsource['uuid'] = uuid
 
-	print subsource
 	sourceCtrl.addSub(ix, subsource)
 
 # Stuff that needs to run once
@@ -59,7 +58,7 @@ def media_init( sourceCtrl ):
 def media_getAll():
 
 	try:
-		print('Check if anything is mounted on /media...')
+		printer('Check if anything is mounted on /media...')
 		# do a -f1 for devices, -f3 for mountpoints
 		grepOut = subprocess.check_output(
 			"mount | grep /media | cut -d' ' -f1,3",
@@ -241,7 +240,7 @@ def media_check( sourceCtrl, subSourceIx=None ):
 	return False
 	"""
 
-def media_play():
+def media_play( sourceCtrl, subSourceIx=None ):
 	printer('Play (MPD)')
 
 	#
@@ -252,7 +251,7 @@ def media_play():
 
 	#debug/test:
 	sUsbLabel = "SJOERD"
-	
+	sLocalMusicMPD = "SJOERD"
 	"""
 	global dSettings
 	global arMediaWithMusic
@@ -268,46 +267,55 @@ def media_play():
 	else:
 	"""
 
+	#
+	# load playlist
+	#
+
 	# populate playlist
 	mpc.playlistClear()
 	#todo: how about cropping, populating, and removing the first? item .. for faster continuity???
-
 #	sUsbLabel = os.path.basename(arMediaWithMusic[dSettings['mediasource']])
-#	dSettings['medialabel'] = sUsbLabel
-
 	mpc.playlistPop('media',sLocalMusicMPD)
 
-	print(' ... Populating playlist, media: {0}'.format(sUsbLabel))
-	mpc.playlistPop(sUsbLabel)
-
-	print(' ... Checking if playlist is populated')
-	task = subprocess.Popen("mpc playlist | wc -l", shell=True, stdout=subprocess.PIPE)
-	mpcOut = task.stdout.read()
-	assert task.wait() == 0
-	
-	if mpcOut.rstrip('\n') == "0":
-		print(' ... . Nothing in the playlist, marking source unavailable.')
-		pa_sfx('error')
-		Sources.setAvailable('label',sUsbLabel,False)
-		#source_next()
-		Sources.sourceNext()
-		source_play()
+	# check if succesful...
+	playlistCount = mpc.playlistIsPop()
+	if playlistCount == "0":
+		printer(' > Nothing in the playlist, trying to update database...')
+		
+		# update and try again...
+		mpc.update( sLocalMusicMPD, True )
+		mpc.playlistPop('locmus',sLocalMusicMPD)
+		
+		# check if succesful...
+		playlistCount = mpc.mpc_playlist_is_populated()
+		if playlistCount == "0":
+			# Failed. Returning false will cause caller to try next source
+			printer(' > Nothing in the playlist, giving up. Marking source unavailable.')
+			sourceCtrl.setAvailableIx( ix, False, subSourceIx )
+			pa_sfx(LL_ERROR)
+			return False
+		else:
+			printer(' > Found {0:s} tracks'.format(playlistCount))
 	else:
-		print(' ... . Found {0:s} tracks'.format(mpcOut.rstrip('\n')))
+		printer(' > Found {0:s} tracks'.format(playlistCount))
 
-		# continue where left
-		playslist_pos = mpc_lkp(sUsbLabel)
+	#
+	# continue where left
+	#
+	
+	playslist_pos = mpc.lastKnownPos( sLabel )
+	
+	printer(' > Starting playback')
+	#mpc.playStart( str(playslist_pos['pos']), playslist_pos['time'] )
+	call(["mpc", "-q" , "stop"])
+	call(["mpc", "-q" , "play", str(playslist_pos['pos'])])
+	if playslist_pos['time'] > 0:
+		printer(' ...  Seeking to {0} sec.'.format(playslist_pos['time']))
+		call(["mpc", "-q" , "seek", str(playslist_pos['time'])])
 
-		print(' ...  Starting playback')
-		call(["mpc", "-q" , "stop"])
-		call(["mpc", "-q" , "play", str(playslist_pos['pos'])])
-		if playslist_pos['time'] > 0:
-			print(' ...  Seeking to {0} sec.'.format(playslist_pos['time']))
-			call(["mpc", "-q" , "seek", str(playslist_pos['time'])])
-
-		# Load playlist directories, to enable folder up/down browsing.
-		#mpc_get_PlaylistDirs()
-		# Run in the background... it seems the thread stays active relatively long, even after the playlistdir array has already been filled.
+	# Load playlist directories, to enable folder up/down browsing.
+	#mpc_get_PlaylistDirs()
+	# Run in the background... it seems the thread stays active relatively long, even after the playlistdir array has already been filled.
 #		mpc_get_PlaylistDirs_thread = threading.Thread(target=mpc_get_PlaylistDirs)
 #		mpc_get_PlaylistDirs_thread.start()
 
