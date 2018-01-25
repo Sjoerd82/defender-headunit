@@ -579,11 +579,11 @@ def printSummary():
 			for subsource in source['subsources']:
 				if 'mountpoint' in subsource:
 					mountpoint = subsource['mountpoint']
-					printer(' {0:d2} {1:17} {2} {3}'.format(i,source['displayname'],available,mountpoint), tag='')
+					printer(' {0:2d} {1:17} {2} {3}'.format(i,source['displayname'],available,mountpoint), tag='')
 		else:
 			mountpoint = ""
 			#logger.info(' {0:d} {1:17} {2} {3}'.format(i,source['displayname'],available,mountpoint), extra={'tag':''})
-			printer(' {0:d2} {1:17} {2} {3}'.format(i,source['displayname'],available,mountpoint), tag='')
+			printer(' {0:2d} {1:17} {2} {3}'.format(i,source['displayname'],available,mountpoint), tag='')
 		
 		i += 1
 	#logger.info('----------------------------------------------------------------------', extra={'tag':''})
