@@ -100,9 +100,9 @@ class SourceController():
 		elif not self.lSource[index]['available']:
 			self.__printer('ERROR: Requested source ({0}: {1:s}) is not available.'.format(index,self.lSource[index]['displayname']),LL_ERROR)
 			return False
-		elif self.lSource[index]['template']:
-			self.__printer('ERROR: Requested source ({0}: {1:s}) is a template.'.format(index,self.lSource[index]['displayname']),LL_ERROR)
-			return False
+		#elif self.lSource[index]['template']:
+		#	self.__printer('ERROR: Requested source ({0}: {1:s}) is a template.'.format(index,self.lSource[index]['displayname']),LL_ERROR)
+		#	return False
 		elif self.lSource[index]['available']:
 			self.__printer('Setting active source to {0}: {1:s}'.format(index,self.lSource[index]['displayname']))
 			self.iCurrent = index
