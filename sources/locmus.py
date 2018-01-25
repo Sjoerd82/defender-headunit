@@ -80,20 +80,19 @@ def locmus_init( sourceCtrl ):
 # Optionally, provide list of mountpoint(s) to check
 #def locmus_check( sourceCtrl, mountpoint=None ):
 def locmus_check( sourceCtrl, subSourceIx=None ):
+	printer('CHECKING availability...')
 	
 	ix = sourceCtrl.getIndex('name','locmus')
 	mountpoints = []
 	mpc = mpdController()
 					
 	if subSourceIx == None:
-		printer('CHECKING availability...')
 		subsources = sourceCtrl.getSubSources( ix )
 		for subsource in subsources:
 			mountpoints.append(subsource['mountpoint'])
 	else:
 		subsource = sourceCtrl.getSubSource( ix, subSourceIx )
 		mountpoints.append(subsource['mountpoint'])
-		printer('CHECKING availability of {0}...'.format(mountpoints[0]))
 
 	# local dir, relative to MPD
 	sLocalMusicMPD = subsource['mpd_dir']
@@ -101,25 +100,21 @@ def locmus_check( sourceCtrl, subSourceIx=None ):
 	# check mountpoint(s)
 	for location in mountpoints:
 		printer('Local folder: {0}'.format(location))
-		try:
-			if not os.listdir(location):
-				printer(" > Local music directory is empty.",LL_WARNING,True)
-				return False
-			else:
-				printer(" > Local music directory present and has files.",LL_INFO,True)
-				
-				if not dbCheckDirectory( sLocalMusicMPD ):
-					printer(" > Running MPD update for this directory.. ALERT! LONG BLOCKING OPERATION AHEAD...")
-					mpc.update( sLocalMusicMPD )
-					if not dbCheckDirectory( sLocalMusicMPD ):
-						printer(" > Nothing to play marking unavailable...")
-						return False
-					else:
-						printer(" > Music found after updating")
-						return True
-		except:
-			printer(" > [FAIL] Error checking for local music directory {0}".format(location),LL_ERROR,True)
+		if not os.listdir(location):
+			printer(" > Local music directory is empty.",LL_WARNING,True)
 			return False
+		else:
+			printer(" > Local music directory present and has files.",LL_INFO,True)
+			
+			if not dbCheckDirectory( sLocalMusicMPD ):
+				printer(" > Running MPD update for this directory.. ALERT! LONG BLOCKING OPERATION AHEAD...")
+				mpc.update( sLocalMusicMPD )
+				if not dbCheckDirectory( sLocalMusicMPD ):
+					printer(" > Nothing to play marking unavailable...")
+					return False
+				else:
+					printer(" > Music found after updating")
+					return True
 
 		
 # Source Play: Return True/False
