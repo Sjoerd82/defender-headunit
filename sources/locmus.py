@@ -106,7 +106,7 @@ def locmus_check( sourceCtrl, subSourceIx=None ):
 				printer(" > Cross-Check with MPD .. TODO")
 				printer(" > Running MPD update for this directory.. ALERT! LONG BLOCKING OPERATION AHEAD...")
 				mpc = mpdController()
-				mpc.update( location )
+				mpc.update( subsource['mpd_dir'] )
 				return True
 		except:
 			printer(" > [FAIL] Error checking for local music directory {0}".format(location),LL_ERROR,True)
