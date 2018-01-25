@@ -31,23 +31,23 @@ class mpdController():
 	def __init__( self ):
 		# Connect to MPD
 		try:
-			print('[MPC] Initializing MPD client')
+			printer('Initializing MPD client')
 			self.mpdc.timeout = 10                # network timeout in seconds (floats allowed), default: None
 			self.mpdc.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
 			self.mpdc.connect("localhost", 6600)
-			print(' ...  Version: {0}'.format(self.mpcd.mpd_version))          # print the MPD version
+			printer(' ...  Version: {0}'.format(self.mpdc.mpd_version))          # print the MPD version
 			self.mpdc.random(0)
 			self.mpdc.repeat(1)	
 			self.mpdc.send_idle()
 		except:
-			print('[MPD] Failed to connect to MPD server')
+			printer('Failed to connect to MPD server')
 			#return False	# __init__() should return None  (?)
 
 	def playlistClear( self ):
 		print(' ...... Emptying playlist')
 		#todo: how about cropping, populating, and removing the first? item .. for faster continuity???
-		self.mpcd.stop()
-		self.mpcd.clear()
+		self.mpdc.stop()
+		self.mpdc.clear()
 		#call(["mpc", "-q", "stop"])
 		#call(["mpc", "-q", "clear"])
 		#self.mpcd.close()

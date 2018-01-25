@@ -885,7 +885,7 @@ disp = lcd_mgr()
 disp.lcd_text('Welcome v0.1.4.8')
 
 # MPD
-mpdc = mpdController()
+#mpdc = mpdController() #NOT USED....
 
 myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 
