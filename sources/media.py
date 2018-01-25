@@ -42,13 +42,15 @@ def media_init( sourceCtrl ):
 	# add all locations as configured
 	arMedia = media_getAll()
 	for dev_mp in arMedia:
-		mountpoint = dev_mp[1]
-		sUsbLabel = os.path.basename(dev_mp[1]).rstrip('\n')
-		uuid = subprocess.check_output("blkid "+dev_mp[0]+" -s PARTUUID -o value", shell=True).rstrip('\n')	
-		media_add( mountpoint
-		          ,sUsbLabel
-				  ,uuid
-				  ,sourceCtrl)
+		if not devmp[1] == 'PIHU_DATA' and not devmp[0].startswith('//'):
+			mountpoint = dev_mp[1]
+			sUsbLabel = os.path.basename(dev_mp[1]).rstrip('\n')
+			#TODO: try-except for subprocess?
+			uuid = subprocess.check_output("blkid "+dev_mp[0]+" -s PARTUUID -o value", shell=True).rstrip('\n')	
+			media_add( mountpoint
+					  ,sUsbLabel
+					  ,uuid
+					  ,sourceCtrl)
 
 	return True
 
