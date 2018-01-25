@@ -142,7 +142,7 @@ class mpdController():
 
 	def mpc_lkp( self, locmus):
 		print('todo')
-		return None
+		return {'pos': 1, 'time': 0}
 		
 #	def playStart( str(playslist_pos['pos']), playslist_pos['time'] ):
 	def playStart( self, pos, time ):
