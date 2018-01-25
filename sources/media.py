@@ -310,7 +310,7 @@ def media_play( sourceCtrl, subSourceIx=None ):
 	call(["mpc", "-q" , "stop"])
 	call(["mpc", "-q" , "play", str(playslist_pos['pos'])])
 	if playslist_pos['time'] > 0:
-		printer(' ...  Seeking to {0} sec.'.format(playslist_pos['time']))
+		printer(' > Seeking to {0} sec.'.format(playslist_pos['time']))
 		call(["mpc", "-q" , "seek", str(playslist_pos['time'])])
 
 	# Load playlist directories, to enable folder up/down browsing.

@@ -38,7 +38,7 @@ def smb_check( sourceCtrl ):
 	printer(' > Not implemented yet, presenting source as available ',tag='.'+mytag,level=LL_CRITICAL)
 	#arSourceAvailable[6]=1
 	#Sources.setAvailable('name','smb', True)
-	return True
+	return False
 
 def smb_play():
 	#global arSourceAvailable

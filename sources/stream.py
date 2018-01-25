@@ -30,7 +30,7 @@ def stream_check( sourceCtrl ):
 	#global Sources
 	
 	printer('Checking availability...')
-	
+	return False
 
 	# Default to not available
 	#arSourceAvailable[5]=0

@@ -190,7 +190,7 @@ class mpdController():
 				pos['pos'] = int(psfind[0]['pos'])+1
 				timeElapsed,timeTotal = map(int, dSavePosition['time'].split(':'))
 				printer('Match found: {0}. Continuing playback at #{1}'.format(dSavePosition['file'],pos['pos']))
-				printer(' >  Elapsed/Total time: {0}s/{1}s'.format(timeElapsed,timeTotal))
+				printer(' > Elapsed/Total time: {0}s/{1}s'.format(timeElapsed,timeTotal))
 				if timeElapsed > iThrElapsed and timeTotal > iThrTotal:
 					pos['time'] = str(timeElapsed)
 					printer(' > Elapsed time over threshold: continuing at last position.')

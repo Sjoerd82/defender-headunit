@@ -26,7 +26,7 @@ def bt_check( sourceCtrl ):
 	printer('CHECK availability... ')
 	#arSourceAvailable[3]=0 # NOT Available
 	#done at bt_init()
-	return True
+	return False
 
 def bt_play():
 	global sBtPlayer

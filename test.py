@@ -905,10 +905,10 @@ myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 #
 
 # TESTING....
-testSs = {'mountpoint':'/media/SJOERD'}
-cSettings.set('source','media')
-cSettings.set('subsource',testSs)
-cSettings.save()
+#testSs = {'mountpoint':'/media/SJOERD'}
+#cSettings.set('source','media')
+#cSettings.set('subsource',testSs)
+#cSettings.save()
 
 prevSource = cSettings.get_key('source')
 prevSourceSub = cSettings.get_key('subsource')
@@ -925,47 +925,13 @@ if not prevSource == "":
 		Sources.setCurrent(prevIx[0],prevIx[1])
 		Sources.sourcePlay()
 	else:
-		printer ('Continuing playback not available, starting first available source', tag='QPLAY')
+		printer ('Continuing playback not available, checking all sources...', tag='QPLAY')
+		Sources.sourceCheckAll( template=True )
+		printSummary()
+		printer ('Starting first available source', tag='QPLAY')
 		Sources.next()
 		Sources.sourcePlay()
 
-exit()
-
-# check all sources..
-# TODO: it's more efficient to only check the previous source now, and check the rest later
-Sources.sourceCheckAll( template=True )
-
-exit()		
-
-
-# is there a previous source?
-# if not, check all sources.
-#if prevSource == "":
-	# No previous source
-	# Check all sources for availability
-
-if not prevSource == "":
-	prevSourceIx = Sources.getIndex('name','source')
-	dPrevSource = Sources.get( prevSourceIx )
-	
-	prevSourceAvailable = Sources.getAvailable(PrevSourceIx)
-	
-if not prevSource == "" and prevSourceAvailable:
-	#play this source..
-	pass
-
-# First, try previously active source
-
-#Sources.sourceCheckAll()
-
-prevSource = cSettings.get_key('source')
-prevLabel = cSettings.get_key('label')
-prevUuid = cSettings.get_key('uuid')
-#print("PREVIOUS SOURCE: {0}".format(cSettings.get_key('source')))
-#print("PREVIOUS SOURCE: {0}".format(cSettings.get_key('label')))
-#print("PREVIOUS SOURCE: {0}".format(cSettings.get_key('uuid')))
-
-# list of sources:
 
 """
 else:
@@ -979,11 +945,6 @@ else:
 			Sources.sourceCheck(
 """
 # First, try previously active source
-
-
-Sources.sourceCheckAll()
-Sources.next()
-printSummary()
 
 
 # on demand...
