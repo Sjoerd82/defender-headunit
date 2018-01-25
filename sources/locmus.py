@@ -106,10 +106,10 @@ def locmus_check( sourceCtrl, subSourceIx=None ):
 		else:
 			printer(" > Local music directory present and has files.",LL_INFO,True)
 			
-			if not dbCheckDirectory( sLocalMusicMPD ):
+			if not mpc.dbCheckDirectory( sLocalMusicMPD ):
 				printer(" > Running MPD update for this directory.. ALERT! LONG BLOCKING OPERATION AHEAD...")
 				mpc.update( sLocalMusicMPD )
-				if not dbCheckDirectory( sLocalMusicMPD ):
+				if not mpc.dbCheckDirectory( sLocalMusicMPD ):
 					printer(" > Nothing to play marking unavailable...")
 					return False
 				else:
