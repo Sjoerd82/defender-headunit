@@ -223,6 +223,8 @@ class SourceController():
 				self.__printer('Availability: ERROR could not set availability',LL_ERROR)
 		else:
 			try:
+				# also make parent source available
+				self.lSource[index]['available'] = available
 				self.lSource[index]['subsources'][subIndex]['available'] = available
 				if available:
 					availableText = colorize('[available    ]','light_green')
@@ -277,14 +279,6 @@ class SourceController():
 		func = self.lSource[index]['sourceCheck'][1]
 		checkResult = getattr(obj,func)(self,subSourceIx)
 		self.setAvailableIx(index,checkResult,subSourceIx)
-		return checkResult
-
-	def sourceCheckParams( self, index, params ):
-
-		obj = self.lSource[index]['sourceCheck'][0]
-		func = self.lSource[index]['sourceCheck'][1]
-		checkResult = getattr(obj,func)(self, params)
-		self.setAvailableIx(index,checkResult)
 		return checkResult
 	
 	# execute a check() for all sources..
