@@ -83,7 +83,7 @@ class mpdController():
 		
 		self.__connect()
 	
-		if type == 'locmus' or type == 'smb':
+		if type == 'locmus' or type == 'smb' or type == 'media':
 			try:
 				self.mpdc.findadd('base',sMpdDir)
 			except:
@@ -127,15 +127,16 @@ class mpdController():
 	def dbCheckDirectory( self, directory ):
 		printer("Checking existance of folder in MPD db..")
 		taskcmd = "mpc listall "+directory+" | wc -l"
+		# if directory is not in mpd db, "mpd error: No such directory" will be returned
 		task = subprocess.Popen(taskcmd, shell=True, stdout=subprocess.PIPE)
 		mpcOut = task.stdout.read()
 		assert task.wait() == 0
 		
 		if mpcOut.rstrip('\n') == '0':
-			print(' ..... {0}: nothing in the database for this source.'.format(directory))
+			printer(' > {0}: nothing in the database for this source.'.format(directory))
 			return False
 		else:
-			print(' ..... {0}: found {1:s} tracks'.format(directory,mpcOut.rstrip('\n')))
+			printer(' > {0}: found {1:s} tracks'.format(directory,mpcOut.rstrip('\n')))
 			return True
 
 	# location must be a path relative to MPD

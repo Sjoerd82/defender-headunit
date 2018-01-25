@@ -25,9 +25,11 @@ def media_add( dir, label, uuid, sourceCtrl ):
 	subsource['displayname'] = 'media: ' + dir
 	subsource['order'] = 0		# no ordering
 	subsource['mountpoint'] = dir
+	subsource['mpd_dir'] = dir[7:]		# TODO -- ASSUMING /media
 	subsource['label'] = label
 	subsource['uuid'] = uuid
 
+	print subsource
 	sourceCtrl.addSub(ix, subsource)
 
 # Stuff that needs to run once
@@ -42,8 +44,11 @@ def media_init( sourceCtrl ):
 	for dev_mp in arMedia:
 		mountpoint = dev_mp[1]
 		sUsbLabel = os.path.basename(dev_mp[1]).rstrip('\n')
-		uuid = dev_mp[0]  #use blkid  on this
-		media_add(mountpoint, sUsbLabel, uuid, sourceCtrl)
+		uuid = subprocess.check_output("blkid "+dev_mp[0]+" -s PARTUUID -o value", shell=True).rstrip('\n')	
+		media_add( mountpoint
+		          ,sUsbLabel
+				  ,uuid
+				  ,sourceCtrl)
 
 	return True
 
@@ -71,10 +76,13 @@ def media_getAll():
 # media_check() returns True or False, depending on availability..
 #  media_check without parameters returns if anything (meaningful or not!) is mounted on /media
 #  media_check with a "label" parameter checks specific label on /media
-def media_check( label=None ):
+#def media_check( label=None ):
+def media_check( sourceCtrl, subSourceIx=None ):
 	
-	printer('CHECK availability...',tag=sourceName)
+	printer('CHECK availability...')
 	
+	# QUESTION.... SHOULD THIS MEDIA_CHECK GO LOOKING FOR POSSIBLE NEW MOUNTS?????
+	"""
 	try:
 		print(' .....  Check if anything is mounted on /media...')
 		# do a -f1 for devices, -f3 for mountpoints
@@ -89,7 +97,46 @@ def media_check( label=None ):
 		return False
 	
 	arMedia = grepOut.split()
+	"""
 
+	ix = sourceCtrl.getIndex('name','media')
+	mountpoints = []
+	mpc = mpdController()
+					
+	if subSourceIx == None:
+		subsources = sourceCtrl.getSubSources( ix )
+		for subsource in subsources:
+			mountpoints.append(subsource['mountpoint'])
+	else:
+		subsource = sourceCtrl.getSubSource( ix, subSourceIx )
+		mountpoints.append(subsource['mountpoint'])
+	
+	# dir, relative to MPD
+	sLocalMusicMPD = subsource['mpd_dir']
+	
+	# check mountpoint(s)
+	for location in mountpoints:
+		printer('Media folder: {0}'.format(location))
+		if not os.listdir(location):
+			printer(" > Removable music directory is empty.",LL_WARNING,True)
+			return False
+		else:
+			printer(" > Removable music directory present and has files.",LL_INFO,True)
+			
+			if not mpc.dbCheckDirectory( sLocalMusicMPD ):
+				printer(" > Running MPD update for this directory.. ALERT! LONG BLOCKING OPERATION AHEAD...")
+				mpc.update( sLocalMusicMPD )
+				if not mpc.dbCheckDirectory( sLocalMusicMPD ):
+					printer(" > Nothing to play marking unavailable...")
+					return False
+				else:
+					printer(" > Music found after updating")
+					return True
+			else:
+				return True
+
+	"""
+	
 	# Return True/False for general check (when label is None)
 	if label == None:
 		if len(arMedia) > 0:
@@ -126,6 +173,8 @@ def media_check( label=None ):
 		print(' ..... . {0}: found {1:s} tracks'.format(sUsbLabel,mpcOut.rstrip('\n')))
 		return True
 
+	"""
+		
 	"""
 	# playlist loading is handled by scripts that trigger on mount/removing of media
 	# mpd database is updated on mount by same script.
@@ -191,7 +240,13 @@ def media_check( label=None ):
 	"""
 
 def media_play():
-	printer('Play (MPD)',tag=sourceName)
+	printer('Play (MPD)')
+
+	#
+	# variables
+	#
+	
+	mpc = mpdController()
 
 	#debug/test:
 	sUsbLabel = "SJOERD"
@@ -210,13 +265,15 @@ def media_play():
 		
 	else:
 	"""
-	print(' ... Emptying playlist')
-	call(["mpc", "-q", "stop"])
-	call(["mpc", "-q", "clear"])
+
+	# populate playlist
+	mpc.playlistClear()
 	#todo: how about cropping, populating, and removing the first? item .. for faster continuity???
 
 #	sUsbLabel = os.path.basename(arMediaWithMusic[dSettings['mediasource']])
 #	dSettings['medialabel'] = sUsbLabel
+
+	mpc.playlistPop('media',sLocalMusicMPD)
 
 	print(' ... Populating playlist, media: {0}'.format(sUsbLabel))
 	mpc.playlistPop(sUsbLabel)

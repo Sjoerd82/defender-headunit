@@ -72,7 +72,7 @@ def locmus_init( sourceCtrl ):
 		locmus_add( location['label']
 		           ,location['musicdir']
 				   ,location['musicdir_mpd']
-				   , sourceCtrl )
+				   ,sourceCtrl )
 
 	return True
 
