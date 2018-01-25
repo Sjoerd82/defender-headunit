@@ -551,7 +551,8 @@ def printSummary():
 	global Sources
 	global logger
 	#logger = logging.getLogger('headunit')
-	logger.info('-- Summary -----------------------------------------------------------', extra={'tag':''})
+	#logger.info('-- Summary -----------------------------------------------------------', extra={'tag':''})
+	printer('-- Summary -----------------------------------------------------------', tag='')
 	iCurrent = Sources.getIndexCurrent()
 	print iCurrent
 #TODO fix
@@ -561,20 +562,21 @@ def printSummary():
 #		logger.info('Current source: {0:d} {1}'.format(iCurrent,Sources[iCurrent]['displayname']), extra={'tag':''})
 	i = 0
 	for source in Sources.getAll():
-		if not source['template']:
-			if source['available']:
-				available = colorize('available','light_green')
-			else:
-				available = colorize('not available','light_red')
+		if source['available']:
+			available = colorize('available','light_green')
+		else:
+			available = colorize('not available','light_red')
+		
+		if 'mountpoint' in source:
+			mountpoint = source['mountpoint']
+		else:
+			mountpoint = ""
 			
-			if 'mountpoint' in source:
-				mountpoint = source['mountpoint']
-			else:
-				mountpoint = ""
-				
-			logger.info(' {0:d} {1:17} {2} {3}'.format(i,source['displayname'],available,mountpoint), extra={'tag':''})
+		#logger.info(' {0:d} {1:17} {2} {3}'.format(i,source['displayname'],available,mountpoint), extra={'tag':''})
+		printer(' {0:d} {1:17} {2} {3}'.format(i,source['displayname'],available,mountpoint), tag=''})
 		i += 1
-	logger.info('----------------------------------------------------------------------', extra={'tag':''})
+	#logger.info('----------------------------------------------------------------------', extra={'tag':''})
+	printer('----------------------------------------------------------------------', tag=''})
 
 def add_a_source( plugindir, sourcePluginName ):
 	configFileName = os.path.join(plugindir,sourcePluginName+'.json')
