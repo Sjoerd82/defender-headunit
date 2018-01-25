@@ -46,8 +46,10 @@ class mpdController():
 	def playlistClear( self ):
 		print(' ...... Emptying playlist')
 		#todo: how about cropping, populating, and removing the first? item .. for faster continuity???
+		self.mpdc.command_list_ok_begin()
 		self.mpdc.stop()
 		self.mpdc.clear()
+		print self.mpdc.command_list_end()
 		#call(["mpc", "-q", "stop"])
 		#call(["mpc", "-q", "clear"])
 		#self.mpcd.close()
