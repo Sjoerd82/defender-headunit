@@ -682,15 +682,15 @@ def bla_refactored( prevSourceName, prevSourceSub, doCheck ):
 								# Check if REALLY available...
 								# !!! TODO: MAKE THIS MORE UNIVERSAL..... !!!
 								if source['name'] in ['media','locmus']:
-									print "OPTION 1 media/locmus"
+									#print "OPTION 1 media/locmus"
 									#if not Sources.sourceCheckParams( ix, ['/media/PIHU_DATA'] ):
 									if not Sources.sourceCheck( ix, ix_ss ): #subsource['mountpoint'] ):
-										print "directory not present or empty [todo: or no music in mpd]"
-										print "---END--- Play first available source."
+										#print "directory not present or empty [todo: or no music in mpd]"
+										#print "---END--- Play first available source."
 										return []
 										#return False
 									else:
-										print "---END--- CONTINUING playback of this subsource!"
+										#print "---END--- CONTINUING playback of this subsource!"
 										retSource.append(ix)
 										retSource.append(ix_ss)
 										return retSource
@@ -698,11 +698,11 @@ def bla_refactored( prevSourceName, prevSourceSub, doCheck ):
 								#TEMPORARY:
 								else:
 									if not Sources.sourceCheck( ix ):
-										print "---END--- Play first available source."
+										#print "---END--- Play first available source."
 										return []
 										#return False
 									else:
-										print "---END--- CONTINUING playback of this subsource!"
+										#print "---END--- CONTINUING playback of this subsource!"
 										retSource.append(ix)
 										retSource.append(ix_ss)
 										return retSource
@@ -920,10 +920,20 @@ if not prevSource == "":
 		printer ('Continuing playback', tag='QPLAY')
 		Sources.setCurrent(prevIx[0])
 		Sources.sourcePlay()
+
+		printer ('Checking other sources...', tag='QPLAY')
+		Sources.sourceCheckAll( template=True )
+		printSummary()
+		
 	elif len(prevIx) == 2:
 		printer ('Continuing playback (subsource)', tag='QPLAY')
 		Sources.setCurrent(prevIx[0],prevIx[1])
 		Sources.sourcePlay()
+
+		printer ('Checking other sources...', tag='QPLAY')
+		Sources.sourceCheckAll( template=True )
+		printSummary()
+
 	else:
 		printer ('Continuing playback not available, checking all sources...', tag='QPLAY')
 		Sources.sourceCheckAll( template=True )
