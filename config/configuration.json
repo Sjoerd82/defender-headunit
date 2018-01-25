@@ -19,7 +19,7 @@
 	}
 	, "source_config": {
 		  "locmus": [ { "label": "PD1", "musicdir": "/media/PIHU_DATA", "musicdir_mpd": "PIHU_DATA"}
-					, { "label": "PD2", "musicdir": "/media/PIHU_DATA2", "musicdir_mpd": "PIHU_DATA2" } ]
+		            , { "label": "PD2", "musicdir": "/media/PIHU_DATA2", "musicdir_mpd": "PIHU_DATA2" } ]
 		, "fm": {"frq_lo": 80}
 	}
 	, "plugins_other": {

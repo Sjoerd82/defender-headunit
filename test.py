@@ -905,7 +905,7 @@ myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 #
 
 # TESTING....
-testSs = {'mountpoint':'/media/PIHU_DATA'}
+testSs = {'mountpoint':'/media/PIHU_DATA2'}
 cSettings.set('source','locmus')
 cSettings.set('subsource',testSs)
 cSettings.save()

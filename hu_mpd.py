@@ -35,14 +35,14 @@ class mpdController():
 			self.mpdc.timeout = 10                # network timeout in seconds (floats allowed), default: None
 			self.mpdc.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
 			self.mpdc.connect("localhost", 6600)
-			printer(' ...  Version: {0}'.format(self.mpdc.mpd_version))          # print the MPD version
+			printer(' > Version: {0}'.format(self.mpdc.mpd_version))          # print the MPD version
 			self.mpdc.random(0)
 			self.mpdc.repeat(1)	
 			#self.mpdc.send_idle()
 			self.mpdc.close()
 			self.mpdc.disconnect()
 		except:
-			printer('Failed to connect to MPD server')
+			printer('Failed to connect to MPD server', level=LL_ERROR)
 			#return False	# __init__() should return None  (?)
 
 	def __connect( self ):
@@ -82,10 +82,7 @@ class mpdController():
 		#oMpdClient.noidle()
 		
 		self.__connect()
-
-		print sMpdDir
-		sMpdDir = "PIHU_DATA"
-		
+	
 		if type == 'locmus' or type == 'smb':
 			try:
 				self.mpdc.findadd('base',sMpdDir)
@@ -117,7 +114,7 @@ class mpdController():
 		#oMpdClient.send_idle()
 		
 	def playlistIsPop( self ):
-		printer(' ...... Checking if playlist is populated')
+		printer('Checking if playlist is populated')
 		self.__connect()
 
 		self.mpdc.command_list_ok_begin()
