@@ -115,6 +115,8 @@ def locmus_check( sourceCtrl, subSourceIx=None ):
 				else:
 					printer(" > Music found after updating")
 					return True
+			else:
+				return True
 
 		
 # Source Play: Return True/False

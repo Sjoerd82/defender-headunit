@@ -2,7 +2,6 @@
 # Wrapper for python-mpd2
 #
 import os
-#from subprocess import call
 import subprocess
 import pickle
 
