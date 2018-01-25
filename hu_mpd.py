@@ -124,7 +124,7 @@ class mpdController():
 		self.mpdc.disconnect()
 		return results[0]['playlistlength']
 
-	def update( self, location ):
+	def update( self, location, wait=True ):
 		#Sound effect
 		pa_sfx('mpd_update_db')
 		#Debug info
