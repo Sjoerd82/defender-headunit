@@ -55,7 +55,7 @@ class mpdController():
 			printer('Failed to connect to MPD server')
 		
 	def playlistClear( self ):
-		print(' ...... Emptying playlist')
+		printer('Emptying MPD playlist')
 		#todo: how about cropping, populating, and removing the first? item .. for faster continuity???
 		#self.mpdc.command_list_ok_begin()
 		self.connect()

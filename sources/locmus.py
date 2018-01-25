@@ -42,16 +42,20 @@ def printer( message, level=LL_INFO, continuation=False, tag=sourceName ):
 
 def locmus_add( dir, label, sourceCtrl ):
 
+	#TODO:
+	mpd_musicdir = '/media'
+
 	# get index (name is unique)
 	ix = sourceCtrl.getIndex('name','locmus')
 
 	# construct the subsource
 	subsource = {}
 	subsource['displayname'] = 'local: ' + dir
-	subsource['order'] = 0		# no ordering
+	subsource['order'] = 0			# no ordering
 	subsource['mountpoint'] = dir
+	subsource['mpd_dir'] = dir[7:]	# directory from a MPD pov. (/media) --- TODO ---  ASSUMES all mountpoints are based on /media, and /media is the MPD music dir
 	subsource['label'] = label
-	subsource['uuid'] = None	#TODO (but not relevant for local sources?)
+	subsource['uuid'] = None		#TODO (but not relevant for local sources?)
 
 	sourceCtrl.addSub( ix, subsource )
 	
@@ -107,10 +111,11 @@ def locmus_check( sourceCtrl, subSourceIx=None ):
 		
 # Source Play: Return True/False
 def locmus_play( sourceCtrl, subSourceIx=None ):
-	global sLocalMusicMPD
-	#global arSourceAvailable
-	global Sources
-	print('[LOCMUS] Play (MPD)')
+
+	sLocalMusicMPD="PIHU_DATA"			# directory from a MPD pov. #TODO: derive from sLocalMusic
+	
+	printer('Play (MPD)')
+
 
 	### Is there a good reason for this? ###
 	#if bInit == 0:
@@ -130,11 +135,19 @@ def locmus_play( sourceCtrl, subSourceIx=None ):
 	else:
 	"""
 	#mpc = MPDClient()
+	
+	# get mountpoint to play
+	ix = sourceCtrl.getIndex('name','locmus')
+	subsource = sourceCtrl.getSubSource( ix, subSourceIx )
+
 	mpc = mpdController()
 	mpc.playlistClear()
 	
 	# MPD playlist for local music *should* be updated by inotifywait.. but, it's a bit tricky, so test for it..
 	printer(' ...... Populating playlist')
+	print subsource['mountpoint']
+	print subsource['mpd_dir']
+	sLocalMusicMPD = subsource['mpd_dir']
 	mpc.mpc_populate_playlist(sLocalMusicMPD)
 
 	printer(' ...... Checking if playlist is populated')
