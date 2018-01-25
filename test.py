@@ -575,10 +575,10 @@ def printSummary():
 			mountpoint = ""
 			
 		#logger.info(' {0:d} {1:17} {2} {3}'.format(i,source['displayname'],available,mountpoint), extra={'tag':''})
-		printer(' {0:d} {1:17} {2} {3}'.format(i,source['displayname'],available,mountpoint), tag=''})
+		printer(' {0:d} {1:17} {2} {3}'.format(i,source['displayname'],available,mountpoint), tag='')
 		i += 1
 	#logger.info('----------------------------------------------------------------------', extra={'tag':''})
-	printer('----------------------------------------------------------------------', tag=''})
+	printer('----------------------------------------------------------------------', tag='')
 
 def add_a_source( plugindir, sourcePluginName ):
 	configFileName = os.path.join(plugindir,sourcePluginName+'.json')
