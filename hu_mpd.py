@@ -116,7 +116,7 @@ class mpdController():
 		#oMpdClient.send_idle()
 		
 	def mpc_playlist_is_populated( self ):
-		self.mpdc.connect()
+		self.connect()
 		self.mpdc.command_list_ok_begin()
 		self.mpdc.status()
 		results = self.mpdc.command_list_end()
