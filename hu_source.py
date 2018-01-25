@@ -326,7 +326,6 @@ class SourceController():
 		#	checkResult = getattr(obj,func)(params)
 		#else:
 		checkResult = getattr(obj,func)(self,self.iCurrentSS)
-		self.setAvailableIx(index,checkResult,self.iCurrentSS)
 
 		#except:
 		#	print('[SOURCE] ERROR: calling player function')
