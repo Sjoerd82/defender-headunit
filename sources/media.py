@@ -219,7 +219,7 @@ def media_play():
 #	dSettings['medialabel'] = sUsbLabel
 
 	print(' ... Populating playlist, media: {0}'.format(sUsbLabel))
-	mpc_populate_playlist(sUsbLabel)
+	mpc.playlistPop(sUsbLabel)
 
 	print(' ... Checking if playlist is populated')
 	task = subprocess.Popen("mpc playlist | wc -l", shell=True, stdout=subprocess.PIPE)

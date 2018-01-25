@@ -18,7 +18,8 @@
 		, "sfx": "/mnt/PIHU_APP/defender-headunit/sfx"
 	}
 	, "source_config": {
-		  "locmus": [{"musicdir_mpd": "PIHU_DATA", "musicdir": "/media/PIHU_DATA"}, { "musicdir": "/media/PIHU_DATA2", "musicdir_mpd": "PIHU_DATA2" }]
+		  "locmus": [ { "label": "PD1", "musicdir": "/media/PIHU_DATA", "musicdir_mpd": "PIHU_DATA"}
+					, { "label": "PD2", "musicdir": "/media/PIHU_DATA2", "musicdir_mpd": "PIHU_DATA2" } ]
 		, "fm": {"frq_lo": 80}
 	}
 	, "plugins_other": {

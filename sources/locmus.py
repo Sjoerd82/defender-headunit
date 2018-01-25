@@ -40,7 +40,7 @@ def printer( message, level=LL_INFO, continuation=False, tag=sourceName ):
 	else:
 		myprint( message, level, tag )
 
-def locmus_add( dir, label, sourceCtrl ):
+def locmus_add( label, dir, mpd_dir, sourceCtrl ):
 
 	#TODO:
 	mpd_musicdir = '/media'
@@ -53,9 +53,9 @@ def locmus_add( dir, label, sourceCtrl ):
 	subsource['displayname'] = 'local: ' + dir
 	subsource['order'] = 0			# no ordering
 	subsource['mountpoint'] = dir
-	subsource['mpd_dir'] = dir[7:]	# directory from a MPD pov. (/media) --- TODO ---  ASSUMES all mountpoints are based on /media, and /media is the MPD music dir
+	subsource['mpd_dir'] = mpd_dir
 	subsource['label'] = label
-	subsource['uuid'] = None		#TODO (but not relevant for local sources?)
+	#subsource['uuid'] = None		# not relevant for local sources
 
 	sourceCtrl.addSub( ix, subsource )
 	
@@ -69,7 +69,10 @@ def locmus_init( sourceCtrl ):
 	
 	# add all locations as configured
 	for location in locmusConfig:
-		locmus_add(location['musicdir'],location['musicdir_mpd'], sourceCtrl)
+		locmus_add( location['label']
+		           ,location['musicdir']
+				   ,location['musicdir_mpd']
+				   , sourceCtrl )
 
 	return True
 
@@ -116,65 +119,60 @@ def locmus_check( sourceCtrl, subSourceIx=None ):
 # Source Play: Return True/False
 def locmus_play( sourceCtrl, subSourceIx=None ):
 
-	sLocalMusicMPD="PIHU_DATA"			# directory from a MPD pov. #TODO: derive from sLocalMusic
-	
 	printer('Play (MPD)')
 
+	#
+	# variables
+	#
+	
+	mpc = mpdController()
 
-	### Is there a good reason for this? ###
-	#if bInit == 0:
-	#	print(' ... Checking if source is still good')
-	#	locmus_check()
-	
-	### This check will be done by Sources ###
-	#if arSourceAvailable[2] == 0:
-	"""
-	if not Sources.getAvailable('name','locmus')
-		print(' ......  Aborting playback, trying next source.') #TODO red color
-		#source_next()
-		Sources.sourceNext()
-		source_play()
-		#TODO: error sound
-		
-	else:
-	"""
-	#mpc = MPDClient()
-	
-	# get mountpoint to play
+	# get directory to play, directory is relative to MPD music dir.
 	ix = sourceCtrl.getIndex('name','locmus')
 	subsource = sourceCtrl.getSubSource( ix, subSourceIx )
-
-	mpc = mpdController()
-	mpc.playlistClear()
-	
-	# MPD playlist for local music *should* be updated by inotifywait.. but, it's a bit tricky, so test for it..
-	printer(' ...... Populating playlist')
 	sLocalMusicMPD = subsource['mpd_dir']
-	mpc.mpc_populate_playlist('locmus',sLocalMusicMPD)
+	sLabel = subsource['label']
+	
+	
+	#
+	# load playlist
+	#
+	
+	# NOT ANYMORE - OR TODO: MPD playlist for local music *should* be updated by inotifywait.. but, it's a bit tricky, so test for it..
 
-	printer(' ...... Checking if playlist is populated')
-	playlistCount = mpc.mpc_playlist_is_populated()
+	# populate playlist
+	mpc.playlistClear()
+	mpc.playlistPop('locmus',sLocalMusicMPD)
+
+	# check if succesful...
+	playlistCount = mpc.playlistIsPop()
 	if playlistCount == "0":
-		printer(' ...... . Nothing in the playlist, trying to update database...')
-		mpc.mpc_update( sLocalMusicMPD, True )
-		mpc.mpc_populate_playlist('locmus',sLocalMusicMPD)
+		printer(' > Nothing in the playlist, trying to update database...')
+		
+		# update and try again...
+		mpc.update( sLocalMusicMPD, True )
+		mpc.playlistPop('locmus',sLocalMusicMPD)
+		
+		# check if succesful...
 		playlistCount = mpc.mpc_playlist_is_populated()
 		if playlistCount == "0":
-			printer(' ...... . Nothing in the playlist, giving up. Marking source unavailable.')
-			#Sources.setAvailable('name','locmus',False)
-			#Sources.sourceNext()
-			#source_play()
+			# Failed. Returning false will cause caller to try next source
+			printer(' > Nothing in the playlist, giving up. Marking source unavailable.')
+			sourceCtrl.setAvailableIx( ix, False, subSourceIx )
 			pa_sfx(LL_ERROR)
 			return False
 		else:
-			printer(' ...... . Found {0:s} tracks'.format(playlistCount))
+			printer(' > Found {0:s} tracks'.format(playlistCount))
 	else:
-		printer(' ...... . Found {0:s} tracks'.format(playlistCount))
+		printer(' > Found {0:s} tracks'.format(playlistCount))
 
+	#
 	# continue where left
-	playslist_pos = mpc.mpc_lkp('locmus')
+	#
 	
-	printer(' ...  Starting playback')
+	playslist_pos = mpc.lastKnownPos( sLabel )
+	
+	printer(' > Starting playback')
 	#mpc.playStart( str(playslist_pos['pos']), playslist_pos['time'] )
 	call(["mpc", "-q" , "stop"])
 	call(["mpc", "-q" , "play", str(playslist_pos['pos'])])

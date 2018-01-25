@@ -45,42 +45,44 @@ class mpdController():
 			printer('Failed to connect to MPD server')
 			#return False	# __init__() should return None  (?)
 
-	def connect( self ):
+	def __connect( self ):
 		try:
-			printer('Connecting to MPD client')
+			printer('Connecting to MPD client', level=LL_DEBUG)
 			self.mpdc.timeout = 10                # network timeout in seconds (floats allowed), default: None
 			self.mpdc.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
 			self.mpdc.connect("localhost", 6600)
 		except:
-			printer('Failed to connect to MPD server')
+			printer('Failed to connect to MPD server', level=LL_ERROR)
+			
+	def __disconnect( self ):
+			printer('Disconnecting', level=LL_DEBUG)
+			self.mpdc.close()
+			self.mpdc.disconnect()
 		
 	def playlistClear( self ):
 		printer('Emptying MPD playlist')
 		#todo: how about cropping, populating, and removing the first? item .. for faster continuity???
 		#self.mpdc.command_list_ok_begin()
-		self.connect()
+		self.__connect()
 		
 		self.mpdc.stop()
 		self.mpdc.clear()
 
-		self.mpdc.close()
-		self.mpdc.disconnect()
+		self.__disconnect()
 
 		#print self.mpdc.command_list_end()
 		#call(["mpc", "-q", "stop"])
 		#call(["mpc", "-q", "clear"])
 		#self.mpcd.close()
 
-	def channelSubscribe( self, channel ):
-		self.mpcd.subscribe(channel)
-		
-	def mpc_populate_playlist( self, type, sMpdDir ):
-		#global oMpdClient
+	def playlistPop( self, type, sMpdDir ):
+		printer('Populating playlist')
 
 		# Stop idle, in order to send a command
 		#oMpdClient.noidle()
 		
-		self.connect()
+		self.__connect()
+
 		print sMpdDir
 		sMpdDir = "PIHU_DATA"
 		
@@ -111,21 +113,25 @@ class mpdController():
 		else:
 			self.mpdc.findadd('base',type)
 		
-		self.mpdc.close()
-		self.mpdc.disconnect()
+		self.__disconnect()
 		#oMpdClient.send_idle()
 		
-	def mpc_playlist_is_populated( self ):
-		self.connect()
+	def playlistIsPop( self ):
+		printer(' ...... Checking if playlist is populated')
+		self.__connect()
+
 		self.mpdc.command_list_ok_begin()
 		self.mpdc.status()
 		results = self.mpdc.command_list_end()
-		self.mpdc.close()
-		self.mpdc.disconnect()
+
+		self.__disconnect()
 		return results[0]['playlistlength']
 
 	# location must be a path relative to MPD
 	def update( self, location, wait=True ):
+
+		self.__connect()
+		
 		#Sound effect
 		pa_sfx('mpd_update_db')
 		#Debug info
@@ -139,10 +145,47 @@ class mpdController():
 			call(["mpc", "-q", "update", location])
 			#bMpdUpdateSmb
 
+		self.__disconnect()
 
-	def mpc_lkp( self, locmus):
-		print('todo')
-		return {'pos': 1, 'time': 0}
+	def lastKnownPos( self, id ):
+	
+		#default
+		pos = {'pos': 1, 'time': 0}
+
+		#TODO!
+		iThrElapsed = 20	 # Minimal time that must have elapsed into a track in order to resume position
+		iThrTotal = 30		 # Minimal track length required in order to resume position
+		
+		# open pickle_file, if it exists
+		pickle_file = sDirSave + "/mp_" + id + ".p"
+		if os.path.isfile(pickle_file):
+			print('[MPC] Retrieving last known position from lkp file: {0:s}'.format(pickle_file))
+			try:
+				dSavePosition = pickle.load( open( pickle_file, "rb" ) )
+			except:
+				print(' ... PICKLE: Loading {0:s} failed!'.format(pickle_file))
+				return pos
+
+			#otherwise continue:
+			self.__connect()
+			psfind = self.mpcd.playlistfind('filename',dSavePosition['file'])
+			self.__disconnect()
+			
+			#in the unlikely case of multiple matches, we'll just take the first, psfind[0]
+			if len(psfind) == 0:
+				print(' ...  File not found in loaded playlist')
+			else:
+				pos['pos'] = int(psfind[0]['pos'])+1
+				timeElapsed,timeTotal = map(int, dSavePosition['time'].split(':'))
+				print('[MPC] Match found: {0}. Continuing playback at #{1}'.format(dSavePosition['file'],pos['pos']))
+				print(' ...  Elapsed/Total time: {0}s/{1}s'.format(timeElapsed,timeTotal))
+				if timeElapsed > iThrElapsed and timeTotal > iThrTotal:
+					pos['time'] = str(timeElapsed)
+					print(' ...  Elapsed time over threshold: continuing at last position.')
+				else:
+					print(' ...  Elapsed time below threshold or short track: restarting at beginning of track.')
+
+		return pos
 		
 #	def playStart( str(playslist_pos['pos']), playslist_pos['time'] ):
 	def playStart( self, pos, time ):
@@ -193,6 +236,8 @@ class mpdController():
 		
 	def mpc_get_currentsong( self ):
 	
+		self.__connect()
+
 		oMpdClient = MPDClient() 
 		oMpdClient.timeout = 10                # network timeout in seconds (floats allowed), default: None
 		oMpdClient.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
@@ -204,13 +249,15 @@ class mpdController():
 		results = oMpdClient.command_list_end()
 		print results[0]
 
-		oMpdClient.close()
-		oMpdClient.disconnect()
+		self.__disconnect()
 	
 		#return self.mpdc.currentsong()
 		return results[0]
 
 	def mpc_get_status( self ):
+
+		self.__connect()
+
 		oMpdClient = MPDClient() 
 		oMpdClient.timeout = 10                # network timeout in seconds (floats allowed), default: None
 		oMpdClient.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
@@ -222,8 +269,7 @@ class mpdController():
 		results = oMpdClient.command_list_end()
 		print results[0]
 
-		oMpdClient.close()
-		oMpdClient.disconnect()
+		self.__disconnect()
 	
 		#return self.mpdc.currentsong()
 		return results[0]
@@ -233,6 +279,12 @@ class mpdController():
 		#TODO
 		return 12
 
+	def channelSubscribe( self, channel ):
+	
+		self.__connect()
+		self.mpcd.subscribe(channel)
+		self.__disconnect()
+		
 
 
 def mpc_random_get():
