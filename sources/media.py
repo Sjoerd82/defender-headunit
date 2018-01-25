@@ -303,7 +303,7 @@ def media_play( sourceCtrl, subSourceIx=None ):
 	# continue where left
 	#
 	
-	playslist_pos = mpc.lastKnownPos( sLabel )
+	playslist_pos = mpc.lastKnownPos( sUsbLabel )
 	
 	printer(' > Starting playback')
 	#mpc.playStart( str(playslist_pos['pos']), playslist_pos['time'] )
