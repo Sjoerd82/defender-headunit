@@ -556,12 +556,12 @@ def printSummary():
 	#logger.info('-- Summary -----------------------------------------------------------', extra={'tag':''})
 	printer('-- Summary -----------------------------------------------------------', tag='')
 	iCurrent = Sources.getIndexCurrent()
-	print iCurrent
-#TODO fix
-#	if iCurrent == None:	
+	if iCurrent == None:	
 #		logger.info('Current source: None', extra={'tag':''})
-#	else:
+		printer('Current source: None', tag='')
+	else:
 #		logger.info('Current source: {0:d} {1}'.format(iCurrent,Sources[iCurrent]['displayname']), extra={'tag':''})
+		printer('Current source: {0:d} {1}'.format(iCurrent,Sources[iCurrent]['displayname']), tag='')
 	i = 0
 	for source in Sources.getAll():
 		if source['available']:
@@ -569,11 +569,13 @@ def printSummary():
 		else:
 			available = colorize('not available','light_red')
 		
-		if 'mountpoint' in source:
-			mountpoint = source['mountpoint']
-		else:
-			mountpoint = ""
-			
+		if 'subsources' in source and len(source['subsources']) > 0:
+			for subsource in source['subsources']:
+				if 'mountpoint' in subsource:
+					mountpoint = subsource['mountpoint']
+					printer(' {0:d} {1:17} {2} {3}'.format(i,source['displayname'],available,mountpoint), tag='')
+		
+		mountpoint = ""
 		#logger.info(' {0:d} {1:17} {2} {3}'.format(i,source['displayname'],available,mountpoint), extra={'tag':''})
 		printer(' {0:d} {1:17} {2} {3}'.format(i,source['displayname'],available,mountpoint), tag='')
 		i += 1
