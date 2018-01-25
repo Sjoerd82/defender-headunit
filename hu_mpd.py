@@ -150,9 +150,9 @@ class mpdController():
 		printer('Updating database for location: {0}'.format(location))
 		#Update
 		if wait:
-			printer(' ...  Please wait, this may take some time...')
+			printer(' > Please wait, this may take some time...')
 			call(["mpc", "--wait", "-q", "update", location])
-			printer(' ...  Update finished')
+			printer(' > Update finished')
 		else:
 			call(["mpc", "-q", "update", location])
 			#bMpdUpdateSmb
@@ -171,31 +171,31 @@ class mpdController():
 		# open pickle_file, if it exists
 		pickle_file = sDirSave + "/mp_" + id + ".p"
 		if os.path.isfile(pickle_file):
-			print('[MPC] Retrieving last known position from lkp file: {0:s}'.format(pickle_file))
+			printer('Retrieving last known position from lkp file: {0:s}'.format(pickle_file))
 			try:
 				dSavePosition = pickle.load( open( pickle_file, "rb" ) )
 			except:
-				print(' ... PICKLE: Loading {0:s} failed!'.format(pickle_file))
+				printer('PICKLE: Loading {0:s} failed!'.format(pickle_file))
 				return pos
 
 			#otherwise continue:
 			self.__connect()
-			psfind = self.mpcd.playlistfind('filename',dSavePosition['file'])
+			psfind = self.mpdc.playlistfind('filename',dSavePosition['file'])
 			self.__disconnect()
 			
 			#in the unlikely case of multiple matches, we'll just take the first, psfind[0]
 			if len(psfind) == 0:
-				print(' ...  File not found in loaded playlist')
+				printer(' > File not found in loaded playlist')
 			else:
 				pos['pos'] = int(psfind[0]['pos'])+1
 				timeElapsed,timeTotal = map(int, dSavePosition['time'].split(':'))
-				print('[MPC] Match found: {0}. Continuing playback at #{1}'.format(dSavePosition['file'],pos['pos']))
-				print(' ...  Elapsed/Total time: {0}s/{1}s'.format(timeElapsed,timeTotal))
+				printer('Match found: {0}. Continuing playback at #{1}'.format(dSavePosition['file'],pos['pos']))
+				printer(' >  Elapsed/Total time: {0}s/{1}s'.format(timeElapsed,timeTotal))
 				if timeElapsed > iThrElapsed and timeTotal > iThrTotal:
 					pos['time'] = str(timeElapsed)
-					print(' ...  Elapsed time over threshold: continuing at last position.')
+					printer(' > Elapsed time over threshold: continuing at last position.')
 				else:
-					print(' ...  Elapsed time below threshold or short track: restarting at beginning of track.')
+					printer(' > Elapsed time below threshold or short track: restarting at beginning of track.')
 
 		return pos
 		
