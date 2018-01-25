@@ -650,7 +650,8 @@ def test_match( dTest, dMatchAgainst ):
 def bla_refactored( prevSourceName, prevSourceSub, doCheck ):
 
 	global Sources
-
+	retSource = []
+	
 	ix = 0
 	for source in Sources.getAll():
 		#print "{0} Source {1}".format(i,source["name"])
@@ -659,13 +660,16 @@ def bla_refactored( prevSourceName, prevSourceSub, doCheck ):
 			if not source['template']:
 				#print "......... Previous Source: {0}; no subsources".format(source['name'])
 				#print "---END--- CONTINUING playback of this source!"
-				return True
+				retSource.append(ix)
+				return retSource
+				#return True
 			else:
 				#print "......... Previous Source: {0}; is template, checking for subsources...>".format(source['name'])
 				if not 'subsources' in source:
 					#print "......... Previous Source: {0}; is template, but has no subsources.".format(source['name'])
 					#print "---END--- no suitable source to continue playing... Play first available source."
-					return True
+					return []
+					#return False
 				else:
 					#print "......... Previous Source: {0}; is template, and has subsources, testing match...>".format(source['name'])
 					ix_ss = 0
@@ -683,34 +687,47 @@ def bla_refactored( prevSourceName, prevSourceSub, doCheck ):
 									if not Sources.sourceCheck( ix, ix_ss ): #subsource['mountpoint'] ):
 										print "directory not present or empty [todo: or no music in mpd]"
 										print "---END--- Play first available source."
-										return False
+										return []
+										#return False
 									else:
 										print "---END--- CONTINUING playback of this subsource!"
-										return True
+										retSource.append(ix)
+										retSource.append(ix_ss)
+										return retSource
+										#return True
 								#TEMPORARY:
 								else:
 									if not Sources.sourceCheck( ix ):
 										print "---END--- Play first available source."
-										return False
+										return []
+										#return False
 									else:
 										print "---END--- CONTINUING playback of this subsource!"
-										return True
+										retSource.append(ix)
+										retSource.append(ix_ss)
+										return retSource
+										#return True
 									
 							else:
 								# No check, clear for available..
 								#print "---END--- CONTINUING playback of this subsource!"
-								return True
+								retSource.append(ix)
+								retSource.append(ix_ss)
+								return retSource
+								#return True
 						else:
 							pass
 							#print "> ..no match on this one"
 							#print "---END--- no suitable source or subsource to continue playing... Play first available source."
 						ix_ss+=1
 			# Nothing matched for this source name
-			return False
+			return []
+			#return False
 		ix+=1
 
 	# Source name was not found.. (strange situation...)
-	return False
+	return []
+	#return False
 
 #********************************************************************************
 #
@@ -859,8 +876,8 @@ myprint('Loading Other Plugins...',tag='SYSTEM')
 from plugin_other import *
 
 # WORKAROUND...
-#for t in threads:
-#	t.start()
+for t in threads:
+	t.start()
 
 # LCD (TODO: move to plugins)
 from hu_lcd import *
@@ -886,6 +903,8 @@ myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 #
 # QuickPlay
 #
+
+# TESTING....
 testSs = {'mountpoint':'/media/PIHU_DATA'}
 cSettings.set('source','locmus')
 cSettings.set('subsource',testSs)
@@ -893,17 +912,22 @@ cSettings.save()
 
 prevSource = cSettings.get_key('source')
 prevSourceSub = cSettings.get_key('subsource')
-print("PREVIOUS SOURCE: {0}".format(cSettings.get_key('source')))
-print("PREVIOUS SOURCE: {0}".format(cSettings.get_key('subsource')))
-
 
 if not prevSource == "":
-	if bla_refactored( prevSource, prevSourceSub, True ): #PlayPrevSource()
-		print ('CONTINUEING PLAYBACK')
-		#Source.play( index... )
+	printer("Previous source: {0} {1}".format(prevSource, prevSourceSub), tag='QPLAY' )
+	prevIx = bla_refactored( prevSource, prevSourceSub, True ): #PlayPrevSource()
+	if len(prevIx) = 1
+		print ('Continuing playback', tag='QPLAY')
+		Source.setCurrent(prevIx[0])
+		Source.playSource()
+	elif len(prevIx) = 2
+		print ('Continuing playback (subsource)', tag='QPLAY')
+		Source.setCurrent(prevIx[0],prevIx[1])
+		Source.playSource()
 	else:
-		print ('START AT FIRST AVAILABLE')
-		#Sources.nextSource()
+		print ('Continuing playback not available, starting first available source', tag='QPLAY')
+		Sources.next()
+		Source.playSource()
 
 exit()
 

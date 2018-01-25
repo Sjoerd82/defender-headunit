@@ -8,6 +8,7 @@ class SourceController():
 
 	lSource = []
 	iCurrent = None
+	iCurrentSS = None
 
 	#def __init__(self):
 		#print('[INIT] Setting up sources')
@@ -89,28 +90,38 @@ class SourceController():
 		return self.iCurrent
 
 	# set current source, by index
-	def setCurrent( self, index ):
+	def setCurrent( self, index, subIndex=None ):
 		if index == None:
 			self.__printer('Setting active source to None')
 			return True
 		elif index >= len(self.lSource):
 			self.__printer('ERROR: Index ({0}) out of bounds'.format(index),LL_ERROR)
 			return False
-		elif self.lSource[index]['available']:
-			self.__printer('Setting active source to {0}: {1:s}'.format(index,self.lSource[index]['displayname']))
-			self.iCurrent = index
-			return True
 		elif not self.lSource[index]['available']:
 			self.__printer('ERROR: Requested source ({0}: {1:s}) is not available.'.format(index,self.lSource[index]['displayname']),LL_ERROR)
 			return False
 		elif self.lSource[index]['template']:
 			self.__printer('ERROR: Requested source ({0}: {1:s}) is a template.'.format(index,self.lSource[index]['displayname']),LL_ERROR)
 			return False
+		elif self.lSource[index]['available']:
+			self.__printer('Setting active source to {0}: {1:s}'.format(index,self.lSource[index]['displayname']))
+			self.iCurrent = index
+
+			# NEW: SUBSOURCES:
+			if not subIndex == None:
+				#TODO: add checks... (available, boundry, etc..)
+				self.iCurrentSS = subIndex
+				return True
+			else:
+				return True
+
 		else:
 			self.__printer('ERROR: Requested source ({0}: {1:s}) cannot be set.'.format(index,self.lSource[index]['displayname']),LL_ERROR)
 			return False
 
+
 	# make the next available source the current, returns the new active source index
+	# TODO: handle sub-source
 	def next( self ):
 		iSourceCnt = len(self.lSource)
 
@@ -292,29 +303,36 @@ class SourceController():
 			i+=1
 	
 	# execute a play() for the current source
-	def sourcePlay( self ):
+	def sourcePlay( self, subSourceIx=None ):
 		if self.iCurrent == None:
 			self.__printer('PLAY: No current source',LL_WARNING)
 			return False
-			
+		
 		if not self.lSource[self.iCurrent]['available']:
 			self.__printer('PLAY: Source not available: {0}'.format(self.iCurrent),LL_WARNING)
 			return False
 		
-		try:
-			if self.lSource[self.iCurrent]['sourcePlay'] == None:
-				self.__printer('PLAY: function not defined',LL_WARNING)
-		except Exception as ex:
-			self.__printer('PLAY: ERROR: {0}'.format(ex),LL_CRITICAL)
+		if 'sourcePlay' not in self.lSource[self.iCurrent] or self.lSource[self.iCurrent]['sourcePlay'] == None:
+			self.__printer('PLAY: function not defined',LL_WARNING)
+			return False
+			
+		#try:
+		#	if self.lSource[self.iCurrent]['sourcePlay'] == None:
+		#		self.__printer('PLAY: function not defined',LL_WARNING)
+		#except Exception as ex:
+		#	self.__printer('PLAY: ERROR: {0}'.format(ex),LL_CRITICAL)
 		
 		#try:
+		
 		obj = self.lSource[self.iCurrent]['sourcePlay'][0]
 		func = self.lSource[self.iCurrent]['sourcePlay'][1]
-		if self.lSource[self.iCurrent]['sourcePlay'].count == 3:
-			params = self.lSource[self.iCurrent]['sourcePlay'][2]
-			checkResult = getattr(obj,func)(params)
-		else:
-			checkResult = getattr(obj,func)()
+		#if self.lSource[self.iCurrent]['sourcePlay'].count == 3:
+		#	params = self.lSource[self.iCurrent]['sourcePlay'][2]
+		#	checkResult = getattr(obj,func)(params)
+		#else:
+		checkResult = getattr(obj,func)(self,subSourceIx)
+		self.setAvailableIx(index,checkResult,subSourceIx)
+
 		#except:
 		#	print('[SOURCE] ERROR: calling player function')
 		if not checkResult:
