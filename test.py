@@ -571,6 +571,8 @@ def printSummary():
 		sCurrDisplay = sCurrent['displayname']
 	elif not arCurrIx[1] == None:
 		sCurrDisplay = sCurrent['subsources'][arCurrIx[1]]['displayname']
+	else:
+		sCurrDisplay = ""
 	
 	if len(arCurrIx) == 0:
 		printer('Current source: None', tag='')
@@ -679,10 +681,16 @@ def bla_refactored( prevSourceName, prevSourceSub, doCheck ):
 		if source['name'] == prevSourceName:
 			if not source['template']:
 				print "......... Previous Source: {0}; no subsources".format(source['name'])
-				print "---END--- CONTINUING playback of this source!"
-				retSource.append(ix)
-				return retSource
-				#return True
+				print "......... Checking if available.."
+				if not Sources.sourceCheck( ix ):
+					#print "---END--- Play first available source."
+					return []
+					#return False
+				else:
+					#print "---END--- CONTINUING playback of this subsource!"
+					retSource.append(ix)
+					return retSource
+
 			else:
 				#print "......... Previous Source: {0}; is template, checking for subsources...>".format(source['name'])
 				if not 'subsources' in source:
