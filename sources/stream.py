@@ -99,10 +99,12 @@ def stream_play( sourceCtrl, subSourceIx=None ):
 	# continue where left
 	#
 	
-	playslist_pos = mpc.lastKnownPos( sLabel )
+	#TODO!
+	#playslist_pos = mpc.lastKnownPos( sLabel )
 	
 	printer(' > Starting playback')
-	call(["mpc", "-q" , "play", str(playslist_pos['pos'])])
+	#call(["mpc", "-q" , "play", str(playslist_pos['pos'])])
+	call(["mpc", "-q" , "play"])
 
 	# double check if source is up-to-date
 	# todo
