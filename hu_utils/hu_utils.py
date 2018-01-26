@@ -61,7 +61,9 @@ def pa_sfx( sfx ):
 		elif sfx == 'reset_shuffle':
 			call(["pactl", "play-sample", "beep_60_x2", sPaSfxSink])
 			
-def internet( sInternet="www.google.com" ):
+def internet():
+	#TODO
+	sInternet="www.google.com"
 	try:
 		# connect to the host -- tells us if the host is actually reachable
 		socket.create_connection((sInternet, 80))

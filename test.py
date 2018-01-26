@@ -561,8 +561,6 @@ def init_load_config():
 def printSummary():
 	global Sources
 	global logger
-	#logger = logging.getLogger('headunit')
-	#logger.info('-- Summary -----------------------------------------------------------', extra={'tag':''})
 	printer('-- Summary -----------------------------------------------------------', tag='')
 	arCurrIx = Sources.getIndexCurrent()
 	sCurrent = Sources.get(None)
@@ -590,12 +588,11 @@ def printSummary():
 			for subsource in source['subsources']:
 				if 'mountpoint' in subsource:
 					mountpoint = subsource['mountpoint']
-					printer(' {0:2d} {1:17} {2:14} {3}'.format(i,source['displayname'],available,mountpoint), tag='')
+					printer(' {0:2} {1:17} {2:14} {3}'.format(i,source['displayname'],available,mountpoint), tag='')
 		else:
-			printer(' {0:2d} {1:17} {2:14}'.format(i,source['displayname'],available), tag='')
+			printer(' {0:2} {1:17} {2:14}'.format(i,source['displayname'],available), tag='')
 		
 		i += 1
-	#logger.info('----------------------------------------------------------------------', extra={'tag':''})
 	printer('----------------------------------------------------------------------', tag='')
 
 def add_a_source( plugindir, sourcePluginName ):
@@ -676,12 +673,12 @@ def bla_refactored( prevSourceName, prevSourceSub, doCheck ):
 	
 	ix = 0
 	for source in Sources.getAll():
-		print "{0} Source {1}".format(ix,source["name"])
+		#print "{0} Source {1}".format(ix,source["name"])
 		#print source
 		if source['name'] == prevSourceName:
 			if not source['template']:
-				print "......... Previous Source: {0}; no subsources".format(source['name'])
-				print "......... Checking if available.."
+				#print "......... Previous Source: {0}; no subsources".format(source['name'])
+				#print "......... Checking if available.."
 				if not Sources.sourceCheck( ix ):
 					#print "---END--- Play first available source."
 					return []
