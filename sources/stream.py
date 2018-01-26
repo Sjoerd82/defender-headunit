@@ -13,18 +13,6 @@ def printer( message, level=LL_INFO, continuation=False, tag=sourceName ):
 	else:
 		myprint( message, level, tag )
 
-
-def internet():
-	try:
-		# connect to the host -- tells us if the host is actually reachable
-		socket.create_connection((sInternet, 80))
-		return True
-	except OSError:
-		pass
-	except:
-		pass
-	return False
-
 # no initializations required
 def stream_init( sourceCtrl ):
 	pass
