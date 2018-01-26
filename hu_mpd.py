@@ -103,10 +103,10 @@ class mpdController():
 					if not uri[:1] == '#' and not uri == '':
 						uri_OK = url_check(uri)
 						if uri_OK:
-							print(' ....  . Stream OK: {0}'.format(uri))
+							print(' ....  . Stream [OK]: {0}'.format(uri))
 							call(["mpc", "-q", "add", uri])
 						else:
-							print(' ....  . Stream FAIL: {0}'.format(uri))
+							print(' ....  . Stream [FAIL]: {0}'.format(uri))
 		else:
 			self.mpdc.findadd('base',type)
 		
