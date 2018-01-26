@@ -109,6 +109,7 @@ def smb_play( sourceCtrl, subSourceIx=None ):
 	
 	mpc = mpdController()
 	sLocalMusicMPD = "PIHU_SMB/music"
+	sUsbLabel = "smb_music"
 
 	#
 	# load playlist
