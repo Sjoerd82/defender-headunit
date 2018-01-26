@@ -4,6 +4,7 @@
   "type": "mpd",
   "depNetwork": true,
   "controls": {"ffwd": false, "rwnd": false, "prev": true, "next": true},
+  "sourceInit":  ["sources.smb", "smb_init"],
   "sourceCheck": ["sources.smb", "smb_check"],
   "sourcePlay":  ["sources.smb", "smb_play"],
   "sourceStop":  ["sources.smb", "smb_stop"],

@@ -5,6 +5,7 @@
   "type": "mpd",
   "depNetwork": false,
   "controls": {"ffwd": false, "rwnd": false, "prev": true, "next": true},
+  "sourceInit":  ["sources.stream", "stream_init"],
   "sourceCheck": ["sources.stream", "stream_check"],
   "sourcePlay":  ["sources.stream", "stream_play"],
   "sourceStop":  ["sources.stream", "stream_stop"],
