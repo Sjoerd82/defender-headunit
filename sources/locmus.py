@@ -121,7 +121,6 @@ def locmus_check( sourceCtrl, subSourceIx=None ):
 		
 # Source Play: Return True/False
 def locmus_play( sourceCtrl, subSourceIx=None ):
-
 	printer('Play (MPD)')
 
 	#

@@ -75,65 +75,42 @@ def stream_check( sourceCtrl, subSourceIx=None  ):
 					printer(' > Stream [FAIL]: {0}'.format(uri))
 					return False
 
-def stream_play():
-	#global Sources
+def stream_play( sourceCtrl, subSourceIx=None ):
 	printer('Play (MPD)',mytag)
 
-	### To be handled by Sources ###
-	#if bInit == 0:
-	#	print(' ....  Checking if source is still good')
-	#	stream_check()
-
-	### To be handled by Sources ###
-	"""
-	if not Sources.getAvailable('name','stream')
-		print(' ....  No, aborting playback, trying next source.') #TODO red color
-		pa_sfx(LL_ERROR)
-		#source_next()
-		Sources.sourceNext()
-		source_play()
-	else:
-	"""
-
-	# Connect to MPD
-	try:
-		mpc.connect("localhost", 6600)
-	except:
-		myprint('MPD: Failed to connect to MPD server',mytag)
-		return False
-
-	printer('MPD: Emptying playlist',mytag)
-	#todo: how about cropping, populating, and removing the first? item .. for faster continuity???
+	#
+	# variables
+	#
 	
-	mpc.stop()
-	mpc.clear()
-	mpc.close()	
-	
-	#call(["mpc", "-q", "stop"])
-	#call(["mpc", "-q", "clear"])
+	mpc = mpdController()
 
-	printer(' .... Populating playlist')
-	mpc_populate_playlist('stream')
 	
-	printer(' .... Checking if playlist is populated')
-	playlistCount = mpc_playlist_is_populated()
+	#
+	# load playlist
+	#
+	
+	# NOT ANYMORE - OR TODO: MPD playlist for local music *should* be updated by inotifywait.. but, it's a bit tricky, so test for it..
+
+	# populate playlist
+	mpc.playlistClear()
+	mpc.playlistPop('stream',None)
+	
+	# check if succesful...
+	playlistCount = mpc.playlistIsPop()
 	if playlistCount == "0":
-		printer(' .... . Nothing in the playlist, aborting...')
+		printer(' > Nothing in the playlist, aborting...')
 		pa_sfx(LL_ERROR)
-		#arSourceAvailable[5] = 0
-		#Sources.setAvailable('name','stream',False)
-		#source_next()
-		#Sources.sourceNext()
-		#source_play()
-		return False
-		
+		return False	
 	else:
-		printer(' .... . Found {0:s} tracks'.format(playlistCount))
+		printer(' .... . Found {0:s} items'.format(playlistCount))
 		
+	#
 	# continue where left
-	playslist_pos = mpc_lkp('stream')
+	#
 	
-	printer(' .... Starting playback')
+	playslist_pos = mpc.lastKnownPos( sLabel )
+	
+	printer(' > Starting playback')
 	call(["mpc", "-q" , "play", str(playslist_pos['pos'])])
 
 	# double check if source is up-to-date
