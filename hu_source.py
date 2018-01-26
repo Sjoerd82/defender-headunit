@@ -154,7 +154,7 @@ class SourceController():
 			else:
 				# Starting for loop at next source
 				
-				printer('TODO!!!! CONSIDER SUB-SOURCE!')
+				self.__printer('TODO!!!! CONSIDER SUB-SOURCE!')
 				
 				i=self.iCurrent+1
 				for source in self.lSource[self.iCurrent+1:]:
