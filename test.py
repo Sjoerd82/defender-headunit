@@ -575,7 +575,7 @@ def printSummary():
 	if len(arCurrIx) == 0:
 		printer('Current source: None', tag='')
 	else:
-		printer('Current source: {0:d} {1}'.format(arCurrIx[0],sCurrDisplay), tag='')
+		printer('Current source: {0} {1}'.format(arCurrIx[0],sCurrDisplay), tag='')
 	
 	i = 0
 	for source in Sources.getAll():
@@ -588,9 +588,9 @@ def printSummary():
 			for subsource in source['subsources']:
 				if 'mountpoint' in subsource:
 					mountpoint = subsource['mountpoint']
-					printer(' {0:2} {1:17} {2:14} {3}'.format(i,source['displayname'],available,mountpoint), tag='')
+					printer(' {0:2d} {1:17} {2:14} {3}'.format(i,source['displayname'],available,mountpoint), tag='')
 		else:
-			printer(' {0:2} {1:17} {2:14}'.format(i,source['displayname'],available), tag='')
+			printer(' {0:2d} {1:17} {2:14}'.format(i,source['displayname'],available), tag='')
 		
 		i += 1
 	printer('----------------------------------------------------------------------', tag='')

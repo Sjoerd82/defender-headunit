@@ -66,7 +66,7 @@ def stream_check( sourceCtrl, subSourceIx=None  ):
 					return False
 
 def stream_play( sourceCtrl, subSourceIx=None ):
-	printer('Play (MPD)',mytag)
+	printer('Play (MPD)')
 
 	#
 	# variables
