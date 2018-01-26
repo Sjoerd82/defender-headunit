@@ -674,12 +674,12 @@ def bla_refactored( prevSourceName, prevSourceSub, doCheck ):
 	
 	ix = 0
 	for source in Sources.getAll():
-		#print "{0} Source {1}".format(i,source["name"])
+		print "{0} Source {1}".format(i,source["name"])
 		#print source
 		if source['name'] == prevSourceName:
 			if not source['template']:
-				#print "......... Previous Source: {0}; no subsources".format(source['name'])
-				#print "---END--- CONTINUING playback of this source!"
+				print "......... Previous Source: {0}; no subsources".format(source['name'])
+				print "---END--- CONTINUING playback of this source!"
 				retSource.append(ix)
 				return retSource
 				#return True
@@ -925,10 +925,10 @@ myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 #
 
 # TESTING....
-#testSs = {}	#{'mountpoint':'/media/SJOERD'}
+testSs = {}	#{'mountpoint':'/media/SJOERD'}
 cSettings.set('source','stream')
-#cSettings.set('subsource',testSs)
-#cSettings.save()
+cSettings.set('subsource',testSs)
+cSettings.save()
 
 prevSource = cSettings.get_key('source')
 prevSourceSub = cSettings.get_key('subsource')
