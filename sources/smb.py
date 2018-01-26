@@ -100,7 +100,7 @@ def smb_check( sourceCtrl, subSourceIx=None  ):
 	#Sources.setAvailable('name','smb', True)
 	return True
 
-def smb_play():
+def smb_play( sourceCtrl, subSourceIx=None ):
 	printer('Play (MPD)')
 
 	#
