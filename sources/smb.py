@@ -163,6 +163,8 @@ def smb_play( sourceCtrl, subSourceIx=None ):
 #	mpc_get_PlaylistDirs_thread = threading.Thread(target=mpc_get_PlaylistDirs)
 #	mpc_get_PlaylistDirs_thread.start()
 
+	return True
+
 def smb_stop():
 	printer('stop')
 	return True
