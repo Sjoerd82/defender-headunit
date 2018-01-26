@@ -674,7 +674,7 @@ def bla_refactored( prevSourceName, prevSourceSub, doCheck ):
 	
 	ix = 0
 	for source in Sources.getAll():
-		print "{0} Source {1}".format(i,source["name"])
+		print "{0} Source {1}".format(ix,source["name"])
 		#print source
 		if source['name'] == prevSourceName:
 			if not source['template']:
