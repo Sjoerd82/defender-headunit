@@ -567,9 +567,9 @@ def printSummary():
 	arCurrIx = Sources.getIndexCurrent()
 	sCurrent = Sources.get(None)
 	
-	if arCurrIx[1] == None:
+	if not arCurrIx[0] == None and arCurrIx[1] == None:
 		sCurrDisplay = sCurrent['displayname']
-	else:
+	elif not arCurrIx[1] == None:
 		sCurrDisplay = sCurrent['subsources'][arCurrIx[1]]['displayname']
 	
 	if len(arCurrIx) == 0:
