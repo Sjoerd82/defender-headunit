@@ -3,7 +3,8 @@ import os
 
 from hu_utils import *
 
-from mpd import MPDClient
+# MPD
+from hu_mpd import *
 
 mytag = 'STREAM'
 sourceName = 'stream'
