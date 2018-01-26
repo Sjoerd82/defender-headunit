@@ -572,10 +572,10 @@ def printSummary():
 	else:
 		sCurrDisplay = sCurrent['subsources'][arCurrIx[1]['displayname']
 	
-	if len(arCurrIx) == 0:
-		printer('Current source: None', tag='')
-	else:
-		printer('Current source: {0:d} {1}'.format(arCurrIx[0],sCurrDisplay), tag='')
+#	if len(arCurrIx) == 0:
+#		printer('Current source: None', tag='')
+#	else:
+#		printer('Current source: {0:d} {1}'.format(arCurrIx[0],sCurrDisplay), tag='')
 	
 	i = 0
 	for source in Sources.getAll():
