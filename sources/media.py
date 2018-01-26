@@ -322,4 +322,5 @@ def media_play( sourceCtrl, subSourceIx=None ):
 	return True
  
 def media_stop():
+	printer('Stopping (todo)')
 	return True

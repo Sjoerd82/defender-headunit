@@ -175,6 +175,15 @@ def cb_remote_btn_press ( func ):
 			# update settings
 			currSrc = Sources.get(None)
 			cSettings.set('source',currSrc['name'])
+			
+			# TODO!!
+			printer('TODO!! save subsoure to settings')
+
+			#testSs = {'mountpoint':'/media/SJOERD'}
+			#cSettings.set('source','media')
+			#cSettings.set('subsource',testSs)
+		
+
 			if 'label' in currSrc:
 				cSettings.set('label',currSrc['label'])
 			else:
@@ -563,10 +572,10 @@ def printSummary():
 	else:
 		sCurrDisplay = sCurrent['subsources'][arCurrIx[1]['displayname']
 	
-	if iCurrent == None:	
+	if arCurrIx == None:
 		printer('Current source: None', tag='')
 	else:
-		printer('Current source: {0:d} {1}'.format(iCurrent,sCurrDisplay), tag='')
+		printer('Current source: {0:d} {1}'.format(arCurrIx[0],sCurrDisplay), tag='')
 	
 	i = 0
 	for source in Sources.getAll():
