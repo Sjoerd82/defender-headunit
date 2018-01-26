@@ -9,8 +9,16 @@ import logging
 # call
 from subprocess import call
 
+#to check for an internet connection
+import socket
+
+#to check an URL
+#import httplib2	# Buildroot is not supporting SSL... somehow...
+import urllib2
+
 # Third party modules
 from colored import fg, bg, attr
+
 
 #log levels
 LL_CRITICAL = 50
@@ -52,3 +60,27 @@ def pa_sfx( sfx ):
 			call(["pactl", "play-sample", "bt", sPaSfxSink])
 		elif sfx == 'reset_shuffle':
 			call(["pactl", "play-sample", "beep_60_x2", sPaSfxSink])
+			
+def internet( sInternet="www.google.com" ):
+	try:
+		# connect to the host -- tells us if the host is actually reachable
+		socket.create_connection((sInternet, 80))
+		return True
+	except OSError:
+		pass
+	except:
+		pass
+	return False
+
+def url_check( url ):
+	# Using httplib2, supporting https (?):
+	#h = httplib2.Http()
+	#resp = h.request(url, 'HEAD')
+	#assert int(resp[0]['status']) < 400
+	
+	# Using urllib2:
+	try:
+		urllib2.urlopen(url)
+		return True
+	except:
+		return False

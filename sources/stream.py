@@ -25,12 +25,16 @@ def internet():
 		pass
 	return False
 
-def stream_check( sourceCtrl, subSourceIx=None  ):
-	#global arSourceAvailable
-	#global Sources
+# no initializations required
+def stream_init( sourceCtrl ):
+	pass
 	
-	printer('Checking availability...')
-	return False
+def stream_check( sourceCtrl, subSourceIx=None  ):
+
+	#TODO!!
+	sDirSave = "/mnt/PIHU_CONFIG"
+
+	printer('CHECKING availability...')
 
 	# Default to not available
 	#arSourceAvailable[5]=0
@@ -39,19 +43,19 @@ def stream_check( sourceCtrl, subSourceIx=None  ):
 	# Test internet connection
 	connected = internet()
 	if not connected:
-		printer(' > Internet: [FAIL]',tag='.STREAM')
-		printer(' > Marking source not available',tag='.STREAM')
+		printer(' > Internet: [FAIL]')
+		printer(' > Marking source not available')
 		return False
 	else:
-		printer(' > Internet: [OK]',tag='.STREAM')
+		printer(' > Internet: [OK]')
 
 	# See if we have streaming URL's
 	streams_file = sDirSave + "/streams.txt"
 	if os.path.isfile(streams_file):
-		printer(' > Stream URL\'s: File found [OK]',tag='.STREAM')
+		printer(' > Stream URL\'s: File found [OK]')
 	else:
-		printer(' > Stream URL\'s: File not found [FAIL]',tag='.STREAM')
-		printer(' > Marking source not available',tag='.STREAM')
+		printer(' > Stream URL\'s: File not found [FAIL]')
+		printer(' > Marking source not available')
 		return False
 
 	# Check if at least one stream is good
@@ -62,13 +66,14 @@ def stream_check( sourceCtrl, subSourceIx=None  ):
 			if not uri[:1] == '#' and not uri == '':
 				uri_OK = url_check(uri)					
 				if uri_OK:
-					printer(' > Stream [OK]: {0}'.format(uri),tag='.STREAM')
+					printer(' > Stream [OK]: {0}'.format(uri))
 					#arSourceAvailable[5]=1
 					#Sources.setAvailable('name','stream',True)
 					#break
 					return True
 				else:
-					printer(' > Stream [FAIL]: {0}'.format(uri),tag='.STREAM')
+					printer(' > Stream [FAIL]: {0}'.format(uri))
+					return False
 
 def stream_play():
 	#global Sources
