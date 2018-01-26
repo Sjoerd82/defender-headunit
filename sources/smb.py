@@ -1,7 +1,9 @@
 
-from hu_utils import *
+import os
+import subprocess
 
-from mpd import MPDClient
+from hu_utils import *
+from hu_mpd import *
 
 # Logging
 mytag='smb'
