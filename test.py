@@ -785,6 +785,7 @@ def QuickPlay( prevSource, prevSourceSub ):
 			Sources.sourcePlay()
 
 			printer ('Checking other sources...', tag='QPLAY')
+			# TODO: the prev. source is now checked again.. this is not efficient..
 			Sources.sourceCheckAll()
 			printSummary()
 			
@@ -794,6 +795,7 @@ def QuickPlay( prevSource, prevSourceSub ):
 			Sources.sourcePlay()
 
 			printer ('Checking other sources...', tag='QPLAY')
+			# TODO: the prev. source is now checked again.. this is not efficient..
 			Sources.sourceCheckAll()
 			printSummary()
 
@@ -994,8 +996,8 @@ prevSourceSub = cSettings.get_key('subsource')
 QuickPlay( prevSource,
 		   prevSourceSub )
 
-time.sleep(10)
-source.sourceSeekNext()
+time.sleep(15)
+Sources.sourceSeekNext()
 		   
 """
 else:
