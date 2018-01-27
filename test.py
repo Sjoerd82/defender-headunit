@@ -154,7 +154,6 @@ def cb_remote_btn_press2 ( func ):
 	print "cb_remote_btn_press2 {0}".format(func)
 
 #
-def cb_remote_btn_press ( func ):
 
 	#def seek_next():
 	#	Sources.sourceSeekNext()
@@ -174,6 +173,8 @@ def cb_remote_btn_press ( func ):
 		elif dSettings['source'] == 3:
 			bt_prev()
 	"""
+
+def cb_remote_btn_press ( func ):
 
 	global Sources
 	global cSettings
