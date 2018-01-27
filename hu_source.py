@@ -128,6 +128,41 @@ class SourceController():
 	# TODO: handle sub-source
 	def next( self ):
 
+		def dingding(i_start, i_end, j_start):
+			#
+			# if no current source, we'll loop through the sources until we find one
+			#
+			# TODO CHECK IF i_start isn't at the end of the list!
+			for source in self.lSource[i_start:i_end]:
+				print "DEBUG A -- {0}".format(source)
+				# no sub-source and available:
+				if not source['template'] and source['available']:
+					self.__printer('NEXT: Switching to {0}: {1:s}'.format(i_start,source['displayname']))
+					self.iCurrent = i_start
+					self.iCurrentSS = j_start
+					self.iCurrentSource[0] = i_start
+					self.iCurrentSource[1] = 0
+					return self.iCurrentSource
+				
+				# sub-source and available:
+				elif source['template'] and source['available']:
+					print "DEBUG 3"
+					for subsource in source['subsources'][j_start:]:
+						print "DEBUG B -- {0}".format(subsource)
+						if subsource['available']:
+							print "DEBUG 4"
+							self.__printer('NEXT: Switching to {0}/{1}: {2:s}'.format(i_start,j_start,subsource['displayname']))
+							self.iCurrent = i_start
+							self.iCurrentSS = j_start
+							self.iCurrentSource[0] = i_start
+							self.iCurrentSource[1] = j_start
+							return self.iCurrentSource
+							
+					j_start += 1
+
+
+				i_start += 1
+
 		#
 		# check if we have at least two sources
 		#
@@ -148,6 +183,8 @@ class SourceController():
 			self.__printer('NEXT: No active source. Searching for first available ...',LL_DEBUG)
 			i_start=0
 			j_start=0
+			i_end = None
+			i_end2 = None
 		else:
 			if  not self.iCurrentSource[1] == None:
 				print "DEBUG: {0}:{1}, {2}".format(self.iCurrent, self.getAvailableSubCnt(self.iCurrent), self.iCurrentSource[1]+1 )
@@ -157,51 +194,24 @@ class SourceController():
 				print "DEBUG 1"
 				# there are more available sub-sources..
 				i_start = self.iCurrentSource[0]
+				i_end2 = i_start-1
 				j_start = self.iCurrentSource[1]+1	#next sub-source (+1) isn't neccesarily available, but this will be checked later
 			else:
 				print "DEBUG 2"
 				# no more available sub-sources
+				i_end2 = i_start-1
 				i_start = self.iCurrentSource[0]+1
 				j_start=0
 
 		print "DEBUG: STARTING POSITIONS ARE: {0}, {1}".format(i_start, j_start)
-		#
-		# if no current source, we'll loop through the sources until we find one
-		#
-		# TODO CHECK IF i_start isn't at the end of the list!
-		for source in self.lSource[i_start:]:
-			print "DEBUG A -- {0}".format(source)
-			# no sub-source and available:
-			if not source['template'] and source['available']:
-				self.__printer('NEXT: Switching to {0}: {1:s}'.format(i_start,source['displayname']))
-				self.iCurrent = i_start
-				self.iCurrentSS = j_start
-				self.iCurrentSource[0] = i_start
-				self.iCurrentSource[1] = 0
-				return self.iCurrentSource
-			
-			# sub-source and available:
-			elif source['template'] and source['available']:
-				print "DEBUG 3"
-				for subsource in source['subsources'][j_start:]:
-					print "DEBUG B -- {0}".format(subsource)
-					if subsource['available']:
-						print "DEBUG 4"
-						self.__printer('NEXT: Switching to {0}/{1}: {2:s}'.format(i_start,j_start,subsource['displayname']))
-						self.iCurrent = i_start
-						self.iCurrentSS = j_start
-						self.iCurrentSource[0] = i_start
-						self.iCurrentSource[1] = j_start
-						return self.iCurrentSource
-						
-				j_start += 1
-
-
-			i_start += 1
+		dingding(i_start, i_end, j_start)
 
 		# Still here?
 		# Let's start from the top...
+		i_start = 0
+		j_start = 0
 		print "DEBUG still here..."
+		dingding(i_start, i_end2, j_start):
 		
 		"""
 		
