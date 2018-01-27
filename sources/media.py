@@ -103,6 +103,7 @@ def media_check( sourceCtrl, subSourceIx=None ):
 	ix = sourceCtrl.getIndex('name','media')
 	mountpoints = []
 	mpc = mpdController()
+	foundStuff = 0
 					
 	if subSourceIx == None:
 		subsources = sourceCtrl.getSubSources( ix )
@@ -122,7 +123,6 @@ def media_check( sourceCtrl, subSourceIx=None ):
 		printer('Media folder: {0}'.format(location))
 		if not os.listdir(location):
 			printer(" > Removable music directory is empty.",LL_WARNING,True)
-			return False
 		else:
 			printer(" > Removable music directory present and has files.",LL_INFO,True)
 			if not mpc.dbCheckDirectory( sLocalMusicMPD ):
@@ -130,16 +130,20 @@ def media_check( sourceCtrl, subSourceIx=None ):
 				mpc.update( sLocalMusicMPD )
 				if not mpc.dbCheckDirectory( sLocalMusicMPD ):
 					printer(" > Nothing to play marking unavailable...")
-					return False
 				else:
 					printer(" > Music found after updating")
 					sourceCtrl.setAvailableIx( ix, True, ssIx )
-					return True
+					foundStuff += 1
 			else:
 				sourceCtrl.setAvailableIx( ix, True, ssIx )
-				return True
+				foundStuff += 1
 		ssIx+=1
-
+	
+	if foundStuff > 0:
+		return True
+	else:
+		return False
+		
 	"""
 	
 	# Return True/False for general check (when label is None)

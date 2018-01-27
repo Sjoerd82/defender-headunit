@@ -85,6 +85,7 @@ def locmus_check( sourceCtrl, subSourceIx=None ):
 	ix = sourceCtrl.getIndex('name','locmus')
 	mountpoints = []
 	mpc = mpdController()
+	foundStuff = 0
 					
 	if subSourceIx == None:
 		subsources = sourceCtrl.getSubSources( ix )
@@ -104,7 +105,6 @@ def locmus_check( sourceCtrl, subSourceIx=None ):
 		printer('Local folder: {0}'.format(location))
 		if not os.listdir(location):
 			printer(" > Local music directory is empty.",LL_WARNING,True)
-			return False
 		else:
 			printer(" > Local music directory present and has files.",LL_INFO,True)
 			
@@ -113,15 +113,19 @@ def locmus_check( sourceCtrl, subSourceIx=None ):
 				mpc.update( sLocalMusicMPD )
 				if not mpc.dbCheckDirectory( sLocalMusicMPD ):
 					printer(" > Nothing to play marking unavailable...")
-					return False
 				else:
 					printer(" > Music found after updating")
 					sourceCtrl.setAvailableIx( ix, True, ssIx )
-					return True
+					foundStuff += 1
 			else:
 				sourceCtrl.setAvailableIx( ix, True, ssIx )
-				return True
+				foundStuff += 1
 		ssIx+=1
+	
+	if foundStuff > 0:
+		return True
+	else:
+		return False
 
 		
 # Source Play: Return True/False
