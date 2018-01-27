@@ -163,7 +163,7 @@ class SourceController():
 
 				i_start += 1
 				
-		return None
+			return None
 
 		#
 		# check if we have at least two sources
