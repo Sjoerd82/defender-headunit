@@ -996,9 +996,7 @@ prevSourceSub = cSettings.get_key('subsource')
 QuickPlay( prevSource,
 		   prevSourceSub )
 
-time.sleep(15)
-Sources.sourceSeekNext()
-		   
+	   
 """
 else:
 	for source in Sources.getAll():

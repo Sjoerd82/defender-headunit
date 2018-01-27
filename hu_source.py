@@ -171,7 +171,7 @@ class SourceController():
 			
 			# no sub-source and available:
 			if not source['template'] and source['available']:
-				self.__printer('NEXT: Switching to {0}: {1:s}'.format(i,source['displayname']))
+				self.__printer('NEXT: Switching to {0}: {1:s}'.format(i_start,source['displayname']))
 				self.iCurrent = i_start
 				self.iCurrentSS = j_start
 				self.iCurrentSource[0] = i_start
