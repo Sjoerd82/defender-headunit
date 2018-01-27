@@ -108,9 +108,11 @@ def media_check( sourceCtrl, subSourceIx=None ):
 		subsources = sourceCtrl.getSubSources( ix )
 		for subsource in subsources:
 			mountpoints.append(subsource['mountpoint'])
+		ssIx = 0
 	else:
 		subsource = sourceCtrl.getSubSource( ix, subSourceIx )
 		mountpoints.append(subsource['mountpoint'])
+		ssIx = subSourceIx
 	
 	# dir, relative to MPD
 	sLocalMusicMPD = subsource['mpd_dir']
@@ -132,9 +134,12 @@ def media_check( sourceCtrl, subSourceIx=None ):
 					return False
 				else:
 					printer(" > Music found after updating")
+					if 
+					sourceCtrl.setAvailableIx( ix, ssIx )
 					return True
 			else:
 				return True
+		ssIx+=1
 
 	"""
 	
