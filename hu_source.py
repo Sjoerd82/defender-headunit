@@ -150,7 +150,7 @@ class SourceController():
 			j_start=0
 		else:
 			if  not self.iCurrentSource[1] == None:
-				print "DEBUG: {0}, {1}".format(self.getAvailableSubCnt(self.iCurrent), self.iCurrentSource[1]+1 )
+				print "DEBUG: {0}:{1}, {2}".format(self.iCurrent, self.getAvailableSubCnt(self.iCurrent), self.iCurrentSource[1]+1 )
 			# if the current source is a sub-source, then first check if there are more sub-sources after the current
 			if ( not self.iCurrentSource[1] == None and
 			     self.getAvailableSubCnt(self.iCurrent) > self.iCurrentSource[1]+1 ):
@@ -353,6 +353,7 @@ class SourceController():
 		for subsource in self.lSource[index]['subsources']:
 			if subsource['available']:
 				c += 1
+		return c
 		
 
 		
