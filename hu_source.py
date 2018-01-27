@@ -211,7 +211,7 @@ class SourceController():
 		i_start = 0
 		j_start = 0
 		print "DEBUG still here..."
-		dingding(i_start, i_end2, j_start):
+		dingding(i_start, i_end2, j_start)
 		
 		"""
 		
