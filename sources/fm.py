@@ -25,12 +25,12 @@ def fm_check( sourceCtrl, subSourceIx=None  ):
 	#echo "Source 0 Unavailable; FM"
 	return True
 
-def fm_play():
+def fm_play( sourceCtrl ):
 	printer('[FM] Start playing FM radio...')
 	return True
 	#TODO
 
-def fm_stop():
+def fm_stop( sourceCtrl ):
 	printer('[FM] Stop')
 	return True
 	

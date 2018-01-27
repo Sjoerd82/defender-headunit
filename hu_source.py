@@ -46,7 +46,7 @@ class SourceController():
 
 		#Check required fields:
 		if not all (k in subsource for k in ('displayname','order')):
-			self.__printer('ADD: sub-source NOT added, missing one or more required field(s)...',LL_ERROR)
+			self.__printer('ADD SUB: sub-source NOT added, missing one or more required field(s)...',LL_ERROR)
 			self.__printer('Required fields are: displayname,order',LL_ERROR,True)
 			return False
 		
@@ -55,7 +55,7 @@ class SourceController():
 		subsource['available'] = False
 
 		#All good, add the source:
-		self.__printer('ADD: {0}'.format(subsource['displayname']))
+		self.__printer('ADD SUB: {0}'.format(subsource['displayname']))
 		self.lSource[index]['subsources'].append(subsource)
 		self.lSource[index]['subsources'].sort( key=lambda k: k['order'] )
 		return True
