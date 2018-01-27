@@ -599,17 +599,23 @@ def printSummary():
 	
 	i = 0
 	for source in Sources.getAll():
-		if source['available']:
-			available = colorize('available','light_green')
-		else:
-			available = colorize('not available','light_red')
-		
+
 		if 'subsources' in source and len(source['subsources']) > 0:
 			for subsource in source['subsources']:
+			
+				if subsource['available']:
+					available = colorize('available','light_green')
+				else:
+					available = colorize('not available','light_red')
+		
 				if 'mountpoint' in subsource:
 					mountpoint = subsource['mountpoint']
 					printer(' {0:2d} {1:17} {2:14} {3}'.format(i,source['displayname'],available,mountpoint), tag='')
 		else:
+			if source['available']:
+				available = colorize('available','light_green')
+			else:
+				available = colorize('not available','light_red')
 			printer(' {0:2d} {1:17} {2:14}'.format(i,source['displayname'],available), tag='')
 		
 		i += 1
