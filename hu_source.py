@@ -9,6 +9,7 @@ class SourceController():
 	lSource = []
 	iCurrent = None
 	iCurrentSS = None
+	iCurrentSource = [ None, None ]
 
 	#def __init__(self):
 		#print('[INIT] Setting up sources')
@@ -72,11 +73,9 @@ class SourceController():
 	def remSub( self, index, subsource ):
 		#TODO
 		return None
-	# get index based on key-value pair. Set template to True to match only templates, False does not match Templates, None matches regardless of Template status
 
-	#  if template set to False (default), exclude template sources..
-	#  if template set to True, include template sources but exclude template based sources?
-
+	# get index based on key-value pair
+	# the "name" key is unique
 	def getIndex( self, key, value ):
 		i=0
 		for source in self.lSource:
@@ -84,7 +83,7 @@ class SourceController():
 				return i
 			i+=1
 
-	# get index of current source
+	# get list of index and subindex of current source
 	def getIndexCurrent( self ):
 		#copy.copy?
 		arCurrIx = []
@@ -127,54 +126,137 @@ class SourceController():
 	# make the next available source the current, returns the new active source index
 	# TODO: handle sub-source
 	def next( self ):
-		iSourceCnt = len(self.lSource)
+
+		#
+		# check if we have at least two sources
+		#
+		iSourceCnt = self.getAvailableCnt()
 
 		if iSourceCnt == 0:
 			self.__printer('NEXT: No available sources.',LL_WARNING)
+			return self.iCurrentSource
 		elif iSourceCnt == 1:
 			self.__printer('NEXT: Only one source, cannot switch.',LL_WARNING)
-		else:
+			return self.iCurrentSource
 
-			# If no current source, we'll loop through the sources until we find one
-			if self.iCurrent == None:
-				self.__printer('NEXT: No active source. Searching for first available ...',LL_DEBUG)
-				i=0
-				for source in self.lSource:
-					if source['available']:
+		#
+		# determine starting positions
+		#
+		
+		if self.iCurrent == None:
+			self.__printer('NEXT: No active source. Searching for first available ...',LL_DEBUG)
+			i_start=0
+			j_start=0
+		else:
+			# if the current source is a sub-source, then first check if there are more sub-sources after the current
+			if ( not self.iCurrentSource[1] == None and
+			     self.getAvailableSubCnt(i) > self.iCurrentSource[1]+1 ):
+				print "DEBUG 1"
+				# there are more available sub-sources..
+				i_start = self.iCurrentSource[0]
+				j_start = self.iCurrentSource[1]+1	#next sub-source (+1) isn't neccesarily available, but this will be checked later
+			else:
+				print "DEBUG 2"
+				# no more available sub-sources
+				i_start = self.iCurrentSource[0]+1
+				j_start=0
+
+		print "DEBUG: STARTING POSITIONS ARE: {0}, {1}".format(i_start, j_start)
+		#
+		# if no current source, we'll loop through the sources until we find one
+		#
+		# TODO CHECK IF i_start isn't at the end of the list!
+		for source in self.lSource[i_start:]:
+			
+			# no sub-source and available:
+			if not source['template'] and source['available']:
+				self.__printer('NEXT: Switching to {0}: {1:s}'.format(i,source['displayname']))
+				self.iCurrent = i_start
+				self.iCurrentSS = j_start
+				self.iCurrentSource[0] = i_start
+				self.iCurrentSource[1] = 0
+				return self.iCurrentSource
+			
+			# sub-source and available:
+			elif source['template'] and source['available']:
+				
+				for subsource in source['subsources'][j_start:]:
+					if subsource['available']:
+						self.__printer('NEXT: Switching to {0}/{1}: {2:s}'.format(i_start,j_start,subsource['displayname']))
+						self.iCurrent = i_start
+						self.iCurrentSS = j_start
+						self.iCurrentSource[0] = i_start
+						self.iCurrentSource[1] = j_start
+						return self.iCurrentSource
+						
+				j_start += 1
+
+
+			i_start += 1
+
+		# Still here?
+		# Let's start from the top...
+		print "DEBUG still here..."
+		
+		"""
+		
+			
+			i=self.iCurrent+1
+			
+			for source in self.lSource:
+				if source['available']:
+					if not source['template']:
 						self.__printer('NEXT: Selecting {0}: {1:s}'.format(i,source['displayname']))
 						self.iCurrent = i # source.index
-						#print source.index
-						#settings_save()
-						break
-					i += 1
-					
-				if self.iCurrent == None:
-					self.__printer('NEXT: No available sources!',LL_WARNING)
-
-			else:
-				# Starting for loop at next source
+						self.iCurrentSource[0] = i
+						return self.iCurrentSource
+					else:
+						ss = 0
+						for subsource in source['subsources']:
+							if subsource['available']:
+								self.__printer('NEXT: Selecting {0}: {1:s}'.format(i,source['displayname']))
+								self.iCurrent = i # source.index
+								self.iCurrentSS = ss
+								self.iCurrentSource[0] = i
+								self.iCurrentSource[1] = ss
+								return self.iCurrentSource
+							ss+=1
+					#TODO? DO WE NEED TO SAVE HERE?
+					# 	-> I think the caller shld take care of that...
+					#print source.index
+					#settings_save()
+					#break
+				i += 1
 				
-				self.__printer('TODO!!!! CONSIDER SUB-SOURCE!')
-				
-				i=self.iCurrent+1
-				for source in self.lSource[self.iCurrent+1:]:
-					if source['available']:
-						self.__printer('NEXT: Switching to {0}: {1:s}'.format(i,source['displayname']))
-						self.iCurrent = i
-						return self.iCurrent
-						break
-					i += 1
+			if self.iCurrent == None:
+				self.__printer('NEXT: No available sources!',LL_WARNING)
 
-				# Starting at beginning of the list until current source
-				i=0
-				for source in self.lSource[:self.iCurrent]:
-					if source['available']:
-						self.__printer('NEXT: Switching to {0}: {1:s}'.format(i,source['displayname']))
-						self.iCurrent = i
-						return self.iCurrent
-						break
-					i += 1
-					
+		else:
+			# Starting for loop at next source
+			
+			self.__printer('TODO!!!! CONSIDER SUB-SOURCE!')
+			
+			i=self.iCurrent+1
+			for source in self.lSource[self.iCurrent+1:]:
+				if source['available']:
+					self.__printer('NEXT: Switching to {0}: {1:s}'.format(i,source['displayname']))
+					self.iCurrent = i
+					return self.iCurrent
+					break
+				i += 1
+
+			# Starting at beginning of the list until current source
+			i=0
+			for source in self.lSource[:self.iCurrent]:
+				if source['available']:
+					self.__printer('NEXT: Switching to {0}: {1:s}'.format(i,source['displayname']))
+					self.iCurrent = i
+					return self.iCurrent
+					break
+				i += 1
+	
+		"""
+	
 	# return the complete lSource ## do we really need this?
 	def getAll( self ):
 		return copy.copy(self.lSource)
@@ -247,15 +329,28 @@ class SourceController():
 	def getAvailable( self, index ):
 		return self.lSource[index]['available']
 	
-	# return number of available sources
+	# return number of available sources, including sub-sources
 	def getAvailableCnt( self ):
-		#return len(self.lSource) # all sources
-		i=0
+		c = 0
 		for source in self.lSource:
-			if source['available']:
-				i += 1
-		return i
+			if not source['template']:
+				if source['available']:
+					c += 1
+			else:
+				for subsource in source['subsources']:
+					if subsource['available']:
+						c += 1
+		return c
 
+	# return number of available subsource for given index
+	def getAvailableSubCnt( self, index ):
+		c = 0
+		for subsource in self.lSource[index]['subsources']:
+			if subsource['available']:
+				c += 1
+		
+
+		
 	def sourceExec( self, index, sourceFunction ):
 		obj = self.lSource[index][sourceFunction][0]
 		func = self.lSource[index][sourceFunction][1]
@@ -358,4 +453,8 @@ class SourceController():
 				checkResult = getattr(obj,func)()
 		except:
 			self.__printer('ERROR: calling player function',LL_CRITICAL)
+		
+	# seek/next:
+	def sourceSeekNext( self ):
+		pass
 		
