@@ -134,7 +134,6 @@ def media_check( sourceCtrl, subSourceIx=None ):
 					return False
 				else:
 					printer(" > Music found after updating")
-					if 
 					sourceCtrl.setAvailableIx( ix, ssIx )
 					return True
 			else:
