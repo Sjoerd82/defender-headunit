@@ -8,5 +8,6 @@
   "sourceCheck": ["sources.media", "media_check"],
   "sourcePlay":  ["sources.media", "media_play"],
   "sourceStop":  ["sources.media", "media_stop"],
+  "sourceNext":  ["sources.media", "media_next"],
   "template": true
 }

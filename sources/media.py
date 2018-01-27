@@ -332,3 +332,9 @@ def media_play( sourceCtrl, subSourceIx=None ):
 def media_stop():
 	printer('Stopping (todo)')
 	return True
+	
+def media_next():
+	printer('Next track')
+	mpc = mpdController()
+	mpc.nextTrack()
+	return True

@@ -156,15 +156,17 @@ def cb_remote_btn_press2 ( func ):
 #
 def cb_remote_btn_press ( func ):
 
-	"""
-	def seek_next():
-		global dSettings
-		if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 5 or dSettings['source'] == 6:
-			mpc_next_track()
-		elif dSettings['source'] == 3:
-			bt_next()
+	#def seek_next():
+	#	Sources.sourceSeekNext()
+		
+		#global dSettings
+		#if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 5 or dSettings['source'] == 6:
+		#	mpc_next_track()
+		#elif dSettings['source'] == 3:
+		#	bt_next()
 		#fm_next ofzoiets
 
+	"""
 	def seek_prev():
 		global dSettings
 		if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 5 or dSettings['source'] == 6:
@@ -189,6 +191,10 @@ def cb_remote_btn_press ( func ):
 			Sources.sourceStop()
 			# next
 			Sources.next()
+			#res = Sources.next()
+			#if res == None:
+			# tjsa... wat??
+			
 			# update settings
 			currSrc = Sources.get(None)
 			cSettings.set('source',currSrc['name'])
@@ -233,13 +239,12 @@ def cb_remote_btn_press ( func ):
 	elif func == 'SEEK_NEXT':
 		print('\033[95m[BUTTON] Seek/Next\033[00m')
 		pa_sfx('button_feedback')
-		#DEBUG/TESTING
-		Sources.next()
+		Sources.sourceSeekNext()
 		#seek_next()
 	elif func == 'SEEK_PREV':
 		print('\033[95m[BUTTON] Seek/Prev.\033[00m')
 		pa_sfx('button_feedback')
-		seek_prev()
+		#seek_prev()
 	elif func == 'DIR_NEXT':
 		print('\033[95m[BUTTON] Next directory\033[00m')
 		if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 6:
@@ -991,8 +996,8 @@ myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 #
 
 # TESTING....
-testSs = {}	#{'mountpoint':'/media/SJOERD'}
-cSettings.set('source','fm')
+testSs = {'mountpoint':'/media/SJOERD'}
+cSettings.set('source','media')
 cSettings.set('subsource',testSs)
 cSettings.save()
 

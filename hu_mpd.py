@@ -297,6 +297,13 @@ class mpdController():
 		self.mpcd.subscribe(channel)
 		self.__disconnect()
 		
+	def nextTrack():
+		print('Next track')
+		call(["mpc", "-q", "next"])
+		
+	def prevTrack():
+		print('Prev. track')
+		call(["mpc", "-q", "prev"])
 
 
 def mpc_random_get():
@@ -432,13 +439,6 @@ def mpc_prev_folder_pos():
 
 	return iNextPos
 
-def mpc_next_track():
-	print('Next track')
-	call(["mpc", "-q", "next"])
-	
-def mpc_prev_track():
-	print('Prev. track')
-	call(["mpc", "-q", "prev"])
 
 def mpc_next_folder():
 	print('[MPC] Next folder')
