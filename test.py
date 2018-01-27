@@ -984,7 +984,7 @@ myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 
 # TESTING....
 testSs = {}	#{'mountpoint':'/media/SJOERD'}
-cSettings.set('source','smb')
+cSettings.set('source','fm')
 cSettings.set('subsource',testSs)
 cSettings.save()
 
