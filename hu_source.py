@@ -151,7 +151,7 @@ class SourceController():
 		else:
 			# if the current source is a sub-source, then first check if there are more sub-sources after the current
 			if ( not self.iCurrentSource[1] == None and
-			     self.getAvailableSubCnt(i) > self.iCurrentSource[1]+1 ):
+			     self.getAvailableSubCnt(i_start) > self.iCurrentSource[1]+1 ):
 				print "DEBUG 1"
 				# there are more available sub-sources..
 				i_start = self.iCurrentSource[0]
@@ -168,7 +168,7 @@ class SourceController():
 		#
 		# TODO CHECK IF i_start isn't at the end of the list!
 		for source in self.lSource[i_start:]:
-			
+			print "DEBUG A -- {0}".format(source)
 			# no sub-source and available:
 			if not source['template'] and source['available']:
 				self.__printer('NEXT: Switching to {0}: {1:s}'.format(i_start,source['displayname']))
@@ -180,8 +180,9 @@ class SourceController():
 			
 			# sub-source and available:
 			elif source['template'] and source['available']:
-				
+				print "DEBUG 3"
 				for subsource in source['subsources'][j_start:]:
+					print "DEBUG B -- {0}".format(source)
 					if subsource['available']:
 						self.__printer('NEXT: Switching to {0}/{1}: {2:s}'.format(i_start,j_start,subsource['displayname']))
 						self.iCurrent = i_start
