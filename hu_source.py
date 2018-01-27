@@ -162,6 +162,8 @@ class SourceController():
 
 
 				i_start += 1
+				
+		return None
 
 		#
 		# check if we have at least two sources
@@ -206,14 +208,17 @@ class SourceController():
 				j_start=0
 
 		print "DEBUG: STARTING POSITIONS ARE: {0}, {1}".format(i_start, j_start)
-		dingding(i_start, i_end, j_start)
 
-		# Still here?
-		# Let's start from the top...
-		i_start = 0
-		j_start = 0
-		print "DEBUG still here..."
-		dingding(i_start, i_end2, j_start)
+		res = dingding(i_start, i_end, j_start)
+		if res == None:
+			# Still here?
+			# Let's start from the top...
+			i_start = 0
+			j_start = 0
+			print "DEBUG still here..."
+			dingding(i_start, i_end2, j_start)
+		else:
+			return res
 		
 		"""
 		
