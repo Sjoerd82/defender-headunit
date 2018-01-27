@@ -108,7 +108,8 @@ class SourceController():
 		#	return False
 		elif self.lSource[index]['available']:
 			self.__printer('Setting active source to {0}: {1:s}'.format(index,self.lSource[index]['displayname']))
-			self.iCurrent = index
+			self.iCurrent = index #TODO: OLD REMOVE
+			self.iCurrentSource[0] = index
 
 			# NEW: SUBSOURCES:
 			if not subIndex == None:
