@@ -133,10 +133,10 @@ def media_check( sourceCtrl, subSourceIx=None ):
 					return False
 				else:
 					printer(" > Music found after updating")
-					sourceCtrl.setAvailableIx( ix, ssIx )
+					sourceCtrl.setAvailableIx( ix, True, ssIx )
 					return True
 			else:
-				sourceCtrl.setAvailableIx( ix, ssIx )
+				sourceCtrl.setAvailableIx( ix, True, ssIx )
 				return True
 		ssIx+=1
 
