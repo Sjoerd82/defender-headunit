@@ -125,7 +125,6 @@ def media_check( sourceCtrl, subSourceIx=None ):
 			return False
 		else:
 			printer(" > Removable music directory present and has files.",LL_INFO,True)
-			
 			if not mpc.dbCheckDirectory( sLocalMusicMPD ):
 				printer(" > Running MPD update for this directory.. ALERT! LONG BLOCKING OPERATION AHEAD...")
 				mpc.update( sLocalMusicMPD )
@@ -137,6 +136,7 @@ def media_check( sourceCtrl, subSourceIx=None ):
 					sourceCtrl.setAvailableIx( ix, ssIx )
 					return True
 			else:
+				sourceCtrl.setAvailableIx( ix, ssIx )
 				return True
 		ssIx+=1
 
