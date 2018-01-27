@@ -199,8 +199,8 @@ class SourceController():
 			else:
 				print "DEBUG 2"
 				# no more available sub-sources
-				i_end2 = i_start-1
 				i_start = self.iCurrentSource[0]+1
+				i_end2 = i_start-1
 				j_start=0
 
 		print "DEBUG: STARTING POSITIONS ARE: {0}, {1}".format(i_start, j_start)
