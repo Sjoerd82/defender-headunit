@@ -194,12 +194,14 @@ class SourceController():
 				print "DEBUG 1"
 				# there are more available sub-sources..
 				i_start = self.iCurrentSource[0]
+				i_end = None
 				i_end2 = i_start-1
 				j_start = self.iCurrentSource[1]+1	#next sub-source (+1) isn't neccesarily available, but this will be checked later
 			else:
 				print "DEBUG 2"
 				# no more available sub-sources
 				i_start = self.iCurrentSource[0]+1
+				i_end = None
 				i_end2 = i_start-1
 				j_start=0
 
