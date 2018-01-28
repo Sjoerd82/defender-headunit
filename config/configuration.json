@@ -6,7 +6,7 @@
 	"default_settings": {
 		  "volume": 20
 		, "source": ""
-		, "subsource": {}
+		, "source_settings": {}
 		, "runcount": 0
 	},
 	"directories": {
