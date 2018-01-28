@@ -198,14 +198,31 @@ def cb_remote_btn_press ( func ):
 			currSrc = Sources.get(None)
 			cSettings.set('source',currSrc['name'])
 			
+			# TODO: make this better... somehow.
+			if currSrc['name'] == 'fm':
+				source_settings = {'freq':'101.10'}	# TODO
+			elif currSrc['name'] == 'media':
+				source_settings = { 'label':currSrc['label'], 'uuid':currSrc['uuid'] }
+			elif currSrc['name'] == 'locmus':
+				source_settings = { 'mountpoint':currSrc['mountpoint'] }
+			elif currSrc['name'] == 'bt':
+				source_settings = {}
+			elif currSrc['name'] == 'line':
+				source_settings = {}				
+			elif currSrc['name'] == 'stream':
+				source_settings = { 'uri':'' }	#TODO
+			elif currSrc['name'] == 'smb':
+				source_settings = { 'mpd_dir':'music' }	#TODO
+			
+			cSettings.set('source_settings'),source_settings)
+			
 			# TODO!!
-			printer('TODO!! save subsoure to settings') # add to source_stop() functionss..
+			#printer('TODO!! save subsoure to settings') # add to source_stop() functionss.. #no better to handle it here.. source has no notion of operational settings..
 
 			#testSs = {'mountpoint':'/media/SJOERD'}
 			#cSettings.set('source','media')
 			#cSettings.set('subsource',testSs)
-		
-
+			"""
 			if 'label' in currSrc:
 				cSettings.set('label',currSrc['label'])
 			else:
@@ -214,6 +231,7 @@ def cb_remote_btn_press ( func ):
 				cSettings.set('uuid',currSrc['uuid'])
 			else:
 				cSettings.set('uuid',"")
+			"""
 			# play
 			Sources.sourcePlay()
 
