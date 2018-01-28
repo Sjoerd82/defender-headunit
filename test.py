@@ -240,7 +240,9 @@ def cb_remote_btn_press ( func ):
 	elif func == 'SEEK_NEXT':
 		print('\033[95m[BUTTON] Seek/Next\033[00m')
 		pa_sfx('button_feedback')
+		print "DEBUG 1"
 		Sources.sourceSeekNext()
+		print "DEBUG 2"
 		#seek_next()
 	elif func == 'SEEK_PREV':
 		print('\033[95m[BUTTON] Seek/Prev.\033[00m')
