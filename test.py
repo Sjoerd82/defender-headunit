@@ -214,7 +214,7 @@ def cb_remote_btn_press ( func ):
 			elif currSrc['name'] == 'smb':
 				source_settings = { 'mpd_dir':'music' }	#TODO
 			
-			cSettings.set('source_settings'),source_settings)
+			cSettings.set('source_settings',source_settings)
 			
 			# TODO!!
 			#printer('TODO!! save subsoure to settings') # add to source_stop() functionss.. #no better to handle it here.. source has no notion of operational settings..
