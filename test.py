@@ -642,7 +642,7 @@ def add_a_source( plugindir, sourcePluginName ):
 	# TODO
 	
 	sourceModule = sys.modules['sources.'+sourcePluginName]
-	for execFunction in ('sourceInit','sourceCheck','sourcePlay','sourceStop'):
+	for execFunction in ('sourceInit','sourceCheck','sourcePlay','sourceStop','sourceNext'):
 		if execFunction in config:
 			#overwrite string with reference to module
 			config[execFunction][0] = sys.modules['sources.'+sourcePluginName]
