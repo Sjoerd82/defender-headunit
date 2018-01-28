@@ -241,11 +241,10 @@ def cb_remote_btn_press ( func ):
 		print('\033[95m[BUTTON] Seek/Next\033[00m')
 		pa_sfx('button_feedback')
 		Sources.sourceSeekNext()
-		#seek_next()
 	elif func == 'SEEK_PREV':
 		print('\033[95m[BUTTON] Seek/Prev.\033[00m')
 		pa_sfx('button_feedback')
-		#seek_prev()
+		Sources.sourceSeekPrev()
 	elif func == 'DIR_NEXT':
 		print('\033[95m[BUTTON] Next directory\033[00m')
 		if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 6:
