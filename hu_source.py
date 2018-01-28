@@ -477,7 +477,8 @@ class SourceController():
 		
 	# seek/next:
 	def sourceSeekNext( self ):
-	
+		pass
+		"""
 		if self.iCurrent == None:
 			self.__printer('STOP: No current source',LL_WARNING)
 			return False
@@ -485,6 +486,6 @@ class SourceController():
 		if 'sourceNext' not in self.lSource[self.iCurrent] or self.lSource[self.iCurrent]['sourceNext'] == None:
 			self.__printer('NEXT: function not defined',LL_WARNING)
 			return False
-
+		"""
 		
 		
