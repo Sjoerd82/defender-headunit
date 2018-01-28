@@ -57,3 +57,11 @@ def bt_stop():
 	except:
 		print('[BT] FAILED -- TODO!')
 		return False
+
+def bt_next( sourceCtrl ):
+	printer('Next track')
+	return True
+
+def bt_prev( sourceCtrl ):
+	printer('Prev track')
+	return True

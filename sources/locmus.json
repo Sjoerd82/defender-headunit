@@ -8,5 +8,7 @@
   "sourceCheck": ["", "locmus_check"],
   "sourcePlay":  ["", "locmus_play"],
   "sourceStop":  ["", "locmus_stop"],
+  "sourceNext":  ["", "locmus_next"],
+  "sourcePrev":  ["", "locmus_prev"],
   "template": true
 }

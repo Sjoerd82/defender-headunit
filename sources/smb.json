@@ -4,9 +4,11 @@
   "type": "mpd",
   "depNetwork": true,
   "controls": {"ffwd": false, "rwnd": false, "prev": true, "next": true},
-  "sourceInit":  ["sources.smb", "smb_init"],
-  "sourceCheck": ["sources.smb", "smb_check"],
-  "sourcePlay":  ["sources.smb", "smb_play"],
-  "sourceStop":  ["sources.smb", "smb_stop"],
+  "sourceInit":  ["", "smb_init"],
+  "sourceCheck": ["", "smb_check"],
+  "sourcePlay":  ["", "smb_play"],
+  "sourceStop":  ["", "smb_stop"],
+  "sourceNext":  ["", "smb_next"],
+  "sourcePrev":  ["", "smb_prev"],
   "template": true
 }

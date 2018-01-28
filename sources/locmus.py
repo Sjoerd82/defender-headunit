@@ -210,3 +210,15 @@ def locmus_stop():
 	# stop playback
 	mpc.mpc_stop()
 	return True
+
+def media_next( sourceCtrl ):
+	printer('Next track')
+	mpc = mpdController()
+	mpc.nextTrack()
+	return True
+
+def media_prev( sourceCtrl ):
+	printer('Prev track')
+	mpc = mpdController()
+	mpc.prevTrack()
+	return True

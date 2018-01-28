@@ -5,8 +5,10 @@
   "type": "bt",
   "depNetwork": false,
   "controls": {"ffwd": false, "rwnd": false, "prev": true, "next": true},
-  "sourceCheck": ["plugin_sources.bt", "bt_check"],
-  "sourcePlay":  ["plugin_sources.bt", "bt_play"],
-  "sourceStop":  ["plugin_sources.bt", "bt_stop"],
+  "sourceCheck": ["", "bt_check"],
+  "sourcePlay":  ["", "bt_play"],
+  "sourceStop":  ["", "bt_stop"],
+  "sourceNext":  ["", "bt_next"],
+  "sourcePrev":  ["", "bt_prev"],
   "template": false
 }

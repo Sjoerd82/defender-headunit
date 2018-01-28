@@ -338,3 +338,9 @@ def media_next( sourceCtrl ):
 	mpc = mpdController()
 	mpc.nextTrack()
 	return True
+
+def media_prev( sourceCtrl ):
+	printer('Prev track')
+	mpc = mpdController()
+	mpc.prevTrack()
+	return True

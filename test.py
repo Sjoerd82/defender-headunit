@@ -997,10 +997,10 @@ myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 #
 
 # TESTING....
-testSs = {'mountpoint':'/media/SJOERD'}
-cSettings.set('source','media')
-cSettings.set('subsource',testSs)
-cSettings.save()
+#testSs = {'mountpoint':'/media/SJOERD'}
+#cSettings.set('source','media')
+#cSettings.set('subsource',testSs)
+#cSettings.save()
 
 prevSource = cSettings.get_key('source')
 prevSourceSub = cSettings.get_key('subsource')

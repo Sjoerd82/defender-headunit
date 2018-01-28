@@ -122,3 +122,15 @@ def stream_stop():
 	#mpc $params_mpc -q stop
 	#mpc $params_mpc -q clear	
 	return True
+
+def stream_next( sourceCtrl ):
+	printer('Next track')
+	mpc = mpdController()
+	mpc.nextTrack()
+	return True
+
+def stream_prev( sourceCtrl ):
+	printer('Prev track')
+	mpc = mpdController()
+	mpc.prevTrack()
+	return True

@@ -168,3 +168,15 @@ def smb_play( sourceCtrl, subSourceIx=None ):
 def smb_stop():
 	printer('stop')
 	return True
+
+def smb_next( sourceCtrl ):
+	printer('Next track')
+	mpc = mpdController()
+	mpc.nextTrack()
+	return True
+
+def smb_prev( sourceCtrl ):
+	printer('Prev track')
+	mpc = mpdController()
+	mpc.prevTrack()
+	return True
