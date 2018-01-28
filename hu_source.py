@@ -485,9 +485,26 @@ class SourceController():
 			self.__printer('NEXT: function not defined',LL_WARNING)
 			return False
 		
+		try:
+			obj = self.lSource[self.iCurrent]['sourceNext'][0]
+			func = self.lSource[self.iCurrent]['sourceNext'][1]
+			checkResult = getattr(obj,func)(self)
+		except:
+			self.__printer('ERROR: calling next function',LL_ERROR)
+
+	# seek/prev:
+	def sourceSeekPrev( self ):
+		if self.iCurrent == None:
+			self.__printer('STOP: No current source',LL_WARNING)
+			return False
+
+		if 'sourcePrev' not in self.lSource[self.iCurrent] or self.lSource[self.iCurrent]['sourcePrev'] == None:
+			self.__printer('PREV: function not defined',LL_WARNING)
+			return False
+		
 		#try:
-		obj = self.lSource[self.iCurrent]['sourceNext'][0]
-		func = self.lSource[self.iCurrent]['sourceNext'][1]
+		obj = self.lSource[self.iCurrent]['sourcePrev'][0]
+		func = self.lSource[self.iCurrent]['sourcePrev'][1]
 		checkResult = getattr(obj,func)(self)
 		#except:
 		#	self.__printer('ERROR: calling next function',LL_ERROR)

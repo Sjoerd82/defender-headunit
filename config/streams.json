@@ -1,0 +1,38 @@
+{
+	"group": [
+		"group name": "NPO"
+		{ "name": "NPO 3FM",
+		  "uri" : "http://icecast.omroep.nl/3fm-bb-mp3" } ]
+
+	"group": [
+		"group name": "NL Commercial"
+		{ "name": "BNR",
+		  "uri" : "http://icecast-bnr.cdp.triple-it.nl/bnr_mp3_96_06" },
+		{ "name": "QMusic",
+		  "uri" : "http://icecast-qmusic.cdp.triple-it.nl/Qmusic_nl_live_96.mp3" },
+		{ "name": "QMusic Foute Uur",
+		  "uri" : "http://icecast-qmusic.cdp.triple-it.nl:80/Qmusic_nl_fouteuur_96.mp3" },
+		{ "name": "538",
+		  "uri" : "http://vip-icecast.538.lw.triple-it.nl:80/RADIO538_MP3" },
+		{ "name": "Arrow Classic Rock",
+		  "uri" : "http://91.221.151.155:80" },
+		{ "name": "Sky Radio",
+		  "uri" : "http://20103.live.streamtheworld.com:80/SKYRADIO_SC" } ]
+
+	"group": [
+		"group name": "International 1"
+		{ "name": "BBC World Service",
+		  "uri" : "http://bbcwssc.ic.llnwd.net/stream/bbcwssc_mp1_ws-eieuk" },
+		{ "name": "BBC Radio 2",
+		  "uri" : "http://as-hls-ww-live.bbcfmt.hs.llnwd.net/pool_7/live/bbc_radio_two/bbc_radio_two.isml/bbc_radio_two-audio%3d96000.norewind.m3u8" } ]
+		  
+	"group": [
+		"group name": "International 2"
+		{ "name": "KEXP",
+		  "uri" : "http://live-aacplus-64.kexp.org/kexp64.aac" },
+		{ "name": "KCRW",
+		  "uri" : "http://kcrw.streamguys1.com/kcrw_192k_mp3_on_air_internet_radio" },
+		{ "name": "Irish Pub Radio",
+		  "uri" : "http://178.32.219.72:8326" } ]
+
+}

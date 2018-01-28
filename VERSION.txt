@@ -3,7 +3,7 @@
  > First release to save all development before major code changes.
 
  Version v0.2.0 (ALPHA)
- > Mostly rewritten in better code
+ > Full rewrite in better code
  - CODE: Added SOURCE class, handling sources
  - CODE: SOURCE plugins
  - CODE: CONTROL plugins
@@ -53,6 +53,7 @@ PLANNED RELEASES
  Version v?.?.?
  - Add Battery support (batt. level, etc.)
  - INPUT: GPIO buttons
+ - CONFIG: "retain random on source switch" > Normally off, make it configurable.
 
  Version v?.?.?
  - Add Source: Spotify, Deezer, Last.fm, ...

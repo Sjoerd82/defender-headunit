@@ -110,7 +110,7 @@ CONFIG_FILE_DEFAULT = '/mnt/PIHU_APP/defender-headunit/config/configuration.json
 CONFIG_FILE = '/mnt/PIHU_CONFIG/configuration.json'
 VERSION = "1.0.0"
 
-hu_details = { 'track':None }
+hu_details = { 'track':None, 'random':False, 'repeat':True }
 
 
 def random( dummy ):
