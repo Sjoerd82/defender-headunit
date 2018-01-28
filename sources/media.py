@@ -333,7 +333,7 @@ def media_stop():
 	printer('Stopping (todo)')
 	return True
 	
-def media_next():
+def media_next( sourceCtrl ):
 	printer('Next track')
 	mpc = mpdController()
 	mpc.nextTrack()

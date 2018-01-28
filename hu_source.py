@@ -486,9 +486,9 @@ class SourceController():
 			self.__printer('NEXT: function not defined',LL_WARNING)
 			return False
 		
-		try:
-			obj = self.lSource[self.iCurrent]['sourceNext'][0]
-			func = self.lSource[self.iCurrent]['sourceNext'][1]
-			checkResult = getattr(obj,func)(self)
-		except:
-			self.__printer('ERROR: calling next function',LL_ERROR)
+		#try:
+		obj = self.lSource[self.iCurrent]['sourceNext'][0]
+		func = self.lSource[self.iCurrent]['sourceNext'][1]
+		checkResult = getattr(obj,func)(self)
+		#except:
+		#	self.__printer('ERROR: calling next function',LL_ERROR)
