@@ -188,9 +188,7 @@ def cb_remote_btn_press ( func ):
 		pa_sfx('button_feedback')
 		# if more than one source available...
 		if Sources.getAvailableCnt() > 1:
-			# stop
 			Sources.sourceStop()
-			# next
 			Sources.next()
 			#res = Sources.next()
 			#if res == None:
@@ -201,7 +199,7 @@ def cb_remote_btn_press ( func ):
 			cSettings.set('source',currSrc['name'])
 			
 			# TODO!!
-			printer('TODO!! save subsoure to settings')
+			printer('TODO!! save subsoure to settings') # add to source_stop() functionss..
 
 			#testSs = {'mountpoint':'/media/SJOERD'}
 			#cSettings.set('source','media')

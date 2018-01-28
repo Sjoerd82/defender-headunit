@@ -111,7 +111,7 @@ def stream_play( sourceCtrl, subSourceIx=None ):
 	
 	return True
 		
-def stream_stop():
+def stream_stop( sourceCtrl ):
 	print('Stopping source: stream. Saving playlist position and clearing playlist.')
 	
 	# save position and current file name for this drive

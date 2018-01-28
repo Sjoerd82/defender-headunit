@@ -26,7 +26,7 @@ def linein_play():
 	#TODO
 	return True
 
-def linein_stop():
+def linein_stop( sourceCtrl ):
 	printer('[LINE] Stop')
 	return True
 

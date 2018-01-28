@@ -165,7 +165,7 @@ def smb_play( sourceCtrl, subSourceIx=None ):
 
 	return True
 
-def smb_stop():
+def smb_stop( sourceCtrl ):
 	printer('stop')
 	return True
 

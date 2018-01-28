@@ -200,7 +200,7 @@ def locmus_play( sourceCtrl, subSourceIx=None ):
 #	mpc_get_PlaylistDirs_thread.start()
 	return True
 
-def locmus_stop():
+def locmus_stop( sourceCtrl ):
 	printer('[LOCMUS] Stopping source: locmus. Saving playlist position and clearing playlist.')
 	mpc = mpdwrapper()
 

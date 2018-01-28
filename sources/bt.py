@@ -43,7 +43,7 @@ def bt_play():
 		print('[BT] FAILED -- TODO!')
 		return False
 
-def bt_stop():
+def bt_stop( sourceCtrl ):
 	print('[BT] Stop playing Bluetooth...')
 	print(' ..  Player: {0}'.format(sBtPlayer))
 

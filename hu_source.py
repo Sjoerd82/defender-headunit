@@ -467,11 +467,7 @@ class SourceController():
 		try:
 			obj = self.lSource[self.iCurrent]['sourceStop'][0]
 			func = self.lSource[self.iCurrent]['sourceStop'][1]
-			if self.lSource[self.iCurrent]['sourceStop'].count == 3:
-				params = self.lSource[self.iCurrent]['sourceStop'][2]
-				checkResult = getattr(obj,func)(params)
-			else:
-				checkResult = getattr(obj,func)()
+			checkResult = getattr(obj,func)(self)
 		except:
 			self.__printer('ERROR: calling player function',LL_CRITICAL)
 		
