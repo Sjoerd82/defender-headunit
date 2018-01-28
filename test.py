@@ -188,52 +188,61 @@ def cb_remote_btn_press ( func ):
 		pa_sfx('button_feedback')
 		# if more than one source available...
 		if Sources.getAvailableCnt() > 1:
-			Sources.sourceStop()
-			Sources.next()
-			#res = Sources.next()
-			#if res == None:
-			# tjsa... wat??
 			
-			# update settings
-			currSrc = Sources.get(None)
-			cSettings.set('source',currSrc['name'])
-			
-			# TODO: make this better... somehow.
-			if currSrc['name'] == 'fm':
-				source_settings = {'freq':'101.10'}	# TODO
-			elif currSrc['name'] == 'media':
-				source_settings = { 'label':currSrc['label'], 'uuid':currSrc['uuid'] }
-			elif currSrc['name'] == 'locmus':
-				source_settings = { 'mountpoint':currSrc['mountpoint'] }
-			elif currSrc['name'] == 'bt':
-				source_settings = {}
-			elif currSrc['name'] == 'line':
-				source_settings = {}				
-			elif currSrc['name'] == 'stream':
-				source_settings = { 'uri':'' }	#TODO
-			elif currSrc['name'] == 'smb':
-				source_settings = { 'mpd_dir':'music' }	#TODO
-			
-			cSettings.set('source_settings',source_settings)
-			
-			# TODO!!
-			#printer('TODO!! save subsoure to settings') # add to source_stop() functionss.. #no better to handle it here.. source has no notion of operational settings..
+			# go to next source
+			res = Sources.next()
+			if not res == None:
 
-			#testSs = {'mountpoint':'/media/SJOERD'}
-			#cSettings.set('source','media')
-			#cSettings.set('subsource',testSs)
-			"""
-			if 'label' in currSrc:
-				cSettings.set('label',currSrc['label'])
-			else:
-				cSettings.set('label',"")
-			if 'uuid' in currSrc:
-				cSettings.set('uuid',currSrc['uuid'])
-			else:
-				cSettings.set('uuid',"")
-			"""
-			# play
-			Sources.sourcePlay()
+				# if succesful, play new source
+				Sources.sourceStop()
+				Sources.sourcePlay()
+			
+				# update operational settings
+				arCurrIx = Sources.getIndexCurrent()
+				
+				if arCurrIx[1] == None:
+					currSrc = Sources.get(None)
+				else:
+					currSrc = Sources.getSubSource(arCurrIx[0],arCurrIx[1])
+					
+				cSettings.set('source',currSrc['name'])
+							
+				# TODO: make this better... somehow.
+				if currSrc['name'] == 'fm':
+					source_settings = {'freq':'101.10'}	# TODO
+				elif currSrc['name'] == 'media':
+					source_settings = { 'label':currSrc['label'], 'uuid':currSrc['uuid'] }
+				elif currSrc['name'] == 'locmus':
+					source_settings = { 'mountpoint':currSrc['mountpoint'] }
+				elif currSrc['name'] == 'bt':
+					source_settings = {}
+				elif currSrc['name'] == 'line':
+					source_settings = {}				
+				elif currSrc['name'] == 'stream':
+					source_settings = { 'uri':'' }	#TODO
+				elif currSrc['name'] == 'smb':
+					source_settings = { 'mpd_dir':'music' }	#TODO
+				
+				cSettings.set('source_settings',source_settings)
+
+				# TODO!!
+				#printer('TODO!! save subsoure to settings') # add to source_stop() functionss.. #no better to handle it here.. source has no notion of operational settings..
+
+				#testSs = {'mountpoint':'/media/SJOERD'}
+				#cSettings.set('source','media')
+				#cSettings.set('subsource',testSs)
+				"""
+				if 'label' in currSrc:
+					cSettings.set('label',currSrc['label'])
+				else:
+					cSettings.set('label',"")
+				if 'uuid' in currSrc:
+					cSettings.set('uuid',currSrc['uuid'])
+				else:
+					cSettings.set('uuid',"")
+				"""
+				# play
+			
 
 		elif Sources.getAvailableCnt() == 1:
 			print('Only one source availble. Ignoring button.')

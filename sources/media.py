@@ -22,6 +22,7 @@ def media_add( dir, label, uuid, sourceCtrl ):
 	
 	# construct the subsource
 	subsource = {}
+	subsource['name'] = 'media'
 	subsource['displayname'] = 'media: ' + dir
 	subsource['order'] = 0		# no ordering
 	subsource['mountpoint'] = dir

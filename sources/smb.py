@@ -25,6 +25,7 @@ def smb_add( dir, path, sourceCtrl ):
 	
 	# construct the subsource
 	subsource = {}
+	subsource['name'] = 'smb'
 	subsource['displayname'] = 'smb: ' + dir
 	subsource['order'] = 0		# no ordering
 	subsource['mountpoint'] = dir

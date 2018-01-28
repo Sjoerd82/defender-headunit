@@ -125,7 +125,7 @@ class SourceController():
 
 
 	# make the next available source the current, returns the new active source index
-	# TODO: handle sub-source
+	# return None if not succesful
 	def next( self ):
 
 		def dingding(i_start, i_end, j_start):
