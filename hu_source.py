@@ -477,7 +477,6 @@ class SourceController():
 		
 	# seek/next:
 	def sourceSeekNext( self ):
-		print "DEBUG A"
 		if self.iCurrent == None:
 			self.__printer('STOP: No current source',LL_WARNING)
 			return False

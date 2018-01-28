@@ -297,11 +297,11 @@ class mpdController():
 		self.mpcd.subscribe(channel)
 		self.__disconnect()
 		
-	def nextTrack():
+	def nextTrack( self ):
 		print('Next track')
 		call(["mpc", "-q", "next"])
 		
-	def prevTrack():
+	def prevTrack( self ):
 		print('Prev. track')
 		call(["mpc", "-q", "prev"])
 
