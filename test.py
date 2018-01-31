@@ -12,10 +12,11 @@
 #  - Not all next() source functions update the settings
 
 #********************************************************************************
-# CONFIGURATION
+# CONFIGURATION and SETTINGS
 #
-# configuration.json		Main configuration file
-# dSettings.json			Operational settings (will be created if not found)
+# configuration.json		Main configuration file (json)
+# dSettings.json			Operational settings (json)
+# mp_<id>.p					Operational source settings, to continue playback (pickled)
 # 
 
 #********************************************************************************
@@ -140,7 +141,7 @@ def volume_up():
 
 def volume_down():
 	return None
-
+	
 # ********************************************************************************
 # Output wrapper
 #
@@ -208,15 +209,25 @@ def cb_remote_btn_press ( func ):
 				Sources.sourceStop()
 				Sources.sourcePlay()
 			
+				#
 				# update operational settings
-				arCurrIx = Sources.getIndexCurrent()
+				#
 				
+				# get current index(es)
+				arCurrIx = Sources.getIndexCurrent()
 				if arCurrIx[1] == None:
 					currSrc = Sources.get(None)
 				else:
 					currSrc = Sources.getSubSource(arCurrIx[0],arCurrIx[1])
-					
+				
+				# update source
 				cSettings.set('source',currSrc['name'])
+				
+				# update sub-source key (in case of sub-source)
+				if not arCurrIx[1] == None:
+					print currSrc
+					#for key in subsource_key
+					#cSettings.set('subsourcekey', )
 
 				# update display
 				hudispdata = {}
@@ -398,19 +409,24 @@ def cb_mpd_event( event ):
 				
 	elif event == "update":
 		printer(" ...  database update started or finished (no action)", tag='MPD')
+		
 	elif event == "database":
 		printer(" ...  database updated with new music #TODO", tag='MPD')
+		
 	elif event == "playlist":
 		priner(" ...  playlist changed (no action)", tag='MPD')
 	#elif event == "media_removed":
 	#elif event == "media_ready":
+	
 	elif event == "ifup":
 		printer(" ...  WiFi interface up: checking network related sources", tag='MPD')
 		stream_check()
 		smb_check()
+		
 	elif event == "ifdown":
 		printer(" ...  WiFi interface down: marking network related sources unavailable", tag='MPD')
 		Sources.setAvailable('depNetwork',True,False)
+		
 	else:
 		printer(' ...  unknown event (no action)', tag='MPD')
 		
@@ -418,11 +434,17 @@ def cb_mpd_event( event ):
 def cb_timer1():
 
 	global cSettings
+	global disp
 
 	printer('Interval function [30 second]', level=LL_DEBUG, tag="TIMER1")
 
 	# save settings (hu_settings)
 	cSettings.save()
+	
+	hudispdata = {}
+	hudispdata['src'] = "USB"		#temp.
+	disp.dispdata(hudispdata)
+
 	return True
 
 def cb_udisk_dev_add( device ):
@@ -961,7 +983,7 @@ pa_sfx_load( configuration['directories']['sfx'] )
 #
 # Load operational settings
 #
-#
+#			#TODO: change this name
 cSettings = huSettings( os.path.join(configuration['directories']['config'],configuration['files']['settings']),
                         defaultSettings=configuration['default_settings'] )
 
@@ -1080,29 +1102,6 @@ for filename in os.listdir( configuration['directories']['output'] ):
 # NOTE: This can really interfere, in a way I don't understand.. executing the threads later helps... somehow..
 # NOTE: For NOW, we'll just execute the threads after the loading of the "other" plugins...
 
-#
-# Initialize the mainloop
-#
-DBusGMainLoop(set_as_default=True)
-
-
-#
-# main loop
-#
-mainloop = gobject.MainLoop()
-
-#
-# DBus: system bus
-# On a root only embedded system there may not be a usable session bus
-#
-bus = dbus.SystemBus()
-
-# Output
-disp = dbusDisplay(bus)
-hudispdata = {}
-hudispdata['src'] = "USB"		#temp.
-disp.dispdata(hudispdata)
-
 
 #
 # Load mpd dbus listener
@@ -1215,11 +1214,31 @@ else:
 # Main loop
 #
 
+#
+# Initialize the mainloop
+#
+DBusGMainLoop(set_as_default=True)
+
+
+#
+# main loop
+#
+mainloop = gobject.MainLoop()
+
 
 #
 # 30 second timer
 #
 gobject.timeout_add_seconds(30,cb_timer1)
+
+#
+# DBus: system bus
+# On a root only embedded system there may not be a usable session bus
+#
+bus = dbus.SystemBus()
+
+# Output
+disp = dbusDisplay(bus)
 
 
 """

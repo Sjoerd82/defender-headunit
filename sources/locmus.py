@@ -133,7 +133,7 @@ class sourceClass():
 		#
 		# variables
 		#
-		
+		return True
 		# get directory to play, directory is relative to MPD music dir.
 		ix = sourceCtrl.getIndex('name','locmus')
 		subsource = sourceCtrl.getSubSource( ix, subSourceIx )

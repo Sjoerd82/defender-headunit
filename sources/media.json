@@ -4,11 +4,6 @@
   "type": "mpd",
   "depNetwork": false,
   "controls": {"ffwd": true, "rwnd": true, "prev": true, "next": true},
-  "sourceInit":  ["", "media_init"],
-  "sourceCheck": ["", "media_check"],
-  "sourcePlay":  ["", "media_play"],
-  "sourceStop":  ["", "media_stop"],
-  "sourceNext":  ["", "media_next"],
-  "sourcePrev":  ["", "media_prev"],
-  "template": true
+  "template": true,
+  "subsource_key": ['uuid','label']
 }
