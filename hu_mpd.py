@@ -38,8 +38,8 @@ class mpdController():
 			printer(' > Version: {0}'.format(self.mpdc.mpd_version))          # print the MPD version
 			self.mpdc.random(0)
 			self.mpdc.repeat(1)	
-			#self.mpdc.send_idle()
-			self.mpdc.idle()	#keep the connection open...
+			#self.mpdc.idle()		#keep the connection open... But this blocks :(
+			self.mpdc.send_idle()	#keep the connection open... Non-blocking..
 			#self.mpdc.close()
 			#self.mpdc.disconnect()
 		except:
@@ -74,7 +74,7 @@ class mpdController():
 		self.mpdc.noidle()
 		self.mpdc.stop()
 		self.mpdc.clear()
-		self.mpdc.idle()
+		self.mpdc.send_idle()
 		#self.__disconnect()
 
 		#print self.mpdc.command_list_end()
@@ -120,7 +120,7 @@ class mpdController():
 		
 		#self.__disconnect()
 		#oMpdClient.send_idle()
-		self.mpdc.idle()
+		self.mpdc.send_idle()
 		
 	def playlistIsPop( self ):
 		printer('Checking if playlist is populated')
@@ -130,7 +130,7 @@ class mpdController():
 		self.mpdc.command_list_ok_begin()
 		self.mpdc.status()
 		results = self.mpdc.command_list_end()
-		self.mpdc.idle()
+		self.mpdc.send_idle()
 
 		#self.__disconnect()
 		return results[0]['playlistlength']
@@ -307,7 +307,7 @@ class mpdController():
 		#self.__connect()
 		self.mpdc.noidle()
 		self.mpcd.subscribe(channel)
-		self.mpdc.idle()
+		self.mpdc.send_idle()
 		#self.__disconnect()
 		
 	def nextTrack( self ):
