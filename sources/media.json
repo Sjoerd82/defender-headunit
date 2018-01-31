@@ -5,5 +5,5 @@
   "depNetwork": false,
   "controls": {"ffwd": true, "rwnd": true, "prev": true, "next": true},
   "template": true,
-  "subsource_key": ['uuid','label']
+  "subsource_key": ["uuid","label"]
 }
