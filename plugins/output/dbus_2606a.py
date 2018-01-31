@@ -383,8 +383,8 @@ def cb_display( displaydata ):
 	print displaydata
 	
 	if 'src' in displaydata:
-		if 'src' in displaydata_cdc:
-			if not displaydata_cdc['src'] == displaydata['src']:
+		if 'src' in self.displaydata_cdc:
+			if not self.displaydata_cdc['src'] == displaydata['src']:
 				#max 4 chars:
 				self.set_fb_str(1,1,displaydata[:4].ljust(4))			
 		else:
@@ -393,8 +393,8 @@ def cb_display( displaydata ):
 		
 
 	if 'upd' in displaydata:
-		if 'upd' in displaydata_cdc:
-			if not displaydata_cdc['upd'] == displaydata['upd']:
+		if 'upd' in self.displaydata_cdc:
+			if not self.displaydata_cdc['upd'] == displaydata['upd']:
 				if displaydata['upd'] == '1':
 					self.set_fb_str(1,5,'UPD')
 				else:
@@ -406,8 +406,8 @@ def cb_display( displaydata ):
 					self.set_fb_str(1,5,'   ')				
 
 	if 'rnd' in displaydata:
-		if 'rnd' in displaydata_cdc:
-			if not displaydata_cdc['rnd'] == displaydata['rnd']:
+#		if 'rnd' in displaydata_cdc:
+#			if not displaydata_cdc['rnd'] == displaydata['rnd']:
 
 		if displaydata['rnd'] == '1':
 			self.set_fb_str(1,9,'RND')
@@ -415,8 +415,8 @@ def cb_display( displaydata ):
 			self.set_fb_str(1,9,'   ')
 			
 	if 'att' in displaydata:
-		if 'att' in displaydata_cdc:
-			if not displaydata_cdc['att'] == displaydata['att']:
+#		if 'att' in displaydata_cdc:
+#			if not displaydata_cdc['att'] == displaydata['att']:
 
 		if displaydata['att'] == '1':
 			self.set_fb_str(1,13,'ATT')
@@ -424,7 +424,7 @@ def cb_display( displaydata ):
 			self.set_fb_str(1,13,'   ')
 
 	#todo... merge!
-	displaydata_cdc = displaydata
+	self.displaydata_cdc = displaydata
 	
 	
 	#if bla == 'src_usb':
