@@ -901,10 +901,13 @@ def QuickPlay( prevSource, prevSourceSub ):
 # DBus Signals
 #
 
-@dbus.service.signal("com.arctura.display", signature='s')
-def hello(self, data):
-	return "Hello"
+class DbusTest(dbus.service.Object):
+    def __init__(self, conn, object_path='/com/arctura/display'):
+        dbus.service.Object.__init__(self, conn, object_path)
 
+	@dbus.service.signal("com.arctura.display", signature='s')
+	def hello(self, data):
+		return "Hello"
 
 #********************************************************************************
 #
@@ -1046,7 +1049,7 @@ for filename in os.listdir( configuration['directories']['output'] ):
 			pathfilename = os.path.join( configuration['directories']['output'], filename )
 			t = threading.Thread(target=plugin_execute, args=(pathfilename,))
 			t.setDaemon(True)
-			threads.append(t)
+			#threads.append(t)
 			#t.start()	WORKAROUND
 			
 # NOTE: Plugins are now loading in the background, in parallel to code below.
@@ -1081,8 +1084,6 @@ for t in threads:
 mpdc = mpdController()
 
 myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
-
-hello("test!")
 
 #
 # end of initialization
@@ -1195,6 +1196,9 @@ bus.add_signal_receiver(cb_remote_btn_press, dbus_interface = "com.arctura.remot
 bus.add_signal_receiver(cb_remote_btn_press2, dbus_interface = "com.arctura.keyboard")
 bus.add_signal_receiver(cb_udisk_dev_add, signal_name='DeviceAdded', dbus_interface="org.freedesktop.UDisks")
 bus.add_signal_receiver(cb_udisk_dev_rem, signal_name='DeviceRemoved', dbus_interface="org.freedesktop.UDisks")
+
+testA = DbusTest(bus)
+testA.hello("!!bla!!")
 
 #
 # Start the blocking main loop...
