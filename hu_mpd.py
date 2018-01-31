@@ -170,6 +170,7 @@ class mpdController():
 #
 # SEEMS TO HANG?
 #
+			psfind = []
 			
 			#in the unlikely case of multiple matches, we'll just take the first, psfind[0]
 			if len(psfind) == 0:
