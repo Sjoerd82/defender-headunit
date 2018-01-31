@@ -1200,7 +1200,7 @@ bus = dbus.SystemBus()
 
 # Output
 disp = dbusDisplay(bus)
-hudispdata = { 'random':True } #, 'updating':True }
+hudispdata = { 'random':True, 'updating':True }
 disp.dispdata(hudispdata)
 #testA.hello2("!!bla!!")
 
