@@ -484,7 +484,7 @@ def mpc_save_pos_for_label ( label, pcklPath ):
 	try:
 		#print debugging
 		testje = debugging['file']
-		print testje
+		#print testje
 	except:
 		print(' ...  Error, key not found!')
 		print debugging

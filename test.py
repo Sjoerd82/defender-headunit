@@ -104,6 +104,7 @@ import gobject
 
 # GLOBAL vars
 Sources = SourceController()	#TODO: rename "Sources" -- confusing name
+mpdc = None
 
 # CONSTANTS
 CONFIG_FILE_DEFAULT = '/mnt/PIHU_APP/defender-headunit/config/configuration.json'
@@ -326,15 +327,10 @@ def cb_remote_btn_press ( func ):
 
 
 def cb_mpd_event( event ):
-#?	global bInit
 	global Sources
 	global settings
+	global mpdc
 
-	#global mpdc
-	mpdc = mpdController()
-
-#?if bInit == 0:
-	
 	printer('DBUS event received: {0}'.format(event), tag='MPD')
 
 	if event == "player":
@@ -368,7 +364,7 @@ def cb_mpd_event( event ):
 		
 		file = os.path.basename(mpcSong['file'])
 		
-		disp.lcd_play( artist, title, file, track, mpcTrackTotal )
+		#disp.lcd_play( artist, title, file, track, mpcTrackTotal )
 		
 				
 	elif event == "update":
@@ -1026,6 +1022,16 @@ for filename in os.listdir( configuration['directories']['controls'] ):
 			t.setDaemon(True)
 			threads.append(t)
 			#t.start()	WORKAROUND
+
+# loop through the output plugin dir
+for filename in os.listdir( configuration['directories']['output'] ):
+		#if filename.startswith('') and
+		if filename.endswith('.py'):
+			pathfilename = os.path.join( configuration['directories']['output'], filename )
+			t = threading.Thread(target=plugin_execute, args=(pathfilename,))
+			t.setDaemon(True)
+			threads.append(t)
+			#t.start()	WORKAROUND
 			
 # NOTE: Plugins are now loading in the background, in parallel to code below.
 # NOTE: This can really interfere, in a way I don't understand.. executing the threads later helps... somehow..
@@ -1051,12 +1057,12 @@ for t in threads:
 	t.start()
 
 # LCD (TODO: move to plugins)
-from hu_lcd import *
-disp = lcd_mgr()
-disp.lcd_text('Welcome v0.1.4.8')
+#from hu_lcd import *
+#disp = lcd_mgr()
+#disp.lcd_text('Welcome v0.1.4.8')
 
 # MPD
-#mpdc = mpdController()
+mpdc = mpdController()
 
 myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 

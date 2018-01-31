@@ -12,6 +12,7 @@
 	},
 	"directories": {
 		  "controls": "/mnt/PIHU_APP/defender-headunit/plugins/control/"
+		, "output": "/mnt/PIHU_APP/defender-headunit/plugins/output/"
 		, "app-root": "/mnt/PIHU_APP/defender-headunit"
 		, "plugin-other": "/mnt/PIHU_APP/defender-headunit/plugin_other/"
 		, "config": "/mnt/PIHU_CONFIG"

@@ -3,9 +3,9 @@
 # Remote control DBus service
 # Based on https://github.com/larryprice/python-dbus-blog-series/blob/part3/service
 
-controlName='ad1x15'
-
 from hu_utils import *
+
+controlName='ad1x15'
 
 # TODO!!! the "headunit"-logger is no longer accessible once this script is started "on its own"..
 def myprint( message, level, tag ):
