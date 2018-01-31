@@ -126,11 +126,11 @@ class mpdController():
 		printer('Checking if playlist is populated')
 		#self.__connect()
 
-		self.mpdc.noidle()
-		self.mpdc.command_list_ok_begin()
-		self.mpdc.status()
-		results = self.mpdc.command_list_end()
-		self.mpdc.send_idle()
+#		self.mpdc.noidle()
+#		self.mpdc.command_list_ok_begin()
+#		self.mpdc.status()
+#		results = self.mpdc.command_list_end()
+#		self.mpdc.send_idle()
 
 		#self.__disconnect()
 		return results[0]['playlistlength']
