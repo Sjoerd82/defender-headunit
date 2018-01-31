@@ -902,7 +902,7 @@ def QuickPlay( prevSource, prevSourceSub ):
 #
 
 @dbus.service.signal("com.arctura.display", signature='s')
-def hello():
+def hello(self, data):
 	return "Hello"
 
 
@@ -1082,7 +1082,7 @@ mpdc = mpdController()
 
 myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 
-hello()
+hello("test!")
 
 #
 # end of initialization
