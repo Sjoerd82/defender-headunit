@@ -211,7 +211,7 @@ def cb_remote_btn_press ( func ):
 				
 				Sources.sourceStop()
 				Sources.sourcePlay()
-			
+				print "DEBUGGG YO"
 				#
 				# update operational settings
 				#
