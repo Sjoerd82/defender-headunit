@@ -47,7 +47,7 @@ class SourceController():
 		if source['name'] == 'fm':
 			#self.lSourceClasses.append()
 			#fmc = sources.fm.sourceFM()	# global name 'sources' is not defined
-			obj = self.lSource['sourceClass'][0]
+			obj = source['sourceClass'][0]
 			fmc = getAttr(obj,'sourceFM')
 			print fmc
 			
