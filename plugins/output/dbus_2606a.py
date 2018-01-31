@@ -10,6 +10,7 @@ from hu_utils import *
 dbus_addr = "com.arctura.2606a"
 outputName='2606a'
 outputName_long = 'LCD 2606a'
+tag='2606a'
 
 # ********************************************************************************
 # Output wrapper
