@@ -207,7 +207,7 @@ class lcd_mgr():
 	#threads = []
 	t = None
 
-	def __init__( self, bus_name ):
+	def __init__( self ):
 
 		self.lcd = CharLCD(i2c_expander='PCF8574', address=0x27, port=1,
                    cols=16, rows=2, dotsize=8,
