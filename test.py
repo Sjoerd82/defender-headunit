@@ -387,11 +387,12 @@ def cb_mpd_event( event ):
 	if event == "player":
 		currSrc = Sources.get( None )
 		
-		if not currSrc == None:
-			if 'label' in currSrc:
-				mpc_save_pos_for_label( currSrc['label'], "/mnt/PIHU_CONFIG" )
-			else:
-				mpc_save_pos_for_label( currSrc['name'], "/mnt/PIHU_CONFIG" )
+	# OLD, NEEDS UPDATE: #todo
+	#	if not currSrc == None:
+	#		if 'label' in currSrc:
+	#			mpc_save_pos_for_label( currSrc['label'], "/mnt/PIHU_CONFIG" )
+	#		else:
+	#			mpc_save_pos_for_label( currSrc['name'], "/mnt/PIHU_CONFIG" )
 
 		""" PROBLEMS AHEAD
 		
