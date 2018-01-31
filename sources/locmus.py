@@ -105,9 +105,9 @@ class sourceClass():
 			if not os.listdir(location):
 				self.__printer(" > Local music directory is empty.",LL_WARNING,True)
 			else:
-				printer(" > Local music directory present and has files.",LL_INFO,True)
+				self.__printer(" > Local music directory present and has files.",LL_INFO,True)
 				
-				if not mpc.dbCheckDirectory( sLocalMusicMPD ):
+				if not self.mpc.dbCheckDirectory( sLocalMusicMPD ):
 					self.__printer(" > Running MPD update for this directory.. ALERT! LONG BLOCKING OPERATION AHEAD...")
 					self.mpc.update( sLocalMusicMPD )
 					if not self.mpc.dbCheckDirectory( sLocalMusicMPD ):
