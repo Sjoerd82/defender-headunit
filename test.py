@@ -563,11 +563,10 @@ def udisk_details( device, action ):
 # turn off the device
 def shutdown():
 	global configuration
-	global settings
-	global settingsfile
+	global cSettings
 
 	# save settings (hu_settings)
-	settings_save( settingsfile, settings )
+	cSettings.save()
 
 	# stop source (hu_source)
 	Source.sourceStop()
