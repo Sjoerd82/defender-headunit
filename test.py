@@ -1080,6 +1080,11 @@ for filename in os.listdir( configuration['directories']['output'] ):
 # NOTE: This can really interfere, in a way I don't understand.. executing the threads later helps... somehow..
 # NOTE: For NOW, we'll just execute the threads after the loading of the "other" plugins...
 
+#
+# Initialize the mainloop
+#
+DBusGMainLoop(set_as_default=True)
+
 
 #
 # main loop
@@ -1210,10 +1215,6 @@ else:
 # Main loop
 #
 
-#
-# Initialize the mainloop
-#
-DBusGMainLoop(set_as_default=True)
 
 #
 # 30 second timer
