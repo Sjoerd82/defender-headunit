@@ -153,7 +153,7 @@ class sourceClass():
 		self.mpc.playlistPop('locmus',sLocalMusicMPD)
 
 		# check if succesful...
-		playlistCount = mpc.playlistIsPop()
+		playlistCount = self.mpc.playlistIsPop()
 		if playlistCount == "0":
 			self.__printer(' > Nothing in the playlist, trying to update database...')
 			
