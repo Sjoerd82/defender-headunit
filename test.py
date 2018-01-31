@@ -1214,6 +1214,10 @@ bus = dbus.SystemBus()
 
 # Output
 disp = dbusDisplay(bus)
+hudispdata = {}
+hudispdata['src'] = "USB"		#temp.
+disp.dispdata(hudispdata)
+
 
 """
 time.sleep(5)	#wait for the plugin to be ready
