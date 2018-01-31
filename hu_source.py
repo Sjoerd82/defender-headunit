@@ -435,7 +435,7 @@ class SourceController():
 			#obj = fmc
 			#print getAttr(fmc,'')
 			#fmc.fm_play()	#NameError: global name 'fmc' is not defined
-			self.lSourceClasses[0].fm_play()
+			self.lSourceClasses[0].fm_play(self)
 			return True
 	
 		if self.iCurrent == None:
