@@ -112,6 +112,7 @@ import gobject
 # GLOBAL vars
 Sources = SourceController()	#TODO: rename "Sources" -- confusing name
 mpdc = None
+disp = None
 
 # CONSTANTS
 CONFIG_FILE_DEFAULT = '/mnt/PIHU_APP/defender-headunit/config/configuration.json'
@@ -122,8 +123,9 @@ hu_details = { 'track':None, 'random':False, 'repeat':True }
 
 
 def random( dummy ):
-	disp.lcd_ding( 'random_on' )
-	disp.lcd_ding( 'update_on' )
+	#disp.lcd_ding( 'random_on' )
+	#disp.lcd_ding( 'update_on' )
+	disp.
 	return None
 
 def volume_att_toggle():
@@ -898,21 +900,25 @@ def QuickPlay( prevSource, prevSourceSub ):
 
 #********************************************************************************
 #
-# DBus Signals
+# DBus Dispay Signals
 #
 
-class DbusTest(dbus.service.Object):
+class dbusDisplay(dbus.service.Object):
 	def __init__(self, conn, object_path='/com/arctura/display'):
 		dbus.service.Object.__init__(self, conn, object_path)
 
-	@dbus.service.signal("com.arctura.display", signature='s')
-	def hello(self, data):
-		return "Hello"
+	@dbus.service.signal("com.arctura.display", signature='a{sb}')
+	def dispdata(self, dispdata):
+		pass
 
-	def hello2(self, data):
-		self.hello(data)
-		#print data
-		return "send!"
+#	@dbus.service.signal("com.arctura.display", signature='s')
+#	def hello(self, data):
+#		return "Hello"
+
+#	def hello2(self, data):
+#		self.hello(data)
+#		#print data
+#		return "send!"
 
 #********************************************************************************
 #
@@ -1193,6 +1199,12 @@ mainloop = gobject.MainLoop()
 #
 bus = dbus.SystemBus()
 
+# Output
+disp = dbusDisplay(bus)
+hudispdata = { 'random':True } #, 'updating':True }
+disp.dispdata(hudispdata)
+#testA.hello2("!!bla!!")
+
 #
 # Connect Callback functions to DBus Signals
 #
@@ -1202,8 +1214,6 @@ bus.add_signal_receiver(cb_remote_btn_press2, dbus_interface = "com.arctura.keyb
 bus.add_signal_receiver(cb_udisk_dev_add, signal_name='DeviceAdded', dbus_interface="org.freedesktop.UDisks")
 bus.add_signal_receiver(cb_udisk_dev_rem, signal_name='DeviceRemoved', dbus_interface="org.freedesktop.UDisks")
 
-testA = DbusTest(bus)
-testA.hello2("!!bla!!")
 
 #
 # Start the blocking main loop...
