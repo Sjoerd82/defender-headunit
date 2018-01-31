@@ -376,7 +376,7 @@ class lcd_mgr():
 
 
 def cb_mpd_event( event ):
-	print('2606a: DBUS event received: {0}'.format(event), tag='MPD')
+	printer('2606a: DBUS event received: {0}'.format(event), tag='MPD')
 
 	if event == "player":
 
