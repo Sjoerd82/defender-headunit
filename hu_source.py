@@ -437,13 +437,6 @@ class SourceController():
 #			self.__printer('PLAY: function not defined',LL_WARNING)
 #			return False
 			
-		#try:
-		#	if self.lSource[self.iCurrent]['sourcePlay'] == None:
-		#		self.__printer('PLAY: function not defined',LL_WARNING)
-		#except Exception as ex:
-		#	self.__printer('PLAY: ERROR: {0}'.format(ex),LL_CRITICAL)
-		
-
 		checkResult = self.lSource[self.iCurrent]['sourceClass'].play(self)
 		if not checkResult:
 			self.__printer('PLAY: failed, marking source unavailable, playing next source...',LL_ERROR)
@@ -457,22 +450,12 @@ class SourceController():
 			self.__printer('STOP: No current source',LL_WARNING)
 			return False
 			
-		try:
-			if self.lSource[self.iCurrent]['sourceStop'] == None:
-				self.__printer('STOP: function not defined',LL_WARNING)
-		except Exception as ex:
-			self.__printer('STOP: ERROR: {0}'.format(ex),LL_CRITICAL)
-		
 		checkResult = self.lSource[self.iCurrent]['sourceClass'].stop(self)
 		
 	# seek/next:
 	def sourceSeekNext( self ):
 		if self.iCurrent == None:
 			self.__printer('STOP: No current source',LL_WARNING)
-			return False
-
-		if 'sourceNext' not in self.lSource[self.iCurrent] or self.lSource[self.iCurrent]['sourceNext'] == None:
-			self.__printer('NEXT: function not defined',LL_WARNING)
 			return False
 
 		checkResult = self.lSource[self.iCurrent]['sourceClass'].next()
@@ -483,14 +466,6 @@ class SourceController():
 			self.__printer('STOP: No current source',LL_WARNING)
 			return False
 
-		if 'sourcePrev' not in self.lSource[self.iCurrent] or self.lSource[self.iCurrent]['sourcePrev'] == None:
-			self.__printer('PREV: function not defined',LL_WARNING)
-			return False
 
 		checkResult = self.lSource[self.iCurrent]['sourceClass'].prev()
-		#try:
-		#obj = self.lSource[self.iCurrent]['sourcePrev'][0]
-		#func = self.lSource[self.iCurrent]['sourcePrev'][1]
-		#checkResult = getattr(obj,func)(self)
-		#except:
-		#	self.__printer('ERROR: calling next function',LL_ERROR)
+
