@@ -202,7 +202,7 @@ class sourceClass():
 #		self.mpc.mpc_save_pos_for_label( 'locmus' )
 		
 		# stop playback
-		self.mpc.mpc_stop()
+		self.mpc.stop()
 		return True
 		
 	def next( self ):

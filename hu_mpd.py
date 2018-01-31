@@ -279,6 +279,9 @@ class mpdController():
 		print('Prev. track')
 		call(["mpc", "-q", "prev"])
 
+	def stop( self ):
+		print('Stop')
+
 
 def mpc_random_get():
 
