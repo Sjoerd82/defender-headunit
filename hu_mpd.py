@@ -62,8 +62,8 @@ class mpdController():
 	
 	def __del__( self ):
 			print('Disconnecting')	#, level=LL_DEBUG
-			#self.mpdc.noidle()
-			self.mpdc.close()
+			self.mpdc.noidle()		# needed?
+			#self.mpdc.close()		# gives an error that there are pending commands.. somehow... #wtf
 			self.mpdc.disconnect()
 		
 	def playlistClear( self ):
