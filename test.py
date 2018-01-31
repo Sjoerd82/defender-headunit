@@ -1195,19 +1195,19 @@ bus = dbus.SystemBus()
 # Output
 disp = dbusDisplay(bus)
 
-time.sleep(10)	#wait for the plugin to be ready
+time.sleep(5)	#wait for the plugin to be ready
 
 hudispdata = {}
 hudispdata['rnd'] = "1"
 hudispdata['artist'] = "The Midnight"
 disp.dispdata(hudispdata)
 
-time.sleep(10)
+time.sleep(5)
 hudispdata = {}
 hudispdata['rnd'] = "0"
 disp.dispdata(hudispdata)
 
-time.sleep(10)
+time.sleep(5)
 hudispdata = {}
 hudispdata['att'] = "1"
 disp.dispdata(hudispdata)
