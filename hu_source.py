@@ -12,7 +12,6 @@ class SourceController():
 	iCurrentSource = [ None, None ]
 	
 	lSourceClasses = []
-	fmc = None
 
 	#def __init__(self):
 		#print('[INIT] Setting up sources')
@@ -44,12 +43,13 @@ class SourceController():
 		self.lSource.sort( key=lambda k: k['order'] )
 		
 		#!EXPERIMENTAL!
-		if source['name'] == 'fm':
-			#self.lSourceClasses.append()
-			#fmc = sources.fm.sourceFM()	# global name 'sources' is not defined
+		if 'sourceClass' in source:
 			obj = source['sourceClass'][0]
-			fmc = getattr(obj,'sourceFM')()
-			self.lSourceClasses.append(fmc)
+			sc = getattr(obj,'sourceClass')()
+			self.lSourceClasses.append(sc)
+			#self.lSourceClasses.append(getattr(obj,'sourceClass')())
+			# add a class field containing the class
+			source['class'] = sc
 			
 		return True
 
@@ -435,7 +435,8 @@ class SourceController():
 			#obj = fmc
 			#print getAttr(fmc,'')
 			#fmc.fm_play()	#NameError: global name 'fmc' is not defined
-			self.lSourceClasses[0].fm_play(self)
+			#self.lSourceClasses[0].fm_play(self)	#OK
+			self.lSource[self.iCurrent]['class'].fm_play(self)
 			return True
 	
 		if self.iCurrent == None:

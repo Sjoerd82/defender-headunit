@@ -26,17 +26,26 @@ class sourceFM():
 		#printer('FM CLASS DELETE!')			# 	ERROR! }
 		print('FM CLASS DELETE!')
 		
-	def fm_check( self, sourceCtrl, subSourceIx=None  ):
-		printer('CHECK availability... CLASS!')
+	def check( self, sourceCtrl, subSourceIx=None  ):
+		printer('CHECK availability...')
 		return True
 		
-	def fm_play( self, sourceCtrl, subSourceIx=None ):
-		printer('[FM] Start playing FM radio... CLASS!')
+	def play( self, sourceCtrl, subSourceIx=None ):
+		printer('Start playing FM radio...')
 		return True	
 
-	def fm_stop( self, sourceCtrl ):
-		printer('[FM] Stop CLASS!')
+	def stop( self, sourceCtrl ):
+		printer('Stop CLASS!')
 		return True
+		
+	def next( self ):
+		printer('NOT IMPLEMENTED')
+		return False
+		
+	def prev( self ):
+		printer('NOT IMPLEMENTED')
+		return False
+		
 
 # Wrapper for "myprint"
 def printer( message, level=LL_INFO, continuation=False, tag=sourceName ):

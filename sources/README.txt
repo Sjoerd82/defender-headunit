@@ -40,10 +40,12 @@ Python script
 ----------------
 
 Functions:
- Init:		Stuff that needs to run once
+ __init__()	Stuff that needs to run once, at first loading of the class
+ init()		Stuff that needs to run once, at functional loading of the source
 		Executed when the source is added ( via: loadSourcePlugins->add_a_source->Source.sourceInit(indexAdded) )
- Check:		Determine availability
+ check()		Determine availability
 		Parameters:
 			sourceCtrl	Required; Object; Reference to Sources
 			subSourceIx	Optional; int	; If present, check Sub-Source instead
 
+ __del__()	Stuff that needs to run when the source gets discarded (close connections, etc.)
