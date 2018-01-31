@@ -217,8 +217,8 @@ class lcd_mgr():
                    auto_linebreaks=True,
                    backlight_enabled=True)
 	
-		self.framebuffer[0] = '                '
-		self.framebuffer[1] = '                '
+		self.framebuffer[0] = '.               '
+		self.framebuffer[1] = '               .'
 		self.lcd.clear()
 		self.charset()
 		
@@ -426,6 +426,9 @@ def cb_display( displaydata ):
 		else:
 			mylcd.set_fb_str(1,13,'   ')
 
+	#commit changes
+	mylcd.write_to_lcd
+	
 	#todo... merge!
 	mylcd.displaydata_cdc = displaydata
 	
