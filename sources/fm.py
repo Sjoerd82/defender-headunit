@@ -22,7 +22,9 @@ class sourceFM():
 		printer('FM CLASS INIT!')
 		
 	def __del__( self ):
-		self.__printer('FM CLASS DELETE!')
+		#self.__printer('FM CLASS DELETE!')		# 	ERROR! } Exception TypeError: TypeError("'NoneType' object is not iterable",)
+		#printer('FM CLASS DELETE!')			# 	ERROR! }
+		print('FM CLASS DELETE!')
 		
 	def fm_check( self, sourceCtrl, subSourceIx=None  ):
 		printer('CHECK availability... CLASS!')
