@@ -976,7 +976,8 @@ print "TESTING TESTING"
 #fmc = sourceFM()				#NameError: name 'sourceFM' is not defined
 #fmc = sources.fm.sourceFM()	#OK
 
-Sources.setCurrent(0)			# FM
+Sources.setAvailableIx(0,True)
+Sources.setCurrent(0)
 Sources.sourcePlay()
 
 exit()
