@@ -164,9 +164,12 @@ class mpdController():
 				return pos
 
 			#otherwise continue:
-			self.mpdc.noidle()
-			psfind = self.mpdc.playlistfind('filename',dSavePosition['file'])
-			self.mpdc.idle()
+#			self.mpdc.noidle()
+#			psfind = self.mpdc.playlistfind('filename',dSavePosition['file'])
+#			self.mpdc.idle()
+#
+# SEEMS TO HANG?
+#
 			
 			#in the unlikely case of multiple matches, we'll just take the first, psfind[0]
 			if len(psfind) == 0:
