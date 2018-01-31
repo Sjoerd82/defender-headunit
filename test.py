@@ -980,8 +980,6 @@ Sources.setAvailableIx(0,True)
 Sources.setCurrent(0)
 Sources.sourcePlay()
 
-time.sleep(10)
-
 exit()
 
 """ DEBUGGING....

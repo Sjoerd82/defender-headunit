@@ -11,11 +11,18 @@ lFmStations = [ 96.40, 99.10, 101.20, 102.54 ]
 
 class sourceFM():
 
+	# Wrapper for "myprint"
+	def __printer( message, level=LL_INFO, continuation=False, tag=sourceName ):
+		if continuation:
+			myprint( message, level, '.'+tag )
+		else:
+			myprint( message, level, tag )
+
 	def __init__( self ):
 		printer('FM CLASS INIT!')
 		
 	def __del__(self):
-		print('FM CLASS DELETE!')
+		__printer('FM CLASS DELETE!')
 		
 	def fm_check( self, sourceCtrl, subSourceIx=None  ):
 		printer('CHECK availability... CLASS!')
