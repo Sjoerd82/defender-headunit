@@ -62,7 +62,7 @@ class mpdController():
 	
 	def __del__( self ):
 			print('Disconnecting')	#, level=LL_DEBUG
-			self.mpdc.noidle()		# needed?
+			#self.mpdc.noidle()		# needed?	gives an error in case no idle was send prior..   #wtf
 			#self.mpdc.close()		# gives an error that there are pending commands.. somehow... #wtf
 			self.mpdc.disconnect()
 		
