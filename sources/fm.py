@@ -15,7 +15,7 @@ class sourceFM():
 		printer('FM CLASS INIT!')
 		
 	def __del__(self):
-		printer('FM CLASS DELETE!')
+		print('FM CLASS DELETE!')
 		
 	def fm_check( self, sourceCtrl, subSourceIx=None  ):
 		printer('CHECK availability... CLASS!')
