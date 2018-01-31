@@ -434,7 +434,7 @@ def cb_display( displaydata ):
 		print "NO att"
 
 	#commit changes
-	mylcd.write_to_lcd
+	mylcd.write_to_lcd()
 	
 	#todo... merge!
 	mylcd.displaydata_cdc = displaydata
