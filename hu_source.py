@@ -411,15 +411,6 @@ class SourceController():
 	def sourceCheck( self, index, subSourceIx=None ):
 	
 		checkResult = self.lSource[index]['sourceClass'].check(self)
-	
-		#if self.iCurrent == None:
-		#	print('[SOURCE] CHECK: No current source')
-		#	return False
-
-		#obj = self.lSource[index]['sourceCheck'][0]
-		#func = self.lSource[index]['sourceCheck'][1]
-		#checkResult = getattr(obj,func)(self,subSourceIx)
-		#self.setAvailableIx(index,checkResult,subSourceIx)
 		return checkResult
 	
 	# execute a check() for all sources..
@@ -454,19 +445,6 @@ class SourceController():
 		
 
 		checkResult = self.lSource[self.iCurrent]['sourceClass'].play(self)
-		
-		#try:
-		
-#		obj = self.lSource[self.iCurrent]['sourcePlay'][0]
-#		func = self.lSource[self.iCurrent]['sourcePlay'][1]
-		#if self.lSource[self.iCurrent]['sourcePlay'].count == 3:
-		#	params = self.lSource[self.iCurrent]['sourcePlay'][2]
-		#	checkResult = getattr(obj,func)(params)
-		#else:
-#		checkResult = getattr(obj,func)(self,self.iCurrentSS)
-
-		#except:
-		#	print('[SOURCE] ERROR: calling player function')
 		if not checkResult:
 			self.__printer('PLAY: failed, marking source unavailable, playing next source...',LL_ERROR)
 			self.setAvailableIx(self.iCurrent,False,self.iCurrentSS)
@@ -486,12 +464,6 @@ class SourceController():
 			self.__printer('STOP: ERROR: {0}'.format(ex),LL_CRITICAL)
 		
 		checkResult = self.lSource[self.iCurrent]['sourceClass'].stop(self)
-		#try:
-		#	obj = self.lSource[self.iCurrent]['sourceStop'][0]
-		#	func = self.lSource[self.iCurrent]['sourceStop'][1]
-		#	checkResult = getattr(obj,func)(self)
-		#except:
-		#	self.__printer('ERROR: calling player function',LL_CRITICAL)
 		
 	# seek/next:
 	def sourceSeekNext( self ):
@@ -503,13 +475,7 @@ class SourceController():
 			self.__printer('NEXT: function not defined',LL_WARNING)
 			return False
 
-		checkResult = self.lSource[self.iCurrent]['sourceClass'].next(self)
-		#try:
-		#	obj = self.lSource[self.iCurrent]['sourceNext'][0]
-		#	func = self.lSource[self.iCurrent]['sourceNext'][1]
-		#	checkResult = getattr(obj,func)(self)
-		#except:
-		#	self.__printer('ERROR: calling next function',LL_ERROR)
+		checkResult = self.lSource[self.iCurrent]['sourceClass'].next()
 
 	# seek/prev:
 	def sourceSeekPrev( self ):
@@ -521,7 +487,7 @@ class SourceController():
 			self.__printer('PREV: function not defined',LL_WARNING)
 			return False
 
-		checkResult = self.lSource[self.iCurrent]['sourceClass'].prev(self)
+		checkResult = self.lSource[self.iCurrent]['sourceClass'].prev()
 		#try:
 		#obj = self.lSource[self.iCurrent]['sourcePrev'][0]
 		#func = self.lSource[self.iCurrent]['sourcePrev'][1]
