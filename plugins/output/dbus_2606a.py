@@ -379,6 +379,11 @@ def cb_mpd_event( event ):
 	printer('2606a: DBUS event received: {0}'.format(event), tag='XXX')
 
 	print event
+	print
+	print event['random']
+	print event['artist']
+	#print event[u'random']
+	#print event[u'artist']
 	
 	#disp = lcd_mgr()
 	#disp.lcd_text(event)
@@ -424,7 +429,6 @@ bus = dbus.SystemBus()
 #
 # Connect Callback functions to DBus Signals
 #
-#bus.add_signal_receiver(cb_mpd_event, dbus_interface = "com.arctura.mpd")
 bus.add_signal_receiver(cb_mpd_event, dbus_interface = "com.arctura.display")
 	
 # Run the loop
