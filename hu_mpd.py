@@ -54,7 +54,11 @@ class mpdController():
 		#todo: how about cropping, populating, and removing the first? item .. for faster continuity???
 		#self.mpdc.command_list_ok_begin()
 
-		self.mpdc.noidle()
+		try:
+			self.mpdc.noidle()
+		except:
+			printer('WEIRD... no idle was set..')
+		
 		self.mpdc.stop()
 		self.mpdc.clear()
 		self.mpdc.send_idle()
@@ -142,8 +146,6 @@ class mpdController():
 
 	def lastKnownPos( self, id ):
 	
-		self.mpdc.noidle()
-
 		#default
 		pos = {'pos': 1, 'time': 0}
 
@@ -162,7 +164,9 @@ class mpdController():
 				return pos
 
 			#otherwise continue:
+			self.mpdc.noidle()
 			psfind = self.mpdc.playlistfind('filename',dSavePosition['file'])
+			self.mpdc.idle()
 			
 			#in the unlikely case of multiple matches, we'll just take the first, psfind[0]
 			if len(psfind) == 0:
@@ -178,7 +182,6 @@ class mpdController():
 				else:
 					printer(' > Elapsed time below threshold or short track: restarting at beginning of track.')
 
-		self.mpdc.idle()
 		return pos
 		
 #	def playStart( str(playslist_pos['pos']), playslist_pos['time'] ):
@@ -230,15 +233,12 @@ class mpdController():
 		
 	def mpc_get_currentsong( self ):
 	
-		oMpdClient = MPDClient() 
-		oMpdClient.timeout = 10                # network timeout in seconds (floats allowed), default: None
-		oMpdClient.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
-		oMpdClient.connect("localhost", 6600)  # connect to localhost:6600
-
-		oMpdClient.command_list_ok_begin()
-		oMpdClient.currentsong()
+		self.mpc.noidle()
+		self.mpc.command_list_ok_begin()
+		self.mpc.currentsong()
+		self.mpc.idle()
 		
-		results = oMpdClient.command_list_end()
+		results = self.mpc.command_list_end()
 		print results[0]
 
 		#return self.mpdc.currentsong()
@@ -246,15 +246,12 @@ class mpdController():
 
 	def mpc_get_status( self ):
 
-		oMpdClient = MPDClient() 
-		oMpdClient.timeout = 10                # network timeout in seconds (floats allowed), default: None
-		oMpdClient.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
-		oMpdClient.connect("localhost", 6600)  # connect to localhost:6600
+		self.mpc.noidle()
+		self.mpc.command_list_ok_begin()
+		self.mpc.status()
 
-		oMpdClient.command_list_ok_begin()
-		oMpdClient.status()
-
-		results = oMpdClient.command_list_end()
+		results = self.mpc.command_list_end()
+		self.mpc.idle()
 		print results[0]
 
 		#return self.mpdc.currentsong()
