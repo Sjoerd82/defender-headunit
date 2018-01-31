@@ -902,8 +902,8 @@ def QuickPlay( prevSource, prevSourceSub ):
 #
 
 class DbusTest(dbus.service.Object):
-    def __init__(self, conn, object_path='/com/arctura/display'):
-        dbus.service.Object.__init__(self, conn, object_path)
+	def __init__(self, conn, object_path='/com/arctura/display'):
+		dbus.service.Object.__init__(self, conn, object_path)
 
 	@dbus.service.signal("com.arctura.display", signature='s')
 	def hello(self, data):
@@ -911,6 +911,7 @@ class DbusTest(dbus.service.Object):
 
 	def hello2(self, data):
 		self.hello(data)
+		#print data
 		return "send!"
 
 #********************************************************************************
