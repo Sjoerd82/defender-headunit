@@ -7,9 +7,9 @@
 
 from hu_utils import *
 
-dbus_addr = "com.arctura.d2606a"
-outputName='d2606a'
-outputName_long = 'LCD 2606a'
+dbus_addr = "com.arctura.d1606a"
+outputName='d1606a'
+outputName_long = 'LCD 1606a'
 
 # ********************************************************************************
 # Output wrapper
@@ -19,7 +19,7 @@ outputName_long = 'LCD 2606a'
 def myprint( message, level, tag ):
 	print("[{0}] {1}".format(tag,message))
 
-def printer( message, level=20, continuation=False, tag="d2606a" ):
+def printer( message, level=20, continuation=False, tag="d1606a" ):
 	#TODO: test if headunit logger exist...
 	if continuation:
 		myprint( message, level, '.'+tag )
@@ -27,7 +27,7 @@ def printer( message, level=20, continuation=False, tag="d2606a" ):
 		myprint( message, level, tag )
 
 
-printer('Starting Output: LCD 2606a')
+printer('Starting Output: LCD 1606a')
 
 		
 # ********************************************************************************
@@ -376,12 +376,14 @@ class lcd_mgr():
 
 
 def cb_mpd_event( event ):
-	printer('2606a: DBUS event received: {0}'.format(event), tag='MPD')
+	printer('2606a: DBUS event received: {0}'.format(event), tag='XXX')
 
-	if event == "player":
-
-		disp = lcd_mgr()
-		disp.lcd_play( 'artist', 'title', 'file.mp3', 'track', 42 )
+	disp = lcd_mgr()
+	disp.lcd_text(event)
+	#if event == "player":
+	#
+	#	disp = lcd_mgr()
+	#	disp.lcd_play( 'artist', 'title', 'file.mp3', 'track', 42 )
 				
 # ********************************************************************************
 #
@@ -418,7 +420,8 @@ bus = dbus.SystemBus()
 #
 # Connect Callback functions to DBus Signals
 #
-bus.add_signal_receiver(cb_mpd_event, dbus_interface = "com.arctura.mpd")
+#bus.add_signal_receiver(cb_mpd_event, dbus_interface = "com.arctura.mpd")
+bus.add_signal_receiver(cb_mpd_event, dbus_interface = "com.arctura.display")
 	
 # Run the loop
 try:

@@ -137,7 +137,7 @@ class mpdControl(dbus.service.Object):
 		
 	@dbus.service.signal("com.arctura.mpd", signature='s')
 	def mpd_control(self, ding):
-		print
+		pass
 
 
 # Initialize a main loop

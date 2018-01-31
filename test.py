@@ -33,6 +33,13 @@
 #
 
 #********************************************************************************
+# DBUS
+# 
+# This script listens to a number of DBus sources.
+# This script also emits signals on com.arctura.hu		#TODO
+#
+
+#********************************************************************************
 # MODULES
 #
 # Automatically loaded:
@@ -889,6 +896,15 @@ def QuickPlay( prevSource, prevSourceSub ):
 			return False
 		
 
+#********************************************************************************
+#
+# DBus Signals
+#
+
+@dbus.service.signal("com.arctura.display", signature='s')
+def hello():
+	return "Hello"
+
 
 #********************************************************************************
 #
@@ -1065,6 +1081,8 @@ for t in threads:
 mpdc = mpdController()
 
 myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
+
+hello()
 
 #
 # end of initialization
