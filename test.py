@@ -123,9 +123,8 @@ hu_details = { 'track':None, 'random':False, 'repeat':True }
 
 
 def random( dummy ):
-	#disp.lcd_ding( 'random_on' )
-	#disp.lcd_ding( 'update_on' )
-	disp.
+	disp.lcd_ding( 'random_on' )
+	disp.lcd_ding( 'update_on' )
 	return None
 
 def volume_att_toggle():
