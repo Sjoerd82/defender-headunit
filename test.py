@@ -1195,7 +1195,7 @@ bus = dbus.SystemBus()
 # Output
 disp = dbusDisplay(bus)
 
-sleep(10)	#wait for the plugin to be ready
+time.sleep(10)	#wait for the plugin to be ready
 
 hudispdata = {}
 hudispdata['rnd'] = "1"
