@@ -397,15 +397,6 @@ class SourceController():
 	def sourceInit( self, index ):
 	
 		checkResult = self.lSource[index]['sourceClass'].init(self)
-		#if 'sourceInit' in self.lSource[index]:
-		#	obj = self.lSource[index]['sourceInit'][0]
-		#	func = self.lSource[index]['sourceInit'][1]
-		#	if len(self.lSource[index]['sourceInit']) == 3:
-		#		params = self.lSource[index]['sourceInit'][2]
-		#		checkResult = getattr(obj,func)(self, params)
-		#	else:
-		#		# self =  reference to Sources
-		#		checkResult = getattr(obj,func)(self)
 	
 	# execute a check() for given source and sets availability accordingly
 	def sourceCheck( self, index, subSourceIx=None ):

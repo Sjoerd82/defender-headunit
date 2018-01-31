@@ -199,7 +199,7 @@ class sourceClass():
 	def stop( self, sourceCtrl ):
 		self.__printer('Stopping source: locmus. Saving playlist position and clearing playlist.')
 		# save playlist position (file name + position)
-		self.mpc.mpc_save_pos_for_label( 'locmus' )
+#		self.mpc.mpc_save_pos_for_label( 'locmus' )
 		
 		# stop playback
 		self.mpc.mpc_stop()
