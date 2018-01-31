@@ -9,7 +9,7 @@
   "sourceStop":  ["", "fm_stop"],
   "sourceNext":  ["", "fm_next"],
   "sourcePrev":  ["", "fm_prev"],
-  "sourceClass": ["", "sourceFM"]
+  "sourceClass": ["", "sourceFM"],
   "template": false,
   "defaultconfig": { "frq_lo" : 80 },
   "menuitems" : [
