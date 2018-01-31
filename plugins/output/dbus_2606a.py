@@ -386,52 +386,27 @@ def cb_display( displaydata ):
 	print displaydata
 	
 	if 'src' in displaydata:
-		if 'src' in mylcd.displaydata_cdc:
-			if not mylcd.displaydata_cdc['src'] == displaydata['src']:
-				#max 4 chars:
-				mylcd.set_fb_str(1,1,displaydata[:4].ljust(4))			
-		else:
+		if not mylcd.displaydata_cdc['src'] == displaydata['src']:
 			#max 4 chars:
-			mylcd.set_fb_str(1,1,displaydata[:4].ljust(4))
-	else:
-		print "NO src"
+			mylcd.set_fb_str(1,1,displaydata[:4].ljust(4))			
 
 	if 'upd' in displaydata:
-		if 'upd' in mylcd.displaydata_cdc:
-			if not mylcd.displaydata_cdc['upd'] == displaydata['upd']:
-				if displaydata['upd'] == '1':
-					mylcd.set_fb_str(1,5,'UPD')
-				else:
-					mylcd.set_fb_str(1,5,'   ')
-			else:
-				if displaydata['upd'] == '1':
-					mylcd.set_fb_str(1,5,'UPD')
-				else:
-					mylcd.set_fb_str(1,5,'   ')				
-	else:
-		print "NO upd"
+		if displaydata['upd'] == '1':
+			mylcd.set_fb_str(1,5,'UPD')
+		else:
+			mylcd.set_fb_str(1,5,'   ')
 
 	if 'rnd' in displaydata:
-#		if 'rnd' in displaydata_cdc:
-#			if not displaydata_cdc['rnd'] == displaydata['rnd']:
-
 		if displaydata['rnd'] == '1':
 			mylcd.set_fb_str(1,9,'RND')
 		else:
 			mylcd.set_fb_str(1,9,'   ')
-	else:
-		print "NO rnd"
 			
 	if 'att' in displaydata:
-#		if 'att' in displaydata_cdc:
-#			if not displaydata_cdc['att'] == displaydata['att']:
-
 		if displaydata['att'] == '1':
 			mylcd.set_fb_str(1,13,'ATT')
 		else:
 			mylcd.set_fb_str(1,13,'   ')
-	else:
-		print "NO att"
 
 	#commit changes
 	mylcd.write_to_lcd()
