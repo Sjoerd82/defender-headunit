@@ -711,8 +711,8 @@ def loadSourcePlugins( plugindir ):
 
 		###if 'sourceClass' in config:
 		###	#overwrite string with reference to module
-		# add a sourceClass item with a ref. to the module
-		config['sourceClass'] = sys.modules['sources.'+sourcePluginName]
+		# add a sourceModule item with a ref. to the module
+		config['sourceModule'] = sys.modules['sources.'+sourcePluginName]
 		
 		# register the source
 		isAdded = Sources.add(config)

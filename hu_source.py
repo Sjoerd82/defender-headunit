@@ -43,9 +43,9 @@ class SourceController():
 		self.lSource.sort( key=lambda k: k['order'] )
 		
 		#!EXPERIMENTAL!
-		if 'sourceClass' in source:
-			obj = source['sourceClass'][0]
-			sc = getattr(obj,'sourceClass')()
+		if 'sourceModule' in source:
+			obj = source['sourceModule']	#[0]
+			sc = getattr(obj,'sourceModule')()
 			self.lSourceClasses.append(sc)
 			#self.lSourceClasses.append(getattr(obj,'sourceClass')())
 			# add a class field containing the class
