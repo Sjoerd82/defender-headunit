@@ -28,7 +28,7 @@ sDirSave = "/mnt/PIHU_CONFIG"
 
 class mpdController():
 
-	#mpdc = MPDClient()		# class attribute	TODO? maybe use this to share the connection????
+	mpdc = MPDClient()		# class attribute	TODO? maybe use this to share the connection????
 
 	def __init__( self ):
 		# Connect to MPD
