@@ -756,7 +756,12 @@ def loadSourcePlugins( plugindir ):
 		if k[0:8] == 'sources.':
 			sourcePluginName = k[8:]
 			if not str(v).find(plugindir) == -1:
-				add_a_source(plugindir, sourcePluginName)
+				list_of_sources.append(sourcePluginName)
+
+	# dictionary of modules may change during the adding of the sources, raising a runtime error..
+	# therefore we save them in a list and iterate over them in a second loop:
+	for sourcePluginName in list_of_sources:
+		add_a_source(plugindir, sourcePluginName)
 
 def plugin_execute( script ):
 	printer('Starting Plugin: {0}'.format(script))
