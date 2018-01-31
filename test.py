@@ -1080,6 +1080,12 @@ for filename in os.listdir( configuration['directories']['output'] ):
 # NOTE: This can really interfere, in a way I don't understand.. executing the threads later helps... somehow..
 # NOTE: For NOW, we'll just execute the threads after the loading of the "other" plugins...
 
+
+#
+# main loop
+#
+mainloop = gobject.MainLoop()
+
 #
 # DBus: system bus
 # On a root only embedded system there may not be a usable session bus
@@ -1213,11 +1219,6 @@ DBusGMainLoop(set_as_default=True)
 # 30 second timer
 #
 gobject.timeout_add_seconds(30,cb_timer1)
-
-#
-# main loop
-#
-mainloop = gobject.MainLoop()
 
 
 """
