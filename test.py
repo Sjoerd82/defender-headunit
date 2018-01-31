@@ -205,7 +205,10 @@ def cb_remote_btn_press ( func ):
 			res = Sources.next()
 			if not res == None:
 
+				#
 				# if succesful, play new source
+				#
+				
 				Sources.sourceStop()
 				Sources.sourcePlay()
 			
@@ -229,11 +232,15 @@ def cb_remote_btn_press ( func ):
 					subsource_key = {}
 					for key in currSrc['subsource_key']:
 						subsource_key[key] = currSSrc[key]
-						
-				print subsource_key
-				cSettings.set('subsourcekey', subsource_key)
+					cSettings.set('subsourcekey', subsource_key)
+				
+				# commit changes
+				cSettings.save()
 
+				#
 				# update display
+				#
+				
 				hudispdata = {}
 				if currSrc['name'] == 'fm':
 					hudispdata['src'] = 'FM'
@@ -1159,7 +1166,7 @@ myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 #cSettings.save()
 
 prevSource = cSettings.get_key('source')
-prevSourceSub = cSettings.get_key('subsource')
+prevSourceSub = cSettings.get_key('subsourcekey')
 
 if prevSource == "":
 	printer ('No previous source.', tag='QPLAY')
