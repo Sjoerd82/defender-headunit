@@ -386,9 +386,9 @@ def cb_display( displaydata ):
 	print displaydata
 	
 	if 'src' in displaydata:
-		if not mylcd.displaydata_cdc['src'] == displaydata['src']:
-			#max 4 chars:
-			mylcd.set_fb_str(1,1,displaydata[:4].ljust(4))			
+		#if not mylcd.displaydata_cdc['src'] == displaydata['src']:
+		#max 4 chars:
+		mylcd.set_fb_str(1,1,displaydata[:4].ljust(4))			
 
 	if 'upd' in displaydata:
 		if displaydata['upd'] == '1':
@@ -412,7 +412,7 @@ def cb_display( displaydata ):
 	mylcd.write_to_lcd()
 	
 	#todo... merge!
-	mylcd.displaydata_cdc = displaydata
+	#mylcd.displaydata_cdc = displaydata
 	
 	
 	#if bla == 'src_usb':
