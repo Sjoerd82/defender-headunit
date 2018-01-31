@@ -124,14 +124,15 @@ hu_details = { 'track':None, 'random':False, 'repeat':True }
 
 
 def random( dummy ):
-	disp.lcd_ding( 'random_on' )
-	disp.lcd_ding( 'update_on' )
+	hudispdata = {}
+	hudispdata['rnd'] = '1'
+	disp.dispdata(hudispdata)
 	return None
 
 def volume_att_toggle():
-	disp.lcd_ding( 'att_on' )
-	disp.lcd_ding( 'src_usb' )
-	disp.lcd_play( 'Dare', 'Waves', 1 )
+	hudispdata = {}
+	hudispdata['att'] = '1'
+	disp.dispdata(hudispdata)
 	return None
 
 def volume_up():
@@ -216,7 +217,26 @@ def cb_remote_btn_press ( func ):
 					currSrc = Sources.getSubSource(arCurrIx[0],arCurrIx[1])
 					
 				cSettings.set('source',currSrc['name'])
-							
+
+				# update display
+				hudispdata = {}
+				if currSrc['name'] == 'fm':
+					hudispdata['src'] = 'FM'
+				elif currSrc['name'] == 'media':
+					hudispdata['src'] = 'USB'
+				elif currSrc['name'] == 'locmus':
+					hudispdata['src'] = 'INT'
+				elif currSrc['name'] == 'bt':
+					hudispdata['src'] = 'BT'
+				elif currSrc['name'] == 'line':
+					hudispdata['src'] = 'AUX'
+				elif currSrc['name'] == 'stream':
+					hudispdata['src'] = 'WEB'
+				elif currSrc['name'] == 'smb':
+					hudispdata['src'] = 'NET'
+				disp.dispdata(hudispdata)
+
+				
 				# TODO: make this better... somehow.
 				"""
 				if currSrc['name'] == 'fm':
@@ -1195,6 +1215,7 @@ bus = dbus.SystemBus()
 # Output
 disp = dbusDisplay(bus)
 
+"""
 time.sleep(5)	#wait for the plugin to be ready
 
 hudispdata = {}
@@ -1213,6 +1234,7 @@ hudispdata['att'] = "1"
 disp.dispdata(hudispdata)
 
 exit()
+"""
 #
 # Connect Callback functions to DBus Signals
 #
