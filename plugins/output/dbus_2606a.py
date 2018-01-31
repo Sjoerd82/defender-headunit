@@ -385,8 +385,8 @@ def cb_display( displaydata ):
 	if 'src' in displaydata:
 		if 'src' in displaydata_cdc:
 			if not displaydata_cdc['src'] == displaydata['src']:
-			#max 4 chars:
-			self.set_fb_str(1,1,displaydata[:4].ljust(4))			
+				#max 4 chars:
+				self.set_fb_str(1,1,displaydata[:4].ljust(4))			
 		else:
 			#max 4 chars:
 			self.set_fb_str(1,1,displaydata[:4].ljust(4))
