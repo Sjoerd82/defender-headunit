@@ -397,12 +397,12 @@ def cb_display( displaydata ):
 			if not displaydata_cdc['upd'] == displaydata['upd']:
 				if displaydata['upd'] == '1':
 					self.set_fb_str(1,5,'UPD')
-				elif
+				else:
 					self.set_fb_str(1,5,'   ')
 			else:
 				if displaydata['upd'] == '1':
 					self.set_fb_str(1,5,'UPD')
-				elif
+				else:
 					self.set_fb_str(1,5,'   ')				
 
 	if 'rnd' in displaydata:
@@ -411,7 +411,7 @@ def cb_display( displaydata ):
 
 		if displaydata['rnd'] == '1':
 			self.set_fb_str(1,9,'RND')
-		elif
+		else:
 			self.set_fb_str(1,9,'   ')
 			
 	if 'att' in displaydata:
@@ -420,7 +420,7 @@ def cb_display( displaydata ):
 
 		if displaydata['att'] == '1':
 			self.set_fb_str(1,13,'ATT')
-		elif
+		else:
 			self.set_fb_str(1,13,'   ')
 
 	#todo... merge!
