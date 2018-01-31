@@ -909,6 +909,10 @@ class DbusTest(dbus.service.Object):
 	def hello(self, data):
 		return "Hello"
 
+	def hello2(self, data):
+		self.hello(data)
+		return "send!"
+
 #********************************************************************************
 #
 # Initialization
@@ -1198,7 +1202,7 @@ bus.add_signal_receiver(cb_udisk_dev_add, signal_name='DeviceAdded', dbus_interf
 bus.add_signal_receiver(cb_udisk_dev_rem, signal_name='DeviceRemoved', dbus_interface="org.freedesktop.UDisks")
 
 testA = DbusTest(bus)
-testA.hello("!!bla!!")
+testA.hello2("!!bla!!")
 
 #
 # Start the blocking main loop...
