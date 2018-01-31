@@ -30,7 +30,7 @@ class sourceClass():
 	def check( self, sourceCtrl, subSourceIx=None  ):
 		self.__printer('Checking availability...', level=15)
 		#global Sources
-		printer('Checking if Line-In is available... not available')
+		self.__printer('Checking if Line-In is available... not available')
 		#arSourceAvailable[4]=0 # not available
 		#Sources.setAvailable('name','alsa',False) # not available
 		#echo "Source 4 Unavailable; Line-In / ALSA"
