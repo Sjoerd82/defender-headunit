@@ -60,7 +60,7 @@ class mpdController():
 	#		self.mpdc.disconnect()
 	
 	def __del__( self ):
-			printer('Disconnecting')	#, level=LL_DEBUG
+			print('Disconnecting')	#, level=LL_DEBUG
 			self.mpdc.close()
 			self.mpdc.disconnect()
 		
