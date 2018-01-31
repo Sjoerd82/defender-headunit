@@ -49,7 +49,7 @@ class SourceController():
 			#fmc = sources.fm.sourceFM()	# global name 'sources' is not defined
 			obj = source['sourceClass'][0]
 			fmc = getattr(obj,'sourceFM')()
-			lSourceClasses.append(fmc)
+			self.lSourceClasses.append(fmc)
 			
 		return True
 
@@ -435,7 +435,7 @@ class SourceController():
 			#obj = fmc
 			#print getAttr(fmc,'')
 			#fmc.fm_play()	#NameError: global name 'fmc' is not defined
-			lSourceClasses[0].fm_play()
+			self.lSourceClasses[0].fm_play()
 			return True
 	
 		if self.iCurrent == None:
