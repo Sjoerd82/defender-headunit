@@ -127,16 +127,17 @@ class sourceClass():
 			return False
 
 		
-	def play( self, sourceCtrl, subSourceIx=None ):
+	def play( self, sourceCtrl ): #, subSourceIx=None ):
 		self.__printer('Start playing')
 		
 		#
 		# variables
 		#
-		return True
+
 		# get directory to play, directory is relative to MPD music dir.
-		ix = sourceCtrl.getIndex('name','locmus')
-		subsource = sourceCtrl.getSubSource( ix, subSourceIx )
+		#ix = sourceCtrl.getIndex('name','locmus')
+		arIx = sourceCtrl.getIndexCurrent()
+		subsource = sourceCtrl.getSubSource( arIx[0], arIx[1] )# subSourceIx )
 		sLocalMusicMPD = subsource['mpd_dir']
 		sLabel = subsource['label']
 		

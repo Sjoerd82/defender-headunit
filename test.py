@@ -322,7 +322,7 @@ def cb_remote_btn_press ( func ):
 					
 				"""
 			
-
+			print('Done switching source [OK]')
 		elif Sources.getAvailableCnt() == 1:
 			print('Only one source availble. Ignoring button.')
 		elif Sources.getAvailableCnt() == 0:
