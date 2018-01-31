@@ -378,53 +378,56 @@ class lcd_mgr():
 
 
 def cb_display( displaydata ):
+
+	global mylcd
+	
 	printer('2606a: DBUS event received: {0}'.format(displaydata), tag='XXX')
 
 	print displaydata
 	
 	if 'src' in displaydata:
-		if 'src' in self.displaydata_cdc:
-			if not self.displaydata_cdc['src'] == displaydata['src']:
+		if 'src' in mylcd.displaydata_cdc:
+			if not mylcd.displaydata_cdc['src'] == displaydata['src']:
 				#max 4 chars:
-				self.set_fb_str(1,1,displaydata[:4].ljust(4))			
+				mylcd.set_fb_str(1,1,displaydata[:4].ljust(4))			
 		else:
 			#max 4 chars:
-			self.set_fb_str(1,1,displaydata[:4].ljust(4))
+			mylcd.set_fb_str(1,1,displaydata[:4].ljust(4))
 		
 
 	if 'upd' in displaydata:
-		if 'upd' in self.displaydata_cdc:
-			if not self.displaydata_cdc['upd'] == displaydata['upd']:
+		if 'upd' in mylcd.displaydata_cdc:
+			if not mylcd.displaydata_cdc['upd'] == displaydata['upd']:
 				if displaydata['upd'] == '1':
-					self.set_fb_str(1,5,'UPD')
+					mylcd.set_fb_str(1,5,'UPD')
 				else:
-					self.set_fb_str(1,5,'   ')
+					mylcd.set_fb_str(1,5,'   ')
 			else:
 				if displaydata['upd'] == '1':
-					self.set_fb_str(1,5,'UPD')
+					mylcd.set_fb_str(1,5,'UPD')
 				else:
-					self.set_fb_str(1,5,'   ')				
+					mylcd.set_fb_str(1,5,'   ')				
 
 	if 'rnd' in displaydata:
 #		if 'rnd' in displaydata_cdc:
 #			if not displaydata_cdc['rnd'] == displaydata['rnd']:
 
 		if displaydata['rnd'] == '1':
-			self.set_fb_str(1,9,'RND')
+			mylcd.set_fb_str(1,9,'RND')
 		else:
-			self.set_fb_str(1,9,'   ')
+			mylcd.set_fb_str(1,9,'   ')
 			
 	if 'att' in displaydata:
 #		if 'att' in displaydata_cdc:
 #			if not displaydata_cdc['att'] == displaydata['att']:
 
 		if displaydata['att'] == '1':
-			self.set_fb_str(1,13,'ATT')
+			mylcd.set_fb_str(1,13,'ATT')
 		else:
-			self.set_fb_str(1,13,'   ')
+			mylcd.set_fb_str(1,13,'   ')
 
 	#todo... merge!
-	self.displaydata_cdc = displaydata
+	mylcd.displaydata_cdc = displaydata
 	
 	
 	#if bla == 'src_usb':
@@ -462,6 +465,8 @@ def cb_display( displaydata ):
 #
 # Main loop
 #
+
+mylcd = lcd_mgr()
 
 #
 # Initialize the mainloop
