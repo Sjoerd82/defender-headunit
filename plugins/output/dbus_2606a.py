@@ -389,19 +389,32 @@ def cb_mpd_event( event ):
 # Main loop
 #
 
-# Initialize a main loop
+#
+# Initialize the mainloop
+#
 DBusGMainLoop(set_as_default=True)
-loop = gobject.MainLoop()
+
+#
+# main loop
+#
+mainloop = gobject.MainLoop()
+
+#
+# DBus: system bus
+# On a root only embedded system there may not be a usable session bus
+#
+bus = dbus.SystemBus()
+
 
 # Declare a name where our service can be reached
-try:
-	bus_name = dbus.service.BusName(dbus_addr,
-                                    bus=dbus.SystemBus(),
-                                    do_not_queue=True)
-	printer('DBus OK: {0}'.format(dbus_addr))
-except dbus.exceptions.NameExistsException:
-	printer("DBus: Service is already running")
-	sys.exit(1)
+#try:
+#	bus_name = dbus.service.BusName(dbus_addr,
+#                                    bus=dbus.SystemBus(),
+#                                    do_not_queue=True)
+#	printer('DBus OK: {0}'.format(dbus_addr))
+#except dbus.exceptions.NameExistsException:
+#	printer("DBus: Service is already running")
+#	sys.exit(1)
 
 #
 # Connect Callback functions to DBus Signals
@@ -411,12 +424,12 @@ bus.add_signal_receiver(cb_mpd_event, dbus_interface = "com.arctura.mpd")
 # Run the loop
 try:
     #dbusService(bus_name)
-    loop.run()
+    mainloop.run()
 except KeyboardInterrupt:
     printer("keyboard interrupt received")
 except Exception as e:
     printer("Unexpected exception occurred: '{}'".format(str(e)))
 finally:
     printer("quitting...")
-    loop.quit()
+    mainloop.quit()
 
