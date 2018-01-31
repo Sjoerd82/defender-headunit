@@ -752,6 +752,7 @@ def loadSourcePlugins( plugindir ):
 	# execute add_a_source() for every found source
 	# #TODO: remove hardcoded reference to "sources.", derive it...
 	#
+	list_of_sources = []
 	for k, v in sys.modules.iteritems():
 		if k[0:8] == 'sources.':
 			sourcePluginName = k[8:]
