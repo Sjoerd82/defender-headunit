@@ -28,6 +28,10 @@ class sourceClass():
 		#printer('FM CLASS DELETE!')			# 	ERROR! }
 		print('FM CLASS DELETE!')
 		
+	def init( self, sourceCtrl ):
+		self.__printer('Initializing...', level=15)
+		return True
+
 	def check( self, sourceCtrl, subSourceIx=None  ):
 		self.__printer('CHECK availability...')
 		return True
