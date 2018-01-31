@@ -7,30 +7,13 @@ from hu_mpd import *
 # Logging
 sourceName='media'
 
-"""
-class sourceMedia():
-
-	def media_init( self ):
-
-	def media_check():
-	
-	def media_play( self ):
-
-	def media_stop( self ):
-
-	def media_next( self ):
-
-	def media_prev( self ):
-"""
-
-	
 # Wrapper for "myprint"
 def printer( message, level=LL_INFO, continuation=False, tag=sourceName ):
 	if continuation:
 		myprint( message, level, '.'+tag )
 	else:
 		myprint( message, level, tag )
-	
+
 # add a media source
 def media_add( dir, label, uuid, sourceCtrl ):
 

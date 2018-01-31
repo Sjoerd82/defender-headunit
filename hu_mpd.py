@@ -38,24 +38,29 @@ class mpdController():
 			printer(' > Version: {0}'.format(self.mpdc.mpd_version))          # print the MPD version
 			self.mpdc.random(0)
 			self.mpdc.repeat(1)	
-			#self.mpdc.send_idle()
-			self.mpdc.close()
-			self.mpdc.disconnect()
+			self.mpdc.send_idle()
+			#self.mpdc.close()
+			#self.mpdc.disconnect()
 		except:
 			printer('Failed to connect to MPD server', level=LL_ERROR)
 			#return False	# __init__() should return None  (?)
 
-	def __connect( self ):
-		try:
-			printer('Connecting to MPD client', level=LL_DEBUG)
-			self.mpdc.timeout = 10                # network timeout in seconds (floats allowed), default: None
-			self.mpdc.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
-			self.mpdc.connect("localhost", 6600)
-		except:
-			printer('Failed to connect to MPD server', level=LL_ERROR)
+	#def __connect( self ):
+	#	try:
+	#		printer('Connecting to MPD client', level=LL_DEBUG)
+	#		self.mpdc.timeout = 10                # network timeout in seconds (floats allowed), default: None
+	#		self.mpdc.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
+	#		self.mpdc.connect("localhost", 6600)
+	#	except:
+	#		printer('Failed to connect to MPD server', level=LL_ERROR)
 			
-	def __disconnect( self ):
-			printer('Disconnecting', level=LL_DEBUG)
+	#def __disconnect( self ):
+	#		printer('Disconnecting', level=LL_DEBUG)
+	#		self.mpdc.close()
+	#		self.mpdc.disconnect()
+	
+	def __del__( self ):
+			printer('Disconnecting')	#, level=LL_DEBUG
 			self.mpdc.close()
 			self.mpdc.disconnect()
 		
@@ -63,12 +68,12 @@ class mpdController():
 		printer('Emptying MPD playlist')
 		#todo: how about cropping, populating, and removing the first? item .. for faster continuity???
 		#self.mpdc.command_list_ok_begin()
-		self.__connect()
+		#self.__connect()
 		
 		self.mpdc.stop()
 		self.mpdc.clear()
 
-		self.__disconnect()
+		#self.__disconnect()
 
 		#print self.mpdc.command_list_end()
 		#call(["mpc", "-q", "stop"])
@@ -81,7 +86,7 @@ class mpdController():
 		# Stop idle, in order to send a command
 		#oMpdClient.noidle()
 		
-		self.__connect()
+		#self.__connect()
 	
 		if type == 'locmus' or type == 'smb' or type == 'media':
 			try:
@@ -110,18 +115,18 @@ class mpdController():
 		else:
 			self.mpdc.findadd('base',type)
 		
-		self.__disconnect()
+		#self.__disconnect()
 		#oMpdClient.send_idle()
 		
 	def playlistIsPop( self ):
 		printer('Checking if playlist is populated')
-		self.__connect()
+		#self.__connect()
 
 		self.mpdc.command_list_ok_begin()
 		self.mpdc.status()
 		results = self.mpdc.command_list_end()
 
-		self.__disconnect()
+		#self.__disconnect()
 		return results[0]['playlistlength']
 
 	def dbCheckDirectory( self, directory ):
@@ -142,7 +147,7 @@ class mpdController():
 	# location must be a path relative to MPD
 	def update( self, location, wait=True ):
 
-		self.__connect()
+		#self.__connect()
 		
 		#Sound effect
 		pa_sfx('mpd_update_db')
@@ -157,7 +162,7 @@ class mpdController():
 			call(["mpc", "-q", "update", location])
 			#bMpdUpdateSmb
 
-		self.__disconnect()
+		#self.__disconnect()
 
 	def lastKnownPos( self, id ):
 	
@@ -248,7 +253,7 @@ class mpdController():
 		
 	def mpc_get_currentsong( self ):
 	
-		self.__connect()
+		#self.__connect()
 
 		oMpdClient = MPDClient() 
 		oMpdClient.timeout = 10                # network timeout in seconds (floats allowed), default: None
@@ -261,14 +266,14 @@ class mpdController():
 		results = oMpdClient.command_list_end()
 		print results[0]
 
-		self.__disconnect()
+		#self.__disconnect()
 	
 		#return self.mpdc.currentsong()
 		return results[0]
 
 	def mpc_get_status( self ):
 
-		self.__connect()
+		#self.__connect()
 
 		oMpdClient = MPDClient() 
 		oMpdClient.timeout = 10                # network timeout in seconds (floats allowed), default: None
@@ -281,7 +286,7 @@ class mpdController():
 		results = oMpdClient.command_list_end()
 		print results[0]
 
-		self.__disconnect()
+		#self.__disconnect()
 	
 		#return self.mpdc.currentsong()
 		return results[0]
@@ -293,9 +298,9 @@ class mpdController():
 
 	def channelSubscribe( self, channel ):
 	
-		self.__connect()
+		#self.__connect()
 		self.mpcd.subscribe(channel)
-		self.__disconnect()
+		#self.__disconnect()
 		
 	def nextTrack( self ):
 		print('Next track')

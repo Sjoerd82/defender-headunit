@@ -42,6 +42,22 @@ Designed to support a (simple) display, but this is completely optional.
  - Incremental Encoder w/button(s) (BMW iDrive style) (via GPIO)
  - Android/iPhone (full control, beyond only MPD)
 
+PLUGINS
+-------
+There are two types of supported plugins:
+
+ 1) Auto-executed executionables (currently only tested with Python scripts) which are connected to the main program via the DBus.
+    TODO: somehow register the callback procedures in the main loop..
+    Located in: /plugins
+    List of plugins:
+    * control/dbus_ads1x15.py
+    * control/dbus_keyboard.py
+    * output/dbus_2606a.py
+
+ 2) Python scripts that are more closely coupled with the main program via the import
+    Located in:
+    * /sources	Source plugins
+    * ?		?
 
 
 --old--

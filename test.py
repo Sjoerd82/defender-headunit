@@ -208,6 +208,7 @@ def cb_remote_btn_press ( func ):
 				cSettings.set('source',currSrc['name'])
 							
 				# TODO: make this better... somehow.
+				"""
 				if currSrc['name'] == 'fm':
 					source_settings = {'freq':'101.10'}	# TODO
 				elif currSrc['name'] == 'media':
@@ -224,24 +225,49 @@ def cb_remote_btn_press ( func ):
 					source_settings = { 'mpd_dir':'music' }	#TODO
 				
 				cSettings.set('source_settings',source_settings)
-
+				"""
+				
 				# TODO!!
 				#printer('TODO!! save subsoure to settings') # add to source_stop() functionss.. #no better to handle it here.. source has no notion of operational settings..
 
 				#testSs = {'mountpoint':'/media/SJOERD'}
 				#cSettings.set('source','media')
 				#cSettings.set('subsource',testSs)
-				"""
-				if 'label' in currSrc:
-					cSettings.set('label',currSrc['label'])
-				else:
-					cSettings.set('label',"")
-				if 'uuid' in currSrc:
-					cSettings.set('uuid',currSrc['uuid'])
-				else:
-					cSettings.set('uuid',"")
-				"""
-				# play
+				
+				if currSrc['name'] == 'fm':
+					source_settings = {'freq':'101.10'}	# TODO
+				elif currSrc['name'] == 'media':
+
+					if 'label' in currSrc:
+						cSettings.set('label',currSrc['label'])
+					else:
+						cSettings.set('label',"")
+					if 'uuid' in currSrc:
+						cSettings.set('uuid',currSrc['uuid'])
+					else:
+						cSettings.set('uuid',"")
+
+				elif currSrc['name'] == 'locmus':
+
+					if 'label' in currSrc:
+						cSettings.set('label',currSrc['label'])
+					else:
+						cSettings.set('label',"")
+					if 'uuid' in currSrc:
+						cSettings.set('uuid',currSrc['uuid'])
+					else:
+						cSettings.set('uuid',"")
+				
+				elif currSrc['name'] == 'bt':
+					source_settings = {}
+				elif currSrc['name'] == 'line':
+					source_settings = {}				
+				elif currSrc['name'] == 'stream':
+					source_settings = { 'uri':'' }	#TODO
+				elif currSrc['name'] == 'smb':
+					source_settings = { 'mpd_dir':'music' }	#TODO
+					
+				
 			
 
 		elif Sources.getAvailableCnt() == 1:
@@ -651,57 +677,76 @@ def printSummary():
 		i += 1
 	printer('----------------------------------------------------------------------', tag='')
 
-def add_a_source( plugindir, sourcePluginName ):
-	configFileName = os.path.join(plugindir,sourcePluginName+'.json')
-	if not os.path.exists( configFileName ):
-		printer('Configuration not found: {0}'.format(configFileName))
-		return False
-		
-	jsConfigFile = open( configFileName )
-	config=json.load(jsConfigFile)
-	
-	# test if name is unique
-	# TODO
-	
-	sourceModule = sys.modules['sources.'+sourcePluginName]
-	for execFunction in ('sourceInit','sourceCheck','sourcePlay','sourceStop','sourceNext','sourcePrev'):
-		if execFunction in config:
-			#overwrite string with reference to module
-			config[execFunction][0] = sys.modules['sources.'+sourcePluginName]
-	# register the source
-	isAdded = Sources.add(config)
-	# check if the source has a configuration
-	if 'defaultconfig' in config:
-		# check if configuration is present in the main configuration file
-		if not sourcePluginName in configuration['source_config']:
-			# insert defaultconfig
-			configuration['source_config'][sourcePluginName] = config['defaultconfig']
-			configuration_save( CONFIG_FILE, configuration )
-	# check if the source has menu items
-	if 'menuitems' in config:
-		for menuitem in config['menuitems']:
-			# do we have a sub menu that needs to be populated?
-			if 'sub' in menuitem:
-				if menuitem['sub'].startswith('!'):
-					func = menuitem['sub'].lstrip('!')
-					menuitem['sub'] = getattr(sourceModule,func)()
-					#menuitem['uuid']
-			#TODO: re-enable
-			#huMenu.add( menuitem )
-	# init source, if successfully added
-	if isAdded:
-		indexAdded = Sources.getIndex('name',config['name'])
-		Sources.sourceInit(indexAdded)
-
 # Load Source Plugins
 def loadSourcePlugins( plugindir ):
 	global Sources
 	global configuration
 
+	#
+	# adds the source:
+	# - Load source json configuration
+	# - 
+	#
+	def add_a_source( plugindir, sourcePluginName ):
+		configFileName = os.path.join(plugindir,sourcePluginName+'.json')
+		if not os.path.exists( configFileName ):
+			printer('Configuration not found: {0}'.format(configFileName))
+			return False
+		
+		# load source configuration file
+		jsConfigFile = open( configFileName )
+		config=json.load(jsConfigFile)
+		
+		# test if name is unique
+		# #TODO
+
+		# fetch module from sys.modules
+		# sourceModule = sys.modules['sources.'+sourcePluginName] # MENU..
+		
+		# 
+		for execFunction in ('sourceInit','sourceCheck','sourcePlay','sourceStop','sourceNext','sourcePrev'):
+			if execFunction in config:
+				#overwrite string with reference to module
+				config[execFunction][0] = sys.modules['sources.'+sourcePluginName]
+		
+		# register the source
+		isAdded = Sources.add(config)
+		# check if the source has a configuration
+		if 'defaultconfig' in config:
+			# check if configuration is present in the main configuration file
+			if not sourcePluginName in configuration['source_config']:
+				# insert defaultconfig
+				configuration['source_config'][sourcePluginName] = config['defaultconfig']
+				configuration_save( CONFIG_FILE, configuration )
+
+		# check if the source has menu items
+		"""
+		if 'menuitems' in config:
+			for menuitem in config['menuitems']:
+				# do we have a sub menu that needs to be populated?
+				if 'sub' in menuitem:
+					if menuitem['sub'].startswith('!'):
+						func = menuitem['sub'].lstrip('!')
+						menuitem['sub'] = getattr(sourceModule,func)()
+						#menuitem['uuid']
+				#TODO: re-enable
+				#huMenu.add( menuitem )
+		"""
+		# init source, if successfully added
+		if isAdded:
+			indexAdded = Sources.getIndex('name',config['name'])
+			Sources.sourceInit(indexAdded)
+	
+	# check if plugin dir exists
 	if not os.path.exists(plugindir):
 		printer('Source path not found: {0}'.format(plugindir), level=LL_CRITICAL)
 		exit()
 	
+	#
+	# loop through all imported modules, picking out the sources
+	# execute add_a_source() for every found source
+	# #TODO: remove hardcoded reference to "sources.", derive it...
+	#
 	for k, v in sys.modules.iteritems():
 		if k[0:8] == 'sources.':
 			sourcePluginName = k[8:]
@@ -925,6 +970,13 @@ import sources
 # read source config files and start source inits
 loadSourcePlugins(os.path.join( os.path.dirname(os.path.abspath(__file__)), 'sources'))
 
+
+print "TESTING TESTING"
+
+fmc = sourceFM()
+fmc1 = sources.fm.sourceFM()
+
+exit()
 
 """ DEBUGGING....
 print "DEBUG!"
