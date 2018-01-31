@@ -381,9 +381,9 @@ def cb_display( displaydata ):
 
 	global mylcd
 	
-	printer('2606a: DBUS event received: {0}'.format(displaydata), tag='XXX')
+	printer('DBUS event received: {0}'.format(displaydata), tag='d1606a')
 
-	print displaydata
+	#print displaydata
 	
 	if 'src' in displaydata:
 		#if not mylcd.displaydata_cdc['src'] == displaydata['src']:

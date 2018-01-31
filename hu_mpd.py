@@ -28,7 +28,7 @@ sDirSave = "/mnt/PIHU_CONFIG"
 
 class mpdController():
 
-	mpdc = MPDClient()		# class attribute -- shared by all instances... gives irrelevant connect errors... not sure if this is good or bad
+	self.mpdc = MPDClient()		# class attribute -- shared by all instances... gives irrelevant connect errors... not sure if this is good or bad
 
 	def __init__( self ):
 		# Connect to MPD
