@@ -11,7 +11,7 @@ class SourceController():
 	iCurrentSS = None
 	iCurrentSource = [ None, None ]
 	
-	#lSourceClasses = []
+	lSourceClasses = []
 	fmc = None
 
 	#def __init__(self):
@@ -49,7 +49,7 @@ class SourceController():
 			#fmc = sources.fm.sourceFM()	# global name 'sources' is not defined
 			obj = source['sourceClass'][0]
 			fmc = getattr(obj,'sourceFM')()
-			print fmc
+			lSourceClasses.append(fmc)
 			
 		return True
 
@@ -434,7 +434,8 @@ class SourceController():
 			#obj = self.lSource[self.iCurrent]['sourcePlay'][0]
 			#obj = fmc
 			#print getAttr(fmc,'')
-			fmc.fm_play()
+			#fmc.fm_play()	#NameError: global name 'fmc' is not defined
+			lSourceClasses[0].fm_play()
 			return True
 	
 		if self.iCurrent == None:

@@ -974,8 +974,7 @@ loadSourcePlugins(os.path.join( os.path.dirname(os.path.abspath(__file__)), 'sou
 print "TESTING TESTING"
 
 #fmc = sourceFM()				#NameError: name 'sourceFM' is not defined
-fmcx = sources.fm.sourceFM()	#OK
-print fmcx
+#fmc = sources.fm.sourceFM()	#OK
 
 Sources.setAvailableIx(0,True)
 Sources.setCurrent(0)
