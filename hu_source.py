@@ -10,6 +10,9 @@ class SourceController():
 	iCurrent = None
 	iCurrentSS = None
 	iCurrentSource = [ None, None ]
+	
+	#lSourceClasses = []
+	fmc = None
 
 	#def __init__(self):
 		#print('[INIT] Setting up sources')
@@ -39,6 +42,12 @@ class SourceController():
 		self.__printer('ADD: {0}'.format(source['displayname']))
 		self.lSource.append(source)
 		self.lSource.sort( key=lambda k: k['order'] )
+		
+		#!EXPERIMENTAL!
+		if source['name'] == 'fm':
+			#self.lSourceClasses.append()
+			fmc = sources.fm.sourceFM()
+			
 		return True
 
 	# add sub-source
@@ -416,6 +425,15 @@ class SourceController():
 	
 	# execute a play() for the current source
 	def sourcePlay( self ):
+	
+		# !EXPERIMENTAL! #FM
+		if self.iCurrent == 0:
+			#obj = self.lSource[self.iCurrent]['sourcePlay'][0]
+			#obj = fmc
+			#print getAttr(fmc,'')
+			fmc.fm_play()
+			return True
+	
 		if self.iCurrent == None:
 			self.__printer('PLAY: No current source',LL_WARNING)
 			return False

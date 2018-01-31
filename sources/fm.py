@@ -11,6 +11,12 @@ lFmStations = [ 96.40, 99.10, 101.20, 102.54 ]
 
 class sourceFM():
 
+	def __init__( self ):
+		printer('FM CLASS INIT!')
+		
+	def __del__(self):
+		printer('FM CLASS DELETE!')
+		
 	def fm_check( self, sourceCtrl, subSourceIx=None  ):
 		printer('CHECK availability... CLASS!')
 		return True

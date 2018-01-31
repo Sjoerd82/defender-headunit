@@ -704,7 +704,7 @@ def loadSourcePlugins( plugindir ):
 		# sourceModule = sys.modules['sources.'+sourcePluginName] # MENU..
 		
 		# 
-		for execFunction in ('sourceInit','sourceCheck','sourcePlay','sourceStop','sourceNext','sourcePrev'):
+		for execFunction in ('sourceInit','sourceCheck','sourcePlay','sourceStop','sourceNext','sourcePrev','sourceClass'):
 			if execFunction in config:
 				#overwrite string with reference to module
 				config[execFunction][0] = sys.modules['sources.'+sourcePluginName]
