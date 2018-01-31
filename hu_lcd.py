@@ -207,7 +207,7 @@ class lcd_mgr():
 	
 	def lcd_ding( self, bla ):
 
-		if bla == 'src_usb':	 
+		if bla == 'src_usb':
 			self.set_fb_str(1,1,'USB')
 			self.write_to_lcd()
 		elif bla == 'update_on':	 

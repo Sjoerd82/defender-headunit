@@ -82,6 +82,7 @@ arg_loglevel = args.loglevel
 #
 #
 #
+import time
 
 #load json source configuration
 import json
@@ -906,18 +907,11 @@ class dbusDisplay(dbus.service.Object):
 	def __init__(self, conn, object_path='/com/arctura/display'):
 		dbus.service.Object.__init__(self, conn, object_path)
 
-	@dbus.service.signal("com.arctura.display", signature='a{sv}')
+	#decided to just send everything as string, should be easier to handle...:
+	#dbus.service.signal("com.arctura.display", signature='a{sv}')
+	@dbus.service.signal("com.arctura.display", signature='a{ss}')
 	def dispdata(self, dispdata):
 		pass
-
-#	@dbus.service.signal("com.arctura.display", signature='s')
-#	def hello(self, data):
-#		return "Hello"
-
-#	def hello2(self, data):
-#		self.hello(data)
-#		#print data
-#		return "send!"
 
 #********************************************************************************
 #
@@ -1200,10 +1194,25 @@ bus = dbus.SystemBus()
 
 # Output
 disp = dbusDisplay(bus)
-hudispdata = { 'random':True, 'artist':'The Midnight' }
-disp.dispdata(hudispdata)
-#testA.hello2("!!bla!!")
 
+sleep(10)	#wait for the plugin to be ready
+
+hudispdata = {}
+hudispdata['rnd'] = "1"
+hudispdata['artist'] = "The Midnight"
+disp.dispdata(hudispdata)
+
+time.sleep(10))
+hudispdata = {}
+hudispdata['rnd'] = "0"
+disp.dispdata(hudispdata)
+
+time.sleep(10)
+hudispdata = {}
+hudispdata['att'] = "1"
+disp.dispdata(hudispdata)
+
+exit()
 #
 # Connect Callback functions to DBus Signals
 #

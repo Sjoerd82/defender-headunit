@@ -207,6 +207,8 @@ class lcd_mgr():
 	#threads = []
 	t = None
 
+	displaydata_cdc = {}
+	
 	def __init__( self ):
 
 		self.lcd = CharLCD(i2c_expander='PCF8574', address=0x27, port=1,
@@ -375,13 +377,75 @@ class lcd_mgr():
 		self.lcd.create_char(7, chr_right)
 
 
-def cb_mpd_event( event ):
-	printer('2606a: DBUS event received: {0}'.format(event), tag='XXX')
+def cb_display( displaydata ):
+	printer('2606a: DBUS event received: {0}'.format(displaydata), tag='XXX')
 
-	print event
-	print
-	print event['random']
-	print event['artist']
+	print displaydata
+	
+	if 'src' in displaydata:
+		if 'src' in displaydata_cdc:
+			if not displaydata_cdc['src'] == displaydata['src']:
+			#max 4 chars:
+			self.set_fb_str(1,1,displaydata[:4].ljust(4))			
+		else:
+			#max 4 chars:
+			self.set_fb_str(1,1,displaydata[:4].ljust(4))
+		
+
+	if 'upd' in displaydata:
+		if 'upd' in displaydata_cdc:
+			if not displaydata_cdc['upd'] == displaydata['upd']:
+				if displaydata['upd'] == '1':
+					self.set_fb_str(1,5,'UPD')
+				elif
+					self.set_fb_str(1,5,'   ')
+			else:
+				if displaydata['upd'] == '1':
+					self.set_fb_str(1,5,'UPD')
+				elif
+					self.set_fb_str(1,5,'   ')				
+
+	if 'rnd' in displaydata:
+		if 'rnd' in displaydata_cdc:
+			if not displaydata_cdc['rnd'] == displaydata['rnd']:
+
+		if displaydata['rnd'] == '1':
+			self.set_fb_str(1,9,'RND')
+		elif
+			self.set_fb_str(1,9,'   ')
+			
+	if 'att' in displaydata:
+		if 'att' in displaydata_cdc:
+			if not displaydata_cdc['att'] == displaydata['att']:
+
+		if displaydata['att'] == '1':
+			self.set_fb_str(1,13,'ATT')
+		elif
+			self.set_fb_str(1,13,'   ')
+
+	#todo... merge!
+	displaydata_cdc = displaydata
+	
+	
+	#if bla == 'src_usb':
+	#		self.set_fb_str(1,1,'USB')
+	#		self.write_to_lcd()
+#		elif bla == 'update_on':	 
+#			self.set_fb_str(1,5,'UPD')
+#			self.write_to_lcd()
+#		elif bla == 'random_on':
+#			self.set_fb_str(1,9,'RND')
+#			self.write_to_lcd()
+#		elif bla == 'att_on':	 
+#			self.set_fb_str(1,13,'ATT')
+#			self.write_to_lcd()
+
+			
+	#print
+	#print event['random']	#OK:	1
+	#print event['artist']	#OK:	The Midnight
+	#print event['random']
+	
 	#print event[u'random']
 	#print event[u'artist']
 	
@@ -429,7 +493,7 @@ bus = dbus.SystemBus()
 #
 # Connect Callback functions to DBus Signals
 #
-bus.add_signal_receiver(cb_mpd_event, dbus_interface = "com.arctura.display")
+bus.add_signal_receiver(cb_display, dbus_interface = "com.arctura.display")
 	
 # Run the loop
 try:
