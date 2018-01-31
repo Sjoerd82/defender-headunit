@@ -5,6 +5,8 @@ import os
 import subprocess
 import pickle
 
+import sys
+
 from mpd import MPDClient
 
 from hu_utils import *
