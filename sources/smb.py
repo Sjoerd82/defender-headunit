@@ -34,7 +34,7 @@ class sourceClass():
 
 	# Returns a list of everything mounted on /media, but does not check if it has music.
 	# Returned is 2-dimension list
-	def __smb_getAll():
+	def __smb_getAll( self ):
 
 		try:
 			self.__printer('Check if anything is mounted on /media/PIHU_SMB...')
