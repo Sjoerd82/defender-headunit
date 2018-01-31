@@ -1145,10 +1145,12 @@ else:
 
 #********************************************************************************
 #
-# Initialize the mainloop
+# Main loop
 #
 
-
+#
+# Initialize the mainloop
+#
 DBusGMainLoop(set_as_default=True)
 
 #

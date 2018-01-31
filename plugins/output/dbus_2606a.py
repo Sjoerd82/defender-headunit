@@ -10,7 +10,6 @@ from hu_utils import *
 dbus_addr = "com.arctura.d2606a"
 outputName='d2606a'
 outputName_long = 'LCD 2606a'
-tag='d2606a'
 
 # ********************************************************************************
 # Output wrapper
@@ -20,7 +19,7 @@ tag='d2606a'
 def myprint( message, level, tag ):
 	print("[{0}] {1}".format(tag,message))
 
-def printer( message, level=20, continuation=False ):
+def printer( message, level=20, continuation=False, tag="d2606a" ):
 	#TODO: test if headunit logger exist...
 	if continuation:
 		myprint( message, level, '.'+tag )
