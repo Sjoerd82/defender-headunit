@@ -43,25 +43,11 @@ class mpdController():
 			#self.mpdc.idle()		#keep the connection open... But this blocks :(
 			self.mpdc.send_idle()	#keep the connection open... Non-blocking..
 		except:
-			printer('Failed to connect to MPD server {0}'.format(sys.exc_info()[0]), level=LL_ERROR)
-
-	#def __connect( self ):
-	#	try:
-	#		printer('Connecting to MPD client', level=LL_DEBUG)
-	#		self.mpdc.timeout = 10                # network timeout in seconds (floats allowed), default: None
-	#		self.mpdc.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
-	#		self.mpdc.connect("localhost", 6600)
-	#	except:
-	#		printer('Failed to connect to MPD server', level=LL_ERROR)
-			
-	#def __disconnect( self ):
-	#		printer('Disconnecting', level=LL_DEBUG)
-	#		self.mpdc.close()
-	#		self.mpdc.disconnect()
+			printer('Failed to connect to MPD server: {0}'.format(sys.exc_info()[0]), level=LL_ERROR)
 	
 	def __del__( self ):
 			print('Disconnecting')	#, level=LL_DEBUG
-			self.mpdc.disconnect()
+			#self.mpdc.disconnect()		#often fails __del__ seems quite unstable
 		
 	def playlistClear( self ):
 		printer('Emptying MPD playlist')

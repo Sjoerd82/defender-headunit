@@ -780,6 +780,11 @@ def test_match( dTest, dMatchAgainst ):
 
 def QuickPlay( prevSource, prevSourceSub ):
 
+	if prevSource == "":
+		printer ('No previous source.', tag='QPLAY')
+		return None
+
+
 	def bla_refactored( prevSourceName, prevSourceSub, doCheck ):
 
 		global Sources
@@ -875,29 +880,17 @@ def QuickPlay( prevSource, prevSourceSub ):
 			printer ('Continuing playback', tag='QPLAY')
 			Sources.setCurrent(prevIx[0])
 			Sources.sourcePlay()
-
-			printer ('Checking other sources...', tag='QPLAY')
-			# TODO: the prev. source is now checked again.. this is not efficient..
-			Sources.sourceCheckAll()
-			printSummary()
-			
+			return True
+						
 		elif len(prevIx) == 2:
 			printer ('Continuing playback (subsource)', tag='QPLAY')
 			Sources.setCurrent(prevIx[0],prevIx[1])
 			Sources.sourcePlay()
-
-			printer ('Checking other sources...', tag='QPLAY')
-			# TODO: the prev. source is now checked again.. this is not efficient..
-			Sources.sourceCheckAll()
-			printSummary()
+			return True
 
 		else:
-			printer ('Continuing playback not available, checking all sources...', tag='QPLAY')
-			Sources.sourceCheckAll()
-			printSummary()
-			printer ('Starting first available source', tag='QPLAY')
-			Sources.next()
-			Sources.sourcePlay()
+			printer ('Continuing playback not available.', tag='QPLAY')
+			return False
 		
 
 
@@ -1091,8 +1084,32 @@ myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 prevSource = cSettings.get_key('source')
 prevSourceSub = cSettings.get_key('subsource')
 
-QuickPlay( prevSource,
-		   prevSourceSub )
+if prevSource == "":
+	printer ('No previous source.', tag='QPLAY')
+	Sources.sourceCheckAll()
+	printSummary()
+	printer ('Starting first available source', tag='QPLAY')
+	Sources.next()
+	Sources.sourcePlay()
+	
+else:
+	ret = QuickPlay( prevSource,
+			         prevSourceSub )
+					 
+	if ret:
+		printer ('Checking other sources...', tag='QPLAY')
+		# TODO: the prev. source is now checked again.. this is not efficient..
+		Sources.sourceCheckAll()
+		printSummary()
+		
+	else:
+		printer ('Continuing playback not available, checking all sources...', tag='QPLAY')
+		Sources.sourceCheckAll()
+		printSummary()
+		printer ('Starting first available source', tag='QPLAY')
+		Sources.next()
+		Sources.sourcePlay()
+
 
 	   
 """
