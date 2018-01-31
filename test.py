@@ -322,11 +322,11 @@ def cb_remote_btn_press ( func ):
 					
 				"""
 			
-			print('Done switching source [OK]')
+			printer('Done switching source [OK]')
 		elif Sources.getAvailableCnt() == 1:
-			print('Only one source availble. Ignoring button.')
+			printer('Only one source availble. Ignoring button.')
 		elif Sources.getAvailableCnt() == 0:
-			print('No available sources.')
+			printer('No available sources.')
 	elif func == 'ATT':
 		print('\033[95m[BUTTON] ATT\033[00m')
 		pa_sfx('button_feedback')
