@@ -24,25 +24,25 @@ class SourceController():
 		
 	# add source
 	def add( self, source ):
-		#Check required fields:
+		# check required fields:
 		if not all (k in source for k in ('name','displayname','order','controls','template')):
 			self.__printer('ADD: source NOT added, missing one or more required field(s)...',LL_ERROR)
 			self.__printer('Required fields are: name,displayname,order,controls,template',LL_ERROR,True)
 			return False
 
-		#Availability = False for all new sources, until cleared by the check() function
+		# availability = False for all new sources, until cleared by the check() function
 		source['available'] = False
 		
-		#Add an empty array for subsources, it it's a template:
+		# add an empty array for subsources, it it's a template:
 		if 'template' in source:
 			source['subsources'] = []
 		
-		#All good, add the source:
+		# all good, add the source:
 		self.__printer('ADD: {0}'.format(source['displayname']))
 		self.lSource.append(source)
 		self.lSource.sort( key=lambda k: k['order'] )
 		
-		#!EXPERIMENTAL!
+		# create a class object and store the reference to it
 		if 'sourceModule' in source:
 			obj = source['sourceModule']	#[0]
 			sc = getattr(obj,'sourceClass')()

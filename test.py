@@ -218,14 +218,15 @@ def cb_remote_btn_press ( func ):
 				if arCurrIx[1] == None:
 					currSrc = Sources.get(None)
 				else:
-					currSrc = Sources.getSubSource(arCurrIx[0],arCurrIx[1])
+					currSrc = Sources.get(None)
+					currSSrc = Sources.getSubSource(arCurrIx[0],arCurrIx[1])
 				
 				# update source
 				cSettings.set('source',currSrc['name'])
 				
 				# update sub-source key (in case of sub-source)
 				if not arCurrIx[1] == None:
-					print currSrc
+					print currSSrc
 					#for key in subsource_key
 					#cSettings.set('subsourcekey', )
 
@@ -275,6 +276,7 @@ def cb_remote_btn_press ( func ):
 				#cSettings.set('source','media')
 				#cSettings.set('subsource',testSs)
 				
+				"""
 				if currSrc['name'] == 'fm':
 					source_settings = {'freq':'101.10'}	# TODO
 				elif currSrc['name'] == 'media':
@@ -308,7 +310,7 @@ def cb_remote_btn_press ( func ):
 				elif currSrc['name'] == 'smb':
 					source_settings = { 'mpd_dir':'music' }	#TODO
 					
-				
+				"""
 			
 
 		elif Sources.getAvailableCnt() == 1:
