@@ -38,7 +38,8 @@ class mpdController():
 			printer(' > Version: {0}'.format(self.mpdc.mpd_version))          # print the MPD version
 			self.mpdc.random(0)
 			self.mpdc.repeat(1)	
-			self.mpdc.send_idle()
+			#self.mpdc.send_idle()
+			self.mpdc.idle()	#keep the connection open...
 			#self.mpdc.close()
 			#self.mpdc.disconnect()
 		except:
@@ -61,6 +62,7 @@ class mpdController():
 	
 	def __del__( self ):
 			print('Disconnecting')	#, level=LL_DEBUG
+			self.mpdc.noidle()
 			self.mpdc.close()
 			self.mpdc.disconnect()
 		
@@ -69,10 +71,10 @@ class mpdController():
 		#todo: how about cropping, populating, and removing the first? item .. for faster continuity???
 		#self.mpdc.command_list_ok_begin()
 		#self.__connect()
-		
+		self.mpdc.noidle()
 		self.mpdc.stop()
 		self.mpdc.clear()
-
+		self.mpdc.idle()
 		#self.__disconnect()
 
 		#print self.mpdc.command_list_end()
@@ -87,6 +89,7 @@ class mpdController():
 		#oMpdClient.noidle()
 		
 		#self.__connect()
+		self.mpdc.noidle()
 	
 		if type == 'locmus' or type == 'smb' or type == 'media':
 			try:
@@ -117,14 +120,17 @@ class mpdController():
 		
 		#self.__disconnect()
 		#oMpdClient.send_idle()
+		self.mpdc.idle()
 		
 	def playlistIsPop( self ):
 		printer('Checking if playlist is populated')
 		#self.__connect()
 
+		self.mpdc.noidle()
 		self.mpdc.command_list_ok_begin()
 		self.mpdc.status()
 		results = self.mpdc.command_list_end()
+		self.mpdc.idle()
 
 		#self.__disconnect()
 		return results[0]['playlistlength']
@@ -299,7 +305,9 @@ class mpdController():
 	def channelSubscribe( self, channel ):
 	
 		#self.__connect()
+		self.mpdc.noidle()
 		self.mpcd.subscribe(channel)
+		self.mpdc.idle()
 		#self.__disconnect()
 		
 	def nextTrack( self ):
