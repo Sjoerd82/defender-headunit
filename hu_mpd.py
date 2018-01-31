@@ -34,7 +34,7 @@ class mpdController():
 		# Connect to MPD
 		try:
 			printer('Initializing MPD client')
-			self.mpdc = MPDClient()
+			self.mpdc = MPDClient()				# per instance !
 			self.mpdc.timeout = 10                # network timeout in seconds (floats allowed), default: None
 			self.mpdc.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
 			self.mpdc.connect("localhost", 6600)

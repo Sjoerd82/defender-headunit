@@ -211,7 +211,6 @@ def cb_remote_btn_press ( func ):
 				
 				Sources.sourceStop()
 				Sources.sourcePlay()
-				print "DEBUGGG YO"
 				#
 				# update operational settings
 				#
@@ -394,6 +393,8 @@ def cb_mpd_event( event ):
 			else:
 				mpc_save_pos_for_label( currSrc['name'], "/mnt/PIHU_CONFIG" )
 
+		""" PROBLEMS AHEAD
+		
 		#hu_details
 		mpcSong = mpdc.mpc_get_currentsong()
 		#mpcStatus = mpdc.mpc_get_status()
@@ -417,7 +418,7 @@ def cb_mpd_event( event ):
 		file = os.path.basename(mpcSong['file'])
 		
 		#disp.lcd_play( artist, title, file, track, mpcTrackTotal )
-		
+		"""
 				
 	elif event == "update":
 		printer(" ...  database update started or finished (no action)", tag='MPD')
