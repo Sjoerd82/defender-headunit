@@ -41,6 +41,7 @@ Python script
 
 Functions:
  Init:		Stuff that needs to run once
+		Executed when the source is added ( via: loadSourcePlugins->add_a_source->Source.sourceInit(indexAdded) )
  Check:		Determine availability
 		Parameters:
 			sourceCtrl	Required; Object; Reference to Sources

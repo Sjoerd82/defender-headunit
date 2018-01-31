@@ -103,7 +103,7 @@ from dbus.mainloop.glib import DBusGMainLoop
 import gobject
 
 # GLOBAL vars
-Sources = SourceController()
+Sources = SourceController()	#TODO: rename "Sources" -- confusing name
 
 # CONSTANTS
 CONFIG_FILE_DEFAULT = '/mnt/PIHU_APP/defender-headunit/config/configuration.json'
@@ -973,8 +973,11 @@ loadSourcePlugins(os.path.join( os.path.dirname(os.path.abspath(__file__)), 'sou
 
 print "TESTING TESTING"
 
-#fmc = sourceFM()
-fmc1 = sources.fm.sourceFM()
+#fmc = sourceFM()				#NameError: name 'sourceFM' is not defined
+#fmc = sources.fm.sourceFM()	#OK
+
+Sources.setCurrent(0)			# FM
+Sources.sourcePlay()
 
 exit()
 

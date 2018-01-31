@@ -12,15 +12,15 @@ lFmStations = [ 96.40, 99.10, 101.20, 102.54 ]
 class sourceFM():
 
 	def fm_check( self, sourceCtrl, subSourceIx=None  ):
-		printer('CHECK availability...')
+		printer('CHECK availability... CLASS!')
 		return True
 		
 	def fm_play( self, sourceCtrl, subSourceIx=None ):
-		printer('[FM] Start playing FM radio...')
+		printer('[FM] Start playing FM radio... CLASS!')
 		return True	
 
 	def fm_stop( self, sourceCtrl ):
-		printer('[FM] Stop')
+		printer('[FM] Stop CLASS!')
 		return True
 
 # Wrapper for "myprint"
