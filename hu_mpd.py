@@ -237,12 +237,12 @@ class mpdController():
 		
 	def mpc_get_currentsong( self ):
 	
-		self.mpc.noidle()
-		self.mpc.command_list_ok_begin()
-		self.mpc.currentsong()
-		self.mpc.idle()
+		self.mpdc.noidle()
+		self.mpdc.command_list_ok_begin()
+		self.mpdc.currentsong()
+		self.mpdc.idle()
 		
-		results = self.mpc.command_list_end()
+		results = self.mpdc.command_list_end()
 		print results[0]
 
 		#return self.mpdc.currentsong()
@@ -250,11 +250,11 @@ class mpdController():
 
 	def mpc_get_status( self ):
 
-		self.mpc.noidle()
-		self.mpc.command_list_ok_begin()
-		self.mpc.status()
+		self.mpdc.noidle()
+		self.mpdc.command_list_ok_begin()
+		self.mpdc.status()
 
-		results = self.mpc.command_list_end()
+		results = self.mpdc.command_list_end()
 		self.mpc.idle()
 		print results[0]
 
@@ -269,7 +269,7 @@ class mpdController():
 	def channelSubscribe( self, channel ):
 	
 		self.mpdc.noidle()
-		self.mpcd.subscribe(channel)
+		self.mpdc.subscribe(channel)
 		self.mpdc.send_idle()
 		
 	def nextTrack( self ):
