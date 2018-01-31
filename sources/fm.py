@@ -9,7 +9,7 @@ sourceName='fm'
 #  TODO: load/save. In configuration(?)
 lFmStations = [ 96.40, 99.10, 101.20, 102.54 ]
 
-class sourceFM():
+class sourceClass():
 
 	# Wrapper for "myprint"
 	def __printer( self, message, level=LL_INFO, continuation=False, tag=sourceName ):
