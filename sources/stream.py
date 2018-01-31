@@ -21,7 +21,7 @@ class sourceClass():
 
 	def __init__( self ):
 		self.__printer('Source Class Init', level=LL_DEBUG)
-		self.mpc1 = mpdController()
+		self.mpc = mpdController()
 		
 	def __del__( self ):
 		print('Source Class Deleted {0}'.format(sourceName))
@@ -91,11 +91,11 @@ class sourceClass():
 		# NOT ANYMORE - OR TODO: MPD playlist for local music *should* be updated by inotifywait.. but, it's a bit tricky, so test for it..
 
 		# populate playlist
-		self.mpc1.playlistClear()
-		self.mpc1.playlistPop('stream',None)
+		self.mpc.playlistClear()
+		self.mpc.playlistPop('stream',None)
 		
 		# check if succesful...
-		playlistCount = self.mpc1.playlistIsPop()
+		playlistCount = self.mpc.playlistIsPop()
 		if playlistCount == "0":
 			self.__printer(' > Nothing in the playlist, aborting...')
 			pa_sfx(LL_ERROR)
@@ -122,20 +122,20 @@ class sourceClass():
 	def stop( self, sourceCtrl ):
 		self.__printer('Stopping source: stream. Saving playlist position and clearing playlist.')
 		# save position and current file name for this drive
-		self.mpc1.mpc_save_pos_for_label( 'stream' )
+		self.mpc.mpc_save_pos_for_label( 'stream' )
 		
 		# stop playback
-		self.mpc1.mpc_stop()
+		self.mpc.mpc_stop()
 		#mpc $params_mpc -q stop
 		#mpc $params_mpc -q clear	
 		return True
 		
 	def next( self ):
 		self.__printer('Next track')
-		self.mpc1.nextTrack()
+		self.mpc.nextTrack()
 		return True
 		
 	def prev( self ):
 		self.__printer('Prev track')
-		self.mpc1.prevTrack()
+		self.mpc.prevTrack()
 		return True
