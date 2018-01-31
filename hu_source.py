@@ -45,7 +45,7 @@ class SourceController():
 		#!EXPERIMENTAL!
 		if 'sourceModule' in source:
 			obj = source['sourceModule']	#[0]
-			sc = getattr(obj,'sourceModule')()
+			sc = getattr(obj,'sourceClass')()
 			self.lSourceClasses.append(sc)
 			#self.lSourceClasses.append(getattr(obj,'sourceClass')())
 			# add a class field containing the class
