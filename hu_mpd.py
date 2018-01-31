@@ -62,8 +62,6 @@ class mpdController():
 	
 	def __del__( self ):
 			print('Disconnecting')	#, level=LL_DEBUG
-			#self.mpdc.noidle()		# needed?	gives an error in case no idle was send prior..   #wtf
-			#self.mpdc.close()		# gives an error that there are pending commands.. somehow... #wtf
 			self.mpdc.disconnect()
 		
 	def playlistClear( self ):
@@ -126,11 +124,11 @@ class mpdController():
 		printer('Checking if playlist is populated')
 		#self.__connect()
 
-#		self.mpdc.noidle()
-#		self.mpdc.command_list_ok_begin()
-#		self.mpdc.status()
-#		results = self.mpdc.command_list_end()
-#		self.mpdc.send_idle()
+		self.mpdc.noidle()
+		self.mpdc.command_list_ok_begin()
+		self.mpdc.status()
+		results = self.mpdc.command_list_end()
+		self.mpdc.send_idle()
 
 		#self.__disconnect()
 		return results[0]['playlistlength']

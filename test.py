@@ -982,16 +982,11 @@ import sources
 loadSourcePlugins(os.path.join( os.path.dirname(os.path.abspath(__file__)), 'sources'))
 
 
-print "TESTING TESTING"
-
-#fmc = sourceFM()				#NameError: name 'sourceFM' is not defined
-#fmc = sources.fm.sourceFM()	#OK
-
-Sources.setAvailableIx(0,True)
-Sources.setCurrent(0)
-Sources.sourcePlay()
-
-exit()
+#print "TESTING TESTING"
+#Sources.setAvailableIx(0,True)
+#Sources.setCurrent(0)
+#Sources.sourcePlay()
+#exit()
 
 """ DEBUGGING....
 print "DEBUG!"
