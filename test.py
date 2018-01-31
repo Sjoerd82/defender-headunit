@@ -1202,7 +1202,7 @@ hudispdata['rnd'] = "1"
 hudispdata['artist'] = "The Midnight"
 disp.dispdata(hudispdata)
 
-time.sleep(10))
+time.sleep(10)
 hudispdata = {}
 hudispdata['rnd'] = "0"
 disp.dispdata(hudispdata)
