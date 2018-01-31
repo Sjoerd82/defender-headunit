@@ -906,7 +906,7 @@ class dbusDisplay(dbus.service.Object):
 	def __init__(self, conn, object_path='/com/arctura/display'):
 		dbus.service.Object.__init__(self, conn, object_path)
 
-	@dbus.service.signal("com.arctura.display", signature='a{sb}')
+	@dbus.service.signal("com.arctura.display", signature='a{sv}')
 	def dispdata(self, dispdata):
 		pass
 
@@ -1059,7 +1059,7 @@ for filename in os.listdir( configuration['directories']['output'] ):
 			pathfilename = os.path.join( configuration['directories']['output'], filename )
 			t = threading.Thread(target=plugin_execute, args=(pathfilename,))
 			t.setDaemon(True)
-			#threads.append(t)
+			threads.append(t)
 			#t.start()	WORKAROUND
 			
 # NOTE: Plugins are now loading in the background, in parallel to code below.
@@ -1200,7 +1200,7 @@ bus = dbus.SystemBus()
 
 # Output
 disp = dbusDisplay(bus)
-hudispdata = { 'random':True, 'updating':True }
+hudispdata = { 'random':True, 'artist':'The Midnight' }
 disp.dispdata(hudispdata)
 #testA.hello2("!!bla!!")
 
