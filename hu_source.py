@@ -453,7 +453,7 @@ class SourceController():
 		#	self.__printer('PLAY: ERROR: {0}'.format(ex),LL_CRITICAL)
 		
 
-		checkResult = self.lSource[index]['sourceClass'].play(self)
+		checkResult = self.lSource[self.iCurrent]['sourceClass'].play(self)
 		
 		#try:
 		
@@ -485,7 +485,7 @@ class SourceController():
 		except Exception as ex:
 			self.__printer('STOP: ERROR: {0}'.format(ex),LL_CRITICAL)
 		
-		checkResult = self.lSource[index]['sourceClass'].stop(self)
+		checkResult = self.lSource[self.iCurrent]['sourceClass'].stop(self)
 		#try:
 		#	obj = self.lSource[self.iCurrent]['sourceStop'][0]
 		#	func = self.lSource[self.iCurrent]['sourceStop'][1]
@@ -503,7 +503,7 @@ class SourceController():
 			self.__printer('NEXT: function not defined',LL_WARNING)
 			return False
 
-		checkResult = self.lSource[index]['sourceClass'].next(self)
+		checkResult = self.lSource[self.iCurrent]['sourceClass'].next(self)
 		#try:
 		#	obj = self.lSource[self.iCurrent]['sourceNext'][0]
 		#	func = self.lSource[self.iCurrent]['sourceNext'][1]
@@ -521,7 +521,7 @@ class SourceController():
 			self.__printer('PREV: function not defined',LL_WARNING)
 			return False
 
-		checkResult = self.lSource[index]['sourceClass'].prev(self)
+		checkResult = self.lSource[self.iCurrent]['sourceClass'].prev(self)
 		#try:
 		#obj = self.lSource[self.iCurrent]['sourcePrev'][0]
 		#func = self.lSource[self.iCurrent]['sourcePrev'][1]
