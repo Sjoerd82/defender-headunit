@@ -5,6 +5,5 @@
   "type": "alsa",
   "depNetwork": false,
   "controls": {"ffwd": false, "rwnd": false, "prev": false, "next": false},
-  "sourceClass": "",
   "template": false
 }

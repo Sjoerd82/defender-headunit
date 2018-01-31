@@ -4,7 +4,6 @@
   "type": "mpd",
   "depNetwork": true,
   "controls": {"ffwd": false, "rwnd": false, "prev": true, "next": true},
-  "sourceClass": "",
   "template": true,
-  "subsource_key": ['mountpoint']
+  "subsource_key": ["mountpoint"]
 }

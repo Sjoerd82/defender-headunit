@@ -5,5 +5,5 @@
   "depNetwork": false,
   "controls": {"ffwd": false, "rwnd": false, "prev": true, "next": true},
   "template": true,
-  "subsource_key": ['mountpoint']
+  "subsource_key": ["mountpoint"]
 }
