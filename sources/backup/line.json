@@ -5,6 +5,8 @@
   "type": "alsa",
   "depNetwork": false,
   "controls": {"ffwd": false, "rwnd": false, "prev": false, "next": false},
-  "sourceClass": "",
+  "sourceCheck": ["sources.line", "linein_check"],
+  "sourcePlay":  ["sources.line", "linein_play"],
+  "sourceStop":  ["sources.line", "linein_stop"],
   "template": false
 }

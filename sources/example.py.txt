@@ -1,12 +1,11 @@
 #********************************************************************************
 #
-# Source: AUX / Line-In
+# Source: Example
 #
 
 from hu_utils import *
 
-# Logging
-sourceName='line'
+sourceName='example'
 
 class sourceClass():
 
@@ -29,12 +28,7 @@ class sourceClass():
 
 	def check( self, sourceCtrl, subSourceIx=None  ):
 		self.__printer('Checking availability...', level=15)
-		#global Sources
-		printer('Checking if Line-In is available... not available')
-		#arSourceAvailable[4]=0 # not available
-		#Sources.setAvailable('name','alsa',False) # not available
-		#echo "Source 4 Unavailable; Line-In / ALSA"
-		return False
+		return True
 		
 	def play( self, sourceCtrl, subSourceIx=None ):
 		self.__printer('Start playing')
@@ -45,9 +39,9 @@ class sourceClass():
 		return True
 		
 	def next( self ):
-		self.__printer('Not available')
-		return False
+		self.__printer('Next track')
+		return True
 		
 	def prev( self ):
-		self.__printer('Not available')
-		return False
+		self.__printer('Prev track')
+		return True

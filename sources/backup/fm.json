@@ -4,7 +4,7 @@
   "type": "fmtools",
   "depNetwork": false,
   "controls": {"ffwd": false, "rwnd": false, "prev": true, "next": true},
-  "sourceClass": "",
+  "sourceClass": ["", "sourceFM"],
   "template": false,
   "defaultconfig": { "frq_lo" : 80 },
   "menuitems" : [

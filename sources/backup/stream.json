@@ -1,0 +1,15 @@
+{ "name": "stream",
+  "displayname": "Internet Radio",
+  "order": 5,
+  "available": false,
+  "type": "mpd",
+  "depNetwork": false,
+  "controls": {"ffwd": false, "rwnd": false, "prev": true, "next": true},
+  "sourceInit":  ["", "stream_init"],
+  "sourceCheck": ["", "stream_check"],
+  "sourcePlay":  ["", "stream_play"],
+  "sourceStop":  ["", "stream_stop"],
+  "sourceNext":  ["", "stream_next"],
+  "sourcePrev":  ["", "stream_prev"],
+  "template": false
+}

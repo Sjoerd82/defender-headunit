@@ -1,3 +1,11 @@
+#********************************************************************************
+#
+# Source: Local music
+#
+# Plays local music folder(s), as defined in the main configuration
+#
+
+
 # MISC (myprint, colorize)
 from hu_utils import *
 from hu_settings import getSourceConfig
@@ -16,210 +24,193 @@ from hu_mpd import *
 sSambaMusic="/media/PIHU_SMB/music"
 sSambaMusicMPD="PIHU_SMB"			# directory from a MPD pov.
 
-"""
-class Source():
-
-	def init():
-		return True
-
-	def check():
-		return True
+class sourceClass():
 	
-	def play():
-		return True
-		
-	def stop():
-		return True
-"""
+	mpc = None
 
-# Wrapper for "myprint"
-#  instead of this function you may use the 'headunit' logger, and use logger.info() 
-def printer( message, level=LL_INFO, continuation=False, tag=sourceName ):
-	if continuation:
-		myprint( message, level, '.'+tag )
-	else:
-		myprint( message, level, tag )
-
-def locmus_add( label, dir, mpd_dir, sourceCtrl ):
-
-	#TODO:
-	mpd_musicdir = '/media'
-
-	# get index (name is unique)
-	ix = sourceCtrl.getIndex('name','locmus')
-
-	# construct the subsource
-	subsource = {}
-	subsource['name'] = 'locmus'
-	subsource['displayname'] = 'local: ' + dir
-	subsource['order'] = 0			# no ordering
-	subsource['mountpoint'] = dir
-	subsource['mpd_dir'] = mpd_dir
-	subsource['label'] = label
-	#subsource['uuid'] = None		# not relevant for local sources
-
-	sourceCtrl.addSub( ix, subsource )
-	
-# Stuff that needs to run once
-#def locmus_init( sourceCtrl ):
-def locmus_init( sourceCtrl ):
-	printer('Initializing....')
-	
-	# get source configuration from main configuration
-	locmusConfig = getSourceConfig('locmus')
-	
-	# add all locations as configured
-	for location in locmusConfig:
-		locmus_add( location['label']
-		           ,location['musicdir']
-				   ,location['musicdir_mpd']
-				   ,sourceCtrl )
-
-	return True
-
-# Source Check: Return True/False (available/not available)
-# Optionally, provide list of mountpoint(s) to check
-#def locmus_check( sourceCtrl, mountpoint=None ):
-def locmus_check( sourceCtrl, subSourceIx=None ):
-	printer('CHECKING availability...')
-	
-	ix = sourceCtrl.getIndex('name','locmus')
-	mountpoints = []
-	mpc = mpdController()
-	foundStuff = 0
-					
-	if subSourceIx == None:
-		subsources = sourceCtrl.getSubSources( ix )
-		for subsource in subsources:
-			mountpoints.append(subsource['mountpoint'])
-		ssIx = 0
-	else:
-		subsource = sourceCtrl.getSubSource( ix, subSourceIx )
-		mountpoints.append(subsource['mountpoint'])
-		ssIx = subSourceIx
-
-	# local dir, relative to MPD
-	sLocalMusicMPD = subsource['mpd_dir']
-
-	# check mountpoint(s)
-	for location in mountpoints:
-		printer('Local folder: {0}'.format(location))
-		if not os.listdir(location):
-			printer(" > Local music directory is empty.",LL_WARNING,True)
+	# Wrapper for "myprint"
+	def __printer( self, message, level=LL_INFO, continuation=False, tag=sourceName ):
+		if continuation:
+			myprint( message, level, '.'+tag )
 		else:
-			printer(" > Local music directory present and has files.",LL_INFO,True)
-			
-			if not mpc.dbCheckDirectory( sLocalMusicMPD ):
-				printer(" > Running MPD update for this directory.. ALERT! LONG BLOCKING OPERATION AHEAD...")
-				mpc.update( sLocalMusicMPD )
+			myprint( message, level, tag )
+
+	def __init__( self ):
+		self.__printer('Source Class Init', level=LL_DEBUG)
+		self.mpc = mpdController()
+		
+	def __del__( self ):
+		print('Source Class Deleted {0}'.format(sourceName))
+
+	def __locmus_add( self, label, dir, mpd_dir, sourceCtrl ):
+
+		#TODO:
+		mpd_musicdir = '/media'
+
+		# get index (name is unique)
+		ix = sourceCtrl.getIndex('name','locmus')
+
+		# construct the subsource
+		subsource = {}
+		subsource['name'] = 'locmus'
+		subsource['displayname'] = 'local: ' + dir
+		subsource['order'] = 0			# no ordering
+		subsource['mountpoint'] = dir
+		subsource['mpd_dir'] = mpd_dir
+		subsource['label'] = label
+		#subsource['uuid'] = None		# not relevant for local sources
+
+		sourceCtrl.addSub( ix, subsource )
+
+	def init( self, sourceCtrl ):
+		self.__printer('Initializing...', level=15)
+		# get source configuration from main configuration
+		locmusConfig = getSourceConfig('locmus')
+		
+		# add all locations as configured
+		for location in locmusConfig:
+			self.__locmus_add( location['label']
+					          ,location['musicdir']
+					          ,location['musicdir_mpd']
+					          ,sourceCtrl )
+
+		return True
+
+	# Source Check: Return True/False (available/not available)
+	# Optionally, provide list of mountpoint(s) to check
+	#def locmus_check( sourceCtrl, mountpoint=None ):
+	def check( self, sourceCtrl, subSourceIx=None  ):
+		self.__printer('Checking availability...', level=15)
+	
+		ix = sourceCtrl.getIndex('name','locmus')
+		mountpoints = []
+		foundStuff = 0
+						
+		if subSourceIx == None:
+			subsources = sourceCtrl.getSubSources( ix )
+			for subsource in subsources:
+				mountpoints.append(subsource['mountpoint'])
+			ssIx = 0
+		else:
+			subsource = sourceCtrl.getSubSource( ix, subSourceIx )
+			mountpoints.append(subsource['mountpoint'])
+			ssIx = subSourceIx
+
+		# local dir, relative to MPD
+		sLocalMusicMPD = subsource['mpd_dir']
+
+		# check mountpoint(s)
+		for location in mountpoints:
+			self.__printer('Local folder: {0}'.format(location))
+			if not os.listdir(location):
+				self.__printer(" > Local music directory is empty.",LL_WARNING,True)
+			else:
+				printer(" > Local music directory present and has files.",LL_INFO,True)
+				
 				if not mpc.dbCheckDirectory( sLocalMusicMPD ):
-					printer(" > Nothing to play marking unavailable...")
+					self.__printer(" > Running MPD update for this directory.. ALERT! LONG BLOCKING OPERATION AHEAD...")
+					self.mpc.update( sLocalMusicMPD )
+					if not self.mpc.dbCheckDirectory( sLocalMusicMPD ):
+						self.__printer(" > Nothing to play marking unavailable...")
+					else:
+						self.__printer(" > Music found after updating")
+						sourceCtrl.setAvailableIx( ix, True, ssIx )
+						foundStuff += 1
 				else:
-					printer(" > Music found after updating")
 					sourceCtrl.setAvailableIx( ix, True, ssIx )
 					foundStuff += 1
-			else:
-				sourceCtrl.setAvailableIx( ix, True, ssIx )
-				foundStuff += 1
-		ssIx+=1
-	
-	if foundStuff > 0:
-		return True
-	else:
-		return False
-
+			ssIx+=1
 		
-# Source Play: Return True/False
-def locmus_play( sourceCtrl, subSourceIx=None ):
-	printer('Play (MPD)')
-
-	#
-	# variables
-	#
-	
-	mpc = mpdController()
-
-	# get directory to play, directory is relative to MPD music dir.
-	ix = sourceCtrl.getIndex('name','locmus')
-	subsource = sourceCtrl.getSubSource( ix, subSourceIx )
-	sLocalMusicMPD = subsource['mpd_dir']
-	sLabel = subsource['label']
-	
-	
-	#
-	# load playlist
-	#
-	
-	# NOT ANYMORE - OR TODO: MPD playlist for local music *should* be updated by inotifywait.. but, it's a bit tricky, so test for it..
-
-	# populate playlist
-	mpc.playlistClear()
-	mpc.playlistPop('locmus',sLocalMusicMPD)
-
-	# check if succesful...
-	playlistCount = mpc.playlistIsPop()
-	if playlistCount == "0":
-		printer(' > Nothing in the playlist, trying to update database...')
-		
-		# update and try again...
-		mpc.update( sLocalMusicMPD, True )
-		mpc.playlistPop('locmus',sLocalMusicMPD)
-		
-		# check if succesful...
-		playlistCount = mpc.mpc_playlist_is_populated()
-		if playlistCount == "0":
-			# Failed. Returning false will cause caller to try next source
-			printer(' > Nothing in the playlist, giving up. Marking source unavailable.')
-			sourceCtrl.setAvailableIx( ix, False, subSourceIx )
-			pa_sfx(LL_ERROR)
-			return False
+		if foundStuff > 0:
+			return True
 		else:
-			printer(' > Found {0:s} tracks'.format(playlistCount))
-	else:
-		printer(' > Found {0:s} tracks'.format(playlistCount))
+			return False
 
-	#
-	# continue where left
-	#
-	
-	playslist_pos = mpc.lastKnownPos( sLabel )
-	
-	printer(' > Starting playback')
-	#mpc.playStart( str(playslist_pos['pos']), playslist_pos['time'] )
-	call(["mpc", "-q" , "stop"])
-	call(["mpc", "-q" , "play", str(playslist_pos['pos'])])
-	if playslist_pos['time'] > 0:
-		printer(' ...  Seeking to {0} sec.'.format(playslist_pos['time']))
-		call(["mpc", "-q" , "seek", str(playslist_pos['time'])])
+		
+	def play( self, sourceCtrl, subSourceIx=None ):
+		self.__printer('Start playing')
+		
+		#
+		# variables
+		#
+		
+		# get directory to play, directory is relative to MPD music dir.
+		ix = sourceCtrl.getIndex('name','locmus')
+		subsource = sourceCtrl.getSubSource( ix, subSourceIx )
+		sLocalMusicMPD = subsource['mpd_dir']
+		sLabel = subsource['label']
+		
+		
+		#
+		# load playlist
+		#
+		
+		# NOT ANYMORE - OR TODO: MPD playlist for local music *should* be updated by inotifywait.. but, it's a bit tricky, so test for it..
 
-	# double check if source is up-to-date
-	
-	# Load playlist directories, to enable folder up/down browsing.
-	#mpc_get_PlaylistDirs()
-	# Run in the background... it seems the thread stays active relatively long, even after the playlistdir array has already been filled.
-#	mpc_get_PlaylistDirs_thread = threading.Thread(target=mpc.mpc_get_PlaylistDirs)
-#	mpc_get_PlaylistDirs_thread.start()
-	return True
+		# populate playlist
+		self.mpc.playlistClear()
+		self.mpc.playlistPop('locmus',sLocalMusicMPD)
 
-def locmus_stop( sourceCtrl ):
-	printer('[LOCMUS] Stopping source: locmus. Saving playlist position and clearing playlist.')
-	mpc = mpdwrapper()
+		# check if succesful...
+		playlistCount = mpc.playlistIsPop()
+		if playlistCount == "0":
+			self.__printer(' > Nothing in the playlist, trying to update database...')
+			
+			# update and try again...
+			self.mpc.update( sLocalMusicMPD, True )
+			self.mpc.playlistPop('locmus',sLocalMusicMPD)
+			
+			# check if succesful...
+			playlistCount = self.mpc.mpc_playlist_is_populated()
+			if playlistCount == "0":
+				# Failed. Returning false will cause caller to try next source
+				self.__printer(' > Nothing in the playlist, giving up. Marking source unavailable.')
+				sourceCtrl.setAvailableIx( ix, False, subSourceIx )
+				pa_sfx(LL_ERROR)
+				return False
+			else:
+				self.__printer(' > Found {0:s} tracks'.format(playlistCount))
+		else:
+			self.__printer(' > Found {0:s} tracks'.format(playlistCount))
 
-	# save playlist position (file name + position)
-	mpc_save_pos_for_label( 'locmus' )
-	
-	# stop playback
-	mpc.mpc_stop()
-	return True
+		#
+		# continue where left
+		#
+		
+		playslist_pos = self.mpc.lastKnownPos( sLabel )
+		
+		self.__printer(' > Starting playback')
+		#mpc.playStart( str(playslist_pos['pos']), playslist_pos['time'] )
+		call(["mpc", "-q" , "stop"])
+		call(["mpc", "-q" , "play", str(playslist_pos['pos'])])
+		if playslist_pos['time'] > 0:
+			self.__printer(' ...  Seeking to {0} sec.'.format(playslist_pos['time']))
+			call(["mpc", "-q" , "seek", str(playslist_pos['time'])])
 
-def media_next( sourceCtrl ):
-	printer('Next track')
-	mpc = mpdController()
-	mpc.nextTrack()
-	return True
+		# double check if source is up-to-date
+		
+		# Load playlist directories, to enable folder up/down browsing.
+		#mpc_get_PlaylistDirs()
+		# Run in the background... it seems the thread stays active relatively long, even after the playlistdir array has already been filled.
+	#	mpc_get_PlaylistDirs_thread = threading.Thread(target=mpc.mpc_get_PlaylistDirs)
+	#	mpc_get_PlaylistDirs_thread.start()
+		return True
 
-def media_prev( sourceCtrl ):
-	printer('Prev track')
-	mpc = mpdController()
-	mpc.prevTrack()
-	return True
+	def stop( self, sourceCtrl ):
+		self.__printer('Stopping source: locmus. Saving playlist position and clearing playlist.'')
+		# save playlist position (file name + position)
+		self.mpc.mpc_save_pos_for_label( 'locmus' )
+		
+		# stop playback
+		self.mpc.mpc_stop()
+		return True
+		
+	def next( self ):
+		self.__printer('Next track')
+		self.mpc.nextTrack()
+		return True
+		
+	def prev( self ):
+		self.__printer('Prev track')
+		self.mpc.prevTrack()
+		return True

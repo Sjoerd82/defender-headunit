@@ -1,8 +1,10 @@
+#********************************************************************************
+#
+# Source: Example
+#
 
 from hu_utils import *
 
-# Logging
-mytag='fm'
 sourceName='fm'
 
 # Station list
@@ -19,7 +21,7 @@ class sourceClass():
 			myprint( message, level, tag )
 
 	def __init__( self ):
-		printer('FM CLASS INIT!')
+		self.__printer('FM CLASS INIT!')
 		
 	def __del__( self ):
 		#self.__printer('FM CLASS DELETE!')		# 	ERROR! } Exception TypeError: TypeError("'NoneType' object is not iterable",)
@@ -27,50 +29,27 @@ class sourceClass():
 		print('FM CLASS DELETE!')
 		
 	def check( self, sourceCtrl, subSourceIx=None  ):
-		printer('CHECK availability...')
+		self.__printer('CHECK availability...')
 		return True
 		
 	def play( self, sourceCtrl, subSourceIx=None ):
-		printer('Start playing FM radio...')
+		self.__printer('Start playing FM radio...')
 		return True	
 
 	def stop( self, sourceCtrl ):
-		printer('Stop CLASS!')
+		self.__printer('Stop CLASS!')
 		return True
 		
 	def next( self ):
-		printer('NOT IMPLEMENTED')
+		self.__printer('NOT IMPLEMENTED')
 		return False
 		
 	def prev( self ):
-		printer('NOT IMPLEMENTED')
+		self.__printer('NOT IMPLEMENTED')
 		return False
 		
 
-# Wrapper for "myprint"
-def printer( message, level=LL_INFO, continuation=False, tag=sourceName ):
-	if continuation:
-		myprint( message, level, '.'+tag )
-	else:
-		myprint( message, level, tag )
 
-# Source Check: Return True/False (available/not available)
-def fm_check( sourceCtrl, subSourceIx=None  ):
-	#global Sources
-	printer('CHECK availability...')
-	#arSourceAvailable[0]=0 # not available
-	#Sources.setAvailable('name','fm',False) # not available
-	#echo "Source 0 Unavailable; FM"
-	return True
-
-def fm_play( sourceCtrl, subSourceIx=None ):
-	printer('[FM] Start playing FM radio...')
-	return True
-	#TODO
-
-def fm_stop( sourceCtrl ):
-	printer('[FM] Stop')
-	return True
 	
 def fm_popMenu():
 	newMenu = []

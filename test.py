@@ -704,10 +704,14 @@ def loadSourcePlugins( plugindir ):
 		# sourceModule = sys.modules['sources.'+sourcePluginName] # MENU..
 		
 		# 
-		for execFunction in ('sourceInit','sourceCheck','sourcePlay','sourceStop','sourceNext','sourcePrev','sourceClass'):
+		for execFunction in ('sourceInit','sourceCheck','sourcePlay','sourceStop','sourceNext','sourcePrev'):
 			if execFunction in config:
 				#overwrite string with reference to module
 				config[execFunction][0] = sys.modules['sources.'+sourcePluginName]
+
+		if 'sourceClass' in config:
+			#overwrite string with reference to module
+			config['sourceClass'] = sys.modules['sources.'+sourcePluginName]
 		
 		# register the source
 		isAdded = Sources.add(config)
