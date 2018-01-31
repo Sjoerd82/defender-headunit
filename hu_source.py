@@ -308,7 +308,8 @@ class SourceController():
 		return self.lSource[index]['subsources']
 
 	def getSubSource( self, index, ssIndex ):
-		return self.lSource[index]['subsources'][ssIndex]
+		if 'subsources' in self.lSource[index]:
+			return self.lSource[index]['subsources'][ssIndex]
 		
 	# return controls for given index ## do we need this
 	def getSourceControls( self, index ):
