@@ -569,7 +569,7 @@ def set_random( req_state ):
 	global mpdc
 	global hu_details
 	global Sources
-	print('[------] Random/Shuffle: {0}'.format(state))
+	print('[------] Random/Shuffle: {0}'.format(req_state))
 	
 	# get current random state
 	curr_State = hu_details['random']
