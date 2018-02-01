@@ -232,7 +232,7 @@ def cb_remote_btn_press ( func ):
 				if not arCurrIx[1] == None:
 					subsource_key = {}
 					for key in currSrc['subsource_key']:
-						subsource_key[key] = currSrc['subsources'][arCurrIx[1][key]
+						subsource_key[key] = currSrc['subsources'][arCurrIx[1]][key]
 					cSettings.set('subsourcekey', subsource_key)
 				
 				# commit changes
