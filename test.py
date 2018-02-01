@@ -572,7 +572,7 @@ def set_random( req_state ):
 	print('[------] Random/Shuffle: {0}'.format(req_state))
 	
 	# get current random state
-	curr_State = hu_details['random']
+	curr_state = hu_details['random']
 	
 	if req_state == curr_state:
 		printer('Already at requested state')
@@ -595,9 +595,9 @@ def set_random( req_state ):
 	if req_state in currSrc['random']:
 		newState = req_state
 	elif req_state == 'toggle':
-		if curr_State == 'off':
+		if curr_state == 'off':
 			newState = 'on'
-		elif curr_State == 'on':
+		elif curr_state == 'on':
 			newState = 'off'
 		else:
 			#newState = ''	#mpc will toggle
