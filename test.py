@@ -252,7 +252,7 @@ def cb_remote_btn_press ( func ):
 				elif currSrc['name'] == 'locmus':
 					hudispdata['src'] = 'INT'
 					hudispdata['info'] = "Internal Storage"
-					if len(subsource_key[key] = currSrc['subsources']):
+					if len(currSrc['subsources']) > 1:
 						hudispdata['info1'] = "folder: " + currSrc['subsources'][arCurrIx[1]]['label']
 				elif currSrc['name'] == 'bt':
 					hudispdata['src'] = 'BT'
