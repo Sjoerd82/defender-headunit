@@ -397,7 +397,7 @@ def cb_display( displaydata ):
 			mylcd.set_fb_str(1,5,'   ')
 
 	if 'rnd' in displaydata:
-		if displaydata['rnd'] == '1':
+		if displaydata['rnd'] == '1' or displaydata['rnd'] == 'on':
 			mylcd.set_fb_str(1,9,'RND')
 		else:
 			mylcd.set_fb_str(1,9,'   ')

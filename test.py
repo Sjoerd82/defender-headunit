@@ -121,7 +121,7 @@ CONFIG_FILE_DEFAULT = '/mnt/PIHU_APP/defender-headunit/config/configuration.json
 CONFIG_FILE = '/mnt/PIHU_CONFIG/configuration.json'
 VERSION = "1.0.0"
 
-hu_details = { 'track':None, 'random':False, 'repeat':True }
+hu_details = { 'track':None, 'random':'off', 'repeat':True }
 
 def volume_att_toggle():
 	hudispdata = {}
@@ -210,20 +210,20 @@ def cb_remote_btn_press ( func ):
 				
 				# get current index(es)
 				arCurrIx = Sources.getIndexCurrent()
-				if arCurrIx[1] == None:
-					currSrc = Sources.get(None)
-				else:
-					currSrc = Sources.get(None)
-					currSSrc = Sources.getSubSource(arCurrIx[0],arCurrIx[1])
+				#if arCurrIx[1] == None:
+				currSrc = Sources.get(None)
+				#else:
+				#	currSrc = Sources.get(None)
+				#	currSSrc = Sources.getSubSource(arCurrIx[0],arCurrIx[1])
+				#
+				#print "currSrc:"
+				#print currSrc
 				
-				print "currSrc:"
-				print currSrc
+				#print "currSSrc:"
+				#print currSSrc
 				
-				print "currSSrc:"
-				print currSSrc
-				
-				print "++:"
-				print Sources.getComposite()
+				#print "++:"
+				#print Sources.getComposite()
 				
 				# update source
 				cSettings.set('source',currSrc['name'])
@@ -232,7 +232,7 @@ def cb_remote_btn_press ( func ):
 				if not arCurrIx[1] == None:
 					subsource_key = {}
 					for key in currSrc['subsource_key']:
-						subsource_key[key] = currSSrc[key]
+						subsource_key[key] = currSrc['subsources'][arCurrIx[1][key]
 					cSettings.set('subsourcekey', subsource_key)
 				
 				# commit changes
@@ -562,44 +562,72 @@ def udisk_details( device, action ):
 # Headunit functions
 #
 
-# set random; state: <toggle | on | off>
+# set random; req_state: <toggle | on | off>
 # todo: implement "special random"-modes: random within album, artist, folder
-def set_random( state ):
-	global dSettings
+def set_random( req_state ):
+	#global dSettings
+	global mpdc
+	global hu_details
+	global Sources
 	print('[------] Random/Shuffle: {0}'.format(state))
 	
-	# get source
+	# get current random state
+	curr_State = hu_details['random']
 	
-	# only for MPD based sources:
-	if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 5 or dSettings['source'] == 6:
-		if state == 'on':
-			pa_sfx('button_feedback')
-			newState = state
-		elif state == 'off':
-			pa_sfx('reset_shuffle')
-			newState = state
-		else:
-			currMpcRandom = mpc_random_get()
-			if currMpcRandom == "on":
-				pa_sfx('reset_shuffle')
-				newState = 'off'
-			elif currMpcRandom == "off":
-				pa_sfx('button_feedback')
-				newState = 'on'
+	if req_state == curr_state:
+		printer('Already at requested state')
+		return False
+	
+	# get current source
+	currSrc = Sources.get(None)
+	
+	# check if the source supports random
+	if not 'random' in currSrc or len(currSrc['random']) == 0:
+		printer('Random not available for this source')
+		return False
 
-		mpc_random( newState )
+	# check type, we only support mpd at this time
+	if not 'type' in currSrc or not currSrc['type'] == 'mpd':
+		printer('Random not available for this source type (only mpd)')
+		return False
+	
+	# set newState
+	if req_state in currSrc['random']:
+		newState = req_state
+	elif req_state = 'toggle':
+		if curr_State == 'off':
+			newState = 'on'
+		elif curr_State == 'on':
+			newState = 'off'
+		else:
+			#newState = ''	#mpc will toggle
+			printer('Can only toggle when state is on or off')
+			return False
+		
+	# sound effect
+	if newState == 'on':
+		pa_sfx('button_feedback')
+	elif newState == 'off':
+		pa_sfx('reset_shuffle')
+	
+	# apply newState
+	mpdc.random( newState )
 		
 	# bluetooth:
+	"""
 	elif dSettings['source'] == 3:
 		pa_sfx('button_feedback')
 		bt_shuffle()
 	
 	else:
 		print(' ...  Random/Shuffle not supported for this source.')
-
+	"""
+	
+	# update display
 	hudispdata = {}
-	hudispdata['rnd'] = '1'
+	hudispdata['rnd'] = newState
 	disp.dispdata(hudispdata)
+	return True
 
 
 

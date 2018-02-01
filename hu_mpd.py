@@ -284,6 +284,24 @@ class mpdController():
 	def stop( self ):
 		print('Stop')
 
+	def random( self, state ):
+		global dSettings
+				
+		# on
+		if state == 'on':
+			print('[MPC] Random ON + Next track')
+			call(["mpc", "-q", "random", "on"])
+			call(["mpc", "-q", "next"])
+
+		# off
+		elif state == 'off':
+			print('[MPC] Random OFF')
+			call(["mpc", "-q", "random", "off"])
+
+		# toggle
+		else: 
+			print('[MPC] Toggling random')
+			call(["mpc", "-q", "random"])
 
 def mpc_random_get():
 

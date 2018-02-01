@@ -304,6 +304,9 @@ class SourceController():
 		else:
 			return copy.copy(self.lSource[index])			
 
+	def getComposite( self ):
+		return dict( self.lSource[self.iCurrent].items() + self.lSource[self.iCurrent]['subsources'][self.iCurrentSS].items() )
+	
 	def getSubSources( self, index ):
 		return self.lSource[index]['subsources']
 
