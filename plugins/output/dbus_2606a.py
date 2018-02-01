@@ -413,12 +413,17 @@ def cb_display( displaydata ):
 	printer('DBUS event received: {0}'.format(displaydata), tag='d1606a')
 
 	if 'rnd' in displaydata:
+		print "1"
 		if displaydata['rnd'] == '1' or displaydata['rnd'] == 'on':
+			print "2"
 			fb_global = fbmod( fb_global, 1,9,'RND')
+			print "3"
 		else:
+			print "4"
 			fb_global = fbmod( fb_global, 1,9,'   ')
+			print "5"
 			
-	print fb_global
+	print("CB: {0}".format(fb_global))
 
 			
 	#print displaydata
