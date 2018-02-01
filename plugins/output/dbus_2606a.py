@@ -391,8 +391,8 @@ def worker():
 		#mylcd.set_fb_str(0,13,str(i))
 		if fb_old <> fb_global:
 			mylcd.set_fb(fb_global)
+			mylcd.write_to_lcd()
 			fb_old = fb_global
-		#mylcd.write_to_lcd()
 		print ("{0}: {1} {2}".format(i,fb_old,fb_global))
 		i += 1
 		
