@@ -497,7 +497,7 @@ fb_global = [
 		'']
 
 
-t = threading.Thread(target=worker, args=(,))
+t = threading.Thread(target=worker)
 #threads.append(t)
 t.start()
 
