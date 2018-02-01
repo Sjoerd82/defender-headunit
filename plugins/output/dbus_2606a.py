@@ -224,7 +224,9 @@ class lcd_mgr():
 
 	def set_fb( self, fb ):
 		self.framebuffer = fb
-		
+		print("debug fb: {0}".format(self.framebuffer))
+		self.write_to_lcd()
+			
 	def write_to_lcd( self ):
 	   """Write the framebuffer out to the specified LCD."""
 	   self.lcd.home()
@@ -391,7 +393,7 @@ def worker():
 		#mylcd.set_fb_str(0,13,str(i))
 		if fb_old <> fb_global:
 			mylcd.set_fb(fb_global)
-			mylcd.write_to_lcd()
+			#mylcd.write_to_lcd()
 			fb_old = fb_global
 		print ("{0}: {1} {2}".format(i,fb_old,fb_global))
 		i += 1
