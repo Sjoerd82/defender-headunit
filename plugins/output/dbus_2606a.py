@@ -411,9 +411,11 @@ def cb_display( displaydata ):
 
 	if 'rnd' in displaydata:
 		if displaydata['rnd'] == '1' or displaydata['rnd'] == 'on':
-			fbmod( fb_global, 1,9,'RND')
+			fb_global = fbmod( fb_global, 1,9,'RND')
 		else:
-			fbmod( db_global, 1,9,'   ')
+			fb_global = fbmod( fb_global, 1,9,'   ')
+			
+	print fb_global
 
 			
 	#print displaydata
