@@ -388,12 +388,13 @@ def worker():
 	fb_old = ""
 	
 	while True:
-		#i += 1
 		#mylcd.set_fb_str(0,13,str(i))
 		if fb_old <> fb_global:
 			mylcd.set_fb(fb_global)
 			fb_old = fb_global
 		#mylcd.write_to_lcd()
+		print ("{0}: {1} {2}".format(i,fb_old,fb_global))
+		i += 1
 		
 		
 		
@@ -495,8 +496,8 @@ mylcd.lcd_text('loading...')
 
 
 fb_global = [
-		'',
-		'']
+		''.ljust(16),
+		''.ljust(16)]
 
 
 t = threading.Thread(target=worker)
