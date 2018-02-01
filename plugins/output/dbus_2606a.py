@@ -409,7 +409,7 @@ def cb_display( displaydata ):
 			mylcd.set_fb_str(1,13,'   ')
 
 	if 'info' in displaydata:
-		mylcd.lcd_text(displaydata['info'][:16].ljust(16)
+		mylcd.lcd_text(displaydata['info'][:16].ljust(16))
 			
 	#commit changes
 	mylcd.write_to_lcd()
