@@ -594,7 +594,7 @@ def set_random( req_state ):
 	# set newState
 	if req_state in currSrc['random']:
 		newState = req_state
-	elif req_state = 'toggle':
+	elif req_state == 'toggle':
 		if curr_State == 'off':
 			newState = 'on'
 		elif curr_State == 'on':
