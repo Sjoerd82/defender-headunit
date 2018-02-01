@@ -410,9 +410,11 @@ def cb_display( displaydata ):
 
 	if 'info' in displaydata:
 		mylcd.lcd_text(displaydata['info'][:16].ljust(16))
-			
+
 	#commit changes
 	mylcd.write_to_lcd()
+
+	time.sleep(10)
 	
 	#todo... merge!
 	#mylcd.displaydata_cdc = displaydata
@@ -455,6 +457,7 @@ def cb_display( displaydata ):
 #
 
 mylcd = lcd_mgr()
+mylcd.lcd_text('loading...')
 
 #
 # Initialize the mainloop

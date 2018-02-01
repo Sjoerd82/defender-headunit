@@ -247,10 +247,13 @@ def cb_remote_btn_press ( func ):
 					hudispdata['src'] = 'FM'
 				elif currSrc['name'] == 'media':
 					hudispdata['src'] = 'USB'
-					hudispdata['info'] = "label: " + currSrc['subsources'][arCurrIx[1]]['label']
+					hudispdata['info'] = "Removable Media"
+					hudispdata['info1'] = "label: " + currSrc['subsources'][arCurrIx[1]]['label']
 				elif currSrc['name'] == 'locmus':
 					hudispdata['src'] = 'INT'
 					hudispdata['info'] = "Internal Storage"
+					if len(subsource_key[key] = currSrc['subsources']):
+						hudispdata['info1'] = "folder: " + currSrc['subsources'][arCurrIx[1]]['label']
 				elif currSrc['name'] == 'bt':
 					hudispdata['src'] = 'BT'
 					hudispdata['info'] = "Bluetooth"
