@@ -247,16 +247,22 @@ def cb_remote_btn_press ( func ):
 					hudispdata['src'] = 'FM'
 				elif currSrc['name'] == 'media':
 					hudispdata['src'] = 'USB'
+					hudispdata['info'] = "label: " + currSrc['subsources'][arCurrIx[1]]['label']
 				elif currSrc['name'] == 'locmus':
 					hudispdata['src'] = 'INT'
+					hudispdata['info'] = "Internal Storage"
 				elif currSrc['name'] == 'bt':
 					hudispdata['src'] = 'BT'
+					hudispdata['info'] = "Bluetooth"
 				elif currSrc['name'] == 'line':
 					hudispdata['src'] = 'AUX'
+					hudispdata['info'] = "AUX Line-In"
 				elif currSrc['name'] == 'stream':
 					hudispdata['src'] = 'WEB'
+					hudispdata['info'] = "Internet Radio"
 				elif currSrc['name'] == 'smb':
 					hudispdata['src'] = 'NET'
+					hudispdata['info'] = "Network Shares"
 				disp.dispdata(hudispdata)
 
 				
@@ -572,10 +578,10 @@ def set_random( req_state ):
 	
 	# get current random state
 	curr_state = hu_details['random']
-	printer('Random/Shuffle: Current:{0}, Requested:{1}'.format(curr_state, req_state), tag='rndom')
+	printer('Random/Shuffle: Current:{0}, Requested:{1}'.format(curr_state, req_state), tag='random')
 	
 	if req_state == curr_state:
-		printer('Already at requested state', tag='rndom')
+		printer('Already at requested state', tag='random')
 		return False
 	
 	# get current source
@@ -583,12 +589,12 @@ def set_random( req_state ):
 	
 	# check if the source supports random
 	if not 'random' in currSrc or len(currSrc['random']) == 0:
-		printer('Random not available for this source', tag='rndom')
+		printer('Random not available for this source', tag='random')
 		return False
 
 	# check type, we only support mpd at this time
 	if not 'type' in currSrc or not currSrc['type'] == 'mpd':
-		printer('Random not available for this source type (only mpd)', tag='rndom')
+		printer('Random not available for this source type (only mpd)', tag='random')
 		return False
 	
 	# set newState
@@ -601,7 +607,7 @@ def set_random( req_state ):
 			newState = 'off'
 		else:
 			#newState = ''	#mpc will toggle
-			printer('Can only toggle when state is on or off', tag='rndom')
+			printer('Can only toggle when state is on or off', tag='random')
 			return False
 		
 	# sound effect
@@ -610,8 +616,13 @@ def set_random( req_state ):
 	elif newState == 'off':
 		pa_sfx('reset_shuffle')
 	
+	# update display
+	printer('Setting Random/Shuffle to: {0}'.format(newState), tag='random')
+	hudispdata = {}
+	hudispdata['rnd'] = newState
+	disp.dispdata(hudispdata)
+
 	# apply newState
-	printer('Setting Random/Shuffle to: {0}'.format(newState), tag='rndom')
 	hu_details['random'] = newState
 	mpdc.random( newState )
 		
@@ -625,10 +636,6 @@ def set_random( req_state ):
 		print(' ...  Random/Shuffle not supported for this source.')
 	"""
 	
-	# update display
-	hudispdata = {}
-	hudispdata['rnd'] = newState
-	disp.dispdata(hudispdata)
 	return True
 
 
