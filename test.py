@@ -612,6 +612,7 @@ def set_random( req_state ):
 	
 	# apply newState
 	printer('Setting Random/Shuffle to: {0}'.format(newState), tag='rndom')
+	hu_details['random'] = newState
 	mpdc.random( newState )
 		
 	# bluetooth:
