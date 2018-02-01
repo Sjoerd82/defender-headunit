@@ -123,13 +123,6 @@ VERSION = "1.0.0"
 
 hu_details = { 'track':None, 'random':False, 'repeat':True }
 
-
-def random( dummy ):
-	hudispdata = {}
-	hudispdata['rnd'] = '1'
-	disp.dispdata(hudispdata)
-	return None
-
 def volume_att_toggle():
 	hudispdata = {}
 	hudispdata['att'] = '1'
@@ -194,7 +187,7 @@ def cb_remote_btn_press ( func ):
 	# Handle button press
 	if func == 'SHUFFLE':
 		print('\033[95m[BUTTON] Shuffle\033[00m')
-		random( 'toggle' )
+		set_random( 'toggle' )
 	elif func == 'SOURCE':
 		print('\033[95m[BUTTON] Next source\033[00m')
 		pa_sfx('button_feedback')
@@ -222,6 +215,15 @@ def cb_remote_btn_press ( func ):
 				else:
 					currSrc = Sources.get(None)
 					currSSrc = Sources.getSubSource(arCurrIx[0],arCurrIx[1])
+				
+				print "currSrc:"
+				print currSrc
+				
+				print "currSSrc:"
+				print currSSrc
+				
+				print "++:"
+				print Sources.getComposite()
 				
 				# update source
 				cSettings.set('source',currSrc['name'])
@@ -555,6 +557,51 @@ def udisk_details( device, action ):
 	else:
 		printer(" > ERROR: Invalid action.",tag=mytag)
 		pa_sfx('error')
+
+# ********************************************************************************
+# Headunit functions
+#
+
+# set random; state: <toggle | on | off>
+# todo: implement "special random"-modes: random within album, artist, folder
+def set_random( state ):
+	global dSettings
+	print('[------] Random/Shuffle: {0}'.format(state))
+	
+	# get source
+	
+	# only for MPD based sources:
+	if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 5 or dSettings['source'] == 6:
+		if state == 'on':
+			pa_sfx('button_feedback')
+			newState = state
+		elif state == 'off':
+			pa_sfx('reset_shuffle')
+			newState = state
+		else:
+			currMpcRandom = mpc_random_get()
+			if currMpcRandom == "on":
+				pa_sfx('reset_shuffle')
+				newState = 'off'
+			elif currMpcRandom == "off":
+				pa_sfx('button_feedback')
+				newState = 'on'
+
+		mpc_random( newState )
+		
+	# bluetooth:
+	elif dSettings['source'] == 3:
+		pa_sfx('button_feedback')
+		bt_shuffle()
+	
+	else:
+		print(' ...  Random/Shuffle not supported for this source.')
+
+	hudispdata = {}
+	hudispdata['rnd'] = '1'
+	disp.dispdata(hudispdata)
+
+
 
 # ********************************************************************************
 # Misc. functions

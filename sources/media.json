@@ -4,6 +4,7 @@
   "type": "mpd",
   "depNetwork": false,
   "controls": {"ffwd": true, "rwnd": true, "prev": true, "next": true},
+  "random": ["on","off"],
   "template": true,
   "subsource_key": ["uuid","label"]
 }
