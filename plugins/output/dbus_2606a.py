@@ -388,7 +388,7 @@ def cb_display( displaydata ):
 	if 'src' in displaydata:
 		#if not mylcd.displaydata_cdc['src'] == displaydata['src']:
 		#max 4 chars:
-		mylcd.set_fb_str(1,1,displaydata['src'][:4].ljust(4))			
+		mylcd.set_fb_str(1,1,displaydata['src'][:4].ljust(4))
 
 	if 'upd' in displaydata:
 		if displaydata['upd'] == '1':
@@ -408,6 +408,9 @@ def cb_display( displaydata ):
 		else:
 			mylcd.set_fb_str(1,13,'   ')
 
+	if 'info' in displaydata:
+		mylcd.lcd_text(displaydata['info'][:16].ljust(16)
+			
 	#commit changes
 	mylcd.write_to_lcd()
 	
