@@ -221,6 +221,9 @@ class lcd_mgr():
 		self.framebuffer[1] = '               .'
 		self.lcd.clear()
 		self.charset()
+
+	def set_fb( self, fb ):
+		self.framebuffer = fb
 		
 	def write_to_lcd( self ):
 	   """Write the framebuffer out to the specified LCD."""
@@ -377,14 +380,44 @@ class lcd_mgr():
 		self.lcd.create_char(7, chr_right)
 
 
-def cb_display( displaydata ):
+def worker():
 
 	global mylcd
+	global fb_global
+	i = 0
+	fb_old = ""
+	
+	while True:
+		#i += 1
+		#mylcd.set_fb_str(0,13,str(i))
+		if fb_old <> fb_global:
+			mylcd.set_fb(fb_global)
+			fb_old = fb_global
+		#mylcd.write_to_lcd()
+		
+		
+		
+# callback, keep it short! (blocks new input)
+def cb_display( displaydata ):
+
+	global fb_global
+	
+	def fbmod( fb, row, col, txt ):
+		fb[row] = fb[row][:col] + txt + fb[row][col+len(txt):]
+		return fb
+
 	
 	printer('DBUS event received: {0}'.format(displaydata), tag='d1606a')
 
+	if 'rnd' in displaydata:
+		if displaydata['rnd'] == '1' or displaydata['rnd'] == 'on':
+			fbmod( fb_global, 1,9,'RND')
+		else:
+			fbmod( db_global, 1,9,'   ')
+
+			
 	#print displaydata
-	
+	"""
 	if 'src' in displaydata:
 		#if not mylcd.displaydata_cdc['src'] == displaydata['src']:
 		#max 4 chars:
@@ -413,8 +446,7 @@ def cb_display( displaydata ):
 
 	#commit changes
 	mylcd.write_to_lcd()
-
-	time.sleep(10)
+	"""
 	
 	#todo... merge!
 	#mylcd.displaydata_cdc = displaydata
@@ -458,6 +490,16 @@ def cb_display( displaydata ):
 
 mylcd = lcd_mgr()
 mylcd.lcd_text('loading...')
+
+
+fb_global = [
+		'',
+		'']
+
+
+t = threading.Thread(target=worker, args=(,))
+#threads.append(t)
+t.start()
 
 #
 # Initialize the mainloop
