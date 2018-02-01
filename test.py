@@ -569,13 +569,13 @@ def set_random( req_state ):
 	global mpdc
 	global hu_details
 	global Sources
-	print('[------] Random/Shuffle: {0}'.format(req_state))
 	
 	# get current random state
 	curr_state = hu_details['random']
+	printer('Random/Shuffle: Current:{0}, Requested:{1}'.format(curr_state, req_state), tag='rndom')
 	
 	if req_state == curr_state:
-		printer('Already at requested state')
+		printer('Already at requested state', tag='rndom')
 		return False
 	
 	# get current source
@@ -583,12 +583,12 @@ def set_random( req_state ):
 	
 	# check if the source supports random
 	if not 'random' in currSrc or len(currSrc['random']) == 0:
-		printer('Random not available for this source')
+		printer('Random not available for this source', tag='rndom')
 		return False
 
 	# check type, we only support mpd at this time
 	if not 'type' in currSrc or not currSrc['type'] == 'mpd':
-		printer('Random not available for this source type (only mpd)')
+		printer('Random not available for this source type (only mpd)', tag='rndom')
 		return False
 	
 	# set newState
@@ -601,7 +601,7 @@ def set_random( req_state ):
 			newState = 'off'
 		else:
 			#newState = ''	#mpc will toggle
-			printer('Can only toggle when state is on or off')
+			printer('Can only toggle when state is on or off', tag='rndom')
 			return False
 		
 	# sound effect
@@ -611,6 +611,7 @@ def set_random( req_state ):
 		pa_sfx('reset_shuffle')
 	
 	# apply newState
+	printer('Setting Random/Shuffle to: {0}'.format(newState), tag='rndom')
 	mpdc.random( newState )
 		
 	# bluetooth:
