@@ -651,12 +651,13 @@ def set_random( req_state ):
 def shutdown():
 	global configuration
 	global cSettings
+	global Sources
 
 	# save settings (hu_settings)
 	cSettings.save()
 
 	# stop source (hu_source)
-	Source.sourceStop()
+	Sources.sourceStop()
 	
 	# call shutdown command
 	"""  This command may be different on different distributions, therefore it's saved in the configuration
