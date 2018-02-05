@@ -406,9 +406,9 @@ def cb_mpd_event( event ):
 		
 		if 'state' in status:
 			if status['state'] == 'stop':
-				print 'detected that mpd playback has stopped.. ignoring this'.
+				print 'detected that mpd playback has stopped.. ignoring this'
 			elif status['state'] == 'pause':
-				print 'detected that mpd playback has paused.. ignoring this'.
+				print 'detected that mpd playback has paused.. ignoring this'
 			elif status['state'] == 'play':
 				print "do stuff for play"
 	
@@ -1094,325 +1094,331 @@ class dbusDisplay(dbus.service.Object):
 #
 # Initialization
 #
+def setup()
 
-#
-# Start logging to console
-#
-#
-init_logging()
-init_logging_c()
+	#
+	# Start logging to console
+	#
+	#
+	init_logging()
+	init_logging_c()
 
-#
-# Load main configuration
-#
-#
-configuration = init_load_config()
+	#
+	# Load main configuration
+	#
+	#
+	configuration = init_load_config()
 
-#
-# Load PulseAudio SFX
-#
-#
-pa_sfx_load( configuration['directories']['sfx'] )
+	#
+	# Load PulseAudio SFX
+	#
+	#
+	pa_sfx_load( configuration['directories']['sfx'] )
 
-	
-#
-# Load operational settings
-#
-#			#TODO: change this name
-cSettings = huSettings( os.path.join(configuration['directories']['config'],configuration['files']['settings']),
-                        defaultSettings=configuration['default_settings'] )
-
-
-#
-# Start logging to file
-#
-#
-init_logging_f( configuration['directories']['log'],
-                configuration['files']['log'],
-				cSettings.incrRunCounter( max=999999 ) )
- 				#settings['runcount'] )
+		
+	#
+	# Load operational settings
+	#
+	#			#TODO: change this name
+	cSettings = huSettings( os.path.join(configuration['directories']['config'],configuration['files']['settings']),
+							defaultSettings=configuration['default_settings'] )
 
 
-#
-# Set/Restore volume level
-#
-#
-# Legacy: #TODO
-settings = cSettings.get()
-VolPulse = VolumeController('alsa_output.platform-soc_sound.analog-stereo')
-VolPulse.set( settings['volume'] )
+	#
+	# Start logging to file
+	#
+	#
+	init_logging_f( configuration['directories']['log'],
+					configuration['files']['log'],
+					cSettings.incrRunCounter( max=999999 ) )
+					#settings['runcount'] )
 
 
-#
-# "Splash Screen": Display version and play startup tune
-#
-#
-myprint('Headunit.py version {0}'.format(VERSION),tag='SYSTEM')
-pa_sfx('startup')
-
-#
-# create menu structure
-#
-#print configuration[
-#huMenu = Menu()
-#testentry = { "entry": "Browse tracks",
-#  "entry_name": "browse_track"}
-#huMenu.add( testentry )
+	#
+	# Set/Restore volume level
+	#
+	#
+	# Legacy: #TODO
+	settings = cSettings.get()
+	VolPulse = VolumeController('alsa_output.platform-soc_sound.analog-stereo')
+	VolPulse.set( settings['volume'] )
 
 
-#
-# App. Init
-#
-#
-myprint('Loading Source Plugins...',tag='SYSTEM')
-# import sources directory
-import sources
-# read source config files and start source inits
-loadSourcePlugins(os.path.join( os.path.dirname(os.path.abspath(__file__)), 'sources'))
+	#
+	# "Splash Screen": Display version and play startup tune
+	#
+	#
+	myprint('Headunit.py version {0}'.format(VERSION),tag='SYSTEM')
+	pa_sfx('startup')
+
+	#
+	# create menu structure
+	#
+	#print configuration[
+	#huMenu = Menu()
+	#testentry = { "entry": "Browse tracks",
+	#  "entry_name": "browse_track"}
+	#huMenu.add( testentry )
 
 
-#print "TESTING TESTING"
-#Sources.setAvailableIx(0,True)
-#Sources.setCurrent(0)
-#Sources.sourcePlay()
-#exit()
-
-""" DEBUGGING....
-print "DEBUG!"
-prevSource = {'name': 'fm'}
-prevSourceSub = {}
-
-print bla_refactored( prevSource, prevSourceSub )
-	
-print "DEBUG!"
-prevSource = {'name': 'locmus'}
-prevSourceSub = {'mountpoint':'/media/PIHU_DATA'}
-bFound = False
-
-print bla_refactored( prevSource, prevSourceSub )
+	#
+	# App. Init
+	#
+	#
+	myprint('Loading Source Plugins...',tag='SYSTEM')
+	# import sources directory
+	import sources
+	# read source config files and start source inits
+	loadSourcePlugins(os.path.join( os.path.dirname(os.path.abspath(__file__)), 'sources'))
 
 
-print "DEBUG!"
-prevSource = {'name': 'locmus'}
-prevSourceSub = {'mountpoint':'/media/PIHU_DATA3'}
-bFound = False
+	#print "TESTING TESTING"
+	#Sources.setAvailableIx(0,True)
+	#Sources.setCurrent(0)
+	#Sources.sourcePlay()
+	#exit()
 
-print bla_refactored( prevSource, prevSourceSub )
-"""
+	""" DEBUGGING....
+	print "DEBUG!"
+	prevSource = {'name': 'fm'}
+	prevSourceSub = {}
 
+	print bla_refactored( prevSource, prevSourceSub )
+		
+	print "DEBUG!"
+	prevSource = {'name': 'locmus'}
+	prevSourceSub = {'mountpoint':'/media/PIHU_DATA'}
+	bFound = False
 
-#debug
-#huMenu.menuDisplay( header=True )
-#huMenu.menuDisplay( entry=1, header=True )
-#print huMenu.getMenu( [1,0] )
-
-#
-# import control plugins
-#
-myprint('Loading Control Plugins...',tag='SYSTEM')
-from plugin_control import *
-
-threads = []
-# loop through the control plugin dir
-for filename in os.listdir( configuration['directories']['controls'] ):
-		#if filename.startswith('') and
-		if filename.endswith('.py'):
-			pathfilename = os.path.join( configuration['directories']['controls'], filename )
-			t = threading.Thread(target=plugin_execute, args=(pathfilename,))
-			t.setDaemon(True)
-			threads.append(t)
-			#t.start()	WORKAROUND
-
-# loop through the output plugin dir
-for filename in os.listdir( configuration['directories']['output'] ):
-		#if filename.startswith('') and
-		if filename.endswith('.py'):
-			pathfilename = os.path.join( configuration['directories']['output'], filename )
-			t = threading.Thread(target=plugin_execute, args=(pathfilename,))
-			t.setDaemon(True)
-			threads.append(t)
-			#t.start()	WORKAROUND
-
-# NOTE: Plugins are now loading in the background, in parallel to code below.
-# NOTE: This can really interfere, in a way I don't understand.. executing the threads later helps... somehow..
-# NOTE: For NOW, we'll just execute the threads after the loading of the "other" plugins...
+	print bla_refactored( prevSource, prevSourceSub )
 
 
-#
-# Load mpd dbus listener
-#
-#
-t = threading.Thread(target=plugin_execute, args=('/mnt/PIHU_APP/defender-headunit/dbus_mpd.py',))
-t.setDaemon(True)
-threads.append(t)
+	print "DEBUG!"
+	prevSource = {'name': 'locmus'}
+	prevSourceSub = {'mountpoint':'/media/PIHU_DATA3'}
+	bFound = False
+
+	print bla_refactored( prevSource, prevSourceSub )
+	"""
 
 
-#
-# load other plugins
-#
-myprint('Loading Other Plugins...',tag='SYSTEM')
-from plugin_other import *
+	#debug
+	#huMenu.menuDisplay( header=True )
+	#huMenu.menuDisplay( entry=1, header=True )
+	#print huMenu.getMenu( [1,0] )
 
-# WORKAROUND...
-for t in threads:
-	t.start()
+	#
+	# import control plugins
+	#
+	myprint('Loading Control Plugins...',tag='SYSTEM')
+	from plugin_control import *
 
-# LCD (TODO: move to plugins)
-#from hu_lcd import *
-#disp = lcd_mgr()
-#disp.lcd_text('Welcome v0.1.4.8')
+	threads = []
+	# loop through the control plugin dir
+	for filename in os.listdir( configuration['directories']['controls'] ):
+			#if filename.startswith('') and
+			if filename.endswith('.py'):
+				pathfilename = os.path.join( configuration['directories']['controls'], filename )
+				t = threading.Thread(target=plugin_execute, args=(pathfilename,))
+				t.setDaemon(True)
+				threads.append(t)
+				#t.start()	WORKAROUND
 
-# MPD
-mpdc = mpdController()
+	# loop through the output plugin dir
+	for filename in os.listdir( configuration['directories']['output'] ):
+			#if filename.startswith('') and
+			if filename.endswith('.py'):
+				pathfilename = os.path.join( configuration['directories']['output'], filename )
+				t = threading.Thread(target=plugin_execute, args=(pathfilename,))
+				t.setDaemon(True)
+				threads.append(t)
+				#t.start()	WORKAROUND
 
-myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
+	# NOTE: Plugins are now loading in the background, in parallel to code below.
+	# NOTE: This can really interfere, in a way I don't understand.. executing the threads later helps... somehow..
+	# NOTE: For NOW, we'll just execute the threads after the loading of the "other" plugins...
 
-#
-# end of initialization
-#
-#********************************************************************************
+
+	#
+	# Load mpd dbus listener
+	#
+	#
+	t = threading.Thread(target=plugin_execute, args=('/mnt/PIHU_APP/defender-headunit/dbus_mpd.py',))
+	t.setDaemon(True)
+	threads.append(t)
+
+
+	#
+	# load other plugins
+	#
+	myprint('Loading Other Plugins...',tag='SYSTEM')
+	from plugin_other import *
+
+	# WORKAROUND...
+	for t in threads:
+		t.start()
+
+	# LCD (TODO: move to plugins)
+	#from hu_lcd import *
+	#disp = lcd_mgr()
+	#disp.lcd_text('Welcome v0.1.4.8')
+
+	# MPD
+	mpdc = mpdController()
+
+	#
+	# end of initialization
+	#
+	#********************************************************************************
+	myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 
 
 #********************************************************************************
 #
 # Mainloop
 #
+def main():
 
-#
-# QuickPlay
-#
+	#
+	# QuickPlay
+	#
 
-# TESTING....
-#testSs = {'mountpoint':'/media/SJOERD'}
-#cSettings.set('source','media')
-#cSettings.set('subsource',testSs)
-#cSettings.save()
+	# TESTING....
+	#testSs = {'mountpoint':'/media/SJOERD'}
+	#cSettings.set('source','media')
+	#cSettings.set('subsource',testSs)
+	#cSettings.save()
 
-prevSource = cSettings.get_key('source')
-prevSourceSub = cSettings.get_key('subsourcekey')
+	prevSource = cSettings.get_key('source')
+	prevSourceSub = cSettings.get_key('subsourcekey')
 
-if prevSource == "":
-	printer ('No previous source.', tag='QPLAY')
-	Sources.sourceCheckAll()
-	printSummary()
-	printer ('Starting first available source', tag='QPLAY')
-	Sources.next()
-	Sources.sourcePlay()
-	
-else:
-	ret = QuickPlay( prevSource,
-			         prevSourceSub )
-					 
-	if ret:
-		printer ('Checking other sources...', tag='QPLAY')
-		# TODO: the prev. source is now checked again.. this is not efficient..
-		Sources.sourceCheckAll()
-		printSummary()
-		
-	else:
-		printer ('Continuing playback not available, checking all sources...', tag='QPLAY')
+	if prevSource == "":
+		printer ('No previous source.', tag='QPLAY')
 		Sources.sourceCheckAll()
 		printSummary()
 		printer ('Starting first available source', tag='QPLAY')
 		Sources.next()
 		Sources.sourcePlay()
-
-
-	   
-"""
-else:
-	for source in Sources.getAll():
-		if source['name'] == prevSource:
-			print("!! PREVIOUS SOURCE: {0}".format(source['name']))
-			#if 'label' in source:
-			index = Sources.getIndex
-			print("!! CHECKING IF IT IS AVAILABLE...")
+		
+	else:
+		ret = QuickPlay( prevSource,
+						 prevSourceSub )
+						 
+		if ret:
+			printer ('Checking other sources...', tag='QPLAY')
+			# TODO: the prev. source is now checked again.. this is not efficient..
+			Sources.sourceCheckAll()
+			printSummary()
 			
-			Sources.sourceCheck(
-"""
-# First, try previously active source
+		else:
+			printer ('Continuing playback not available, checking all sources...', tag='QPLAY')
+			Sources.sourceCheckAll()
+			printSummary()
+			printer ('Starting first available source', tag='QPLAY')
+			Sources.next()
+			Sources.sourcePlay()
 
 
-# on demand...
-#plugin_sources.media.media_add('/media/USBDRIVE', Sources)
+		   
+	"""
+	else:
+		for source in Sources.getAll():
+			if source['name'] == prevSource:
+				print("!! PREVIOUS SOURCE: {0}".format(source['name']))
+				#if 'label' in source:
+				index = Sources.getIndex
+				print("!! CHECKING IF IT IS AVAILABLE...")
+				
+				Sources.sourceCheck(
+	"""
+	# First, try previously active source
 
 
-#myprint('A WARNING', level=logging.WARNING, tag="test")
-#logger.warning('Another WARNING', extra={'tag':'test'})
-
-# Save operational settings
-#dSettings1 = {"source": -1, 'volume': 99, 'mediasource': -1, 'medialabel': ''}	 # No need to save random, we don't want to save that (?)
-#settings_save( sFileSettings, dSettings1 )
-
-#********************************************************************************
-#
-# Main loop
-#
-
-#
-# Initialize the mainloop
-#
-DBusGMainLoop(set_as_default=True)
+	# on demand...
+	#plugin_sources.media.media_add('/media/USBDRIVE', Sources)
 
 
-#
-# main loop
-#
-mainloop = gobject.MainLoop()
+	#myprint('A WARNING', level=logging.WARNING, tag="test")
+	#logger.warning('Another WARNING', extra={'tag':'test'})
+
+	# Save operational settings
+	#dSettings1 = {"source": -1, 'volume': 99, 'mediasource': -1, 'medialabel': ''}	 # No need to save random, we don't want to save that (?)
+	#settings_save( sFileSettings, dSettings1 )
+
+	#********************************************************************************
+	#
+	# Main loop
+	#
+
+	#
+	# Initialize the mainloop
+	#
+	DBusGMainLoop(set_as_default=True)
 
 
-#
-# 30 second timer
-#
-gobject.timeout_add_seconds(30,cb_timer1)
-
-#
-# DBus: system bus
-# On a root only embedded system there may not be a usable session bus
-#
-bus = dbus.SystemBus()
-
-# Output
-disp = dbusDisplay(bus)
+	#
+	# main loop
+	#
+	mainloop = gobject.MainLoop()
 
 
-"""
-time.sleep(5)	#wait for the plugin to be ready
+	#
+	# 30 second timer
+	#
+	gobject.timeout_add_seconds(30,cb_timer1)
 
-hudispdata = {}
-hudispdata['rnd'] = "1"
-hudispdata['artist'] = "The Midnight"
-disp.dispdata(hudispdata)
+	#
+	# DBus: system bus
+	# On a root only embedded system there may not be a usable session bus
+	#
+	bus = dbus.SystemBus()
 
-time.sleep(5)
-hudispdata = {}
-hudispdata['rnd'] = "0"
-disp.dispdata(hudispdata)
-
-time.sleep(5)
-hudispdata = {}
-hudispdata['att'] = "1"
-disp.dispdata(hudispdata)
-
-exit()
-"""
-#
-# Connect Callback functions to DBus Signals
-#
-bus.add_signal_receiver(cb_mpd_event, dbus_interface = "com.arctura.mpd")
-bus.add_signal_receiver(cb_remote_btn_press, dbus_interface = "com.arctura.remote")
-bus.add_signal_receiver(cb_remote_btn_press2, dbus_interface = "com.arctura.keyboard")
-bus.add_signal_receiver(cb_udisk_dev_add, signal_name='DeviceAdded', dbus_interface="org.freedesktop.UDisks")
-bus.add_signal_receiver(cb_udisk_dev_rem, signal_name='DeviceRemoved', dbus_interface="org.freedesktop.UDisks")
+	# Output
+	disp = dbusDisplay(bus)
 
 
-#
-# Start the blocking main loop...
-#
-try:
-	mainloop.run()
-finally:
-	mainloop.quit()
+	"""
+	time.sleep(5)	#wait for the plugin to be ready
+
+	hudispdata = {}
+	hudispdata['rnd'] = "1"
+	hudispdata['artist'] = "The Midnight"
+	disp.dispdata(hudispdata)
+
+	time.sleep(5)
+	hudispdata = {}
+	hudispdata['rnd'] = "0"
+	disp.dispdata(hudispdata)
+
+	time.sleep(5)
+	hudispdata = {}
+	hudispdata['att'] = "1"
+	disp.dispdata(hudispdata)
+
+	exit()
+	"""
+	#
+	# Connect Callback functions to DBus Signals
+	#
+	bus.add_signal_receiver(cb_mpd_event, dbus_interface = "com.arctura.mpd")
+	bus.add_signal_receiver(cb_remote_btn_press, dbus_interface = "com.arctura.remote")
+	bus.add_signal_receiver(cb_remote_btn_press2, dbus_interface = "com.arctura.keyboard")
+	bus.add_signal_receiver(cb_udisk_dev_add, signal_name='DeviceAdded', dbus_interface="org.freedesktop.UDisks")
+	bus.add_signal_receiver(cb_udisk_dev_rem, signal_name='DeviceRemoved', dbus_interface="org.freedesktop.UDisks")
 
 
+	#
+	# Start the blocking main loop...
+	#
+	try:
+		mainloop.run()
+	finally:
+		mainloop.quit()
 
+
+if __name__ == '__main__':
+	setup()
+    main()
+
+	
+	
