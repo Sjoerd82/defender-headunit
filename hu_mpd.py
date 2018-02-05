@@ -225,6 +225,7 @@ class mpdController():
 		"""
 		
 		# Via the commandline
+		"""
 		pipe = Popen('mpc -f %file% playlist', shell=True, stdout=PIPE)
 
 		for line in pipe.stdout:
@@ -234,6 +235,7 @@ class mpdController():
 				arMpcPlaylistDirs.append(t)
 			dirname_prev = dirname_current
 			iPos += 1
+		"""
 			
 		return arMpcPlaylistDirs
 		
