@@ -1094,7 +1094,7 @@ class dbusDisplay(dbus.service.Object):
 #
 # Initialization
 #
-def setup()
+def setup():
 
 	#
 	# Start logging to console
