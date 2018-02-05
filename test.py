@@ -450,53 +450,50 @@ def udisk_details( device, action ):
 # Headunit functions
 #
 
-def do_source(xSources):
+def do_source():
 
-	def test_printSummary(Sources):
-		printer('-- Summary -----------------------------------------------------------', tag='')
-		arCurrIx = Sources.getIndexCurrent()
-		sCurrent = Sources.get(None)
-		
-		if not arCurrIx[0] == None and arCurrIx[1] == None:
-			sCurrDisplay = sCurrent['displayname']
-		elif not arCurrIx[1] == None:
-			sCurrDisplay = sCurrent['subsources'][arCurrIx[1]]['displayname']
-		else:
-			sCurrDisplay = ""
-		
-		if len(arCurrIx) == 0:
-			printer('Current source: None', tag='')
-		else:
-			printer('Current source: {0} {1}'.format(arCurrIx[0],sCurrDisplay), tag='')
-		
-		i = 0
-		for source in Sources.getAll():
+	xSources = SourceController()	#TODO: rename "Sources" -- confusing name
 
-			if 'subsources' in source and len(source['subsources']) > 0:
-				for subsource in source['subsources']:
-				
-					if subsource['available']:
-						available = colorize('available    ','light_green')
-					else:
-						available = colorize('not available','light_red')
+	printer('-- Summary -----------------------------------------------------------', tag='')
+	arCurrIx = xSources.getIndexCurrent()
+	sCurrent = xSources.get(None)
+	
+	if not arCurrIx[0] == None and arCurrIx[1] == None:
+		sCurrDisplay = sCurrent['displayname']
+	elif not arCurrIx[1] == None:
+		sCurrDisplay = sCurrent['subsources'][arCurrIx[1]]['displayname']
+	else:
+		sCurrDisplay = ""
+	
+	if len(arCurrIx) == 0:
+		printer('Current source: None', tag='')
+	else:
+		printer('Current source: {0} {1}'.format(arCurrIx[0],sCurrDisplay), tag='')
+	
+	i = 0
+	for source in xSources.getAll():
+
+		if 'subsources' in source and len(source['subsources']) > 0:
+			for subsource in source['subsources']:
 			
-					if 'mountpoint' in subsource:
-						mountpoint = subsource['mountpoint']
-						printer(' {0:2d} {1:17} {2} {3}'.format(i,source['displayname'],available,mountpoint), tag='')
-			else:
-				if source['available']:
+				if subsource['available']:
 					available = colorize('available    ','light_green')
 				else:
 					available = colorize('not available','light_red')
-				printer(' {0:2d} {1:17} {2}'.format(i,source['displayname'],available), tag='')
-			
-			i += 1
-		printer('----------------------------------------------------------------------', tag='')
+		
+				if 'mountpoint' in subsource:
+					mountpoint = subsource['mountpoint']
+					printer(' {0:2d} {1:17} {2} {3}'.format(i,source['displayname'],available,mountpoint), tag='')
+		else:
+			if source['available']:
+				available = colorize('available    ','light_green')
+			else:
+				available = colorize('not available','light_red')
+			printer(' {0:2d} {1:17} {2}'.format(i,source['displayname'],available), tag='')
+		
+		i += 1
+	printer('----------------------------------------------------------------------', tag='')
 
-	#global Sources
-	#global cSettings
-	print "Xuthin'.."
-	test_printSummary(xSources)
 
 def do_source1():
 
@@ -1158,7 +1155,7 @@ def worker_queue_blocking():
 		item = qBlock.get()
 		print "QUEUE WORKER BLOCK: {0}".format(item)
 		if item == 'SOURCE':
-			do_source(Sources)
+			do_source()
 		elif item == 'SEEK_NEXT':
 			Sources.sourceSeekNext()
 		elif item == 'SEEK_PREV':
