@@ -252,7 +252,11 @@ class mpdController():
 
 	def mpc_get_status( self ):
 
-		self.mpdc.noidle()
+		try:
+			self.mpdc.noidle()
+		except:
+			printer('WEIRD... no idle was set..')
+
 		self.mpdc.command_list_ok_begin()
 		self.mpdc.status()
 
