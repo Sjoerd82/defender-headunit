@@ -205,6 +205,7 @@ def cb_remote_btn_press ( func ):
 			printer('Queue is full.. ignoring button press.')
 
 		printer('Blocking Queue Size after: {0}'.format(qBlock.qsize()))
+		return 0
 		
 	elif func == 'ATT':
 		print('\033[95m[BUTTON] ATT\033[00m')
@@ -218,7 +219,7 @@ def cb_remote_btn_press ( func ):
 	elif func == 'VOL_DOWN':
 		print('\033[95m[BUTTON] VOL_DOWN\033[00m')
 		pa_sfx('button_feedback')
-		volume_down()
+		qPrio.put("VOL_DOWN", False)
 		return 0
 	elif func == 'SEEK_NEXT':
 		print('\033[95m[BUTTON] Seek/Next\033[00m')
