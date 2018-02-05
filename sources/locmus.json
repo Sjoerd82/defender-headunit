@@ -3,7 +3,7 @@
   "order": 2,
   "type": "mpd",
   "depNetwork": false,
-  "controls": {"ffwd": false, "rwnd": false, "prev": true, "next": true},
+  "controls": {"ffwd": false, "rwnd": false, "prev": true, "next": true, "dirnext": true},
   "random": ["on","off"],
   "template": true,
   "subsource_key": ["mountpoint"]

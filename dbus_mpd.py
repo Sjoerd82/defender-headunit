@@ -111,16 +111,22 @@ class mpdControl(dbus.service.Object):
 							print('ERROR: Channel not supported')
 				
 			elif e == "player":
-				self.oMpdClient.command_list_ok_begin()
-				self.oMpdClient.status()
-				results = self.oMpdClient.command_list_end()		
+				#
+				# This works, but instead, it's more effective to handle this at the headunit.py side
+				#
+				#self.oMpdClient.command_list_ok_begin()
+				#self.oMpdClient.status()
+				#results = self.oMpdClient.command_list_end()		
+				#				
+				#for r in results:
+				#	print(r)
+				#
+				# Output:
+				# {'songid': '180', 'playlistlength': '36', 'playlist': '18', 'repeat': '1', 'consume': '0', 'mixrampdb': '0.000000', 'random': '0', 'state': 'play', 'elapsed': '0.000', 'volume': '100', 'single': '0', 'nextsong': '31', 'time': '0:193', 'duration': '193.328', 'song': '30', 'audio': '44100:24:2', 'bitrate': '0', 'nextsongid': '181'}
 				
 				self.mpd_control('player')
-				
-				for r in results:
-					print(r)
-				
-				
+				# do not add code after here... (will not be executed)
+			
 			#elif e == "subscription":
 			#	oMpdClient.command_list_ok_begin()
 			#	oMpdClient.channels()

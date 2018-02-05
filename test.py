@@ -365,20 +365,22 @@ def cb_remote_btn_press ( func ):
 		Sources.sourceSeekPrev()
 	elif func == 'DIR_NEXT':
 		print('\033[95m[BUTTON] Next directory\033[00m')
-		if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 6:
+
+		# check if the source supports random
+		if 'dirnext' in currSrc['controls'] and currSrc['controls']['dirnext']:
+			printer('Next folder not available for this source', tag='random')
 			pa_sfx('button_feedback')
-			#mpc_next_folder()
 		else:
 			pa_sfx('error')
-			print(' No function for this button! ')
+			print(' No function for this button! or function not available for this source.')
 	elif func == 'DIR_PREV':
 		print('\033[95m[BUTTON] Prev directory\033[00m')
-		if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 6:
-			pa_sfx('button_feedback')
-			#mpc_prev_folder()
-		else:
-			pa_sfx('error')
-			print(' No function for this button! ')
+		#if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 6:
+		#	pa_sfx('button_feedback')
+		#	#mpc_prev_folder()
+		#else:
+		#	pa_sfx('error')
+		#	print(' No function for this button! ')
 	elif func == 'UPDATE_LOCAL':
 		print('\033[95m[BUTTON] Updating local MPD database\033[00m')
 		pa_sfx('button_feedback')
@@ -398,8 +400,18 @@ def cb_mpd_event( event ):
 
 	printer('DBUS event received: {0}'.format(event), tag='MPD')
 
+	# anything related to the player	
 	if event == "player":
-		currSrc = Sources.get( None )
+	
+		# first let's determine the state:	
+		status = mpdc.mpc_get_status
+		print "STATUS: {0}.".format(status)
+		print "STATE : {0}.".format(status['state'])
+	
+	#	currSrc = Sources.get( None )
+		
+		
+		
 		
 	# OLD, NEEDS UPDATE: #todo
 	#	if not currSrc == None:
