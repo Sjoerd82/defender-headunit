@@ -365,14 +365,7 @@ def cb_remote_btn_press ( func ):
 		Sources.sourceSeekPrev()
 	elif func == 'DIR_NEXT':
 		print('\033[95m[BUTTON] Next directory\033[00m')
-
-		# check if the source supports random
-		if 'dirnext' in currSrc['controls'] and currSrc['controls']['dirnext']:
-			printer('Next folder not available for this source', tag='random')
-			pa_sfx('button_feedback')
-		else:
-			pa_sfx('error')
-			print(' No function for this button! or function not available for this source.')
+		dir_next()
 	elif func == 'DIR_PREV':
 		print('\033[95m[BUTTON] Prev directory\033[00m')
 		#if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 6:
@@ -404,7 +397,7 @@ def cb_mpd_event( event ):
 	if event == "player":
 	
 		# first let's determine the state:	
-		status = mpdc.mpc_get_status
+		status = mpdc.mpc_get_status()
 		print "STATUS: {0}.".format(status)
 		print "STATE : {0}.".format(status['state'])
 	
@@ -585,6 +578,21 @@ def udisk_details( device, action ):
 # ********************************************************************************
 # Headunit functions
 #
+
+def dir_next():
+	global Sources
+
+	# get current source
+	currSrc = Sources.get(None)
+
+	# check if the source supports random
+	if 'dirnext' in currSrc['controls'] and currSrc['controls']['dirnext']:
+		printer('Next folder not available for this source', tag='random')
+		pa_sfx('button_feedback')
+	else:
+		pa_sfx('error')
+		print(' No function for this button! or function not available for this source.')
+
 
 # set random; req_state: <toggle | on | off>
 # todo: implement "special random"-modes: random within album, artist, folder
