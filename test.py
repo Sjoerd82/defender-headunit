@@ -1100,9 +1100,9 @@ def worker_queue_blocking():
 		print "QUEUE WORKER BLOCK: {0}".format(item)
 		if item == 'SOURCE':
 			do_source()
-		elif item = 'SEEK_NEXT':
+		elif item == 'SEEK_NEXT':
 			Sources.sourceSeekNext()
-		elif item = 'SEEK_PREV':
+		elif item == 'SEEK_PREV':
 			Sources.sourceSeekPrev()
 		else:
 			print 'UNKNOWN TASK'
