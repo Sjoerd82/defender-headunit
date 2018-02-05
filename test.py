@@ -1418,7 +1418,7 @@ t2 = threading.Thread(target=worker_queue_blocking)
 #p2 = Process(target=worker_queue_blocking)
 t2.setDaemon(True)
 #p2.daemon = True
-t.start()
+t2.start()
 
 t3 = threading.Thread(target=worker_queue_async)
 #p3 = Process(target=worker_queue_async)
