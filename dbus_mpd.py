@@ -111,13 +111,15 @@ class mpdControl(dbus.service.Object):
 							print('ERROR: Channel not supported')
 				
 			elif e == "player":
-				#oMpdClient.command_list_ok_begin()
-				#oMpdClient.status()
-				#results = oMpdClient.command_list_end()		
-				#
-				#for r in results:
-				#	print(r)
+				self.oMpdClient.command_list_ok_begin()
+				self.oMpdClient.status()
+				results = self.oMpdClient.command_list_end()		
+				
 				self.mpd_control('player')
+				
+				for r in results:
+					print(r)
+				
 				
 			#elif e == "subscription":
 			#	oMpdClient.command_list_ok_begin()

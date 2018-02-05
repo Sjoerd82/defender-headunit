@@ -337,6 +337,10 @@ def cb_remote_btn_press ( func ):
 			printer('Only one source availble. Ignoring button.')
 		elif Sources.getAvailableCnt() == 0:
 			printer('No available sources.')
+		
+		# show sources
+		printSummary()
+		
 	elif func == 'ATT':
 		print('\033[95m[BUTTON] ATT\033[00m')
 		pa_sfx('button_feedback')
@@ -386,7 +390,6 @@ def cb_remote_btn_press ( func ):
 	else:
 		print('Unknown button function')
 		pa_sfx('error')
-
 
 def cb_mpd_event( event ):
 	global Sources
