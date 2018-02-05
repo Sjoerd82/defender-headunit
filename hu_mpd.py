@@ -256,7 +256,8 @@ class mpdController():
 		self.mpdc.status()
 
 		results = self.mpdc.command_list_end()
-		self.mpc.idle()
+		self.mpdc.idle()
+		print results
 		print results[0]
 
 		#return self.mpdc.currentsong()

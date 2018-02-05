@@ -268,6 +268,9 @@ def cb_remote_btn_press ( func ):
 					hudispdata['info'] = "Network Shares"
 				disp.dispdata(hudispdata)
 
+				# if source is MPD and supports directories (don't they all?), gather list of dirs, in separate thread..
+				dirList = mpdc.mpc_get_PlaylistDirs()
+				print dirList
 				
 				# TODO: make this better... somehow.
 				"""
@@ -587,7 +590,7 @@ def dir_next():
 
 	# check if the source supports random
 	if 'dirnext' in currSrc['controls'] and currSrc['controls']['dirnext']:
-		printer('Next folder not available for this source', tag='random')
+		printer('OK!', tag='dirnext')
 		pa_sfx('button_feedback')
 	else:
 		pa_sfx('error')
