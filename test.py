@@ -214,11 +214,11 @@ def cb_remote_btn_press ( func ):
 	elif func == 'SEEK_NEXT':
 		print('\033[95m[BUTTON] Seek/Next\033[00m')
 		pa_sfx('button_feedback')
-		qBlock.put("SEEK_NEXT", False))
+		qBlock.put("SEEK_NEXT", False)
 	elif func == 'SEEK_PREV':
 		print('\033[95m[BUTTON] Seek/Prev.\033[00m')
 		pa_sfx('button_feedback')
-		qBlock.put("SEEK_PREV", False))
+		qBlock.put("SEEK_PREV", False)
 	elif func == 'DIR_NEXT':
 		print('\033[95m[BUTTON] Next directory\033[00m')
 		dir_next()
