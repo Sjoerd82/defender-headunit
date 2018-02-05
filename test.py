@@ -1145,15 +1145,15 @@ def QuickPlay( prevSource, prevSourceSub ):
 
 def worker_queue_prio():
 	while True:
-		while not qPrio.empty():
-			item = qPrio.get()
-			#item = qPrio.get_nowait()
-			print "QUEUE WORKER PRIO: {0}".format(item)
-			if item == 'VOL_UP':
-				volume_up()
-			elif item == 'VOL_DOWN':
-				volume_down()
-			qPrio.task_done()
+	#	while not qPrio.empty():
+		item = qPrio.get()
+		#item = qPrio.get_nowait()
+		print "QUEUE WORKER PRIO: {0}".format(item)
+		#if item == 'VOL_UP':
+		#	print "volume_up()"
+		#elif item == 'VOL_DOWN':
+		#	print "volume_down()"
+		qPrio.task_done()
 
 def worker_queue_blocking():
 	global Sources
