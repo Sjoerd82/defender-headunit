@@ -501,8 +501,8 @@ def do_source():
 
 	#global Sources
 	#global cSettings
-	print "Nuthin'.."
-	printSummary()
+	print "Xuthin'.."
+	test_printSummary()
 
 def do_source1():
 
