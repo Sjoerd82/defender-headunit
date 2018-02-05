@@ -444,10 +444,10 @@ def udisk_details( device, action ):
 # Headunit functions
 #
 
-def do_source():
+#def do_source():
 	print "Nuthin'.."
 
-def do_source1():
+def do_source():
 
 	global Sources
 	global cSettings
@@ -1407,26 +1407,24 @@ qBlock = Queue(maxsize=4)	# 0 = infinite
 # Long stuff that can run anytime (but may occasionally do a reality check):
 qAsync = Queue(maxsize=4)	# 0 = infinite
 
-#t = threading.Thread(target=worker_queue_prio)
-#t.setDaemon(True)
-#t.start()
-p1 = Process(target=worker_queue_prio)
-#t.setDaemon(True)
-p1.daemon = True
-p1.start()
+t1 = threading.Thread(target=worker_queue_prio)
+#p1 = Process(target=worker_queue_prio)
+t1.setDaemon(True)
+#p1.daemon = True
+t1.start()
 #p.join()
 
-t = threading.Thread(target=worker_queue_blocking)
+t2 = threading.Thread(target=worker_queue_blocking)
 #p2 = Process(target=worker_queue_blocking)
-t.setDaemon(True)
+t2.setDaemon(True)
 #p2.daemon = True
 t.start()
 
-#t = threading.Thread(target=worker_queue_async)
-p3 = Process(target=worker_queue_async)
-#p.setDaemon(True)
-p3.daemon = True
-p3.start()
+t3 = threading.Thread(target=worker_queue_async)
+#p3 = Process(target=worker_queue_async)
+t3.setDaemon(True)
+#p3.daemon = True
+t3.start()
 
 """
 qBlock.put("SOURCE")
