@@ -134,9 +134,11 @@ def volume_att_toggle():
 	return None
 
 def volume_up():
+	printer('Vol Up')
 	return None
 
 def volume_down():
+	printer('Vol Down')
 	return None
 	
 # ********************************************************************************
@@ -211,7 +213,7 @@ def cb_remote_btn_press ( func ):
 	elif func == 'VOL_UP':
 		print('\033[95m[BUTTON] VOL_UP\033[00m')		
 		pa_sfx('button_feedback')
-		volume_up()
+		qPrio.put("VOL_UP", False)
 		return 0
 	elif func == 'VOL_DOWN':
 		print('\033[95m[BUTTON] VOL_DOWN\033[00m')
@@ -1145,6 +1147,10 @@ def worker_queue_prio():
 	#while not qPrio.empty():
 		item = qPrio.get()
 		print "QUEUE WORKER PRIO: {0}".format(item)
+		if item == 'VOL_UP':
+			volume_up()
+		elif item == 'VOL_DOWN':
+			volume_down()
 		qPrio.task_done()
 
 def worker_queue_blocking():
