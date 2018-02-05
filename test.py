@@ -111,8 +111,9 @@ import sys
 from dbus.mainloop.glib import DBusGMainLoop
 import gobject
 
-# QUEUING
+# qeueing
 from Queue import Queue
+from multiprocessing import Process
 
 # GLOBAL vars
 Sources = SourceController()	#TODO: rename "Sources" -- confusing name
@@ -194,7 +195,7 @@ def cb_remote_btn_press ( func ):
 	elif func == 'SOURCE':
 		print('\033[95m[BUTTON] Next source\033[00m')
 		pa_sfx('button_feedback')
-		printer('Blocking Queue Size: {0}'.format(qBlock.qsize))
+		printer('Blocking Queue Size: {0}'.format(qBlock.qsize()))
 		qBlock.put("SOURCE", False)
 		#do_source()
 	elif func == 'ATT':
@@ -1400,17 +1401,23 @@ qBlock = Queue(maxsize=4)	# 0 = infinite
 # Long stuff that can run anytime (but may occasionally do a reality check):
 qAsync = Queue(maxsize=4)	# 0 = infinite
 
-t = threading.Thread(target=worker_queue_prio)
-t.setDaemon(True)
-t.start()
+#t = threading.Thread(target=worker_queue_prio)
+#t.setDaemon(True)
+#t.start()
+p = Process(target=worker_queue_prio)
+p.setDaemon(True)
+p.start()
+#p.join()
 
-t = threading.Thread(target=worker_queue_blocking)
-t.setDaemon(True)
-t.start()
+#t = threading.Thread(target=worker_queue_blocking)
+p = Process(target=worker_queue_blocking)
+p.setDaemon(True)
+p.start()
 
-t = threading.Thread(target=worker_queue_async)
-t.setDaemon(True)
-t.start()
+#t = threading.Thread(target=worker_queue_async)
+p = Process(target=worker_queue_async)
+p.setDaemon(True)
+p.start()
 
 """
 qBlock.put("SOURCE")
