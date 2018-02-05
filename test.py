@@ -1405,18 +1405,21 @@ qAsync = Queue(maxsize=4)	# 0 = infinite
 #t.setDaemon(True)
 #t.start()
 p = Process(target=worker_queue_prio)
-p.setDaemon(True)
+#t.setDaemon(True)
+p.daemon = True
 p.start()
 #p.join()
 
 #t = threading.Thread(target=worker_queue_blocking)
 p = Process(target=worker_queue_blocking)
-p.setDaemon(True)
+#t.setDaemon(True)
+p.daemon = True
 p.start()
 
 #t = threading.Thread(target=worker_queue_async)
 p = Process(target=worker_queue_async)
-p.setDaemon(True)
+#p.setDaemon(True)
+p.daemon = True
 p.start()
 
 """
