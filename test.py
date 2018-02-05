@@ -451,6 +451,9 @@ def do_source():
 		
 	# if more than one source available...
 	if Sources.getAvailableCnt() > 1:
+		print "Yow, this is it mate.."
+		
+	elif Sources.getAvailableCnt() == 100:
 		# go to next source
 		res = Sources.next()
 		if not res == None:
