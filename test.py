@@ -195,9 +195,15 @@ def cb_remote_btn_press ( func ):
 	elif func == 'SOURCE':
 		print('\033[95m[BUTTON] Next source\033[00m')
 		pa_sfx('button_feedback')
-		printer('Blocking Queue Size: {0}'.format(qBlock.qsize()))
-		qBlock.put("SOURCE", False)
-		#do_source()
+		printer('Blocking Queue Size before: {0}'.format(qBlock.qsize()))
+		
+		try:
+			qBlock.put("SOURCE", False)
+		except Full:
+			printer('Queue is full.. ignoring button press.')
+
+		printer('Blocking Queue Size after: {0}'.format(qBlock.qsize()))
+		
 	elif func == 'ATT':
 		print('\033[95m[BUTTON] ATT\033[00m')
 		pa_sfx('button_feedback')
@@ -444,10 +450,13 @@ def udisk_details( device, action ):
 # Headunit functions
 #
 
-#def do_source():
-	print "Nuthin'.."
-
 def do_source():
+	global Sources
+	global cSettings
+	print "Nuthin'.."
+	printSummary()
+
+def do_source1():
 
 	global Sources
 	global cSettings
