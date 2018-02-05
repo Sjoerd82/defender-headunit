@@ -194,159 +194,8 @@ def cb_remote_btn_press ( func ):
 	elif func == 'SOURCE':
 		print('\033[95m[BUTTON] Next source\033[00m')
 		pa_sfx('button_feedback')
-		# if more than one source available...
-		if Sources.getAvailableCnt() > 1:
-			
-			# go to next source
-			res = Sources.next()
-			if not res == None:
-
-				#
-				# if succesful, play new source
-				#
-				
-				Sources.sourceStop()
-				Sources.sourcePlay()
-				#
-				# update operational settings
-				#
-				
-				# get current index(es)
-				arCurrIx = Sources.getIndexCurrent()
-				#if arCurrIx[1] == None:
-				currSrc = Sources.get(None)
-				#else:
-				#	currSrc = Sources.get(None)
-				#	currSSrc = Sources.getSubSource(arCurrIx[0],arCurrIx[1])
-				#
-				#print "currSrc:"
-				#print currSrc
-				
-				#print "currSSrc:"
-				#print currSSrc
-				
-				#print "++:"
-				#print Sources.getComposite()
-				
-				# update source
-				cSettings.set('source',currSrc['name'])
-				
-				# update sub-source key (in case of sub-source)
-				if not arCurrIx[1] == None:
-					subsource_key = {}
-					for key in currSrc['subsource_key']:
-						subsource_key[key] = currSrc['subsources'][arCurrIx[1]][key]
-					cSettings.set('subsourcekey', subsource_key)
-				
-				# commit changes
-				cSettings.save()
-
-				#
-				# update display
-				#
-				
-				hudispdata = {}
-				if currSrc['name'] == 'fm':
-					hudispdata['src'] = 'FM'
-				elif currSrc['name'] == 'media':
-					hudispdata['src'] = 'USB'
-					hudispdata['info'] = "Removable Media"
-					hudispdata['info1'] = "label: " + currSrc['subsources'][arCurrIx[1]]['label']
-				elif currSrc['name'] == 'locmus':
-					hudispdata['src'] = 'INT'
-					hudispdata['info'] = "Internal Storage"
-					if len(currSrc['subsources']) > 1:
-						hudispdata['info1'] = "folder: " + currSrc['subsources'][arCurrIx[1]]['label']
-				elif currSrc['name'] == 'bt':
-					hudispdata['src'] = 'BT'
-					hudispdata['info'] = "Bluetooth"
-				elif currSrc['name'] == 'line':
-					hudispdata['src'] = 'AUX'
-					hudispdata['info'] = "AUX Line-In"
-				elif currSrc['name'] == 'stream':
-					hudispdata['src'] = 'WEB'
-					hudispdata['info'] = "Internet Radio"
-				elif currSrc['name'] == 'smb':
-					hudispdata['src'] = 'NET'
-					hudispdata['info'] = "Network Shares"
-				disp.dispdata(hudispdata)
-
-				# if source is MPD and supports directories (don't they all?), gather list of dirs, in separate thread..
-				dirList = mpdc.mpc_get_PlaylistDirs()
-				print dirList
-				
-				# TODO: make this better... somehow.
-				"""
-				if currSrc['name'] == 'fm':
-					source_settings = {'freq':'101.10'}	# TODO
-				elif currSrc['name'] == 'media':
-					source_settings = { 'label':currSrc['label'], 'uuid':currSrc['uuid'] }
-				elif currSrc['name'] == 'locmus':
-					source_settings = { 'mountpoint':currSrc['mountpoint'] }
-				elif currSrc['name'] == 'bt':
-					source_settings = {}
-				elif currSrc['name'] == 'line':
-					source_settings = {}				
-				elif currSrc['name'] == 'stream':
-					source_settings = { 'uri':'' }	#TODO
-				elif currSrc['name'] == 'smb':
-					source_settings = { 'mpd_dir':'music' }	#TODO
-				
-				cSettings.set('source_settings',source_settings)
-				"""
-				
-				# TODO!!
-				#printer('TODO!! save subsoure to settings') # add to source_stop() functionss.. #no better to handle it here.. source has no notion of operational settings..
-
-				#testSs = {'mountpoint':'/media/SJOERD'}
-				#cSettings.set('source','media')
-				#cSettings.set('subsource',testSs)
-				
-				"""
-				if currSrc['name'] == 'fm':
-					source_settings = {'freq':'101.10'}	# TODO
-				elif currSrc['name'] == 'media':
-
-					if 'label' in currSrc:
-						cSettings.set('label',currSrc['label'])
-					else:
-						cSettings.set('label',"")
-					if 'uuid' in currSrc:
-						cSettings.set('uuid',currSrc['uuid'])
-					else:
-						cSettings.set('uuid',"")
-
-				elif currSrc['name'] == 'locmus':
-
-					if 'label' in currSrc:
-						cSettings.set('label',currSrc['label'])
-					else:
-						cSettings.set('label',"")
-					if 'uuid' in currSrc:
-						cSettings.set('uuid',currSrc['uuid'])
-					else:
-						cSettings.set('uuid',"")
-				
-				elif currSrc['name'] == 'bt':
-					source_settings = {}
-				elif currSrc['name'] == 'line':
-					source_settings = {}				
-				elif currSrc['name'] == 'stream':
-					source_settings = { 'uri':'' }	#TODO
-				elif currSrc['name'] == 'smb':
-					source_settings = { 'mpd_dir':'music' }	#TODO
-					
-				"""
-			
-			printer('Done switching source [OK]')
-		elif Sources.getAvailableCnt() == 1:
-			printer('Only one source availble. Ignoring button.')
-		elif Sources.getAvailableCnt() == 0:
-			printer('No available sources.')
-		
-		# show sources
-		printSummary()
-		
+		qBlock.put("SOURCE")
+		#do_source()
 	elif func == 'ATT':
 		print('\033[95m[BUTTON] ATT\033[00m')
 		pa_sfx('button_feedback')
@@ -364,11 +213,11 @@ def cb_remote_btn_press ( func ):
 	elif func == 'SEEK_NEXT':
 		print('\033[95m[BUTTON] Seek/Next\033[00m')
 		pa_sfx('button_feedback')
-		Sources.sourceSeekNext()
+		qBlock.put("SEEK_NEXT")
 	elif func == 'SEEK_PREV':
 		print('\033[95m[BUTTON] Seek/Prev.\033[00m')
 		pa_sfx('button_feedback')
-		Sources.sourceSeekPrev()
+		qBlock.put("SEEK_PREV")
 	elif func == 'DIR_NEXT':
 		print('\033[95m[BUTTON] Next directory\033[00m')
 		dir_next()
@@ -593,6 +442,163 @@ def udisk_details( device, action ):
 # Headunit functions
 #
 
+def do_source():
+
+	global Sources
+	global cSettings
+		
+	# if more than one source available...
+	if Sources.getAvailableCnt() > 1:
+		# go to next source
+		res = Sources.next()
+		if not res == None:
+
+			#
+			# if succesful, play new source
+			#
+			
+			Sources.sourceStop()
+			Sources.sourcePlay()
+			#
+			# update operational settings
+			#
+			
+			# get current index(es)
+			arCurrIx = Sources.getIndexCurrent()
+			#if arCurrIx[1] == None:
+			currSrc = Sources.get(None)
+			#else:
+			#	currSrc = Sources.get(None)
+			#	currSSrc = Sources.getSubSource(arCurrIx[0],arCurrIx[1])
+			#
+			#print "currSrc:"
+			#print currSrc
+			
+			#print "currSSrc:"
+			#print currSSrc
+			
+			#print "++:"
+			#print Sources.getComposite()
+			
+			# update source
+			cSettings.set('source',currSrc['name'])
+			
+			# update sub-source key (in case of sub-source)
+			if not arCurrIx[1] == None:
+				subsource_key = {}
+				for key in currSrc['subsource_key']:
+					subsource_key[key] = currSrc['subsources'][arCurrIx[1]][key]
+				cSettings.set('subsourcekey', subsource_key)
+			
+			# commit changes
+			cSettings.save()
+
+			#
+			# update display
+			#
+			
+			hudispdata = {}
+			if currSrc['name'] == 'fm':
+				hudispdata['src'] = 'FM'
+			elif currSrc['name'] == 'media':
+				hudispdata['src'] = 'USB'
+				hudispdata['info'] = "Removable Media"
+				hudispdata['info1'] = "label: " + currSrc['subsources'][arCurrIx[1]]['label']
+			elif currSrc['name'] == 'locmus':
+				hudispdata['src'] = 'INT'
+				hudispdata['info'] = "Internal Storage"
+				if len(currSrc['subsources']) > 1:
+					hudispdata['info1'] = "folder: " + currSrc['subsources'][arCurrIx[1]]['label']
+			elif currSrc['name'] == 'bt':
+				hudispdata['src'] = 'BT'
+				hudispdata['info'] = "Bluetooth"
+			elif currSrc['name'] == 'line':
+				hudispdata['src'] = 'AUX'
+				hudispdata['info'] = "AUX Line-In"
+			elif currSrc['name'] == 'stream':
+				hudispdata['src'] = 'WEB'
+				hudispdata['info'] = "Internet Radio"
+			elif currSrc['name'] == 'smb':
+				hudispdata['src'] = 'NET'
+				hudispdata['info'] = "Network Shares"
+			disp.dispdata(hudispdata)
+
+			# if source is MPD and supports directories (don't they all?), gather list of dirs, in separate thread..
+			dirList = mpdc.mpc_get_PlaylistDirs()
+			print dirList
+			
+			# TODO: make this better... somehow.
+			"""
+			if currSrc['name'] == 'fm':
+				source_settings = {'freq':'101.10'}	# TODO
+			elif currSrc['name'] == 'media':
+				source_settings = { 'label':currSrc['label'], 'uuid':currSrc['uuid'] }
+			elif currSrc['name'] == 'locmus':
+				source_settings = { 'mountpoint':currSrc['mountpoint'] }
+			elif currSrc['name'] == 'bt':
+				source_settings = {}
+			elif currSrc['name'] == 'line':
+				source_settings = {}				
+			elif currSrc['name'] == 'stream':
+				source_settings = { 'uri':'' }	#TODO
+			elif currSrc['name'] == 'smb':
+				source_settings = { 'mpd_dir':'music' }	#TODO
+			
+			cSettings.set('source_settings',source_settings)
+			"""
+			
+			# TODO!!
+			#printer('TODO!! save subsoure to settings') # add to source_stop() functionss.. #no better to handle it here.. source has no notion of operational settings..
+
+			#testSs = {'mountpoint':'/media/SJOERD'}
+			#cSettings.set('source','media')
+			#cSettings.set('subsource',testSs)
+			
+			"""
+			if currSrc['name'] == 'fm':
+				source_settings = {'freq':'101.10'}	# TODO
+			elif currSrc['name'] == 'media':
+
+				if 'label' in currSrc:
+					cSettings.set('label',currSrc['label'])
+				else:
+					cSettings.set('label',"")
+				if 'uuid' in currSrc:
+					cSettings.set('uuid',currSrc['uuid'])
+				else:
+					cSettings.set('uuid',"")
+
+			elif currSrc['name'] == 'locmus':
+
+				if 'label' in currSrc:
+					cSettings.set('label',currSrc['label'])
+				else:
+					cSettings.set('label',"")
+				if 'uuid' in currSrc:
+					cSettings.set('uuid',currSrc['uuid'])
+				else:
+					cSettings.set('uuid',"")
+			
+			elif currSrc['name'] == 'bt':
+				source_settings = {}
+			elif currSrc['name'] == 'line':
+				source_settings = {}				
+			elif currSrc['name'] == 'stream':
+				source_settings = { 'uri':'' }	#TODO
+			elif currSrc['name'] == 'smb':
+				source_settings = { 'mpd_dir':'music' }	#TODO
+				
+			"""
+		
+		printer('Done switching source [OK]')
+	elif Sources.getAvailableCnt() == 1:
+		printer('Only one source availble. Ignoring button.')
+	elif Sources.getAvailableCnt() == 0:
+		printer('No available sources.')
+
+	printSummary()
+
+		
 def dir_next():
 	global Sources
 
@@ -1086,12 +1092,27 @@ def worker_queue_prio():
 		qPrio.task_done()
 
 def worker_queue_blocking():
+	global Sources
+
 	while True:
 	#while not qBlock.empty():
 		item = qBlock.get()
 		print "QUEUE WORKER BLOCK: {0}".format(item)
-		time.sleep(5)
+		if item == 'SOURCE':
+			do_source()
+		elif item = 'SEEK_NEXT':
+			Sources.sourceSeekNext()
+		elif item = 'SEEK_PREV':
+			Sources.sourceSeekPrev()
+		else:
+			print 'UNKNOWN TASK'
 		qBlock.task_done()
+
+def worker_queue_async():
+	while True:
+		item = qAsync.get()
+		print "QUEUE WORKER ASYNC: {0}".format(item)
+		qAsync.task_done()
 
 		
 #********************************************************************************
@@ -1364,16 +1385,18 @@ else:
 #dSettings1 = {"source": -1, 'volume': 99, 'mediasource': -1, 'medialabel': ''}	 # No need to save random, we don't want to save that (?)
 #settings_save( sFileSettings, dSettings1 )
 
-## TESTING QUEUES ##
+#
+# Setting up worker threads
+#
 
 # Short stuff that can run anytime:
-qPrio = Queue(maxsize=0)	# 0 = infinite, change to a smallish number (5?)
+qPrio = Queue(maxsize=4)	# 0 = infinite
 
 # Blocking stuff that needs to run in sequence
-qBlock = Queue(maxsize=0)	# 0 = infinite, change to a smallish number (5?)
+qBlock = Queue(maxsize=4)	# 0 = infinite
 
 # Long stuff that can run anytime (but may occasionally do a reality check):
-qAsync = Queue(maxsize=0)	# 0 = infinite, change to a smallish number (5?)
+qAsync = Queue(maxsize=4)	# 0 = infinite
 
 t = threading.Thread(target=worker_queue_prio)
 t.setDaemon(True)
@@ -1383,6 +1406,11 @@ t = threading.Thread(target=worker_queue_blocking)
 t.setDaemon(True)
 t.start()
 
+t = threading.Thread(target=worker_queue_async)
+t.setDaemon(True)
+t.start()
+
+"""
 qBlock.put("SOURCE")
 qPrio.put("VOL_UP")
 qBlock.put("NEXT")
@@ -1392,6 +1420,7 @@ qBlock.put("SHUFFLE")
 qPrio.put("SHUTDOWN")
 
 exit()
+"""
 
 #********************************************************************************
 #
