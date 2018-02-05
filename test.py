@@ -1158,7 +1158,7 @@ def worker_queue_blocking():
 		item = qBlock.get()
 		print "QUEUE WORKER BLOCK: {0}".format(item)
 		if item == 'SOURCE':
-			do_source()
+			do_source(Sources)
 		elif item == 'SEEK_NEXT':
 			Sources.sourceSeekNext()
 		elif item == 'SEEK_PREV':
