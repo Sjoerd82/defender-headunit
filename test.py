@@ -194,7 +194,8 @@ def cb_remote_btn_press ( func ):
 	elif func == 'SOURCE':
 		print('\033[95m[BUTTON] Next source\033[00m')
 		pa_sfx('button_feedback')
-		qBlock.put("SOURCE")
+		printer('Blocking Queue Size: {0}'.format(qBlock.qsize))
+		qBlock.put("SOURCE", False)
 		#do_source()
 	elif func == 'ATT':
 		print('\033[95m[BUTTON] ATT\033[00m')
@@ -213,11 +214,11 @@ def cb_remote_btn_press ( func ):
 	elif func == 'SEEK_NEXT':
 		print('\033[95m[BUTTON] Seek/Next\033[00m')
 		pa_sfx('button_feedback')
-		qBlock.put("SEEK_NEXT")
+		qBlock.put("SEEK_NEXT", False))
 	elif func == 'SEEK_PREV':
 		print('\033[95m[BUTTON] Seek/Prev.\033[00m')
 		pa_sfx('button_feedback')
-		qBlock.put("SEEK_PREV")
+		qBlock.put("SEEK_PREV", False))
 	elif func == 'DIR_NEXT':
 		print('\033[95m[BUTTON] Next directory\033[00m')
 		dir_next()
@@ -1388,6 +1389,7 @@ else:
 #
 # Setting up worker threads
 #
+printer('Setting up queues and worker threads')
 
 # Short stuff that can run anytime:
 qPrio = Queue(maxsize=4)	# 0 = infinite
