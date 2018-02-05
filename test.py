@@ -199,7 +199,7 @@ def cb_remote_btn_press ( func ):
 		
 		try:
 			qBlock.put("SOURCE", False)
-		except Full:
+		except Queue.Full:
 			printer('Queue is full.. ignoring button press.')
 
 		printer('Blocking Queue Size after: {0}'.format(qBlock.qsize()))
@@ -450,11 +450,9 @@ def udisk_details( device, action ):
 # Headunit functions
 #
 
-def do_source():
+def do_source(xSources):
 
-	def test_printSummary():
-		global Sources
-		global logger
+	def test_printSummary(Sources):
 		printer('-- Summary -----------------------------------------------------------', tag='')
 		arCurrIx = Sources.getIndexCurrent()
 		sCurrent = Sources.get(None)
@@ -498,7 +496,7 @@ def do_source():
 	#global Sources
 	#global cSettings
 	print "Xuthin'.."
-	test_printSummary()
+	test_printSummary(xSources)
 
 def do_source1():
 
