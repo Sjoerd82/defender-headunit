@@ -1146,7 +1146,8 @@ def QuickPlay( prevSource, prevSourceSub ):
 def worker_queue_prio():
 	while True:
 		while not qPrio.empty():
-			item = qPrio.get()
+			#item = qPrio.get()
+			item = qPrio.get_nowait()
 			print "QUEUE WORKER PRIO: {0}".format(item)
 			if item == 'VOL_UP':
 				volume_up()
