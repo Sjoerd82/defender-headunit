@@ -401,8 +401,16 @@ def cb_mpd_event( event ):
 	
 		# first let's determine the state:	
 		status = mpdc.mpc_get_status()
-		print "STATUS: {0}.".format(status)
-		print "STATE : {0}.".format(status['state'])
+		#print "STATUS: {0}.".format(status)
+		#print "STATE : {0}.".format(status['state'])
+		
+		if 'state' in status:
+			if status['state'] == 'stop':
+				print 'detected that mpd playback has stopped.. ignoring this'.
+			elif status['state'] == 'pause':
+				print 'detected that mpd playback has paused.. ignoring this'.
+			elif status['state'] == 'play':
+				print "do stuff for play"
 	
 	#	currSrc = Sources.get( None )
 		
