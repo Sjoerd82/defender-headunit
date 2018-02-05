@@ -453,9 +453,6 @@ def udisk_details( device, action ):
 def do_source():
 
 	def test_printSummary():
-		print('-- Xummary -----------------------------------------------------------')
-	"""
-	def test_printSummary():
 		global Sources
 		global logger
 		printer('-- Summary -----------------------------------------------------------', tag='')
@@ -497,7 +494,6 @@ def do_source():
 			
 			i += 1
 		printer('----------------------------------------------------------------------', tag='')
-	"""
 
 	#global Sources
 	#global cSettings
