@@ -1410,23 +1410,23 @@ qAsync = Queue(maxsize=4)	# 0 = infinite
 #t = threading.Thread(target=worker_queue_prio)
 #t.setDaemon(True)
 #t.start()
-p = Process(target=worker_queue_prio)
+p1 = Process(target=worker_queue_prio)
 #t.setDaemon(True)
-p.daemon = True
-p.start()
+p1.daemon = True
+p1.start()
 #p.join()
 
-#t = threading.Thread(target=worker_queue_blocking)
-p = Process(target=worker_queue_blocking)
-#t.setDaemon(True)
-p.daemon = True
-p.start()
+t = threading.Thread(target=worker_queue_blocking)
+#p2 = Process(target=worker_queue_blocking)
+t.setDaemon(True)
+#p2.daemon = True
+t.start()
 
 #t = threading.Thread(target=worker_queue_async)
-p = Process(target=worker_queue_async)
+p3 = Process(target=worker_queue_async)
 #p.setDaemon(True)
-p.daemon = True
-p.start()
+p3.daemon = True
+p3.start()
 
 """
 qBlock.put("SOURCE")
