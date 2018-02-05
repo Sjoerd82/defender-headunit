@@ -111,6 +111,9 @@ import sys
 from dbus.mainloop.glib import DBusGMainLoop
 import gobject
 
+# QUEUING
+from Queue import Queue
+
 # GLOBAL vars
 Sources = SourceController()	#TODO: rename "Sources" -- confusing name
 mpdc = None
@@ -1075,6 +1078,22 @@ def QuickPlay( prevSource, prevSourceSub ):
 			return False
 		
 
+def worker_queue_prio():
+	while True:
+	#while not qPrio.empty():
+		item = qPrio.get()
+		print "QUEUE WORKER PRIO: {0}".format(item)
+		qPrio.task_done()
+
+def worker_queue_blocking():
+	while True:
+	#while not qBlock.empty():
+		item = qBlock.get()
+		print "QUEUE WORKER BLOCK: {0}".format(item)
+		time.sleep(5)
+		qBlock.task_done()
+
+		
 #********************************************************************************
 #
 # DBus Dispay Signals
@@ -1344,6 +1363,35 @@ else:
 # Save operational settings
 #dSettings1 = {"source": -1, 'volume': 99, 'mediasource': -1, 'medialabel': ''}	 # No need to save random, we don't want to save that (?)
 #settings_save( sFileSettings, dSettings1 )
+
+## TESTING QUEUES ##
+
+# Short stuff that can run anytime:
+qPrio = Queue(maxsize=0)	# 0 = infinite, change to a smallish number (5?)
+
+# Blocking stuff that needs to run in sequence
+qBlock = Queue(maxsize=0)	# 0 = infinite, change to a smallish number (5?)
+
+# Long stuff that can run anytime (but may occasionally do a reality check):
+qAsync = Queue(maxsize=0)	# 0 = infinite, change to a smallish number (5?)
+
+t = threading.Thread(target=worker_queue_prio)
+t.setDaemon(True)
+t.start()
+
+t = threading.Thread(target=worker_queue_blocking)
+t.setDaemon(True)
+t.start()
+
+qBlock.put("SOURCE")
+qPrio.put("VOL_UP")
+qBlock.put("NEXT")
+qPrio.put("VOL_UP")
+qPrio.put("VOL_ATT")
+qBlock.put("SHUFFLE")
+qPrio.put("SHUTDOWN")
+
+exit()
 
 #********************************************************************************
 #

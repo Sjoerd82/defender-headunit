@@ -225,6 +225,8 @@ class mpdController():
 		"""
 		
 		# Via the commandline
+
+# SEEMS TO HANG?
 		"""
 		pipe = Popen('mpc -f %file% playlist', shell=True, stdout=PIPE)
 
