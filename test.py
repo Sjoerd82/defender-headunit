@@ -445,6 +445,9 @@ def udisk_details( device, action ):
 #
 
 def do_source():
+	print "Nuthin'.."
+
+def do_source1():
 
 	global Sources
 	global cSettings
