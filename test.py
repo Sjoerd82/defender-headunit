@@ -1471,10 +1471,10 @@ qPrio = Queue(maxsize=0)	# 0 = infinite
 qPrio.put('BLANK', False)
 
 # Blocking stuff that needs to run in sequence
-qBlock = Queue(maxsize=4)	# 0 = infinite
+#qBlock = Queue(maxsize=4)	# 0 = infinite
 
 # Long stuff that can run anytime (but may occasionally do a reality check):
-qAsync = Queue(maxsize=4)	# 0 = infinite
+#qAsync = Queue(maxsize=4)	# 0 = infinite
 
 t1 = threading.Thread(target=worker_queue_prio)
 #p1 = Process(target=worker_queue_prio)
