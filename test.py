@@ -529,9 +529,6 @@ def do_sourceX():
 
 def do_source(item):
 
-	print item
-	return 0
-
 	def my_printSummary(Sources):
 		print('-- Summary -----------------------------------------------------------')
 		arCurrIx = Sources.getIndexCurrent()
@@ -575,14 +572,14 @@ def do_source(item):
 		
 	#global Sources
 	#global cSettings
-	mysource = SourceController()
+	#mysource = SourceController()
 
 	for i in range(0,20):
 		print i
 	
 	#printSummary(Sources)
-	my_printSummary(mysource)
-	#printSummary(src)
+	#my_printSummary(mysource)
+	printSummary(item)
 	print("DONE!")
 
 def do_source1():
