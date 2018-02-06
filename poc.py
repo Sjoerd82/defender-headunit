@@ -27,6 +27,10 @@ import gobject
 from Queue import Queue
 from multiprocessing import Process
 
+# GLOBAL vars
+Sources = None
+mpdc = None
+
 # CONSTANTS
 CONFIG_FILE_DEFAULT = '/mnt/PIHU_APP/defender-headunit/config/configuration.json'
 CONFIG_FILE = '/mnt/PIHU_CONFIG/configuration.json'
@@ -260,6 +264,66 @@ class dbusDisplay(dbus.service.Object):
 	def dispdata(self, dispdata):
 		pass
 
+#********************************************************************************
+#
+# Initialization
+#
+
+threads = []
+"""
+# loop through the control plugin dir
+for filename in os.listdir( configuration['directories']['controls'] ):
+		#if filename.startswith('') and
+		if filename.endswith('.py'):
+			pathfilename = os.path.join( configuration['directories']['controls'], filename )
+			t = threading.Thread(target=plugin_execute, args=(pathfilename,))
+			t.setDaemon(True)
+			threads.append(t)
+			#t.start()	WORKAROUND
+
+# loop through the output plugin dir
+for filename in os.listdir( configuration['directories']['output'] ):
+		#if filename.startswith('') and
+		if filename.endswith('.py'):
+			pathfilename = os.path.join( configuration['directories']['output'], filename )
+			t = threading.Thread(target=plugin_execute, args=(pathfilename,))
+			t.setDaemon(True)
+			threads.append(t)
+			#t.start()	WORKAROUND
+
+# NOTE: Plugins are now loading in the background, in parallel to code below.
+# NOTE: This can really interfere, in a way I don't understand.. executing the threads later helps... somehow..
+# NOTE: For NOW, we'll just execute the threads after the loading of the "other" plugins...
+"""
+
+#
+# Load mpd dbus listener
+#
+#
+t = threading.Thread(target=plugin_execute, args=('/mnt/PIHU_APP/defender-headunit/dbus_mpd.py',))
+t.setDaemon(True)
+threads.append(t)
+
+
+
+# WORKAROUND...
+for t in threads:
+	t.start()
+
+# LCD (TODO: move to plugins)
+#from hu_lcd import *
+#disp = lcd_mgr()
+#disp.lcd_text('Welcome v0.1.4.8')
+
+# MPD
+mpdc = mpdController()
+
+#
+# end of initialization
+#
+#********************************************************************************
+myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
+
 
 #********************************************************************************
 #
@@ -270,11 +334,17 @@ class dbusDisplay(dbus.service.Object):
 #
 # Setting up worker threads
 #
-print('Setting up queues and worker threads')
+printer('Setting up queues and worker threads')
 
 # Short stuff that can run anytime:
 qPrio = Queue(maxsize=0)	# 0 = infinite
 qPrio.put('BLANK', False)
+
+# Blocking stuff that needs to run in sequence
+qBlock = Queue(maxsize=4)	# 0 = infinite
+
+# Long stuff that can run anytime (but may occasionally do a reality check):
+qAsync = Queue(maxsize=4)	# 0 = infinite
 
 t1 = threading.Thread(target=worker_queue_prio)
 #p1 = Process(target=worker_queue_prio)
@@ -283,7 +353,17 @@ t1.setDaemon(True)
 t1.start()
 #p.join()
 
+t2 = threading.Thread(target=worker_queue_blocking)
+#p2 = Process(target=worker_queue_blocking)
+t2.setDaemon(True)
+#p2.daemon = True
+t2.start()
 
+t3 = threading.Thread(target=worker_queue_async)
+#p3 = Process(target=worker_queue_async)
+t3.setDaemon(True)
+#p3.daemon = True
+t3.start()
 
 """
 qBlock.put("SOURCE")
@@ -326,6 +406,30 @@ gobject.timeout_add_seconds(5,cb_timer2)
 #
 bus = dbus.SystemBus()
 
+# Output
+disp = dbusDisplay(bus)
+
+
+"""
+time.sleep(5)	#wait for the plugin to be ready
+
+hudispdata = {}
+hudispdata['rnd'] = "1"
+hudispdata['artist'] = "The Midnight"
+disp.dispdata(hudispdata)
+
+time.sleep(5)
+hudispdata = {}
+hudispdata['rnd'] = "0"
+disp.dispdata(hudispdata)
+
+time.sleep(5)
+hudispdata = {}
+hudispdata['att'] = "1"
+disp.dispdata(hudispdata)
+
+exit()
+"""
 #
 # Connect Callback functions to DBus Signals
 #
