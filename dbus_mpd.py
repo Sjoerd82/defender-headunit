@@ -134,9 +134,10 @@ class mpdControl(dbus.service.Object):
 			#
 			#	for r in results:
 			#		print(r)		
-
-			#else:
-			#	print(' ...  unmanaged event')
+			elif e == "database"
+				self.mpd_control('database')
+			else:
+				print(' ...  unmanaged event')
 	
 	#oMpdClient will create a list variable with the change events
 	#@dbus.service.signal("com.arctura.mpd", signature='as')

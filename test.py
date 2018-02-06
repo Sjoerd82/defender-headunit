@@ -342,9 +342,62 @@ def cb_mpd_event( event ):
 				
 	elif event == "update":
 		printer(" ...  database update started or finished (no action)", tag='MPD')
-		
+
 	elif event == "database":
 		printer(" ...  database updated with new music #TODO", tag='MPD')
+
+		# let's determine what has changed
+		
+		
+		""" TODO: UNCOMMENT THIS
+		#IF we're already playing local music: Continue playing without interruption
+		# and add new tracks to the playlist
+		# Source 2 = locmus
+		if dSettings['source'] == 2:
+			print(' ......  source is already playing, trying seamless update...')
+			# 1. "crop" playlist (remove everything, except playing track)
+			call(["mpc", "-q" , "crop"])
+
+			yMpdClient = MPDClient()
+			yMpdClient.connect("localhost", 6600)
+					
+			# 2. songid is not unique, get the full filename
+			current_song = yMpdClient.currentsong()
+			curr_file = current_song['file']
+			print(' ......  currently playing file: {0}'.format(curr_file))
+			
+			# 3. reload local music playlist
+			mpc_populate_playlist(sLocalMusicMPD)
+			
+			# 4. find position of song that we are playing, skipping the first position (pos 0) in the playlist, because that's where the currently playing song is
+			delpos = '0'
+			for s in yMpdClient.playlistinfo('1:'):
+				if s['file'] == curr_file:
+					print(' ......  song found at position {0}'.format(s['pos']))
+					delpos = s['pos']
+			
+			if delpos != '0':
+				print(' ......  moving currently playing track back in place')
+				yMpdClient.delete(delpos)
+				yMpdClient.move(0,int(delpos)-1)
+			else:
+				print(' ......  ERROR: something went wrong')
+				pa_sfx('error')
+
+			yMpdClient.close()
+			
+		#IF we were not playing local music: Try to switch to local music, but check if the source is OK.
+		else:
+			#We cannot check if there's any NEW tracks, but let's check if there's anything to play..
+			locmus_check()
+			# Source 2 = locmus
+			#if arSourceAvailable[2] == 1:
+			if Sources.getAvailable('name','locmus')
+				dSettings['source'] = 2
+				source_play()
+			else:
+				print('[LOCMUS] Update requested, but no music available for playing... Doing nothing.')
+		"""
 		
 	elif event == "playlist":
 		priner(" ...  playlist changed (no action)", tag='MPD')
@@ -647,15 +700,32 @@ def dir_next():
 	# get current source
 	currSrc = Sources.get(None)
 
-	# check if the source supports random
+	# check if the source supports dirnext
 	if 'dirnext' in currSrc['controls'] and currSrc['controls']['dirnext']:
 		printer('OK!', tag='dirnext')
 		pa_sfx('button_feedback')
+
+		dir_to_file()
+		
 	else:
 		pa_sfx('error')
 		print(' No function for this button! or function not available for this source.')
 
 
+def dir_to_file():
+	pipe = Popen('mpc -f %file% playlist', shell=True, stdout=PIPE)
+
+	with open('/mnt/PIHU_CONFIG/dirs.txt','w') as dirs:
+		for line in pipe.stdout:
+			dirname_current=os.path.dirname(line.strip())
+			t = iPos, dirname_current
+			if dirname_prev != dirname_current:
+				#arMpcPlaylistDirs.append(t)
+				dirs.write(t)
+			dirname_prev = dirname_current
+			iPos += 1
+
+		
 # set random; req_state: <toggle | on | off>
 # todo: implement "special random"-modes: random within album, artist, folder
 def set_random( req_state ):
@@ -734,70 +804,24 @@ def do_update():
 		
 		global mpdc
 		
-		printer('Updating local database [{0}]'.format(folder))
-
 		#Update database
 		mpdc.update( folder, False ) # False = Don't wait for completion (will be picked up by the mpd callback)
-		
-		""" TODO: UNCOMMENT THIS
-		#IF we're already playing local music: Continue playing without interruption
-		# and add new tracks to the playlist
-		# Source 2 = locmus
-		if dSettings['source'] == 2:
-			print(' ......  source is already playing, trying seamless update...')
-			# 1. "crop" playlist (remove everything, except playing track)
-			call(["mpc", "-q" , "crop"])
-
-			yMpdClient = MPDClient()
-			yMpdClient.connect("localhost", 6600)
-					
-			# 2. songid is not unique, get the full filename
-			current_song = yMpdClient.currentsong()
-			curr_file = current_song['file']
-			print(' ......  currently playing file: {0}'.format(curr_file))
-			
-			# 3. reload local music playlist
-			mpc_populate_playlist(sLocalMusicMPD)
-			
-			# 4. find position of song that we are playing, skipping the first position (pos 0) in the playlist, because that's where the currently playing song is
-			delpos = '0'
-			for s in yMpdClient.playlistinfo('1:'):
-				if s['file'] == curr_file:
-					print(' ......  song found at position {0}'.format(s['pos']))
-					delpos = s['pos']
-			
-			if delpos != '0':
-				print(' ......  moving currently playing track back in place')
-				yMpdClient.delete(delpos)
-				yMpdClient.move(0,int(delpos)-1)
-			else:
-				print(' ......  ERROR: something went wrong')
-				pa_sfx('error')
-
-			yMpdClient.close()
-			
-		#IF we were not playing local music: Try to switch to local music, but check if the source is OK.
-		else:
-			#We cannot check if there's any NEW tracks, but let's check if there's anything to play..
-			locmus_check()
-			# Source 2 = locmus
-			#if arSourceAvailable[2] == 1:
-			if Sources.getAvailable('name','locmus')
-				dSettings['source'] = 2
-				source_play()
-			else:
-				print('[LOCMUS] Update requested, but no music available for playing... Doing nothing.')
-		"""
 
 	# get local folders
 	for source in Sources.getAll():
 	
 		if source['name'] == 'locmus':
 			if 'subsources' in source and len(source['subsources']) > 0:
+				printer('Updating local database')
 				for subsource in source['subsources']:
 					if 'mpd_dir' in subsource:
 						mpd_dir = subsource['mpd_dir']
 						locmus_update(mpd_dir)
+			else:
+				printer('No local databases configured', level=LL_WARNING)
+		else:
+			printer('No local source available', level=LL_WARNING)
+
 			
 	# the only update is an locmus_update ;-)
 	#locmus_update()
