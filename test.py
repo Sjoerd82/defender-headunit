@@ -1483,6 +1483,7 @@ t1.setDaemon(True)
 t1.start()
 #p.join()
 
+"""
 t2 = threading.Thread(target=worker_queue_blocking)
 #p2 = Process(target=worker_queue_blocking)
 t2.setDaemon(True)
@@ -1494,6 +1495,7 @@ t3 = threading.Thread(target=worker_queue_async)
 t3.setDaemon(True)
 #p3.daemon = True
 t3.start()
+"""
 
 """
 qBlock.put("SOURCE")
