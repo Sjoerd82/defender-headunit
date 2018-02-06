@@ -231,6 +231,10 @@ def cb_timer2():
 	qPrio.put('VOL_UP',False)
 	return True
 	
+def plugin_execute( script ):
+	printer('Starting Plugin: {0}'.format(script))
+	#os.system( 'python '+script )
+	call(['python',script])
 
 def worker_queue_prio():
 	while True:
