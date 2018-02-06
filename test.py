@@ -1,4 +1,4 @@
-#!/usr/bin/python
+7#!/usr/bin/python
 
 # A car's headunit.
 #
@@ -138,6 +138,7 @@ from dbus.mainloop.glib import DBusGMainLoop
 Sources = SourceController()	#TODO: rename "Sources" -- confusing name
 mpdc = None
 disp = None
+arMpcPlaylistDirs = [ ]			#TODO: should probably not be global...
 
 # CONSTANTS
 CONFIG_FILE_DEFAULT = '/mnt/PIHU_APP/defender-headunit/config/configuration.json'
@@ -708,6 +709,9 @@ def dir_next():
 		# TESTING
 		dir_to_file()
 		
+		# TESTING
+		load_dirlist()
+		
 	else:
 		pa_sfx('error')
 		printer('Function not available for this source.', level=LL_WARNING)
@@ -730,10 +734,20 @@ def dir_to_file():
 			t = iPos, dirname_current
 			if dirname_prev != dirname_current:
 				#arMpcPlaylistDirs.append(t)
-				dirs.write("{0}|{1}".format(iPos,dirname_current))
+				dirs.write("{0}|{1}\n".format(iPos,dirname_current))
 			dirname_prev = dirname_current
 			iPos += 1
 
+def load_dirlist():
+	dirfile = '/mnt/PIHU_CONFIG/dl_current.txt'
+	with open(dirfile,'r') as dirs:
+		for l in dirs:
+			t  = l.split()
+			arMpcPlaylistDirs.append(t)
+	
+	print arMpcPlaylistDirs
+			
+		
 		
 # set random; req_state: <toggle | on | off>
 # todo: implement "special random"-modes: random within album, artist, folder
