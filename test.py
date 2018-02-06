@@ -526,14 +526,16 @@ def do_sourceX():
 
 def do_source():
 
-	global Sources
-	global cSettings
+	#global Sources
+	#global cSettings
+	mysource = SourceController()
 
 	for i in range(0,20):
 		print i
 	
+	#printSummary(Sources)
 	#printSummary(mysource)
-	printSummary(Sources)
+	#printSummary(src)
 
 def do_source1():
 
