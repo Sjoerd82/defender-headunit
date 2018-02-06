@@ -742,7 +742,8 @@ def load_dirlist():
 	dirfile = '/mnt/PIHU_CONFIG/dl_current.txt'
 	with open(dirfile,'r') as dirs:
 		for l in dirs:
-			t  = l.split('|')
+			#t  = l.split('|')
+			t = [x.strip() for x in l.split('|')]
 			arMpcPlaylistDirs.append(t)
 	
 	print arMpcPlaylistDirs
