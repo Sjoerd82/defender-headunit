@@ -215,7 +215,7 @@ def cb_timer1():
 	global cSettings
 	#global disp
 
-	printer('Interval function [30 second]', level=LL_DEBUG, tag="TIMER1")
+	print('Interval function [30 second]')
 
 	# save settings (hu_settings)
 	#cSettings.save()
@@ -228,6 +228,7 @@ def cb_timer1():
 
 #Timer 2: Test the queuing
 def cb_timer2():
+	print('Interval function [5 second]')
 	qPrio.put('VOL_UP',False)
 	return True
 	
