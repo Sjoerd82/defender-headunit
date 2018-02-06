@@ -50,6 +50,8 @@
 # case messed up the later introduced queing worker threads. For now we'll
 # manually start the plugins
 #
+# Try: gobject.spawn_async
+#
 
 #********************************************************************************
 # MODULES
@@ -1278,6 +1280,13 @@ def worker_queue_blocking():
 		# sign off task
 		qBlock.task_done()
 
+def cb_queue():
+	print("dbg 1")
+	while not qBlock.empty():
+		item = qBlock.get()
+		printer("Blocking Queue [CB-idle]: Picking up: {0}".format(item), tag='QUEUE')
+		qBlock.task_done()
+
 def worker_queue_async():
 	while True:
 		item = qAsync.get()
@@ -1592,7 +1601,7 @@ t2 = threading.Thread(target=worker_queue_blocking)
 #p2 = Process(target=worker_queue_blocking)
 t2.setDaemon(True)
 #p2.daemon = True
-t2.start()
+#t2.start()
 
 t3 = threading.Thread(target=worker_queue_async)
 #p3 = Process(target=worker_queue_async)
@@ -1634,6 +1643,11 @@ mainloop = gobject.MainLoop()
 # 30 second timer
 #
 gobject.timeout_add_seconds(30,cb_timer1)
+
+#
+# Queue handler
+#
+gobject.idle_add(cb_queue)
 
 #
 # DBus: system bus
