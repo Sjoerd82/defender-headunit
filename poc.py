@@ -28,7 +28,7 @@ from Queue import Queue
 from multiprocessing import Process
 
 # GLOBAL vars
-Sources = SourceController()	#TODO: rename "Sources" -- confusing name
+Sources = None
 mpdc = None
 
 # CONSTANTS
