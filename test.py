@@ -1286,6 +1286,7 @@ def cb_queue():
 		item = qBlock.get()
 		printer("Blocking Queue [CB-idle]: Picking up: {0}".format(item), tag='QUEUE')
 		qBlock.task_done()
+	return True
 
 def worker_queue_async():
 	while True:
