@@ -342,17 +342,22 @@ def cb_mpd_event( event ):
 def cb_timer1():
 
 	global cSettings
-	global disp
+	#global disp
 
 	printer('Interval function [30 second]', level=LL_DEBUG, tag="TIMER1")
 
 	# save settings (hu_settings)
 	cSettings.save()
 	
-	hudispdata = {}
-	hudispdata['src'] = "USB"		#temp.
-	disp.dispdata(hudispdata)
+	#hudispdata = {}
+	#hudispdata['src'] = "USB"		#temp.
+	#disp.dispdata(hudispdata)
 
+	return True
+
+#Timer 2: Test the queuing
+def cb_timer2():
+	qPrio.put('VOL_UP',False)
 	return True
 
 def cb_udisk_dev_add( device ):
@@ -1517,6 +1522,7 @@ mainloop = gobject.MainLoop()
 # 30 second timer
 #
 gobject.timeout_add_seconds(30,cb_timer1)
+gobject.timeout_add_seconds(5,cb_timer2)
 
 #
 # DBus: system bus
