@@ -793,16 +793,11 @@ def do_update():
 	for source in Sources.getAll():
 	
 		if source['name'] == 'locmus':
-			print "debug 1"
-			
 			if 'subsources' in source and len(source['subsources']) > 0:
-				print "debug 2"
 				for subsource in source['subsources']:
-					
 					if 'mountpoint' in subsource:
 						mountpoint = subsource['mountpoint']
-						print mountpoint
-						#locmus_update(mountpoint)
+						locmus_update(mountpoint)
 			
 	# the only update is an locmus_update ;-)
 	#locmus_update()
