@@ -235,16 +235,15 @@ def cb_remote_btn_press ( func ):
 		
 	elif func == 'SOURCE':
 		printer('\033[95m[BUTTON] Next source\033[00m')
-		#queue('blocking','SOURCE','button_feedback')
-		qBlock.put(Sources, False)
+		queue('blocking','SOURCE','button_feedback')
+		#qBlock.put(Sources, False)
 		
 	elif func == 'ATT':
-		printer('\033[95m[BUTTON] ATT\033[00m')
+		printer(colorize('[BUTTON] ATT','light_magenta'))
 		queue('prio','ATT','button_feedback')
 
 	elif func == 'VOL_UP':
-		#print('\033[95m[BUTTON] VOL_UP\033[00m')
-		printer( colorize('[BUTTON] VOL_UP','light_magenta') )
+		printer(colorize('VOL_UP','light_magenta'),tag='button')
 		queue('prio','VOL_UP','button_feedback')
 		
 	elif func == 'VOL_DOWN':
@@ -485,115 +484,13 @@ def udisk_details( device, action ):
 # Headunit functions
 #
 
-def do_sourceX():
-
-	xSources = SourceController()	#TODO: rename "Sources" -- confusing name
-
-	printer('-- Summary -----------------------------------------------------------', tag='')
-	arCurrIx = xSources.getIndexCurrent()
-	sCurrent = xSources.get(None)
-	
-	if not arCurrIx[0] == None and arCurrIx[1] == None:
-		sCurrDisplay = sCurrent['displayname']
-	elif not arCurrIx[1] == None:
-		sCurrDisplay = sCurrent['subsources'][arCurrIx[1]]['displayname']
-	else:
-		sCurrDisplay = ""
-	
-	if len(arCurrIx) == 0:
-		printer('Current source: None', tag='')
-	else:
-		printer('Current source: {0} {1}'.format(arCurrIx[0],sCurrDisplay), tag='')
-	
-	i = 0
-	for source in xSources.getAll():
-
-		if 'subsources' in source and len(source['subsources']) > 0:
-			for subsource in source['subsources']:
-			
-				if subsource['available']:
-					available = colorize('available    ','light_green')
-				else:
-					available = colorize('not available','light_red')
-		
-				if 'mountpoint' in subsource:
-					mountpoint = subsource['mountpoint']
-					printer(' {0:2d} {1:17} {2} {3}'.format(i,source['displayname'],available,mountpoint), tag='')
-		else:
-			if source['available']:
-				available = colorize('available    ','light_green')
-			else:
-				available = colorize('not available','light_red')
-			printer(' {0:2d} {1:17} {2}'.format(i,source['displayname'],available), tag='')
-		
-		i += 1
-	printer('----------------------------------------------------------------------', tag='')
-
-def do_source(item):
-
-	def my_printSummary(Sources):
-		print('-- Summary -----------------------------------------------------------')
-		arCurrIx = Sources.getIndexCurrent()
-		sCurrent = Sources.get(None)
-		
-		if not arCurrIx[0] == None and arCurrIx[1] == None:
-			sCurrDisplay = sCurrent['displayname']
-		elif not arCurrIx[1] == None:
-			sCurrDisplay = sCurrent['subsources'][arCurrIx[1]]['displayname']
-		else:
-			sCurrDisplay = ""
-		
-		if len(arCurrIx) == 0:
-			print('Current source: None')
-		else:
-			print('Current source: {0} {1}'.format(arCurrIx[0],sCurrDisplay))
-		
-		i = 0
-		for source in Sources.getAll():
-
-			if 'subsources' in source and len(source['subsources']) > 0:
-				for subsource in source['subsources']:
-				
-					if subsource['available']:
-						available = colorize('available    ','light_green')
-					else:
-						available = colorize('not available','light_red')
-			
-					if 'mountpoint' in subsource:
-						mountpoint = subsource['mountpoint']
-						print(' {0:2d} {1:17} {2} {3}'.format(i,source['displayname'],available,mountpoint))
-			else:
-				if source['available']:
-					available = 'available    '
-				else:
-					available = 'not available'
-				print(' {0:2d} {1:17} {2}'.format(i,source['displayname'],available))
-			
-			i += 1
-		print('----------------------------------------------------------------------')
-		
-	#global Sources
-	#global cSettings
-	#mysource = SourceController()
-
-	for i in range(0,20):
-		print i
-	
-	#printSummary(Sources)
-	#my_printSummary(mysource)
-	printSummary(item)
-	print("DONE!")
-
-def do_source1():
+def do_source():
 
 	global Sources
 	global cSettings
 		
-	# if more than one source available...
-	if Sources.getAvailableCnt() > 1:
-		print "Yow, this is it mate.."
-		
-	elif Sources.getAvailableCnt() == 100:
+	# if more than one source available...	
+	elif Sources.getAvailableCnt() > 1:
 		# go to next source
 		res = Sources.next()
 		if not res == None:
@@ -1249,17 +1146,13 @@ def worker_queue_prio():
 		# sign off task
 		qPrio.task_done()
 
-def worker_queue_blocking():
-	global Sources
+def cb_queue():
 
-	while True:
 	#while not qBlock.empty():
+	if not qBlock.empty():
 		item = qBlock.get()
-		printer("Blocking Queue: Picking up: {0}".format(item), tag='QUEUE')
+		printer("Blocking Queue [CB-idle]: Picking up: {0}".format(item), tag='QUEUE')
 		
-		do_source(item)
-		
-		"""
 		if item == 'SOURCE':
 			do_source()
 		elif item == 'SEEK_NEXT':
@@ -1275,17 +1168,6 @@ def worker_queue_blocking():
 		else:
 			printer('Undefined task', level=LL_ERROR, tag='QUEUE')
 
-		"""
-		
-		# sign off task
-		qBlock.task_done()
-
-def cb_queue():
-
-	#while not qBlock.empty():
-	if not qBlock.empty():
-		item = qBlock.get()
-		printer("Blocking Queue [CB-idle]: Picking up: {0}".format(item), tag='QUEUE')
 		qBlock.task_done()
 	
 	# return True to automatically be rescheduled
@@ -1601,9 +1483,9 @@ t1.setDaemon(True)
 t1.start()
 #p.join()
 
-t2 = threading.Thread(target=worker_queue_blocking)
+#t2 = threading.Thread(target=worker_queue_blocking)
 #p2 = Process(target=worker_queue_blocking)
-t2.setDaemon(True)
+#t2.setDaemon(True)
 #p2.daemon = True
 #t2.start()
 
