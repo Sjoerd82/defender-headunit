@@ -324,15 +324,16 @@ for filename in os.listdir( configuration['directories']['output'] ):
 # Load mpd dbus listener
 #
 #
-t = threading.Thread(target=plugin_execute, args=('/mnt/PIHU_APP/defender-headunit/dbus_mpd.py',))
-t.setDaemon(True)
-threads.append(t)
+
+# # #t = threading.Thread(target=plugin_execute, args=('/mnt/PIHU_APP/defender-headunit/dbus_mpd.py',))
+# # #t.setDaemon(True)
+# # #threads.append(t)
 
 
 
 # WORKAROUND...
-for t in threads:
-	t.start()
+# # #for t in threads:
+# # #	t.start()
 
 # LCD (TODO: move to plugins)
 #from hu_lcd import *
@@ -340,7 +341,7 @@ for t in threads:
 #disp.lcd_text('Welcome v0.1.4.8')
 
 # MPD
-mpdc = mpdController()
+# # #mpdc = mpdController()
 
 #
 # end of initialization
