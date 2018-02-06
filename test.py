@@ -205,16 +205,16 @@ def cb_remote_btn_press2 ( func ):
 # Handle button press
 def cb_remote_btn_press ( func ):
 
-	def queue(queue, item, sfx=None):
+	def queue(q, item, sfx=None):
 		#printer('Blocking Queue Size before: {0}'.format(qBlock.qsize()))
 		try:
-			if queue == 'prio':
+			if q == 'prio':
 				qPrio.put(item, False)
-			elif queue == 'blocking':
+			elif q == 'blocking':
 				qBlock.put(item, False)
-			elif queue == 'async':
+			elif q == 'async':
 				qAsync.put(item, False)
-		except Queue.Full:
+		except queue.Full:
 			printer('Queue is full.. ignoring button press.')
 			return None
 			
@@ -239,7 +239,7 @@ def cb_remote_btn_press ( func ):
 
 	elif func == 'VOL_UP':
 		#print('\033[95m[BUTTON] VOL_UP\033[00m')
-		print( colorize('VOL_UP','purple') )
+		print( colorize('VOL_UP','purple_1b') )
 		queue('prio','VOL_UP','button_feedback')
 		
 	elif func == 'VOL_DOWN':
@@ -524,8 +524,12 @@ def do_sourceX():
 		i += 1
 	printer('----------------------------------------------------------------------', tag='')
 
-
 def do_source():
+
+	for i in range(0,20):
+		print i
+
+def do_source1():
 
 	global Sources
 	global cSettings
