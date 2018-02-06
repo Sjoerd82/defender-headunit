@@ -1329,9 +1329,11 @@ for filename in os.listdir( configuration['directories']['controls'] ):
 		#if filename.startswith('') and
 		if filename.endswith('.py'):
 			pathfilename = os.path.join( configuration['directories']['controls'], filename )
-			t = threading.Thread(target=plugin_execute, args=(pathfilename,))
-			t.setDaemon(True)
-			threads.append(t)
+			#t = threading.Thread(target=plugin_execute, args=(pathfilename,))
+			#t.setDaemon(True)
+			p = Process(target=plugin_execute, args=(pathfilename,))
+			p.daemon = True
+			threads.append(p)
 			#t.start()	WORKAROUND
 
 # loop through the output plugin dir
@@ -1339,9 +1341,11 @@ for filename in os.listdir( configuration['directories']['output'] ):
 		#if filename.startswith('') and
 		if filename.endswith('.py'):
 			pathfilename = os.path.join( configuration['directories']['output'], filename )
-			t = threading.Thread(target=plugin_execute, args=(pathfilename,))
-			t.setDaemon(True)
-			threads.append(t)
+			#t = threading.Thread(target=plugin_execute, args=(pathfilename,))
+			#t.setDaemon(True)
+			p = Process(target=plugin_execute, args=(pathfilename,))
+			p.daemon = True
+			threads.append(p)
 			#t.start()	WORKAROUND
 
 # NOTE: Plugins are now loading in the background, in parallel to code below.
@@ -1353,9 +1357,11 @@ for filename in os.listdir( configuration['directories']['output'] ):
 # Load mpd dbus listener
 #
 #
-t = threading.Thread(target=plugin_execute, args=('/mnt/PIHU_APP/defender-headunit/dbus_mpd.py',))
-t.setDaemon(True)
-threads.append(t)
+#t = threading.Thread(target=plugin_execute, args=('/mnt/PIHU_APP/defender-headunit/dbus_mpd.py',))
+#t.setDaemon(True)
+p = Process(target=plugin_execute, args=('/mnt/PIHU_APP/defender-headunit/dbus_mpd.py',))
+p.daemon = True
+threads.append(p)
 
 
 #
@@ -1365,8 +1371,8 @@ myprint('Loading Other Plugins...',tag='SYSTEM')
 from plugin_other import *
 
 # WORKAROUND...
-for t in threads:
-	t.start()
+for p in threads:
+	p.start()
 
 # LCD (TODO: move to plugins)
 #from hu_lcd import *
