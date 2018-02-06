@@ -215,7 +215,6 @@ def cb_remote_btn_press ( func ):
 		print('\033[95m[BUTTON] VOL_UP\033[00m')		
 		pa_sfx('button_feedback')
 		qPrio.put("VOL_UP", False)
-		qPrio.put('BLANK2', False)
 		return 0
 	elif func == 'VOL_DOWN':
 		print('\033[95m[BUTTON] VOL_DOWN\033[00m')
@@ -1468,7 +1467,6 @@ printer('Setting up queues and worker threads')
 
 # Short stuff that can run anytime:
 qPrio = Queue(maxsize=0)	# 0 = infinite
-qPrio.put('BLANK', False)
 
 # Blocking stuff that needs to run in sequence
 qBlock = Queue(maxsize=4)	# 0 = infinite
@@ -1529,7 +1527,6 @@ mainloop = gobject.MainLoop()
 # 30 second timer
 #
 gobject.timeout_add_seconds(30,cb_timer1)
-gobject.timeout_add_seconds(5,cb_timer2)
 
 #
 # DBus: system bus
