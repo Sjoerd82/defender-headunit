@@ -737,7 +737,7 @@ def do_update():
 		printer('Updating local database [{0}]'.format(mountpoint))
 
 		#Update database
-		mpdc.mpc_update( mountpoint, False ) # False = Don't wait for completion (will be picked up by the mpd callback)
+		mpdc.update( mountpoint, False ) # False = Don't wait for completion (will be picked up by the mpd callback)
 		
 		""" TODO: UNCOMMENT THIS
 		#IF we're already playing local music: Continue playing without interruption
