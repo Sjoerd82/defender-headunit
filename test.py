@@ -1155,10 +1155,10 @@ def worker_queue_prio():
 		item = qPrio.get()
 		#item = qPrio.get_nowait()
 		print "QUEUE WORKER PRIO: {0}".format(item)
-		#if item == 'VOL_UP':
-		#	print "volume_up()"
-		#elif item == 'VOL_DOWN':
-		#	print "volume_down()"
+		if item == 'VOL_UP':
+			print "volume_up()"
+		elif item == 'VOL_DOWN':
+			print "volume_down()"
 		qPrio.task_done()
 
 def worker_queue_blocking():
