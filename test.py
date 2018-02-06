@@ -705,11 +705,12 @@ def dir_next():
 		printer('OK!', tag='dirnext')
 		pa_sfx('button_feedback')
 
+		# TESTING
 		dir_to_file()
 		
 	else:
 		pa_sfx('error')
-		print(' No function for this button! or function not available for this source.')
+		printer('Function not available for this source.', level=LL_WARNING)
 
 
 def dir_to_file():
@@ -720,8 +721,10 @@ def dir_to_file():
 	iPos = 1
 		
 	pipe = Popen('mpc -f %file% playlist', shell=True, stdout=PIPE)
-
-	with open('/mnt/PIHU_CONFIG/dirs.txt','w') as dirs:
+	
+	# todo: future, create them per (sub)source
+	dirfile = '/mnt/PIHU_CONFIG/dl_current.txt'
+	with open(dirfile,'w') as dirs:
 		for line in pipe.stdout:
 			dirname_current=os.path.dirname(line.strip())
 			t = iPos, dirname_current
