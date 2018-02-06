@@ -239,7 +239,7 @@ def cb_remote_btn_press ( func ):
 
 	elif func == 'VOL_UP':
 		#print('\033[95m[BUTTON] VOL_UP\033[00m')
-		print( colorize('VOL_UP','medium_purple') )
+		print( colorize('VOL_UP','purple_4a') )
 		queue('prio','VOL_UP','button_feedback')
 		
 	elif func == 'VOL_DOWN':
@@ -458,7 +458,7 @@ def udisk_details( device, action ):
 			sources.media.media_add(mountpoint, sUsbLabel, partuuid, Sources)
 			if sources.media.media_check(sUsbLabel):
 				Sources.setAvailable('mountpoint',mountpoint,True)
-			printSummary()
+			printSummary(Sources)
 		else:
 			printer(" > No mountpoint found. Stopping.",tag=mytag)
 		
@@ -531,6 +531,9 @@ def do_source():
 
 	for i in range(0,20):
 		print i
+	
+	#printSummary(mysource)
+	printSummary(Sources)
 
 def do_source1():
 
@@ -689,7 +692,7 @@ def do_source1():
 	elif Sources.getAvailableCnt() == 0:
 		printer('No available sources.')
 
-	printSummary()
+	printSummary(Sources)
 
 		
 def dir_next():
@@ -918,9 +921,8 @@ def init_load_config():
 
 
 # print a source summary
-def printSummary():
-	global Sources
-	global logger
+def printSummary(Sources):
+	#global Sources
 	printer('-- Summary -----------------------------------------------------------', tag='')
 	arCurrIx = Sources.getIndexCurrent()
 	sCurrent = Sources.get(None)
@@ -1462,7 +1464,7 @@ prevSourceSub = cSettings.get_key('subsourcekey')
 if prevSource == "":
 	printer ('No previous source.', tag='QPLAY')
 	Sources.sourceCheckAll()
-	printSummary()
+	printSummary(Sources)
 	printer ('Starting first available source', tag='QPLAY')
 	Sources.next()
 	Sources.sourcePlay()
@@ -1475,12 +1477,12 @@ else:
 		printer ('Checking other sources...', tag='QPLAY')
 		# TODO: the prev. source is now checked again.. this is not efficient..
 		Sources.sourceCheckAll()
-		printSummary()
+		printSummary(Sources)
 		
 	else:
 		printer ('Continuing playback not available, checking all sources...', tag='QPLAY')
 		Sources.sourceCheckAll()
-		printSummary()
+		printSummary(Sources)
 		printer ('Starting first available source', tag='QPLAY')
 		Sources.next()
 		Sources.sourcePlay()
