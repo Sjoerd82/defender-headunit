@@ -727,7 +727,7 @@ def dir_to_file():
 			t = iPos, dirname_current
 			if dirname_prev != dirname_current:
 				#arMpcPlaylistDirs.append(t)
-				dirs.write(t)
+				dirs.write("{0}|{1}".format(iPos,dirname_current))
 			dirname_prev = dirname_current
 			iPos += 1
 
