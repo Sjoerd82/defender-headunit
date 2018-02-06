@@ -713,6 +713,12 @@ def dir_next():
 
 
 def dir_to_file():
+
+	# local variables
+	dirname_current = ''
+	dirname_prev = ''
+	iPos = 1
+		
 	pipe = Popen('mpc -f %file% playlist', shell=True, stdout=PIPE)
 
 	with open('/mnt/PIHU_CONFIG/dirs.txt','w') as dirs:
