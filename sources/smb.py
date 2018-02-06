@@ -64,7 +64,7 @@ class sourceClass():
 		subsource['displayname'] = 'smb: ' + dir
 		subsource['order'] = 0		# no ordering
 		subsource['mountpoint'] = dir
-		subsource['mpd_dir'] = dir[16:]		# TODO -- ASSUMING /media/PIHU_SMB
+		subsource['mpd_dir'] = dir[8:]		# TODO -- ASSUMING /media/PIHU_SMB
 		subsource['path'] = path
 
 		sourceCtrl.addSub(ix, subsource)
@@ -105,6 +105,7 @@ class sourceClass():
 
 		# local dir, relative to MPD
 		sLocalMusicMPD = subsource['mpd_dir']
+		print sLocalMusicMPD
 
 		# check mountpoint(s)
 		for location in mountpoints:
