@@ -702,7 +702,7 @@ def dir_next():
 	currSrc = Sources.get(None)
 
 	# check if the source supports dirnext
-	if 'dirnext' in currSrc['controls'] and currSrc['controls']['nxtdir']:
+	if 'dirnext' in currSrc['controls'] and currSrc['controls']['dirnext']:
 		printer('OK!', tag='nxtdir')
 		pa_sfx('button_feedback')
 
