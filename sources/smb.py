@@ -64,7 +64,7 @@ class sourceClass():
 		subsource['displayname'] = 'smb: ' + dir
 		subsource['order'] = 0		# no ordering
 		subsource['mountpoint'] = dir
-		subsource['mpd_dir'] = dir[8:]		# TODO -- ASSUMING /media/PIHU_SMB
+		subsource['mpd_dir'] = dir[7:]		# TODO -- ASSUMING /media/PIHU_SMB
 		subsource['path'] = path
 
 		sourceCtrl.addSub(ix, subsource)
