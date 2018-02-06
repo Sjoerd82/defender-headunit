@@ -205,6 +205,8 @@ def cb_remote_btn_press2 ( func ):
 # Handle button press
 def cb_remote_btn_press ( func ):
 
+	global Sources
+
 	def queue(q, item, sfx=None):
 		#printer('Blocking Queue Size before: {0}'.format(qBlock.qsize()))
 		try:
@@ -231,7 +233,8 @@ def cb_remote_btn_press ( func ):
 		
 	elif func == 'SOURCE':
 		printer('\033[95m[BUTTON] Next source\033[00m')
-		queue('blocking','SOURCE','button_feedback')
+		#queue('blocking','SOURCE','button_feedback')
+		qBlock.put(Sources, False)
 		
 	elif func == 'ATT':
 		printer('\033[95m[BUTTON] ATT\033[00m')
@@ -524,7 +527,10 @@ def do_sourceX():
 		i += 1
 	printer('----------------------------------------------------------------------', tag='')
 
-def do_source():
+def do_source(item):
+
+	print item
+	return 0
 
 	def my_printSummary(Sources):
 		print('-- Summary -----------------------------------------------------------')
@@ -566,6 +572,7 @@ def do_source():
 			
 			i += 1
 		print('----------------------------------------------------------------------')
+		
 	#global Sources
 	#global cSettings
 	mysource = SourceController()
@@ -1250,6 +1257,10 @@ def worker_queue_blocking():
 	#while not qBlock.empty():
 		item = qBlock.get()
 		printer("Blocking Queue: Picking up: {0}".format(item), tag='QUEUE')
+		
+		do_source(item)
+		
+		"""
 		if item == 'SOURCE':
 			do_source()
 		elif item == 'SEEK_NEXT':
@@ -1265,6 +1276,8 @@ def worker_queue_blocking():
 		else:
 			printer('Undefined task', level=LL_ERROR, tag='QUEUE')
 
+		"""
+		
 		# sign off task
 		qBlock.task_done()
 
