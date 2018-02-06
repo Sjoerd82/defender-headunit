@@ -329,8 +329,8 @@ bus = dbus.SystemBus()
 #
 # Connect Callback functions to DBus Signals
 #
-#bus.add_signal_receiver(cb_mpd_event, dbus_interface = "com.arctura.mpd")
-#bus.add_signal_receiver(cb_remote_btn_press, dbus_interface = "com.arctura.remote")
+bus.add_signal_receiver(cb_mpd_event, dbus_interface = "com.arctura.mpd")
+bus.add_signal_receiver(cb_remote_btn_press, dbus_interface = "com.arctura.remote")
 
 #
 # Start the blocking main loop...
