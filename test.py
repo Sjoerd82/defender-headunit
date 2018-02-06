@@ -702,15 +702,21 @@ def dir_next():
 	currSrc = Sources.get(None)
 
 	# check if the source supports dirnext
-	if 'dirnext' in currSrc['controls'] and currSrc['controls']['dirnext']:
-		printer('OK!', tag='dirnext')
+	if 'dirnext' in currSrc['controls'] and currSrc['controls']['nxtdir']:
+		printer('OK!', tag='nxtdir')
 		pa_sfx('button_feedback')
 
 		# TESTING
 		dir_to_file()
 		
 		# TESTING
-		load_dirlist()
+		ardirs = load_dirlist()
+		
+		# TESTING
+		nextpos = mpc_next_folder_pos(ardirs)
+		
+		printer('Next folder @ {0}'.format(nextpos))
+		call(["mpc", "-q", "play", str(nextpos)])
 		
 	else:
 		pa_sfx('error')
@@ -747,8 +753,31 @@ def load_dirlist():
 			arMpcPlaylistDirs.append(t)
 	
 	print arMpcPlaylistDirs
-			
-		
+	return arMpcPlaylistDirs
+
+
+def mpc_next_folder_pos(arMpcPlaylistDirs):
+
+
+	# Get current folder
+	pipe = subprocess.check_output("mpc -f %file%", shell=True)
+	dirname_current = os.path.dirname(pipe.splitlines()[0])
+	
+	print(' ...  Current folder: {0:s}'.format(dirname_current))
+	
+	#print(' >>> DEBUG info:')
+	#print mpc_get_PlaylistDirs_thread.isAlive()
+	
+	try:
+		iNextPos = arMpcPlaylistDirs[([y[1] for y in arMpcPlaylistDirs].index(dirname_current)+1)][0]
+		print(' ...  New folder = {0:s}'.format(arMpcPlaylistDirs[([y[1] for y in arMpcPlaylistDirs].index(dirname_current)+1)][1]))
+	except IndexError:
+		# I assume the end of the list has been reached...
+		print(' ...  ERROR: IndexError - restart at 1')
+		iNextPos = 1
+
+	return iNextPos
+	
 		
 # set random; req_state: <toggle | on | off>
 # todo: implement "special random"-modes: random within album, artist, folder
