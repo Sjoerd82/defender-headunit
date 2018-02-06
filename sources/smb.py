@@ -87,8 +87,48 @@ class sourceClass():
 		return True
 
 	def check( self, sourceCtrl, subSourceIx=None  ):
-		self.__printer('Checking availability... TODO!', level=15)
+		self.__printer('Checking availability...', level=15)
 		
+		ix = sourceCtrl.getIndex('name','smb')
+		mountpoints = []
+		foundStuff = 0
+						
+		if subSourceIx == None:
+			subsources = sourceCtrl.getSubSources( ix )
+			for subsource in subsources:
+				mountpoints.append(subsource['mountpoint'])
+			ssIx = 0
+		else:
+			subsource = sourceCtrl.getSubSource( ix, subSourceIx )
+			mountpoints.append(subsource['mountpoint'])
+			ssIx = subSourceIx
+
+		# local dir, relative to MPD
+		sLocalMusicMPD = subsource['mpd_dir']
+
+		# check mountpoint(s)
+		for location in mountpoints:
+			self.__printer('SMB folder: {0}'.format(location))
+			if not os.listdir(location):
+				self.__printer(" > SMB directory is empty.",LL_WARNING,True)
+			else:
+				self.__printer(" > SMB directory present and has files.",LL_INFO,True)
+				
+				if not self.mpc.dbCheckDirectory( sLocalMusicMPD ):
+					self.__printer(" > Running MPD update for this directory.. ALERT! LONG BLOCKING OPERATION AHEAD...")
+					self.mpc.update( sLocalMusicMPD )
+					if not self.mpc.dbCheckDirectory( sLocalMusicMPD ):
+						self.__printer(" > Nothing to play marking unavailable...")
+					else:
+						self.__printer(" > Music found after updating")
+						sourceCtrl.setAvailableIx( ix, True, ssIx )
+						foundStuff += 1
+				else:
+					sourceCtrl.setAvailableIx( ix, True, ssIx )
+					foundStuff += 1
+			ssIx+=1
+		
+	
 		#Check if wlan is up
 		#TODO
 		
@@ -110,7 +150,12 @@ class sourceClass():
 		#printer(' > Not implemented yet, presenting source as available ',level=LL_CRITICAL)
 		#arSourceAvailable[6]=1
 		#Sources.setAvailable('name','smb', True)
-		return True
+
+		if foundStuff > 0:
+			return True
+		else:
+			return False
+
 		
 	def play( self, sourceCtrl, subSourceIx=None ):
 		self.__printer('Start playing')
