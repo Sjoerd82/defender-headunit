@@ -726,7 +726,86 @@ def set_random( req_state ):
 	
 	return True
 
+def do_update():
 
+	global Sources
+
+	def locmus_update( mountpoint ):
+		
+		global mpdc
+		
+		printer('Updating local database [{0}]'.format(mountpoint))
+
+		#Update database
+		mpdc.mpc_update( mountpoint, False ) # False = Don't wait for completion (will be picked up by the mpd callback)
+		
+		""" TODO: UNCOMMENT THIS
+		#IF we're already playing local music: Continue playing without interruption
+		# and add new tracks to the playlist
+		# Source 2 = locmus
+		if dSettings['source'] == 2:
+			print(' ......  source is already playing, trying seamless update...')
+			# 1. "crop" playlist (remove everything, except playing track)
+			call(["mpc", "-q" , "crop"])
+
+			yMpdClient = MPDClient()
+			yMpdClient.connect("localhost", 6600)
+					
+			# 2. songid is not unique, get the full filename
+			current_song = yMpdClient.currentsong()
+			curr_file = current_song['file']
+			print(' ......  currently playing file: {0}'.format(curr_file))
+			
+			# 3. reload local music playlist
+			mpc_populate_playlist(sLocalMusicMPD)
+			
+			# 4. find position of song that we are playing, skipping the first position (pos 0) in the playlist, because that's where the currently playing song is
+			delpos = '0'
+			for s in yMpdClient.playlistinfo('1:'):
+				if s['file'] == curr_file:
+					print(' ......  song found at position {0}'.format(s['pos']))
+					delpos = s['pos']
+			
+			if delpos != '0':
+				print(' ......  moving currently playing track back in place')
+				yMpdClient.delete(delpos)
+				yMpdClient.move(0,int(delpos)-1)
+			else:
+				print(' ......  ERROR: something went wrong')
+				pa_sfx('error')
+
+			yMpdClient.close()
+			
+		#IF we were not playing local music: Try to switch to local music, but check if the source is OK.
+		else:
+			#We cannot check if there's any NEW tracks, but let's check if there's anything to play..
+			locmus_check()
+			# Source 2 = locmus
+			#if arSourceAvailable[2] == 1:
+			if Sources.getAvailable('name','locmus')
+				dSettings['source'] = 2
+				source_play()
+			else:
+				print('[LOCMUS] Update requested, but no music available for playing... Doing nothing.')
+		"""
+
+	# get local folders
+	for source in Sources.getAll():
+	
+		if source['name'] = 'locmus':
+			print "debug 1"
+			
+			if 'subsources' in source and len(source['subsources']) > 0:
+				print "debug 2"
+				for subsource in source['subsources']:
+					
+					if 'mountpoint' in subsource:
+						mountpoint = subsource['mountpoint']
+						print mountpoint
+						#locmus_update(mountpoint)
+			
+	# the only update is an locmus_update ;-)
+	#locmus_update()
 
 # ********************************************************************************
 # Misc. functions
@@ -1178,7 +1257,7 @@ def worker_queue_async():
 		item = qAsync.get()
 		printer("Async Queue: Picking up: {0}".format(item), tag='QUEUE')
 		if item == 'UPDATE':
-			locmus_update()
+			do_update()
 		
 		# sign off task
 		qAsync.task_done()
@@ -1467,33 +1546,30 @@ else:
 #
 printer('Setting up queues and worker threads')
 
-# Short stuff that can run anytime:
-qPrio = Queue(maxsize=0)	# 0 = infinite
 
-# Blocking stuff that needs to run in sequence
-qBlock = Queue(maxsize=4)	# 0 = infinite
+qPrio = Queue(maxsize=4)	# Short stuff that can run anytime:
+qBlock = Queue(maxsize=4)	# Blocking stuff that needs to run in sequence
+qAsync = Queue(maxsize=4)	# Long stuff that can run anytime (but may occasionally do a reality check):
 
-# Long stuff that can run anytime (but may occasionally do a reality check):
-qAsync = Queue(maxsize=4)	# 0 = infinite
-
-t1 = threading.Thread(target=worker_queue_prio)
-#p1 = Process(target=worker_queue_prio)
-t1.setDaemon(True)
-#p1.daemon = True
-t1.start()
+t = threading.Thread(target=worker_queue_prio)
+#p = Process(target=worker_queue_prio)
+t.setDaemon(True)
+#p.daemon = True
+t.start()
 #p.join()
 
-#t2 = threading.Thread(target=worker_queue_blocking)
-#p2 = Process(target=worker_queue_blocking)
-#t2.setDaemon(True)
-#p2.daemon = True
-#t2.start()
+# disabled: see idle_add Queue Handler below
+# t = threading.Thread(target=worker_queue_blocking)
+# p = Process(target=worker_queue_blocking)
+# t.setDaemon(True)
+# p.daemon = True
+# t.start()
 
-t3 = threading.Thread(target=worker_queue_async)
-#p3 = Process(target=worker_queue_async)
-t3.setDaemon(True)
-#p3.daemon = True
-t3.start()
+t = threading.Thread(target=worker_queue_async)
+#p = Process(target=worker_queue_async)
+t.setDaemon(True)
+#p.daemon = True
+t.start()
 
 
 """
@@ -1532,7 +1608,9 @@ gobject.timeout_add_seconds(30,cb_timer1)
 
 #
 # Queue handler
-#
+# NOTE: Remember, everything executed through the qBlock queue blocks, including qPrio!
+# IDEALLY, WE'D PUT THIS BACK IN A THREAD, IF THAT WOULD PERFORM... (which for some reason it doesn't!)
+# 
 gobject.idle_add(cb_queue)
 
 #

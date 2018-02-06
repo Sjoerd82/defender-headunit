@@ -15,6 +15,7 @@ import re
 tagcolors = {
   'source'	: 'yellow'
  ,'plugin'	: 'blue'
+ ,'button'	: 'light_magenta'
  #SOURCES:
  ,'mpd'		: 'cyan'
  ,'fm'		: 'turquoise_4'
