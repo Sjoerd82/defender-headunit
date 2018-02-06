@@ -228,7 +228,6 @@ def cb_timer1():
 
 #Timer 2: Test the queuing
 def cb_timer2():
-	print('Interval function [5 second]')
 	qPrio.put('VOL_UP',False)
 	return True
 	
@@ -248,7 +247,31 @@ def worker_queue_prio():
 		#elif item == 'VOL_DOWN':
 		#	print "volume_down()"
 		qPrio.task_done()
-	
+
+def worker_queue_blocking():
+	global Sources
+
+	while True:
+	#while not qBlock.empty():
+		item = qBlock.get()
+		print "QUEUE WORKER BLOCK: {0}".format(item)
+		if item == 'SOURCE':
+			do_source()
+		elif item == 'SEEK_NEXT':
+			Sources.sourceSeekNext()
+		elif item == 'SEEK_PREV':
+			Sources.sourceSeekPrev()
+		else:
+			print 'UNKNOWN TASK'
+		qBlock.task_done()
+
+def worker_queue_async():
+	while True:
+		item = qAsync.get()
+		print "QUEUE WORKER ASYNC: {0}".format(item)
+		qAsync.task_done()
+
+		
 #********************************************************************************
 #
 # DBus Dispay Signals
