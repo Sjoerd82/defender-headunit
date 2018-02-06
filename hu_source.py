@@ -6,15 +6,15 @@ import copy
 
 class SourceController():
 
-	lSource = []
-	iCurrent = None
-	iCurrentSS = None
-	iCurrentSource = [ None, None ]
-	
-	lSourceClasses = []
-
-	#def __init__(self):
-		#print('[INIT] Setting up sources')
+	def __init__(self):
+		self.__printer('INIT', level=LL_DEBUG)
+		
+		# initialize instance variables:
+		self.lSource = []
+		self.iCurrent = None
+		self.iCurrentSS = None
+		self.iCurrentSource = [ None, None ]
+		self.lSourceClasses = []
 
 	def __printer( self, message, level=LL_INFO, continuation=False, tag='SOURCE' ):
 		if continuation:

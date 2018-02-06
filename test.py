@@ -9,7 +9,8 @@
 #********************************************************************************
 #
 # ISSUES:
-#  - Not all next() source functions update the settings
+#  - Plug-in Auto Start outside of this script.
+#  - Not all next() source functions update the settings.
 
 #********************************************************************************
 # CONFIGURATION and SETTINGS
@@ -22,13 +23,16 @@
 #********************************************************************************
 # LOGGING and CONSOLE output
 #
-# All output is channeled through the Python logger, in order to both be displayed on the console and written to a logfile.
+# All output is channeled through the Python logger, in order to both be displayed
+# on the console and written to a logfile.
+#
 # Please don't use the print() function. Instead use either:
 #  - myprint( message, level="INFO", tag="")	# defined in hu_utils.py
 #  - logger.info(message, extra={'tag': tag})	# or any other desired log level
 #
-# Log level INFO or higher is sent to the console.
-# Log level DEBUG or higher is sent to the log file.
+# Default log level can be overridden via command line parameters. Default:
+# > Log level INFO or higher is sent to the console.
+# > Log level DEBUG or higher is sent to the log file.
 #
 # Output sent to the file is cleansed of any ANSI formatting.
 #
@@ -38,6 +42,13 @@
 # 
 # This script listens to a number of DBus sources.
 # This script also emits signals on com.arctura.hu		#TODO
+
+#********************************************************************************
+# PLUGINS
+# 
+# Originally these were started via threading or multiprocessing, but in either
+# case messed up the later introduced queing worker threads. For now we'll
+# manually start the plugins
 #
 
 #********************************************************************************
@@ -46,8 +57,8 @@
 # Automatically loaded:
 #
 # ./sources/* 			Source plugins
-# ./plugin_control/*	Controller plugins
-# ./plugin_other/*		Other plugins
+# ./plugin_control/*	Controller plugins	} NOT ANY MORE, SEE: ISSUES, PLUGINS
+# ./plugin_other/*		Other plugins		}
 #
 # ./hu_utils.py			Misc. handy functions
 # ./hu_volume.py		Volume control
@@ -83,18 +94,26 @@ arg_loglevel = args.loglevel
 #
 #
 #
+
+# temporary / debugging:
 import time
 
-#load json source configuration
+# load json source configuration
 import json
 
+# dynamic module loading
+import sys
+import inspect
 
-#dynamic module loading
-import sys, inspect
+# queuing
+from Queue import Queue
 
-#starting plugins in separate thread
+# multithreading
 import threading
 import subprocess
+
+# multiprocessing (disabled)
+#from multiprocessing import Process
 
 # support modules
 from hu_pulseaudio import *
@@ -105,15 +124,13 @@ from hu_settings import *
 from hu_mpd import *
 #from hu_menu import *
 
-# DBUS STUUF,, ALL REQUIRED???
-import dbus, dbus.service, dbus.exceptions
-import sys
-from dbus.mainloop.glib import DBusGMainLoop
-import gobject
+# dbus
+import dbus.service
+import dbus.exceptions
 
-# qeueing
-from Queue import Queue
-from multiprocessing import Process
+# main loop
+import gobject
+from dbus.mainloop.glib import DBusGMainLoop
 
 # GLOBAL vars
 Sources = SourceController()	#TODO: rename "Sources" -- confusing name
@@ -185,69 +202,74 @@ def cb_remote_btn_press2 ( func ):
 			bt_prev()
 	"""
 
+# Handle button press
 def cb_remote_btn_press ( func ):
 
-	global Sources
-	global cSettings
-
-	# Handle button press
-	if func == 'SHUFFLE':
-		print('\033[95m[BUTTON] Shuffle\033[00m')
-		set_random( 'toggle' )
-	elif func == 'SOURCE':
-		print('\033[95m[BUTTON] Next source\033[00m')
-		pa_sfx('button_feedback')
-		printer('Blocking Queue Size before: {0}'.format(qBlock.qsize()))
-		
+	def queue(queue, item, sfx=None):
+		#printer('Blocking Queue Size before: {0}'.format(qBlock.qsize()))
 		try:
-			qBlock.put("SOURCE", False)
+			if queue == 'prio':
+				qPrio.put(item, False)
+			elif queue == 'blocking':
+				qBlock.put(item, False)
+			elif queue == 'async':
+				qAsync.put(item, False)
 		except Queue.Full:
 			printer('Queue is full.. ignoring button press.')
-
-		printer('Blocking Queue Size after: {0}'.format(qBlock.qsize()))
+			return None
+			
+		# play sfx, if successfully added to queue and sfx defined
+		if sfx:
+			pa_sfx(sfx)
+		
+		#printer('Blocking Queue Size after: {0}'.format(qBlock.qsize()))
 		return 0
+
+	if func == 'SHUFFLE':
+		printer('\033[95m[BUTTON] Shuffle\033[00m')
+		queue('blocking','RANDOM')
+		
+	elif func == 'SOURCE':
+		printer('\033[95m[BUTTON] Next source\033[00m')
+		queue('blocking','SOURCE','button_feedback')
 		
 	elif func == 'ATT':
-		print('\033[95m[BUTTON] ATT\033[00m')
-		pa_sfx('button_feedback')
-		volume_att_toggle()
+		printer('\033[95m[BUTTON] ATT\033[00m')
+		queue('prio','ATT','button_feedback')
+
 	elif func == 'VOL_UP':
-		print('\033[95m[BUTTON] VOL_UP\033[00m')		
-		pa_sfx('button_feedback')
-		qPrio.put("VOL_UP", False)
-		return 0
+		#print('\033[95m[BUTTON] VOL_UP\033[00m')
+		print( colorize('VOL_UP','purple') )
+		queue('prio','VOL_UP','button_feedback')
+		
 	elif func == 'VOL_DOWN':
 		print('\033[95m[BUTTON] VOL_DOWN\033[00m')
-		pa_sfx('button_feedback')
-		qPrio.put("VOL_DOWN", False)
-		return 0
+		queue('prio','VOL_DOWN','button_feedback')
+
 	elif func == 'SEEK_NEXT':
 		print('\033[95m[BUTTON] Seek/Next\033[00m')
-		pa_sfx('button_feedback')
-		qBlock.put("SEEK_NEXT", False)
+		queue('blocking','SEEK_NEXT','button_feedback')
+		
 	elif func == 'SEEK_PREV':
 		print('\033[95m[BUTTON] Seek/Prev.\033[00m')
-		pa_sfx('button_feedback')
-		qBlock.put("SEEK_PREV", False)
+		queue('blocking','SEEK_PREV','button_feedback')
+		
 	elif func == 'DIR_NEXT':
 		print('\033[95m[BUTTON] Next directory\033[00m')
-		dir_next()
+		queue('blocking','DIR_NEXT')
+
 	elif func == 'DIR_PREV':
 		print('\033[95m[BUTTON] Prev directory\033[00m')
-		#if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 6:
-		#	pa_sfx('button_feedback')
-		#	#mpc_prev_folder()
-		#else:
-		#	pa_sfx('error')
-		#	print(' No function for this button! ')
+		queue('blocking','DIR_PREV')
+
 	elif func == 'UPDATE_LOCAL':
 		print('\033[95m[BUTTON] Updating local MPD database\033[00m')
-		pa_sfx('button_feedback')
-		#locmus_update()
+		queue('async','UPDATE','button_feedback')
+
 	elif func == 'OFF':
 		print('\033[95m[BUTTON] Shutting down\033[00m')
-		pa_sfx('button_feedback')
-		shutdown()
+		queue('prio','OFF','button_feedback')
+		
 	else:
 		print('Unknown button function')
 		pa_sfx('error')
@@ -458,7 +480,7 @@ def udisk_details( device, action ):
 # Headunit functions
 #
 
-def do_source():
+def do_sourceX():
 
 	xSources = SourceController()	#TODO: rename "Sources" -- confusing name
 
@@ -503,7 +525,7 @@ def do_source():
 	printer('----------------------------------------------------------------------', tag='')
 
 
-def do_source1():
+def do_source():
 
 	global Sources
 	global cSettings
@@ -1153,11 +1175,20 @@ def worker_queue_prio():
 	#	while not qPrio.empty():
 		item = qPrio.get()
 		#item = qPrio.get_nowait()
-		print "QUEUE WORKER PRIO: {0}".format(item)
+		
+		printer("Priority Queue: Picking up: {0}".format(item), tag='QUEUE')
 		if item == 'VOL_UP':
-			print "volume_up()"
+			volume_up()
 		elif item == 'VOL_DOWN':
-			print "volume_down()"
+			volume_down()
+		elif item == 'ATT':
+			volume_att_toggle()
+		elif item == 'OFF':
+			shutdown()
+		else:
+			printer('Undefined task', level=LL_ERROR, tag='QUEUE')
+		
+		# sign off task
 		qPrio.task_done()
 
 def worker_queue_blocking():
@@ -1166,21 +1197,33 @@ def worker_queue_blocking():
 	while True:
 	#while not qBlock.empty():
 		item = qBlock.get()
-		print "QUEUE WORKER BLOCK: {0}".format(item)
+		printer("Blocking Queue: Picking up: {0}".format(item), tag='QUEUE')
 		if item == 'SOURCE':
 			do_source()
 		elif item == 'SEEK_NEXT':
 			Sources.sourceSeekNext()
 		elif item == 'SEEK_PREV':
 			Sources.sourceSeekPrev()
+		elif item == 'DIR_NEXT':
+			dir_next()
+		elif item == 'DIR_PREV':
+			print( "TODO!!" )
+		elif item == 'RANDOM':
+			set_random( 'toggle' )
 		else:
-			print 'UNKNOWN TASK'
+			printer('Undefined task', level=LL_ERROR, tag='QUEUE')
+
+		# sign off task
 		qBlock.task_done()
 
 def worker_queue_async():
 	while True:
 		item = qAsync.get()
-		print "QUEUE WORKER ASYNC: {0}".format(item)
+		printer("Async Queue: Picking up: {0}".format(item), tag='QUEUE')
+		if item == 'UPDATE':
+			locmus_update()
+		
+		# sign off task
 		qAsync.task_done()
 
 		
