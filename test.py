@@ -730,14 +730,14 @@ def do_update():
 
 	global Sources
 
-	def locmus_update( mountpoint ):
+	def locmus_update( folder ):
 		
 		global mpdc
 		
-		printer('Updating local database [{0}]'.format(mountpoint))
+		printer('Updating local database [{0}]'.format(folder))
 
 		#Update database
-		mpdc.update( mountpoint, False ) # False = Don't wait for completion (will be picked up by the mpd callback)
+		mpdc.update( folder, False ) # False = Don't wait for completion (will be picked up by the mpd callback)
 		
 		""" TODO: UNCOMMENT THIS
 		#IF we're already playing local music: Continue playing without interruption
@@ -795,9 +795,9 @@ def do_update():
 		if source['name'] == 'locmus':
 			if 'subsources' in source and len(source['subsources']) > 0:
 				for subsource in source['subsources']:
-					if 'mountpoint' in subsource:
-						mountpoint = subsource['mountpoint']
-						locmus_update(mountpoint)
+					if 'mpd_dir' in subsource:
+						mpd_dir = subsource['mpd_dir']
+						locmus_update(mpd_dir)
 			
 	# the only update is an locmus_update ;-)
 	#locmus_update()
