@@ -341,7 +341,7 @@ for filename in os.listdir( configuration['directories']['output'] ):
 #disp.lcd_text('Welcome v0.1.4.8')
 
 # MPD
-# # #mpdc = mpdController()
+mpdc = mpdController()
 
 #
 # end of initialization
