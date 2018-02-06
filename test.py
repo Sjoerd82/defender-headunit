@@ -1371,8 +1371,8 @@ myprint('Loading Other Plugins...',tag='SYSTEM')
 from plugin_other import *
 
 # WORKAROUND...
-for p in threads:
-	p.start()
+#for p in threads:
+#	p.start()
 
 # LCD (TODO: move to plugins)
 #from hu_lcd import *
