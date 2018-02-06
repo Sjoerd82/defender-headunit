@@ -490,7 +490,7 @@ def do_source():
 	global cSettings
 		
 	# if more than one source available...	
-	elif Sources.getAvailableCnt() > 1:
+	if Sources.getAvailableCnt() > 1:
 		# go to next source
 		res = Sources.next()
 		if not res == None:
