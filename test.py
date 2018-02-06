@@ -1281,11 +1281,14 @@ def worker_queue_blocking():
 		qBlock.task_done()
 
 def cb_queue():
-	print("dbg 1")
-	while not qBlock.empty():
+
+	#while not qBlock.empty():
+	if not qBlock.empty():
 		item = qBlock.get()
 		printer("Blocking Queue [CB-idle]: Picking up: {0}".format(item), tag='QUEUE')
 		qBlock.task_done()
+	
+	# return True to automatically be rescheduled
 	return True
 
 def worker_queue_async():
