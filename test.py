@@ -1360,8 +1360,9 @@ print bla_refactored( prevSource, prevSourceSub )
 #print huMenu.getMenu( [1,0] )
 
 #
-# import control plugins
+# import control plugins (disabled)
 #
+"""
 myprint('Loading Control Plugins...',tag='SYSTEM')
 from plugin_control import *
 
@@ -1415,6 +1416,7 @@ from plugin_other import *
 # WORKAROUND...
 #for p in threads:
 #	p.start()
+"""
 
 # LCD (TODO: move to plugins)
 #from hu_lcd import *
