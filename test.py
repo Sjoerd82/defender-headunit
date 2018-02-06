@@ -792,7 +792,7 @@ def do_update():
 	# get local folders
 	for source in Sources.getAll():
 	
-		if source['name'] = 'locmus':
+		if source['name'] == 'locmus':
 			print "debug 1"
 			
 			if 'subsources' in source and len(source['subsources']) > 0:
