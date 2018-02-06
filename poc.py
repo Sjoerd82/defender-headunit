@@ -228,6 +228,7 @@ def cb_timer1():
 
 #Timer 2: Test the queuing
 def cb_timer2():
+	print('Interval function [5 second]')
 	qPrio.put('VOL_UP',False)
 	return True
 	
@@ -247,31 +248,7 @@ def worker_queue_prio():
 		#elif item == 'VOL_DOWN':
 		#	print "volume_down()"
 		qPrio.task_done()
-
-def worker_queue_blocking():
-	global Sources
-
-	while True:
-	#while not qBlock.empty():
-		item = qBlock.get()
-		print "QUEUE WORKER BLOCK: {0}".format(item)
-		if item == 'SOURCE':
-			do_source()
-		elif item == 'SEEK_NEXT':
-			Sources.sourceSeekNext()
-		elif item == 'SEEK_PREV':
-			Sources.sourceSeekPrev()
-		else:
-			print 'UNKNOWN TASK'
-		qBlock.task_done()
-
-def worker_queue_async():
-	while True:
-		item = qAsync.get()
-		print "QUEUE WORKER ASYNC: {0}".format(item)
-		qAsync.task_done()
-
-		
+	
 #********************************************************************************
 #
 # DBus Dispay Signals
@@ -363,12 +340,6 @@ printer('Setting up queues and worker threads')
 qPrio = Queue(maxsize=0)	# 0 = infinite
 qPrio.put('BLANK', False)
 
-# Blocking stuff that needs to run in sequence
-qBlock = Queue(maxsize=4)	# 0 = infinite
-
-# Long stuff that can run anytime (but may occasionally do a reality check):
-qAsync = Queue(maxsize=4)	# 0 = infinite
-
 t1 = threading.Thread(target=worker_queue_prio)
 #p1 = Process(target=worker_queue_prio)
 t1.setDaemon(True)
@@ -376,17 +347,7 @@ t1.setDaemon(True)
 t1.start()
 #p.join()
 
-t2 = threading.Thread(target=worker_queue_blocking)
-#p2 = Process(target=worker_queue_blocking)
-t2.setDaemon(True)
-#p2.daemon = True
-t2.start()
 
-t3 = threading.Thread(target=worker_queue_async)
-#p3 = Process(target=worker_queue_async)
-t3.setDaemon(True)
-#p3.daemon = True
-t3.start()
 
 """
 qBlock.put("SOURCE")
