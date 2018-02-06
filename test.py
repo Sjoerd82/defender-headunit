@@ -239,7 +239,7 @@ def cb_remote_btn_press ( func ):
 
 	elif func == 'VOL_UP':
 		#print('\033[95m[BUTTON] VOL_UP\033[00m')
-		print( colorize('VOL_UP','magenta') )
+		printer( colorize('[BUTTON] VOL_UP','light_magenta') )
 		queue('prio','VOL_UP','button_feedback')
 		
 	elif func == 'VOL_DOWN':
@@ -526,6 +526,46 @@ def do_sourceX():
 
 def do_source():
 
+	def my_printSummary(Sources):
+		print('-- Summary -----------------------------------------------------------')
+		arCurrIx = Sources.getIndexCurrent()
+		sCurrent = Sources.get(None)
+		
+		if not arCurrIx[0] == None and arCurrIx[1] == None:
+			sCurrDisplay = sCurrent['displayname']
+		elif not arCurrIx[1] == None:
+			sCurrDisplay = sCurrent['subsources'][arCurrIx[1]]['displayname']
+		else:
+			sCurrDisplay = ""
+		
+		if len(arCurrIx) == 0:
+			print('Current source: None')
+		else:
+			print('Current source: {0} {1}'.format(arCurrIx[0],sCurrDisplay))
+		
+		i = 0
+		for source in Sources.getAll():
+
+			if 'subsources' in source and len(source['subsources']) > 0:
+				for subsource in source['subsources']:
+				
+					if subsource['available']:
+						available = colorize('available    ','light_green')
+					else:
+						available = colorize('not available','light_red')
+			
+					if 'mountpoint' in subsource:
+						mountpoint = subsource['mountpoint']
+						print(' {0:2d} {1:17} {2} {3}'.format(i,source['displayname'],available,mountpoint))
+			else:
+				if source['available']:
+					available = 'available    '
+				else:
+					available = 'not available'
+				print(' {0:2d} {1:17} {2}'.format(i,source['displayname'],available))
+			
+			i += 1
+		print('----------------------------------------------------------------------')
 	#global Sources
 	#global cSettings
 	mysource = SourceController()
@@ -534,7 +574,7 @@ def do_source():
 		print i
 	
 	#printSummary(Sources)
-	printSummary(mysource)
+	my_printSummary(mysource)
 	#printSummary(src)
 	print("DONE!")
 
