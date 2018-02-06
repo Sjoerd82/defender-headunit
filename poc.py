@@ -53,7 +53,7 @@ def volume_down():
 # Output wrapper
 #
 def printer( message, level=20, continuation=False, tag='SYSTEM' ):
-	print( "{0} {1}".format(level, message)
+	print( "{0} {1}".format(level, message))
 
 
 def cb_remote_btn_press ( func ):
