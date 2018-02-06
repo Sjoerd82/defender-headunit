@@ -239,7 +239,7 @@ def cb_remote_btn_press ( func ):
 
 	elif func == 'VOL_UP':
 		#print('\033[95m[BUTTON] VOL_UP\033[00m')
-		print( colorize('VOL_UP','purple_4a') )
+		print( colorize('VOL_UP','magenta') )
 		queue('prio','VOL_UP','button_feedback')
 		
 	elif func == 'VOL_DOWN':
@@ -534,8 +534,9 @@ def do_source():
 		print i
 	
 	#printSummary(Sources)
-	#printSummary(mysource)
+	printSummary(mysource)
 	#printSummary(src)
+	print("DONE!")
 
 def do_source1():
 
