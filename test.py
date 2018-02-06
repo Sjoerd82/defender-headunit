@@ -730,7 +730,7 @@ def dir_to_file():
 	dirfile = '/mnt/PIHU_CONFIG/dl_current.txt'
 	with open(dirfile,'w') as dirs:
 		for line in pipe.stdout:
-			dirname_current=os.path.dirname(line.strip())
+			dirname_current=os.path.dirname(line.strip('|'))
 			t = iPos, dirname_current
 			if dirname_prev != dirname_current:
 				#arMpcPlaylistDirs.append(t)
