@@ -27,10 +27,6 @@ import gobject
 from Queue import Queue
 from multiprocessing import Process
 
-# GLOBAL vars
-Sources = None
-mpdc = None
-
 # CONSTANTS
 CONFIG_FILE_DEFAULT = '/mnt/PIHU_APP/defender-headunit/config/configuration.json'
 CONFIG_FILE = '/mnt/PIHU_CONFIG/configuration.json'
@@ -264,66 +260,6 @@ class dbusDisplay(dbus.service.Object):
 	def dispdata(self, dispdata):
 		pass
 
-#********************************************************************************
-#
-# Initialization
-#
-
-threads = []
-"""
-# loop through the control plugin dir
-for filename in os.listdir( configuration['directories']['controls'] ):
-		#if filename.startswith('') and
-		if filename.endswith('.py'):
-			pathfilename = os.path.join( configuration['directories']['controls'], filename )
-			t = threading.Thread(target=plugin_execute, args=(pathfilename,))
-			t.setDaemon(True)
-			threads.append(t)
-			#t.start()	WORKAROUND
-
-# loop through the output plugin dir
-for filename in os.listdir( configuration['directories']['output'] ):
-		#if filename.startswith('') and
-		if filename.endswith('.py'):
-			pathfilename = os.path.join( configuration['directories']['output'], filename )
-			t = threading.Thread(target=plugin_execute, args=(pathfilename,))
-			t.setDaemon(True)
-			threads.append(t)
-			#t.start()	WORKAROUND
-
-# NOTE: Plugins are now loading in the background, in parallel to code below.
-# NOTE: This can really interfere, in a way I don't understand.. executing the threads later helps... somehow..
-# NOTE: For NOW, we'll just execute the threads after the loading of the "other" plugins...
-"""
-
-#
-# Load mpd dbus listener
-#
-#
-t = threading.Thread(target=plugin_execute, args=('/mnt/PIHU_APP/defender-headunit/dbus_mpd.py',))
-t.setDaemon(True)
-threads.append(t)
-
-
-
-# WORKAROUND...
-for t in threads:
-	t.start()
-
-# LCD (TODO: move to plugins)
-#from hu_lcd import *
-#disp = lcd_mgr()
-#disp.lcd_text('Welcome v0.1.4.8')
-
-# MPD
-mpdc = mpdController()
-
-#
-# end of initialization
-#
-#********************************************************************************
-myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
-
 
 #********************************************************************************
 #
@@ -334,7 +270,7 @@ myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 #
 # Setting up worker threads
 #
-printer('Setting up queues and worker threads')
+print('Setting up queues and worker threads')
 
 # Short stuff that can run anytime:
 qPrio = Queue(maxsize=0)	# 0 = infinite
@@ -390,35 +326,11 @@ gobject.timeout_add_seconds(5,cb_timer2)
 #
 bus = dbus.SystemBus()
 
-# Output
-disp = dbusDisplay(bus)
-
-
-"""
-time.sleep(5)	#wait for the plugin to be ready
-
-hudispdata = {}
-hudispdata['rnd'] = "1"
-hudispdata['artist'] = "The Midnight"
-disp.dispdata(hudispdata)
-
-time.sleep(5)
-hudispdata = {}
-hudispdata['rnd'] = "0"
-disp.dispdata(hudispdata)
-
-time.sleep(5)
-hudispdata = {}
-hudispdata['att'] = "1"
-disp.dispdata(hudispdata)
-
-exit()
-"""
 #
 # Connect Callback functions to DBus Signals
 #
-bus.add_signal_receiver(cb_mpd_event, dbus_interface = "com.arctura.mpd")
-bus.add_signal_receiver(cb_remote_btn_press, dbus_interface = "com.arctura.remote")
+#bus.add_signal_receiver(cb_mpd_event, dbus_interface = "com.arctura.mpd")
+#bus.add_signal_receiver(cb_remote_btn_press, dbus_interface = "com.arctura.remote")
 
 #
 # Start the blocking main loop...
