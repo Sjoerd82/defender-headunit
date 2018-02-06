@@ -1,4 +1,4 @@
-7#!/usr/bin/python
+#!/usr/bin/python
 
 # A car's headunit.
 #
