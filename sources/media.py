@@ -70,10 +70,15 @@ class sourceClass():
 			
 			grepOut = grepOut.rstrip('\n')
 			lst_mountpoints = [[x for x in ss.split(' ')] for ss in grepOut.split('\n')]
-			#if not lst_mountpoints:
+
+			#for mountpoint in lst_mountpoints:
+			#	if mountpoint[1] == '/media/PIHU_DATA' or mountpoint[0].startswith('//'):
+			#		mountpoint.
+			
 			print len(lst_mountpoints)
-			if len(lst_mountpoints) == 0:
-				printer(' > Nothing mounted on /media')
+			lst_mountpoints[:] = [tup for tup in lst_mountpoints if (tup[1] == '/media/PIHU_DATA' or tup[0].startswith('//'))]
+			print len(lst_mountpoints)
+			
 			return lst_mountpoints
 		
 		# do a general media_check to find any mounted drives
@@ -126,11 +131,11 @@ class sourceClass():
 		if subSourceIx == None:
 			subsources = sourceCtrl.getSubSources( ix )
 			for subsource in subsources:
-				locations.append( subsource['mountpoint'], subsource['mpd_dir'] )
+				locations.append( (subsource['mountpoint'], subsource['mpd_dir']) )
 			ssIx = 0
 		else:
 			subsource = sourceCtrl.getSubSource( ix, subSourceIx )
-			locations.append( subsource['mountpoint'], subsource['mpd_dir'] )
+			locations.append( (subsource['mountpoint'], subsource['mpd_dir']) )
 			ssIx = subSourceIx
 			
 		# check mountpoint(s)

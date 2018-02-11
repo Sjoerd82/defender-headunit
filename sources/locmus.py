@@ -89,11 +89,11 @@ class sourceClass():
 		if subSourceIx == None:
 			subsources = sourceCtrl.getSubSources( ix )
 			for subsource in subsources:
-				locations.append( subsource['mountpoint'], subsource['mpd_dir'] )
+				locations.append( (subsource['mountpoint'], subsource['mpd_dir']) )
 			ssIx = 0
 		else:
 			subsource = sourceCtrl.getSubSource( ix, subSourceIx )
-			locations.append( subsource['mountpoint'], subsource['mpd_dir'] )
+			locations.append( (subsource['mountpoint'], subsource['mpd_dir']) )
 			ssIx = subSourceIx
 
 		# check mountpoint(s)
