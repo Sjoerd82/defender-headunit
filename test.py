@@ -441,6 +441,7 @@ def cb_timer2():
 
 def cb_udisk_dev_add( device ):
 	printer('Device added: {0}'.format(str(device)),tag='UDISKS')
+	item = {}
 	item['command'] = 'DEVADD'
 	item['device'] = device
 	queue('blocking',item,'button_devadd')
