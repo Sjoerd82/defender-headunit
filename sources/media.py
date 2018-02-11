@@ -53,7 +53,7 @@ class sourceClass():
 
 		# Returns a list of everything mounted on /media, but does not check if it has music.
 		# Returned is 2-dimension list
-		def media_getAll( self ):
+		def media_getAll():
 
 			try:
 				self.__printer('Check if anything is mounted on /media...')
