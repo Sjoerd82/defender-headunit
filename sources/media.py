@@ -53,7 +53,7 @@ class sourceClass():
 
 		# Returns a list of everything mounted on /media, but does not check if it has music.
 		# Returned is 2-dimension list
-		def __media_getAll( self ):
+		def media_getAll( self ):
 
 			try:
 				self.__printer('Check if anything is mounted on /media...')
@@ -78,7 +78,7 @@ class sourceClass():
 		#media_check( label=None )
 		
 		# add all locations as configured
-		arMedia = self.__media_getAll()
+		arMedia = media_getAll()
 		for dev_mp in arMedia:
 			if not dev_mp[1] == '/media/PIHU_DATA' and not dev_mp[0].startswith('//'):
 				mountpoint = dev_mp[1]
