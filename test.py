@@ -574,33 +574,30 @@ def udisk_details( device, action ):
 		# WHAT IF IT'S PLAYING??
 		# TODO CHECK IF PLAYING!!
 	
-		print device
-		print device_obj
-
-		try:
-			print str(device_obj)
-			#dbus_obj_path = str(device_obj)
-		except:
-			print "FAIL 1"
-			
+		print device	
 		printer('Removed: {0}'.format(str(device)))
+		dbus_obj_path = '{0}'.format(str(device))
 			
-		#partition = os.dbus.basename(dbus_obj_path)
+		partition = os.dbus.basename(dbus_obj_path)
 	
 		#TODO!
 		print('todo!')
 		
-		#print dbus_obj_path
-		#print partition
+		print dbus_obj_path
+		print partition
 
 		# get subsource index
-		ix_ss = Sources.getIndexSub(ix, 'device', DeviceFile)
+		ix_ss = Sources.getIndexSub(ix, 'device', partition)
 		
-		# remove subsource
-		Sources.remSub(ix, ix_ss)
+		if not ix_ss is None:
 		
-		# display overview
-		printSummary(Sources)
+			# remove subsource
+			Sources.remSub(ix, ix_ss)
+		
+			# display overview
+			printSummary(Sources)
+		else:
+			printer('Not found in sources: {0}'.format('xxx'))
 		
 		
 	else:
