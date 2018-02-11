@@ -230,50 +230,51 @@ def cb_remote_btn_press ( func ):
 
 	global Sources
 
+	queue_func = {'command':func}
+	
 	if func == 'SHUFFLE':
 		printer('\033[95m[BUTTON] Shuffle\033[00m')
-		queue('blocking','RANDOM')
+		queue('blocking',queue_func)
 		
 	elif func == 'SOURCE':
 		printer('\033[95m[BUTTON] Next source\033[00m')
-		queue('blocking','SOURCE','button_feedback')
-		#qBlock.put(Sources, False)
+		queue('blocking',queue_func,'button_feedback')
 		
 	elif func == 'ATT':
 		printer(colorize('[BUTTON] ATT','light_magenta'))
-		queue('prio','ATT','button_feedback')
+		queue('prio',queue_func,'button_feedback')
 
 	elif func == 'VOL_UP':
 		printer(colorize('VOL_UP','light_magenta'),tag='button')
-		queue('prio','VOL_UP','button_feedback')
+		queue('prio',queue_func,'button_feedback')
 		
 	elif func == 'VOL_DOWN':
 		print('\033[95m[BUTTON] VOL_DOWN\033[00m')
-		queue('prio','VOL_DOWN','button_feedback')
+		queue('prio',queue_func,'button_feedback')
 
 	elif func == 'SEEK_NEXT':
 		print('\033[95m[BUTTON] Seek/Next\033[00m')
-		queue('blocking','SEEK_NEXT','button_feedback')
+		queue('blocking',queue_func,'button_feedback')
 		
 	elif func == 'SEEK_PREV':
 		print('\033[95m[BUTTON] Seek/Prev.\033[00m')
-		queue('blocking','SEEK_PREV','button_feedback')
+		queue('blocking',queue_func,'button_feedback')
 		
 	elif func == 'DIR_NEXT':
 		print('\033[95m[BUTTON] Next directory\033[00m')
-		queue('blocking','DIR_NEXT')
+		queue('blocking',queue_func)
 
 	elif func == 'DIR_PREV':
 		print('\033[95m[BUTTON] Prev directory\033[00m')
-		queue('blocking','DIR_PREV')
+		queue('blocking',queue_func)
 
 	elif func == 'UPDATE_LOCAL':
 		print('\033[95m[BUTTON] Updating local MPD database\033[00m')
-		queue('async','UPDATE','button_feedback')
+		queue('async',queue_func,'button_feedback')
 
 	elif func == 'OFF':
 		print('\033[95m[BUTTON] Shutting down\033[00m')
-		queue('prio','OFF','button_feedback')
+		queue('prio',queue_func,'button_feedback')
 		
 	else:
 		print('Unknown button function')
@@ -445,12 +446,13 @@ def cb_udisk_dev_add( device ):
 	item['command'] = 'DEVADD'
 	item['device'] = device
 	queue('blocking',item,'button_devadd')
-	#udisk_details( device, 'A' )
 
 def cb_udisk_dev_rem( device ):
 	printer('Device removed: {0}'.format(str(device)),tag='UDISKS')
-	queue('blocking','DEVREM','button_devrem')
-	#udisk_details( device, 'R' )
+	item = {}
+	item['command'] = 'DEVREM'
+	item['device'] = device
+	queue('blocking',item,'button_devrem')
 
 def udisk_details( device, action ):
 
@@ -506,7 +508,7 @@ def udisk_details( device, action ):
 		return 1
 
 	# Variables
-	ix = sourceCtrl.getIndex('name','media')
+	ix = Sources.getIndex('name','media')
 	
 	if action == 'A':
 
@@ -1355,7 +1357,7 @@ def cb_queue():
 			dir_next()
 		elif command == 'DIR_PREV':
 			print( "TODO!!" )
-		elif command == 'RANDOM':
+		elif command == 'SHUFFLE':
 			set_random( 'toggle' )
 		elif command == 'DEVADD':
 			device = item['device']
