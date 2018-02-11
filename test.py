@@ -555,8 +555,6 @@ def udisk_details( device, action ):
 		subsource['device'] = DeviceFile
 		isAdded = Sources.addSub(ix, subsource)
 
-		print DeviceFile
-		
 		# check source, if added successfully
 		if isAdded:
 			# get subsource index
@@ -1097,7 +1095,8 @@ def printSummary(Sources):
 	if not arCurrIx[0] == None and arCurrIx[1] == None:
 		sCurrDisplay = sCurrent['displayname']
 	elif not arCurrIx[1] == None:
-		sCurrDisplay = sCurrent['subsources'][arCurrIx[1]]['displayname']
+		sCurrDisplay = "" #TODO
+		#sCurrDisplay = sCurrent['subsources'][arCurrIx[1]]['displayname']
 	else:
 		sCurrDisplay = ""
 	
