@@ -108,7 +108,7 @@ class SourceController():
 	# get index of most recently added sub-source
 	def getIndexSub( self, index, key, value ):
 		i=0
-		for subsource in self.lSource[index]:
+		for subsource in self.lSource[index]['subsources']:
 			if subsource[key] == value:
 				return i
 			i+=1		
