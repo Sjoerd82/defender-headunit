@@ -580,17 +580,8 @@ def udisk_details( device, action ):
 
 		stringvar = str(device)
 		print stringvar
-		print device.ObjectPath
-		
-		dbus_obj_path = ""
-		dbus_obj_path = "" + str(device)
 			
-		partition = os.dbus.basename(dbus_obj_path)
-	
-		#TODO!
-		print('todo!')
-		
-		print dbus_obj_path
+		partition = os.dbus.basename(stringvar)
 		print partition
 
 		# get subsource index
