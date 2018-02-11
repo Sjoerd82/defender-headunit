@@ -578,11 +578,9 @@ def udisk_details( device, action ):
 		print device
 		print('Removed: {0}'.format(str(device)))
 
-		#stringvar = str(device)
-		stringvar = '/org/freedesktop/UDisks/devices/sda1'
-		print stringvar	
+		stringvar = str(device)
 		
-		partition = os.dbus.basename(stringvar)
+		partition = os.path.basename(stringvar)
 		print partition
 
 		# get subsource index
