@@ -578,9 +578,10 @@ def udisk_details( device, action ):
 		print device
 		print('Removed: {0}'.format(str(device)))
 
-		print device.__ObjectPath__
+		stringvar = str(device)
+		print stringvar
+		print device.ObjectPath
 		
-		printer('Removed: {0}'.format(str(device)))
 		dbus_obj_path = ""
 		dbus_obj_path = "" + str(device)
 			
