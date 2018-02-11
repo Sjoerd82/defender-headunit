@@ -585,7 +585,7 @@ def udisk_details( device, action ):
 
 		# get subsource index
 		ix_ss = Sources.getIndexSub(ix, 'device', partition)
-		
+		print ix_ss
 		if not ix_ss is None:
 		
 			# remove subsource
