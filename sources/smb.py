@@ -105,7 +105,6 @@ class sourceClass():
 
 		# local dir, relative to MPD
 		sLocalMusicMPD = subsource['mpd_dir']
-		print sLocalMusicMPD
 
 		# check mountpoint(s)
 		for location in mountpoints:

@@ -32,26 +32,6 @@ class sourceClass():
 	def __del__( self ):
 		print('Source Class Deleted {0}'.format(sourceName))
 
-	# Returns a list of everything mounted on /media, but does not check if it has music.
-	# Returned is 2-dimension list
-	def __media_getAll( self ):
-
-		try:
-			self.__printer('Check if anything is mounted on /media...')
-			# do a -f1 for devices, -f3 for mountpoints
-			grepOut = subprocess.check_output(
-				"mount | grep /media | cut -d' ' -f1,3",
-				shell=True,
-				stderr=subprocess.STDOUT,
-			)
-		except subprocess.CalledProcessError as err:
-			print('ERROR:', err)
-			pa_sfx('error')
-			return None
-		
-		grepOut = grepOut.rstrip('\n')
-		return [[x for x in ss.split(' ')] for ss in grepOut.split('\n')]
-	
 	def __media_add( self, dir, label, uuid, sourceCtrl ):
 		# get index (name is unique)
 		ix = sourceCtrl.getIndex('name','media')
@@ -70,6 +50,29 @@ class sourceClass():
 	
 	def init( self, sourceCtrl ):
 		self.__printer('Initializing...', level=15)
+
+		# Returns a list of everything mounted on /media, but does not check if it has music.
+		# Returned is 2-dimension list
+		def __media_getAll( self ):
+
+			try:
+				self.__printer('Check if anything is mounted on /media...')
+				# do a -f1 for devices, -f3 for mountpoints
+				grepOut = subprocess.check_output(
+					"mount | grep /media | cut -d' ' -f1,3",
+					shell=True,
+					stderr=subprocess.STDOUT,
+				)
+			except subprocess.CalledProcessError as err:
+				print('ERROR:', err)
+				pa_sfx('error')
+				return None
+			
+			grepOut = grepOut.rstrip('\n')
+			lst_mountpoints = [[x for x in ss.split(' ')] for ss in grepOut.split('\n')]
+			if not lst_mountpoints:
+				printer(' > Nothing mounted on /media')
+			return lst_mountpoints
 		
 		# do a general media_check to find any mounted drives
 		#media_check( label=None )
@@ -114,33 +117,41 @@ class sourceClass():
 		"""
 
 		ix = sourceCtrl.getIndex('name','media')
-		mountpoints = []
+		#mountpoints = []
+		#mpd_dirs = []
+		# list of tuples; index: 0 = mountpoint, 1 = mpd dir.
+		locations = []
 		foundStuff = 0
 						
 		if subSourceIx == None:
 			subsources = sourceCtrl.getSubSources( ix )
 			for subsource in subsources:
-				mountpoints.append(subsource['mountpoint'])
+				#mountpoints.append(subsource['mountpoint'])
+				#mpd_dirs.append(subsource['mpd_dir'])
+				locations.append( subsource['mountpoint'], subsource['mpd_dir'] )
 			ssIx = 0
 		else:
 			subsource = sourceCtrl.getSubSource( ix, subSourceIx )
-			mountpoints.append(subsource['mountpoint'])
+			#mountpoints.append(subsource['mountpoint'])
+			#mpd_dirs.append(subsource['mpd_dir'])
+			locations.append( subsource['mountpoint'], subsource['mpd_dir'] )
 			ssIx = subSourceIx
-		
-		# dir, relative to MPD
-		sLocalMusicMPD = subsource['mpd_dir']
-		
+			
 		# check mountpoint(s)
-		for location in mountpoints:
-			self.__printer('Media folder: {0}'.format(location))
-			if not os.listdir(location):
+		#for location in mountpoints:
+		for location in locations:
+			# get mountpoint and mpd dir
+			mountpoint = location[0]
+			mpd_dir = location[1]
+			self.__printer('Media folder: {0}'.format(mountpoint))
+			if not os.listdir(mountpoint):
 				self.__printer(" > Removable music directory is empty.",LL_WARNING,True)
 			else:
 				self.__printer(" > Removable music directory present and has files.",LL_INFO,True)
-				if not self.mpc.dbCheckDirectory( sLocalMusicMPD ):
+				if not self.mpc.dbCheckDirectory( mpd_dir ):
 					self.__printer(" > Running MPD update for this directory.. ALERT! LONG BLOCKING OPERATION AHEAD...")
-					self.mpc.update( sLocalMusicMPD )
-					if not self.mpc.dbCheckDirectory( sLocalMusicMPD ):
+					self.mpc.update( mpd_dir )
+					if not self.mpc.dbCheckDirectory( mpd_dir ):
 						self.__printer(" > Nothing to play marking unavailable...")
 					else:
 						self.__printer(" > Music found after updating")

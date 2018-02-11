@@ -20,13 +20,13 @@ class sourceClass():
 		else:
 			myprint( message, level, tag )
 
-	def __init__( self ):
-		self.__printer('FM CLASS INIT!')
+	#def __init__( self ):
+		#self.__printer('Initialized')
 		
-	def __del__( self ):
+	#def __del__( self ):
 		#self.__printer('FM CLASS DELETE!')		# 	ERROR! } Exception TypeError: TypeError("'NoneType' object is not iterable",)
 		#printer('FM CLASS DELETE!')			# 	ERROR! }
-		print('FM CLASS DELETE!')
+		#print('FM CLASS DELETE!')
 		
 	def init( self, sourceCtrl ):
 		self.__printer('Initializing...', level=15)
