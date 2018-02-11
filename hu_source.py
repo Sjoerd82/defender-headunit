@@ -113,7 +113,7 @@ class SourceController():
 			if subsource[key] == value:
 				return i
 			i+=1		
-		return
+		return 0
 		
 	# set current source, by index
 	def setCurrent( self, index, subIndex=None ):
