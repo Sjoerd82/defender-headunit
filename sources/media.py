@@ -70,7 +70,9 @@ class sourceClass():
 			
 			grepOut = grepOut.rstrip('\n')
 			lst_mountpoints = [[x for x in ss.split(' ')] for ss in grepOut.split('\n')]
-			if not lst_mountpoints:
+			#if not lst_mountpoints:
+			print len(lst_mountpoints)
+			if len(lst_mountpoints) == 0:
 				printer(' > Nothing mounted on /media')
 			return lst_mountpoints
 		
@@ -80,6 +82,7 @@ class sourceClass():
 		# add all locations as configured
 		arMedia = media_getAll()
 		for dev_mp in arMedia:
+			# TODO: this shouldn't be hardcoded:
 			if not dev_mp[1] == '/media/PIHU_DATA' and not dev_mp[0].startswith('//'):
 				mountpoint = dev_mp[1]
 				sUsbLabel = os.path.basename(dev_mp[1]).rstrip('\n')
@@ -116,29 +119,21 @@ class sourceClass():
 		arMedia = grepOut.split()
 		"""
 
-		ix = sourceCtrl.getIndex('name','media')
-		#mountpoints = []
-		#mpd_dirs = []
-		# list of tuples; index: 0 = mountpoint, 1 = mpd dir.
-		locations = []
-		foundStuff = 0
+		ix = sourceCtrl.getIndex('name','media')	# index
+		locations = []								# list of tuples; index: 0 = mountpoint, 1 = mpd dir.
+		foundStuff = 0								#
 						
 		if subSourceIx == None:
 			subsources = sourceCtrl.getSubSources( ix )
 			for subsource in subsources:
-				#mountpoints.append(subsource['mountpoint'])
-				#mpd_dirs.append(subsource['mpd_dir'])
 				locations.append( subsource['mountpoint'], subsource['mpd_dir'] )
 			ssIx = 0
 		else:
 			subsource = sourceCtrl.getSubSource( ix, subSourceIx )
-			#mountpoints.append(subsource['mountpoint'])
-			#mpd_dirs.append(subsource['mpd_dir'])
 			locations.append( subsource['mountpoint'], subsource['mpd_dir'] )
 			ssIx = subSourceIx
 			
 		# check mountpoint(s)
-		#for location in mountpoints:
 		for location in locations:
 			# get mountpoint and mpd dir
 			mountpoint = location[0]

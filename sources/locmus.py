@@ -82,43 +82,56 @@ class sourceClass():
 	def check( self, sourceCtrl, subSourceIx=None  ):
 		self.__printer('Checking availability...', level=15)
 	
-		ix = sourceCtrl.getIndex('name','locmus')
-		mountpoints = []
-		foundStuff = 0
+		ix = sourceCtrl.getIndex('name','locmus')	# source index
+		locations = []								# list of tuples; index: 0 = mountpoint, 1 = mpd dir.
+		foundStuff = 0								#
 						
 		if subSourceIx == None:
 			subsources = sourceCtrl.getSubSources( ix )
 			for subsource in subsources:
-				mountpoints.append(subsource['mountpoint'])
+				locations.append( subsource['mountpoint'], subsource['mpd_dir'] )
 			ssIx = 0
 		else:
 			subsource = sourceCtrl.getSubSource( ix, subSourceIx )
-			mountpoints.append(subsource['mountpoint'])
+			locations.append( subsource['mountpoint'], subsource['mpd_dir'] )
 			ssIx = subSourceIx
 
-		# local dir, relative to MPD
-		sLocalMusicMPD = subsource['mpd_dir']
-
 		# check mountpoint(s)
-		for location in mountpoints:
-			self.__printer('Local folder: {0}'.format(location))
-			if not os.listdir(location):
-				self.__printer(" > Local music directory is empty.",LL_WARNING,True)
+		for location in locations:
+		
+			# get mountpoint and mpd dir
+			mountpoint = location[0]
+			mpd_dir = location[1]
+
+			self.__printer('Local folder: {0}'.format(mountpoint))
+			
+			# check if the dir exists:
+			if not os.path.exists(mountpoint):
+				self.__printer(" > Local music directory does not exist.. creating...",LL_WARNING,True)
+				os.makedirs(mountpoint)
+
+			if not os.path.exists(mountpoint):
+				self.__printer(" > Local music directory does not exist.. Failed creating?",LL_WARNING,True)
 			else:
-				self.__printer(" > Local music directory present and has files.",LL_INFO,True)
 				
-				if not self.mpc.dbCheckDirectory( sLocalMusicMPD ):
-					self.__printer(" > Running MPD update for this directory.. ALERT! LONG BLOCKING OPERATION AHEAD...")
-					self.mpc.update( sLocalMusicMPD )
-					if not self.mpc.dbCheckDirectory( sLocalMusicMPD ):
-						self.__printer(" > Nothing to play marking unavailable...")
+				if not os.listdir(mountpoint):
+					self.__printer(" > Local music directory is empty.",LL_WARNING,True)
+				else:
+					self.__printer(" > Local music directory present and has files.",LL_INFO,True)
+					
+					if not self.mpc.dbCheckDirectory( mpd_dir ):
+						self.__printer(" > Running MPD update for this directory.. ALERT! LONG BLOCKING OPERATION AHEAD...")
+						self.mpc.update( mpd_dir )
+						if not self.mpc.dbCheckDirectory( mpd_dir ):
+							self.__printer(" > Nothing to play marking unavailable...")
+						else:
+							self.__printer(" > Music found after updating")
+							sourceCtrl.setAvailableIx( ix, True, ssIx )
+							foundStuff += 1
 					else:
-						self.__printer(" > Music found after updating")
 						sourceCtrl.setAvailableIx( ix, True, ssIx )
 						foundStuff += 1
-				else:
-					sourceCtrl.setAvailableIx( ix, True, ssIx )
-					foundStuff += 1
+			
 			ssIx+=1
 		
 		if foundStuff > 0:
