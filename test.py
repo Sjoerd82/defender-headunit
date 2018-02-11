@@ -441,7 +441,9 @@ def cb_timer2():
 
 def cb_udisk_dev_add( device ):
 	printer('Device added: {0}'.format(str(device)),tag='UDISKS')
-	queue('blocking','DEVADD','button_devadd')
+	item['command'] = 'DEVADD'
+	item['device'] = device
+	queue('blocking',item,'button_devadd')
 	#udisk_details( device, 'A' )
 
 def cb_udisk_dev_rem( device ):
@@ -1340,21 +1342,25 @@ def cb_queue():
 		item = qBlock.get()
 		printer("Blocking Queue [CB-idle]: Picking up: {0}".format(item), tag='QUEUE')
 		
-		if item == 'SOURCE':
+		command = item['command']
+		
+		if command == 'SOURCE':
 			do_source()
-		elif item == 'SEEK_NEXT':
+		elif command == 'SEEK_NEXT':
 			Sources.sourceSeekNext()
-		elif item == 'SEEK_PREV':
+		elif command == 'SEEK_PREV':
 			Sources.sourceSeekPrev()
-		elif item == 'DIR_NEXT':
+		elif command == 'DIR_NEXT':
 			dir_next()
-		elif item == 'DIR_PREV':
+		elif command == 'DIR_PREV':
 			print( "TODO!!" )
-		elif item == 'RANDOM':
+		elif command == 'RANDOM':
 			set_random( 'toggle' )
-		elif item == 'DEVADD':
+		elif command == 'DEVADD':
+			device = item['device']
 			udisk_details( device, 'A' )
-		elif item == 'DEVREM':
+		elif command == 'DEVREM':
+			device = item['device']
 			udisk_details( device, 'R' )
 		else:
 			printer('Undefined task', level=LL_ERROR, tag='QUEUE')
