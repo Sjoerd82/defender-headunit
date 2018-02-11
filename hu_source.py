@@ -83,9 +83,10 @@ class SourceController():
 		else:
 			self.__printer('ERROR: Cannot remove active source. Doing nothing.',LL_ERROR,self.mytag)
 
-	def remSub( self, index, subsource ):
-		#TODO
-		return None
+	# remove subsource by index
+	def remSub( self, index, index_subsource ):
+		del self.lSource[index]['subsources'][index_subsource]
+		return True
 
 	# get index based on key-value pair
 	# the "name" key is unique

@@ -470,47 +470,47 @@ def udisk_details( device, action ):
 	#data = device_props.GetAll('')
 	#for i in data: print i+': '+str(data[i])
 	
+	# Variables
 	DeviceFile = ""
 	mountpoint = ""
 	mytag = ".UDISKS"
-	
-	try:
-		DeviceFile = device_props.Get('org.freedesktop.UDisks.Device',"DeviceFile")
-		printer(" > DeviceFile: {0}".format(DeviceFile),tag=mytag)
-		
-	except:
-		printer(" > DeviceFile is unset... Aborting...",tag=mytag)
-		return 1
-	
-	# Check if DeviceIsMediaAvailable...
-	try:    
-		is_media_available = device_props.Get('org.freedesktop.UDisks.Device', "DeviceIsMediaAvailable")
-		if is_media_available:
-			printer(" > Media available",tag=mytag)
-		else:
-			printer(" > Media not available... Aborting...",tag=mytag)
-			return 1
-	except:
-		printer(" > DeviceIsMediaAvailable is not set... Aborting...",tag=mytag)
-		return 1
-	
-	# Check if it is a Partition...
-	try:
-		is_partition = device_props.Get('org.freedesktop.UDisks.Device', "DeviceIsPartition")
-		if is_partition:
-			printer(" > Device is partition",tag=mytag)
-	except:
-		printer(" > DeviceIsPartition is not set... Aborting...",tag=mytag)
-		return 1
-
-	if not is_partition:
-		printer(" > DeviceIsPartition is not set... Aborting...",tag=mytag)
-		return 1
-
-	# Variables
 	ix = Sources.getIndex('name','media')
 	
 	if action == 'A':
+
+		try:
+			DeviceFile = device_props.Get('org.freedesktop.UDisks.Device',"DeviceFile")
+			printer(" > DeviceFile: {0}".format(DeviceFile),tag=mytag)
+			
+		except:
+			printer(" > DeviceFile is unset... Aborting...",tag=mytag)
+			return 1
+		
+		# Check if DeviceIsMediaAvailable...
+		try:    
+			is_media_available = device_props.Get('org.freedesktop.UDisks.Device', "DeviceIsMediaAvailable")
+			if is_media_available:
+				printer(" > Media available",tag=mytag)
+			else:
+				printer(" > Media not available... Aborting...",tag=mytag)
+				return 1
+		except:
+			printer(" > DeviceIsMediaAvailable is not set... Aborting...",tag=mytag)
+			return 1
+		
+		# Check if it is a Partition...
+		try:
+			is_partition = device_props.Get('org.freedesktop.UDisks.Device', "DeviceIsPartition")
+			if is_partition:
+				printer(" > Device is partition",tag=mytag)
+		except:
+			printer(" > DeviceIsPartition is not set... Aborting...",tag=mytag)
+			return 1
+
+		if not is_partition:
+			printer(" > DeviceIsPartition is not set... Aborting...",tag=mytag)
+			return 1
+
 
 		#queue('blocking','DEVREM','button_devrem')
 	
@@ -552,24 +552,45 @@ def udisk_details( device, action ):
 		subsource['mpd_dir'] = mountpoint[7:]		# TODO -- ASSUMING /media
 		subsource['label'] = sUsbLabel
 		subsource['uuid'] = partuuid
+		subsource['device'] = DeviceFile
 		isAdded = Sources.addSub(ix, subsource)
 
 		# check source, if added successfully
 		if isAdded:
-			ix_ss = Sources.getIndexSub(ix, 'uuid', partuuid)
-			Sources.sourceCheck( ix, ix_ss )
+			# get subsource index
+			ix_ss = Sources.getIndexSub(ix, 'device', DeviceFile)
+			
+			# check, and if available play
+			if Sources.sourceCheck( ix, ix_ss ):
+				Sources.setCurrent( ix, ix_ss )
+				Sources.sourcePlay()
 		
-		printSummary(Sources)		
+		# display overview
+		printSummary(Sources)
 		
 	elif action == 'R':
-		# Find out its mountpoint...
-		#We cannot retrieve many details from dbus about a removed drive, other than the DeviceFile (which at this point is no longer available).
-# ->	media_check( None )
-		# Determine if we were playing this media (source: usb=1)
-		#if dSettings['source'] == 1 and
-		
+		# The removed mountpoint can be derived from str(device)
+	
+		# WHAT IF IT'S PLAYING??
+		# TODO CHECK IF PLAYING!!
+	
+		dbus_obj_path = str(device)
+		partition = os.dbus.basename(dbus_obj_path)
+	
 		#TODO!
 		print('todo!')
+		print dbus_obj_path
+		print partition
+
+		# get subsource index
+		ix_ss = Sources.getIndexSub(ix, 'device', DeviceFile)
+		
+		# remove subsource
+		Sources.remSub(ix, ix_ss)
+		
+		# display overview
+		printSummary(Sources)
+		
 		
 	else:
 		printer(" > ERROR: Invalid action.",tag=mytag)

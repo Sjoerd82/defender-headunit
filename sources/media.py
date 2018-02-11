@@ -32,7 +32,10 @@ class sourceClass():
 	def __del__( self ):
 		print('Source Class Deleted {0}'.format(sourceName))
 
-	def __media_add_subsource( self, dir, label, uuid, sourceCtrl ):
+	def remove_subsource( self ):
+		print('REMOVE SUBSOURCE: TODO')
+		
+	def __media_add_subsource( self, dir, label, uuid, device, sourceCtrl ):
 		# get index (name is unique)
 		ix = sourceCtrl.getIndex('name','media')
 		
@@ -45,6 +48,7 @@ class sourceClass():
 		subsource['mpd_dir'] = dir[7:]		# TODO -- ASSUMING /media
 		subsource['label'] = label
 		subsource['uuid'] = uuid
+		subsource['device'] = device
 
 		sourceCtrl.addSub(ix, subsource)
 	
@@ -96,6 +100,7 @@ class sourceClass():
 			self.__media_add_subsource( mountpoint
 							           ,sUsbLabel
 							           ,uuid
+									   ,dev_mp[0]
 							           ,sourceCtrl)
 
 		return True
