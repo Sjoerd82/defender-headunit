@@ -171,6 +171,26 @@ def printer( message, level=20, continuation=False, tag='SYSTEM' ):
 	else:
 		myprint( message, level, tag )
 
+def queue(q, item, sfx=None):
+	#printer('Blocking Queue Size before: {0}'.format(qBlock.qsize()))
+	try:
+		if q == 'prio':
+			qPrio.put(item, False)
+		elif q == 'blocking':
+			qBlock.put(item, False)
+		elif q == 'async':
+			qAsync.put(item, False)
+	except queue.Full:
+		printer('Queue is full.. ignoring button press.')
+		return None
+		
+	# play sfx, if successfully added to queue and sfx defined
+	if sfx:
+		pa_sfx(sfx)
+	
+	#printer('Blocking Queue Size after: {0}'.format(qBlock.qsize()))
+	return 0
+
 
 # ********************************************************************************
 # Callback functions
@@ -209,26 +229,6 @@ def cb_remote_btn_press2 ( func ):
 def cb_remote_btn_press ( func ):
 
 	global Sources
-
-	def queue(q, item, sfx=None):
-		#printer('Blocking Queue Size before: {0}'.format(qBlock.qsize()))
-		try:
-			if q == 'prio':
-				qPrio.put(item, False)
-			elif q == 'blocking':
-				qBlock.put(item, False)
-			elif q == 'async':
-				qAsync.put(item, False)
-		except queue.Full:
-			printer('Queue is full.. ignoring button press.')
-			return None
-			
-		# play sfx, if successfully added to queue and sfx defined
-		if sfx:
-			pa_sfx(sfx)
-		
-		#printer('Blocking Queue Size after: {0}'.format(qBlock.qsize()))
-		return 0
 
 	if func == 'SHUFFLE':
 		printer('\033[95m[BUTTON] Shuffle\033[00m')
