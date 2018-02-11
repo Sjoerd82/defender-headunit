@@ -555,6 +555,8 @@ def udisk_details( device, action ):
 		subsource['device'] = DeviceFile
 		isAdded = Sources.addSub(ix, subsource)
 
+		print DeviceFile
+		
 		# check source, if added successfully
 		if isAdded:
 			# get subsource index
@@ -595,6 +597,7 @@ def udisk_details( device, action ):
 			printSummary(Sources)
 		else:
 			printer('Not found in sources: {0}'.format('xxx'))
+			printSummary(Sources)
 		
 		
 	else:
