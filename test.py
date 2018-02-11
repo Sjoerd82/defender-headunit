@@ -574,9 +574,10 @@ def udisk_details( device, action ):
 		# WHAT IF IT'S PLAYING??
 		# TODO CHECK IF PLAYING!!
 	
-		print device	
+		print device
 		printer('Removed: {0}'.format(str(device)))
-		dbus_obj_path = '{0}'.format(str(device))
+		dbus_obj_path = ""
+		dbus_obj_path = "" + str(device)
 			
 		partition = os.dbus.basename(dbus_obj_path)
 	
