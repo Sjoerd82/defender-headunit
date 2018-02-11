@@ -582,7 +582,7 @@ def udisk_details( device, action ):
 
 		stringvar = str(device)
 		
-		partition = os.path.basename(stringvar)
+		partition = "/dev/"+os.path.basename(stringvar)
 		print partition
 
 		# get subsource index
