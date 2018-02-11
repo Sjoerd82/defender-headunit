@@ -552,7 +552,7 @@ def udisk_details( device, action ):
 		subsource['mpd_dir'] = mountpoint[7:]		# TODO -- ASSUMING /media
 		subsource['label'] = sUsbLabel
 		subsource['uuid'] = partuuid
-		isAdded = Sources.addSub(ix, subsource_config)
+		isAdded = Sources.addSub(ix, subsource)
 
 		# check source, if added successfully
 		if isAdded:
