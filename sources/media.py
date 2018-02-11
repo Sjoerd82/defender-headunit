@@ -32,7 +32,7 @@ class sourceClass():
 	def __del__( self ):
 		print('Source Class Deleted {0}'.format(sourceName))
 
-	def __media_add( self, dir, label, uuid, sourceCtrl ):
+	def __media_add_subsource( self, dir, label, uuid, sourceCtrl ):
 		# get index (name is unique)
 		ix = sourceCtrl.getIndex('name','media')
 		
@@ -71,13 +71,14 @@ class sourceClass():
 			grepOut = grepOut.rstrip('\n')
 			lst_mountpoints = [[x for x in ss.split(' ')] for ss in grepOut.split('\n')]
 
-			#for mountpoint in lst_mountpoints:
-			#	if mountpoint[1] == '/media/PIHU_DATA' or mountpoint[0].startswith('//'):
-			#		mountpoint.
-			
-			print len(lst_mountpoints)
-			lst_mountpoints[:] = [tup for tup in lst_mountpoints if (tup[1] == '/media/PIHU_DATA' or tup[0].startswith('//'))]
-			print len(lst_mountpoints)
+			# remove local data (locmus) and smb mounts:
+			# TODO: this shouldn't be hardcoded:
+			lst_mountpoints[:] = [tup for tup in lst_mountpoints if (not tup[1] == '/media/PIHU_DATA' and not tup[0].startswith('//'))]
+
+			if not lst_mountpoints:
+				self.__printer(' > No removable media found')
+			else:
+				self.__printer(' > Found {0} removable media'.format(len(lst_mountpoints)))
 			
 			return lst_mountpoints
 		
@@ -87,16 +88,15 @@ class sourceClass():
 		# add all locations as configured
 		arMedia = media_getAll()
 		for dev_mp in arMedia:
-			# TODO: this shouldn't be hardcoded:
-			if not dev_mp[1] == '/media/PIHU_DATA' and not dev_mp[0].startswith('//'):
-				mountpoint = dev_mp[1]
-				sUsbLabel = os.path.basename(dev_mp[1]).rstrip('\n')
-				#TODO: try-except for subprocess?
-				uuid = subprocess.check_output("blkid "+dev_mp[0]+" -s PARTUUID -o value", shell=True).rstrip('\n')	
-				self.__media_add( mountpoint
-						         ,sUsbLabel
-						         ,uuid
-						         ,sourceCtrl)
+			
+			mountpoint = dev_mp[1]
+			sUsbLabel = os.path.basename(dev_mp[1]).rstrip('\n')
+			#TODO: try-except for subprocess?
+			uuid = subprocess.check_output("blkid "+dev_mp[0]+" -s PARTUUID -o value", shell=True).rstrip('\n')	
+			self.__media_add_subsource( mountpoint
+							           ,sUsbLabel
+							           ,uuid
+							           ,sourceCtrl)
 
 		return True
 

@@ -131,7 +131,7 @@ class mpdController():
 			return True
 
 	# location must be a path relative to MPD
-	def update( self, location, wait=True ):
+	def update_call( self, location, wait=True ):
 
 		#Sound effect
 		pa_sfx('mpd_update_db')
@@ -145,7 +145,35 @@ class mpdController():
 		else:
 			call(["mpc", "-q", "update", location])
 			#bMpdUpdateSmb
+	
+	def update( self, location, wait=True ):
 
+		#Sound effect
+		pa_sfx('mpd_update_db')
+		#Debug info
+		printer('Updating database for location: {0}'.format(location))
+
+		try:
+			self.mpdc.noidle()
+		except:
+			printer('WEIRD... no idle was set..')
+
+		#Update
+		if wait:
+			printer(' > Please wait, this may take some time...')
+			self.mpdc.update(location)
+			printer(' > Update finished')
+		else:
+			self.mpdc.update(location)
+
+		self.mpdc.command_list_ok_begin()
+		self.mpdc.status()
+		results = self.mpdc.command_list_end()
+		print results
+		
+		#self.mpdc.idle()
+		self.mpdc.send_idle()
+			
 	def lastKnownPos( self, id ):
 	
 		#default
@@ -246,7 +274,7 @@ class mpdController():
 		self.mpdc.noidle()
 		self.mpdc.command_list_ok_begin()
 		self.mpdc.currentsong()
-		self.mpdc.idle()
+		self.mpdc.send_idle()
 		
 		results = self.mpdc.command_list_end()
 		print results[0]
@@ -265,7 +293,7 @@ class mpdController():
 		self.mpdc.status()
 
 		results = self.mpdc.command_list_end()
-		self.mpdc.idle()
+		self.mpdc.send_idle()
 		print results
 		print results[0]
 
@@ -460,19 +488,6 @@ def mpc_stop():
 	print('[MPC] Stopping MPC [pause]')
 	call(["mpc", "-q", "pause"])
 
-def mpc_update( location, wait ):
-	#Sound effect
-	pa_sfx('mpd_update_db')
-	#Debug info
-	print('[MPC] Updating database for location: {0}'.format(location))
-	#Update
-	if wait:
-		print(' ...  Please wait, this may take some time...')
-		call(["mpc", "--wait", "-q", "update", location])
-		print(' ...  Update finished')
-	else:
-		call(["mpc", "-q", "update", location])
-		#bMpdUpdateSmb
 	
 """
 def mpc_save_pos( source ):

@@ -109,6 +109,8 @@ class sourceClass():
 			if not os.path.exists(mountpoint):
 				self.__printer(" > Local music directory does not exist.. creating...",LL_WARNING,True)
 				os.makedirs(mountpoint)
+				# obviously there will no be any music in that new directory, so marking it unavailable..
+				sourceCtrl.setAvailableIx( ix, True, ssIx )
 
 			if not os.path.exists(mountpoint):
 				self.__printer(" > Local music directory does not exist.. Failed creating?",LL_WARNING,True)

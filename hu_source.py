@@ -15,6 +15,7 @@ class SourceController():
 		self.iCurrentSS = None
 		self.iCurrentSource = [ None, None ]
 		self.lSourceClasses = []
+		self.iRecentSS = None
 
 	def __printer( self, message, level=LL_INFO, continuation=False, tag='SOURCE' ):
 		if continuation:
@@ -23,52 +24,52 @@ class SourceController():
 			myprint( message, level, tag )
 		
 	# add source
-	def add( self, source ):
+	def add( self, source_config ):
 		# check required fields:
-		if not all (k in source for k in ('name','displayname','order','controls','template')):
+		if not all (k in source_config for k in ('name','displayname','order','controls','template')):
 			self.__printer('ADD: source NOT added, missing one or more required field(s)...',LL_ERROR)
 			self.__printer('Required fields are: name,displayname,order,controls,template',LL_ERROR,True)
 			return False
 
 		# availability = False for all new sources, until cleared by the check() function
-		source['available'] = False
+		source_config['available'] = False
 		
 		# add an empty array for subsources, it it's a template:
-		if 'template' in source:
-			source['subsources'] = []
+		if 'template' in source_config:
+			source_config['subsources'] = []
 		
 		# all good, add the source:
-		self.__printer('ADD: {0}'.format(source['displayname']))
-		self.lSource.append(source)
+		self.__printer('ADD: {0}'.format(source_config['displayname']))
+		self.lSource.append(source_config)
 		self.lSource.sort( key=lambda k: k['order'] )
 		
 		# create a class object and store the reference to it
-		if 'sourceModule' in source:
-			obj = source['sourceModule']	#[0]
+		if 'sourceModule' in source_config:
+			obj = source_config['sourceModule']	#[0]
 			sc = getattr(obj,'sourceClass')()
 			self.lSourceClasses.append(sc)
 			#self.lSourceClasses.append(getattr(obj,'sourceClass')())
 			# add a class field containing the class
-			source['sourceClass'] = sc
+			source_config['sourceClass'] = sc
 			
 		return True
 
 	# add sub-source
-	def addSub( self, index, subsource ):
+	def addSub( self, index, subsource_config ):
 
 		#Check required fields:
-		if not all (k in subsource for k in ('displayname','order')):
+		if not all (k in subsource_config for k in ('displayname','order')):
 			self.__printer('ADD SUB: sub-source NOT added, missing one or more required field(s)...',LL_ERROR)
 			self.__printer('Required fields are: displayname,order',LL_ERROR,True)
 			return False
 		
 		#Availability = False for all new subsources, until cleared by the check() function
 		# TODO -- not fully implemented yet
-		subsource['available'] = False
+		subsource_config['available'] = False
 
 		#All good, add the source:
-		self.__printer('ADD SUB: {0}'.format(subsource['displayname']))
-		self.lSource[index]['subsources'].append(subsource)
+		self.__printer('ADD SUB: {0}'.format(subsource_config['displayname']))
+		self.lSource[index]['subsources'].append(subsource_config)
 		self.lSource[index]['subsources'].sort( key=lambda k: k['order'] )
 		return True
 	
@@ -104,6 +105,15 @@ class SourceController():
 		#return self.iCurrent
 		return arCurrIx
 
+	# get index of most recently added sub-source
+	def getIndexSub( self, index, key, value ):
+		i=0
+		for subsource in self.lSource[index]:
+			if subsource[key] == value:
+				return i
+			i+=1		
+		return
+		
 	# set current source, by index
 	def setCurrent( self, index, subIndex=None ):
 		if index == None:

@@ -27,11 +27,11 @@ class sourceClass():
 		print('Source Class Deleted {0}'.format(sourceName))
 		
 	def init( self, sourceCtrl ):
-		self.__printer('Initializing...', level=15)
+		self.__printer('Initializing...')
 		return True
 
 	def check( self, sourceCtrl, subSourceIx=None  ):
-		self.__printer('Checking availability...', level=15)
+		self.__printer('Checking availability...')
 		
 		#TODO!!
 		sDirSave = "/mnt/PIHU_CONFIG"
