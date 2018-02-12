@@ -274,9 +274,8 @@ class mpdController():
 		self.mpdc.noidle()
 		self.mpdc.command_list_ok_begin()
 		self.mpdc.currentsong()
-		self.mpdc.send_idle()
-		
 		results = self.mpdc.command_list_end()
+		self.mpdc.send_idle()
 		print results[0]
 
 		#return self.mpdc.currentsong()
