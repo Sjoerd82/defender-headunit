@@ -198,6 +198,27 @@ class SourceController():
 			return self.iCurrentSource
 		elif iSourceCnt == 1:
 			self.__printer('NEXT: Only one source, cannot switch.',LL_WARNING)
+
+			# it's possible the iCurrentSource isn't set yet
+			if self.iCurrentSource is None:
+				i = 0
+				for source in self.lSource:
+					if source['available'] and not source['template']:
+						self.iCurrent = i
+						self.iCurrentSource[0] = i
+						self.iCurrentSource[1] = None
+						return 0
+					elif source['available'] and source['template']::
+						self.iCurrentSource = i
+						j = 0
+						for subsource in source['subsources']:
+							if subsource['available']:
+								self.iCurrentSS = j
+								self.iCurrentSource[1] = j
+								return 0
+							j += 1
+					i += 1
+
 			return self.iCurrentSource
 
 		#
