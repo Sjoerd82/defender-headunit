@@ -294,12 +294,14 @@ class mpdController():
 
 		results = self.mpdc.command_list_end()
 		self.mpdc.send_idle()
-		print results
-		print results[0]
+		
+		#print results
+
+		#print results[0]:
+		#{'songid': '14000', 'playlistlength': '7382', 'playlist': '8', 'repeat': '1', 'consume': '0', 'mixrampdb': '0.000000', 'random': '1', 'state': 'play', 'elapsed': '0.000', 'volume': '100', 'single': '0', 'nextsong': '806', 'time': '0:239', 'duration': '239.020', 'song': '6545', 'audio': '44100:24:2', 'bitrate': '0', 'nextsongid': '8261'}
 
 		#return self.mpdc.currentsong()
 		return results[0]
-		#return self.mpdc.status()
 
 	def mpc_get_trackcount( self ):
 		#TODO
@@ -502,60 +504,7 @@ def mpc_save_pos( source ):
 		mpc_save_pos_for_label ('smb')
 """
 
-def mpc_save_pos_for_label ( label, pcklPath ):
-	printer('Saving playlist position for label: {0}'.format(label))
-	oMpdClient = MPDClient() 
-	oMpdClient.timeout = 10                # network timeout in seconds (floats allowed), default: None
-	oMpdClient.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
-	oMpdClient.connect("localhost", 6600)  # connect to localhost:6600
 
-	oMpdClient.command_list_ok_begin()
-	oMpdClient.status()
-	results = oMpdClient.command_list_end()
-
-	songid = None
-	testje = None
-	current_song_listdick = None
-	# Dictionary in List
-	try:
-		for r in results:
-			songid = r['songid']
-			timeelapsed = r['time']
-		
-		current_song_listdick = oMpdClient.playlistid(songid)
-	except:
-		print(' ...  Error, key not found!')
-		print results
-
-	#print("DEBUG: current song details")
-	debugging = oMpdClient.currentsong()
-	try:
-		#print debugging
-		testje = debugging['file']
-		#print testje
-	except:
-		print(' ...  Error, key not found!')
-		print debugging
-		
-	oMpdClient.close()
-	oMpdClient.disconnect()
-
-	if testje == None:
-		print('DEBUG: BREAK BREAK')
-		return 1
-
-	if songid == None:
-		current_file=testje
-	else:	
-		for f in current_song_listdick:
-				current_file = f['file']
-
-	dSavePosition = {'file': current_file, 'time': timeelapsed}
-	print(' ...  file: {0}, time: {1}'.format(current_file,timeelapsed))
-
-	#if os.path.isfile(pickle_file):
-	pickle_file = pcklPath + "/mp_" + label + ".p"
-	pickle.dump( dSavePosition, open( pickle_file, "wb" ) )
 
 def mpc_lkp( label ):
 

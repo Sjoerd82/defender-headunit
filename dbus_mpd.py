@@ -136,6 +136,8 @@ class mpdControl(dbus.service.Object):
 			#		print(r)		
 			elif e == "database":
 				self.mpd_control('database')
+			elif e == "options":
+				print "OPTIONS! RANDOM??"
 			else:
 				print(' ...  unmanaged event')
 	

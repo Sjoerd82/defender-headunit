@@ -17,7 +17,16 @@
 #
 # configuration.json		Main configuration file (json)
 # dSettings.json			Operational settings (json)
-# mp_<id>.p					Operational source settings, to continue playback (pickled)
+#
+# Operational source settings, to continue playback (pickled):
+#
+# fm.p
+# media/<uuid>.p			
+# locmus/<mountpoint>.p		
+# smb/<ip_mountpoint>.p		172_16_8_11_music
+#
+# ?:
+# stream, line, bt
 # 
 
 #********************************************************************************
@@ -285,6 +294,63 @@ def cb_mpd_event( event ):
 	global settings
 	global mpdc
 
+	#def mpc_save_pos_for_label ( label, pcklPath ):
+	"""
+	def save_pos_for_label ( label, pcklPath ):
+		printer('Saving playlist position for label: {0}'.format(label))
+		oMpdClient = MPDClient() 
+		oMpdClient.timeout = 10                # network timeout in seconds (floats allowed), default: None
+		oMpdClient.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
+		oMpdClient.connect("localhost", 6600)  # connect to localhost:6600
+
+		oMpdClient.command_list_ok_begin()
+		oMpdClient.status()
+		results = oMpdClient.command_list_end()
+
+		songid = None
+		testje = None
+		current_song_listdick = None
+		# Dictionary in List
+		try:
+			for r in results:
+				songid = r['songid']
+				timeelapsed = r['time']
+			
+			current_song_listdick = oMpdClient.playlistid(songid)
+		except:
+			print(' ...  Error, key not found!')
+			print results
+
+		#print("DEBUG: current song details")
+		debugging = oMpdClient.currentsong()
+		try:
+			#print debugging
+			testje = debugging['file']
+			#print testje
+		except:
+			print(' ...  Error, key not found!')
+			print debugging
+			
+		oMpdClient.close()
+		oMpdClient.disconnect()
+
+		if testje == None:
+			print('DEBUG: BREAK BREAK')
+			return 1
+
+		if songid == None:
+			current_file=testje
+		else:	
+			for f in current_song_listdick:
+					current_file = f['file']
+
+		dSavePosition = {'file': current_file, 'time': timeelapsed}
+		print(' ...  file: {0}, time: {1}'.format(current_file,timeelapsed))
+
+		#if os.path.isfile(pickle_file):
+		pickle_file = pcklPath + "/mp_" + label + ".p"
+		pickle.dump( dSavePosition, open( pickle_file, "wb" ) )
+	"""
 	printer('DBUS event received: {0}'.format(event), tag='MPD')
 
 	# anything related to the player	
@@ -295,6 +361,12 @@ def cb_mpd_event( event ):
 		#print "STATUS: {0}.".format(status)
 		#print "STATE : {0}.".format(status['state'])
 		
+		"""status:
+		{'songid': '14000', 'playlistlength': '7382', 'playlist': '8', 'repeat': '1', 'consume': '0', 'mixrampdb': '0.000000',
+		'random': '1', 'state': 'play', 'elapsed': '0.000', 'volume': '100', 'single': '0', 'nextsong': '806', 'time': '0:239',
+		'duration': '239.020', 'song': '6545', 'audio': '44100:24:2', 'bitrate': '0', 'nextsongid': '8261'}
+		"""
+		
 		if 'state' in status:
 			if status['state'] == 'stop':
 				print 'detected that mpd playback has stopped.. ignoring this'
@@ -302,18 +374,35 @@ def cb_mpd_event( event ):
 				print 'detected that mpd playback has paused.. ignoring this'
 			elif status['state'] == 'play':
 				print "do stuff for play"
-	
-	#	currSrc = Sources.get( None )
-		
-		
-		
-		
-	# OLD, NEEDS UPDATE: #todo
-	#	if not currSrc == None:
-	#		if 'label' in currSrc:
-	#			mpc_save_pos_for_label( currSrc['label'], "/mnt/PIHU_CONFIG" )
-	#		else:
-	#			mpc_save_pos_for_label( currSrc['name'], "/mnt/PIHU_CONFIG" )
+				
+				# one of the following possible things have happened:
+				# - prev track, next track, seek track
+						
+				###mpc_save_pos_for_label###
+				
+				currSrc = Sources.get()
+				
+				print currSrc["name"]
+				try:
+					print currSrc["subsource_key"]
+					print currSrc["filename_save"]
+				except:
+					pass
+				print status['songid']
+				print status['time']
+				print status['elapsed']
+				print status['duration']
+				
+				#if currSrc
+				
+				#"filename_save": ["uuid"]
+				
+				# OLD, NEEDS UPDATE: #todo
+				#	if not currSrc == None:
+				#		if 'label' in currSrc:
+				#			mpc_save_pos_for_label( currSrc['label'], "/mnt/PIHU_CONFIG" )
+				#		else:
+				#			mpc_save_pos_for_label( currSrc['name'], "/mnt/PIHU_CONFIG" )
 
 		""" PROBLEMS AHEAD
 		
