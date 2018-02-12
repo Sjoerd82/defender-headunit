@@ -416,6 +416,7 @@ def cb_mpd_event( event ):
 				print(' ...  file: {0}, time: {1}'.format(current_file,timeelapsed))
 
 				#if os.path.isfile(pickle_file):
+				pcklPath = "/mnt/PIHU_CONFIG"
 				pickle_file = pcklPath + "/" + source_name + "/" + source_key + ".p"
 				pickle.dump( dSavePosition, open( pickle_file, "wb" ) )
 
