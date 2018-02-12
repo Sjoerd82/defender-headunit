@@ -276,8 +276,10 @@ class mpdController():
 		self.mpdc.currentsong()
 		results = self.mpdc.command_list_end()
 		self.mpdc.send_idle()
-		print results[0]
-
+		
+		# print results[0]
+		#{'album': 'Exodus', 'composer': 'Andy Hunter/Tedd T.', 'title': 'Go', 'track': '1', 'duration': '411.480', 'artist': 'Andy Hunter', 'pos': '0', 'last-modified': '2013-10-12T15:53:13Z', 'albumartist': 'Andy Hunter', 'file': 'PIHU_SMB/music/electric/Andy Hunter/Andy Hunter - 2002 - Exodus/01 - Andy Hunter - Go.mp3', 'time': '411', 'date': '2002', 'genre': 'Electronic/Dance', 'id': '44365'}
+		
 		#return self.mpdc.currentsong()
 		return results[0]
 

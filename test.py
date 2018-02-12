@@ -377,36 +377,47 @@ def cb_mpd_event( event ):
 				
 				source_name = currSrc["name"]
 				if 'filename_save' in currSrc:
-					source_key = currSrc["filename_save"]
+					#source_key = currSrc["filename_save"]
+					# todo!
+					source_key = currSrc["filename_save"][0]
 				else:
 					source_key = "untitled"
 				
+				timeelapsed = status['time']
+				
 				print source_name
 				print source_key
+				print timeelapsed
 				try:
 					print currSrc["subsource_key"]
 					print currSrc["filename_save"]
 				except:
 					pass
 				print status['songid']
-				print status['time']
 				print status['elapsed']
 				print status['duration']
 				
-				printer('Saving playlist position for: {0}, {1}'.format(source_name,source_key))
+				
 				
 				currSong = mpdc.mpc_get_currentsong()
-				print currSong
-				
-				
+				"""print currSong
+				{'album': 'Exodus', 'composer': 'Andy Hunter/Tedd T.', 'title': 'Go', 'track': '1', 'duration': '411.480',
+				'artist': 'Andy Hunter', 'pos': '0', 'last-modified': '2013-10-12T15:53:13Z', 'albumartist': 'Andy Hunter',
+				'file': 'PIHU_SMB/music/electric/Andy Hunter/Andy Hunter - 2002 - Exodus/01 - Andy Hunter - Go.mp3',
+				'time': '411', 'date': '2002', 'genre': 'Electronic/Dance', 'id': '44365'}
 				"""
+				current_file = currSong['file']
+				print current_file
+				
+				printer('Saving playlist position for: {0}, {1}'.format(source_name,source_key))
+				
+
 				dSavePosition = {'file': current_file, 'time': timeelapsed}
 				print(' ...  file: {0}, time: {1}'.format(current_file,timeelapsed))
 
 				#if os.path.isfile(pickle_file):
-				pickle_file = pcklPath + "/mp_" + label + ".p"
+				pickle_file = pcklPath + "/" + source_name + "/" + source_key + ".p"
 				pickle.dump( dSavePosition, open( pickle_file, "wb" ) )
-				"""
 
 				#if currSrc
 				
