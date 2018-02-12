@@ -208,7 +208,7 @@ class SourceController():
 						self.iCurrentSource[0] = i
 						self.iCurrentSource[1] = None
 						return 0
-					elif source['available'] and source['template']::
+					elif source['available'] and source['template']:
 						self.iCurrentSource = i
 						j = 0
 						for subsource in source['subsources']:
