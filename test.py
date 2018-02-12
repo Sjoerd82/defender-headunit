@@ -380,7 +380,7 @@ def cb_mpd_event( event ):
 						
 				###mpc_save_pos_for_label###
 				
-				currSrc = Sources.get()
+				currSrc = Sources.get( None ) # None = Current
 				
 				print currSrc["name"]
 				try:
