@@ -134,7 +134,7 @@ class mpdControl(dbus.service.Object):
 			#
 			#	for r in results:
 			#		print(r)		
-			elif e == "database"
+			elif e == "database":
 				self.mpd_control('database')
 			else:
 				print(' ...  unmanaged event')

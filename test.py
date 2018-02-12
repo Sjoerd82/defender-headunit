@@ -1623,12 +1623,6 @@ myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 # QuickPlay
 #
 
-# TESTING....
-#testSs = {'mountpoint':'/media/SJOERD'}
-#cSettings.set('source','media')
-#cSettings.set('subsource',testSs)
-#cSettings.save()
-
 prevSource = cSettings.get_key('source')
 prevSourceSub = cSettings.get_key('subsourcekey')
 
@@ -1748,6 +1742,9 @@ mainloop = gobject.MainLoop()
 #
 # 30 second timer
 #
+# timer1:
+# - Save settings
+# - check if dbus services still online? (or make this a separate service?)
 gobject.timeout_add_seconds(30,cb_timer1)
 
 #

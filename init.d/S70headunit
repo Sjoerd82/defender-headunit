@@ -1,0 +1,36 @@
+#!/bin/sh
+#Main headunit script
+
+# TODO
+DAEMON="/mnt/PIHU_APP/defender-headunit/headunit.py"
+
+start() {
+        if [ -f $DAEMON ]; then
+          echo "Script: ${DAEMON} found.."
+          $DAEMON &
+        else
+          echo "${DAEMON} not found!"
+        fi
+}
+
+stop() {
+        echo "Not yet implemented"
+}
+
+case "$1" in
+  start)
+        start
+        ;;
+  stop)
+        stop
+        ;;
+  restart|reload)
+        stop
+        start
+        ;;
+  *)
+        echo "Usage: $0 {start|stop|restart}"
+        exit 1
+esac
+
+exit $?
