@@ -297,11 +297,6 @@ def cb_mpd_event( event ):
 	#def mpc_save_pos_for_label ( label, pcklPath ):
 	"""
 	def save_pos_for_label ( label, pcklPath ):
-		printer('Saving playlist position for label: {0}'.format(label))
-		oMpdClient = MPDClient() 
-		oMpdClient.timeout = 10                # network timeout in seconds (floats allowed), default: None
-		oMpdClient.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
-		oMpdClient.connect("localhost", 6600)  # connect to localhost:6600
 
 		oMpdClient.command_list_ok_begin()
 		oMpdClient.status()
@@ -331,8 +326,6 @@ def cb_mpd_event( event ):
 			print(' ...  Error, key not found!')
 			print debugging
 			
-		oMpdClient.close()
-		oMpdClient.disconnect()
 
 		if testje == None:
 			print('DEBUG: BREAK BREAK')
@@ -382,7 +375,14 @@ def cb_mpd_event( event ):
 				
 				currSrc = Sources.get( None ) # None = Current
 				
-				print currSrc["name"]
+				source_name = currSrc["name"]
+				if 'filename_save' in currSrc:
+					source_key = currSrc["filename_save"]
+				else:
+					source_key = "untitled"
+				
+				print source_name
+				print source_key
 				try:
 					print currSrc["subsource_key"]
 					print currSrc["filename_save"]
@@ -393,6 +393,21 @@ def cb_mpd_event( event ):
 				print status['elapsed']
 				print status['duration']
 				
+				printer('Saving playlist position for: {0}, {1}'.format(source_name,source_key))
+				
+				currSong = mpdc.mpc_get_currentsong()
+				print currSong
+				
+				
+				"""
+				dSavePosition = {'file': current_file, 'time': timeelapsed}
+				print(' ...  file: {0}, time: {1}'.format(current_file,timeelapsed))
+
+				#if os.path.isfile(pickle_file):
+				pickle_file = pcklPath + "/mp_" + label + ".p"
+				pickle.dump( dSavePosition, open( pickle_file, "wb" ) )
+				"""
+
 				#if currSrc
 				
 				#"filename_save": ["uuid"]
