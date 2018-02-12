@@ -574,29 +574,24 @@ def udisk_details( device, action ):
 		# WHAT IF IT'S PLAYING??
 		# TODO CHECK IF PLAYING!!
 	
-	
-		print device
-		print('Removed: {0}'.format(str(device)))
-
-		stringvar = str(device)
+		# TODO ignore /dev/sda
 		
-		partition = "/dev/"+os.path.basename(stringvar)
-		print partition
+		# form the partition device name
+		partition = "/dev/"+os.path.basename(str(device))
 
-		# get subsource index
+		# search for the subsource index
 		ix_ss = Sources.getIndexSub(ix, 'device', partition)
-		print ix_ss
 		if not ix_ss is None:
 		
+			printer(' > Found {0}. Removing...'.format(partition))
+			
 			# remove subsource
 			Sources.remSub(ix, ix_ss)
 		
 			# display overview
 			printSummary(Sources)
 		else:
-			printer('Not found in sources: {0}'.format('xxx'))
-			printSummary(Sources)
-		
+			printer(' > Not a subsource: {0}'.format(partition))	
 		
 	else:
 		printer(" > ERROR: Invalid action.",tag=mytag)
