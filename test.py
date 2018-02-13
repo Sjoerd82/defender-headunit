@@ -378,7 +378,7 @@ def cb_mpd_event( event ):
 				source_name = currSrc["name"]
 				if 'filename_save' in currSrc:
 					#source_key = currSrc["filename_save"]
-					# todo!
+					# todo! get actual value and convert any slashes and other invalid filename chars to _
 					source_key = currSrc["filename_save"][0]
 				else:
 					source_key = "untitled"
