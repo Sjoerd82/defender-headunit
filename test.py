@@ -77,6 +77,12 @@
 
 #********************************************************************************
 #
+# Version
+#
+from .version import __version__
+
+#********************************************************************************
+#
 # Logging
 #
 import logging
@@ -1596,7 +1602,7 @@ VolPulse.set( settings['volume'] )
 # "Splash Screen": Display version and play startup tune
 #
 #
-myprint('Headunit.py version {0}'.format(VERSION),tag='SYSTEM')
+myprint('Headunit.py version {0}'.format(__version__),tag='SYSTEM')
 pa_sfx('startup')
 
 #
