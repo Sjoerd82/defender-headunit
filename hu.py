@@ -379,13 +379,16 @@ def cb_mpd_event( event ):
 						
 				###mpc_save_pos_for_label###
 				
-				currSrc = Sources.get( None ) # None = Current
+				#currSrc = Sources.get( None ) # None = Current
+				currSrc = Sources.getComposite()
+				print currSrc
 				
 				source_name = currSrc["name"]
 				if 'filename_save' in currSrc:
 					#source_key = currSrc["filename_save"]
 					# todo! get actual value and convert any slashes and other invalid filename chars to _
-					source_key = currSrc["filename_save"][0]
+					source_key = currSrc["filename_save"][0]	#eg "mountpoint"
+					source_key_value = currSrc["subsources"][source_key]
 				else:
 					source_key = "untitled"
 				
@@ -393,6 +396,7 @@ def cb_mpd_event( event ):
 				
 				print source_name
 				print source_key
+				print source_key_value
 				print timeelapsed
 				try:
 					print currSrc["subsource_key"]
