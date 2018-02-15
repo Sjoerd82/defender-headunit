@@ -1,6 +1,6 @@
 #!/bin/sh
 
-DAEMON="/mnt/PIHU_APP/defender-headunit/dbus_mpd.py"
+DAEMON="/mnt/PIHU_APP/defender-headunit/d_dbus_mpd.py"
 
 start() {
         if [ -f $DAEMON ]; then
