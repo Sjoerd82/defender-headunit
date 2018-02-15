@@ -889,22 +889,23 @@ def dir_next():
 
 	# check if the source supports dirnext
 	if 'dirnext' in currSrc['controls'] and currSrc['controls']['dirnext']:
-		printer('OK!', tag='nxtdir')
 		pa_sfx('button_feedback')
 
 		if not arMpcPlaylistDirs:
-		
+			printer(' > Building new dirlist.. standby!', tag='nxtdir')
 			# TESTING
 			dir_to_file( True )
 			
 			# TESTING
 			#ardirs = load_dirlist()
+		else:
+			printer(' > Reusing dirlist', tag='nxtdir')
 		
 		# TESTING
 		nextpos = mpc_next_folder_pos(arMpcPlaylistDirs)
 		
-		printer('Next folder @ {0}'.format(nextpos))
-		call(["mpc", "-q", "random off", str(nextpos)])
+		printer(' > Next folder @ {0}'.format(nextpos))
+		call(["mpc", "-q", "random off"])
 		call(["mpc", "-q", "play", str(nextpos)])
 		
 	else:
