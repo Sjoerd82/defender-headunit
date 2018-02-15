@@ -149,6 +149,14 @@ import dbus.exceptions
 import gobject
 from dbus.mainloop.glib import DBusGMainLoop
 
+#********************************************************************************
+#
+# Third party and others...
+#
+
+from slugify import slugify
+
+
 # GLOBAL vars
 Sources = SourceController()	#TODO: rename "Sources" -- confusing name
 mpdc = None
@@ -388,7 +396,7 @@ def cb_mpd_event( event ):
 					#source_key = currSrc["filename_save"]
 					# todo! get actual value and convert any slashes and other invalid filename chars to _
 					source_key = currSrc["filename_save"][0]	#eg "mountpoint"
-					source_key_value = currSrc["subsources"][source_key]
+					source_key_value = slugify( currSrc["subsources"][0][source_key] )
 				else:
 					source_key = "untitled"
 				
