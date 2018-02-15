@@ -882,7 +882,8 @@ def do_source():
 		
 def dir_next():
 	global Sources
-
+	global arMpcPlaylistDirs
+	
 	# get current source
 	currSrc = Sources.get(None)
 
@@ -891,16 +892,19 @@ def dir_next():
 		printer('OK!', tag='nxtdir')
 		pa_sfx('button_feedback')
 
-		# TESTING
-		dir_to_file()
+		if not arMpcPlaylistDirs:
+		
+			# TESTING
+			dir_to_file( True )
+			
+			# TESTING
+			#ardirs = load_dirlist()
 		
 		# TESTING
-		ardirs = load_dirlist()
-		
-		# TESTING
-		nextpos = mpc_next_folder_pos(ardirs)
+		nextpos = mpc_next_folder_pos(arMpcPlaylistDirs)
 		
 		printer('Next folder @ {0}'.format(nextpos))
+		call(["mpc", "-q", "random off", str(nextpos)])
 		call(["mpc", "-q", "play", str(nextpos)])
 		
 	else:
@@ -908,14 +912,21 @@ def dir_next():
 		printer('Function not available for this source.', level=LL_WARNING)
 
 
-def dir_to_file():
+# change? instead pass a variable to be filled with the dirlist?
+def dir_to_file( current=True ):
+
+	global arMpcPlaylistDirs
 
 	# local variables
 	dirname_current = ''
 	dirname_prev = ''
 	iPos = 1
-		
+	
 	pipe = Popen('mpc -f %file% playlist', shell=True, stdout=PIPE)
+
+	# if current == True, then update the global current dirlist, so first clear it:
+	if current:
+		arMpcPlaylistDirs = [ ]
 	
 	# todo: future, create them per (sub)source
 	dirfile = '/mnt/PIHU_CONFIG/dl_current.txt'
@@ -924,7 +935,9 @@ def dir_to_file():
 			dirname_current=os.path.dirname(line.strip())
 			t = iPos, dirname_current
 			if dirname_prev != dirname_current:
-				#arMpcPlaylistDirs.append(t)
+				# if current == True, then update the global current dirlist
+				if current:
+					arMpcPlaylistDirs.append(t)
 				dirs.write("{0}|{1}\n".format(iPos,dirname_current))
 			dirname_prev = dirname_current
 			iPos += 1
