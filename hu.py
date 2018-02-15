@@ -421,10 +421,13 @@ def cb_mpd_event( event ):
 				dSavePosition = {'file': current_file, 'time': timeelapsed}
 				print(' ...  file: {0}, time: {1}'.format(current_file,timeelapsed))
 
-				#if os.path.isfile(pickle_file):
-				pcklPath = "/mnt/PIHU_CONFIG"
-				pickle_file = pcklPath + "/" + source_name + "/" + source_key + ".p"
-				pickle.dump( dSavePosition, open( pickle_file, "wb" ) )
+				# create path, if it doesn't exist yet..
+				pckl_path = os.path.join('/mnt/PIHU_CONFIG',source_name)
+				if not os.path.exists(pckl_path):
+					os.makedirs(pckl_path)
+				# pickle file will be created by dump, if it doesn't exist yet
+				pckl_file = os.path.join(pckl_path,source_key + ".p")
+				pickle.dump( dSavePosition, open( pckl_file, "wb" ) )
 
 				#if currSrc
 				
@@ -905,7 +908,7 @@ def dir_next():
 		nextpos = mpc_next_folder_pos(arMpcPlaylistDirs)
 		
 		printer(' > Next folder @ {0}'.format(nextpos))
-		call(["mpc", "-q", "random off"])
+		call(["mpc", "-q", "random", "off"])
 		call(["mpc", "-q", "play", str(nextpos)])
 		
 	else:
