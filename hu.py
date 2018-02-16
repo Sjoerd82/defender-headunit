@@ -1841,7 +1841,14 @@ else:
 # Save Settings
 currSrc = Sources.getComposite()
 cSettings.set('source',currSrc['name'])
-cSettings.set('subsourcekey',currSrc['subsource_key'])
+
+# update sub-source key (in case of sub-source)
+if currSrc['subsource']:
+	subsource_key = {}
+	for key in currSrc['subsource_key']:
+		subsource_key[key] = currSrc['subsources'][arCurrIx[1]][key]
+	cSettings.set('subsourcekey', subsource_key)
+
 cSettings.save()
 
 		
