@@ -192,10 +192,7 @@ class sourceClass():
 		#
 		# continue where left
 		#
-		print resume
-		#playslist_pos = self.mpc.lastKnownPos( sLabel )
 		playslist_pos = self.mpc.lastKnownPos2( resume['file'], resume['time'] )	
-		#psfind = self.mpc.playlistfind('filename',resume['file'])
 		
 		self.__printer(' > Starting playback')
 		#mpc.playStart( str(playslist_pos['pos']), playslist_pos['time'] )

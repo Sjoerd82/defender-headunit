@@ -58,6 +58,8 @@ class mpdController():
 
 		try:
 			self.mpdc.noidle()
+		except MPDConnectionError:
+			self.mpdc.connect("localhost", 6600)
 		except:
 			printer('WEIRD... no idle was set..')
 		
@@ -73,7 +75,12 @@ class mpdController():
 	def playlistPop( self, type, sMpdDir ):
 		printer('Populating playlist, folder: {0}'.format(sMpdDir))
 
-		self.mpdc.noidle()
+		try:
+			self.mpdc.noidle()
+		except MPDConnectionError:
+			self.mpdc.connect("localhost", 6600)
+		except:
+			printer('WEIRD... no idle was set..')
 	
 		if type == 'locmus' or type == 'smb' or type == 'media':
 			try:
@@ -107,7 +114,13 @@ class mpdController():
 	def playlistIsPop( self ):
 		printer('Checking if playlist is populated')
 
-		self.mpdc.noidle()
+		try:
+			self.mpdc.noidle()
+		except MPDConnectionError:
+			self.mpdc.connect("localhost", 6600)
+		except:
+			printer('WEIRD... no idle was set..')
+		
 		self.mpdc.command_list_ok_begin()
 		self.mpdc.status()
 		results = self.mpdc.command_list_end()
@@ -155,6 +168,8 @@ class mpdController():
 
 		try:
 			self.mpdc.noidle()
+		except MPDConnectionError:
+			self.mpdc.connect("localhost", 6600)
 		except:
 			printer('WEIRD... no idle was set..')
 
@@ -229,6 +244,8 @@ class mpdController():
 		
 		try:
 			self.mpdc.noidle()
+		except MPDConnectionError:
+			self.mpdc.connect("localhost", 6600)
 		except:
 			printer('WEIRD... no idle was set..')
 		
@@ -304,7 +321,13 @@ class mpdController():
 		
 	def mpc_get_currentsong( self ):
 	
-		self.mpdc.noidle()
+		try:
+			self.mpdc.noidle()
+		except MPDConnectionError:
+			self.mpdc.connect("localhost", 6600)
+		except:
+			printer('WEIRD... no idle was set..')
+			
 		self.mpdc.command_list_ok_begin()
 		self.mpdc.currentsong()
 		results = self.mpdc.command_list_end()
@@ -320,6 +343,8 @@ class mpdController():
 
 		try:
 			self.mpdc.noidle()
+		except MPDConnectionError:
+			self.mpdc.connect("localhost", 6600)
 		except:
 			printer('WEIRD... no idle was set..')
 
