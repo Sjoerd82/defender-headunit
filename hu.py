@@ -597,6 +597,18 @@ def cb_timer2():
 	qPrio.put('VOL_UP',False)
 	return True
 
+
+# called when the ifup script is called (interface up)
+def cb_ifup():
+	global Sources
+	printer('Network interface online')
+
+	ix = 0
+	for source in Sources.getAll():
+		if source['depNetwork']:
+			Source.sourceCheck(ix)
+
+	
 def cb_udisk_dev_add( device ):
 	printer('Device added: {0}'.format(str(device)),tag='UDISKS')
 	item = {}
@@ -1995,6 +2007,7 @@ bus.add_signal_receiver(cb_remote_btn_press, dbus_interface = "com.arctura.remot
 bus.add_signal_receiver(cb_remote_btn_press2, dbus_interface = "com.arctura.keyboard")
 bus.add_signal_receiver(cb_udisk_dev_add, signal_name='DeviceAdded', dbus_interface="org.freedesktop.UDisks")
 bus.add_signal_receiver(cb_udisk_dev_rem, signal_name='DeviceRemoved', dbus_interface="org.freedesktop.UDisks")
+bus.add_signal_receiver(cb_ifup, signal_name='ifup', dbus_interface="com.arctura.ifup")
 
 
 #
