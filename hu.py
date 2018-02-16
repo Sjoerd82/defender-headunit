@@ -215,7 +215,7 @@ def queue(q, item, sfx=None):
 	return 0
 
 # todo: rename? put in hu_settings?
-def save_current_position()
+def save_current_position():
 
 	global Sources
 	global mpdc
@@ -262,7 +262,7 @@ def save_current_position()
 	pckl_file = os.path.join(pckl_path,source_key_value + ".p")
 	pickle.dump( dSave, open( pckl_file, "wb" ) )
 
-def load_current_resume()
+def load_current_resume():
 
 	global Sources
 	global mpdc
