@@ -103,9 +103,6 @@ class sourceClass():
 			mountpoints.append(subsource['mountpoint'])
 			ssIx = subSourceIx
 
-		# local dir, relative to MPD
-		sLocalMusicMPD = subsource['mpd_dir']
-
 		# check mountpoint(s)
 		for location in mountpoints:
 			self.__printer('SMB folder: {0}'.format(location))
@@ -113,6 +110,9 @@ class sourceClass():
 				self.__printer(" > SMB directory is empty.",LL_WARNING,True)
 			else:
 				self.__printer(" > SMB directory present and has files.",LL_INFO,True)
+				
+				# local dir, relative to MPD
+				sLocalMusicMPD = location['mpd_dir']
 				
 				if not self.mpc.dbCheckDirectory( sLocalMusicMPD ):
 					self.__printer(" > Running MPD update for this directory.. ALERT! LONG BLOCKING OPERATION AHEAD...")

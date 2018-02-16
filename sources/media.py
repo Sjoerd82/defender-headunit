@@ -155,7 +155,7 @@ class sourceClass():
 				self.__printer(" > Removable music directory present and has files.",LL_INFO,True)
 				if not self.mpc.dbCheckDirectory( mpd_dir ):
 					self.__printer(" > Running MPD update for this directory.. ALERT! LONG BLOCKING OPERATION AHEAD...")
-					self.mpc.update( mpd_dir )
+					self.mpc.update( mpd_dir, True )	#TODO: don't wait! set available on return of update..
 					if not self.mpc.dbCheckDirectory( mpd_dir ):
 						self.__printer(" > Nothing to play marking unavailable...")
 					else:

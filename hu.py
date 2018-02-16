@@ -427,7 +427,7 @@ def cb_mpd_event( event ):
 				current_file = currSong['file']
 				print current_file
 				
-				printer('Saving playlist position for: {0}, {1}'.format(source_name,source_key))
+				printer('Saving playlist position for: {0}: {1}'.format(source_name,source_key_value))
 				
 
 				dSavePosition = {'file': current_file, 'time': timeelapsed}
@@ -438,7 +438,7 @@ def cb_mpd_event( event ):
 				if not os.path.exists(pckl_path):
 					os.makedirs(pckl_path)
 				# pickle file will be created by dump, if it doesn't exist yet
-				pckl_file = os.path.join(pckl_path,source_key + ".p")
+				pckl_file = os.path.join(pckl_path,source_key_value + ".p")
 				pickle.dump( dSavePosition, open( pckl_file, "wb" ) )
 
 				#if currSrc
