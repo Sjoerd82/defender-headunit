@@ -233,6 +233,7 @@ def save_current_position(timeelapsed):
 			source_key_value = "untitled"
 	else:
 		source_key = "untitled"
+		source_key_value = "untitled"
 
 	# get time into track
 	#timeelapsed = status['time']
@@ -280,6 +281,7 @@ def load_current_resume():
 			source_key_value = "untitled"
 	else:
 		source_key = "untitled"
+		source_key_value = "untitled"
 				
 	# load file
 	printer('Loading playlist position for: {0}: {1}'.format(source_name,source_key_value))
