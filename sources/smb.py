@@ -161,11 +161,11 @@ class sourceClass():
 
 		
 	def play( self, sourceCtrl, resume={} ):
-		self.__printer('Start playing')
+		self.__printer('Start playing (MPD)')
+		
 		#
 		# variables
 		#
-		
 		arIx = sourceCtrl.getIndexCurrent()
 		subsource = sourceCtrl.getSubSource( arIx[0], arIx[1] )
 		sLocalMusicMPD = subsource['mpd_dir']

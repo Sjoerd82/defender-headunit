@@ -230,7 +230,7 @@ def save_current_position(timeelapsed):
 			source_key_value = slugify( currSrc["subsource"][source_key] )
 		else:
 			printer("Error creating savefile, source_key ({0}) doesn't exist".format(source_key))
-			source_key = "untitled"
+			source_key_value = "untitled"
 	else:
 		source_key = "untitled"
 

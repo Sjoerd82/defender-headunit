@@ -276,11 +276,18 @@ class sourceClass():
 		return False
 		"""
 		
-	def play( self, sourceCtrl, subSourceIx=None ):
+	def play( self, sourceCtrl, resume={} ):
 		self.__printer('Start playing (MPD)')
+		
 		#
 		# variables
 		#
+		arIx = sourceCtrl.getIndexCurrent()
+		subsource = sourceCtrl.getSubSource( arIx[0], arIx[1] )
+		sLocalMusicMPD = subsource['mpd_dir']
+		sUsbLabel = subsource['label']
+		print sLocalMusicMPD
+		print sUsbLabel
 		
 		#debug/test:
 		sUsbLabel = "SJOERD"
@@ -335,8 +342,11 @@ class sourceClass():
 		#
 		# continue where left
 		#
-		
-		playslist_pos = self.mpc.lastKnownPos( sUsbLabel )
+		if resume:
+			playslist_pos = self.mpc.lastKnownPos2( resume['file'], resume['time'] )
+			#playslist_pos = self.mpc.lastKnownPos( sUsbLabel )
+		else:
+			playslist_pos = {'pos': 1, 'time': 0}
 		
 		self.__printer(' > Starting playback')
 		#mpc.playStart( str(playslist_pos['pos']), playslist_pos['time'] )
