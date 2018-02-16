@@ -1,45 +1,3 @@
-#!/usr/bin/python
-
-# Headunit, created to function as a car's headunit.
-# Designed to be controlled by a Sony RM-X2S or RM-X4S resistor network style remote control.
-# Music is played using MPD.
-#
-# Author: Sjoerd Venema
-# License: MIT
-#
-# Contains parts of "blueagent5.py"
-#
-# Dependencies: python-gobject, ...
-#
-
-#
-# Available sources:
-# - Local music folder
-# - Flash drive
-# - FM radio
-# - Bluetooth
-# - Airplay (future plan)
-# - Line-In (detection via ADC -- TODO)
-#
-# Remote control:
-# - Sony RM-X2S, RM-X4S via ADS1x15 ADC module
-# - Any MPD client, when in local/usb music mode
-# - CAN bus (future plan)
-#
-# Future plans:
-# - Add output for an LCD display
-# - Pi Zero hat
-# - Line-In hardware control
-
-# Known issues/limitations
-# - Audio channels don't seem to mute on start, but if they do, we don't have anything implemented to unmute them.
-
-# Instructions for running on Windows:
-# - Python 2 (latest = 2.7)
-# - Cygwin
-# - pip install python-mpd2 	( current = 0.5.5 2017/12/24, but Buildroot is still at 0.5.1 )
-#
-
 import os
 import time
 import subprocess
@@ -75,13 +33,6 @@ import logging
 #from pid import PidFile
 from optparse import OptionParser
 
-#to check for an internet connection
-import socket
-
-#to check an URL
-#import httplib2	# Buildroot is not supporting SSL... somehow...
-import urllib2
-
 # Source class
 from source import Source
 
@@ -96,10 +47,7 @@ dSettings = {'source': -1, 'volume': 20, 'mediasource': -1, 'medialabel': ''}	 #
 sDirRoot = "/mnt/PIHU_APP/defender-headunit"
 sDirSave = "/mnt/PIHU_CONFIG"
 bBeep = 0									 # Use hardware beep?
-sInternet = "www.google.com"				 # URL to test internet with
 bInit = 1									 # Are we in init() phase?
-iThrElapsed = 20							 # Minimal time that must have elapsed into a track in order to resume position
-iThrTotal = 30								 # Minimal track length required in order to resume position
 bMpcInit = False
 bBtInit = False
 bMpdUpdateSmb = False
@@ -159,137 +107,6 @@ LOG_FORMAT = "%(asctime)s %(levelname)s [%(module)s] %(message)s"
 #lDevices = [['/dev/sda1','/dev/sdb1']['SJOERD','MUSIC']]
 
 
-# ********************************************************************************
-# Callback functions
-#
-#  - Remote control
-#  - MPD events
-#  - UDisk add/remove drive
-
-def cb_remote_btn_press ( func ):
-
-	global Sources
-
-	# Handle button press
-	if func == 'SHUFFLE':
-		print('\033[95m[BUTTON] Shuffle\033[00m')
-		random( 'toggle' )
-	elif func == 'SOURCE':
-		print('\033[95m[BUTTON] Next source\033[00m')
-		pa_sfx('button_feedback')
-		# if more than one source available...
-		if Sources.getAvailableCnt() > 1:
-			source_stop()
-			#source_next()
-			Sources.sourceNext()
-			source_play()
-	elif func == 'ATT':
-		print('\033[95m[BUTTON] ATT\033[00m')
-		pa_sfx('button_feedback')
-		volume_att_toggle()
-	elif func == 'VOL_UP':
-		print('\033[95m[BUTTON] VOL_UP\033[00m')		
-		pa_sfx('button_feedback')
-		volume_up()
-		return 0
-	elif func == 'VOL_DOWN':
-		print('\033[95m[BUTTON] VOL_DOWN\033[00m')
-		pa_sfx('button_feedback')
-		volume_down()
-		return 0
-	elif func == 'SEEK_NEXT':
-		print('\033[95m[BUTTON] Seek/Next\033[00m')
-		pa_sfx('button_feedback')
-		seek_next()
-	elif func == 'SEEK_PREV':
-		print('\033[95m[BUTTON] Seek/Prev.\033[00m')
-		pa_sfx('button_feedback')
-		seek_prev()
-	elif func == 'DIR_NEXT':
-		print('\033[95m[BUTTON] Next directory\033[00m')
-		if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 6:
-			pa_sfx('button_feedback')
-			mpc_next_folder()
-		else:
-			pa_sfx('error')
-			print(' No function for this button! ')
-	elif func == 'DIR_PREV':
-		print('\033[95m[BUTTON] Prev directory\033[00m')
-		if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 6:
-			pa_sfx('button_feedback')
-			mpc_prev_folder()
-		else:
-			pa_sfx('error')
-			print(' No function for this button! ')
-	elif func == 'UPDATE_LOCAL':
-		print('\033[95m[BUTTON] Updating local MPD database\033[00m')
-		pa_sfx('button_feedback')
-		locmus_update()
-	elif func == 'OFF':
-		print('\033[95m[BUTTON] Shutting down\033[00m')
-		pa_sfx('button_feedback')
-		shutdown()
-	else:
-		print('Unknown button function')
-		pa_sfx('error')
-
-def cb_mpd_event( event ):
-	global bInit
-	global Sources
-
-	if bInit == 0:
-	
-		print('[MPD] DBUS event received: {0}'.format(event))
-
-		if event == "player":
-			mpc_save_pos()
-		elif event == "update":
-			print " ...  database update started or finished (no action)"
-		elif event == "database":
-			print " ...  database updated with new music #TODO"
-		elif event == "playlist":
-			print " ...  playlist changed (no action)"
-		#elif event == "media_removed":
-		#elif event == "media_ready":
-		elif event == "ifup":
-			print " ...  WiFi interface up: checking network related sources"
-			stream_check()
-			smb_check()
-		elif event == "ifdown":
-			print " ...  WiFi interface down: marking network related sources unavailable"
-			Sources.setAvailable('depNetwork',True,False)
-			#arSourceAvailable[5] = 0 #stream
-			#arSourceAvailable[6] = 0 #smb
-		else:
-			print(' ...  unknown event (no action)')
-
-def cb_udisk_dev_add( device ):
-	print('[UDISK] Device added: {0}'.format(str(device)))
-	udisk_details( device, 'A' )
-
-def cb_udisk_dev_rem( device ):
-	print('[UDISK] Device removed: {0}'.format(str(device)))
-	udisk_details( device, 'R' )
-
-def cb_periodically( test ):
-	print('[INT] Interval function')
-	print test
-
-def do_every(period,f,*args):
-    def g_tick():
-        t = time.time()
-        count = 0
-        while True:
-            count += 1
-            yield max(t + count*period - time.time(),0)
-    g = g_tick()
-    while True:
-        time.sleep(next(g))
-        f(*args)
-
-def cb_periodically( foo ):
-	printc('timed','Every minute','TMR')
-	time.sleep(.3)
 	
 # ********************************************************************************
 # bluezutils5.py
@@ -640,38 +457,7 @@ def beep():
 	time.sleep(0.05)
 	call(["gpio", "write", "6", "0"])
 
-def printc( title, text, style ):
-	print('[{0:6}] {1}'.format(title, text))
 
-def shutdown():
-	settings_save()
-	source_stop()
-	#call(["systemctl", "poweroff", "-i"])
-	call(["halt"])
-
-def internet():
-	try:
-		# connect to the host -- tells us if the host is actually reachable
-		socket.create_connection((sInternet, 80))
-		return True
-	except OSError:
-		pass
-	except:
-		pass
-	return False
-
-def url_check( url ):
-	# Using httplib2, supporting https (?):
-	#h = httplib2.Http()
-	#resp = h.request(url, 'HEAD')
-	#assert int(resp[0]['status']) < 400
-	
-	# Using urllib2:
-	try:
-		urllib2.urlopen(url)
-		return True
-	except:
-		return False
 
 
 # ********************************************************************************
@@ -739,49 +525,6 @@ def alsa_set_volume( volume ):
 		print('[ALSA] Setting volume to {0:d}%'.format(volume))
 		oAlsaMixer.setvolume(volume, alsaaudio.MIXER_CHANNEL_ALL)
 
-# ********************************************************************************
-# PulseAudio
-# Use 0-100 for volume.
-#
-def pa_init():
-	print('[PULSE] Loading sound effects')
-	call(["pactl","upload-sample",sDirRoot+"/sfx/startup.wav", "startup"])
-	call(["pactl","upload-sample",sDirRoot+"/sfx/beep_60.wav", "beep_60"])
-	call(["pactl","upload-sample",sDirRoot+"/sfx/beep_70.wav", "beep_70"])
-	call(["pactl","upload-sample",sDirRoot+"/sfx/beep_60_70.wav", "beep_60_70"])
-	call(["pactl","upload-sample",sDirRoot+"/sfx/beep_60_x2.wav", "beep_60_x2"])
-	call(["pactl","upload-sample",sDirRoot+"/sfx/error.wav", "error"])
-	call(["pactl","upload-sample",sDirRoot+"/sfx/bt.wav", "bt"])
-
-def pa_set_volume( volume ):
-	print('[PULSE] Setting volume')
-	pavol = pa_volume_handler('alsa_output.platform-soc_sound.analog-stereo')
-	pavol.vol_set_pct(volume)
-
-def pa_get_volume():
-	print('[PULSE] Getting volume')
-	pavol = pa_volume_handler('alsa_output.platform-soc_sound.analog-stereo')
-	return pavol.vol_get()
-
-def pa_sfx( sfx ):
-	global sPaSfxSink
-	global bBeep
-	
-	if bBeep:
-		beep()
-	else:
-		if sfx == 'startup':
-			call(["pactl", "play-sample", "startup", sPaSfxSink])
-		elif sfx == 'button_feedback':
-			call(["pactl", "play-sample", "beep_60", sPaSfxSink])
-		elif sfx == 'error':
-			call(["pactl", "play-sample", "error", sPaSfxSink])
-		elif sfx == 'mpd_update_db':
-			call(["pactl", "play-sample", "beep_60_70", sPaSfxSink])
-		elif sfx == 'bt':
-			call(["pactl", "play-sample", "bt", sPaSfxSink])
-		elif sfx == 'reset_shuffle':
-			call(["pactl", "play-sample", "beep_60_x2", sPaSfxSink])
 	
 # ********************************************************************************
 # Volume wrappers
@@ -939,100 +682,8 @@ def udisk_details( device, action ):
 		print(" .....  ERROR: Invalid action.")
 		pa_sfx('error')
 
-# ********************************************************************************
-# Save & Load settings, using pickle
-#
-
-def settings_save():
-	global dSettings
-	global sDirSave
-	print('[PICKLE] Saving settings')
-	try:
-		pickle.dump( dSettings, open( sDirSave+"/headunit.p", "wb" ) )
-	except:
-		print(' ......  ERROR saving settings')
-		pa_sfx('error')
-
-def settings_load():
-	global dSettings
-	global sDirSave
-
-	sPickleFile = sDirSave+"/headunit.p"
 	
-	print('\033[96m[PICKLE] Loading previous settings\033[00m')
-	try:
-		dSettings = pickle.load( open( sPickleFile, "rb" ) )
-	except:
-		print(' ......  Loading headunit.p failed. First run? - Creating headunit.p with default values.')
-		#assume: fails because it's the first time and no settings saved yet? Setting default:
-		pickle.dump( dSettings, open( sPickleFile, "wb" ) )
-		
-	#VOLUME
-	#check if the value is valid
-	if dSettings['volume'] < 0 or dSettings['volume'] > 100:
-		dSettings['volume'] = 40
-		pickle.dump( dSettings, open( sPickleFile, "wb" ) )
-		print(' ......  No setting found, defaulting to 40%')
-	elif dSettings['volume'] < 30:
-		print(' ......  Volume too low, defaulting to 30%')
-		dSettings['volume'] = 30
-	else:
-		print(' ......  Volume: {0:d}%'.format(dSettings['volume']))
-	
-	#SOURCE
-	print(' ......  Source: {0}'.format(dSettings['source']))
-	#MEDIASOURCE
-	print(' ......  Media source: {0}'.format(dSettings['mediasource']))
-	#MEDIALABEL
-	print(' ......  Media label: {0}'.format(dSettings['medialabel']))
-	
-	print('\033[96m ......  DONE\033[00m')
-	
-def seek_next():
-	global dSettings
-	if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 5 or dSettings['source'] == 6:
-		mpc_next_track()
-	elif dSettings['source'] == 3:
-		bt_next()
-	#fm_next ofzoiets
 
-def seek_prev():
-	global dSettings
-	if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 5 or dSettings['source'] == 6:
-		mpc_prev_track()
-	elif dSettings['source'] == 3:
-		bt_prev()
-
-def random( state ):
-	global dSettings
-	print('[------] Random/Shuffle: {0}'.format(state))
-	
-	# only for MPD based sources:
-	if dSettings['source'] == 1 or dSettings['source'] == 2 or dSettings['source'] == 5 or dSettings['source'] == 6:
-		if state == 'on':
-			pa_sfx('button_feedback')
-			newState = state
-		elif state == 'off':
-			pa_sfx('reset_shuffle')
-			newState = state
-		else:
-			currMpcRandom = mpc_random_get()
-			if currMpcRandom == "on":
-				pa_sfx('reset_shuffle')
-				newState = 'off'
-			elif currMpcRandom == "off":
-				pa_sfx('button_feedback')
-				newState = 'on'
-
-		mpc_random( newState )
-		
-	# bluetooth:
-	elif dSettings['source'] == 3:
-		pa_sfx('button_feedback')
-		bt_shuffle()
-	
-	else:
-		print(' ...  Random/Shuffle not supported for this source.')
 			
 
 # ********************************************************************************
@@ -1342,64 +993,6 @@ def media_stop():
 	mpc_stop()	
 	
 		
-def locmus_update():
-	global dSettings
-	global sLocalMusicMPD
-	global Source
-	
-	print('[LOCMUS] Updating local database [{0}]'.format(sLocalMusicMPD))
-
-	#Update database
-	mpc_update( sLocalMusicMPD, True )
-	
-	#IF we're already playing local music: Continue playing without interruption
-	# and add new tracks to the playlist
-	# Source 2 = locmus
-	if dSettings['source'] == 2:
-		print(' ......  source is already playing, trying seamless update...')
-		# 1. "crop" playlist (remove everything, except playing track)
-		call(["mpc", "-q" , "crop"])
-
-		yMpdClient = MPDClient()
-		yMpdClient.connect("localhost", 6600)
-				
-		# 2. songid is not unique, get the full filename
-		current_song = yMpdClient.currentsong()
-		curr_file = current_song['file']
-		print(' ......  currently playing file: {0}'.format(curr_file))
-		
-		# 3. reload local music playlist
-		mpc_populate_playlist(sLocalMusicMPD)
-		
-		# 4. find position of song that we are playing, skipping the first position (pos 0) in the playlist, because that's where the currently playing song is
-		delpos = '0'
-		for s in yMpdClient.playlistinfo('1:'):
-			if s['file'] == curr_file:
-				print(' ......  song found at position {0}'.format(s['pos']))
-				delpos = s['pos']
-		
-		if delpos != '0':
-			print(' ......  moving currently playing track back in place')
-			yMpdClient.delete(delpos)
-			yMpdClient.move(0,int(delpos)-1)
-		else:
-			print(' ......  ERROR: something went wrong')
-			pa_sfx('error')
-
-		yMpdClient.close()
-		
-	#IF we were not playing local music: Try to switch to local music, but check if the source is OK.
-	else:
-		#We cannot check if there's any NEW tracks, but let's check if there's anything to play..
-		locmus_check()
-		# Source 2 = locmus
-		#if arSourceAvailable[2] == 1:
-		if Sources.getAvailable('name','locmus')
-			dSettings['source'] = 2
-			source_play()
-		else:
-			print('[LOCMUS] Update requested, but no music available for playing... Doing nothing.')
-
 		
 
 def old_source_next():

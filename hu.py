@@ -175,16 +175,6 @@ def volume_att_toggle():
 	hudispdata['att'] = '1'
 	disp.dispdata(hudispdata)
 	return None
-
-def volume_up():
-	print('Vol Up')
-	volm.dispdata("11")
-	return None
-
-def volume_down():
-	print('Vol Down')
-	volm.dispdata("10")
-	return None
 	
 # ********************************************************************************
 # Output wrapper
@@ -1538,9 +1528,9 @@ def worker_queue_prio():
 		
 		printer("Priority Queue: Picking up: {0}".format(item), tag='QUEUE')
 		if command == 'VOL_UP':
-			volume_up()
+			volm.incr("11")
 		elif command == 'VOL_DOWN':
-			volume_down()
+			volm.decr("11")
 		elif command == 'ATT':
 			volume_att_toggle()
 		elif command == 'OFF':
@@ -1619,9 +1609,12 @@ class dbusVolume(dbus.service.Object):
 	#decided to just send everything as string, should be easier to handle...:
 	#dbus.service.signal("com.arctura.display", signature='a{sv}')
 	@dbus.service.signal("com.arctura.volume", signature='s')
-	def dispdata(self, dispdata):
+	def incr(self, dispdata):
 		pass
 
+	@dbus.service.signal("com.arctura.volume", signature='s')
+	def decr(self, dispdata):
+		pass
 #********************************************************************************
 #
 # Initialization
