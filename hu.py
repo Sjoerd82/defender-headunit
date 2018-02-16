@@ -1836,6 +1836,8 @@ else:
 		Sources.next()
 		Sources.sourcePlay()
 
+# Save Settings
+cSettings.save()
 
 	   
 """
