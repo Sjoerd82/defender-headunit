@@ -486,11 +486,10 @@ class SourceController():
 #			return False
 		
 		if resume:
-			print('YOPE')
+			checkResult = self.lSource[self.iCurrent]['sourceClass'].play(self,resume)
 		else:
-			print('NOPE')
-		
-		checkResult = self.lSource[self.iCurrent]['sourceClass'].play(self)
+			checkResult = self.lSource[self.iCurrent]['sourceClass'].play(self)
+			
 		if not checkResult:
 			self.__printer('PLAY: failed, marking source unavailable, playing next source...',LL_ERROR)
 			self.setAvailableIx(self.iCurrent,False,self.iCurrentSS)
