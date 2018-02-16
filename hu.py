@@ -215,7 +215,7 @@ def queue(q, item, sfx=None):
 	return 0
 
 # todo: rename? put in hu_settings?
-def save_current_position():
+def save_current_position(timeelapsed):
 
 	global Sources
 	global mpdc
@@ -235,7 +235,7 @@ def save_current_position():
 		source_key = "untitled"
 
 	# get time into track
-	timeelapsed = status['time']
+	#timeelapsed = status['time']
 	
 	# get track name
 	currSong = mpdc.mpc_get_currentsong()
@@ -469,7 +469,8 @@ def cb_mpd_event( event ):
 				#
 				# Save position
 				#
-				save_current_position()
+				timeelapsed = status['time']
+				save_current_position(timeelapsed)
 
 				""" PROBLEMS AHEAD
 				
