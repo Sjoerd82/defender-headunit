@@ -286,26 +286,6 @@ class sourceClass():
 		subsource = sourceCtrl.getSubSource( arIx[0], arIx[1] )
 		sLocalMusicMPD = subsource['mpd_dir']
 		sUsbLabel = subsource['label']
-		print sLocalMusicMPD
-		print sUsbLabel
-		
-		#debug/test:
-		sUsbLabel = "SJOERD"
-		sLocalMusicMPD = "SJOERD"
-		"""
-		global dSettings
-		global arMediaWithMusic
-		global Sources
-
-		if not mySources.getAvailable('name','media'):
-			print('Aborting playback, trying next source.')
-			pa_sfx('error')
-			#source_next()
-			Sources.sourceNext()
-			source_play()
-			
-		else:
-		"""
 
 		#
 		# load playlist

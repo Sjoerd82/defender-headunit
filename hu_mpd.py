@@ -56,6 +56,7 @@ class mpdController():
 		#todo: how about cropping, populating, and removing the first? item .. for faster continuity???
 		#self.mpdc.command_list_ok_begin()
 
+		"""
 		try:
 			self.mpdc.noidle()
 		except MPDConnectionError:
@@ -65,16 +66,16 @@ class mpdController():
 		
 		try:
 			self.mpdc.stop()
+			self.mpdc.clear()
 		except:
 			printer('Dont know why but this sometimes failes!!!! Investigate..',level=LL_CRITICAL)
 		
-		self.mpdc.clear()
 		self.mpdc.send_idle()
-
+		"""
 		#print self.mpdc.command_list_end()
-		#call(["mpc", "-q", "stop"])
-		#call(["mpc", "-q", "clear"])
-		#self.mpcd.close()
+		call(["mpc", "-q", "stop"])
+		call(["mpc", "-q", "clear"])
+
 
 	def playlistPop( self, type, sMpdDir ):
 		printer('Populating playlist, folder: {0}'.format(sMpdDir))
