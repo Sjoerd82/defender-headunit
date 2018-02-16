@@ -232,8 +232,8 @@ def save_current_position(timeelapsed):
 			printer("Error creating savefile, source_key ({0}) doesn't exist".format(source_key))
 			source_key_value = "untitled"
 	else:
-		source_key = "untitled"
-		source_key_value = "untitled"
+		printer('Error: "filename_save" not defined in configuration, not saving.',level=LL_ERROR)
+		return None
 
 	# get time into track
 	#timeelapsed = status['time']
@@ -280,8 +280,8 @@ def load_current_resume():
 			printer("Error creating savefile, source_key ({0}) doesn't exist".format(source_key))
 			source_key_value = "untitled"
 	else:
-		source_key = "untitled"
-		source_key_value = "untitled"
+		printer('Error: "filename_save" not defined in configuration, not saving.',level=LL_ERROR)
+		return None
 				
 	# load file
 	printer('Loading playlist position for: {0}: {1}'.format(source_name,source_key_value))

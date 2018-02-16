@@ -6,5 +6,6 @@
   "controls": {"ffwd": true, "rwnd": true, "prev": true, "next": true, "dirnext": true},
   "random": ["on","off"],
   "template": true,
-  "subsource_key": ["uuid","label"]
+  "subsource_key": ["uuid","label"],
+  "filename_save": ["uuid","label"]
 }
