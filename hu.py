@@ -1609,6 +1609,16 @@ class dbusDisplay(dbus.service.Object):
 	def dispdata(self, dispdata):
 		pass
 
+class dbusVolume(dbus.service.Object):
+	def __init__(self, conn, object_path='/com/arctura/volume'):
+		dbus.service.Object.__init__(self, conn, object_path)
+
+	#decided to just send everything as string, should be easier to handle...:
+	#dbus.service.signal("com.arctura.display", signature='a{sv}')
+	@dbus.service.signal("com.arctura.volume", signature='a{ss}')
+	def dispdata(self, dispdata):
+		pass
+
 #********************************************************************************
 #
 # Initialization
