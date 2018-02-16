@@ -218,7 +218,7 @@ class mpdController():
 
 		return pos
 
-	def lastKnownPos2( self, filename ):
+	def lastKnownPos2( self, filename, time ):
 	
 		#default
 		pos = {'pos': 1, 'time': 0}
@@ -240,8 +240,8 @@ class mpdController():
 			printer(' > File not found in loaded playlist')
 		else:
 			pos['pos'] = int(psfind[0]['pos'])+1
-			timeElapsed,timeTotal = map(int, dSavePosition['time'].split(':'))
-			printer('Match found: {0}. Continuing playback at #{1}'.format(dSavePosition['file'],pos['pos']))
+			timeElapsed,timeTotal = map(int, time.split(':'))
+			printer('Match found: {0}. Continuing playback at #{1}'.format(filename,pos['pos']))
 			printer(' > Elapsed/Total time: {0}s/{1}s'.format(timeElapsed,timeTotal))
 			if timeElapsed > iThrElapsed and timeTotal > iThrTotal:
 				pos['time'] = str(timeElapsed)
