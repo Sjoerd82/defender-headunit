@@ -169,9 +169,7 @@ class SourceController():
 				
 				# sub-source and available:
 				elif source['template'] and source['available']:
-					#print "DEBUG 3"
 					for subsource in source['subsources'][j_start:]:
-						print "DEBUG B -- {0}:{1}".format(j_start,subsource)
 						if subsource['available']:
 							#print "DEBUG 4"
 							self.__printer('NEXT: Switching to {0}/{1}: {2:s}'.format(i_start,j_start,subsource['displayname']))

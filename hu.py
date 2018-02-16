@@ -393,10 +393,12 @@ def cb_mpd_event( event ):
 				
 				source_name = currSrc["name"]
 				if 'filename_save' in currSrc:
-					#source_key = currSrc["filename_save"]
-					# todo! get actual value and convert any slashes and other invalid filename chars to _
 					source_key = currSrc["filename_save"][0]	#eg "mountpoint"
-					source_key_value = slugify( currSrc["subsources"][0][source_key] )
+					if source_key in currSrc["subsources"][0]:
+						source_key_value = slugify( currSrc["subsources"][0][source_key] )
+					else:
+						printer("Error creating savefile, source_key ({0}) doesn't exist".format(source_key))
+						source_key = "untitled"
 				else:
 					source_key = "untitled"
 				

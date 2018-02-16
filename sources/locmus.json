@@ -7,5 +7,5 @@
   "random": ["on","off"],
   "template": true,
   "subsource_key": ["mountpoint"],
-  "filename_save": ["uuid"]
+  "filename_save": ["mountpoint"]
 }
