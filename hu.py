@@ -1528,11 +1528,12 @@ def worker_queue_prio():
 		
 		printer("Priority Queue: Picking up: {0}".format(item), tag='QUEUE')
 		if command == 'VOL_UP':
-			volm.incr("11")
+			volm.set('+5%')
 		elif command == 'VOL_DOWN':
-			volm.decr("11")
+			volm.set('-5%')
 		elif command == 'ATT':
-			volume_att_toggle()
+			volm.set('20%')
+			#volume_att_toggle()
 		elif command == 'OFF':
 			shutdown()
 		else:
@@ -1606,15 +1607,10 @@ class dbusVolume(dbus.service.Object):
 	def __init__(self, conn, object_path='/com/arctura/volume'):
 		dbus.service.Object.__init__(self, conn, object_path)
 
-	#decided to just send everything as string, should be easier to handle...:
-	#dbus.service.signal("com.arctura.display", signature='a{sv}')
 	@dbus.service.signal("com.arctura.volume", signature='s')
-	def incr(self, dispdata):
+	def set(self, volume):
 		pass
 
-	@dbus.service.signal("com.arctura.volume", signature='s')
-	def decr(self, dispdata):
-		pass
 #********************************************************************************
 #
 # Initialization

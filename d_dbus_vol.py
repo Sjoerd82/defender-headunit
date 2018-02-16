@@ -74,7 +74,8 @@ class pa_volume_handler():
 		self.pa_sink = sink
 
 	def vol_set_pct(self, volume):
-		vol_pct = str(volume) + "%"
+		#vol_pct = str(volume) + "%"
+		vol_pct = volume
 		call(["pactl", "set-sink-volume", self.pa_sink, vol_pct])
 		
 	def vol_up(self):
@@ -94,10 +95,11 @@ class pa_volume_handler():
 
 		
 # callback, keep it short! (blocks new input)
-def cb_volume( data ):
+def cb_volume( volume ):
 
 	printer('DBUS event received: {0}'.format(data), tag='volume')
-	pavh.vol_up()
+	pavh.vol_set_pct(volume)
+		
 	return True
 			
 
