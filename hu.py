@@ -286,14 +286,13 @@ def load_current_resume():
 	# load file
 	printer('Loading playlist position for: {0}: {1}'.format(source_name,source_key_value))
 
-	# create path, if it doesn't exist yet..
-	pckl_path = os.path.join('/mnt/PIHU_CONFIG',source_name)
-	if not os.path.exists(pckl_path):
-		printer('ERROR: Save file path not found',level=LL_ERROR)
+	# check if there's a save file..
+	pckl_file = os.path.join('/mnt/PIHU_CONFIG',source_name,source_key_value + ".p")
+	if not os.path.exists(pckl_file):
+		printer('ERROR: Save file not found',level=LL_WARNING)
 		return None
-	# TODO: check if file exists
-	pckl_file = os.path.join(pckl_path,source_key_value + ".p")
-	dLoad = pickle.load( open( pckl_file, "rb" ) )
+	else:
+		dLoad = pickle.load( open( pckl_file, "rb" ) )
 	return dLoad
 	
 	
