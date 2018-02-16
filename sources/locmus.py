@@ -142,7 +142,7 @@ class sourceClass():
 			return False
 
 		
-	def play( self, sourceCtrl ): #, subSourceIx=None ):
+	def play( self, sourceCtrl, resume ): #, subSourceIx=None ):
 		self.__printer('Start playing')
 		
 		#
@@ -192,7 +192,10 @@ class sourceClass():
 		#
 		# continue where left
 		#
-		
+		print "!!DEBUG!! -- RESUME --"
+		print resume
+		print "!!DEBUG!! -- RESUME --"
+		"""
 		playslist_pos = self.mpc.lastKnownPos( sLabel )
 		
 		self.__printer(' > Starting playback')
@@ -202,7 +205,8 @@ class sourceClass():
 		if playslist_pos['time'] > 0:
 			self.__printer(' ...  Seeking to {0} sec.'.format(playslist_pos['time']))
 			call(["mpc", "-q" , "seek", str(playslist_pos['time'])])
-
+		"""
+		
 		# double check if source is up-to-date
 		
 		# Load playlist directories, to enable folder up/down browsing.

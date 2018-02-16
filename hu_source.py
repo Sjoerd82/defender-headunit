@@ -470,7 +470,8 @@ class SourceController():
 			i+=1
 	
 	# execute a play() for the current source
-	def sourcePlay( self ):
+	# optionally, a dictionary may be given containing resume data
+	def sourcePlay( self, resume={} ):
 	
 		if self.iCurrent == None:
 			self.__printer('PLAY: No current source',LL_WARNING)

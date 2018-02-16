@@ -261,7 +261,40 @@ def save_current_position()
 	# pickle file will be created by dump, if it doesn't exist yet
 	pckl_file = os.path.join(pckl_path,source_key_value + ".p")
 	pickle.dump( dSave, open( pckl_file, "wb" ) )
+
+def load_current_resume()
+
+	global Sources
+	global mpdc
+	
+	currSrc = Sources.getComposite()
+	
+	# create filename
+	source_name = currSrc["name"]
+	if 'filename_save' in currSrc:
+		source_key = currSrc["filename_save"][0]	#eg "mountpoint"
+		if source_key in currSrc["subsource"]:
+			source_key_value = slugify( currSrc["subsource"][source_key] )
+		else:
+			printer("Error creating savefile, source_key ({0}) doesn't exist".format(source_key))
+			source_key = "untitled"
+	else:
+		source_key = "untitled"
 				
+	# load file
+	printer('Loading playlist position for: {0}: {1}'.format(source_name,source_key_value))
+
+	# create path, if it doesn't exist yet..
+	pckl_path = os.path.join('/mnt/PIHU_CONFIG',source_name)
+	if not os.path.exists(pckl_path):
+		printer('ERROR: Save file path not found',level=LL_ERROR)
+		return None
+	# TODO: check if file exists
+	pckl_file = os.path.join(pckl_path,source_key_value + ".p")
+	dLoad = pickle.load( open( pckl_file, "rb" ) )
+	return dLoad
+	
+	
 # ********************************************************************************
 # Callback functions
 #
@@ -1469,13 +1502,21 @@ def QuickPlay( prevSource, prevSourceSub ):
 		if len(prevIx) == 1:
 			printer ('Continuing playback', tag='QPLAY')
 			Sources.setCurrent(prevIx[0])
-			Sources.sourcePlay()
+			#EXPERIMENTAL
+			dLoaded = load_current_resume()
+			print dLoaded
+			Sources.sourcePlay(dLoaded)
+			#EXPERIMENTAL
 			return True
 						
 		elif len(prevIx) == 2:
 			printer ('Continuing playback (subsource)', tag='QPLAY')
 			Sources.setCurrent(prevIx[0],prevIx[1])
-			Sources.sourcePlay()
+			#EXPERIMENTAL
+			dLoaded = load_current_resume()
+			print dLoaded
+			Sources.sourcePlay(dLoaded)
+			#EXPERIMENTAL
 			return True
 
 		else:
