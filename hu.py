@@ -727,6 +727,7 @@ def udisk_details( device, action ):
 			# check, and if available play
 			if Sources.sourceCheck( ix, ix_ss ):
 				Sources.setCurrent( ix, ix_ss )
+				#TODO: load resume
 				Sources.sourcePlay()
 		
 		# display overview
@@ -777,11 +778,16 @@ def do_source():
 		if not res == None:
 
 			#
-			# if succesful, play new source
+			# load resume data
+			#
+			dLoaded = load_current_resume()
+
+			#
+			# play new source
 			#
 			
-			Sources.sourceStop()
-			Sources.sourcePlay()
+			Sources.sourceStop()			# todo: required??
+			Sources.sourcePlay(dLoaded)
 			#
 			# update operational settings
 			#
@@ -1504,21 +1510,15 @@ def QuickPlay( prevSource, prevSourceSub ):
 		if len(prevIx) == 1:
 			printer ('Continuing playback', tag='QPLAY')
 			Sources.setCurrent(prevIx[0])
-			#EXPERIMENTAL
 			dLoaded = load_current_resume()
-			print dLoaded
 			Sources.sourcePlay(dLoaded)
-			#EXPERIMENTAL
 			return True
 						
 		elif len(prevIx) == 2:
 			printer ('Continuing playback (subsource)', tag='QPLAY')
 			Sources.setCurrent(prevIx[0],prevIx[1])
-			#EXPERIMENTAL
 			dLoaded = load_current_resume()
-			print dLoaded
 			Sources.sourcePlay(dLoaded)
-			#EXPERIMENTAL
 			return True
 
 		else:
