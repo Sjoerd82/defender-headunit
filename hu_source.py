@@ -484,7 +484,12 @@ class SourceController():
 #		if 'sourcePlay' not in self.lSource[self.iCurrent] or self.lSource[self.iCurrent]['sourcePlay'] == None:
 #			self.__printer('PLAY: function not defined',LL_WARNING)
 #			return False
-			
+		
+		if resume:
+			print('YOPE')
+		else:
+			print('NOPE')
+		
 		checkResult = self.lSource[self.iCurrent]['sourceClass'].play(self)
 		if not checkResult:
 			self.__printer('PLAY: failed, marking source unavailable, playing next source...',LL_ERROR)

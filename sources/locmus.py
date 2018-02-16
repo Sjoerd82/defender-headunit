@@ -142,7 +142,7 @@ class sourceClass():
 			return False
 
 		
-	def play( self, sourceCtrl, resume ): #, subSourceIx=None ):
+	def play( self, sourceCtrl, resume={} ): #, subSourceIx=None ):
 		self.__printer('Start playing')
 		
 		#
