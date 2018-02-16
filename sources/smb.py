@@ -160,7 +160,7 @@ class sourceClass():
 			return False
 
 		
-	def play( self, sourceCtrl, subSourceIx=None, resume={} ):
+	def play( self, sourceCtrl, resume={} ):
 		self.__printer('Start playing')
 		#
 		# variables
@@ -205,14 +205,16 @@ class sourceClass():
 		#
 		if resume:
 			playslist_pos = self.mpc.lastKnownPos2( resume['file'], resume['time'] )	
-			
-			self.__printer(' > Starting playback')
-			#mpc.playStart( str(playslist_pos['pos']), playslist_pos['time'] )
-			call(["mpc", "-q" , "stop"])
-			call(["mpc", "-q" , "play", str(playslist_pos['pos'])])
-			if playslist_pos['time'] > 0:
-				self.__printer(' ...  Seeking to {0} sec.'.format(playslist_pos['time']))
-				call(["mpc", "-q" , "seek", str(playslist_pos['time'])])
+		else:
+			playslist_pos = {'pos': 1, 'time': 0}
+		
+		self.__printer(' > Starting playback')
+		#mpc.playStart( str(playslist_pos['pos']), playslist_pos['time'] )
+		call(["mpc", "-q" , "stop"])
+		call(["mpc", "-q" , "play", str(playslist_pos['pos'])])
+		if playslist_pos['time'] > 0:
+			self.__printer(' ...  Seeking to {0} sec.'.format(playslist_pos['time']))
+			call(["mpc", "-q" , "seek", str(playslist_pos['time'])])
 
 
 		# double check if source is up-to-date
