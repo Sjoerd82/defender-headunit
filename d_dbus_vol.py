@@ -97,7 +97,7 @@ class pa_volume_handler():
 # callback, keep it short! (blocks new input)
 def cb_volume( volume ):
 
-	printer('DBUS event received: {0}'.format(data), tag='volume')
+	printer('DBUS event received: {0}'.format(volume), tag='volume')
 	pavh.vol_set_pct(volume)
 		
 	return True
