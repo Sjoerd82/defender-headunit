@@ -181,8 +181,7 @@ class SourceController():
 							self.iCurrentSource[1] = j_start
 							return self.iCurrentSource
 							
-					j_start += 1
-
+						j_start += 1
 
 				i_start += 1
 				
