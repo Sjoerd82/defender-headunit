@@ -217,6 +217,44 @@ class mpdController():
 					printer(' > Elapsed time below threshold or short track: restarting at beginning of track.')
 
 		return pos
+
+	def lastKnownPos2( self, filename ):
+	
+		#default
+		pos = {'pos': 1, 'time': 0}
+
+		#TODO!
+		iThrElapsed = 20	 # Minimal time that must have elapsed into a track in order to resume position
+		iThrTotal = 30		 # Minimal track length required in order to resume position
+		
+		try:
+			self.mpdc.noidle()
+		except:
+			printer('WEIRD... no idle was set..')
+
+		psfind = self.mpdc.playlistfind('filename',filename)
+
+		self.mpdc.send_idle()
+#
+# SEEMS TO HANG?
+#
+		psfind = []
+		
+		#in the unlikely case of multiple matches, we'll just take the first, psfind[0]
+		if len(psfind) == 0:
+			printer(' > File not found in loaded playlist')
+		else:
+			pos['pos'] = int(psfind[0]['pos'])+1
+			timeElapsed,timeTotal = map(int, dSavePosition['time'].split(':'))
+			printer('Match found: {0}. Continuing playback at #{1}'.format(dSavePosition['file'],pos['pos']))
+			printer(' > Elapsed/Total time: {0}s/{1}s'.format(timeElapsed,timeTotal))
+			if timeElapsed > iThrElapsed and timeTotal > iThrTotal:
+				pos['time'] = str(timeElapsed)
+				printer(' > Elapsed time over threshold: continuing at last position.')
+			else:
+				printer(' > Elapsed time below threshold or short track: restarting at beginning of track.')
+
+		return pos
 		
 #	def playStart( str(playslist_pos['pos']), playslist_pos['time'] ):
 	def playStart( self, pos, time ):
