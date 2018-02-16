@@ -1618,7 +1618,7 @@ class dbusVolume(dbus.service.Object):
 
 	#decided to just send everything as string, should be easier to handle...:
 	#dbus.service.signal("com.arctura.display", signature='a{sv}')
-	@dbus.service.signal("com.arctura.volume", signature='a{ss}')
+	@dbus.service.signal("com.arctura.volume", signature='s')
 	def dispdata(self, dispdata):
 		pass
 
