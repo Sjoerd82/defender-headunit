@@ -1534,15 +1534,16 @@ def worker_queue_prio():
 	#	while not qPrio.empty():
 		item = qPrio.get()
 		#item = qPrio.get_nowait()
+		command = item['command']
 		
 		printer("Priority Queue: Picking up: {0}".format(item), tag='QUEUE')
-		if item == 'VOL_UP':
+		if command == 'VOL_UP':
 			volume_up()
-		elif item == 'VOL_DOWN':
+		elif command == 'VOL_DOWN':
 			volume_down()
-		elif item == 'ATT':
+		elif command == 'ATT':
 			volume_att_toggle()
-		elif item == 'OFF':
+		elif command == 'OFF':
 			shutdown()
 		else:
 			printer('Undefined task', level=LL_ERROR, tag='QUEUE')
