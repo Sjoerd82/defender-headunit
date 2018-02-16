@@ -585,7 +585,8 @@ def cb_timer1():
 	printer('Interval function [30 second]', level=LL_DEBUG, tag="TIMER1")
 
 	# save current position
-	save_current_position()
+	# TODO: ONLY WHEN WE'RE ACTUALLY PLAYING SOMETHING...
+	#save_current_position()
 	
 	# WHAT'S THE POINT OF THIS?:
 	# save settings (hu_settings)
