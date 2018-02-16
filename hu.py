@@ -178,10 +178,12 @@ def volume_att_toggle():
 
 def volume_up():
 	print('Vol Up')
+	volm.dispdata("11")
 	return None
 
 def volume_down():
 	print('Vol Down')
+	volm.dispdata("10")
 	return None
 	
 # ********************************************************************************
@@ -1972,6 +1974,7 @@ bus = dbus.SystemBus()
 
 # Output
 disp = dbusDisplay(bus)
+volm = dbusVolume(bus)
 
 
 """
