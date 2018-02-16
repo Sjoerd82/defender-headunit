@@ -203,24 +203,30 @@ class SourceController():
 			if (self.iCurrentSource[0] is None or
 			    self.iCurrent is None):
 				i = 0
+				print "debug 1"
 				for source in self.lSource:
+					print "debug 2 {0}".format(i)
 					if source['available'] and not source['template']:
 						self.iCurrent = i
 						self.iCurrentSource[0] = i
 						self.iCurrentSource[1] = None
+						print "debug 3"
 						return self.iCurrentSource
 					elif source['available'] and source['template']:
 						self.iCurrentSource[0] = i
 						self.iCurrent = i
 						j = 0
+						print "debug 4"
 						for subsource in source['subsources']:
+							print "debug 5 {0}".format(j)
 							if subsource['available']:
 								self.iCurrentSS = j
 								self.iCurrentSource[1] = j
+								print "debug 6 {0}".format(j)
 								return self.iCurrentSource
 							j += 1
 					i += 1
-
+			print "debug 7"
 			return self.iCurrentSource
 
 		#

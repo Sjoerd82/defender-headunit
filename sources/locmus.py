@@ -110,7 +110,7 @@ class sourceClass():
 				self.__printer(" > Local music directory does not exist.. creating...",LL_WARNING,True)
 				os.makedirs(mountpoint)
 				# obviously there will no be any music in that new directory, so marking it unavailable..
-				sourceCtrl.setAvailableIx( ix, True, ssIx )
+				sourceCtrl.setAvailableIx( ix, False, ssIx )
 
 			if not os.path.exists(mountpoint):
 				self.__printer(" > Local music directory does not exist.. Failed creating?",LL_WARNING,True)
@@ -177,7 +177,7 @@ class sourceClass():
 			self.mpc.playlistPop('locmus',sLocalMusicMPD)
 			
 			# check if succesful...
-			playlistCount = self.mpc.mpc_playlist_is_populated()
+			playlistCount = self.mpc.playlistIsPop()
 			if playlistCount == "0":
 				# Failed. Returning false will cause caller to try next source
 				self.__printer(' > Nothing in the playlist, giving up. Marking source unavailable.')

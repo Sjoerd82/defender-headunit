@@ -611,22 +611,6 @@ def mpc_populate_playlist ( label ):
 	#oMpdClient.send_idle()
 
 
-def mpc_playlist_is_populated():
-	# Old method using mpc on the commandline:
-	"""
-	task = subprocess.Popen("mpc playlist | wc -l", shell=True, stdout=subprocess.PIPE)
-	mpcOut = task.stdout.read()
-	assert task.wait() == 0
-	return mpcOut.rstrip('\n')
-	"""
-	# New method, using mpd status
-	xMpdClient = MPDClient() 
-	xMpdClient.connect("localhost", 6600)  # connect to localhost:6600
-	xMpdClient.command_list_ok_begin()
-	xMpdClient.status()
-	results = xMpdClient.command_list_end()
-	xMpdClient.close()
-	return results[0]['playlistlength']
 	
 
 def mpc_db_label_exist( label ):
