@@ -1846,7 +1846,7 @@ cSettings.set('source',currSrc['name'])
 if currSrc['subsource']:
 	subsource_key = {}
 	for key in currSrc['subsource_key']:
-		subsource_key[key] = currSrc['subsources'][arCurrIx[1]][key]
+		subsource_key[key] = currSrc['subsource'][key]
 	cSettings.set('subsourcekey', subsource_key)
 
 cSettings.save()
