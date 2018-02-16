@@ -231,14 +231,9 @@ class mpdController():
 			self.mpdc.noidle()
 		except:
 			printer('WEIRD... no idle was set..')
-
+		
 		psfind = self.mpdc.playlistfind('filename',filename)
-
 		self.mpdc.send_idle()
-#
-# SEEMS TO HANG?
-#
-		psfind = []
 		
 		#in the unlikely case of multiple matches, we'll just take the first, psfind[0]
 		if len(psfind) == 0:
