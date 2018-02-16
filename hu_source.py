@@ -341,10 +341,10 @@ class SourceController():
 		else:
 			return copy.copy(self.lSource[index])			
 
+	# return the current source + subsource
+	# subsource is a dictionary in ['subsource'], containing the curren sub-source
+	# the returned source is stripped of python objects (for no real reason)
 	def getComposite( self ):
-		# this will include *ALL* sub-sources
-		#return dict( self.lSource[self.iCurrent].items() + self.lSource[self.iCurrent]['subsources'][self.iCurrentSS].items() )
-
 		# make a copy
 		composite_current_source = dict( self.lSource[self.iCurrent] )
 		# remove sub-sources:
