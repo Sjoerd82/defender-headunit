@@ -1838,8 +1838,12 @@ else:
 		Sources.sourcePlay()
 
 # Save Settings
+currSrc = Sources.getComposite()
+cSettings.set('source',currSrc['name'])
+cSettings.set('subsourcekey',currSrc['subsource_key'])
 cSettings.save()
 
+		
 	   
 """
 else:

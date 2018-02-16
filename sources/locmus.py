@@ -195,6 +195,7 @@ class sourceClass():
 		print "!!DEBUG!! -- RESUME --"
 		print resume
 		print "!!DEBUG!! -- RESUME --"
+		call(["mpc", "-q" , "play"])
 		"""
 		playslist_pos = self.mpc.lastKnownPos( sLabel )
 		
