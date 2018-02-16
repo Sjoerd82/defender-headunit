@@ -91,33 +91,36 @@ class sourceClass():
 		
 		ix = sourceCtrl.getIndex('name','smb')
 		mountpoints = []
+		locations = []
 		foundStuff = 0
-						
+
 		if subSourceIx == None:
 			subsources = sourceCtrl.getSubSources( ix )
 			for subsource in subsources:
-				mountpoints.append(subsource['mountpoint'])
+				locations.append( (subsource['mountpoint'], subsource['mpd_dir']) )
 			ssIx = 0
 		else:
 			subsource = sourceCtrl.getSubSource( ix, subSourceIx )
-			mountpoints.append(subsource['mountpoint'])
+			locations.append( (subsource['mountpoint'], subsource['mpd_dir']) )
 			ssIx = subSourceIx
 
 		# check mountpoint(s)
-		for location in mountpoints:
-			self.__printer('SMB folder: {0}'.format(location))
-			if not os.listdir(location):
+		for location in locations:
+		
+			# get mountpoint and mpd dir
+			mountpoint = location[0]
+			mpd_dir = location[1]
+			
+			self.__printer('SMB folder: {0}'.format(mountpoint))
+			if not os.listdir(mountpoint):
 				self.__printer(" > SMB directory is empty.",LL_WARNING,True)
 			else:
 				self.__printer(" > SMB directory present and has files.",LL_INFO,True)
 				
-				# local dir, relative to MPD
-				sLocalMusicMPD = location['mpd_dir']
-				
-				if not self.mpc.dbCheckDirectory( sLocalMusicMPD ):
+				if not self.mpc.dbCheckDirectory( mpd_dir ):
 					self.__printer(" > Running MPD update for this directory.. ALERT! LONG BLOCKING OPERATION AHEAD...")
 					self.mpc.update( sLocalMusicMPD )
-					if not self.mpc.dbCheckDirectory( sLocalMusicMPD ):
+					if not self.mpc.dbCheckDirectory( mpd_dir ):
 						self.__printer(" > Nothing to play marking unavailable...")
 					else:
 						self.__printer(" > Music found after updating")
