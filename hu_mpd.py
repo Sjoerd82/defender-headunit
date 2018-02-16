@@ -63,7 +63,11 @@ class mpdController():
 		except:
 			printer('WEIRD... no idle was set..')
 		
-		self.mpdc.stop()
+		try:
+			self.mpdc.stop()
+		except:
+			printer('Dont know why but this sometimes failes!!!! Investigate..',level=LL_CRITICAL)
+		
 		self.mpdc.clear()
 		self.mpdc.send_idle()
 
