@@ -160,14 +160,15 @@ class sourceClass():
 			return False
 
 		
-	def play( self, sourceCtrl, subSourceIx=None ):
+	def play( self, sourceCtrl, subSourceIx=None, resume={} ):
 		self.__printer('Start playing')
 		#
 		# variables
 		#
 		
-		sLocalMusicMPD = "PIHU_SMB/music"
-		sUsbLabel = "smb_music"
+		arIx = sourceCtrl.getIndexCurrent()
+		subsource = sourceCtrl.getSubSource( arIx[0], arIx[1] )
+		sLocalMusicMPD = subsource['mpd_dir']
 
 		#
 		# load playlist
@@ -202,16 +203,17 @@ class sourceClass():
 		#
 		# continue where left
 		#
-		
-		playslist_pos = self.mpc.lastKnownPos( sUsbLabel )
-		
-		self.__printer(' > Starting playback')
-		#self.mpc.playStart( str(playslist_pos['pos']), playslist_pos['time'] )
-		call(["mpc", "-q" , "stop"])
-		call(["mpc", "-q" , "play", str(playslist_pos['pos'])])
-		if playslist_pos['time'] > 0:
-			self.__printer(' > Seeking to {0} sec.'.format(playslist_pos['time']))
-			call(["mpc", "-q" , "seek", str(playslist_pos['time'])])
+		if resume:
+			playslist_pos = self.mpc.lastKnownPos2( resume['file'], resume['time'] )	
+			
+			self.__printer(' > Starting playback')
+			#mpc.playStart( str(playslist_pos['pos']), playslist_pos['time'] )
+			call(["mpc", "-q" , "stop"])
+			call(["mpc", "-q" , "play", str(playslist_pos['pos'])])
+			if playslist_pos['time'] > 0:
+				self.__printer(' ...  Seeking to {0} sec.'.format(playslist_pos['time']))
+				call(["mpc", "-q" , "seek", str(playslist_pos['time'])])
+
 
 		# double check if source is up-to-date
 		
