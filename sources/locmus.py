@@ -192,12 +192,10 @@ class sourceClass():
 		#
 		# continue where left
 		#
-		print "!!DEBUG!! -- RESUME --"
 		print resume
-		print "!!DEBUG!! -- RESUME --"
-		call(["mpc", "-q" , "play"])
-		"""
-		playslist_pos = self.mpc.lastKnownPos( sLabel )
+		#playslist_pos = self.mpc.lastKnownPos( sLabel )
+		playslist_pos = self.mpc.lastKnownPos2( resume['file'] )	
+		#psfind = self.mpc.playlistfind('filename',resume['file'])
 		
 		self.__printer(' > Starting playback')
 		#mpc.playStart( str(playslist_pos['pos']), playslist_pos['time'] )
@@ -206,7 +204,6 @@ class sourceClass():
 		if playslist_pos['time'] > 0:
 			self.__printer(' ...  Seeking to {0} sec.'.format(playslist_pos['time']))
 			call(["mpc", "-q" , "seek", str(playslist_pos['time'])])
-		"""
 		
 		# double check if source is up-to-date
 		
