@@ -342,7 +342,19 @@ class SourceController():
 			return copy.copy(self.lSource[index])			
 
 	def getComposite( self ):
-		return dict( self.lSource[self.iCurrent].items() + self.lSource[self.iCurrent]['subsources'][self.iCurrentSS].items() )
+		# this will include *ALL* sub-sources
+		#return dict( self.lSource[self.iCurrent].items() + self.lSource[self.iCurrent]['subsources'][self.iCurrentSS].items() )
+
+		# make a copy
+		composite_current_source = dict( self.lSource[self.iCurrent] )
+		# remove sub-sources:
+		del composite_current_source['subsources']
+		# add current sub-source: Note that this entry is called subsource, not subsources!
+		composite_current_source['subsource'] = self.lSource[self.iCurrent]['subsources'][self.iCurrentSS]
+		# remove not-usefull stuff:
+		del composite_current_source['sourceModule']	# what did we use this for again??? #TODO
+		del composite_current_source['sourceClass']		# what did we use this for again??? #TODO
+		return composite_current_source
 	
 	def getSubSources( self, index ):
 		return self.lSource[index]['subsources']
