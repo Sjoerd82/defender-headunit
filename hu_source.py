@@ -64,17 +64,24 @@ class SourceController():
 			return False
 		
 		# check key:
+		keys = []
 		keyvals = []
 		for key in self.lSource[index]["subsource_key"]:
 			if not key in subsource_config:
 				self.__printer('Defined key ({0}) is missing value in subsource_config'.format(key),LL_ERROR)
 				return False
 			else:
+				keys.append(key)
 				keyvals.append(subsource_config[key])
 				self.__printer("[OK] Found key value: {0}: {1}".format(key, subsource_config[key])) # LL_DEBUG
 		
 		if len(self.lSource[index]["subsources"]) > 0:
 			print "WE HAVE SS'S.. CHECK REQUIRED..."
+		
+		# for all defined keys, loop
+		print "WE HAVE TO CHECK THESE KEYS:"
+		for key in keys:
+			print key
 		
 		# existing key values:
 		existing_keyvals = []
