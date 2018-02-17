@@ -562,10 +562,12 @@ def cb_mpd_event( event ):
 	elif event == "ifup":
 		printer(" ...  WiFi interface up: checking network related sources", tag='MPD')
 		cb_ifup()
+		printSummary(Sources)
 		
 	elif event == "ifdown":
 		printer(" ...  WiFi interface down: marking network related sources unavailable", tag='MPD')
 		Sources.setAvailable('depNetwork',True,False)
+		printSummary(Sources)
 		
 	else:
 		printer(' ...  unknown event (no action)', tag='MPD')
