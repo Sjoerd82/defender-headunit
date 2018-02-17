@@ -71,7 +71,7 @@ class SourceController():
 				return False
 			else:
 				keyvals.append(subsource_config[key])
-				self.__print "[OK] Found key value: {0}: {1}".format(key, subsource_config[key]) # LL_DEBUG
+				self.__printer("[OK] Found key value: {0}: {1}".format(key, subsource_config[key])) # LL_DEBUG
 		
 		if len(self.lSource[index]["subsources"]) > 0:
 			print "WE HAVE SS'S.. CHECK REQUIRED..."
