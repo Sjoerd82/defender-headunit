@@ -69,7 +69,7 @@ class SourceController():
 			if not key in subsource_config:
 				self.__printer('Defined key ({0}) is missing value in subsource_config'.format(key),LL_ERROR)
 			else:
-				keyvals.append(subsource_config[keyval])
+				keyvals.append(subsource_config[key])
 				print "[OK] Found key value: {0}: {1}".format(key, subsource_config[key]) # LL_DEBUG
 		
 		if len(self.lSource[index]["subsources"]) > 0:
