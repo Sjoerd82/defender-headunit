@@ -73,7 +73,7 @@ class SourceController():
 		print "MATCH FOR KEY:"
 		print subsource_config["subsource_key"]
 		print "MATCH FOR VALUE(s):"
-		for keyval in subsource_config["subsource_key"]
+		for keyval in subsource_config["subsource_key"]:
 			print subsource_config[keyval]
 		print "DEBUG! ----"
 		
