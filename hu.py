@@ -558,10 +558,10 @@ def cb_mpd_event( event ):
 	#elif event == "media_removed":
 	#elif event == "media_ready":
 	
+	# TEMPORARY --  DON'T DEPEND ON MPD FOR THIS -- USE DBUS #
 	elif event == "ifup":
 		printer(" ...  WiFi interface up: checking network related sources", tag='MPD')
-		stream_check()
-		smb_check()
+		cb_ifup()
 		
 	elif event == "ifdown":
 		printer(" ...  WiFi interface down: marking network related sources unavailable", tag='MPD')
