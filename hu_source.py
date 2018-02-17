@@ -88,24 +88,19 @@ class SourceController():
 			# collect all key values from existing sub-sources
 			# existing key values:
 			existing_keyvals = []
-			#i = 0
-			print "DEBUG1"
-			for i in range(0, len(self.lSource[index]["subsources"]) ):
-				print self.lSource[index]["subsources"][i]
-
-			print "DEBUG2"
 			for i in self.lSource[index]["subsources"]:
 				if key in i:
 					print i[key]
 					existing_keyvals.append(i[key])
-				
-				#if keyA == key:
-					#existing_keyvals.append( self.lSource[index]["subsource_key"][i][keyA]
 			
-			#if subsource_config[key] 
-			# check if mountpoint already exists
+			# check if mountpoint already exists	
+			if subsource_config[key] in existing_keyvals:
+				print "VALUE ALREADY THERE, NOK!"
+				print "ABORTING!"
+			else:
+				print "VALUE NOT YET THERE, OK!"
 			
-	
+		"""
 		print "EXISTING KEYVALS: {0}".format(existing_keyvals)
 
 		
@@ -124,7 +119,7 @@ class SourceController():
 		#matches = set(dTest.items()) & set(dMatchAgainst.items())
 		#if len(matches) == len(dTest):
 		#return True
-
+		"""
 		
 		# availability = False for all new subsources, until cleared by the check() function
 		# TODO -- not fully implemented yet
