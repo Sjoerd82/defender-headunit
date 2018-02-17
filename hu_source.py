@@ -465,7 +465,7 @@ class SourceController():
 	
 	# execute a check() for given source and sets availability accordingly
 	def sourceCheck( self, index, subSourceIx=None ):
-	
+		self.__printer('CHECK: {0}/{1}'.format(index,subSourceIx)) #LL_DEBUG
 		checkResult = self.lSource[index]['sourceClass'].check(self)
 		return checkResult
 	
