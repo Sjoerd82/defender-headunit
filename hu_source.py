@@ -74,31 +74,25 @@ class SourceController():
 				keys.append(key)
 				keyvals.append(subsource_config[key])
 				self.__printer("[OK] Found key value: {0}: {1}".format(key, subsource_config[key])) # LL_DEBUG
-		
-		if len(self.lSource[index]["subsources"]) > 0:
-			print "WE HAVE SS'S.. CHECK REQUIRED..."
 
-		print "DEBUG! ----"
-		
-		# for all defined keys, loop
-		print "WE HAVE TO CHECK THESE KEYS:"
-		for key in keys:
-			print key	# mountpoint, uuid, etc.
-			
-			# collect all key values from existing sub-sources
-			# existing key values:
-			existing_keyvals = []
-			for i in self.lSource[index]["subsources"]:
-				if key in i:
-					print i[key]
-					existing_keyvals.append(i[key])
-			
-			# check if mountpoint already exists	
-			if subsource_config[key] in existing_keyvals:
-				print "VALUE ALREADY THERE, NOK!"
-				print "ABORTING!"
-			else:
-				print "VALUE NOT YET THERE, OK!"
+		# check for duplicate sub-source
+		if len(self.lSource[index]["subsources"]) > 0:
+	
+			# for all defined keys, loop
+			for key in keys:		
+				# collect all key values from existing sub-sources
+				existing_keyvals = []
+				for i in self.lSource[index]["subsources"]:
+					if key in i:
+						print i[key]
+						existing_keyvals.append(i[key])
+				
+				# check if mountpoint already exists	
+				if subsource_config[key] in existing_keyvals:
+					#TODO: remove+replace or abort?
+					self.__printer('Sub-Source already exists, removing existing (?).'.format(key),LL_WARNING)
+					#del self.lSource[index]["subsources"][]
+					return False
 			
 		"""
 		print "EXISTING KEYVALS: {0}".format(existing_keyvals)
