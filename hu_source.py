@@ -97,7 +97,7 @@ class SourceController():
 			for i in self.lSource[index]["subsources"]:
 				if key in i:
 					print i[key]
-					existing_keyvals.append(i['key'])
+					existing_keyvals.append(i[key])
 				
 				#if keyA == key:
 					#existing_keyvals.append( self.lSource[index]["subsource_key"][i][keyA]
