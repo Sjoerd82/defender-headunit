@@ -94,7 +94,7 @@ class SourceController():
 				print self.lSource[index]["subsources"][i]
 
 			print "DEBUG2"
-			for i in self.lSource[index]["subsources"]):
+			for i in self.lSource[index]["subsources"]:
 				print i
 				
 				#if keyA == key:
