@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 from RPLCD.i2c import CharLCD
 
 def write_framebuffer(lcd, framebuffer):
