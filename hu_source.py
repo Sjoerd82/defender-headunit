@@ -376,7 +376,7 @@ class SourceController():
 	#   available -> True: will not change (will need to set to available "manually")
 	def setAvailable( self, key, value, available ):
 		for source in self.lSource:
-			if key in source and source[key] == value
+			if key in source and source[key] == value:
 				source['available'] = available
 				if available:
 					availableText = colorize('[available    ]','light_green')
