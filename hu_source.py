@@ -58,9 +58,9 @@ class SourceController():
 	def addSub( self, index, subsource_config ):
 
 		# check required fields:
-		if not all (k in subsource_config for k in ('displayname','order','subsource_key')):
+		if not all (k in subsource_config for k in ('displayname','order')):
 			self.__printer('ADD SUB: sub-source NOT added, missing one or more required field(s)...',LL_ERROR)
-			self.__printer('Required fields are: displayname, order and subsource_key',LL_ERROR,True)
+			self.__printer('Required fields are: displayname and order',LL_ERROR,True)
 			return False
 		
 		# check key:
