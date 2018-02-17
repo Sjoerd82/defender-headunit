@@ -64,22 +64,38 @@ class SourceController():
 			return False
 		
 		# check key:
-		# TODO
-		#self.lSource[index]["subsource_key"]
+		keyvals = []
+		for key in self.lSource[index]["subsource_key"]:
+			if not key in subsource_config:
+				self.__printer('Defined key ({0}) is missing value in subsource_config'.format(key),LL_ERROR)
+			else:
+				keyvals.append(subsource_config[keyval])
+				print "[OK] Found key value: {0}: {1}".format(key, subsource_config[key]) # LL_DEBUG
+		
+		if len(self.lSource[index]["subsources"]) > 0:
+			print "WE HAVE SS'S.. CHECK REQUIRED..."
+		
+		# existing key values:
+		existing_keyvals = []
+		for key in self.lSource[index]["subsource_key"]:
+			print "EXISTING KEY: {0}".format(key)
+			print "EXISTING KEY VALUE: {0}".format(self.lSource[index]["subsources"][key])
+			existing_keyvals.append(self.lSource[index]["subsources"][key])
+		
 		
 		# check if the subsource already exist
 		print "DEBUG! ----"
+		print "SS COUNT:"
+		print len(self.lSource[index]["subsources"])
 		print "CONFIG RECEIVED:"
 		print subsource_config
 		print "MATCH FOR KEY:"
 		print self.lSource[index]["subsource_key"]
-		print "MATCH FOR VALUE(s):"
-		for keyval in self.lSource[index]["subsource_key"]:
-			if keyval in subsource_config:
-				print "FOUND: {0}: {1}".format(keyval, subsource_config[keyval])
-			else:
-				print "NOT FOUND: {0}".format(keyval)
-				
+		#print "MATCH FOR VALUE(s):"
+		print "LOOKING FOR MATCH:"
+		print set(keyvals)
+		print set(existing_keyvals)
+		#print set(keyvals) & set(dMatchAgainst.items())
 		print "DEBUG! ----"
 		
 		#matches = set(dTest.items()) & set(dMatchAgainst.items())
