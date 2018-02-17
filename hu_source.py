@@ -65,16 +65,21 @@ class SourceController():
 		
 		# check key:
 		# TODO
+		#self.lSource[index]["subsource_key"]
 		
 		# check if the subsource already exist
 		print "DEBUG! ----"
 		print "CONFIG RECEIVED:"
 		print subsource_config
 		print "MATCH FOR KEY:"
-		print subsource_config["subsource_key"]
+		print self.lSource[index]["subsource_key"]
 		print "MATCH FOR VALUE(s):"
-		for keyval in subsource_config["subsource_key"]:
-			print subsource_config[keyval]
+		for keyval in self.lSource[index]["subsource_key"]:
+			if keyval in subsource_config:
+				print "FOUND: {0}: {1}".format(keyval, subsource_config[keyval])
+			else:
+				print "NOT FOUND: {0}".format(keyval)
+				
 		print "DEBUG! ----"
 		
 		#matches = set(dTest.items()) & set(dMatchAgainst.items())
