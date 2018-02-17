@@ -372,7 +372,7 @@ class SourceController():
 
 	# overload using decorators?
 	# subsources:
-	#	available -> False: will all be set to False #TODO
+	#	available -> False: will all be set to False
 	#   available -> True: will not change (will need to set to available "manually")
 	def setAvailable( self, key, value, available ):
 		for source in self.lSource:
@@ -382,6 +382,12 @@ class SourceController():
 					availableText = colorize('[available    ]','light_green')
 				else:
 					availableText = colorize('[not available]','light_red')
+					# loop through subsources, marking them unavailable:
+					if 'subsources' in source and len(source['subsources']) > 0:
+						for subsource in source['subsources']:
+							subsource['available'] = False #TODO: do we need self. ??
+							self.__printer('Subsource availability set to: {0} - {1}'.format(availableText,subsource['displayname']))
+						
 				self.__printer('Source availability set to: {0} - {1}'.format(availableText,source['displayname']))
 
 	def setAvailableIx( self, index, available, subIndex=None ):
