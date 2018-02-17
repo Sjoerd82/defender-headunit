@@ -606,7 +606,7 @@ def cb_ifup():
 	ix = 0
 	for source in Sources.getAll():
 		if source['depNetwork']:
-			Source.sourceCheck(ix)
+			Sources.sourceCheck(ix)
 
 	
 def cb_udisk_dev_add( device ):
