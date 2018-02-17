@@ -81,8 +81,8 @@ class SourceController():
 		i = 0
 		for key in self.lSource[index]["subsource_key"]:
 			print "EXISTING KEY: {0}".format(key)
-			print "EXISTING KEY VALUE: {0}".format( self.lSource[index]["subsources"][i][key] )
-			existing_keyvals.append( self.lSource[index]["subsources"][i][key] )
+			#print "EXISTING KEY VALUE: {0}".format( self.lSource[index]["subsources"][i][key] )
+			#existing_keyvals.append( self.lSource[index]["subsources"][i][key] )
 			i += 1
 		
 		
