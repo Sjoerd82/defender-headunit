@@ -57,17 +57,36 @@ class SourceController():
 	# add sub-source
 	def addSub( self, index, subsource_config ):
 
-		#Check required fields:
-		if not all (k in subsource_config for k in ('displayname','order')):
+		# check required fields:
+		if not all (k in subsource_config for k in ('displayname','order','subsource_key')):
 			self.__printer('ADD SUB: sub-source NOT added, missing one or more required field(s)...',LL_ERROR)
-			self.__printer('Required fields are: displayname,order',LL_ERROR,True)
+			self.__printer('Required fields are: displayname, order and subsource_key',LL_ERROR,True)
 			return False
 		
-		#Availability = False for all new subsources, until cleared by the check() function
+		# check key:
+		# TODO
+		
+		# check if the subsource already exist
+		print "DEBUG! ----"
+		print "CONFIG RECEIVED:"
+		print subsource_config
+		print "MATCH FOR KEY:"
+		print subsource_config["subsource_key"]
+		print "MATCH FOR VALUE(s):"
+		for keyval in subsource_config["subsource_key"]
+			print subsource_config[keyval]
+		print "DEBUG! ----"
+		
+		#matches = set(dTest.items()) & set(dMatchAgainst.items())
+		#if len(matches) == len(dTest):
+		#return True
+
+		
+		# availability = False for all new subsources, until cleared by the check() function
 		# TODO -- not fully implemented yet
 		subsource_config['available'] = False
 
-		#All good, add the source:
+		# all good, add the source:
 		self.__printer('ADD SUB: {0}'.format(subsource_config['displayname']))
 		self.lSource[index]['subsources'].append(subsource_config)
 		self.lSource[index]['subsources'].sort( key=lambda k: k['order'] )
