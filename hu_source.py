@@ -77,11 +77,26 @@ class SourceController():
 		
 		if len(self.lSource[index]["subsources"]) > 0:
 			print "WE HAVE SS'S.. CHECK REQUIRED..."
+
+		print "DEBUG! ----"
 		
 		# for all defined keys, loop
 		print "WE HAVE TO CHECK THESE KEYS:"
 		for key in keys:
-			print key
+			print key	# mountpoint, uuid, etc.
+			
+			# collect all key values from existing sub-sources
+			# existing key values:
+			#existing_keyvals = []
+			#i = 0
+			for keyA in self.lSource[index]["subsource_key"]:
+				print keyA
+				#if keyA == key:
+					#existing_keyvals.append( self.lSource[index]["subsource_key"][i][keyA]
+			
+			#if subsource_config[key] 
+			# check if mountpoint already exists
+			
 		
 		# existing key values:
 		existing_keyvals = []
@@ -94,7 +109,6 @@ class SourceController():
 		
 		
 		# check if the subsource already exist
-		print "DEBUG! ----"
 		print "SS COUNT:"
 		print len(self.lSource[index]["subsources"])
 		print "CONFIG RECEIVED:"
