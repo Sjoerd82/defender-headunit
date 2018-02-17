@@ -460,7 +460,7 @@ class SourceController():
 	
 	# execute a init() for given source
 	def sourceInit( self, index ):
-	
+		self.__printer('INIT: {0}'.format(index)) #LL_DEBUG
 		checkResult = self.lSource[index]['sourceClass'].init(self)
 	
 	# execute a check() for given source and sets availability accordingly

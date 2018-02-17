@@ -608,7 +608,8 @@ def cb_ifup():
 	ix = 0
 	for source in Sources.getAll():
 		if source['depNetwork']:
-			Sources.sourceCheck(ix)
+			#Sources.sourceCheck(ix)
+			Sources.sourceInit(ix)	#TODO -- Add a re-init or something... or extend check() with init stuff
 		ix += 1
 
 	
