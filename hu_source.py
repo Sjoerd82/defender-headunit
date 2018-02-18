@@ -235,7 +235,7 @@ class SourceController():
 					for subsource in source['subsources'][j_start::step]:
 						if subsource['available']:
 							#print "DEBUG 4"
-							self.__printer('NEXT: Switching {0} {1}/{2}: {3:s}'.format(logtext,i_start,j_start,subsource['displayname']))
+							self.__printer('NEXT: Switching {0}: {1}/{2}: {3:s}'.format(logtext,i_start,j_start,subsource['displayname']))
 							self.iCurrentSource[0] = i_start
 							self.iCurrentSource[1] = j_start
 							return self.iCurrentSource

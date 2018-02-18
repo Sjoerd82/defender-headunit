@@ -822,6 +822,7 @@ def do_source():
 			#
 			# update display
 			#
+			"""
 			currSrc = Sources.get(None)
 			hudispdata = {}
 			if currSrc['name'] == 'fm':
@@ -829,12 +830,12 @@ def do_source():
 			elif currSrc['name'] == 'media':
 				hudispdata['src'] = 'USB'
 				hudispdata['info'] = "Removable Media"
-				hudispdata['info1'] = "label: " + currSrc['subsources'][arCurrIx[1]]['label']
+				#hudispdata['info1'] = "label: " + currSrc['subsources'][arCurrIx[1]]['label']
 			elif currSrc['name'] == 'locmus':
 				hudispdata['src'] = 'INT'
 				hudispdata['info'] = "Internal Storage"
-				if len(currSrc['subsources']) > 1:
-					hudispdata['info1'] = "folder: " + currSrc['subsources'][arCurrIx[1]]['label']
+				#if len(currSrc['subsources']) > 1:
+				#	hudispdata['info1'] = "folder: " + currSrc['subsources'][arCurrIx[1]]['label']
 			elif currSrc['name'] == 'bt':
 				hudispdata['src'] = 'BT'
 				hudispdata['info'] = "Bluetooth"
@@ -848,6 +849,7 @@ def do_source():
 				hudispdata['src'] = 'NET'
 				hudispdata['info'] = "Network Shares"
 			disp.dispdata(hudispdata)
+			"""
 
 			# if source is MPD and supports directories (don't they all?), gather list of dirs, in separate thread..
 			dirList = mpdc.mpc_get_PlaylistDirs()
