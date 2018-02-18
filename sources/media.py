@@ -36,13 +36,17 @@ class sourceClass():
 		print('REMOVE SUBSOURCE: TODO')
 	
 	def add_subsource( self, sourceCtrl, parameters ):
-		print "DEBUG!"
-		print parameters
 		
 		has_mountpoint = False
 		has_device = False
 		device = ""
+		mountpoint = ""
+		uuid = ""
+		label = ""
+		mpd_dir = ""
+		index = None
 		
+		# MOUNTPOINT and DEVICE
 		if 'mountpoint' in parameters:
 			print "MOUNTP"
 			has_mountpoint = True
@@ -52,23 +56,75 @@ class sourceClass():
 			print "DEVICE {0}".format(device)
 			has_device = True
 		
+		# retrieve mountpoint or device
 		if not has_mountpoint and not has_device:
 			self.__printer('No mountpoint or device given, aborting')
 			return False
-		elif has_mountpoint and not has_device:
-			print "DETERMINE DEVICE"
-		elif has_device and not has_mountpoint:
-			print "DETERMINE MOUNTP"
 			
+		elif has_mountpoint and not has_device:
+			print "DETERMINE DEVICE #TODO > aborting"
+			#TODO
+			return False
+			
+		elif has_device and not has_mountpoint:
+			self.__printer("Determining mountpoint", level=LL_DEBUG)
+			
+			# get mountpoint from "mount" command
 			mountpoint = subprocess.check_output("mount | egrep "+device+" | cut -d ' ' -f 3", shell=True).rstrip('\n')
 
-			# check if we have a mountpoint..
+			# check if we have a mountpoint...
 			if mountpoint == "":
 				self.__printer(" > No mountpoint found. Stopping.")
-			else:
-				print mountpoint
+				return False
+
+		# UUID
+		if 'uuid' not in parameters:
+			# retrieve the partition uuid (hu_utils)
+			uuid = get_part_uuid(device)
+		else:
+			uuid = parameters['uuid']		
+			
+		# check if we have a UUID...
+		if uuid == "":
+			self.__printer(" > No UUID found. Stopping.")
+			return False
 		
-		print "DEBUG!"
+		# LABEL
+		if 'label' not in parameters:
+			label = os.path.basename(mountpoint).rstrip('\n')
+		else:
+			label = parameters['label']
+		
+		# check if we have a label...
+		if label == "":
+			self.__printer(" > No label found. Stopping.")
+			return False
+		
+		# MPD dir
+		if 'mpd_dir' not in parameters:
+			# TODO -- ASSUMING /media
+			mpd_dir = mountpoint[7:]
+		else:
+			mpd_dir = parameters['mpd_dir']
+		
+		# Source index
+		if 'index' not in parameters:
+			index = sourceCtrl.getIndex('name','media')
+		else:
+			index = parameters['index']
+		
+		# construct the subsource
+		subsource = {}
+		subsource['name'] = 'media'
+		subsource['displayname'] = 'media: ' + mountpoint
+		subsource['order'] = 0		# no ordering
+		subsource['mountpoint'] = mountpoint
+		subsource['mpd_dir'] = mpd_dir
+		subsource['label'] = label
+		subsource['uuid'] = uuid
+		subsource['device'] = device
+
+		sourceCtrl.addSub(ix, subsource)
 		
 	
 	def __media_add_subsource( self, dir, label, uuid, device, sourceCtrl ):

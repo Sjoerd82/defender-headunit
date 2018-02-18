@@ -634,7 +634,7 @@ def cb_udisk_dev_rem( device ):
 	item['device'] = device
 	queue('blocking',item,'button_devrem')
 
-def udisk_details( device, action ):
+def udisk_add( device ):
 
 	global Sources
 
@@ -653,141 +653,162 @@ def udisk_details( device, action ):
 	# Variables
 	DeviceFile = ""
 	mountpoint = ""
-	mytag = ".UDISKS"
+	mytag = "UDISKS"
 	ix = Sources.getIndex('name','media')
 	
-	if action == 'A':
-
-		try:
-			DeviceFile = device_props.Get('org.freedesktop.UDisks.Device',"DeviceFile")
-			printer(" > DeviceFile: {0}".format(DeviceFile),tag=mytag)
-			
-		except:
-			printer(" > DeviceFile is unset... Aborting...",tag=mytag)
-			return None
+	try:
+		DeviceFile = device_props.Get('org.freedesktop.UDisks.Device',"DeviceFile")
+		printer(" > DeviceFile: {0}".format(DeviceFile),tag=mytag)
 		
-		# Check if DeviceIsMediaAvailable...
-		try:    
-			is_media_available = device_props.Get('org.freedesktop.UDisks.Device', "DeviceIsMediaAvailable")
-			if is_media_available:
-				printer(" > Media available",tag=mytag)
-			else:
-				printer(" > Media not available... Aborting...",tag=mytag)
-				return None
-		except:
-			printer(" > DeviceIsMediaAvailable is not set... Aborting...",tag=mytag)
-			return None
-		
-		# Check if it is a Partition...
-		try:
-			is_partition = device_props.Get('org.freedesktop.UDisks.Device', "DeviceIsPartition")
-			if is_partition:
-				printer(" > Device is partition",tag=mytag)
-		except:
-			printer(" > DeviceIsPartition is not set... Aborting...",tag=mytag)
-			return None
-
-		if not is_partition:
-			printer(" > DeviceIsPartition is not set... Aborting...",tag=mytag)
-			return None
-
-		# Please Note:
-		# DeviceFile = dbus.String(u'/dev/sda1', variant_level=1)
-		print DeviceFile
-		print str(DeviceFile)
-			
-		#return DeviceFile
-		parameters = {}
-		parameters['index'] = ix
-		parameters['device'] = str(DeviceFile)
-		Sources.sourceAddSub(ix,parameters)
-		return True
-		
-		#queue('blocking','DEVREM','button_devrem')
+	except:
+		printer(" > DeviceFile is unset... Aborting...",tag=mytag)
+		return None
 	
-		#IdLabel: SJOERD
-		#DriveSerial: 0014857749DCFD20C7F95F31
-		#DeviceMountPaths: dbus.Array([dbus.String(u'/media/SJOERD')], signature=dbus.Signature('s'), variant_level=1)
-		#DeviceFileById: dbus.Array([dbus.String(u'/dev/disk/by-id/usb-Kingston_DataTraveler_SE9_0014857749DCFD20C7F95F31-0:0-part1'), dbus.String(u'/dev/disk/by-uuid/D2B6-F8B3')], signature=dbus.Signature('s'), variant_level=1)
-		
-		#
-		# DeviceFile contains the device name of the added device..
-		#
-		
-		# get mountpoint from "mount" command
-		mountpoint = subprocess.check_output("mount | egrep "+DeviceFile+" | cut -d ' ' -f 3", shell=True).rstrip('\n')
+	# Check if DeviceIsMediaAvailable...
+	try:    
+		is_media_available = device_props.Get('org.freedesktop.UDisks.Device', "DeviceIsMediaAvailable")
+		if is_media_available:
+			printer(" > Media available",tag=mytag)
+		else:
+			printer(" > Media not available... Aborting...",tag=mytag)
+			return None
+	except:
+		printer(" > DeviceIsMediaAvailable is not set... Aborting...",tag=mytag)
+		return None
+	
+	# Check if it is a Partition...
+	try:
+		is_partition = device_props.Get('org.freedesktop.UDisks.Device', "DeviceIsPartition")
+		if is_partition:
+			printer(" > Device is partition",tag=mytag)
+	except:
+		printer(" > DeviceIsPartition is not set... Aborting...",tag=mytag)
+		return None
 
-		# check if we have a mountpoint..
-		if mountpoint == "":
-			printer(" > No mountpoint found. Stopping.",tag=mytag)
-			return 1
-		
-		# get the partition uuid from the "blkid" command
-		partuuid = subprocess.check_output("blkid "+DeviceFile+" -s PARTUUID -o value", shell=True).rstrip('\n')
+	if not is_partition:
+		printer(" > DeviceIsPartition is not set... Aborting...",tag=mytag)
+		return None
 
-		# derive USB label from mountpoint
-		sUsbLabel = os.path.basename(mountpoint).rstrip('\n')
+	# Please Note:
+	# DeviceFile = dbus.String(u'/dev/sda1', variant_level=1)
+	print DeviceFile
+	print str(DeviceFile)
 		
-		# logging
-		printer(" > Mounted on: {0} (label: {1})".format(mountpoint,sUsbLabel),tag=mytag)
-		
-		# add source
-		# TODO, DRY-conflict met __media_add_subsource in media.py
-		
-		# construct the subsource
-		subsource = {}
-		subsource['name'] = 'media'
-		subsource['displayname'] = 'media: ' + mountpoint
-		subsource['order'] = 0		# no ordering
-		subsource['mountpoint'] = mountpoint
-		subsource['mpd_dir'] = mountpoint[7:]		# TODO -- ASSUMING /media
-		subsource['label'] = sUsbLabel
-		subsource['uuid'] = partuuid
-		subsource['device'] = DeviceFile
-		isAdded = Sources.addSub(ix, subsource)
+	#return DeviceFile
+	parameters = {}
+	parameters['index'] = ix
+	parameters['device'] = str(DeviceFile)
+	Sources.sourceAddSub(ix,parameters)
+	printSummary(Sources)
+	return True
+	
+	#queue('blocking','DEVREM','button_devrem')
 
-		# check source, if added successfully
-		if isAdded:
-			# get subsource index
-			ix_ss = Sources.getIndexSub(ix, 'device', DeviceFile)
-			
-			# check, and if available play
-			if Sources.sourceCheck( ix, ix_ss ):
-				Sources.setCurrent( ix, ix_ss )
-				#TODO: load resume
-				Sources.sourcePlay()
+	#IdLabel: SJOERD
+	#DriveSerial: 0014857749DCFD20C7F95F31
+	#DeviceMountPaths: dbus.Array([dbus.String(u'/media/SJOERD')], signature=dbus.Signature('s'), variant_level=1)
+	#DeviceFileById: dbus.Array([dbus.String(u'/dev/disk/by-id/usb-Kingston_DataTraveler_SE9_0014857749DCFD20C7F95F31-0:0-part1'), dbus.String(u'/dev/disk/by-uuid/D2B6-F8B3')], signature=dbus.Signature('s'), variant_level=1)
+	
+	#
+	# DeviceFile contains the device name of the added device..
+	#
+	
+	""" MOVED TO media.py >>>
+	
+	# get mountpoint from "mount" command
+	mountpoint = subprocess.check_output("mount | egrep "+DeviceFile+" | cut -d ' ' -f 3", shell=True).rstrip('\n')
+
+	# check if we have a mountpoint..
+	if mountpoint == "":
+		printer(" > No mountpoint found. Stopping.",tag=mytag)
+		return 1
+	
+	# get the partition uuid from the "blkid" command
+	partuuid = subprocess.check_output("blkid "+DeviceFile+" -s PARTUUID -o value", shell=True).rstrip('\n')
+
+	# derive USB label from mountpoint
+	sUsbLabel = os.path.basename(mountpoint).rstrip('\n')
+	
+	# logging
+	printer(" > Mounted on: {0} (label: {1})".format(mountpoint,sUsbLabel),tag=mytag)
+	
+	# add source
+	# TODO, DRY-conflict met __media_add_subsource in media.py
+	
+	# construct the subsource
+	subsource = {}
+	subsource['name'] = 'media'
+	subsource['displayname'] = 'media: ' + mountpoint
+	subsource['order'] = 0		# no ordering
+	subsource['mountpoint'] = mountpoint
+	subsource['mpd_dir'] = mountpoint[7:]		# TODO -- ASSUMING /media
+	subsource['label'] = sUsbLabel
+	subsource['uuid'] = partuuid
+	subsource['device'] = DeviceFile
+	isAdded = Sources.addSub(ix, subsource)
+
+	# check source, if added successfully
+	if isAdded:
+		# get subsource index
+		ix_ss = Sources.getIndexSub(ix, 'device', DeviceFile)
 		
+		# check, and if available play
+		if Sources.sourceCheck( ix, ix_ss ):
+			Sources.setCurrent( ix, ix_ss )
+			#TODO: load resume
+			Sources.sourcePlay()
+	
+	# display overview
+	printSummary(Sources)
+	"""
+		
+
+def udisk_rem( device ):
+
+	global Sources
+
+	device_obj = bus.get_object("org.freedesktop.UDisks", device)
+	device_props = dbus.Interface(device_obj, dbus.PROPERTIES_IFACE)
+	#
+	#  beware.... anything after this may or may not be defined depending on the event and state of the drive. 
+	#  Attempts to get a prop that is no longer set will generate a dbus.connection:Exception
+	#
+
+	# HANDY DEBUGGING TIP, DISPLAY ALL AVAILABLE PROPERTIES:
+	# WILL *NOT* WORK FOR DEVICE REMOVAL
+	#data = device_props.GetAll('')
+	#for i in data: print i+': '+str(data[i])
+	
+	# Variables
+	DeviceFile = ""
+	mountpoint = ""
+	mytag = "UDISKS"
+	ix = Sources.getIndex('name','media')
+	
+	# The removed mountpoint can be derived from str(device)
+
+	# WHAT IF IT'S PLAYING??
+	# TODO CHECK IF PLAYING!!
+
+	# TODO ignore /dev/sda
+	
+	# form the partition device name
+	partition = "/dev/"+os.path.basename(str(device))
+
+	# search for the subsource index
+	ix_ss = Sources.getIndexSub(ix, 'device', partition)
+	if not ix_ss is None:
+	
+		printer(' > Found {0}. Removing...'.format(partition))
+		
+		# remove subsource
+		Sources.remSub(ix, ix_ss)
+	
 		# display overview
 		printSummary(Sources)
-		
-	elif action == 'R':
-		# The removed mountpoint can be derived from str(device)
-	
-		# WHAT IF IT'S PLAYING??
-		# TODO CHECK IF PLAYING!!
-	
-		# TODO ignore /dev/sda
-		
-		# form the partition device name
-		partition = "/dev/"+os.path.basename(str(device))
-
-		# search for the subsource index
-		ix_ss = Sources.getIndexSub(ix, 'device', partition)
-		if not ix_ss is None:
-		
-			printer(' > Found {0}. Removing...'.format(partition))
-			
-			# remove subsource
-			Sources.remSub(ix, ix_ss)
-		
-			# display overview
-			printSummary(Sources)
-		else:
-			printer(' > Not a subsource: {0}'.format(partition))	
-		
 	else:
-		printer(" > ERROR: Invalid action.",tag=mytag)
-		pa_sfx('error')
+		printer(' > Not a subsource: {0}'.format(partition))	
+		
 
 # ********************************************************************************
 # Headunit functions
@@ -1599,15 +1620,14 @@ def cb_queue():
 			set_random( 'toggle' )
 		elif command == 'DEVADD':
 			device = item['device']
-			#devicefile = 
-			udisk_details( device, 'A' )
+			udisk_add(device)
 #			if not devicefile is None:
 #				print "TODO"
-				
-				
+			print "TODO: auto-play"
+			print "TODO: determine dir-list"
 		elif command == 'DEVREM':
 			device = item['device']
-			udisk_details( device, 'R' )
+			udisk_rem(device)
 		else:
 			printer('Undefined task', level=LL_ERROR, tag='QUEUE')
 

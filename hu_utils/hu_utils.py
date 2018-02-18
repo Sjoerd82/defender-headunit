@@ -86,3 +86,11 @@ def url_check( url ):
 		return True
 	except:
 		return False
+		
+def get_part_uuid( device ):
+	# TODO: check "device"
+	# retrieve the partition uuid from the "blkid" command
+	partuuid = subprocess.check_output("blkid "+device+" -s PARTUUID -o value", shell=True).rstrip('\n')
+	return partuuid
+
+#def get_label_from_
