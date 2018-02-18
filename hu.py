@@ -219,6 +219,12 @@ def save_current_position(timeelapsed):
 	
 	# create filename
 	source_name = currSrc["name"]
+	
+	if not 'subsource' in currSrc:
+		print "TODO: resume not (YET) supported for this source, sorry."
+		print currSrc
+		return None
+
 	if 'filename_save' in currSrc:
 		source_key = currSrc["filename_save"][0]	#eg "mountpoint"
 		if source_key in currSrc["subsource"]:
@@ -270,6 +276,7 @@ def load_current_resume():
 	
 	if not 'subsource' in currSrc:
 		print "TODO: resume not (YET) supported for this source, sorry."
+		print currSrc
 		return None
 	
 	if 'filename_save' in currSrc:

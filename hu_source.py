@@ -410,7 +410,7 @@ class SourceController():
 		del composite_current_source['subsources']
 			
 		# check if current source is a sub-source
-		if not self.iCurrentSource[1] is None:
+		if self.iCurrentSource[1] is None:
 			# return without a subsource
 			return composite_current_source
 		else:		
