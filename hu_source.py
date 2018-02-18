@@ -399,16 +399,27 @@ class SourceController():
 	# subsource is a dictionary in ['subsource'], containing the curren sub-source
 	# the returned source is stripped of python objects (for no real reason)
 	def getComposite( self ):
+	
+		# check index
+		if iCurrentSource[0] is None:
+			return None
+
 		# make a copy
 		composite_current_source = dict( self.lSource[self.iCurrentSource[0]] )
 		# remove sub-sources:
 		del composite_current_source['subsources']
-		# add current sub-source: Note that this entry is called subsource, not subsources!
-		composite_current_source['subsource'] = self.lSource[self.iCurrentSource[0]]['subsources'][self.iCurrentSource[1]]
-		# remove not-usefull stuff:
-		del composite_current_source['sourceModule']	# what did we use this for again??? #TODO
-		del composite_current_source['sourceClass']		# what did we use this for again??? #TODO
-		return composite_current_source
+			
+		# check if current source is a sub-source
+		if not self.iCurrentSource[1] is None:
+			# return without a subsource
+			return composite_current_source
+		else:		
+			# add current sub-source: Note that this entry is called subsource, not subsources!
+			composite_current_source['subsource'] = self.lSource[self.iCurrentSource[0]]['subsources'][self.iCurrentSource[1]]
+			# remove not-usefull stuff:
+			del composite_current_source['sourceModule']	# what did we use this for again??? #TODO
+			del composite_current_source['sourceClass']		# what did we use this for again??? #TODO
+			return composite_current_source
 	
 	def getSubSources( self, index ):
 		return self.lSource[index]['subsources']

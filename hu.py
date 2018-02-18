@@ -771,14 +771,16 @@ def udisk_rem( device ):
 	if not ix_ss is None:
 	
 		# remove sub-source
-		printer(' > Found {0}. Removing...'.format(partition))
+		printer(' > Removing {0}...'.format(partition))
 		Sources.remSub(ix, ix_ss)
 		
 		# stop playing, if removed source is current source
 		arIxCurr = Sources.getIndexCurrent()
 		if ix == arIxCurr[0] and ix_ss == arIxCurr[1]:
 			Sources.sourceStop()
-			Sources.next(reverse=True)
+			#Sources.next(reverse=True)
+			x = Sources.next()
+			print "DEBUG: {0}".format(x)
 			hu_play()
 	
 		# display overview
