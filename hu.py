@@ -664,7 +664,7 @@ def udisk_add( device ):
 		return None
 	
 	# Check if DeviceIsMediaAvailable...
-	try:    
+	try:
 		is_media_available = device_props.Get('org.freedesktop.UDisks.Device', "DeviceIsMediaAvailable")
 		if is_media_available:
 			printer(" > Media available",tag=mytag)
@@ -697,9 +697,13 @@ def udisk_add( device ):
 	parameters = {}
 	parameters['index'] = ix
 	parameters['device'] = str(DeviceFile)
-	Sources.sourceAddSub(ix,parameters)
-	printSummary(Sources)
-	return True
+	isAdded = Sources.sourceAddSub(ix,parameters)
+	
+	if isAdded:
+		printSummary(Sources)
+		return True
+	else:
+		return False
 	
 	#queue('blocking','DEVREM','button_devrem')
 
@@ -711,55 +715,11 @@ def udisk_add( device ):
 	#
 	# DeviceFile contains the device name of the added device..
 	#
-	
-	""" MOVED TO media.py >>>
-	
-	# get mountpoint from "mount" command
-	mountpoint = subprocess.check_output("mount | egrep "+DeviceFile+" | cut -d ' ' -f 3", shell=True).rstrip('\n')
 
-	# check if we have a mountpoint..
-	if mountpoint == "":
-		printer(" > No mountpoint found. Stopping.",tag=mytag)
-		return 1
-	
-	# get the partition uuid from the "blkid" command
-	partuuid = subprocess.check_output("blkid "+DeviceFile+" -s PARTUUID -o value", shell=True).rstrip('\n')
-
-	# derive USB label from mountpoint
-	sUsbLabel = os.path.basename(mountpoint).rstrip('\n')
-	
-	# logging
-	printer(" > Mounted on: {0} (label: {1})".format(mountpoint,sUsbLabel),tag=mytag)
-	
-	# add source
-	# TODO, DRY-conflict met __media_add_subsource in media.py
-	
-	# construct the subsource
-	subsource = {}
-	subsource['name'] = 'media'
-	subsource['displayname'] = 'media: ' + mountpoint
-	subsource['order'] = 0		# no ordering
-	subsource['mountpoint'] = mountpoint
-	subsource['mpd_dir'] = mountpoint[7:]		# TODO -- ASSUMING /media
-	subsource['label'] = sUsbLabel
-	subsource['uuid'] = partuuid
-	subsource['device'] = DeviceFile
-	isAdded = Sources.addSub(ix, subsource)
 
 	# check source, if added successfully
-	if isAdded:
-		# get subsource index
-		ix_ss = Sources.getIndexSub(ix, 'device', DeviceFile)
-		
-		# check, and if available play
-		if Sources.sourceCheck( ix, ix_ss ):
-			Sources.setCurrent( ix, ix_ss )
-			#TODO: load resume
-			Sources.sourcePlay()
 	
-	# display overview
-	printSummary(Sources)
-	"""
+
 		
 
 def udisk_rem( device ):
@@ -824,6 +784,8 @@ def do_source():
 		res = Sources.next()
 		if not res == None:
 
+			hu_play()
+			"""
 			#
 			# load resume data
 			#
@@ -838,6 +800,7 @@ def do_source():
 			#
 			# update operational settings
 			#
+			"""
 			
 			# get current index(es)
 			arCurrIx = Sources.getIndexCurrent()
@@ -975,6 +938,56 @@ def do_source():
 	printSummary(Sources)
 
 		
+
+def hu_play( index=None, index_sub=None, resume=True ):
+
+	# set current index, if given
+	if not index is None:
+		Sources.setCurrent(index, index_sub)
+
+	if resume:
+		dLoaded = load_current_resume()
+		Sources.sourcePlay(dLoaded)
+	else:
+		Sources.sourcePlay()
+
+"""
+		
+#from device add:
+		# get subsource index
+		ix_ss = Sources.getIndexSub(ix, 'device', DeviceFile)
+		
+		# check, and if available play
+		if Sources.sourceCheck( ix, ix_ss ):
+			Sources.setCurrent( ix, ix_ss )
+			#TODO: load resume
+			Sources.sourcePlay()
+
+#from do_source:
+			#
+			# load resume data
+			#
+			dLoaded = load_current_resume()
+
+			#
+			# play new source
+			#
+			
+			Sources.sourceStop()			# todo: required??
+			Sources.sourcePlay(dLoaded)
+
+#qplay:			
+			Sources.setCurrent(prevIx[0])
+			dLoaded = load_current_resume()
+			Sources.sourcePlay(dLoaded)
+
+			Sources.setCurrent(prevIx[0],prevIx[1])
+			dLoaded = load_current_resume()
+			Sources.sourcePlay(dLoaded)
+
+Sources.sourcePlay()
+"""
+
 def dir_next():
 	global Sources
 	global arMpcPlaylistDirs
@@ -1556,16 +1569,18 @@ def QuickPlay( prevSource, prevSourceSub ):
 		prevIx = bla_refactored( prevSource, prevSourceSub, True ) #PlayPrevSource()
 		if len(prevIx) == 1:
 			printer ('Continuing playback', tag='QPLAY')
-			Sources.setCurrent(prevIx[0])
-			dLoaded = load_current_resume()
-			Sources.sourcePlay(dLoaded)
+			hu_play(prevIx[0])
+			#Sources.setCurrent(prevIx[0])
+			#dLoaded = load_current_resume()
+			#Sources.sourcePlay(dLoaded)
 			return True
 						
 		elif len(prevIx) == 2:
 			printer ('Continuing playback (subsource)', tag='QPLAY')
-			Sources.setCurrent(prevIx[0],prevIx[1])
-			dLoaded = load_current_resume()
-			Sources.sourcePlay(dLoaded)
+			hu_play(prevIx[0],prevIx[1])
+			#Sources.setCurrent(prevIx[0],prevIx[1])
+			#dLoaded = load_current_resume()
+			#Sources.sourcePlay(dLoaded)
 			return True
 
 		else:
@@ -1619,11 +1634,12 @@ def cb_queue():
 			set_random( 'toggle' )
 		elif command == 'DEVADD':
 			device = item['device']
-			udisk_add(device)
-#			if not devicefile is None:
-#				print "TODO"
-			print "TODO: auto-play"
-			print "TODO: determine dir-list"
+			ret = udisk_add(device)
+			if ret:
+				#hu_play(
+				# if autoplay: #TODO
+				print "TODO: auto-play"
+				print "TODO: determine dir-list"
 		elif command == 'DEVREM':
 			device = item['device']
 			udisk_rem(device)
@@ -1879,7 +1895,8 @@ if prevSource == "":
 	printSummary(Sources)
 	printer ('Starting first available source', tag='QPLAY')
 	Sources.next()
-	Sources.sourcePlay()
+	#Sources.sourcePlay()
+	hu_play(resume=False)
 	
 else:
 	ret = QuickPlay( prevSource,
@@ -1897,7 +1914,8 @@ else:
 		printSummary(Sources)
 		printer ('Starting first available source', tag='QPLAY')
 		Sources.next()
-		Sources.sourcePlay()
+		#Sources.sourcePlay()
+		hu_play(resume=False)
 
 # Save Settings
 currSrc = Sources.getComposite()

@@ -112,7 +112,10 @@ class sourceClass():
 			index = sourceCtrl.getIndex('name','media')
 		else:
 			index = parameters['index']
-		
+
+		# logging
+		self.__printer(" > Mounted on: {0} (label: {1})".format(mountpoint,sUsbLabel))
+			
 		# construct the subsource
 		subsource = {}
 		subsource['name'] = 'media'
@@ -124,7 +127,8 @@ class sourceClass():
 		subsource['uuid'] = uuid
 		subsource['device'] = device
 
-		sourceCtrl.addSub(index, subsource)
+		ret = sourceCtrl.addSub(index, subsource)
+		return ret
 		
 	
 	def __media_add_subsource( self, dir, label, uuid, device, sourceCtrl ):
