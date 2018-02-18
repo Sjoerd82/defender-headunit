@@ -802,58 +802,13 @@ def do_source():
 		res = Sources.next()
 		if not res == None:
 
+			# play newly selected source
 			hu_play()
-			"""
-			#
-			# load resume data
-			#
-			dLoaded = load_current_resume()
 
-			#
-			# play new source
-			#
-			
-			Sources.sourceStop()			# todo: required??
-			Sources.sourcePlay(dLoaded)
-			#
-			# update operational settings
-			#
-
-			
-			# get current index(es)
-			arCurrIx = Sources.getIndexCurrent()
-			#if arCurrIx[1] == None:
-			currSrc = Sources.get(None)
-			#else:
-			#	currSrc = Sources.get(None)
-			#	currSSrc = Sources.getSubSource(arCurrIx[0],arCurrIx[1])
-			#
-			#print "currSrc:"
-			#print currSrc
-			
-			#print "currSSrc:"
-			#print currSSrc
-			
-			#print "++:"
-			#print Sources.getComposite()
-			
-			# update source
-			cSettings.set('source',currSrc['name'])
-			
-			# update sub-source key (in case of sub-source)
-			if not arCurrIx[1] == None:
-				subsource_key = {}
-				for key in currSrc['subsource_key']:
-					subsource_key[key] = currSrc['subsources'][arCurrIx[1]][key]
-				cSettings.set('subsourcekey', subsource_key)
-			
-			# commit changes
-			cSettings.save()
-			"""
 			#
 			# update display
 			#
-			
+			currSrc = Sources.get(None)
 			hudispdata = {}
 			if currSrc['name'] == 'fm':
 				hudispdata['src'] = 'FM'
