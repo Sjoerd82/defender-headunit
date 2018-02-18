@@ -1615,12 +1615,13 @@ def cb_queue():
 			set_random( 'toggle' )
 		elif command == 'DEVADD':
 			device = item['device']
-			ret = udisk_add(device)
-			if ret:
+			udisk_add(device)
+			#ret = udisk_add(device)
+			#if ret:
 				#hu_play(
 				# if autoplay: #TODO
-				print "TODO: auto-play"
-				print "TODO: determine dir-list"
+				#print "TODO: auto-play"
+				#print "TODO: determine dir-list"
 		elif command == 'DEVREM':
 			device = item['device']
 			udisk_rem(device)
