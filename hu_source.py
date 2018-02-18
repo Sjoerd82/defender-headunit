@@ -253,63 +253,58 @@ class SourceController():
 		elif iSourceCnt == 1:
 			self.__printer('NEXT: Only one source, cannot switch.',LL_WARNING)
 
-			# it's possible the iCurrentSource isn't set yet
-			if (self.iCurrentSource[0] is None or
-			    self.iCurrent is None):
-				i = 0
-				print "debug 1"
-				for source in self.lSource:
-					print "debug 2 {0}".format(i)
-					if source['available'] and not source['template']:
-						self.iCurrent = i
-						self.iCurrentSource[0] = i
-						self.iCurrentSource[1] = None
-						print "debug 3"
-						return self.iCurrentSource
-					elif source['available'] and source['template']:
-						self.iCurrentSource[0] = i
-						self.iCurrent = i
-						j = 0
-						print "debug 4"
-						for subsource in source['subsources']:
-							print "debug 5 {0}".format(j)
-							if subsource['available']:
-								self.iCurrentSS = j
-								self.iCurrentSource[1] = j
-								print "debug 6 {0}".format(j)
-								return self.iCurrentSource
-							j += 1
-					i += 1
-			print "debug 7"
+		#
+		# check if iCurrentSource is set
+		# (in that case, set the next available, and return index)
+		#
+		if (self.iCurrentSource[0] is None or
+			self.iCurrent is None):
+			i = 0
+			for source in self.lSource:
+				if source['available'] and not source['template']:
+					self.iCurrent = i
+					self.iCurrentSource[0] = i
+					self.iCurrentSource[1] = None
+					return self.iCurrentSource
+				elif source['available'] and source['template']:
+					self.iCurrentSource[0] = i
+					self.iCurrent = i
+					j = 0
+					for subsource in source['subsources']:
+						if subsource['available']:
+							self.iCurrentSS = j
+							self.iCurrentSource[1] = j
+							return self.iCurrentSource
+						j += 1
+				i += 1
 			return self.iCurrentSource
 
 		#
 		# determine starting positions
 		#
-		
-		if self.iCurrent == None:
-			self.__printer('NEXT: No active source. Searching for first available ...',LL_DEBUG)
-			i_start=0
-			j_start=0
+#		if self.iCurrent == None:
+#			self.__printer('NEXT: No active source. Searching for first available ...',LL_DEBUG)
+#			i_start=0
+#			j_start=0
+#			i_end = None
+#			i_end2 = None
+#		else:
+		# if the current source is a sub-source, then first check if there are more sub-sources after the current
+		if ( not self.iCurrentSource[1] == None and
+			 self.getAvailableSubCnt(self.iCurrent) > self.iCurrentSource[1]+1 ):
+			#print "DEBUG 1"
+			# there are more available sub-sources..
+			i_start = self.iCurrentSource[0]
 			i_end = None
-			i_end2 = None
+			i_end2 = i_start-1
+			j_start = self.iCurrentSource[1]+1	#next sub-source (+1) isn't neccesarily available, but this will be checked later
 		else:
-			# if the current source is a sub-source, then first check if there are more sub-sources after the current
-			if ( not self.iCurrentSource[1] == None and
-			     self.getAvailableSubCnt(self.iCurrent) > self.iCurrentSource[1]+1 ):
-				#print "DEBUG 1"
-				# there are more available sub-sources..
-				i_start = self.iCurrentSource[0]
-				i_end = None
-				i_end2 = i_start-1
-				j_start = self.iCurrentSource[1]+1	#next sub-source (+1) isn't neccesarily available, but this will be checked later
-			else:
-				#print "DEBUG 2"
-				# no more available sub-sources
-				i_start = self.iCurrentSource[0]+1
-				i_end = None
-				i_end2 = i_start-1
-				j_start=0
+			#print "DEBUG 2"
+			# no more available sub-sources
+			i_start = self.iCurrentSource[0]+1
+			i_end = None
+			i_end2 = i_start-1
+			j_start=0
 
 		#print "DEBUG: STARTING POSITIONS ARE: {0}, {1}".format(i_start, j_start)
 
@@ -382,6 +377,12 @@ class SourceController():
 				i += 1
 	
 		"""
+	# make the previous available source the current, returns the new active source index
+	# return None if not succesful
+	""" Useful in case an active source becomes unavailable, it's more natural for the user to jump back
+	    to a previously playing source, instead of the next in line """
+	#def prev( self ):
+	
 	
 	# return the complete lSource ## do we really need this?
 	def getAll( self ):
