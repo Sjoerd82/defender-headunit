@@ -21,13 +21,16 @@
 # Operational source settings, to continue playback (pickled):
 #
 # fm.p
-# media/<uuid>.p			
-# locmus/<mountpoint>.p		
-# smb/<ip_mountpoint>.p		172_16_8_11_music
+# media /<uuid>.p
+#       /<uuid>_dirs.txt
+# locmus/<mountpoint>.p
+#       /<mountpoint>_dirs.txt
+# smb   /<ip_mountpoint>.p			172_16_8_11_music.p
+#		/<ip_mountpoint>_dirs.txt	172_16_8_11_music_dirs.txt
 #
 # ?:
 # stream, line, bt
-# 
+#
 
 #********************************************************************************
 # LOGGING and CONSOLE output
@@ -560,15 +563,11 @@ def cb_mpd_event( event ):
 	
 	# TEMPORARY --  DON'T DEPEND ON MPD FOR THIS -- USE DBUS #
 	elif event == "ifup":
-		printer(" ...  WiFi interface up: checking network related sources", tag='MPD')
 		cb_ifup()
-		printSummary(Sources)
 		
 	elif event == "ifdown":
-		printer(" ...  WiFi interface down: marking network related sources unavailable", tag='MPD')
-		Sources.setAvailable('depNetwork',True,False)
-		printSummary(Sources)
-		
+		cb_ifdn()
+
 	else:
 		printer(' ...  unknown event (no action)', tag='MPD')
 		
@@ -594,16 +593,10 @@ def cb_timer1():
 
 	return True
 
-#Timer 2: Test the queuing
-def cb_timer2():
-	qPrio.put('VOL_UP',False)
-	return True
-
-
 # called when the ifup script is called (interface up)
 def cb_ifup():
 	global Sources
-	printer('Network interface online')
+	printer("WiFi interface UP: checking network related sources")
 
 	ix = 0
 	for source in Sources.getAll():
@@ -612,6 +605,20 @@ def cb_ifup():
 			Sources.sourceInit(ix)	#TODO -- Add a re-init or something... or extend check() with init stuff
 		ix += 1
 
+	# display overview
+	printSummary(Sources)
+
+# called when the ifdown script is called (interface down)
+def cb_ifdn():
+	global Sources
+	printer("WiFi interface DOWN: marking network related sources unavailable")
+
+	# set all network dependend sources to unavailable
+	# TODO: We're assuming we only have wlan, add a check for any remaining interfaces in case we have other
+	Sources.setAvailable('depNetwork',True,False)
+
+	# display overview
+	printSummary(Sources)
 	
 def cb_udisk_dev_add( device ):
 	printer('Device added: {0}'.format(str(device)),tag='UDISKS')
@@ -657,7 +664,7 @@ def udisk_details( device, action ):
 			
 		except:
 			printer(" > DeviceFile is unset... Aborting...",tag=mytag)
-			return 1
+			return None
 		
 		# Check if DeviceIsMediaAvailable...
 		try:    
@@ -666,10 +673,10 @@ def udisk_details( device, action ):
 				printer(" > Media available",tag=mytag)
 			else:
 				printer(" > Media not available... Aborting...",tag=mytag)
-				return 1
+				return None
 		except:
 			printer(" > DeviceIsMediaAvailable is not set... Aborting...",tag=mytag)
-			return 1
+			return None
 		
 		# Check if it is a Partition...
 		try:
@@ -678,13 +685,20 @@ def udisk_details( device, action ):
 				printer(" > Device is partition",tag=mytag)
 		except:
 			printer(" > DeviceIsPartition is not set... Aborting...",tag=mytag)
-			return 1
+			return None
 
 		if not is_partition:
 			printer(" > DeviceIsPartition is not set... Aborting...",tag=mytag)
-			return 1
+			return None
 
 
+		#return DeviceFile
+		parameters = {}
+		parameters['index'] = ix
+		parameters['device'] = DeviceFile
+		Sources.sourceAddSub(ix,parameters)
+		return True
+		
 		#queue('blocking','DEVREM','button_devrem')
 	
 		#IdLabel: SJOERD
@@ -1581,7 +1595,11 @@ def cb_queue():
 			set_random( 'toggle' )
 		elif command == 'DEVADD':
 			device = item['device']
-			udisk_details( device, 'A' )
+			devicefile = udisk_details( device, 'A' )
+#			if not devicefile is None:
+#				print "TODO"
+				
+				
 		elif command == 'DEVREM':
 			device = item['device']
 			udisk_details( device, 'R' )
@@ -2012,6 +2030,7 @@ bus.add_signal_receiver(cb_remote_btn_press2, dbus_interface = "com.arctura.keyb
 bus.add_signal_receiver(cb_udisk_dev_add, signal_name='DeviceAdded', dbus_interface="org.freedesktop.UDisks")
 bus.add_signal_receiver(cb_udisk_dev_rem, signal_name='DeviceRemoved', dbus_interface="org.freedesktop.UDisks")
 bus.add_signal_receiver(cb_ifup, signal_name='ifup', dbus_interface="com.arctura.ifup")
+bus.add_signal_receiver(cb_ifdn, signal_name='ifdn', dbus_interface="com.arctura.ifdn")
 
 
 #

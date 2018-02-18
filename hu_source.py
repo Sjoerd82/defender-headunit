@@ -498,17 +498,6 @@ class SourceController():
 			if subsource['available']:
 				c += 1
 		return c
-		
-
-		
-	def sourceExec( self, index, sourceFunction ):
-		obj = self.lSource[index][sourceFunction][0]
-		func = self.lSource[index][sourceFunction][1]
-		if len(self.lSource[index][sourceFunction]) == 3:
-			params = self.lSource[index][sourceFunction][2]
-			checkResult = getattr(obj,func)(params)
-		else:
-			checkResult = getattr(obj,func)()
 	
 	# execute a init() for given source
 	def sourceInit( self, index ):
@@ -582,3 +571,19 @@ class SourceController():
 
 		checkResult = self.lSource[self.iCurrent]['sourceClass'].prev()
 
+
+	def sourceAddSub( self, index, parameters ):
+		# TODO: check if index is valid
+		checkResult = self.lSource[index]['sourceClass'].add_subsource(self,parameters)
+		return checkResult
+	
+	"""
+	def sourceExec( self, index, sourceFunction ):
+		obj = self.lSource[index][sourceFunction][0]
+		func = self.lSource[index][sourceFunction][1]
+		if len(self.lSource[index][sourceFunction]) == 3:
+			params = self.lSource[index][sourceFunction][2]
+			checkResult = getattr(obj,func)(params)
+		else:
+			checkResult = getattr(obj,func)()
+	"""

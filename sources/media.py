@@ -34,7 +34,34 @@ class sourceClass():
 
 	def remove_subsource( self ):
 		print('REMOVE SUBSOURCE: TODO')
+	
+	def add_subsource( self, sourceCtrl, parameters ):
+		print "DEBUG!"
+		print parameters
 		
+		has_mountpoint = False
+		has_device = False
+		
+		if 'mountpoint' in parameters:
+			print "MOUNTP"
+			has_mountpoint = True
+		
+		if 'device' in parameters:
+			print "DEVICE {0}".format(parameters['device'])
+			has_device = True
+		
+		if not has_mountpoint and not has_device:
+			self.__printer('No mountpoint or device given, aborting')
+			return False
+		elif has_mountpoint and not has_device:
+			print "DETERMINE DEVICE"
+		elif has_device and not has_mountpoint:
+			print "DETERMINE MOUNTP"
+		
+		
+		print "DEBUG!"
+		
+	
 	def __media_add_subsource( self, dir, label, uuid, device, sourceCtrl ):
 		# get index (name is unique)
 		ix = sourceCtrl.getIndex('name','media')
