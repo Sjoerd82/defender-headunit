@@ -3,7 +3,6 @@
 #
 import os
 import subprocess
-from subprocess import Popen, PIPE
 import pickle
 
 import sys
@@ -73,8 +72,8 @@ class mpdController():
 		self.mpdc.send_idle()
 		"""
 		#print self.mpdc.command_list_end()
-		call(["mpc", "-q", "stop"])
-		call(["mpc", "-q", "clear"])
+		subprocess.call(["mpc", "-q", "stop"])
+		subprocess.call(["mpc", "-q", "clear"])
 
 
 	def playlistPop( self, type, sMpdDir ):
@@ -158,10 +157,10 @@ class mpdController():
 		#Update
 		if wait:
 			printer(' > Please wait, this may take some time...')
-			call(["mpc", "--wait", "-q", "update", location])
+			subprocess.call(["mpc", "--wait", "-q", "update", location])
 			printer(' > Update finished')
 		else:
-			call(["mpc", "-q", "update", location])
+			subprocess.call(["mpc", "-q", "update", location])
 			#bMpdUpdateSmb
 	
 	def update( self, location, wait=True ):
@@ -394,18 +393,18 @@ class mpdController():
 		# on
 		if state == 'on':
 			print('[MPC] Random ON + Next track')
-			call(["mpc", "-q", "random", "on"])
-			call(["mpc", "-q", "next"])
+			subprocess.call(["mpc", "-q", "random", "on"])
+			subprocess.call(["mpc", "-q", "next"])
 
 		# off
 		elif state == 'off':
 			print('[MPC] Random OFF')
-			call(["mpc", "-q", "random", "off"])
+			subprocess.call(["mpc", "-q", "random", "off"])
 
 		# toggle
 		else: 
 			print('[MPC] Toggling random')
-			call(["mpc", "-q", "random"])
+			subprocess.call(["mpc", "-q", "random"])
 
 def mpc_random_get():
 
@@ -444,18 +443,18 @@ def mpc_random( state ):
 	# on
 	if state == 'on':
 		print('[MPC] Random ON + Next track')
-		call(["mpc", "-q", "random", "on"])
-		call(["mpc", "-q", "next"])
+		subprocess.call(["mpc", "-q", "random", "on"])
+		subprocess.call(["mpc", "-q", "next"])
 
 	# off
 	elif state == 'off':
 		print('[MPC] Random OFF')
-		call(["mpc", "-q", "random", "off"])
+		subprocess.call(["mpc", "-q", "random", "off"])
 
 	# toggle
 	else: 
 		print('[MPC] Toggling random')
-		call(["mpc", "-q", "random"])
+		subprocess.call(["mpc", "-q", "random"])
 	
 def mpc_get_PlaylistDirs():
 	global arMpcPlaylistDirs
@@ -488,7 +487,7 @@ def mpc_get_PlaylistDirs():
 	"""
 	
 	# Via the commandline
-	pipe = Popen('mpc -f %file% playlist', shell=True, stdout=PIPE)
+	pipe = subprocess.Popen('mpc -f %file% playlist', shell=True, stdout=subprocess.PIPE)
 
 	for line in pipe.stdout:
 		dirname_current=os.path.dirname(line.strip())
@@ -543,16 +542,16 @@ def mpc_prev_folder_pos():
 
 def mpc_next_folder():
 	print('[MPC] Next folder')
-	call(["mpc", "-q", "play", str(mpc_next_folder_pos())])
+	subprocess.call(["mpc", "-q", "play", str(mpc_next_folder_pos())])
 	# Shuffle Off
 
 def mpc_prev_folder():
 	print('[MPC] Prev folder')
-	call(["mpc", "-q", "play", str(mpc_prev_folder_pos())])
+	subprocess.call(["mpc", "-q", "play", str(mpc_prev_folder_pos())])
 	
 def mpc_stop():
 	print('[MPC] Stopping MPC [pause]')
-	call(["mpc", "-q", "pause"])
+	subprocess.call(["mpc", "-q", "pause"])
 
 	
 """
@@ -663,7 +662,7 @@ def mpc_populate_playlist ( label ):
 					uri_OK = url_check(uri)
 					if uri_OK:
 						print(' ....  . Stream OK: {0}'.format(uri))
-						call(["mpc", "-q", "add", uri])
+						subprocess.call(["mpc", "-q", "add", uri])
 					else:
 						print(' ....  . Stream FAIL: {0}'.format(uri))
 	else:
