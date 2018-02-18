@@ -770,10 +770,15 @@ def udisk_rem( device ):
 	ix_ss = Sources.getIndexSub(ix, 'device', partition)
 	if not ix_ss is None:
 	
+		# remove sub-source
 		printer(' > Found {0}. Removing...'.format(partition))
-		
-		# remove subsource
 		Sources.remSub(ix, ix_ss)
+		
+		# stop playing, if removed source is current source
+		arIxCurr = Source.getIndexCurrent
+		if ix = arIxCurr[0] and ix_ss = arIxCurr[1]
+			Sources.sourceStop()
+			Sources.sourceNext()
 	
 		# display overview
 		printSummary(Sources)
@@ -962,20 +967,7 @@ def hu_play( index=None, index_sub=None, resume=True ):
 		Sources.sourcePlay(dLoaded)
 	else:
 		Sources.sourcePlay()
-
-"""
-		
-#from device add:
-		# get subsource index
-		ix_ss = Sources.getIndexSub(ix, 'device', DeviceFile)
-		
-		# check, and if available play
-		if Sources.sourceCheck( ix, ix_ss ):
-			Sources.setCurrent( ix, ix_ss )
-			#TODO: load resume
-			Sources.sourcePlay()
-
-"""
+	
 
 def dir_next():
 	global Sources

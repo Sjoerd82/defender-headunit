@@ -138,6 +138,11 @@ class SourceController():
 	# remove subsource by index
 	def remSub( self, index, index_subsource ):
 		del self.lSource[index]['subsources'][index_subsource]
+		
+		#Check if there are any available subsources left, if not mark source unavailable..
+		if self.getAvailableSubCnt(self, index) == 0:
+			self.setAvailableIx(index, False)
+		
 		return True
 
 	# get index based on key-value pair
