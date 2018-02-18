@@ -790,8 +790,8 @@ def udisk_rem( device ):
 		arIxCurr = Sources.getIndexCurrent()
 		if ix == arIxCurr[0] and ix_ss == arIxCurr[1]:
 			Sources.sourceStop()
-			#Sources.next(reverse=True)
-			x = Sources.next()
+			x = Sources.next(reverse=True)
+			#x = Sources.next()
 			print "DEBUG: {0}".format(x)
 			hu_play()
 	
@@ -822,7 +822,7 @@ def do_source():
 			#
 			# update display
 			#
-			"""
+			""" dit werkt opzich wel... maar kan beter...
 			currSrc = Sources.get(None)
 			hudispdata = {}
 			if currSrc['name'] == 'fm':
