@@ -691,11 +691,15 @@ def udisk_details( device, action ):
 			printer(" > DeviceIsPartition is not set... Aborting...",tag=mytag)
 			return None
 
-
+		# Please Note:
+		# DeviceFile = dbus.String(u'/dev/sda1', variant_level=1)
+		print DeviceFile
+		print str(DeviceFile)
+			
 		#return DeviceFile
 		parameters = {}
 		parameters['index'] = ix
-		parameters['device'] = DeviceFile
+		parameters['device'] = str(DeviceFile)
 		Sources.sourceAddSub(ix,parameters)
 		return True
 		

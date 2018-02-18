@@ -41,13 +41,15 @@ class sourceClass():
 		
 		has_mountpoint = False
 		has_device = False
+		device = ""
 		
 		if 'mountpoint' in parameters:
 			print "MOUNTP"
 			has_mountpoint = True
 		
 		if 'device' in parameters:
-			print "DEVICE {0}".format(parameters['device'])
+			device = parameters['device']
+			print "DEVICE {0}".format(device)
 			has_device = True
 		
 		if not has_mountpoint and not has_device:
@@ -57,7 +59,14 @@ class sourceClass():
 			print "DETERMINE DEVICE"
 		elif has_device and not has_mountpoint:
 			print "DETERMINE MOUNTP"
-		
+			
+			mountpoint = subprocess.check_output("mount | egrep "+device+" | cut -d ' ' -f 3", shell=True).rstrip('\n')
+
+			# check if we have a mountpoint..
+			if mountpoint == "":
+				self.__printer(" > No mountpoint found. Stopping.")
+			else:
+				print mountpoint
 		
 		print "DEBUG!"
 		
