@@ -1892,7 +1892,7 @@ currSrc = Sources.getComposite()
 cSettings.set('source',currSrc['name'])
 
 # update sub-source key (in case of sub-source)
-if currSrc['subsource']:
+if 'subsource' in currSrc:
 	subsource_key = {}
 	for key in currSrc['subsource_key']:
 		subsource_key[key] = currSrc['subsource'][key]
