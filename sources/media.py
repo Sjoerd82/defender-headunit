@@ -124,7 +124,7 @@ class sourceClass():
 		subsource['uuid'] = uuid
 		subsource['device'] = device
 
-		sourceCtrl.addSub(ix, subsource)
+		sourceCtrl.addSub(index, subsource)
 		
 	
 	def __media_add_subsource( self, dir, label, uuid, device, sourceCtrl ):
