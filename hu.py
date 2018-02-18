@@ -778,7 +778,7 @@ def udisk_rem( device ):
 		arIxCurr = Sources.getIndexCurrent()
 		if ix == arIxCurr[0] and ix_ss == arIxCurr[1]:
 			Sources.sourceStop()
-			Sources.next()
+			Sources.next(reverse=True)
 			hu_play()
 	
 		# display overview

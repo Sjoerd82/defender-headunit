@@ -206,14 +206,25 @@ class SourceController():
 
 	# make the next available source the current, returns the new active source index
 	# return None if not succesful
-	def next( self ):
+	
+	# if reverse=True make the *PREVIOUS* available source the current
+	""" Useful in case an active source becomes unavailable, it's more natural for the user to jump back
+	    to a previously playing source, instead of the next in line """
 
-		def dingding(i_start, i_end, j_start):
+	def next( self, reverse=False ):
+
+		def source_iterator(i_start, i_end, j_start, reverse):
 			#
 			# if no current source, we'll loop through the sources until we find one
 			#
 			# TODO CHECK IF i_start isn't at the end of the list!
-			for source in self.lSource[i_start:i_end]:
+			
+			if reverse:
+				step = -1
+			else:
+				step = 1
+			
+			for source in self.lSource[i_start:i_end:step]:
 				#print "DEBUG A -- {0}".format(source)
 				# no sub-source and available:
 				if not source['template'] and source['available']:
@@ -226,7 +237,7 @@ class SourceController():
 				
 				# sub-source and available:
 				elif source['template'] and source['available']:
-					for subsource in source['subsources'][j_start:]:
+					for subsource in source['subsources'][j_start::step]:
 						if subsource['available']:
 							#print "DEBUG 4"
 							self.__printer('NEXT: Switching to {0}/{1}: {2:s}'.format(i_start,j_start,subsource['displayname']))
@@ -282,40 +293,44 @@ class SourceController():
 		#
 		# determine starting positions
 		#
+		# si  = source index
+		# ssi = sub-source index
+		#
+		# _cur = current (starting) index
+		# _end = ending index
+		#
+		
 #		if self.iCurrent == None:
 #			self.__printer('NEXT: No active source. Searching for first available ...',LL_DEBUG)
-#			i_start=0
-#			j_start=0
-#			i_end = None
-#			i_end2 = None
+#			si_start=0
+#			ssi_start=0
+#			si_end = None
 #		else:
-		# if the current source is a sub-source, then first check if there are more sub-sources after the current
+
+		# Current source is a sub-source:
 		if ( not self.iCurrentSource[1] == None and
 			 self.getAvailableSubCnt(self.iCurrent) > self.iCurrentSource[1]+1 ):
-			#print "DEBUG 1"
+			# then first check if there are more sub-sources after the current..
 			# there are more available sub-sources..
-			i_start = self.iCurrentSource[0]
-			i_end = None
-			i_end2 = i_start-1
-			j_start = self.iCurrentSource[1]+1	#next sub-source (+1) isn't neccesarily available, but this will be checked later
+			si_cur = self.iCurrentSource[0]
+			si_end = None
+			ssi_start = self.iCurrentSource[1]+1	#next sub-source (+1) isn't neccesarily available, but this will be checked later
+			
+		# Current source is not a sub-source:
 		else:
 			#print "DEBUG 2"
 			# no more available sub-sources
-			i_start = self.iCurrentSource[0]+1
-			i_end = None
-			i_end2 = i_start-1
-			j_start=0
+			si_cur = self.iCurrentSource[0]+1
+			si_end = None
+			ssi_start=0
 
-		#print "DEBUG: STARTING POSITIONS ARE: {0}, {1}".format(i_start, j_start)
-
-		res = dingding(i_start, i_end, j_start)
+		# source_iterator returns next source index, or None, in case no next available was found
+		res = source_iterator(si_cur, si_end, ssi_start, reverse)
 		if res == None:
-			# Still here?
-			# Let's start from the top...
-			i_start = 0
-			j_start = 0
+			# Let's start from the beginning till current
+			ssi_start = 0
 			#print "DEBUG still here..."
-			return dingding(i_start, i_end2, j_start)
+			return source_iterator(0, si_cur-1, ssi_start, reverse)
 		else:
 			return res
 		
@@ -377,12 +392,6 @@ class SourceController():
 				i += 1
 	
 		"""
-	# make the previous available source the current, returns the new active source index
-	# return None if not succesful
-	""" Useful in case an active source becomes unavailable, it's more natural for the user to jump back
-	    to a previously playing source, instead of the next in line """
-	#def prev( self ):
-	
 	
 	# return the complete lSource ## do we really need this?
 	def getAll( self ):
