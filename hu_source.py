@@ -401,7 +401,7 @@ class SourceController():
 	def getComposite( self ):
 	
 		# check index
-		if iCurrentSource[0] is None:
+		if self.iCurrentSource[0] is None:
 			return None
 
 		# make a copy
