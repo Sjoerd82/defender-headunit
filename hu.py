@@ -788,12 +788,17 @@ def udisk_rem( device ):
 		
 		# stop playing, if removed source is current source
 		arIxCurr = Sources.getIndexCurrent()
+		print "DEBUG 1: {0}".format(arIxCurr)
 		if ix == arIxCurr[0] and ix_ss == arIxCurr[1]:
+			print "DEBUG 2"
 			Sources.sourceStop()
+			print "DEBUG 3"
 			x = Sources.next(reverse=True)
 			#x = Sources.next()
-			print "DEBUG: {0}".format(x)
+			print "DEBUG 4: {0}".format(x)
 			hu_play()
+			print "DEBUG 5"
+
 	
 		# display overview
 		printSummary(Sources)
