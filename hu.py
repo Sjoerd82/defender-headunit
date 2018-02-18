@@ -818,7 +818,7 @@ def do_source():
 			#
 			# update operational settings
 			#
-			"""
+
 			
 			# get current index(es)
 			arCurrIx = Sources.getIndexCurrent()
@@ -849,7 +849,7 @@ def do_source():
 			
 			# commit changes
 			cSettings.save()
-
+			"""
 			#
 			# update display
 			#
@@ -959,16 +959,40 @@ def do_source():
 
 def hu_play( index=None, index_sub=None, resume=True ):
 
+	global Sources
+	global cSettings
+
 	# set current index, if given
 	if not index is None:
 		Sources.setCurrent(index, index_sub)
+		
 
 	if resume:
 		dLoaded = load_current_resume()
 		Sources.sourcePlay(dLoaded)
 	else:
 		Sources.sourcePlay()
+
 	
+	# get current index(es)
+	arCurrIx = Sources.getIndexCurrent()
+
+	# get current source
+	currSrc = Sources.get(None)
+	
+	# update source name
+	cSettings.set('source',currSrc['name'])
+	
+	# update sub-source key (in case of sub-source)
+	if not arCurrIx[1] == None:
+		subsource_key = {}
+		for key in currSrc['subsource_key']:
+			subsource_key[key] = currSrc['subsources'][arCurrIx[1]][key]
+		cSettings.set('subsourcekey', subsource_key)
+	
+	# commit changes
+	cSettings.save()
+		
 
 def dir_next():
 	global Sources

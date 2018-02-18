@@ -107,7 +107,7 @@ class mpdController():
 						uri_OK = url_check(uri)
 						if uri_OK:
 							print(' ....  . Stream [OK]: {0}'.format(uri))
-							call(["mpc", "-q", "add", uri])
+							subprocess.call(["mpc", "-q", "add", uri])
 						else:
 							print(' ....  . Stream [FAIL]: {0}'.format(uri))
 		else:
@@ -378,11 +378,11 @@ class mpdController():
 		
 	def nextTrack( self ):
 		print('Next track')
-		call(["mpc", "-q", "next"])
+		subprocess.call(["mpc", "-q", "next"])
 		
 	def prevTrack( self ):
 		print('Prev. track')
-		call(["mpc", "-q", "prev"])
+		subprocess.call(["mpc", "-q", "prev"])
 
 	def stop( self ):
 		print('Stop')
