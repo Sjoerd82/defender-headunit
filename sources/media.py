@@ -422,11 +422,11 @@ class sourceClass():
 		
 		self.__printer(' > Starting playback')
 		#mpc.playStart( str(playslist_pos['pos']), playslist_pos['time'] )
-		call(["mpc", "-q" , "stop"])
-		call(["mpc", "-q" , "play", str(playslist_pos['pos'])])
+		subprocess.call(["mpc", "-q" , "stop"])
+		subprocess.call(["mpc", "-q" , "play", str(playslist_pos['pos'])])
 		if playslist_pos['time'] > 0:
 			self.__printer(' > Seeking to {0} sec.'.format(playslist_pos['time']))
-			call(["mpc", "-q" , "seek", str(playslist_pos['time'])])
+			subprocess.call(["mpc", "-q" , "seek", str(playslist_pos['time'])])
 
 		# Load playlist directories, to enable folder up/down browsing.
 		#mpc_get_PlaylistDirs()
