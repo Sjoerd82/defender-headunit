@@ -267,6 +267,11 @@ def load_current_resume():
 	
 	# create filename
 	source_name = currSrc["name"]
+	
+	if not 'subsource' in currSrc:
+		print "TODO: resume not (YET) supported for this source, sorry."
+		return None
+	
 	if 'filename_save' in currSrc:
 		source_key = currSrc["filename_save"][0]	#eg "mountpoint"
 		if source_key in currSrc["subsource"]:
@@ -926,7 +931,10 @@ def hu_play( index=None, index_sub=None, resume=True ):
 
 	if resume:
 		dLoaded = load_current_resume()
-		Sources.sourcePlay(dLoaded)
+		if not dLoaded is None:
+			Sources.sourcePlay(dLoaded)
+		else:
+			Sources.sourcePlay()
 	else:
 		Sources.sourcePlay()
 
