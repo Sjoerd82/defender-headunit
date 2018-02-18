@@ -114,7 +114,7 @@ class sourceClass():
 			index = parameters['index']
 
 		# logging
-		self.__printer(" > Mounted on: {0} (label: {1})".format(mountpoint,sUsbLabel))
+		self.__printer(" > Mounted on: {0} (label: {1})".format(mountpoint,label))
 			
 		# construct the subsource
 		subsource = {}
