@@ -702,14 +702,14 @@ def udisk_add( device ):
 	if isAdded:
 	
 		#get ix, ix_ss
-		arIx = Sources.getIndexSub(ix,'device',str(DeviceFile))
+		ix_ss = Sources.getIndexSub(ix,'device',str(DeviceFile))
 		
 		# check, and if available play
-		if Sources.sourceCheck( arIx[0], arIx[1] ):
+		if Sources.sourceCheck( ix, ix_ss ):
 			#Sources.setCurrent( ix, ix_ss )
 			#TODO: move to queue
 			#Sources.sourcePlay()
-			hu_play(arIx[0], arIx[1])
+			hu_play(ix, ix_ss)
 
 			
 		printSummary(Sources)
