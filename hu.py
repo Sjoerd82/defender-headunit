@@ -700,6 +700,18 @@ def udisk_add( device ):
 	isAdded = Sources.sourceAddSub(ix,parameters)
 	
 	if isAdded:
+	
+		#get ix, ix_ss
+		arIx = Sources.getIndexSub(ix,'device',str(DeviceFile))
+		
+		# check, and if available play
+		if Sources.sourceCheck( arIx[0], arIx[1] ):
+			#Sources.setCurrent( ix, ix_ss )
+			#TODO: move to queue
+			#Sources.sourcePlay()
+			hu_play(arIx[0], arIx[1])
+
+			
 		printSummary(Sources)
 		return True
 	else:
@@ -963,29 +975,6 @@ def hu_play( index=None, index_sub=None, resume=True ):
 			#TODO: load resume
 			Sources.sourcePlay()
 
-#from do_source:
-			#
-			# load resume data
-			#
-			dLoaded = load_current_resume()
-
-			#
-			# play new source
-			#
-			
-			Sources.sourceStop()			# todo: required??
-			Sources.sourcePlay(dLoaded)
-
-#qplay:			
-			Sources.setCurrent(prevIx[0])
-			dLoaded = load_current_resume()
-			Sources.sourcePlay(dLoaded)
-
-			Sources.setCurrent(prevIx[0],prevIx[1])
-			dLoaded = load_current_resume()
-			Sources.sourcePlay(dLoaded)
-
-Sources.sourcePlay()
 """
 
 def dir_next():
@@ -1895,7 +1884,6 @@ if prevSource == "":
 	printSummary(Sources)
 	printer ('Starting first available source', tag='QPLAY')
 	Sources.next()
-	#Sources.sourcePlay()
 	hu_play(resume=False)
 	
 else:
@@ -1914,7 +1902,6 @@ else:
 		printSummary(Sources)
 		printer ('Starting first available source', tag='QPLAY')
 		Sources.next()
-		#Sources.sourcePlay()
 		hu_play(resume=False)
 
 # Save Settings
