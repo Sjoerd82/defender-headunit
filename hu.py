@@ -776,7 +776,7 @@ def udisk_rem( device ):
 		
 		# stop playing, if removed source is current source
 		arIxCurr = Source.getIndexCurrent
-		if ix == arIxCurr[0] and ix_ss == arIxCurr[1]
+		if ix == arIxCurr[0] and ix_ss == arIxCurr[1]:
 			Sources.sourceStop()
 			Sources.sourceNext()
 	
