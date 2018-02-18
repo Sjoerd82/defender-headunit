@@ -11,8 +11,8 @@ class SourceController():
 		
 		# initialize instance variables:
 		self.lSource = []
-		self.iCurrent = None
-		self.iCurrentSS = None
+		#self.iCurrent = None
+		#self.iCurrentSS = None
 		self.iCurrentSource = [ None, None ]
 		self.lSourceClasses = []
 		self.iRecentSS = None
@@ -127,7 +127,7 @@ class SourceController():
 	
 	# remove source by index. Set force to True to allow removal of active source.
 	def rem( self, index, force ):
-		if not index == self.iCurrent or force:
+		if not index == self.iCurrentSource[0] or force:
 			sourceName = self.lSource[index]['displayname']
 			#self.lSource.remove(index)
 			del self.lSource[index]
@@ -157,11 +157,7 @@ class SourceController():
 	# get list of index and subindex of current source
 	def getIndexCurrent( self ):
 		#copy.copy?
-		arCurrIx = []
-		arCurrIx.append(self.iCurrent)
-		arCurrIx.append(self.iCurrentSS)
-		#return self.iCurrent
-		return arCurrIx
+		return self.iCurrentSource
 
 	# get index of most recently added sub-source
 	def getIndexSub( self, index, key, value ):
@@ -188,13 +184,12 @@ class SourceController():
 		#	return False
 		elif self.lSource[index]['available']:
 			self.__printer('Setting active source to {0}: {1:s}'.format(index,self.lSource[index]['displayname']))
-			self.iCurrent = index #TODO: OLD REMOVE
 			self.iCurrentSource[0] = index
 
 			# NEW: SUBSOURCES:
 			if not subIndex == None:
 				#TODO: add checks... (available, boundry, etc..)
-				self.iCurrentSS = subIndex
+				self.iCurrentSource[1] = subIndex
 				return True
 			else:
 				return True
@@ -229,10 +224,8 @@ class SourceController():
 				# no sub-source and available:
 				if not source['template'] and source['available']:
 					self.__printer('NEXT: Switching to {0}: {1:s}'.format(i_start,source['displayname']))
-					self.iCurrent = i_start
-					self.iCurrentSS = j_start
 					self.iCurrentSource[0] = i_start
-					self.iCurrentSource[1] = 0
+					self.iCurrentSource[1] = j_start
 					return self.iCurrentSource
 				
 				# sub-source and available:
@@ -241,8 +234,6 @@ class SourceController():
 						if subsource['available']:
 							#print "DEBUG 4"
 							self.__printer('NEXT: Switching to {0}/{1}: {2:s}'.format(i_start,j_start,subsource['displayname']))
-							self.iCurrent = i_start
-							self.iCurrentSS = j_start
 							self.iCurrentSource[0] = i_start
 							self.iCurrentSource[1] = j_start
 							return self.iCurrentSource
@@ -268,22 +259,18 @@ class SourceController():
 		# check if iCurrentSource is set
 		# (in that case, set the next available, and return index)
 		#
-		if (self.iCurrentSource[0] is None or
-			self.iCurrent is None):
+		if self.iCurrentSource[0] is None:
 			i = 0
 			for source in self.lSource:
 				if source['available'] and not source['template']:
-					self.iCurrent = i
 					self.iCurrentSource[0] = i
 					self.iCurrentSource[1] = None
 					return self.iCurrentSource
 				elif source['available'] and source['template']:
 					self.iCurrentSource[0] = i
-					self.iCurrent = i
 					j = 0
 					for subsource in source['subsources']:
 						if subsource['available']:
-							self.iCurrentSS = j
 							self.iCurrentSource[1] = j
 							return self.iCurrentSource
 						j += 1
@@ -309,7 +296,7 @@ class SourceController():
 
 		# Current source is a sub-source:
 		if ( not self.iCurrentSource[1] == None and
-			 self.getAvailableSubCnt(self.iCurrent) > self.iCurrentSource[1]+1 ):
+			 self.getAvailableSubCnt(self.iCurrentSource[0]) > self.iCurrentSource[1]+1 ):
 			# then first check if there are more sub-sources after the current..
 			# there are more available sub-sources..
 			si_cur = self.iCurrentSource[0]
@@ -401,10 +388,10 @@ class SourceController():
 	#def get( self, index=self.iCurrent ):	syntax not allowed?
 	def get( self, index ):
 		if index == None:
-			if self.iCurrent == None:
+			if self.iCurrentSource[0] == None:
 				return None
 			else:
-				return copy.copy(self.lSource[self.iCurrent])
+				return copy.copy(self.lSource[self.iCurrentSource[0]])
 		else:
 			return copy.copy(self.lSource[index])			
 
@@ -413,11 +400,11 @@ class SourceController():
 	# the returned source is stripped of python objects (for no real reason)
 	def getComposite( self ):
 		# make a copy
-		composite_current_source = dict( self.lSource[self.iCurrent] )
+		composite_current_source = dict( self.lSource[self.iCurrentSource[0]] )
 		# remove sub-sources:
 		del composite_current_source['subsources']
 		# add current sub-source: Note that this entry is called subsource, not subsources!
-		composite_current_source['subsource'] = self.lSource[self.iCurrent]['subsources'][self.iCurrentSS]
+		composite_current_source['subsource'] = self.lSource[self.iCurrentSource[0]]['subsources'][self.iCurrentSource[1]]
 		# remove not-usefull stuff:
 		del composite_current_source['sourceModule']	# what did we use this for again??? #TODO
 		del composite_current_source['sourceClass']		# what did we use this for again??? #TODO
@@ -538,11 +525,11 @@ class SourceController():
 	# optionally, a dictionary may be given containing resume data
 	def sourcePlay( self, resume={} ):
 	
-		if self.iCurrent == None:
+		if self.iCurrentSource[0] == None:
 			self.__printer('PLAY: No current source',LL_WARNING)
 			return False
 		
-		if not self.lSource[self.iCurrent]['available']:
+		if not self.lSource[self.iCurrentSource[0]]['available']:
 			self.__printer('PLAY: Source not available: {0}'.format(self.iCurrent),LL_WARNING)
 			return False
 		
@@ -551,40 +538,40 @@ class SourceController():
 #			return False
 		
 		if resume:
-			checkResult = self.lSource[self.iCurrent]['sourceClass'].play(self,resume)
+			checkResult = self.lSource[self.iCurrentSource[0]]['sourceClass'].play(self,resume)
 		else:
-			checkResult = self.lSource[self.iCurrent]['sourceClass'].play(self)
+			checkResult = self.lSource[self.iCurrentSource[0]]['sourceClass'].play(self)
 			
 		if not checkResult:
 			self.__printer('PLAY: failed, marking source unavailable, playing next source...',LL_ERROR)
-			self.setAvailableIx(self.iCurrent,False,self.iCurrentSS)
+			self.setAvailableIx(self.iCurrentSource[0],False,self.iCurrentSource[1])
 			self.next()
 			self.sourcePlay()
 	
 	# execute a stop() for current source
 	def sourceStop( self ):
-		if self.iCurrent == None:
+		if self.iCurrentSource[0] == None:
 			self.__printer('STOP: No current source',LL_WARNING)
 			return False
 			
-		checkResult = self.lSource[self.iCurrent]['sourceClass'].stop(self)
+		checkResult = self.lSource[self.iCurrentSource[0]]['sourceClass'].stop(self)
 		
 	# seek/next:
 	def sourceSeekNext( self ):
-		if self.iCurrent == None:
+		if self.iCurrentSource[0] == None:
 			self.__printer('STOP: No current source',LL_WARNING)
 			return False
 
-		checkResult = self.lSource[self.iCurrent]['sourceClass'].next()
+		checkResult = self.lSource[self.iCurrentSource[0]]['sourceClass'].next()
 
 	# seek/prev:
 	def sourceSeekPrev( self ):
-		if self.iCurrent == None:
+		if self.iCurrentSource[0] == None:
 			self.__printer('STOP: No current source',LL_WARNING)
 			return False
 
 
-		checkResult = self.lSource[self.iCurrent]['sourceClass'].prev()
+		checkResult = self.lSource[self.iCurrentSource[0]]['sourceClass'].prev()
 
 
 	def sourceAddSub( self, index, parameters ):
