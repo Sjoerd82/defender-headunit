@@ -73,7 +73,7 @@ class sourceClass():
 		self.__printer('Initializing...', level=15)
 		# do a general media_check to find any mounted drives
 		#media_check( label=None )
-		
+			
 		# add all locations as configured
 		arSmb = self.__smb_getAll()
 		for dev_mp in arSmb:

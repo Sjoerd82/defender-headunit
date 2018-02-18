@@ -1595,7 +1595,8 @@ def cb_queue():
 			set_random( 'toggle' )
 		elif command == 'DEVADD':
 			device = item['device']
-			devicefile = udisk_details( device, 'A' )
+			#devicefile = 
+			udisk_details( device, 'A' )
 #			if not devicefile is None:
 #				print "TODO"
 				
