@@ -216,14 +216,16 @@ class SourceController():
 			
 			if reverse:
 				step = -1
+				logtext = "to prev."
 			else:
 				step = 1
+				logtext = "to next"
 			
 			for source in self.lSource[i_start:i_end:step]:
 				#print "DEBUG A -- {0}".format(source)
 				# no sub-source and available:
 				if not source['template'] and source['available']:
-					self.__printer('NEXT: Switching to {0}: {1:s}'.format(i_start,source['displayname']))
+					self.__printer('NEXT: Switching {0} {1}: {2:s}'.format(logtext,i_start,source['displayname']))
 					self.iCurrentSource[0] = i_start
 					self.iCurrentSource[1] = j_start
 					return self.iCurrentSource
@@ -233,7 +235,7 @@ class SourceController():
 					for subsource in source['subsources'][j_start::step]:
 						if subsource['available']:
 							#print "DEBUG 4"
-							self.__printer('NEXT: Switching to {0}/{1}: {2:s}'.format(i_start,j_start,subsource['displayname']))
+							self.__printer('NEXT: Switching {0} {1}/{2}: {3:s}'.format(logtext,i_start,j_start,subsource['displayname']))
 							self.iCurrentSource[0] = i_start
 							self.iCurrentSource[1] = j_start
 							return self.iCurrentSource
