@@ -6,8 +6,8 @@
 # myprint()
 import logging
 
-# call
-from subprocess import call
+# call, check_output
+import subprocess
 
 #to check for an internet connection
 import socket

@@ -654,7 +654,7 @@ def udisk_add( device ):
 	DeviceFile = ""
 	mountpoint = ""
 	mytag = "UDISKS"
-	ix = Sources.getIndex('name','media')
+	#ix = Sources.getIndex('name','media')
 	
 	try:
 		DeviceFile = device_props.Get('org.freedesktop.UDisks.Device',"DeviceFile")
@@ -691,12 +691,10 @@ def udisk_add( device ):
 
 	# Please Note:
 	# DeviceFile = dbus.String(u'/dev/sda1', variant_level=1)
-	print DeviceFile
-	print str(DeviceFile)
 		
 	#return DeviceFile
 	parameters = {}
-	parameters['index'] = ix
+	#parameters['index'] = ix
 	parameters['device'] = str(DeviceFile)
 	Sources.sourceAddSub(ix,parameters)
 	printSummary(Sources)
