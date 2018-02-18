@@ -782,12 +782,14 @@ def udisk_rem( device ):
 	ix_ss = Sources.getIndexSub(ix, 'device', partition)
 	if not ix_ss is None:
 	
+		# check current index, to check if we're playing this to-be removed sub-source
+		arIxCurr = Sources.getIndexCurrent()
+	
 		# remove sub-source
 		printer(' > Removing {0}...'.format(partition))
 		Sources.remSub(ix, ix_ss)
 		
 		# stop playing, if removed source is current source
-		arIxCurr = Sources.getIndexCurrent()
 		print "DEBUG 1: {0}".format(arIxCurr)
 		if ix == arIxCurr[0] and ix_ss == arIxCurr[1]:
 			print "DEBUG 2"
