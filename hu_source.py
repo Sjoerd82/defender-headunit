@@ -232,8 +232,8 @@ class SourceController():
 				# source available and has *no* sub-sources:
 				if not source['template'] and source['available']:
 					print('NEXT: Switching {0} {1}: {2:s}'.format(logtext,ix_start,source['displayname']))
-					iCurrentSource[0] = ix_start
-					iCurrentSource[1] = None
+					self.iCurrentSource[0] = ix_start
+					self.iCurrentSource[1] = None
 					return iCurrentSource
 				
 				# sub-source and available:
@@ -252,9 +252,9 @@ class SourceController():
 
 						if subsource['available']:
 							print('NEXT: Switching {0}: {1}/{2}: {3:s}'.format(logtext,ix_start,j_start,subsource['displayname']))
-							iCurrentSource[0] = ix_start
-							iCurrentSource[1] = j_start
-							return iCurrentSource
+							self.iCurrentSource[0] = ix_start
+							self.iCurrentSource[1] = j_start
+							return self.iCurrentSource
 							
 						j_start += step
 
@@ -301,49 +301,49 @@ class SourceController():
 		#
 		# Current source is a Sub-Source
 		#
-		if not iCurrentSource[1] is None: # and
+		if not self.iCurrentSource[1] is None: # and
 			
 			if not reverse:
 				
 				# set source start point
-				start = iCurrentSource[0]
+				start = self.iCurrentSource[0]
 				
 				# set sub-source start point
-				if iCurrentSource[1] is None:
+				if self.iCurrentSource[1] is None:
 					ssi_start = 0
 				else:
-					ssi_start = iCurrentSource[1]+1	#next sub-source (+1) isn't neccesarily available, but this will be checked later
+					ssi_start = self.iCurrentSource[1]+1	#next sub-source (+1) isn't neccesarily available, but this will be checked later
 					#print "Starting Sub-Source loop at {0}".format(ssi_start)
 
 			elif reverse:
 				
 				#if the current sub-source is the first, the don't loop sub-sources, but start looping at the previous source
-				ss_cnt = getAvailableSubCnt(iCurrentSource[0])
-				if iCurrentSource[1] == 0 or ss_cnt-1 == 0:
-				#if iCurrentSource[1] == 0 or ssi_start == 0:
-					start = iCurrentSource[0]-1	# previous source
+				ss_cnt = getAvailableSubCnt(self.iCurrentSource[0])
+				if self.iCurrentSource[1] == 0 or ss_cnt-1 == 0:
+				#if self.iCurrentSource[1] == 0 or ssi_start == 0:
+					start = self.iCurrentSource[0]-1	# previous source
 					ssi_start = None			# identifies to start at the highest sub-source
 				else:
-					start = iCurrentSource[0]	# current source
+					start = self.iCurrentSource[0]	# current source
 					ssi_start = ss_cnt-2		# previous sub-source
 				
 		#
 		# Current source is *not* a Sub-Source:
 		#
-		elif iCurrentSource[1] is None:
+		elif self.iCurrentSource[1] is None:
 
 			if not reverse:
 			
-				start = iCurrentSource[0]+1
+				start = self.iCurrentSource[0]+1
 				ssi_start=0
 				
 			elif reverse:
 			
 				# if the current source is the first, then start at the last source
-				if iCurrentSource[0] == 0:
+				if self.iCurrentSource[0] == 0:
 					start = len(self.lSource)-1		# start at the last item in the list
 				else:
-					start = iCurrentSource[0]-1		# previous source
+					start = self.iCurrentSource[0]-1		# previous source
 				
 				ssi_start=None
 		
