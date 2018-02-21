@@ -1,18 +1,31 @@
 #!/bin/sh
 
+# APPLICATION
+NAME="dBus MPD helper"
 DAEMON="/mnt/PIHU_APP/defender-headunit/d_dbus_mpd.py"
+DAEMONOPTS=""
+
+# PID (created by application)
+PIDFILE=/var/run/dbusmpd.pid
 
 start() {
         if [ -f $DAEMON ]; then
-          echo "Script: ${DAEMON} found.."
-          $DAEMON &
+          echo "Starting $NAME..."
+          $DAEMON $DAEMONOPTS &
         else
-          echo "${DAEMON} not found!"
+          echo "$DAEMON not found!"
         fi
 }
 
 stop() {
-        echo "Not yet implemented"
+        if [ -f $PIDFILE ]; then
+            echo "Stopping $NAME"
+            PID=`cat $PIDFILE`
+            kill -HUP $PID
+            rm -f $PIDFILE
+        else
+            echo "$PIDFILE not found, aborting..."
+        fi
 }
 
 case "$1" in

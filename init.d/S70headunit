@@ -1,5 +1,4 @@
 #!/bin/sh
-#Main headunit script
 
 # APPLICATION
 NAME="Headunit"

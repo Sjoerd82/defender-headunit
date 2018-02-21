@@ -18,7 +18,17 @@ def printer( message, level=LL_INFO, continuation=False, tag=controlName ):
 	else:
 		myprint( message, level, tag )
 
-printer('Starting Remote Control: Resistor Network')
+
+from pid import PidFile
+PID_FILE = "dbusads"
+
+#
+# Stop if we're already running
+#
+if check_running(PID_FILE):
+	exit()
+else:
+	printer('Starting Remote Control: Resistor Network')
 
 
 
@@ -29,6 +39,7 @@ from dbus.mainloop.glib import DBusGMainLoop
 import gobject
 
 import os
+
 
 
 #############################
@@ -182,16 +193,17 @@ except dbus.exceptions.NameExistsException:
 	sys.exit(1)
 
 # Run the loop
-try:
-    # Create our initial objects
-	# load remote.py
-    #from remote import RemoteControl
-    RemoteControl(bus_name)
-    loop.run()
-except KeyboardInterrupt:
-    printer("keyboard interrupt received")
-except Exception as e:
-    printer("Unexpected exception occurred: '{}'".format(str(e)))
-finally:
-    printer("quitting...")
-    loop.quit()
+with PidFile(PID_FILE) as p:
+	try:
+		# Create our initial objects
+		# load remote.py
+		#from remote import RemoteControl
+		RemoteControl(bus_name)
+		loop.run()
+	except KeyboardInterrupt:
+		printer("keyboard interrupt received")
+	except Exception as e:
+		printer("Unexpected exception occurred: '{}'".format(str(e)))
+	finally:
+		printer("quitting...")
+		loop.quit()

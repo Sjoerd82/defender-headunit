@@ -20,7 +20,7 @@ from select import select
 from mpd import MPDClient
 
 from hu_utils import *
-
+from pid import PidFile
 PID_FILE = "dbusmpd"
 
 class mpdControl(dbus.service.Object):
