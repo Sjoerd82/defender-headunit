@@ -318,7 +318,7 @@ class SourceController():
 			elif reverse:
 				
 				#if the current sub-source is the first, the don't loop sub-sources, but start looping at the previous source
-				ss_cnt = getAvailableSubCnt(self.iCurrentSource[0])
+				ss_cnt = self.getAvailableSubCnt(self.iCurrentSource[0])
 				if self.iCurrentSource[1] == 0 or ss_cnt-1 == 0:
 				#if self.iCurrentSource[1] == 0 or ssi_start == 0:
 					start = self.iCurrentSource[0]-1	# previous source
