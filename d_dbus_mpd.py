@@ -19,6 +19,8 @@ from select import select
 # used mainly for getting the current song for lookup on reload
 from mpd import MPDClient
 
+from hu_utils import *
+
 PID_FILE = "dbusmpd"
 
 class mpdControl(dbus.service.Object):
