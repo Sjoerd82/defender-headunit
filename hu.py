@@ -170,6 +170,7 @@ arMpcPlaylistDirs = [ ]			#TODO: should probably not be global...
 CONFIG_FILE_DEFAULT = '/mnt/PIHU_APP/defender-headunit/config/configuration.json'
 CONFIG_FILE = '/mnt/PIHU_CONFIG/configuration.json'
 VERSION = "1.0.0"
+PID_FILE = "hu"
 
 hu_details = { 'track':None, 'random':'off', 'repeat':True, 'att':False }
 
@@ -1724,6 +1725,20 @@ class MainInstance(dbus.service.Object):
 #def setup():
 
 #
+# Stop if we're already running
+#
+if os.path.exists('/var/run/'+PID_FILE+'.pid'):
+	printer('pid file found: /var/run/{0}.pid'.format(PID_FILE))
+	
+	try:
+		with PidFile(PID_FILE) as p:
+			print('Checking if we\'re already runnning')
+			# will delete the pid file if succesful.
+	except:
+		printer('Already runnning! Stopping.')
+		exit()
+
+#
 # Start logging to console
 #
 #
@@ -2122,7 +2137,7 @@ bus.add_signal_receiver(cb_ifdn, signal_name='ifdn', dbus_interface="com.arctura
 #
 # Start the blocking main loop...
 #
-with PidFile('hu') as p:
+with PidFile(PID_FILE) as p:
 	try:
 		mainloop.run()
 	finally:
