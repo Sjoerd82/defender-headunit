@@ -9,6 +9,9 @@ import logging
 # call, check_output
 import subprocess
 
+# path
+import os
+
 #to check for an internet connection
 import socket
 
