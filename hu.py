@@ -1728,14 +1728,14 @@ class MainInstance(dbus.service.Object):
 # Stop if we're already running
 #
 if os.path.exists('/var/run/'+PID_FILE+'.pid'):
-	printer('pid file found: /var/run/{0}.pid'.format(PID_FILE))
+	print('pid file found: /var/run/{0}.pid'.format(PID_FILE))
 	
 	try:
 		with PidFile(PID_FILE) as p:
 			print('Checking if we\'re already runnning')
 			# will delete the pid file if succesful.
 	except:
-		printer('Already runnning! Stopping.')
+		print('Already runnning! Stopping.')
 		exit()
 
 #
