@@ -227,7 +227,7 @@ class SourceController():
 				logtext = "to next"
 			
 			# loop sources
-			for source in lSource[ix_start:ix_stop:step]:
+			for source in self.lSource[ix_start:ix_stop:step]:
 			
 				# source available and has *no* sub-sources:
 				if not source['template'] and source['available']:
