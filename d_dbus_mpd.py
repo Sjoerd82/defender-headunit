@@ -179,14 +179,15 @@ except dbus.exceptions.NameExistsException:
     sys.exit(1)
 
 # Run the loop
-try:
-    # Create our initial objects
-    mpdControl(bus_name)
-    loop.run()
-except KeyboardInterrupt:
-    print("keyboard interrupt received")
-except Exception as e:
-    print("Unexpected exception occurred: '{}'".format(str(e)))
-finally:
-    print("quitting...")
-    loop.quit()
+with PidFile(PID_FILE) as p:
+	try:
+		# Create our initial objects
+		mpdControl(bus_name)
+		loop.run()
+	except KeyboardInterrupt:
+		print("keyboard interrupt received")
+	except Exception as e:
+		print("Unexpected exception occurred: '{}'".format(str(e)))
+	finally:
+		print("quitting...")
+		loop.quit()
