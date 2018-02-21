@@ -295,79 +295,79 @@ class SourceController():
 		elif iSourceCnt == 1:
 			self.__printer('NEXT: Only one source, cannot switch.',LL_WARNING)
 
-	#
-	# determine starting positions
-	#
-	#
-	# Current source is a Sub-Source
-	#
-	if not iCurrentSource[1] is None: # and
+		#
+		# determine starting positions
+		#
+		#
+		# Current source is a Sub-Source
+		#
+		if not iCurrentSource[1] is None: # and
+			
+			if not reverse:
+				
+				# set source start point
+				start = iCurrentSource[0]
+				
+				# set sub-source start point
+				if iCurrentSource[1] is None:
+					ssi_start = 0
+				else:
+					ssi_start = iCurrentSource[1]+1	#next sub-source (+1) isn't neccesarily available, but this will be checked later
+					#print "Starting Sub-Source loop at {0}".format(ssi_start)
+
+			elif reverse:
+				
+				#if the current sub-source is the first, the don't loop sub-sources, but start looping at the previous source
+				ss_cnt = getAvailableSubCnt(iCurrentSource[0])
+				if iCurrentSource[1] == 0 or ss_cnt-1 == 0:
+				#if iCurrentSource[1] == 0 or ssi_start == 0:
+					start = iCurrentSource[0]-1	# previous source
+					ssi_start = None			# identifies to start at the highest sub-source
+				else:
+					start = iCurrentSource[0]	# current source
+					ssi_start = ss_cnt-2		# previous sub-source
+				
+		#
+		# Current source is *not* a Sub-Source:
+		#
+		elif iCurrentSource[1] is None:
+
+			if not reverse:
+			
+				start = iCurrentSource[0]+1
+				ssi_start=0
+				
+			elif reverse:
+			
+				# if the current source is the first, then start at the last source
+				if iCurrentSource[0] == 0:
+					start = len(self.lSource)-1		# start at the last item in the list
+				else:
+					start = iCurrentSource[0]-1		# previous source
+				
+				ssi_start=None
 		
-		if not reverse:
-			
-			# set source start point
-			start = iCurrentSource[0]
-			
-			# set sub-source start point
-			if iCurrentSource[1] is None:
+		# loop through sources
+		# source_iterator returns next source index, or None, in case no next available was found
+		res = source_iterator(start, None, ssi_start, reverse)
+		
+		# if nothing was found, "wrap-around" to beginning/ending of list
+		if res == None:
+				
+			if not reverse:
+				stop = start-1	# stop before current source
+				start = 0		# start at the beginning
 				ssi_start = 0
-			else:
-				ssi_start = iCurrentSource[1]+1	#next sub-source (+1) isn't neccesarily available, but this will be checked later
-				#print "Starting Sub-Source loop at {0}".format(ssi_start)
-
-		elif reverse:
+				return source_iterator(start, stop, ssi_start, reverse)
+				
+			elif reverse:
+				stop = start					# stop at the current source
+				start = len(self.lSource)-1 	# start at the last item in the list
+				ssi_start = None
+				return source_iterator(start, stop, ssi_start, reverse)
 			
-			#if the current sub-source is the first, the don't loop sub-sources, but start looping at the previous source
-			ss_cnt = getAvailableSubCnt(iCurrentSource[0])
-			if iCurrentSource[1] == 0 or ss_cnt-1 == 0:
-			#if iCurrentSource[1] == 0 or ssi_start == 0:
-				start = iCurrentSource[0]-1	# previous source
-				ssi_start = None			# identifies to start at the highest sub-source
-			else:
-				start = iCurrentSource[0]	# current source
-				ssi_start = ss_cnt-2		# previous sub-source
-			
-	#
-	# Current source is *not* a Sub-Source:
-	#
-	elif iCurrentSource[1] is None:
-
-		if not reverse:
-		
-			start = iCurrentSource[0]+1
-			ssi_start=0
-			
-		elif reverse:
-		
-			# if the current source is the first, then start at the last source
-			if iCurrentSource[0] == 0:
-				start = len(self.lSource)-1		# start at the last item in the list
-			else:
-				start = iCurrentSource[0]-1		# previous source
-			
-			ssi_start=None
-	
-	# loop through sources
-	# source_iterator returns next source index, or None, in case no next available was found
-	res = source_iterator(start, None, ssi_start, reverse)
-	
-	# if nothing was found, "wrap-around" to beginning/ending of list
-	if res == None:
-			
-		if not reverse:
-			stop = start-1	# stop before current source
-			start = 0		# start at the beginning
-			ssi_start = 0
-			#return None #source_iterator(start, stop, ssi_start, reverse)
-			
-		elif reverse:
-			stop = start					# stop at the current source
-			start = len(self.lSource)-1 	# start at the last item in the list
-			ssi_start = None
-			#return None #source_iterator(start, stop, ssi_start, reverse)
-		
-	else:
-		return res
+		else:
+			return res
 		
 	def nextOld( self, reverse=False ):
 
