@@ -19,6 +19,8 @@ from select import select
 # used mainly for getting the current song for lookup on reload
 from mpd import MPDClient
 
+PID_FILE = "dbusmpd"
+
 class mpdControl(dbus.service.Object):
 
 	oMpdClient = None
@@ -150,6 +152,12 @@ class mpdControl(dbus.service.Object):
 	def mpd_control(self, ding):
 		pass
 
+
+#
+# Stop if we're already running
+#
+if check_running(PID_FILE):
+	exit()
 
 # Initialize a main loop
 DBusGMainLoop(set_as_default=True)

@@ -38,6 +38,22 @@ def colorize ( string, foreground, background='black' ):
 	colorized = fg(foreground) + bg(background) + string + attr('reset')
 	return colorized
 
+# Return true if script for given pid is already running
+def check_running( pid_file ):
+	if not os.path.exists('/var/run/'+PID_FILE+'.pid'):
+		return False
+	else:
+		print('pid file found: /var/run/{0}.pid'.format(PID_FILE))
+		
+		# try a lock, if succesful, it's a stale pid file, and we'll delete it
+		try:
+			with PidFile(PID_FILE) as p:
+				print('Checking if we\'re already runnning')
+				return False
+		except:
+			print('Already runnning! Stopping.')
+			return True
+	
 def pa_sfx( sfx ):
 
 	#global sPaSfxSink

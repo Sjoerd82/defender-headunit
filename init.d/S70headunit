@@ -1,20 +1,32 @@
 #!/bin/sh
 #Main headunit script
 
-# TODO
+# APPLICATION
+NAME="Headunit"
 DAEMON="/mnt/PIHU_APP/defender-headunit/hu.py"
+DAEMONOPTS=""
+
+# PID (created by application)
+PIDFILE=/var/run/hu.pid
 
 start() {
         if [ -f $DAEMON ]; then
-          echo "Script: ${DAEMON} found.."
-          $DAEMON &
+          echo "Starting $NAME..."
+          $DAEMON $DAEMONOPTS &
         else
-          echo "${DAEMON} not found!"
+          echo "$DAEMON not found!"
         fi
 }
 
 stop() {
-        echo "Not yet implemented"
+        if [ -f $PIDFILE ]; then
+            echo "Stopping $NAME"
+            PID=`cat $PIDFILE`
+            kill -HUP $PID
+            rm -f $PIDFILE
+        else
+            echo "$PIDFILE not found, aborting..."
+        fi
 }
 
 case "$1" in
