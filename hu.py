@@ -819,7 +819,7 @@ def volume_att():
 	
 	if 'att' in hu_details:
 		hu_details['att'] = not hu_details['att']
-	else
+	else:
 		hu_details['att'] = True
 
 	if hu_details['att']:
