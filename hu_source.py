@@ -358,13 +358,13 @@ class SourceController():
 			stop = start-1	# stop before current source
 			start = 0		# start at the beginning
 			ssi_start = 0
-			return source_iterator(start, stop, ssi_start, reverse)
+			return None #source_iterator(start, stop, ssi_start, reverse)
 			
 		elif reverse:
 			stop = start					# stop at the current source
 			start = len(self.lSource)-1 	# start at the last item in the list
 			ssi_start = None
-			return source_iterator(start, stop, ssi_start, reverse)
+			return None #source_iterator(start, stop, ssi_start, reverse)
 		
 	else:
 		return res
