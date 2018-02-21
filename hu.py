@@ -158,7 +158,7 @@ from dbus.mainloop.glib import DBusGMainLoop
 #
 
 from slugify import slugify
-
+from pid import PidFile
 
 # GLOBAL vars
 Sources = SourceController()	#TODO: rename "Sources" -- confusing name
@@ -2122,10 +2122,11 @@ bus.add_signal_receiver(cb_ifdn, signal_name='ifdn', dbus_interface="com.arctura
 #
 # Start the blocking main loop...
 #
-try:
-	mainloop.run()
-finally:
-	mainloop.quit()
+with PidFile('hu') as p:
+	try:
+		mainloop.run()
+	finally:
+		mainloop.quit()
 
 
 # TODO
