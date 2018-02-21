@@ -207,41 +207,6 @@ class SourceController():
 	    to a previously playing source, instead of the next in line """
 	def next( self, reverse=False ):
 	
-		#
-		# check if iCurrentSource is set
-		# (in that case, set the next available, and return index)
-		#
-		if self.iCurrentSource[0] is None:
-			i = 0
-			for source in self.lSource:
-				if source['available'] and not source['template']:
-					self.iCurrentSource[0] = i
-					self.iCurrentSource[1] = None
-					return self.iCurrentSource
-				elif source['available'] and source['template']:
-					self.iCurrentSource[0] = i
-					j = 0
-					for subsource in source['subsources']:
-						if subsource['available']:
-							self.iCurrentSource[1] = j
-							return self.iCurrentSource
-						j += 1
-				i += 1
-			return self.iCurrentSource
-			
-		#
-		# check if we have at least two sources
-		#
-		iSourceCnt = self.getAvailableCnt()
-
-		if iSourceCnt == 0:
-			self.__printer('NEXT: No available sources.',LL_WARNING)
-			return self.iCurrentSource
-		elif iSourceCnt == 1:
-			self.__printer('NEXT: Only one source, cannot switch.',LL_WARNING)
-		
-
-		
 		def source_iterator(ix_start, ix_stop, j_start, reverse):
 			#
 			# if no current source, we'll loop through the sources until we find one
@@ -296,6 +261,39 @@ class SourceController():
 				ix_start += step
 
 			return None
+			
+		#
+		# check if iCurrentSource is set
+		# (in that case, set the next available, and return index)
+		#
+		if self.iCurrentSource[0] is None:
+			i = 0
+			for source in self.lSource:
+				if source['available'] and not source['template']:
+					self.iCurrentSource[0] = i
+					self.iCurrentSource[1] = None
+					return self.iCurrentSource
+				elif source['available'] and source['template']:
+					self.iCurrentSource[0] = i
+					j = 0
+					for subsource in source['subsources']:
+						if subsource['available']:
+							self.iCurrentSource[1] = j
+							return self.iCurrentSource
+						j += 1
+				i += 1
+			return self.iCurrentSource
+			
+		#
+		# check if we have at least two sources
+		#
+		iSourceCnt = self.getAvailableCnt()
+
+		if iSourceCnt == 0:
+			self.__printer('NEXT: No available sources.',LL_WARNING)
+			return self.iCurrentSource
+		elif iSourceCnt == 1:
+			self.__printer('NEXT: Only one source, cannot switch.',LL_WARNING)
 
 	#
 	# determine starting positions
