@@ -171,13 +171,13 @@ CONFIG_FILE_DEFAULT = '/mnt/PIHU_APP/defender-headunit/config/configuration.json
 CONFIG_FILE = '/mnt/PIHU_CONFIG/configuration.json'
 VERSION = "1.0.0"
 
-hu_details = { 'track':None, 'random':'off', 'repeat':True }
+hu_details = { 'track':None, 'random':'off', 'repeat':True, 'att':False }
 
-def volume_att_toggle():
-	hudispdata = {}
-	hudispdata['att'] = '1'
-	disp.dispdata(hudispdata)
-	return None
+#def volume_att_toggle():
+#	hudispdata = {}
+#	hudispdata['att'] = '1'
+#	disp.dispdata(hudispdata)
+#	return None
 	
 # ********************************************************************************
 # Output wrapper
@@ -811,6 +811,22 @@ def udisk_rem( device ):
 # ********************************************************************************
 # Headunit functions
 #
+
+def volume_att():
+
+	global volm
+	global hu_details
+	
+	if 'att' in hu_details:
+		hu_details['att'] = not hu_details['att']
+	else
+		hu_details['att'] = True
+
+	if hu_details['att']:
+		volm.set('20%')
+	else:
+		pre_att_vol = '60%' #TODO	#VolPulse.get()
+		volm.set(pre_att_vol)
 
 def do_source():
 
@@ -1588,8 +1604,9 @@ def worker_queue_prio():
 		elif command == 'VOL_DOWN':
 			volm.set('-5%')
 		elif command == 'ATT':
-			volm.set('20%')
+			#volm.set('20%')
 			#volume_att_toggle()
+			volume_att()
 		elif command == 'OFF':
 			shutdown()
 		else:
@@ -1673,6 +1690,32 @@ class dbusVolume(dbus.service.Object):
 	def set(self, volume):
 		pass
 
+server_name = "com.arctura.hu"
+interface_name = "com.arctura.hu"
+object_name = "/com/arctura/hu"
+class MainInstance():
+
+	def __init__(self):
+		#super(mpdControl,self).__init__(bus_name, "/com/arctura/hu")
+
+		#
+		# DBus: system bus
+		# On a root only embedded system there may not be a usable session bus
+		#
+		try:
+			bus = dbus.SystemBus()
+		except dbus.DBusException:
+			raise RuntimeError("No D-Bus connection")
+
+		if bus.name_has_owner(server_name):
+			raise NameError
+				
+		bus_name = dbus.service.BusName(server_name, bus=bus)
+		super(MainInstance, self).__init__(conn=bus,
+											object_path=object_name,
+											bus_name=bus_name)
+
+		
 #********************************************************************************
 #
 # Initialization
@@ -2022,12 +2065,25 @@ gobject.idle_add(cb_queue)
 # DBus: system bus
 # On a root only embedded system there may not be a usable session bus
 #
-bus = dbus.SystemBus()
+m = MainInstance()
+
+"""
+try:
+	bus = dbus.SystemBus()
+except dbus.DBusException:
+	raise RuntimeError("No D-Bus connection")
+
+# Declare a name where our service can be reached
+try:
+    bus_name = dbus.service.BusName("com.arctura.hu", bus, do_not_queue=True)
+except dbus.exceptions.NameExistsException:
+    print("service is already running")
+    sys.exit(1)
 
 # Output
 disp = dbusDisplay(bus)
 volm = dbusVolume(bus)
-
+"""
 
 """
 time.sleep(5)	#wait for the plugin to be ready
@@ -2049,6 +2105,7 @@ disp.dispdata(hudispdata)
 
 exit()
 """
+"""
 #
 # Connect Callback functions to DBus Signals
 #
@@ -2060,7 +2117,7 @@ bus.add_signal_receiver(cb_udisk_dev_rem, signal_name='DeviceRemoved', dbus_inte
 bus.add_signal_receiver(cb_ifup, signal_name='ifup', dbus_interface="com.arctura.ifup")
 bus.add_signal_receiver(cb_ifdn, signal_name='ifdn', dbus_interface="com.arctura.ifdn")
 
-
+"""
 #
 # Start the blocking main loop...
 #

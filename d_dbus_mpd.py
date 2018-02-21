@@ -155,11 +155,15 @@ class mpdControl(dbus.service.Object):
 DBusGMainLoop(set_as_default=True)
 loop = gobject.MainLoop()
 
+# Connect to System Bus
+try:
+	bus = dbus.SystemBus()
+except dbus.DBusException:
+	raise RuntimeError("No D-Bus connection")
+
 # Declare a name where our service can be reached
 try:
-    bus_name = dbus.service.BusName("com.arctura.mpd",
-                                    bus=dbus.SystemBus(),
-                                    do_not_queue=True)
+    bus_name = dbus.service.BusName("com.arctura.mpd", bus, do_not_queue=True)
 except dbus.exceptions.NameExistsException:
     print("service is already running")
     sys.exit(1)
