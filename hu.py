@@ -1693,7 +1693,7 @@ class dbusVolume(dbus.service.Object):
 server_name = "com.arctura.hu"
 interface_name = "com.arctura.hu"
 object_name = "/com/arctura/hu"
-class MainInstance():
+class MainInstance(ExportedGObject):
 
 	def __init__(self):
 		#super(mpdControl,self).__init__(bus_name, "/com/arctura/hu")
