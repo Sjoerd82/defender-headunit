@@ -158,7 +158,6 @@ from dbus.mainloop.glib import DBusGMainLoop
 #
 
 from slugify import slugify
-from pid import PidFile
 
 # GLOBAL vars
 Sources = SourceController()	#TODO: rename "Sources" -- confusing name

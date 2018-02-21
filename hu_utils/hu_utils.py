@@ -21,7 +21,7 @@ import urllib2
 
 # Third party modules
 from colored import fg, bg, attr
-
+from pid import PidFile
 
 #log levels
 LL_CRITICAL = 50
@@ -43,14 +43,14 @@ def colorize ( string, foreground, background='black' ):
 
 # Return true if script for given pid is already running
 def check_running( pid_file ):
-	if not os.path.exists('/var/run/'+PID_FILE+'.pid'):
+	if not os.path.exists('/var/run/'+pid_file+'.pid'):
 		return False
 	else:
-		print('pid file found: /var/run/{0}.pid'.format(PID_FILE))
+		print('pid file found: /var/run/{0}.pid'.format(pid_file))
 		
 		# try a lock, if succesful, it's a stale pid file, and we'll delete it
 		try:
-			with PidFile(PID_FILE) as p:
+			with PidFile(pid_file) as p:
 				print('Checking if we\'re already runnning')
 				return False
 		except:
