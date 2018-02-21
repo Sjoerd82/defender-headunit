@@ -295,7 +295,7 @@ class SourceController():
 
 				ix_start += step
 
-		return None
+			return None
 
 	#
 	# determine starting positions
