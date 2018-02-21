@@ -243,59 +243,59 @@ class SourceController():
 
 		
 		def source_iterator(ix_start, ix_stop, j_start, reverse):
-		#
-		# if no current source, we'll loop through the sources until we find one
-		#
-		# TODO CHECK IF i_start isn't at the end of the list!
-		
-		# python list slicing
-		# step -1 reverses direction
-		# the start and end needs to be reversed too
-		# 
-		original_start = ix_start
-		
-		if reverse:
-			step = -1
-			logtext = "to prev."
-		else:
-			step = 1
-			logtext = "to next"
-		
-		# loop sources
-		for source in lSource[ix_start:ix_stop:step]:
-		
-			# source available and has *no* sub-sources:
-			if not source['template'] and source['available']:
-				print('NEXT: Switching {0} {1}: {2:s}'.format(logtext,ix_start,source['displayname']))
-				iCurrentSource[0] = ix_start
-				iCurrentSource[1] = None
-				return iCurrentSource
+			#
+			# if no current source, we'll loop through the sources until we find one
+			#
+			# TODO CHECK IF i_start isn't at the end of the list!
 			
-			# sub-source and available:
-			elif source['template'] and source['available']:
+			# python list slicing
+			# step -1 reverses direction
+			# the start and end needs to be reversed too
+			# 
+			original_start = ix_start
 			
-				# reverse initialize sub-sources loop
-				if reverse and j_start is None:
-					j_start = len(source['subsources'])-1
-								
-				# reset sub-loop counter to 0
-				if ix_start > original_start and j_start > 0:
-					j_start = 0
+			if reverse:
+				step = -1
+				logtext = "to prev."
+			else:
+				step = 1
+				logtext = "to next"
 			
-				# loop sub-sources:
-				for subsource in source['subsources'][j_start::step]:
+			# loop sources
+			for source in lSource[ix_start:ix_stop:step]:
+			
+				# source available and has *no* sub-sources:
+				if not source['template'] and source['available']:
+					print('NEXT: Switching {0} {1}: {2:s}'.format(logtext,ix_start,source['displayname']))
+					iCurrentSource[0] = ix_start
+					iCurrentSource[1] = None
+					return iCurrentSource
+				
+				# sub-source and available:
+				elif source['template'] and source['available']:
+				
+					# reverse initialize sub-sources loop
+					if reverse and j_start is None:
+						j_start = len(source['subsources'])-1
+									
+					# reset sub-loop counter to 0
+					if ix_start > original_start and j_start > 0:
+						j_start = 0
+				
+					# loop sub-sources:
+					for subsource in source['subsources'][j_start::step]:
 
-					if subsource['available']:
-						print('NEXT: Switching {0}: {1}/{2}: {3:s}'.format(logtext,ix_start,j_start,subsource['displayname']))
-						iCurrentSource[0] = ix_start
-						iCurrentSource[1] = j_start
-						return iCurrentSource
-						
-					j_start += step
+						if subsource['available']:
+							print('NEXT: Switching {0}: {1}/{2}: {3:s}'.format(logtext,ix_start,j_start,subsource['displayname']))
+							iCurrentSource[0] = ix_start
+							iCurrentSource[1] = j_start
+							return iCurrentSource
+							
+						j_start += step
 
-			ix_start += step
+				ix_start += step
 
-		return None
+			return None
 
 	#
 	# determine starting positions
