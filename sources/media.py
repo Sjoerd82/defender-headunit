@@ -209,16 +209,16 @@ class sourceClass():
 		
 		# add all locations as configured
 		arMedia = media_getAll()
-		for dev_mp in arMedia:
+		for mount in arMedia:
 			
-			mountpoint = dev_mp[1]
-			sUsbLabel = os.path.basename(dev_mp[1]).rstrip('\n')
+			mountpoint = mount['mountpoint']
+			sUsbLabel = os.path.basename(mount['mountpoint']).rstrip('\n')
 			#TODO: try-except for subprocess?
-			uuid = subprocess.check_output("blkid "+dev_mp[0]+" -s PARTUUID -o value", shell=True).rstrip('\n')	
+			uuid = subprocess.check_output("blkid "+mount['spec']+" -s PARTUUID -o value", shell=True).rstrip('\n')	
 			self.__media_add_subsource( mountpoint
 							           ,sUsbLabel
 							           ,uuid
-									   ,dev_mp[0]
+									   ,mount['mountpoint']
 							           ,sourceCtrl)
 
 		return True
