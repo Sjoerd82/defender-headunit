@@ -193,6 +193,7 @@ class sourceClass():
 			
 				# filter out everything that's not mounted on /media or is smb:
 				for i, mp in enumerate(lst_mountpoints):
+					print mp['mountpoint']
 					print mp['fs']
 					if not mp['mountpoint'].startswith('/media/') or mp['fs'] == 'cifs':
 						del lst_mountpoints[i]
@@ -200,9 +201,10 @@ class sourceClass():
 				# check if anything left
 				if not lst_mountpoints:
 					self.__printer(' > No removable media found')
-				else:				
+				else:
 					self.__printer(' > Found {0} removable media'.format(len(lst_mountpoints)))
 			
+			print lst_mountpoints
 			return lst_mountpoints
 		
 		# do a general media_check to find any mounted drives
@@ -210,6 +212,7 @@ class sourceClass():
 		
 		# add all locations as configured
 		arMedia = media_getAll()
+		print arMedia
 		for mount in arMedia:
 			
 			# get mountpoint and label
