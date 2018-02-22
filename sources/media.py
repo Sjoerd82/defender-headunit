@@ -202,7 +202,7 @@ class sourceClass():
 					if not mp['mountpoint'].startswith('/media/') or mp['fs'] == 'cifs':
 						print "DELETE: {0}".format(mp['mountpoint'])
 						#del lst_mountpoints[i]
-						lst_mountpoints.remove(i)
+						lst_mountpoints.remove( mp )
 						
 					i+=1
 					
