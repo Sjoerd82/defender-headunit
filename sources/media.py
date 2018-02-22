@@ -211,10 +211,18 @@ class sourceClass():
 		arMedia = media_getAll()
 		for mount in arMedia:
 			
+			# get mountpoint and label
 			mountpoint = mount['mountpoint']
 			sUsbLabel = os.path.basename(mount['mountpoint']).rstrip('\n')
-			#TODO: try-except for subprocess?
-			uuid = subprocess.check_output("blkid "+mount['spec']+" -s PARTUUID -o value", shell=True).rstrip('\n')	
+			
+			# get uuid
+			try:
+				uuid = subprocess.check_output("blkid "+mount['spec']+" -s PARTUUID -o value", shell=True).rstrip('\n')
+			except:
+				self.__printer('Could not get a partition UUID for {0}'.format(mount['spec']),level=LL_ERROR)
+				uuid = ''
+				
+			# add subsource
 			self.__media_add_subsource( mountpoint
 							           ,sUsbLabel
 							           ,uuid
