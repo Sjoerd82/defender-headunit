@@ -194,7 +194,7 @@ class sourceClass():
 				# filter out everything that's not mounted on /media
 				for i, mp in enumerate(lst_mountpoints):
 					if not mp.startswith('/media/'):
-						lst_mountpoints.del(i)
+						del lst_mountpoints[i]
 				
 				# check if anything left
 				if not lst_mountpoints:
