@@ -36,21 +36,25 @@ class sourceClass():
 	# Returned is 2-dimension list
 	def __smb_getAll( self ):
 
-		try:
-			self.__printer('Check if anything is mounted on /media/PIHU_SMB...')
-			# do a -f1 for devices, -f3 for mountpoints
-			grepOut = subprocess.check_output(
-				"mount | grep /media/PIHU_SMB | cut -d' ' -f1,3",
-				shell=True,
-				stderr=subprocess.STDOUT,
-			)
-		except subprocess.CalledProcessError as err:
-			print('ERROR:', err)
-			pa_sfx('error')
-			return None
+		lst_mountpoints = get_mounts( fs='cifs' )
+
+		if not lst_mountpoints:
+			self.__printer(' > No SMB network shares found')
+		else:
+			# filter out everything that's not mounted on /media/PIHU_SMB
+			# TODO: remove hardcoded path
+			for i, mp in enumerate(lst_mountpoints):
+				if not mp['mountpoint'].startswith('/media/PIHU_SMB'):
+					del lst_mountpoints[i]
+			
+			# check if anything left
+			if not lst_mountpoints:
+				self.__printer(' > No SMB network shares found on /media/PIHU_SMB')
+			else:				
+				self.__printer(' > Found {0} shares'.format(len(lst_mountpoints)))
 		
-		grepOut = grepOut.rstrip('\n')
-		return [[x for x in ss.split(' ')] for ss in grepOut.split('\n')]
+		return lst_mountpoints
+
 	
 	# add a smb source
 	def __smb_add( self, dir, path, sourceCtrl ):
@@ -76,10 +80,10 @@ class sourceClass():
 			
 		# add all locations as configured
 		arSmb = self.__smb_getAll()
-		for dev_mp in arSmb:
-			if dev_mp[0].startswith('//'):
-				smbAddr = dev_mp[0]
-				mountpoint = dev_mp[1]
+		for mount in arSmb:
+			if mount['spec'].startswith('//'):
+				smbAddr = mount['spec']
+				mountpoint = mount['mountpoint']
 				self.__smb_add( mountpoint
 						       ,smbAddr
 						       ,sourceCtrl)
