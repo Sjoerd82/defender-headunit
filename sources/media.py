@@ -190,7 +190,7 @@ class sourceClass():
 			if not lst_mountpoints:
 				self.__printer(' > No removable media found')
 			else:
-			
+				print lst_mountpoints
 				# filter out everything that's not mounted on /media or is smb:
 				n=0
 				for i, mp in enumerate(lst_mountpoints):
