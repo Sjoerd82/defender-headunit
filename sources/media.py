@@ -196,7 +196,7 @@ class sourceClass():
 					print mp['mountpoint']
 					print mp['fs']
 					if not mp['mountpoint'].startswith('/media/') or mp['fs'] == 'cifs':
-						del lst_mountpoints[i]
+						del lst_mountpoints[i-1]
 				
 				# check if anything left
 				if not lst_mountpoints:
