@@ -56,7 +56,7 @@ def check_running( pid_file ):
 		except:
 			print('Already runnning! Stopping.')
 			return True
-	
+#
 def pa_sfx( sfx ):
 
 	#global sPaSfxSink
@@ -79,7 +79,32 @@ def pa_sfx( sfx ):
 			subprocess.call(["pactl", "play-sample", "bt", sPaSfxSink])
 		elif sfx == 'reset_shuffle':
 			subprocess.call(["pactl", "play-sample", "beep_60_x2", sPaSfxSink])
-			
+
+# Return dictionary with mounts
+# optionally apply a filter on device and/or fs and/or a list of mountpoints to exclude
+def get_mounts( spec=None, fs=None, mp_exclude=[] ):
+
+	mounts = []
+	with open('/proc/mounts','r') as f:
+		for line in f.readlines():
+			mount = {}
+			mount['spec'] = line.split()[0]
+			mount['mountpoint'] = line.split()[1]
+			mount['fs'] = line.split()[2]
+
+			# excluded mountpoints
+			if not mount['mountpoint'] in mp_exclude:
+				
+				# filters:
+				if not spec is None and mount['spec'] == spec:
+					mounts.append(mount)
+				elif not fs is None and mount['fs'] == fs:
+					mounts.append(mount)
+				elif spec is None and fs is None and not mount['fs'] in ('devtmpfs','proc','devpts','tmpfs','sysfs'):
+					mounts.append(mount)
+
+	return mounts
+
 def internet():
 	#TODO
 	sInternet="www.google.com"

@@ -69,13 +69,21 @@ class sourceClass():
 		elif has_device and not has_mountpoint:
 			self.__printer("Determining mountpoint", level=LL_DEBUG)
 			
-			# get mountpoint from "mount" command
-			mountpoint = subprocess.check_output("mount | egrep "+device+" | cut -d ' ' -f 3", shell=True).rstrip('\n')
-
-			# check if we have a mountpoint...
-			if mountpoint == "":
+			## get mountpoint from "mount" command
+			#mountpoint = subprocess.check_output("mount | egrep "+device+" | cut -d ' ' -f 3", shell=True).rstrip('\n')
+			## check if we have a mountpoint...
+			#if mountpoint == "":
+			#	self.__printer(" > No mountpoint found. Stopping.")
+			#	return False
+			
+			# get mountpoint
+			mountpoints = get_mounts( spec=device )	
+			#if len(mountpoints) == 0:
+			if not mountpoints:
 				self.__printer(" > No mountpoint found. Stopping.")
 				return False
+			else:
+				mountpoint = mountpoints[0]['mountpoint']
 
 		# UUID
 		if 'uuid' not in parameters:
@@ -155,6 +163,7 @@ class sourceClass():
 		# Returned is 2-dimension list
 		def media_getAll():
 
+			"""
 			try:
 				self.__printer('Check if anything is mounted on /media...')
 				# do a -f1 for devices, -f3 for mountpoints
@@ -174,11 +183,24 @@ class sourceClass():
 			# remove local data (locmus) and smb mounts:
 			# TODO: this shouldn't be hardcoded:
 			lst_mountpoints[:] = [tup for tup in lst_mountpoints if (not tup[1] == '/media/PIHU_DATA' and not tup[0].startswith('//'))]
-
+			"""
+			# TODO: remove hardcoded paths
+			lst_mountpoints = get_mounts( mp_exclude=['/mnt/PIHU_APP','/mnt/PIHU_CONFIG','/media/PIHU_DATA'] )	
+			
 			if not lst_mountpoints:
 				self.__printer(' > No removable media found')
 			else:
-				self.__printer(' > Found {0} removable media'.format(len(lst_mountpoints)))
+			
+				# filter out everything that's not mounted on /media
+				for i, mp in enumerate(lst_mountpoints):
+					if not mp.startswith('/media/'):
+						lst_mountpoints.del(i)
+				
+				# check if anything left
+				if not lst_mountpoints:
+					self.__printer(' > No removable media found')
+				else:				
+					self.__printer(' > Found {0} removable media'.format(len(lst_mountpoints)))
 			
 			return lst_mountpoints
 		

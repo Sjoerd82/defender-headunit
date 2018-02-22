@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ItemType>PythonProject</ItemType>
+    <ProductVersion>10.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{876C0FB2-F890-4EA7-94FC-327D47E57981}</ProjectGuid>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>Debug</OutputPath>
+    <Build>
+      <Build Optimize="false" />
+    </Build>
+    <Runtime>
+      <Runtime Module="main" PythonOptions="">
+        <Interpreter path="/usr/bin/python2.7" ctype="Python27Runtime" />
+      </Runtime>
+    </Runtime>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <OutputPath>Release</OutputPath>
+    <Build>
+      <Build Optimize="true" />
+    </Build>
+    <Runtime>
+      <Runtime Module="main" PythonOptions="">
+        <Interpreter path="/usr/bin/python2.6" ctype="Python26Runtime" />
+      </Runtime>
+    </Runtime>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="test\__init__.py" />
+    <Compile Include="test\Test.py" />
+    <Compile Include="src\model\__init__.py" />
+    <Compile Include="src\model\Server.py" />
+    <Compile Include="src\model\Volume.py" />
+    <Compile Include="src\model\Sink.py" />
+    <Compile Include="src\model\Source.py" />
+    <Compile Include="src\model\Module.py" />
+    <Compile Include="src\model\Client.py" />
+    <Compile Include="src\model\Card.py" />
+    <Compile Include="src\model\SinkInput.py" />
+    <Compile Include="src\__init__.py" />
+    <Compile Include="src\lib.py" />
+    <Compile Include="src\RfPulseClient.py" />
+    <Compile Include="src\RfPulseLib.py" />
+    <Compile Include="src\model\ChannelMap.py" />
+    <Compile Include="src\model\Port.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="src\model\SampleSpecification.py" />
+    <None Include="README.markdown" />
+  </ItemGroup>
+  <ProjectExtensions>
+    <MonoDevelop>
+      <Properties>
+        <Policies>
+          <TextStylePolicy FileWidth="120" inheritsSet="VisualStudio" inheritsScope="text/plain" scope="text/x-python" />
+        </Policies>
+      </Properties>
+    </MonoDevelop>
+  </ProjectExtensions>
+  <ItemGroup>
+    <Folder Include="src\" />
+  </ItemGroup>
+</Project>
