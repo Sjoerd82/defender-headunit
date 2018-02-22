@@ -51,7 +51,7 @@ class sourceClass():
 			if not lst_mountpoints:
 				self.__printer(' > No SMB network shares found on /media/PIHU_SMB')
 			else:				
-				self.__printer(' > Found {0} shares'.format(len(lst_mountpoints)))
+				self.__printer(' > Found {0} share(s)'.format(len(lst_mountpoints)))
 		
 		return lst_mountpoints
 

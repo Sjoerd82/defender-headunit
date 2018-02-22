@@ -185,7 +185,7 @@ class sourceClass():
 			lst_mountpoints[:] = [tup for tup in lst_mountpoints if (not tup[1] == '/media/PIHU_DATA' and not tup[0].startswith('//'))]
 			"""
 			# TODO: remove hardcoded paths
-			lst_mountpoints = get_mounts( mp_exclude=['/mnt/PIHU_APP','/mnt/PIHU_CONFIG','/media/PIHU_DATA','/media/PIHU_SMB'] )
+			lst_mountpoints = get_mounts( mp_exclude=['/mnt/PIHU_APP','/mnt/PIHU_CONFIG','/media/PIHU_DATA'] )
 			
 			if not lst_mountpoints:
 				self.__printer(' > No removable media found')
@@ -194,6 +194,7 @@ class sourceClass():
 				# filter out everything that's not mounted on /media or is smb:
 				for i, mp in enumerate(lst_mountpoints):
 					if not mp['mountpoint'].startswith('/media/') or mp['fs'] == 'cifs':
+						print mp['fs']
 						del lst_mountpoints[i]
 				
 				# check if anything left
