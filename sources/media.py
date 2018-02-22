@@ -193,8 +193,8 @@ class sourceClass():
 			
 				# filter out everything that's not mounted on /media or is smb:
 				for i, mp in enumerate(lst_mountpoints):
+					print mp['fs']
 					if not mp['mountpoint'].startswith('/media/') or mp['fs'] == 'cifs':
-						print mp['fs']
 						del lst_mountpoints[i]
 				
 				# check if anything left
