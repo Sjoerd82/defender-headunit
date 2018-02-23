@@ -2072,9 +2072,9 @@ gobject.idle_add(cb_queue)
 # DBus: system bus
 # On a root only embedded system there may not be a usable session bus
 #
-m = MainInstance()
+#m = MainInstance()
 
-"""
+
 try:
 	bus = dbus.SystemBus()
 except dbus.DBusException:
@@ -2090,7 +2090,7 @@ except dbus.exceptions.NameExistsException:
 # Output
 disp = dbusDisplay(bus)
 volm = dbusVolume(bus)
-"""
+
 
 """
 time.sleep(5)	#wait for the plugin to be ready
@@ -2112,7 +2112,7 @@ disp.dispdata(hudispdata)
 
 exit()
 """
-"""
+
 #
 # Connect Callback functions to DBus Signals
 #
@@ -2124,7 +2124,7 @@ bus.add_signal_receiver(cb_udisk_dev_rem, signal_name='DeviceRemoved', dbus_inte
 bus.add_signal_receiver(cb_ifup, signal_name='ifup', dbus_interface="com.arctura.ifup")
 bus.add_signal_receiver(cb_ifdn, signal_name='ifdn', dbus_interface="com.arctura.ifdn")
 
-"""
+
 #
 # Start the blocking main loop...
 #
