@@ -192,8 +192,9 @@ class sourceClass():
 			else:
 				print lst_mountpoints
 				#lst_mountpoints[:] = (x for x in somelist if determine(x))
+				#yourList[:] = itertools.ifilter(do_the_magic, yourList)
 				# filter out everything that's not mounted on /media or is smb:
-
+				"""
 				i=0
 				#for i, mp in enumerate(lst_mountpoints):
 				for mp in lst_mountpoints:
@@ -202,10 +203,10 @@ class sourceClass():
 					if not mp['mountpoint'].startswith('/media/') or mp['fs'] == 'cifs':
 						print "DELETE: {0}".format(mp['mountpoint'])
 						#del lst_mountpoints[i]
-						lst_mountpoints.remove( mp )
+						#lst_mountpoints.remove( mp )
 						
 					i+=1
-					
+				"""
 				# check if anything left
 				if not lst_mountpoints:
 					self.__printer(' > No removable media found')
