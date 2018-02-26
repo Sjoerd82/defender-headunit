@@ -18,6 +18,10 @@
 		, "log": "/mnt/PIHU_CONFIG/log"
 		, "sfx": "/mnt/PIHU_APP/defender-headunit/sfx"
 	}
+	, "audio_output": {
+		"pulse-sink": "alsa_output.platform-soc_sound.analog-stereo"
+	   ,"mpd_output": "pulse audio"
+	}
 	, "source_config": {
 		  "locmus": [ { "label": "PD1", "musicdir": "/media/PIHU_DATA", "musicdir_mpd": "PIHU_DATA"}
 		            , { "label": "PD2", "musicdir": "/media/PIHU_DATA2", "musicdir_mpd": "PIHU_DATA2" } ]
@@ -27,10 +31,12 @@
 	, "plugins_other": {
 		"scrobbler": {"lastfm_password_hash": "64828e435bff400260a0d8f595644544", "lastfm_api_secret": "e7377c56280a4edec2442c3d1a8ee0ce", "lastfm_api_key": "6aec32f8c9d6e39aefdb9606d45ae8a0", "lastfm_username": "SjoerdVenema"}
 	}
+	, "auto_update": "all"
 	, "retain_random": false
 	, "media_autoplay": true
 	, "mount_media": "ro"
 	, "threshold_elapsed": 20
 	, "threshold_total": 30
+	, "http_port": 8289
 	, "shutdown_cmd": ["halt"]
 }
