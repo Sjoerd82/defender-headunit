@@ -1,0 +1,35 @@
+ 
+ Headunit Control App
+
+ Inspiration: YATSE
+
+ Main screen:
+ - Player Controls:
+   Play/Pause
+   Next/Prev
+   Next/Prev folder
+   Seek?
+   Random
+   Volume
+   Source (list?)
+   View Playlist
+  
+ Settings menu:
+ - Connection settings
+	Set IP / Search for headunit
+ - Preferences
+	Starting source: <resume|source x>
+	WiFi mode: <ap|network|apfallback|off>
+	ATT level
+ - Internet radio
+	A/R/E Stations/Streams
+ - WiFi
+	A/R/E WiFi Networks
+	Accesspoint Settings
+ - Remote Control
+	Infrared (select remote control)
+	Wired; select/configure (button functions)
+ - Scrobbler
+	Set username
+	Set password
+	Set url

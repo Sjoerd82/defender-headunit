@@ -1,0 +1,165 @@
+Hardware add-ons required, these will be located on the HeadUnit "hat" or "shield"
+
+ CORE functionality:
+ - PhatDac
+
+ SMALL stuff, which we'll include, because it's small:
+ - header 1x[3 pin]: IR receiver header (2pin) + IR TSSOP chip (3pin)?
+		     pins = VCC, GND, DATA
+ - header 1x[5 pin]: 3.5mm jack (line-in) with mic and insert detection
+                     1 pin = Gnd/Shield, 2 pins (L/R) to mixer, 1 pin for mic (IR/voice commands), 1 pin = insert detection, wire to GPIO
+ - header 1x[3 pin]: volume, bass, treble via encoder (switch to switch between vol/bas/etc..)
+		     2 pins = A,B encoder, 1 pin for push switch
+ - header 3x[3 pin]: 2->1 Mixer + select via GPIO (Output: Amp. Inputs: PhatDac, Line)
+		     1 pin = Gnd/Shield, 2 pins = L+R
+ - header 1x[? pin]: Text display SPI?
+
+ OPTIONALS A -- ADC
+ - header 1x[4 pin] + 
+ - chip ADC: 4Ch.ADC (2Ch for Remote, 2Ch for other things*)
+
+ OPTIONALS B -- FM 
+ - chip: FM+RDS receiver +
+ - Antenna plug (header?? -- would be nice, +insertion detection?)
+
+ OPTIONALS C1 -- POWER
+ - Switching power supply; 3V/5V-32V
+
+ OPTIONALS C2 -- BATTERY
+ - LiPo battery circuit + battery plug
+
+ OPTIONALS C3 -- SOFT POWER OFF
+ - Cap/LiPo for soft-shutdown //and/or// button for soft-power off ==> Implement in one button
+
+ OPTIONALS D -- CANbus
+ - CAN bus transceiver (SPI?)
+ - CAN bus header (2 pin)
+
+ OPTIONALS E -- ENCODERS
+ - 
+
+ * Optionally: (Line-In detection??) Volume, Bass, Treble, Balance, but these are better implemented using rotary encoders.
+   Bass and treble controls are better to be connected to the amplifier(??)
+   Volume, Bass and Treble (and perhaps balance) are better implemented using incremental encoders, when it's (and it is) and they are also controlled by software.
+   A volume knob controlled via ADC is absolute, now if the volume changes via a different input the ADC knob will be out of sync and volume level will jerk when the knob is used.
+   Same goes for the Bass, Treble and Balance controls (where the latter is of least importance).
+
+   Q. Is it better to implement the Bass and Treble knobs on the amp (if possible, it's ideal to connect Balance to the amp) or on the software?
+      Connecting them to the amp will have the benefit that they can complement the software equalizer.e
+
+
+Optional add-on hardware:
+ - Flanged 3.5mm plug w/ insert detection
+ - Flanged Antenna plug (insert/presence detection?)
+ - Flanged IR receiver
+ - Flanged Incremental Rotary Encoder for volume
+ - Flanged Incremental Rotary Encoder 3x (bass, treble, balance)
+ - Amp: Flanged Balance controller
+
+Q. Pi has two SPI channels?			?
+Q. Can the LVDS be used for the text display?	No
+Q. Pi has a WiFi connector?			No, but solderable
+
+
+GPIO:
+ - 1x Beeper
+ - ?x FM
+ - 1x Line-In detection
+ - ?x display		SPI/I2C
+ - ?x ADC		SPI
+ - ?x IR
+ - 2x Mixer Control (1x when using a register?)
+ - ?x CAN BUS		SPI
+ - 1x Power Off
+ - 1x Battery Low
+
+PCB Form factor:
+
+ - Pi sized PCB "shield", stack on top
+	Pro:
+	 + Space
+	Con:
+	 - High
+
+ - Pi Zero sized PCB "hat", stack on top
+	Pro:
+	 + Small
+	 + Shallow
+	 + Will also stack on a regular Pi
+	 + Connect "sideways" -> Shallow
+	Con:
+	 - Too small for all features?
+	 - High (if stacked)
+
+If we can fit everything on a "Hat", that would be ideal, but seems hard, also potentially problematic because of noise. esp. the power stuff.
+Compromise:
+
+ - Pi sized "shield", to be stacked on a Pi Zero. On the far side of the shield, we'll provide a connector for an addon that can than reside next to the Pi Zero.
+	Pro:
+	 + Space for all features
+	 + Less noise? (we'll put the power stuff on the separate board next to the Pi)
+	Con:
+	 - High and wide
+
+
+Encloure connections:
+
+CONNECTION								NANO	AUTOM.	miniDIN	PORTABLE
+ - 1x Power In (also for charging) .................................... X	X	X	X
+ - 1x Power Switch .................................................... X	-	-	X
+ - 1x 3.5mm Line Out .................................................. X	X	X	X
+ - 1x SMA WiFi ? ...................................................... -	-	-	-
+ - 1x FM antenna plug ISO ............................................. -*	X	X	X?
+ - 1x USB			} ..................................... X	}		X
+ - 1x 3.5mm Line In		} Combine into a custom connector ..... -	}-X		X
+ - 1x Remote Control            } HDMI-style                     ...... -	}		-
+ - 1x Remote Volume knob	} "breakout moulds"**           ....... -	}		-
+ - 2x Remote Bass+Treble knobs	}			       ........ -	}		-
+ - 1x CAN bus (RS232/custom)	}                             ......... -	}		-
+ - 1x Custom? Display		}                            .......... -	}		X
+ - 1x IR receiver / plug	}                           ........... X	}		X
+ - 1x Speaker			}                          ............ -	}		-
+ - 1x Volume knob ..................................................... X	-	-	- (AMP)
+ - 1x Bass knob ....................................................... ?	-	-	- (AMP)
+ - 1x Treble knob ..................................................... ?	-	-	- (AMP)
+
+ * Built-in into enclosure
+** Box, with two custom connectors, M and F, and:
+    - RS232
+    - Flanged IR
+    - USB
+    - 3.5mm Line In
+    - Display "header", JST connector
+    - Speaker "header", JST connector
+    - Volume potmeter, flanged
+    - Bass potmeter, flanged
+    - Treble potmeter, flanged
+
+Nano: Smallest form-factor, for bookshelf speakers
+	maybe build into one of those chinese bookshelve amps?
+
+Enclosure form factor:
+
+ - 1x DIN blank, shallow (for mounting behind existing console)
+	Pro:
+	 + Easy to source enclosure
+	 + Spacious
+	 + Standardized
+	Con:
+	 - Mostly useful in automotive applications (less usefull (too big?) on the bookshelve, suitcase)
+	 - Hidden audio applications may not have this DIN-bay available
+
+ - Combined with Amp.
+	Pro:
+	 + All-in-One box
+	Con:
+	 - Heat?
+	 - Size
+
+ - Custom plastic enclosure
+   Flanged box, possibly IP67, to mount under car seat, or wherever.
+   Width matches DIN size, so could also be mounted behind console.
+	Pro:
+	 + Custom
+	Con:
+	 - Price?

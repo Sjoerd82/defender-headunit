@@ -1,0 +1,64 @@
+
+ [ HU_FSK_API.py ]          }
+   Flask web framework      } <-> DBus
+   Flask RESTFul extension  }
+
+Python "requests" HTTP library
+
+getall() ?
+
+--------------------------------------------------
+http://127.0.0.1/player/
+Object: Player
+Methods:
+  Pause
+  Play
+  PlayPauseToggle
+  GetState
+  NextTrack
+  PrevTrack
+  NextFolder
+  PrevFolder
+  RandomOn
+  RandomOff
+  RandomMode	<folder|artist|genre|all>
+  RandomToggle
+Properties:
+  State
+  Random
+
+--------------------------------------------------
+Object: Volume
+Methods:
+  VolumeUp
+  VolumeDown
+  VolumeSetPct
+  VolumeGetPct
+  EqualizerBand1 Set/Get
+  EqualizerBand. Set/Get
+Properties:
+  EqualizerBand1
+
+------------------------------------------------
+Object: Track
+Details about what is being played
+Methods:
+  Artist 	}
+  Album		} - return a struct?
+  Title		} 
+  GetID3tag	(only for files that have an ID3 tag)
+  
+
+--------------------------------------------------
+Object: Source
+Methods:
+ GetList
+
+ Return a dict with the source struct, including availability
+ Future: Add supported controls
+
+--------------------------------------------------
+Specific sources:
+
+Object: FM
+ 

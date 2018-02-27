@@ -1,0 +1,340 @@
+
+ HeadUnit.py DBUS application API
+ --------------------------------
+     object: com/arctura/hu
+ interfaces: com.arctura.hu.status
+		           .player
+             		   .volume
+            		   .playlist
+			   .plugin	<- ??
+			   .config	<- ??
+ Plugin interfaces:
+	     com.arctura.hu.plugin.mpdevent	<- ?
+				  .fm
+				  .
+
+ * The various sources will have their own interfaces, no need to expose them here
+ * DBus has methods and signals, not properties
+ * The signals can be used by "other plugins", ex. the Scrobbler
+
+ Methods:
+ ============ [ status ] ====================
+  inputs	GetInputs ()
+
+  'input': 'available' 	yes|no|unknown
+
+ ============ [ player ] ====================
+  		SetPlayState ( state )		state = play|pause|toggle
+  state		GetPlayState ()
+  		TrackNext ()
+  		TrackPrev ()
+  		FolderNext ()
+  		FolderPrev ()
+  		SetRandom ( mode )		mode = all|off|toggle >> not supported yet: |folder|artist|genre
+  mode		GetRandom ()
+  nowplaying*	GetNowPlaying()
+  playing*	GetPlaying ()
+
+		SourceNext ()
+		SourcePrev ()
+  sources*	GetSourceList ()
+  sourcectrl*	GetSourceControls ()
+  sourcedtls*	GetSourceDetails ()
+
+
+ Signals:
+ 		SourceChanged
+		TrackChanged
+		PlayStateChanged
+		WiFiChanged
+		InternetChanged
+
+*nowplaying:
+is a string that can be displayed "as-is"
+
+*playing:
+'title'
+'artist'
+'album'
+'year'
+'tracknumber'
+'genre'
+
+Not all sources may provide all details.
+If no ID3 tag available, title will be the filename
+
+*sources, sourcectrl
+#todo
+
+
+==================================================
+
+ Volume.py DBUS application API
+ --------------------------------
+     object: com/arctura/volume
+ interfaces: com.arctura.volume
+
+ Support for ALSA (theoretically, not implemented) and Pulse, should theoretically be able to handle other audio architectures..
+
+ ============ [ volume ] ====================		
+  sinks		GetSinks ()
+		SetVolume ( sink, percentage )		sink = default|...
+  volume*	GetVolume ( sink )
+		SetVolumeAtt ( percentage )
+  volume	GetVolumeAtt ()
+		SetVolumeIncrement ( percentage )
+  pct		GetVolumeIncrement ()
+		VolumeIncr ()
+		VolumeDecr ()
+		SetAttState ( state )		state = on|off|toggle
+  state		GetAttState ()
+		SetEqualizer ( band, level )	band = ?, level = ?
+  equalizer	GetEqualizer ( band )
+
+
+*volume
+is a percentage, 0-999
+
+
+==================================================
+
+ Plug-ins:
+ --------------------
+ com.arctura.hu.mpd.event		cb_mpd_event
+
+ com/arctura/hu/source/fm
+ com/arctura/hu/source/medialocal		} incorporate into main program ??
+ com/arctura/hu/source/mediaremovable		}
+ com/arctura/hu/source/samba
+ com/arctura/hu/source/internetradio
+ com/arctura/hu/source/bluetooth
+ com/arctura/hu/source/linein
+
+ com/arctura/hu/control/ads-1x15	cb_button_press
+ com/arctura/hu/control/keyboard
+ com/arctura/hu/control/ir-lirc
+ com/arctura/hu/control/ir-alsa
+ com/arctura/hu/control/gpio
+ com/arctura/hu/control/incr-encoder
+ com/arctura/hu/control/canbus
+ com/arctura/hu/control/rest
+
+ com.arctura.hu.bt.event
+ com.arctura.hu.update.event
+
+ FM DBUS application API
+ --------------------------------
+     object: com/arctura/hu/source/fm
+ interfaces: com.arctura.hu.source.fm
+				  .fm.config
+ Methods:
+ controls	GetControls ()				<- ??
+		Next ()					alias for StationNext
+		Prev ()					alias for StationPrev
+  		SetFrequency ( frequency )		frequency in Hz, "10155" = 101.55 MHz
+ frequency	GetFrequency ()
+ frequency	SeekNext ()
+ frequency	SeekPrev ()
+
+		SetStation ( frequency, stationname )
+		RemStation ( id )
+ station	GetStationName ()
+ stations	GetAllStations ()
+		StationNext ()
+		StationPrev ()
+
+	Config:
+ 		SetSpiAddress ( address )
+		...
+
+ Signals:
+		Signal Strength? In-Tune?
+		NewRdsDataAvailable
+
+
+ Line-In DBUS application API
+ --------------------------------
+     object: com/arctura/hu/source/linein
+ interfaces: com.arctura.hu.source.linein
+
+ Methods:
+  		no methods...
+
+ Signals:
+		LineInConnected
+		LineInDisconnected
+
+
+ Local Media DBUS application API
+ --------------------------------
+     object: com/arctura/hu/source/medialocal
+ interfaces: com.arctura.hu.source.medialocal
+
+ Depends on mpd helper class... how? import mpd?, connect to mpd dbus app?
+
+ Methods:
+  		SetPlayState ( state )		state = play|pause|toggle
+  state		GetPlayState ()
+  		TrackNext ()
+  		TrackPrev ()
+  		FolderNext ()
+  		FolderPrev ()
+  		SetRandom ( mode )		mode = all|off|toggle >> not supported yet: |folder|artist|genre
+  mode		GetRandom ()
+  nowplaying*	GetNowPlaying()
+  playing*	GetPlaying ()
+		UpdateDb ( path )
+
+
+ ADC resistor network DBUS application API
+ --------------------------------
+     object: com/arctura/hu/control/adc_1x45
+ interfaces: com.arctura.hu.control.adc_1x45
+
+ Methods:
+		SetGain ( gain )
+ gain		GetGain ()
+		SetAddress ( address ) i2c?
+ address	GetAddress
+
+ 		AddButton ( channel, low, high, channel1, channel2, channel3, channel4, mintime, delay, wait, function )
+		RemButton ( function )
+
+			channel  = ADC channel
+			low      = low threshold value [0..1023]
+			high     = high treshold value 
+			channel1 = } value of other channels, set to None if not relevant
+			channel2 = }			      set to 1 if it must be high; > 1000
+			channel3 = }			      set to 0 if it must be low; < 100
+			channel4 = }
+			mintime  = minimal time (ms) the button must be pressed, may be used for long press functions, default = 0
+			delay    = time (ms) the button will be ignored after being pressed, may be used to prevent too many button presses (use a higher value for next track, lower value for volume)
+			wait     = True|False; send out only one signal as long as the button is pressed, use zero or low delay time when setting this to True
+			function = next|prev|nextfolder|prevfolder|source|volincr|voldecr|random|att|power|update|network|menu
+
+
+ Signals:
+		ButtonPress { function }
+
+ Keyboard DBUS application API
+ --------------------------------
+     object: com/arctura/hu/control/keyboard
+ interfaces: com.arctura.hu.control.keyboard
+
+ Methods:
+ 		AddButton ( key, ctrl, alt, shift, function )
+		RemButton ( function )
+
+			key  = ASCII keystroke code
+			ctrl/alt/shift = True|False; determines which "control key" also needs to be pressed
+			function = next|prev|nextfolder|prevfolder|source|volincr|voldecr|random|att|power|update|network|menu
+
+		ControlEnable ()
+		ControlDisable ()
+
+			The keyboard control listener may be disabled when the user needs to enter text, in order to prevent unintended control input.
+
+ Signals:
+		ButtonPress { function }
+
+
+ Infrared DBUS application API
+ --------------------------------
+     object: com/arctura/hu/control/ir-lirc
+ interfaces: com.arctura.hu.control.ir-lirc
+
+ Methods:
+ 		AddButton ( code?, function )
+		RemButton ( function )
+
+ Signals:
+		ButtonPress { function }
+
+
+ Infrared over Audio DBUS application API
+ --------------------------------
+     object: com/arctura/hu/control/ir-alsa
+ interfaces: com.arctura.hu.control.ir-alsa
+
+http://www.lirc.org/html/audio-alsa.html
+
+ Methods:
+ 		AddButton ( code?, function )
+		RemButton ( function )
+
+ Signals:
+		ButtonPress { function }
+
+
+ GPIO-button DBUS application API
+ --------------------------------
+     object: com/arctura/hu/control/gpio-button
+ interfaces: com.arctura.hu.control.gpio-button
+
+ Methods:
+ 		AddButton ( pin, trigger, pin_dep, mintime, delay, wait, function )
+		RemButton ( function )
+
+			trigger  = edge, .. ?
+			pin      = pin number, according to wiringpi
+			pin_dep  = value of other pins, set to None if not relevant, see pin_dep structure
+			mintime  = minimal time (ms) the button must be pressed, may be used for long press functions, default = 0
+			delay    = time (ms) the button will be ignored after being pressed, may be used to prevent too many button presses (use a higher value for next track, lower value for volume)
+			wait     = True|False; send out only one signal as long as the button is pressed, use zero or low delay time when setting this to True
+			function = next|prev|nextfolder|prevfolder|source|volincr|voldecr|random|att|power|update|network|menu
+
+ Signals:
+		ButtonPress { function }
+
+
+ Incremental Encoder DBUS application API
+ --------------------------------
+     object: com/arctura/hu/control/incr-encoder
+ interfaces: com.arctura.hu.control.incr-encoder
+
+
+Methods:
+		AddMode ( mode )		mode = volume | bass | treble | balance
+		SetResetTime ( ms )		time in ms before mode is reset to the firstly added mode
+ ms		GetResetTime ()
+
+		SetMode ( mode )		not sure why you would need to call this..
+ mode		GetMode ()
+
+Signals:
+		IncrEncoderUp { mode }
+		IncrEncoderDown { mode }
+
+
+ CAN bus DBUS application API
+ --------------------------------
+     object: com/arctura/hu/control/canbus
+ interfaces: com.arctura.hu.control.canbus
+
+ Methods:
+ 		AddButton ( , function )
+		RemButton ( function )
+
+		TODO
+
+ Signals:
+		ButtonPress { function }
+
+ HTTP REST DBUS application API
+ --------------------------------
+     object: com/arctura/hu/control/rest
+ interfaces: com.arctura.hu.control.rest
+
+ The REST plugin starts a HTTP server (see API: hu.api.rest.txt) and accesses the com.arctura.hu.* interfaces (.player, etc, but not (?) the plugin interfaces (?)).
+
+ Methods:
+ 		SetPortNumber( port )
+ port		GetPortNumber ()
+		SetPassword ( password )	No password by default
+		HttpEnable ()
+		HttpDisable ()
+ state		GetState ()		state = enabled|disabled
+
+ Signals:
+		ClientConnected		<- ? useful?
+		ClientDisconnected 	<- ? useful?
