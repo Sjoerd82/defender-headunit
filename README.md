@@ -83,3 +83,7 @@ Read at boot. Write at shutdown. Optionally write every n seconds. ~to be refine
 #### state.json
 Operational state. May be kept on a ramdrive (no need for persistance).
 May be used to read from to quickly get state information. Will see a lot of R/W.
+
+### ENV
+HU_CONFIG_FILE
+HU_RUN_COUNT
