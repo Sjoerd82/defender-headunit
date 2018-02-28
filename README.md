@@ -63,3 +63,21 @@ There are two types of supported plugins:
     Located in:
     * /sources	Source plugins
     * ?		?
+
+### FILES
+
+1. configuration.json
+2. settings.json
+3. state.json
+
+#### configuration.json
+Centralized configuration file. Aims to be the only configuration file you'll ever need to change.
+Will see occasional writing.
+
+#### settings.json
+Operational settings which need to be persisted and restores over reboots.
+Read at boot. Write at shutdown. Optionally write every n seconds. ~to be refined...
+
+#### state.json
+Operational state. May be kept on a ramdrive (no need for persistance).
+May be used to read from to quickly get state information. Will see a lot of R/W.
