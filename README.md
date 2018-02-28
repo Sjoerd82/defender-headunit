@@ -6,7 +6,10 @@ Designed for "hidden" applications, such as classic- or custom cars, yachts, sui
 
 Intended for Raspberry Pi embedded Linux, and build upon PulseAudio and MPD.
 
-*Primary goal:* Intuitive and easy to control without display.
+*Primary goals:*
+- Intuitive and easy to control without display.
+- Ultrashort time-to-play (fast boot, start/resume playback).
+- Modular
 
 ## Features
 
