@@ -7,8 +7,9 @@ Designed for "hidden" applications, such as classic- or custom cars, yachts, sui
 Intended for Raspberry Pi embedded Linux, and build upon PulseAudio and MPD.
 
 *Primary goals:*
-- Intuitive and easy to control without display.
-- Ultrashort time-to-play (fast boot, start/resume playback).
+- Intuitive and easy to control without display
+- Ultrashort time-to-play (fast boot, start/resume playback)
+- Audiophile quality
 - Modular
 
 ## Features
@@ -20,7 +21,9 @@ Intended for Raspberry Pi embedded Linux, and build upon PulseAudio and MPD.
  + Supports a wide range of music "sources" out of the box
  + Supports third-party plugins to support additional sources or input controls
  + Supports character displays
- PLANNED:
+
+PLANNED:
+ - Active crossover filters
  - CAN-bus input and output
 
 ###  List of supported sources:
@@ -30,6 +33,7 @@ Intended for Raspberry Pi embedded Linux, and build upon PulseAudio and MPD.
  + USB drive
  + Bluetooth
  + Windows network shares (SMB/CIFS)
+ 
  PLANNED:
  - Aux In
  - NFS (low prio)
@@ -38,6 +42,7 @@ Intended for Raspberry Pi embedded Linux, and build upon PulseAudio and MPD.
 ### List of supported input methods:
  + Resistor network style remote controls, Sony RM-X2S pre-configured.
  + Android/iPhone: MPD client
+ 
  PLANNED:
  - Keyboard (via USB,BT)
  - Infrared, LIRC (via GPIO(TSSOP),USB,MIC)
@@ -78,7 +83,7 @@ Centralized configuration file. Aims to be the only configuration file you'll ev
 Default location: /mnt/PIHU_CONFIG (the FAT32 partition, so it's configurable by plugging the SD card into a PC)
 Will see occasional writing.
 
-#### settings.json, HU_SOURCE, HU_VOLUME
+#### settings.json, HU_SOURCE
 Operational settings which need to be persisted and restores over reboots. The files HU_SOURCE and HU_VOLUME are separate file for easy reading during boot.
 Location: /mnt/PIHU_CONFIG
 Read at boot. Write at shutdown. Optionally write every n seconds. ~to be refined...
