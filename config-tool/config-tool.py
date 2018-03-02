@@ -204,10 +204,14 @@ def main():
 	if arg_dbus:
 		if validate_config( 'dbus', ['location','services'] ):
 			write_config_dbus( configuration['system_configuration']['dbus'] )
+		else:
+			printer('DBus: Invalid Config')
 							
 	if arg_wpa:
-		if validate_config( 'wpa_supplicant', ['location','networks'] ):
+		if validate_config( 'wpa_supplicant', ['location','network'] ):
 			write_config_generic( configuration['system_configuration']['wpa_supplicant'], '=', '={' )
+		else:
+			printer('DBus: Invalid Config')
 
 	if arg_hapd:
 		if validate_config( 'hostapd', ['location','interface','driver','ssid','channel'] ):
