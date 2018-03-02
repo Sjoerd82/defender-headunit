@@ -77,12 +77,17 @@ def printer( message, level=20, continuation=False, tag='SYSTEM' ):
 # Config writers
 #
 
-def write_config_dbus( dbus_config ):
-	#open file for replacement
-	#print header
-	#for service in dbus_config['services']
-	#print footer
-	return 0
+def write_config_dbus( config ):
+	with open( config['location'], 'w' ) as outfile:
+		outfile.write('<!DOCTYPE busconfig PUBLIC "-//freedesktop//DTD D-Bus Bus Configuration 1.0//EN"')
+		outfile.write(' "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">')
+		outfile.write('<busconfig>')
+  		outfile.write('  <policy context="default">')
+		for service in config['services']:
+			outfile.write('    <allow own="{0}"/>')
+		outfile.write('  </policy>')
+		outfile.write('</busconfig>')
+	print "Dbus DONE"
 
 def write_config_wpa( wpa_config ):
 	with open( wpa_config['location'], 'w' ) as outfile:
@@ -186,7 +191,9 @@ def main():
 	else:
 		printer('System configuration found...')
 	
+	print "DEBUG1"
 	if arg_all:
+		print "DEBUG2"
 		arg_dbus = True
 		arg_wpa  = True
 		arg_hapd = True
@@ -194,12 +201,19 @@ def main():
 		arg_resv = True
 		arg_mpd  = True
 		arg_smb  = True
-		
+
+
+	print "DEBUG3"
+
 	if arg_dbus:
+		print "DEBUG4"
 		if validate_config( 'dbus', ['location','services'] ):
+			print "DEBUG5"
 			write_config_dbus( configuration['system_configuration']['dbus'] )
+		else:
+			print "FAILLL...!"
 	else:
-		print "DEBUG!"
+		print "DEBUG6"
 							
 	if arg_wpa:
 		if validate_config( 'wpa_supplicant', ['location','networks'] ):
