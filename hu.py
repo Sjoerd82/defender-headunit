@@ -1297,6 +1297,27 @@ def init_logging_f( logdir, logfile, runcount ):
 				logger.debug('Removing old log file: {0}'.format(filename),extra={'tag':'log'})
 
 
+# address may be a tuple consisting of (host, port) or a string such as '/dev/log'
+def init_logging_s( address=('localhost', SYSLOG_UDP_PORT), facility="HEADUNIT", socktype=socket.SOCK_DGRAM ):
+
+	global logger
+	
+	# create syslog handler
+	sh = logging.SysLogHandler(address=address, facility=facility, socktype=socktype)
+	sh.setLevel(logging.DEBUG)
+
+	# create formatters
+	fmtr_sh = RemAnsiFormatter("%(asctime)-9s [%(levelname)-8s] %(tag)s %(message)s")
+		
+	# add formatter to handlers
+	sh.setFormatter(fmtr_sh)
+
+	# add sh to logger
+	logger.addHandler(sh)
+	
+	logger.info('Logging started',extra={'tag':'log'})
+	
+	
 def init_load_config():
 	configuration = configuration_load( CONFIG_FILE, CONFIG_FILE_DEFAULT )
 	if configuration == None:
@@ -1732,7 +1753,7 @@ if check_running(PID_FILE):
 #
 # Start logging to console
 #
-#
+# TODO: get settings from configuration.json
 init_logging()
 init_logging_c()
 
@@ -1760,12 +1781,17 @@ cSettings = huSettings( os.path.join(configuration['directories']['config'],conf
 #
 # Start logging to file
 #
-#
+# TODO: get settings from configuration.json
 init_logging_f( configuration['directories']['log'],
 				configuration['files']['log'],
 				cSettings.incrRunCounter( max=999999 ) )
 				#settings['runcount'] )
 
+#
+# Start logging to syslog
+#
+# TODO: get settings from configuration.json
+init_logging_s( address='/dev/log' )
 
 #
 # Set/Restore volume level

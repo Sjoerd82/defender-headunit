@@ -9,7 +9,7 @@ import logging
 # call, check_output
 import subprocess
 
-# path
+# pathroot
 import os
 
 #to check for an internet connection

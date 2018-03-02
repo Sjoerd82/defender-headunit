@@ -1,15 +1,10 @@
 {
 	"files": {
-		"log": "headunit",
-		"settings": "dSettings.json"
-	},
-	"default_settings": {
-		  "volume": 20
-		, "source": ""
-		, "subsourcekey": {}
-		, "runcount": 0
-	},
-	"directories": {
+		  "log": "headunit"
+		, "state": "state.json"
+		, "settings": "dSettings.json"
+	}
+	, "directories": {
 		  "controls": "/mnt/PIHU_APP/defender-headunit/plugins/control/"
 		, "output": "/mnt/PIHU_APP/defender-headunit/plugins/output/"
 		, "app-root": "/mnt/PIHU_APP/defender-headunit"
@@ -18,9 +13,64 @@
 		, "log": "/mnt/PIHU_CONFIG/log"
 		, "sfx": "/mnt/PIHU_APP/defender-headunit/sfx"
 	}
+	, "preferences": {
+		  "start_source": "resume"
+		, "retain_random": false
+		, "media_autoplay": true
+		, "mount_media": "ro"
+		, "threshold_elapsed_sec": 20
+		, "threshold_total_sec": 30
+	}
+	, "default_settings": {
+		  "volume": 20
+		, "source": ""
+		, "subsourcekey": {}
+		, "runcount": 0
+	}
 	, "audio_output": {
 		"pulse-sink": "alsa_output.platform-soc_sound.analog-stereo"
 	   ,"mpd_output": "pulse audio"
+	}
+	, "wifi": {
+		  "ip": "dhcp"
+		, "mode": "network"
+		, "ap": {
+			  "ssid":"headunit"
+			, "psk": "f22da64fa334468e8b0ace4d544c63c5b340877327d31ad028296c875c0d8adb" }
+	}
+	, "volume": {
+		  "default":   "30"
+		, "max":       "100"
+		, "att":       "20"
+		, "start_min": "20"
+		, "start_max": "70"
+	}
+	, "webserver": {
+		  "http_port": 8289
+		, "password": "(hash)" 
+	}
+	, "auto_update": {
+		  "mode": "all"
+		, "url": "https://github.com/Sjoerd82/defender-headunit"
+	}
+	,"logging": {
+		"console": {
+			  "enabled":true
+			, "loglevel":20
+		}
+		, "file": {
+			  "enabled":true
+			, "loglevel":20
+		}
+		, "syslog": {
+			  "enabled":true
+			, "loglevel":20
+			, "host":""
+			, "port":""
+			, "socktype":"UDP"
+			, "address":"/dev/log"
+			, "facility":"HEADUNIT"
+		}
 	}
 	, "source_config": {
 		  "locmus": [ { "label": "PD1", "musicdir": "/media/PIHU_DATA", "musicdir_mpd": "PIHU_DATA"}
@@ -31,12 +81,55 @@
 	, "plugins_other": {
 		"scrobbler": {"lastfm_password_hash": "64828e435bff400260a0d8f595644544", "lastfm_api_secret": "e7377c56280a4edec2442c3d1a8ee0ce", "lastfm_api_key": "6aec32f8c9d6e39aefdb9606d45ae8a0", "lastfm_username": "SjoerdVenema"}
 	}
-	, "auto_update": "all"
-	, "retain_random": false
-	, "media_autoplay": true
-	, "mount_media": "ro"
-	, "threshold_elapsed": 20
-	, "threshold_total": 30
-	, "http_port": 8289
+	, "x_plugins_source":  [
+	]
+	, "x_plugins_control": [
+	]
+	, "x_plugins_display": [
+	]
+	, "x_plugins_other":   [
+	]
+	, "system_configuration":
+	{
+		  "SYSLOGD_ARGS":"-n -O /var/log/messages"
+		, "KLOGD_ARGS":"-n"
+		, "dbus": {
+			  "location":"/usr/share/dbus-1/system.d/hu.conf"
+			, "services": [
+				  "com.arctura.hu"
+				, "com.arctura.keyboard"
+				, "com.arctura.mpd"
+				, "com.arctura.remote"
+				, "com.arctura.volume" ]
+		}
+		, "wpa_supplicant": {
+			  "location":       "/etc/wpa_supplicant.conf"
+			, "ctrl_interface": "/var/run/wpa_supplicant"
+			, "update_config":  "1"
+			, "network": [
+				  {  "ssid": "OpenWrt"
+					,"psk":  "f22da64fa334468e8b0ace4d544c63c5b340877327d31ad028296c875c0d8adb" }
+				, {  "ssid": "SecondNetwork"
+					 "psk":  "f22da64fa334468e8b0ace4d544c63c5b340877327d31ad028296c875c0d8adb" } ]
+		}
+		, "hostapd": {
+			  "location":      "/etc/hostapd.conf"
+			, "interface":     "wlan0"
+			, "driver":        "nl80211"
+			, "ssid":          "r0ckb0x"
+			, "channel":       "1"
+			, "wpa":           "2"
+			, "auth_algs":     "1"
+			, "wpa_key_mgmt":  "WPA-PSK"
+			, "wpa_psk":       "889bcfb6b711150c91e2078f34876dcc417741ddb60e6f119dc25c6968363309"
+		}
+		, "mpd_conf": {
+			  "location":"/etc/mpd.conf"
+			, "music_directory":"/media"
+			, "playlist_directory": "/var/lib/mpd/playlists"
+			, "db_file": "/var/lib/mpd/database"
+			
+		}
+	}
 	, "shutdown_cmd": ["halt"]
 }
