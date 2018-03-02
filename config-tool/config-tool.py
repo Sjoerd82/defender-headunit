@@ -121,15 +121,16 @@ def write_config_resolv( config ):
 def write_config_generic( config, delim="=", group="={" ):
 	printer("Creating: {0}".format(config['location']))
 	with open( config['location'], 'w' ) as outfile:
-		for key, value in config:
-			if type(key) == 'list':
-				if group == "={":
-					outfile.write('{0}{1}{2}'.format(key,delim,group))
-				for listkey, listvar in config[key]:
-					outfile.write('  {1}{0}{2}'.format(delim,listkey,listvar))
-				if group == "={":
-					outfile.write('}')
-			elif not key in ('location'):
+		for X in config:
+			if type(X) == 'list':
+				pass
+			#	if group == "={":
+			#		outfile.write('{0}{1}{2}'.format(key,delim,group))
+			#	for listkey, listvar in config[key]:
+			#		outfile.write('  {1}{0}{2}'.format(delim,listkey,listvar))
+			#	if group == "={":
+			#		outfile.write('}')
+			elif X not in ('location'):
 				outfile.write('{1}{0}{2}'.format(delim,key,value))
 
 
@@ -211,7 +212,7 @@ def main():
 		if validate_config( 'wpa_supplicant', ['location','network'] ):
 			write_config_generic( configuration['system_configuration']['wpa_supplicant'], '=', '={' )
 		else:
-			printer('DBus: Invalid Config')
+			printer('WPA: Invalid Config')
 
 	if arg_hapd:
 		if validate_config( 'hostapd', ['location','interface','driver','ssid','channel'] ):
