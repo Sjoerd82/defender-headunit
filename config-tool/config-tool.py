@@ -33,37 +33,7 @@ from hu_logger import *
 import os
 import argparse
 
-#if environ.get('HU_CONFIG_FILE') is not None:
-env_config_file = os.getenv('HU_CONFIG_FILE')
 
-parser = argparse.ArgumentParser(description='Configure Linux environment')
-parser.add_argument('--system','-s', required=False, action='store', help='BusyBox,...', choices=['BusyBox'], metavar='BusyBox')
-if env_config_file:
-	parser.add_argument('--config','-c', required=False, action='store', help='Configuration file', default=env_config_file)
-else:
-	parser.add_argument('--config','-c', required=True, action='store', help='Configuration file')
-parser.add_argument('--all',  required=False, action='store_true', help='Generate all files')
-parser.add_argument('--dbus', required=False, action='store_true', help='Generate dbus configuration')
-parser.add_argument('--wpa',  required=False, action='store_true', help='Generate wpa_supplicant.conf file')
-parser.add_argument('--hapd', required=False, action='store_true', help='Generate hostapd.conf file')
-parser.add_argument('--dnsm', required=False, action='store_true', help='Generate dnsmasq.conf file')
-parser.add_argument('--resv', required=False, action='store_true', help='Generate resolv.conf file')
-parser.add_argument('--mpd',  required=False, action='store_true', help='Generate mpd.conf file')
-parser.add_argument('--smb',  required=False, action='store_true', help='Generate samba.conf file')
-
-
-args = parser.parse_args()
-
-arg_system = args.system
-arg_config = args.config
-arg_all  = args.all
-arg_dbus = args.dbus
-arg_wpa  = args.wpa
-arg_hapd = args.hapd
-arg_dnsm = args.dnsm
-arg_resv = args.resv
-arg_mpd  = args.mpd
-arg_smb  = args.smb
 
 # ********************************************************************************
 #
@@ -162,6 +132,38 @@ def write_config_generic( config, delim="=", group="={" ):
 #
 
 def main():
+
+	#if environ.get('HU_CONFIG_FILE') is not None:
+	env_config_file = os.getenv('HU_CONFIG_FILE')
+
+	parser = argparse.ArgumentParser(description='Configure Linux environment')
+	parser.add_argument('--system','-s', required=False, action='store', help='BusyBox,...', choices=['BusyBox'], metavar='BusyBox')
+	if env_config_file:
+		parser.add_argument('--config','-c', required=False, action='store', help='Configuration file', default=env_config_file)
+	else:
+		parser.add_argument('--config','-c', required=True, action='store', help='Configuration file')
+	parser.add_argument('--all',  required=False, action='store_true', help='Generate all files')
+	parser.add_argument('--dbus', required=False, action='store_true', help='Generate dbus configuration')
+	parser.add_argument('--wpa',  required=False, action='store_true', help='Generate wpa_supplicant.conf file')
+	parser.add_argument('--hapd', required=False, action='store_true', help='Generate hostapd.conf file')
+	parser.add_argument('--dnsm', required=False, action='store_true', help='Generate dnsmasq.conf file')
+	parser.add_argument('--resv', required=False, action='store_true', help='Generate resolv.conf file')
+	parser.add_argument('--mpd',  required=False, action='store_true', help='Generate mpd.conf file')
+	parser.add_argument('--smb',  required=False, action='store_true', help='Generate samba.conf file')
+
+
+	args = parser.parse_args()
+
+	arg_system = args.system
+	arg_config = args.config
+	arg_all  = args.all
+	arg_dbus = args.dbus
+	arg_wpa  = args.wpa
+	arg_hapd = args.hapd
+	arg_dnsm = args.dnsm
+	arg_resv = args.resv
+	arg_mpd  = args.mpd
+	arg_smb  = args.smb
 
 	def validate_config( ci, required_fields ):
 		if ci in configuration['system_configuration']:
