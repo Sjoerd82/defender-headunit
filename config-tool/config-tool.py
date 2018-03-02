@@ -86,12 +86,6 @@ def configuration_load( configfile, defaultconfig=None ):
 		printer('Loading/parsing {0}: [FAIL]'.format(configfile) ,LL_CRITICAL, tag='CONFIG')
 		# if we had not previously restored it, try that and parse again
 
-	# not sure if this is still possible, but let's check it..
-	if config == None:
-		printer('Loading configuration failed!'.format(configfile) ,LL_CRITICAL, tag='CONFIG')
-	else:
-		printer('Loading configuration [OK]'.format(configfile), tag='CONFIG')
-		
 	return config
 
 
