@@ -35,6 +35,7 @@ import argparse
 
 #if environ.get('HU_CONFIG_FILE') is not None:
 env_config_file = os.getenv('HU_CONFIG_FILE')
+print env_config_file
 
 parser = argparse.ArgumentParser(description='Configure Linux environment')
 parser.add_argument('--system','-s', required=False, action='store', help='BusyBox,...', choices=['BusyBox'], metavar='BusyBox')
@@ -77,11 +78,14 @@ import hu_settings
 # Output wrapper
 #
 def printer( message, level=20, continuation=False, tag='SYSTEM' ):
+
+	print(message)
+
 	#TODO: test if headunit logger exist...
-	if continuation:
-		myprint( message, level, '.'+tag )
-	else:
-		myprint( message, level, tag )
+	#if continuation:
+	#	myprint( message, level, '.'+tag )
+	#else:
+	#	myprint( message, level, tag )
 
 # ********************************************************************************
 # Config writers
