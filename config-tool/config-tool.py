@@ -123,15 +123,17 @@ def write_config_generic( config, delim="=", group="={" ):
 	with open( config['location'], 'w' ) as outfile:
 		for key,value in config.items():
 			if isinstance(value, list):
-				pass
-			#	if group == "={":
-			#		outfile.write('{0}{1}{2}'.format(key,delim,group))
-			#	for listkey, listvar in config[key]:
-			#		outfile.write('  {1}{0}{2}'.format(delim,listkey,listvar))
-			#	if group == "={":
-			#		outfile.write('}')
+				if group == "={":
+					outfile.write('{0}{1}{2}'.format(key,delim,group))
+					
+				for listkey, listval in value.items():
+					print listkey
+					print listval
+					outfile.write('  {1}{0}{2}\n'.format(delim,listkey,listval))
+				if group == "={":
+					outfile.write('}')
 			elif not key == 'location':
-				outfile.write('{1}{0}{2}'.format(delim,key,value))
+				outfile.write('{1}{0}{2}\n'.format(delim,key,value))
 
 
 # ********************************************************************************
