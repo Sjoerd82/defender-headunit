@@ -79,13 +79,13 @@ def printer( message, level=20, continuation=False, tag='SYSTEM' ):
 
 def write_config_dbus( config ):
 	with open( config['location'], 'w' ) as outfile:
-		outfile.write('<!DOCTYPE busconfig PUBLIC "-//freedesktop//DTD D-Bus Bus Configuration 1.0//EN"')
-		outfile.write(' "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">')
-		outfile.write('<busconfig>')
-  		outfile.write('  <policy context="default">')
+		outfile.write('<!DOCTYPE busconfig PUBLIC "-//freedesktop//DTD D-Bus Bus Configuration 1.0//EN"\n')
+		outfile.write(' "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">\n')
+		outfile.write('<busconfig>\n')
+  		outfile.write('  <policy context="default">\n')
 		for service in config['services']:
-			outfile.write('    <allow own="{0}"/>')
-		outfile.write('  </policy>')
+			outfile.write('    <allow own="{0}"/>\n'.format(service))
+		outfile.write('  </policy>\n')
 		outfile.write('</busconfig>')
 	print "Dbus DONE"
 
