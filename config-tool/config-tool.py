@@ -121,20 +121,17 @@ def write_config_resolv( config ):
 def write_config_generic( config, delim="=", group="={" ):
 	printer("Creating: {0}".format(config['location']))
 	with open( config['location'], 'w' ) as outfile:
-		for key,val in config.items():
-			print key
-			print val
-			print isinstance(val, list)
-			#if type(X) == 'list':
-			#	pass
+		for key,value in config.items():
+			if isinstance(value, list):
+				pass
 			#	if group == "={":
 			#		outfile.write('{0}{1}{2}'.format(key,delim,group))
 			#	for listkey, listvar in config[key]:
 			#		outfile.write('  {1}{0}{2}'.format(delim,listkey,listvar))
 			#	if group == "={":
 			#		outfile.write('}')
-			#elif X not in ('location'):
-			#	outfile.write('{1}{0}{2}'.format(delim,key,value))
+			elif not key == 'location':
+				outfile.write('{1}{0}{2}'.format(delim,key,value))
 
 
 # ********************************************************************************
