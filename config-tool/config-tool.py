@@ -78,7 +78,7 @@ def printer( message, level=20, continuation=False, tag='SYSTEM' ):
 #
 
 def write_config_dbus( config ):
-	printer("Creating: {0}".format(config['location'])
+	printer("Creating: {0}".format(config['location']))
 	with open( config['location'], 'w' ) as outfile:
 		outfile.write('<!DOCTYPE busconfig PUBLIC "-//freedesktop//DTD D-Bus Bus Configuration 1.0//EN"\n')
 		outfile.write(' "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">\n')
@@ -119,7 +119,7 @@ def write_config_resolv( config ):
 			outfile.write('nameserver {0}'.format(nameserver))
 
 def write_config_generic( config, delim="=", group="={" ):
-	printer("Creating: {0}".format(config['location'])
+	printer("Creating: {0}".format(config['location']))
 	with open( config['location'], 'w' ) as outfile:
 		for key, value in config:
 			if type(key) == 'list':
