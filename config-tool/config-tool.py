@@ -33,7 +33,8 @@ from hu_logger import *
 import os
 import argparse
 
-env_config_file = os.environ["HU_CONFIG_FILE"]
+#if environ.get('HU_CONFIG_FILE') is not None:
+env_config_file = os.getenv('HU_CONFIG_FILE')
 
 parser = argparse.ArgumentParser(description='Configure Linux environment')
 parser.add_argument('--system','-s', required=False, action='store', help='BusyBox,...', choices=['BusyBox'], metavar='BusyBox')
@@ -152,7 +153,8 @@ def main():
 			return False
 			
 		return True
-
+	
+	printer('Loading: {0}'.format( arg_config ))
 	configuration = hu_settings.configuration_load( arg_config )
 	
 	if 'system_configuration' not in configuration:
