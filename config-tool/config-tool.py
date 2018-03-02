@@ -165,6 +165,9 @@ def main():
 	arg_mpd  = args.mpd
 	arg_smb  = args.smb
 
+	print args
+	print arg_dbus
+	
 	def validate_config( ci, required_fields ):
 		if ci in configuration['system_configuration']:
 			if not all (k in configuration['system_configuration'][ci] for k in required_fields):
