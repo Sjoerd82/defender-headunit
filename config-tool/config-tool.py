@@ -114,7 +114,8 @@ def write_config_mpd( mpd_config ):
 def write_config_smb( smb_config ):
 	#open file for replacement
 	#print header
-	for outputs in dbus_config['shares']
+	#for outputs in dbus_config['shares']
+	return 0
 
 def write_config_resolv( config ):
 	with open( config['location'], 'w' ) as outfile:
