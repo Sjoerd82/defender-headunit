@@ -198,30 +198,30 @@ def main():
 	if arg_dbus:
 		if validate_config( 'dbus', ['location','services'] ):
 			write_config_dbus( configuration['system_configuration']['dbus'] )
-		else:
-			print "DEBUG!"
+	else:
+		print "DEBUG!"
 							
-	elif arg_wpa:
+	if arg_wpa:
 		if validate_config( 'wpa_supplicant', ['location','networks'] ):
 			write_config_generic( configuration['system_configuration']['wpa_supplicant'], '=', '={' )
 
-	elif arg_hapd:
+	if arg_hapd:
 		if validate_config( 'hostapd', ['location','interface','driver','ssid','channel'] ):
 			write_config_generic( configuration['system_configuration']['hostapd'], '=', '={' )
 
-	elif arg_dnsm:
+	if arg_dnsm:
 		if validate_config( 'dnsmasq', ['location'] ):
 			write_config_generic( configuration['system_configuration']['dhcpd'] )
 
-	elif arg_resv:
+	if arg_resv:
 		if validate_config( 'resolv', ['location','nameservers'] ):
 			write_config_resolv( configuration['system_configuration']['resolv'] )
 			
-	elif arg_mpd:
+	if arg_mpd:
 		if validate_config( 'mpd', ['location','outputs'] ):
 			write_config_mpd( configuration['system_configuration']['mpd'] )
 
-	elif arg_smb:
+	if arg_smb:
 		if validate_config( 'smb', ['location','shares'] ):
 			write_config_smb( configuration['system_configuration']['smb'] )
 
