@@ -121,8 +121,10 @@ def write_config_resolv( config ):
 def write_config_generic( config, delim="=", group="={" ):
 	printer("Creating: {0}".format(config['location']))
 	with open( config['location'], 'w' ) as outfile:
-		for X in config:
-			print X
+		for key,val in config.item():
+			print key
+			print val
+			print type(key)
 			#if type(X) == 'list':
 			#	pass
 			#	if group == "={":
