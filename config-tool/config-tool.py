@@ -165,9 +165,6 @@ def main():
 	arg_mpd  = args.mpd
 	arg_smb  = args.smb
 
-	print args
-	print arg_dbus
-	
 	def validate_config( ci, required_fields ):
 		if ci in configuration['system_configuration']:
 			if not all (k in configuration['system_configuration'][ci] for k in required_fields):
@@ -186,6 +183,8 @@ def main():
 	if 'system_configuration' not in configuration:
 		printer('Configuration file does not contain a system configuration.')
 		exit()
+	else:
+		printer('System configuration found...')
 	
 	if arg_all:
 		arg_dbus = True
@@ -199,6 +198,8 @@ def main():
 	if arg_dbus:
 		if validate_config( 'dbus', ['location','services'] ):
 			write_config_dbus( configuration['system_configuration']['dbus'] )
+		else:
+			print "DEBUG!"
 							
 	elif arg_wpa:
 		if validate_config( 'wpa_supplicant', ['location','networks'] ):
