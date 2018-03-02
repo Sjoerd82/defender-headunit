@@ -35,7 +35,6 @@ import argparse
 
 #if environ.get('HU_CONFIG_FILE') is not None:
 env_config_file = os.getenv('HU_CONFIG_FILE')
-print env_config_file
 
 parser = argparse.ArgumentParser(description='Configure Linux environment')
 parser.add_argument('--system','-s', required=False, action='store', help='BusyBox,...', choices=['BusyBox'], metavar='BusyBox')
@@ -71,7 +70,45 @@ arg_smb  = args.smb
 # load json source configuration
 import os
 import json
-import hu_settings
+#import hu_settings
+
+def configuration_load( configfile, defaultconfig=None ):
+
+	# keep track if we restored the config file
+	restored = False
+	
+	# use the default from the config dir, in case the configfile is not found (first run)
+	if not os.path.exists(configfile) and os.path.exists(defaultconfig):
+		printer('Configuration not present (first run?); loading default: {0}'.format( defaultconfig ), tag='CONFIG')
+		restored = configuration_restore( configfile, defaultconfig )
+		if not restored:
+			printer('Restoring configuration {0}: [FAIL]'.format(defaultconfig), LL_CRITICAL, tag='CONFIG')
+			return None
+
+	# open configuration file (restored or original) and Try to parse it
+	jsConfigFile = open(configfile)
+	try:
+		config=json.load(jsConfigFile)
+	except:
+		printer('Loading/parsing {0}: [FAIL]'.format(configfile) ,LL_CRITICAL, tag='CONFIG')
+		# if we had not previously restored it, try that and parse again
+		if not restored:
+			printer('Restoring default configuration', tag='CONFIG')
+			configuration_restore( configfile, defaultconfig )
+			jsConfigFile = open(configfile)
+			config=json.load(jsConfigFile)
+			return config
+		else:
+			printer('Loading/parsing restored configuration failed!'.format(configfile) ,LL_CRITICAL, tag='CONFIG')
+			return None
+
+	# not sure if this is still possible, but let's check it..
+	if config == None:
+		printer('Loading configuration failed!'.format(configfile) ,LL_CRITICAL, tag='CONFIG')
+	else:
+		printer('Loading configuration [OK]'.format(configfile), tag='CONFIG')
+		
+	return config
 
 
 # ********************************************************************************
