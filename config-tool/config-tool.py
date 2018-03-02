@@ -123,15 +123,6 @@ def write_config_resolv( config ):
 			outfile.write('nameserver {0}'.format(nameserver))
 
 def write_config_generic( config, delim="=", group="={" ):
-"""
-Format:
- key1=value1
- key2=value2
- list-key {
-   key1=value1
-   key2=value2
- }
-"""
 	with open( config['location'], 'w' ) as outfile:
 		for key, value in config:
 			if type(key) == 'list':
