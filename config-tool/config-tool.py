@@ -89,8 +89,9 @@ def printer( message, level=20, continuation=False, tag='SYSTEM' ):
 def write_config_dbus( dbus_config ):
 	#open file for replacement
 	#print header
-	for service in dbus_config['services']
+	#for service in dbus_config['services']
 	#print footer
+	return 0
 
 def write_config_wpa( wpa_config ):
 	with open( wpa_config['location'], 'w' ) as outfile:
@@ -107,7 +108,8 @@ def write_config_wpa( wpa_config ):
 def write_config_mpd( mpd_config ):
 	#open file for replacement
 	#print header
-	for outputs in dbus_config['outputs']
+	#for outputs in dbus_config['outputs']
+	return 0
 
 def write_config_smb( smb_config ):
 	#open file for replacement
