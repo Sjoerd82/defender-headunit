@@ -196,7 +196,8 @@ def main():
 		return True
 	
 	printer('Loading: {0}'.format( arg_config ))
-	configuration = hu_settings.configuration_load( arg_config )
+	#configuration = hu_settings.configuration_load( arg_config )
+	configuration = configuration_load( arg_config )
 	
 	if 'system_configuration' not in configuration:
 		printer('Configuration file does not contain a system configuration.')
