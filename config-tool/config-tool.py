@@ -124,7 +124,7 @@ def write_config_generic( config, delim="=", group="={" ):
 		for key,val in config.items():
 			print key
 			print val
-			print type(key)
+			print isinstance(val, list)
 			#if type(X) == 'list':
 			#	pass
 			#	if group == "={":
