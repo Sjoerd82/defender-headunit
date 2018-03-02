@@ -83,6 +83,7 @@ def configuration_load( configfile, defaultconfig=None ):
 	try:
 		config=json.load(jsConfigFile)
 	except:
+		config = None
 		printer('Loading/parsing {0}: [FAIL]'.format(configfile) ,LL_CRITICAL, tag='CONFIG')
 		# if we had not previously restored it, try that and parse again
 
