@@ -130,8 +130,8 @@ def write_config_generic( config, delim="=", group="={" ):
 						print listkey
 						print listval
 						outfile.write('  {1}{0}{2}\n'.format(delim,listkey,listval))
-				if group == "={":
-					outfile.write('}\n')
+					if group == "={":
+						outfile.write('}\n')
 			elif not key == 'location':
 				outfile.write('{1}{0}{2}\n'.format(delim,key,value))
 
