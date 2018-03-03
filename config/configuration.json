@@ -139,11 +139,23 @@
 			
 		}
 		, "mpd_conf": {
-			  "location":"/etc/mpd.conf"
-			, "music_directory":"/media"
+			  "location":           "/etc/mpd2.conf"
+			, "music_directory":    "/media"
 			, "playlist_directory": "/var/lib/mpd/playlists"
-			, "db_file": "/var/lib/mpd/database"
-			
+			, "db_file":            "/var/lib/mpd/database"
+			, "log_file":           "/var/log/mpd.log"
+			, "pid_file":           "/run/mpd.pid"
+			, "state_file":         "/var/lib/mpd/state"
+			, "sticker_file":       "/var/lib/mpd/sticker.sql"
+			, "user":                   "root"
+			, "bind_to_address":        "0.0.0.0"
+			, "port":                   "6600"
+			, "max_playlist_length":    "32000"
+			, "follow_outside_symlinks":"yes"
+			, "follow_inside_symlinks": "yes"
+			, "audio_output": [
+				{  "type":"pulse"
+				 , "name":"pulse audio" } ]
 		}
 	}
 	, "shutdown_cmd": ["halt"]

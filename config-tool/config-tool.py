@@ -40,6 +40,8 @@ import argparse
 # load json source configuration
 import os
 import json
+# load json in ordered dict to save to file in same order
+from collections import OrderedDict
 #import hu_settings
 
 def configuration_load( configfile, defaultconfig=None ):
@@ -51,13 +53,14 @@ def configuration_load( configfile, defaultconfig=None ):
 	# open configuration file (restored or original) and Try to parse it
 	jsConfigFile = open(configfile)
 	try:
-		config=json.load(jsConfigFile)
+		#config=json.load(jsConfigFile)
+		config=json.load(jsConfigFile, object_pairs_hook=OrderedDict)
 	except:
 		config = None
 		printer('Loading/parsing {0}: [FAIL]'.format(configfile) ,LL_CRITICAL, tag='CONFIG')
 		# if we had not previously restored it, try that and parse again
 
-	print config
+	print config['system_configuration']
 	return config
 
 
@@ -125,11 +128,11 @@ def write_config_generic( config, delim="=", group="={" ):
 		for key,value in config.items():
 			if isinstance(value, list):				
 				for lon in value:
-					if group == "={":
+					if (group == "={" or group == " {") :
 						outfile.write('{0}{2}\n'.format(key,delim,group))
 					for listkey, listval in lon.items():
 						outfile.write('  {1}{0}{2}\n'.format(delim,listkey,listval))
-					if group == "={":
+					if (group == "={" or group == " {") :
 						outfile.write('}\n')
 			elif not key == 'location':
 				if value:
@@ -230,13 +233,13 @@ def main():
 		else:
 			printer('dnsmasq: Invalid Config')
 
-	if arg_resv:
-		if validate_config( 'resolv', ['location','nameservers'] ):
-			write_config_resolv( configuration['system_configuration']['resolv'] )
+	#if arg_resv:
+	#	if validate_config( 'resolv', ['location','nameservers'] ):
+	#		write_config_resolv( configuration['system_configuration']['resolv'] )
 			
 	if arg_mpd:
 		if validate_config( 'mpd', ['location','outputs'] ):
-			write_config_mpd( configuration['system_configuration']['mpd'] )
+			write_config_generic( configuration['system_configuration']['mpd'], ' ', ' {' )
 
 	if arg_smb:
 		if validate_config( 'smb', ['location','shares'] ):
