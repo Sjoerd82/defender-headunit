@@ -172,6 +172,7 @@ CONFIG_FILE_DEFAULT = '/mnt/PIHU_APP/defender-headunit/config/configuration.json
 CONFIG_FILE = '/mnt/PIHU_CONFIG/configuration.json'
 VERSION = "1.0.0"
 PID_FILE = "hu"
+SYSLOG_UDP_PORT=514
 
 hu_details = { 'track':None, 'random':'off', 'repeat':True, 'att':False }
 
