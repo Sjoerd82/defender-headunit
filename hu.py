@@ -1306,7 +1306,8 @@ def init_logging_s( address=('localhost', SYSLOG_UDP_PORT), facility="HEADUNIT",
 	global logger
 	
 	# create syslog handler
-	sh = logging.handlers.SysLogHandler(address=address, facility=facility, socktype=socktype)
+	#sh = logging.handlers.SysLogHandler(address=address, facility=facility, socktype=socktype)
+	sh = logging.handlers.SysLogHandler(address=address, socktype=socktype)
 	sh.setLevel(logging.DEBUG)
 
 	# create formatters
