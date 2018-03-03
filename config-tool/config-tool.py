@@ -120,6 +120,7 @@ def write_config_resolv( config ):
 
 def write_config_generic( config, delim="=", group="={" ):
 	printer("Creating: {0}".format(config['location']))
+	print config
 	with open( config['location'], 'w' ) as outfile:
 		for key,value in config.items():
 			if isinstance(value, list):				
@@ -217,6 +218,8 @@ def main():
 	if arg_hapd:
 		if validate_config( 'hostapd', ['location','interface','driver','ssid','channel'] ):
 			write_config_generic( configuration['system_configuration']['hostapd'], '=', '={' )
+		else:
+			printer('hostapd: Invalid Config')
 
 	if arg_dnsm:
 		if validate_config( 'dnsmasq', ['location'] ):
