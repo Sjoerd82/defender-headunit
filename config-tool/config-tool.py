@@ -104,17 +104,22 @@ def write_config_wpa( wpa_config ):
 			outfile.write('psk={0}'.format(network['psk']))
 			outfile.write('}')
 
-def write_config_mpd( mpd_config ):
-	#open file for replacement
-	#print header
-	#for outputs in dbus_config['outputs']
-	return 0
+def write_config_smb( config ):
+	printer("Creating: {0}".format(config['location']))
+	with open( config['location'], 'w' ) as outfile:
 
-def write_config_smb( smb_config ):
-	#open file for replacement
-	#print header
-	#for outputs in dbus_config['shares']
-	return 0
+		outfile.write('[global]')
+		for key,value in config['global'].items():
+			outfile.write('  {0} = {1}\n'.format(key,value))
+			
+		#outfile.write('[shares]')
+		for key,value in config['shares'].items():
+			outfile.write('[{0}]'.format(key))
+			for share in value:
+				for listkey, listval in share.items():
+					outfile.write('  {0} = {1}\n'.format(listkey,listval))
+		
+
 
 def write_config_resolv( config ):
 	with open( config['location'], 'w' ) as outfile:
@@ -238,13 +243,15 @@ def main():
 			
 	if arg_mpd:
 		if validate_config( 'mpd', ['location','music_directory','audio_output'] ):
-			write_config_generic( configuration['system_configuration']['mpd'], ' ', ' {', '"' )
+			write_config_generic( configuration['system_configuration']['mpd'], '\t', ' {', '"' )
 		else:
 			printer('mpd: Invalid Config')
 
 	if arg_smb:
-		if validate_config( 'smb', ['location','shares'] ):
+		if validate_config( 'smb', ['location','global','shares'] ):
 			write_config_smb( configuration['system_configuration']['smb'] )
+		else:
+			printer('smb: Invalid Config')
 
 		
 if __name__ == '__main__':

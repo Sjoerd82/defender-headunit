@@ -157,6 +157,37 @@
 				{  "type":"pulse"
 				 , "name":"pulse audio" } ]
 		}
+		, "smb": {
+			  "location":           "/etc/samba/smb2.conf"
+			, "global": {
+				  "workgroup":      "MYGROUP"
+				, "server string":  "Samba Server Version %v"
+				, "security":       "user"
+				, "passdb":         "tdbsam"
+				, "load printers":  "no"
+				, "printcap name":  "/dev/null"
+			}
+			, "shares": { 	  
+				"music":{
+					  "path":           "/media/PIHU_DATA"
+					, "force group":    "users"
+					, "create mask":    "0666"
+					, "directory mask": "0777"
+					, "browsable":      "yes"
+					, "writable":       "yes"
+					, "guest ok":       "yes"
+				}
+				, "config": {
+					  "path":           "/media/PIHU_CONFIG"
+					, "force group":    "users"
+					, "create mask":    "0666"
+					, "directory mask": "0777"
+					, "browsable":      "yes"
+					, "writable":       "yes"
+					, "guest ok":       "yes"
+				}
+			}
+		}
 	}
 	, "shutdown_cmd": ["halt"]
 }
