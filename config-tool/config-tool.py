@@ -121,7 +121,7 @@ def write_config_resolv( config ):
 		for nameserver in config['nameservers']:
 			outfile.write('nameserver {0}'.format(nameserver))
 
-def write_config_generic( config, delim="=", group="={" ):
+def write_config_generic( config, delim="=", group="={", quotes=None ):
 	printer("Creating: {0}".format(config['location']))
 	with open( config['location'], 'w' ) as outfile:
 		for key,value in config.items():
@@ -135,7 +135,7 @@ def write_config_generic( config, delim="=", group="={" ):
 						outfile.write('}\n')
 			elif not key == 'location':
 				if value:
-					outfile.write('{1}{0}{2}\n'.format(delim,key,value))
+					outfile.write('{1}{0}{3}{2}{3}\n'.format(delim,key,value,quotes))
 				else:
 					outfile.write('{0}\n'.format(key))
 
@@ -238,7 +238,7 @@ def main():
 			
 	if arg_mpd:
 		if validate_config( 'mpd', ['location','music_directory','audio_output'] ):
-			write_config_generic( configuration['system_configuration']['mpd'], ' ', ' {' )
+			write_config_generic( configuration['system_configuration']['mpd'], ' ', ' {', '"' )
 		else:
 			printer('mpd: Invalid Config')
 
