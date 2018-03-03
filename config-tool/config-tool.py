@@ -60,7 +60,6 @@ def configuration_load( configfile, defaultconfig=None ):
 		printer('Loading/parsing {0}: [FAIL]'.format(configfile) ,LL_CRITICAL, tag='CONFIG')
 		# if we had not previously restored it, try that and parse again
 
-	print config['system_configuration']
 	return config
 
 
@@ -238,8 +237,10 @@ def main():
 	#		write_config_resolv( configuration['system_configuration']['resolv'] )
 			
 	if arg_mpd:
-		if validate_config( 'mpd', ['location','outputs'] ):
+		if validate_config( 'mpd', ['location','music_directory','audio_output'] ):
 			write_config_generic( configuration['system_configuration']['mpd'], ' ', ' {' )
+		else:
+			printer('mpd: Invalid Config')
 
 	if arg_smb:
 		if validate_config( 'smb', ['location','shares'] ):

@@ -138,7 +138,7 @@
 			, "dhcp-range":    "172.24.1.50,172.24.1.150,255.255.255.0,24h"
 			
 		}
-		, "mpd_conf": {
+		, "mpd": {
 			  "location":           "/etc/mpd2.conf"
 			, "music_directory":    "/media"
 			, "playlist_directory": "/var/lib/mpd/playlists"
