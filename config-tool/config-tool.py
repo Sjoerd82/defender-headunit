@@ -116,8 +116,9 @@ def write_config_smb( config ):
 		for key,value in config['shares'].items():
 			outfile.write('[{0}]'.format(key))
 			for share in value:
-				for listkey, listval in share.items():
-					outfile.write('  {0} = {1}\n'.format(listkey,listval))
+				print value
+				#for listkey, listval in share.items():
+				#	outfile.write('  {0} = {1}\n'.format(listkey,listval))
 		
 
 
