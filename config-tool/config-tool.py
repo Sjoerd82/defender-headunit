@@ -108,17 +108,21 @@ def write_config_smb( config ):
 	printer("Creating: {0}".format(config['location']))
 	with open( config['location'], 'w' ) as outfile:
 
-		outfile.write('[global]')
+		outfile.write('[global]\n')
 		for key,value in config['global'].items():
 			outfile.write('  {0} = {1}\n'.format(key,value))
 			
 		#outfile.write('[shares]')
 		for key,value in config['shares'].items():
-			outfile.write('[{0}]'.format(key))
-			for share in value:
+			outfile.write('\n[{0}]\n'.format(key))
+			for share in config['shares'][key]:
 				print value
 				#for listkey, listval in share.items():
 				#	outfile.write('  {0} = {1}\n'.format(listkey,listval))
+			for listkey,listval in config['shares'][key].items():
+				print listkey
+				print listval
+
 		
 
 
