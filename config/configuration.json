@@ -116,12 +116,27 @@
 			  "location":      "/etc/hostapd.conf"
 			, "interface":     "wlan0"
 			, "driver":        "nl80211"
+			, "hw_mode":       "g"
+			, "ieee80211n":    "1"
+			, "wmm_enabled":   "1"
+			, "macaddr_acl":   "0"
 			, "ssid":          "r0ckb0x"
 			, "channel":       "1"
 			, "wpa":           "2"
 			, "auth_algs":     "1"
 			, "wpa_key_mgmt":  "WPA-PSK"
 			, "wpa_psk":       "889bcfb6b711150c91e2078f34876dcc417741ddb60e6f119dc25c6968363309"
+			, "wpa_pairwise":  "TKIP"
+			, "rsn_pairwise":  "CCMP"
+		}
+		, "dnsmasq": {
+			  "location":      "/etc/dnsmasq.conf"
+			, "interface":     "wlan0"
+			, "listen-address":"172.24.1.1"
+			, "bind-dynamic":  null
+			, "server":        "8.8.8.8"
+			, "dhcp-range":    "172.24.1.50,172.24.1.150,255.255.255.0,24h"
+			
 		}
 		, "mpd_conf": {
 			  "location":"/etc/mpd.conf"

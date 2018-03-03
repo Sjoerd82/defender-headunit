@@ -57,6 +57,7 @@ def configuration_load( configfile, defaultconfig=None ):
 		printer('Loading/parsing {0}: [FAIL]'.format(configfile) ,LL_CRITICAL, tag='CONFIG')
 		# if we had not previously restored it, try that and parse again
 
+	print config
 	return config
 
 
@@ -120,7 +121,6 @@ def write_config_resolv( config ):
 
 def write_config_generic( config, delim="=", group="={" ):
 	printer("Creating: {0}".format(config['location']))
-	print config
 	with open( config['location'], 'w' ) as outfile:
 		for key,value in config.items():
 			if isinstance(value, list):				
@@ -132,7 +132,10 @@ def write_config_generic( config, delim="=", group="={" ):
 					if group == "={":
 						outfile.write('}\n')
 			elif not key == 'location':
-				outfile.write('{1}{0}{2}\n'.format(delim,key,value))
+				if value:
+					outfile.write('{1}{0}{2}\n'.format(delim,key,value))
+				else:
+					outfile.write('{0}\n'.format(key))
 
 
 # ********************************************************************************
@@ -222,8 +225,10 @@ def main():
 			printer('hostapd: Invalid Config')
 
 	if arg_dnsm:
-		if validate_config( 'dnsmasq', ['location'] ):
-			write_config_generic( configuration['system_configuration']['dhcpd'] )
+		if validate_config( 'dnsmasq', ['location','interface'] ):
+			write_config_generic( configuration['system_configuration']['dnsmasq'], '=', '={' )
+		else:
+			printer('dnsmasq: Invalid Config')
 
 	if arg_resv:
 		if validate_config( 'resolv', ['location','nameservers'] ):
