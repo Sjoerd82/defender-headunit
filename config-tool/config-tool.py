@@ -121,7 +121,7 @@ def write_config_resolv( config ):
 		for nameserver in config['nameservers']:
 			outfile.write('nameserver {0}'.format(nameserver))
 
-def write_config_generic( config, delim="=", group="={", quotes=None ):
+def write_config_generic( config, delim="=", group="={", quotes="" ):
 	printer("Creating: {0}".format(config['location']))
 	with open( config['location'], 'w' ) as outfile:
 		for key,value in config.items():
@@ -130,7 +130,7 @@ def write_config_generic( config, delim="=", group="={", quotes=None ):
 					if (group == "={" or group == " {") :
 						outfile.write('{0}{2}\n'.format(key,delim,group))
 					for listkey, listval in lon.items():
-						outfile.write('  {1}{0}{2}\n'.format(delim,listkey,listval))
+						outfile.write('  {1}{0}{3}{2}{3}\n'.format(delim,listkey,listval,quotes))
 					if (group == "={" or group == " {") :
 						outfile.write('}\n')
 			elif not key == 'location':
