@@ -446,7 +446,7 @@ class sourceClass():
 			self.mpc.playlistPop('locmus',sLocalMusicMPD)
 			
 			# check if succesful...
-			playlistCount = self.mpc.mpc_playlist_is_populated()
+			playlistCount = self.mpc.playlistIsPop()
 			if playlistCount == "0":
 				# Failed. Returning false will cause caller to try next source
 				self.__printer(' > Nothing in the playlist, giving up. Marking source unavailable.')
