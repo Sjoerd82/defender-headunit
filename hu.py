@@ -95,6 +95,8 @@ import datetime
 import os
 logger = None
 from hu_logger import *
+# for logging to syslog
+import socket
 
 #********************************************************************************
 #
