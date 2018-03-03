@@ -115,13 +115,14 @@ def write_config_smb( config ):
 		#outfile.write('[shares]')
 		for key,value in config['shares'].items():
 			outfile.write('\n[{0}]\n'.format(key))
-			for share in config['shares'][key]:
-				print value
+			#for share in config['shares'][key]:
+				#print value
 				#for listkey, listval in share.items():
 				#	outfile.write('  {0} = {1}\n'.format(listkey,listval))
 			for listkey,listval in config['shares'][key].items():
-				print listkey
-				print listval
+				#print listkey
+				#print listval
+				outfile.write('  {0} = {1}\n'.format(listkey,listval))
 
 		
 
