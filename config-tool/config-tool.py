@@ -114,7 +114,7 @@ def write_config_wpa( config ):
 					outfile.write('}\n')
 			elif not key == 'location':
 				if value:
-					if listval in quoted_fields:
+					if value in quoted_fields:
 						quotes = '"'
 					else:
 						quotes = ''
