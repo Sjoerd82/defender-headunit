@@ -4,7 +4,7 @@
 NAME="Headunit"
 DAEMON="/mnt/PIHU_APP/defender-headunit/hu.py"
 
-if [ -n "$HU_SOURCE" ]
+if [ -n "$HU_SOURCE" ]; then
   DAEMONOPTS="--source $HU_SOURCE"
 else
   DAEMONOPTS=""

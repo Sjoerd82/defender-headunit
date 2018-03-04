@@ -102,32 +102,37 @@ import socket
 #
 # Parse command line arguments and environment variables
 # Command line takes precedence over environment variables and settings.json
-# settings.json vs. environment variable?
 #
 import os
 import argparse
 
 ENV_CONFIG_FILE = os.getenv('HU_CONFIG_FILE')
-ENV_SOURCE = os.getenv('HU_SOURCE')
+#ENV_SOURCE = os.getenv('HU_SOURCE')
 
 parser = argparse.ArgumentParser(description='Uhmmmsssszzz...')
 parser.add_argument('--loglevel', action='store', default=LL_INFO, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)
 parser.add_argument('--source', action='store')
+parser.add_argument('--boot', action='store_true')
 args = parser.parse_args()
 
 arg_loglevel = args.loglevel
 arg_source = args.source
+arg_boot = args.boot
 
 if arg_source:
 	SOURCE = arg_source
-elif ENV_SOURCE:
-	SOURCE = ENV_SOURCE
+#elif ENV_SOURCE:
+#	SOURCE = ENV_SOURCE
 else:
 	SOURCE = None
+
+if arg_boot:
+	BOOT = args.boot
+else:
+	BOOT = False
 	
 print('PLAYING SOURCE: {0}'.format(SOURCE))
 
-exit()
 
 #********************************************************************************
 #
@@ -1973,6 +1978,16 @@ myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 
 prevSource = cSettings.get_key('source')
 prevSourceSub = cSettings.get_key('subsourcekey')
+
+# BOOT is true for 'early boot'
+#if BOOT and not prevSource = "" and not prevSource == SOURCE:
+if not prevSource == SOURCE and not prevSource = "":
+	print('Quickplay failed due mismatching source')
+	exit()
+
+if SOURCE and not prevSource:
+	prevSource = SOURCE
+
 
 if prevSource == "":
 	printer ('No previous source.', tag='QPLAY')
