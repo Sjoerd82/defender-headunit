@@ -123,7 +123,7 @@ class sourceClass():
 				
 				if not self.mpc.dbCheckDirectory( mpd_dir ):
 					self.__printer(" > Running MPD update for this directory.. ALERT! LONG BLOCKING OPERATION AHEAD...")
-					self.mpc.update( sLocalMusicMPD )
+					self.mpc.update( mpd_dir )
 					if not self.mpc.dbCheckDirectory( mpd_dir ):
 						self.__printer(" > Nothing to play marking unavailable...")
 					else:
