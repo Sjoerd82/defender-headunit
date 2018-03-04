@@ -125,7 +125,7 @@ elif ENV_SOURCE:
 else:
 	SOURCE = None
 	
-print('PLAYING SOURCE: {0}'.format(SOURCE)
+print('PLAYING SOURCE: {0}'.format(SOURCE))
 
 exit()
 
