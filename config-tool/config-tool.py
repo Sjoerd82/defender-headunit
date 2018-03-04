@@ -93,7 +93,7 @@ def write_config_dbus( config ):
 		outfile.write('</busconfig>')
 
 # the wpa_supplicant config is a tricky one as it requires quotes for text fields only.
-def write_config_wpa( wpa_config ):
+def write_config_wpa( config ):
 	printer("Creating: {0}".format(config['location']))
 	
 	group = "={"
