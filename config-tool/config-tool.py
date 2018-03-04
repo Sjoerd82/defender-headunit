@@ -106,7 +106,7 @@ def write_config_wpa( config ):
 				for lon in value:
 					outfile.write('{0}{2}\n'.format(key,delim,group))
 					for listkey, listval in lon.items():
-						if listval in quoted_fields:
+						if listkey in quoted_fields:
 							quotes = '"'
 						else:
 							quotes = ''
@@ -114,7 +114,7 @@ def write_config_wpa( config ):
 					outfile.write('}\n')
 			elif not key == 'location':
 				if value:
-					if value in quoted_fields:
+					if key in quoted_fields:
 						quotes = '"'
 					else:
 						quotes = ''
