@@ -134,7 +134,6 @@
 			, "interface":     "wlan0"
 			, "listen-address":"172.24.1.1"
 			, "bind-dynamic":  null
-			, "server":        "8.8.8.8"
 			, "dhcp-range":    "172.24.1.50,172.24.1.150,255.255.255.0,24h"
 			
 		}
@@ -163,7 +162,7 @@
 				  "workgroup":      "MYGROUP"
 				, "server string":  "Samba Server Version %v"
 				, "security":       "user"
-				, "passdb":         "tdbsam"
+				, "passdb backend": "tdbsam"
 				, "load printers":  "no"
 				, "printcap name":  "/dev/null"
 			}
