@@ -139,7 +139,7 @@
 			
 		}
 		, "mpd": {
-			  "location":           "/etc/mpd2.conf"
+			  "location":           "/etc/mpd.conf"
 			, "music_directory":    "/media"
 			, "playlist_directory": "/var/lib/mpd/playlists"
 			, "db_file":            "/var/lib/mpd/database"
@@ -158,7 +158,7 @@
 				 , "name":"pulse audio" } ]
 		}
 		, "smb": {
-			  "location":           "/etc/samba/smb2.conf"
+			  "location":           "/etc/samba/smb.conf"
 			, "global": {
 				  "workgroup":      "MYGROUP"
 				, "server string":  "Samba Server Version %v"
