@@ -1981,7 +1981,7 @@ prevSourceSub = cSettings.get_key('subsourcekey')
 
 # BOOT is true for 'early boot'
 #if BOOT and not prevSource = "" and not prevSource == SOURCE:
-if not prevSource == SOURCE and not prevSource = "":
+if not prevSource == SOURCE and not prevSource:
 	print('Quickplay failed due mismatching source')
 	exit()
 
