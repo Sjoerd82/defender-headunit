@@ -3,7 +3,12 @@
 # APPLICATION
 NAME="Headunit"
 DAEMON="/mnt/PIHU_APP/defender-headunit/hu.py"
-DAEMONOPTS=""
+
+if [ -n "$HU_SOURCE" ]
+  DAEMONOPTS="--source $HU_SOURCE"
+else
+  DAEMONOPTS=""
+fi
 
 # PID (created by application)
 PIDFILE=/var/run/hu.pid

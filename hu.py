@@ -100,17 +100,34 @@ import socket
 
 #********************************************************************************
 #
-# Parse command line arguments
+# Parse command line arguments and environment variables
+# Command line takes precedence over environment variables and settings.json
+# settings.json vs. environment variable?
 #
-#
-
+import os
 import argparse
+
+ENV_CONFIG_FILE = os.getenv('HU_CONFIG_FILE')
+ENV_SOURCE = os.getenv('HU_SOURCE')
 
 parser = argparse.ArgumentParser(description='Uhmmmsssszzz...')
 parser.add_argument('--loglevel', action='store', default=LL_INFO, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)
+parser.add_argument('--source', action='store')
 args = parser.parse_args()
 
 arg_loglevel = args.loglevel
+arg_source = args.source
+
+if arg_source:
+	SOURCE = arg_source
+elif ENV_SOURCE:
+	SOURCE = ENV_SOURCE
+else:
+	SOURCE = None
+	
+print('PLAYING SOURCE: {0}'.format(SOURCE)
+
+exit()
 
 #********************************************************************************
 #
