@@ -92,17 +92,35 @@ def write_config_dbus( config ):
 		outfile.write('  </policy>\n')
 		outfile.write('</busconfig>')
 
+# the wpa_supplicant config is a tricky one as it requires quotes for text fields only.
 def write_config_wpa( wpa_config ):
-	with open( wpa_config['location'], 'w' ) as outfile:
-		for key, value in wpa_config:
-			if not key in ('location','networks'):
-				outfile.write('{0}={1}'.format(key,value))
-				
-		for network in wpa_config['networks']:
-			outfile.write('network={')
-			outfile.write('ssid={0}'.format(network['ssid']))
-			outfile.write('psk={0}'.format(network['psk']))
-			outfile.write('}')
+	printer("Creating: {0}".format(config['location']))
+	
+	group = "={"
+	delim = "="
+	quoted_fields=("ssid")
+	
+	with open( config['location'], 'w' ) as outfile:
+		for key,value in config.items():
+			if isinstance(value, list):				
+				for lon in value:
+					outfile.write('{0}{2}\n'.format(key,delim,group))
+					for listkey, listval in lon.items():
+						if listval in quoted_fields:
+							quotes = '"'
+						else:
+							quotes = ''
+						outfile.write('  {1}{0}{3}{2}{3}\n'.format(delim,listkey,listval,quotes))
+					outfile.write('}\n')
+			elif not key == 'location':
+				if value:
+					if listval in quoted_fields:
+						quotes = '"'
+					else:
+						quotes = ''
+					outfile.write('{1}{0}{3}{2}{3}\n'.format(delim,key,value,quotes))
+				else:
+					outfile.write('{0}\n'.format(key))
 
 def write_config_smb( config ):
 	printer("Creating: {0}".format(config['location']))
@@ -112,20 +130,10 @@ def write_config_smb( config ):
 		for key,value in config['global'].items():
 			outfile.write('  {0} = {1}\n'.format(key,value))
 			
-		#outfile.write('[shares]')
 		for key,value in config['shares'].items():
 			outfile.write('\n[{0}]\n'.format(key))
-			#for share in config['shares'][key]:
-				#print value
-				#for listkey, listval in share.items():
-				#	outfile.write('  {0} = {1}\n'.format(listkey,listval))
 			for listkey,listval in config['shares'][key].items():
-				#print listkey
-				#print listval
 				outfile.write('  {0} = {1}\n'.format(listkey,listval))
-
-		
-
 
 def write_config_resolv( config ):
 	with open( config['location'], 'w' ) as outfile:
@@ -171,7 +179,6 @@ def main():
 	parser.add_argument('--wpa',  required=False, action='store_true', help='Generate wpa_supplicant.conf file')
 	parser.add_argument('--hapd', required=False, action='store_true', help='Generate hostapd.conf file')
 	parser.add_argument('--dnsm', required=False, action='store_true', help='Generate dnsmasq.conf file')
-	parser.add_argument('--resv', required=False, action='store_true', help='Generate resolv.conf file')
 	parser.add_argument('--mpd',  required=False, action='store_true', help='Generate mpd.conf file')
 	parser.add_argument('--smb',  required=False, action='store_true', help='Generate samba.conf file')
 
@@ -185,7 +192,6 @@ def main():
 	arg_wpa  = args.wpa
 	arg_hapd = args.hapd
 	arg_dnsm = args.dnsm
-	arg_resv = args.resv
 	arg_mpd  = args.mpd
 	arg_smb  = args.smb
 
@@ -201,7 +207,6 @@ def main():
 		return True
 	
 	printer('Loading: {0}'.format( arg_config ))
-	#configuration = hu_settings.configuration_load( arg_config )
 	configuration = configuration_load( arg_config )
 	
 	if 'system_configuration' not in configuration:
@@ -227,7 +232,7 @@ def main():
 							
 	if arg_wpa:
 		if validate_config( 'wpa_supplicant', ['location','network'] ):
-			write_config_generic( configuration['system_configuration']['wpa_supplicant'], '=', '={' )
+			write_config_wpa( configuration['system_configuration']['wpa_supplicant'])
 		else:
 			printer('WPA: Invalid Config')
 
@@ -243,10 +248,6 @@ def main():
 		else:
 			printer('dnsmasq: Invalid Config')
 
-	#if arg_resv:
-	#	if validate_config( 'resolv', ['location','nameservers'] ):
-	#		write_config_resolv( configuration['system_configuration']['resolv'] )
-			
 	if arg_mpd:
 		if validate_config( 'mpd', ['location','music_directory','audio_output'] ):
 			write_config_generic( configuration['system_configuration']['mpd'], '\t', ' {', '"' )
