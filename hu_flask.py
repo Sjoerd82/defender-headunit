@@ -1,8 +1,14 @@
+
 from flask import Flask
 from flask import render_template
 from flask import url_for
 from flask import jsonify
+
+import zmq
+
 app = Flask(__name__)
+
+
 
 @app.route('/')
 def hello_world():
@@ -40,16 +46,81 @@ def list_routes():
 	#for line in sorted(links):
 	#	print line
 
+	
+"""
+
+GET /source								Retrieve list of sources
+GET /source/<id>						Retrieve source <id>
+GET /source/available					Retrieve list of available sources
+GET /source/<id>/subsource				Retrieve list of subsources
+GET /source/<id>/subsource/<id>			Retrieve subsource <id> of source <id>
+GET /source/<id>/subsource/available	Retrieve list of available subsourcesof source <id>
+POST /source/<id>						Set active source to <id> 
+POST /source/<id>/subsource/<id>		Set active subsource to <id>
+POST /source/next						Set active (sub)source to the next available
+POST /source/prev						Set active (sub)source to the prev available
+
+"""
+
 @app.route('/hu/api/v1.0/source', methods=['GET'])
 def get_source():
 	#get sources from MQ
 	#stub:
 	sources = [{ "code":"smb" }, { "code":"media" }]
 	return jsonify({'sources': sources})
+
+"""
+@app.route('/hu/api/v1.0/source/<int:source_id>', methods=['GET'])
+@app.route('/hu/api/v1.0/source/available', methods=['GET'])
+@app.route('/hu/api/v1.0/source/<int:source_id>/subsource', methods=['GET'])
+@app.route('/hu/api/v1.0/source/<int:source_id>/subsource/<int:subsource_id>', methods=['GET'])
+@app.route('/hu/api/v1.0/source/<int:source_id>/subsource/available', methods=['GET'])
+
+#Set active source to <id> 
+@app.route('/hu/api/v1.0/source/<int:source_id>', methods=['POST'])
+
+#Set active subsource to <id>
+@app.route('/hu/api/v1.0/source/<int:source_id>/subsource/<int:subsource_id>', methods=['POST'])
+
+#Set active (sub)source to the next available
+@app.route('/hu/api/v1.0/source/next', methods=['POST'])
+
+#Set active (sub)source to the prev available
+@app.route('/hu/api/v1.0/source/prev', methods=['POST'])
 	
+"""
+
+
 @app.route('/hello/')
 @app.route('/hello/<name>')
 def hello(name=None):
 	return render_template('hello.html', name=name)
 	
+
+def sync(bind_to):
+	# use bind socket + 1
+	sync_with = ':'.join(bind_to.split(':')[:-1] + [str(int(bind_to.split(':')[-1]) + 1)])
+	ctx = zmq.Context.instance()
+	s = ctx.socket(zmq.REP)
+	s.bind(sync_with)
+	print("Waiting for subscriber to connect...")
+	s.recv()
+	print("   Done.")
+	s.send('GO')
+
+def main():
+	bind_to = "FLASK-TEST"
+
+	ctx = zmq.Context()
+	s = ctx.socket(zmq.PUB)
+	s.bind(bind_to)
+
+	sync(bind_to)
+
+	print("Sending arrays...")
+	#for i in range(array_count):
+	#	a = numpy.random.rand(array_size, array_size)
+	#	s.send_pyobj(a)
+	#print("   Done.")
 	
+main()
