@@ -130,7 +130,7 @@ def main():
 
 
 def publish_message(message):
-	url = "tcp://172.16.8.192:5555"
+	url = "tcp://127.0.0.1:5555"
 	try:
 		pub.bind(url)
 		time.sleep(1)
