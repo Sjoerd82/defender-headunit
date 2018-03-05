@@ -157,7 +157,7 @@ def printNumber(number):
 # "__main__" whenever the script
 # file itself is called instead
 # of being used as a library
-if __name__ == ‘__main__’:
+if __name__ == '__main__':
 	# The default port it will run on here is 5000
-	app.run(host=’0.0.0.0′, debug=True)
+	app.run(host='0.0.0.0', debug=True)
 	
