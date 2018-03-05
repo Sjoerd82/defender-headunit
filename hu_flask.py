@@ -18,7 +18,7 @@ def hello_world():
 @app.route('/api')
 def list_routes():
 	import urllib
-	output = []
+	links = []
 	for rule in app.url_map.iter_rules():
 
 		if len(rule.defaults) >= len(rule.arguments):
@@ -32,10 +32,10 @@ def list_routes():
 		#methods = ','.join(rule.methods)
 		#url = url_for(rule.endpoint, **options)
 		#line = urllib.unquote("{:50s} {:20s} {}".format(rule.endpoint, methods, url))
-		#output.append(line)
+		#links.append(line)
 	
 	return render_template("api.html", links=links)
-	#for line in sorted(output):
+	#for line in sorted(links):
 	#	print line
 
 @app.route('/hu/api/v1.0/source', methods=['GET'])
