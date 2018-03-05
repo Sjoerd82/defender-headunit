@@ -153,10 +153,11 @@ def printNumber(number):
 	publish_message('number%d' % number)
 	return response
 
-# In python “__name__” will be
-# “__main__” whenever the script
+# In python "__name__" will be
+# "__main__" whenever the script
 # file itself is called instead
 # of being used as a library
 if __name__ == ‘__main__’:
 	# The default port it will run on here is 5000
 	app.run(host=’0.0.0.0′, debug=True)
+	
