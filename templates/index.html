@@ -1,0 +1,11 @@
+<!doctype html>
+<title>Hello from Flask</title>
+
+<TABLE>
+<TR><TD>Sections:</TD><TD ROWSPAN="100"> "body" </TD></TR>
+
+        {% for post in posts %}
+        <TR><TD><A HREF="/{{ pages.id }}">{{ pages.title }}</A></TD></TR>
+        {% endfor %}
+
+</TABLE>
