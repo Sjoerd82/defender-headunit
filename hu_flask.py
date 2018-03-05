@@ -20,18 +20,30 @@ def list_routes():
 	output = []
 	for rule in app.url_map.iter_rules():
 
-		options = {}
-		for arg in rule.arguments:
-			options[arg] = "[{0}]".format(arg)
-
-		methods = ','.join(rule.methods)
-		url = url_for(rule.endpoint, **options)
-		line = urllib.unquote("{:50s} {:20s} {}".format(rule.endpoint, methods, url))
-		output.append(line)
+		if len(rule.defaults) >= len(rule.arguments):
+		url = url_for(rule.endpoint, **(rule.defaults or {}))
+		links.append((url, rule.endpoint))
+			
+		#options = {}
+		#for arg in rule.arguments:
+		#	options[arg] = "[{0}]".format(arg)
+		#
+		#methods = ','.join(rule.methods)
+		#url = url_for(rule.endpoint, **options)
+		#line = urllib.unquote("{:50s} {:20s} {}".format(rule.endpoint, methods, url))
+		#output.append(line)
 	
-	for line in sorted(output):
-		print line
+	return render_template("api.html", links=links)
+	#for line in sorted(output):
+	#	print line
 
+@app.route('/hu/api/v1.0/source', methods=['GET'])
+def get_source():
+	#get sources from MQ
+	#stub:
+	sources = [{ "code":"smb" }, { "code":"media" }]
+	return jsonify({'sources': sources})
+	
 @app.route('/hello/')
 @app.route('/hello/<name>')
 def hello(name=None):
