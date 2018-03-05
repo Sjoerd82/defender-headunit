@@ -21,17 +21,18 @@ def list_routes():
 	links = []
 	for rule in app.url_map.iter_rules():
 
-		if len(rule.defaults) >= len(rule.arguments):
-			url = url_for(rule.endpoint, **(rule.defaults or {}))
-			links.append((url, rule.endpoint))
+		#if len(rule.defaults) >= len(rule.arguments):
+		#	url = url_for(rule.endpoint, **(rule.defaults or {}))
+		#	links.append((url, rule.endpoint))
 			
-		#options = {}
-		#for arg in rule.arguments:
-		#	options[arg] = "[{0}]".format(arg)
-		#
-		#methods = ','.join(rule.methods)
-		#url = url_for(rule.endpoint, **options)
+		options = {}
+		for arg in rule.arguments:
+			options[arg] = "[{0}]".format(arg)
+		
+		methods = ','.join(rule.methods)
+		url = url_for(rule.endpoint, **options)
 		#line = urllib.unquote("{:50s} {:20s} {}".format(rule.endpoint, methods, url))
+		links.append((url, rule.endpoint))
 		#links.append(line)
 	
 	return render_template("api.html", links=links)
