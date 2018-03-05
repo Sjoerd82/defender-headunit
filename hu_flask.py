@@ -138,10 +138,10 @@ def publish_message(message):
 	except Exception as e:
 		print("error {0}".format(e))
 	finally:
-	# You wanna unbind the publisher to keep
-	# receiving the published messages
-	# Otherwise you would get a - Adress already in use - error
-	pub.unbind(url)
+		# You wanna unbind the publisher to keep
+		# receiving the published messages
+		# Otherwise you would get a - Adress already in use - error
+		pub.unbind(url)
 
 
 # This is an endpoint which prints the
