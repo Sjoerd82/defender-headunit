@@ -140,7 +140,7 @@ def publish_message(message):
 	finally:
 	# You wanna unbind the publisher to keep
 	# receiving the published messages
-	# Otherwise you would get a — Adress already in use — error
+	# Otherwise you would get a - Adress already in use - error
 	pub.unbind(url)
 
 
