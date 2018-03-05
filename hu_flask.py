@@ -21,8 +21,8 @@ def list_routes():
 	for rule in app.url_map.iter_rules():
 
 		if len(rule.defaults) >= len(rule.arguments):
-		url = url_for(rule.endpoint, **(rule.defaults or {}))
-		links.append((url, rule.endpoint))
+			url = url_for(rule.endpoint, **(rule.defaults or {}))
+			links.append((url, rule.endpoint))
 			
 		#options = {}
 		#for arg in rule.arguments:
