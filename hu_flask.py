@@ -11,6 +11,7 @@ def hello_world():
 	 ,{"title":"API","id":"api"}
 	 ,{"title":"Logs","id":"log"}
 	]
+	print pages
 	return render_template('index.html', pages=pages)
 	
 @app.route('/api')

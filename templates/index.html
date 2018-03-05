@@ -4,8 +4,8 @@
 <TABLE>
 <TR><TD>Sections:</TD><TD ROWSPAN="100"> "body" </TD></TR>
 
-        {% for post in posts %}
-        <TR><TD><A HREF="/{{ pages.id }}">{{ pages.title }}</A></TD></TR>
+        {% for page in pages %}
+        <TR><TD><A HREF="/{{ page.id }}">{{ page.title }}</A></TD></TR>
         {% endfor %}
 
 </TABLE>
