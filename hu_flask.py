@@ -147,7 +147,7 @@ def publish_message(message):
 # This is an endpoint which prints the
 # number we want to print in response
 # and also publishes a message containing the number
-@app.route("/print/<number>", methods = ['GET'])
+@app.route("/print/<int:number>", methods = ['GET'])
 def printNumber(number):
 	response = 'Number %d' % number
 	publish_message('number%d' % number)
