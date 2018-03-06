@@ -78,6 +78,8 @@
 # ./hu_volume.py		Volume control
 # ./hu_....py
 
+import sys
+
 #********************************************************************************
 #
 # Version
@@ -146,7 +148,6 @@ import time
 import json
 
 # dynamic module loading
-import sys
 import inspect
 
 # queuing
@@ -182,6 +183,18 @@ from dbus.mainloop.glib import DBusGMainLoop
 #
 
 from slugify import slugify
+
+#********************************************************************************
+#
+# ZeroMQ
+#
+
+import zmq
+
+# TODO: get port from config
+subscriber = context.socket (zmq.SUB)
+subscriber.connect ("tcp://localhost:5556")
+subscriber.setsockopt (zmq.SUBSCRIBE, '')
 
 # GLOBAL vars
 Sources = SourceController()	#TODO: rename "Sources" -- confusing name
@@ -1714,6 +1727,12 @@ def worker_queue_async():
 		qAsync.task_done()
 
 		
+def mq_recv():
+	message = subscriber.recv()
+	if message == '/player/track/next':
+		Sources.sourceSeekNext()
+
+	
 #********************************************************************************
 #
 # DBus Dispay Signals
@@ -2128,7 +2147,8 @@ gobject.timeout_add_seconds(30,cb_timer1)
 # NOTE: Remember, everything executed through the qBlock queue blocks, including qPrio!
 # IDEALLY, WE'D PUT THIS BACK IN A THREAD, IF THAT WOULD PERFORM... (which for some reason it doesn't!)
 # 
-gobject.idle_add(cb_queue)
+gobject.idle_add(mq_recv)
+#gobject.idle_add(cb_queue)
 
 #
 # DBus: system bus

@@ -15,16 +15,18 @@ import time
 
 zmq_ctx = zmq.Context()
 zmq_sck = zmq_ctx.socket(zmq.PUB)
+#zmq_sck_req = zmq_ctx.socket(zmq.REQ)
 
 print zmq.pyzmq_version()
 
-def publish_message1(message):
+def publish_message(message):
 	try:
 		msg = "{0} |{1}".format("test",message)
 		print("Sending message : {0}".format(msg))
 		zmq_sck.send(msg)
 	except Exception as e:
 		print("error {0}".format(e))
+
 
 
 """		
@@ -65,34 +67,7 @@ def hello_world():
 	print pages
 	return render_template('index.html', pages=pages)
 	
-@app.route('/api')
-def list_routes():
-	links = []
-	func_list = {}
-	for rule in app.url_map.iter_rules():
-	
-			if rule.endpoint != 'static':
-			
-				print app.view_functions[rule.endpoint]
-				links.append(str(app.view_functions[rule.endpoint]))
-			
-			#url = url_for(rule.endpoint, **options)
-			#print("URL: {0}".format(url_for(rule.endpoint, **options)) )
-			
-	#		func_list[rule.rule] = app.view_functions[rule.endpoint].__doc__
-			
-			#links.append(func_list)
-			#print("RULE: {0}".format(rule))
-			#links.append(func_list[rule.rule])
-			#print("FUNC: {0}".format(app.view_functions[rule.endpoint]))
-			#print rule.rule
-	
-	#		print app.view_functions[rule.endpoint]
-	#		links.append(app.view_functions[rule.endpoint])
-		
-	return render_template("api.html", links=links)	
-	#return jsonify(func_list)
-	
+#app.route('/api')
 """
 
 GET  /source                            Retrieve list of sources
@@ -244,6 +219,7 @@ def post_player_track_track(track):
 #Next track
 @app.route('/hu/api/v1.0/player/next', methods=['POST'])
 def post_player_next():
+	publish_message("/player/track/next")
 	stub = [{'a':'a'},{'b':'b'}]
 	return jsonify({'stub':stub})
 
