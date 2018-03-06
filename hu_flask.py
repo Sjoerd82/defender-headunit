@@ -152,7 +152,8 @@ def publish_message(message):
 @app.route("/print/<int:number>", methods = ['GET'])
 def printNumber(number):
 	response = 'Number %d' % number
-	publish_message('number%d' % number)
+	#publish_message('number%d' % number)
+	publish_message(number)
 	return response
 
 # In python "__name__" will be
