@@ -39,7 +39,7 @@ def publish_message(message):
 		#print("Sending message : {0}".format(msg))
 		topic = "test"
 		message = "hello world"
-		zmq_sck.send("%d %d" % (topic, message))
+		zmq_sck.send("%s %s" % (topic, message))
 		#zmq_sck.send(msg)
 	except Exception as e:
 		print("error {0}".format(e))
