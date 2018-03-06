@@ -68,14 +68,14 @@ def hello_world():
 @app.route('/api')
 def list_routes():
 	links = []
-	#func_list = {}
+	func_list = {}
 	for rule in app.url_map.iter_rules():
 		if rule.endpoint != 'static':
 			
 			#url = url_for(rule.endpoint, **options)
 			#print("URL: {0}".format(url_for(rule.endpoint, **options)) )
 			
-			#func_list[rule.rule] = app.view_functions[rule.endpoint].__doc__
+			func_list[rule.rule] = app.view_functions[rule.endpoint].__doc__
 			
 			#links.append(func_list)
 			#print("RULE: {0}".format(rule))
@@ -83,10 +83,9 @@ def list_routes():
 			#print("FUNC: {0}".format(app.view_functions[rule.endpoint]))
 			#print rule.rule
 			#links.append(rule.endpoint)
-			links.append(rule.rule)
 		
-	return render_template("api.html", links=links)	
-    #return jsonify(func_list)
+	#return render_template("api.html", links=links)	
+    return jsonify(func_list)
 	
 """
 
