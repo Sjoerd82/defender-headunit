@@ -17,7 +17,7 @@ zmq_ctx = zmq.Context()
 zmq_sck = zmq_ctx.socket(zmq.PUB)
 
 # TODO! get port number from configuration
-url = "tcp://127.0.0.1:5555"
+url = "tcp://127.0.0.1:5556"
 
 print zmq.pyzmq_version()
 
@@ -32,7 +32,7 @@ def publish_message1(message):
 		
 def publish_message(message):
 	try:
-		url = "tcp://127.0.0.1:5555"
+		url = "tcp://127.0.0.1:5556"
 		zmq_sck.bind(url)
 		#msg = "{0} |{1}".format("test",message)
 		#msg = "test"
