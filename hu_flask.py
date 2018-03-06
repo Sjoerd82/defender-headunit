@@ -92,7 +92,7 @@ def list_routes():
 	return render_template("api.html", links=links)
 	#for line in sorted(links):
 	#	print line
-""""
+"""
 
 @app.route('/api')
 def list_routes():
