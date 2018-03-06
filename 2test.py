@@ -121,7 +121,8 @@ def printer( message, level=20, continuation=False, tag='SYSTEM' ):
 
 
 def mq_recv():
-	message = subscriber.recv()
+	#message = subscriber.recv()
+	message = "bla"
 	if message == '/player/track/next':
 		print("{0}".format(message))
 	else:
