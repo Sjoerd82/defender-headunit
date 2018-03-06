@@ -73,7 +73,7 @@ def list_routes():
 	
 			if rule.endpoint != 'static':
 			
-[				print app.view_functions[rule.endpoint]
+				print app.view_functions[rule.endpoint]
 				links.append(str(app.view_functions[rule.endpoint]))
 			
 			#url = url_for(rule.endpoint, **options)
