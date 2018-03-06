@@ -163,5 +163,5 @@ if __name__ == '__main__':
 		print("could not bind.. perhaps already bound")
 
 	# The default port it will run on here is 5000
-	app.run(host='0.0.0.0', debug=True)
+	app.run(host='0.0.0.0', debug=False, use_reloader=False)
 	
