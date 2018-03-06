@@ -134,8 +134,9 @@ def publish_message(message):
 	try:
 		pub.bind(url)
 		time.sleep(1)
-		print("sending message : {0}".format(message, pub))
-		pub.send(message)
+		topic = "test"
+		print("sending message : [{0}] {1} {2}".format(topic, message, pub))
+		pub.send(topic,message)
 	except Exception as e:
 		print("error {0}".format(e))
 	finally:
