@@ -159,7 +159,7 @@ def get_source():
 
 
 @app.route('/hu/api/v1.0/source/<int:source_id>', methods=['GET'])
-def get_source_id():
+def get_source_id(id):
 	"""Another. It does nothing."""
 	stub = [{'a':'a'},{'b':'b'}]
 	return jsonify({'stub':stub})
@@ -170,29 +170,29 @@ def get_source_available():
 	return jsonify({'stub':stub})
 
 @app.route('/hu/api/v1.0/source/<int:source_id>/subsource', methods=['GET'])
-def get_source_id_subsource():
+def get_source_id_subsource(id):
 	stub = [{'a':'a'},{'b':'b'}]
 	return jsonify({'stub':stub})
 
 @app.route('/hu/api/v1.0/source/<int:source_id>/subsource/<int:subsource_id>', methods=['GET'])
-def get_source_id_subsource_id():
+def get_source_id_subsource_id(id,ss):
 	stub = [{'a':'a'},{'b':'b'}]
 	return jsonify({'stub':stub})
 
 @app.route('/hu/api/v1.0/source/<int:source_id>/subsource/available', methods=['GET'])
-def get_source_id_subsource_available():
+def get_source_id_subsource_available(id):
 	stub = [{'a':'a'},{'b':'b'}]
 	return jsonify({'stub':stub})
 
 #Set active source to <id> 
 @app.route('/hu/api/v1.0/source/<int:source_id>', methods=['POST'])
-def post_source_id():
+def post_source_id(id):
 	stub = [{'a':'a'},{'b':'b'}]
 	return jsonify({'stub':stub})
 
 #Set active subsource to <id>
 @app.route('/hu/api/v1.0/source/<int:source_id>/subsource/<int:subsource_id>', methods=['POST'])
-def post_source_id_subsource_id():
+def post_source_id_subsource_id(id,ss):
 	stub = [{'a':'a'},{'b':'b'}]
 	return jsonify({'stub':stub})
 
@@ -228,31 +228,31 @@ def get_player_folders():
 
 #Set pause on|off|toggle
 @app.route('/hu/api/v1.0/player/pause/<mode>', methods=['POST'])
-def post_player_pause_mode():
+def post_player_pause_mode(mode):
 	stub = [{'a':'a'},{'b':'b'}]
 	return jsonify({'stub':stub})
 
 #Set state play|pause|stop
 @app.route('/hu/api/v1.0/player/state/<mode>', methods=['POST'])
-def post_player_state_mode():
+def post_player_state_mode(mode):
 	stub = [{'a':'a'},{'b':'b'}]
 	return jsonify({'stub':stub})
 
 #Set random on|off|toggle|special modes
 @app.route('/hu/api/v1.0/player/random/<mode>', methods=['POST'])
-def post_player_random_mode():
+def post_player_random_mode(mode):
 	stub = [{'a':'a'},{'b':'b'}]
 	return jsonify({'stub':stub})
 
 #Set random mode: folder|artist|genre|all
 @app.route('/hu/api/v1.0/player/randommode/<mode>', methods=['POST'])
-def post_player_randommode_mode():
+def post_player_randommode_mode(mode):
 	stub = [{'a':'a'},{'b':'b'}]
 	return jsonify({'stub':stub})
 
 #<playlist id>
 @app.route('/hu/api/v1.0/player/track/<track>', methods=['POST'])
-def post_player_track_track():
+def post_player_track_track(track):
 	stub = [{'a':'a'},{'b':'b'}]
 	return jsonify({'stub':stub})
 
@@ -282,7 +282,7 @@ def post_player_seekrev():
 
 #Seek increment (seconds)
 @app.route('/hu/api/v1.0/player/seek/<incr_sec>', methods=['POST'])
-def post_player_seek_incrsec():
+def post_player_seek_incrsec(incr_sec):
 	stub = [{'a':'a'},{'b':'b'}]
 	return jsonify({'stub':stub})
 
@@ -300,7 +300,7 @@ def get_playlists():
 
 #Retrieve saved playist #todo
 @app.route('/hu/api/v1.0/playlist/<id>', methods=['GET'])
-def get_playlist_id():
+def get_playlist_id(id):
 	stub = [{'a':'a'},{'b':'b'}]
 	return jsonify({'stub':stub})
 
@@ -312,31 +312,31 @@ def get_volume():
 
 #Retrieve EQ
 @app.route('/hu/api/v1.0/equalizer/<band>', methods=['GET'])
-def get_equalizer_band():
+def get_equalizer_band(band):
 	stub = [{'a':'a'},{'b':'b'}]
 	return jsonify({'stub':stub})
 
 #Set volume. Vol= up|down|+n|-n|att (incr,decr is in %)
 @app.route('/hu/api/v1.0/volume/<vol>', methods=['POST'])
-def post_volume_vol():
+def post_volume_vol(vol):
 	stub = [{'a':'a'},{'b':'b'}]
 	return jsonify({'stub':stub})
 
 #Set ATT volume. Level in %.
 @app.route('/hu/api/v1.0/volume/att/<level>', methods=['POST'])
-def post_volume_att_level():
+def post_volume_att_level(level):
 	stub = [{'a':'a'},{'b':'b'}]
 	return jsonify({'stub':stub})
 
 #Set increments for Volume up/down
 @app.route('/hu/api/v1.0/volume/increment/<incr>', methods=['POST'])
-def post_volume_increment_incr():
+def post_volume_increment_incr(incr):
 	stub = [{'a':'a'},{'b':'b'}]
 	return jsonify({'stub':stub})
 
 #Set EQ level for band
 @app.route('/hu/api/v1.0/equalizer/<band>/<level>', methods=['POST'])
-def post_equalizer_band_level():
+def post_equalizer_band_level(band,level):
 	stub = [{'a':'a'},{'b':'b'}]
 	return jsonify({'stub':stub})
 
@@ -348,13 +348,13 @@ def get_config():
 
 #Retrieve a ci group or ci item
 @app.route('/hu/api/v1.0/config/<path:config>', methods=['GET'])
-def get_config_path():
+def get_config_path(path):
 	stub = [{'a':'a'},{'b':'b'}]
 	return jsonify({'stub':stub})
 
 #Set ci item
 @app.route('/hu/api/v1.0/config/<path:config>/<value>', methods=['POST'])
-def post_config_path_value():
+def post_config_path_value(path,value):
 	stub = [{'a':'a'},{'b':'b'}]
 	return jsonify({'stub':stub})
 
@@ -366,13 +366,13 @@ def get_plugin_api():
 
 #Get something from a plugin
 @app.route('/hu/api/v1.0/plugin/<path:config>', methods=['GET'])
-def get_plugin_path():
+def get_plugin_path(path):
 	stub = [{'a':'a'},{'b':'b'}]
 	return jsonify({'stub':stub})
 
 #Set something for a plugin
 @app.route('/hu/api/v1.0/plugin/<path:config>', methods=['POST'])
-def post_plugin_path():
+def post_plugin_path(path):
 	stub = [{'a':'a'},{'b':'b'}]
 	return jsonify({'stub':stub})
 
