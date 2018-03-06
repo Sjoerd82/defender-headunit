@@ -25,11 +25,11 @@ try:
 	zmq_sck.bind(url)
 except Exception as e:
 	print("error {0}".format(e))
-finally:
+#finally:
 	# You wanna unbind the publisher to keep
 	# receiving the published messages
 	# Otherwise you would get a - Adress already in use - error
-	zmq_sck.unbind(url)
+	#zmq_sck.unbind(url)
 
 def publish_message(message):
 	try:
