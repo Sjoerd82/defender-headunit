@@ -34,7 +34,8 @@ def publish_message(message):
 	try:
 		url = "tcp://127.0.0.1:5556"
 		zmq_sck.bind(url)
-		#msg = "{0} |{1}".format("test",message)
+		time.sleep(1)	# IMPORTANT !!
+		msg = "{0} |{1}".format("test",message)
 		#msg = "test"
 		#print("Sending message : {0}".format(msg))
 		topic = "test"
