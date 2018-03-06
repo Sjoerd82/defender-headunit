@@ -21,7 +21,8 @@ print zmq.pyzmq_version()
 
 def publish_message(message):
 	try:
-		msg = "{0} |{1}".format("test",message)
+		#msg = "{0} |{1}".format("test",message)
+		msg = message
 		print("Sending message : {0}".format(msg))
 		zmq_sck.send(msg)
 	except Exception as e:
