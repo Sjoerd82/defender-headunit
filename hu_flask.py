@@ -71,25 +71,13 @@ def list_routes():
 	func_list = {}
 	for rule in app.url_map.iter_rules():
 	
-		try:
-	
 			if rule.endpoint != 'static':
-				
+			
 				if hasattr(app.view_functions[rule.endpoint], 'import_name'):
-					import_name = app.view_functions[rule.endpoint].import_name
-					obj = import_string(import_name)
-					links.append({rule.rule: "%s\n%s" % (",".join(list(rule.methods)), obj.__doc__)})
-				else:
-					links.append({rule.rule: app.view_functions[rule.endpoint].__doc__})
-						
-		except:
+				
+					print app.view_functions[rule.endpoint].import_name
 		
-			links.append({rule.rule: "(%s) INVALID ROUTE DEFINITION!!!" % rule.endpoint})
-			route_info = "%s => %s" % (rule.rule, rule.endpoint)
-			print("Invalid route: %s" % route_info)
-			# func_list[rule.rule] = obj.__doc__
-		
-	
+			links.append(str(app.view_functions[rule.endpoint].import_name))
 			
 			#url = url_for(rule.endpoint, **options)
 			#print("URL: {0}".format(url_for(rule.endpoint, **options)) )
