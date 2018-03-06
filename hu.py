@@ -191,9 +191,9 @@ from slugify import slugify
 
 import zmq
 
-# TODO: get port from config
+context = zmq.Context()
 subscriber = context.socket (zmq.SUB)
-subscriber.connect ("tcp://localhost:5556")
+subscriber.connect ("tcp://localhost:5556")	# TODO: get port from config
 subscriber.setsockopt (zmq.SUBSCRIBE, '')
 
 # GLOBAL vars
