@@ -18,6 +18,9 @@ zmq_sck = zmq_ctx.socket(zmq.PUB)
 
 # TODO! get port number from configuration
 url = "tcp://127.0.0.1:5556"
+zmq_sck.bind(url)
+time.sleep(1)
+
 
 print zmq.pyzmq_version()
 
@@ -148,7 +151,7 @@ def hello(name=None):
 def printNumber(number):
 	response = 'Number %d' % number
 	#publish_message('number%d' % number)
-	publish_message(number)
+	publish_message1(number)
 	return response
 
 # In python "__name__" will be
