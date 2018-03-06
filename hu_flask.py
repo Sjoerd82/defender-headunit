@@ -34,9 +34,13 @@ def publish_message(message):
 	try:
 		url = "tcp://127.0.0.1:5555"
 		zmq_sck.bind(url)
-		msg = "{0} |{1}".format("test",message)
-		print("Sending message : {0}".format(msg))
-		zmq_sck.send(msg)
+		#msg = "{0} |{1}".format("test",message)
+		#msg = "test"
+		#print("Sending message : {0}".format(msg))
+		topic = "test"
+		message = "hello world"
+		zmq_sck.send("%d %d" % (topic, message))
+		#zmq_sck.send(msg)
 	except Exception as e:
 		print("error {0}".format(e))
 	finally:
@@ -135,37 +139,6 @@ def get_source():
 def hello(name=None):
 	return render_template('hello.html', name=name)
 	
-
-def sync(bind_to):
-	# use bind socket + 1
-	sync_with = ':'.join(bind_to.split(':')[:-1] + [str(int(bind_to.split(':')[-1]) + 1)])
-	ctx = zmq.Context.instance()
-	s = ctx.socket(zmq.REP)
-	s.bind(sync_with)
-	print("Waiting for subscriber to connect...")
-	s.recv()
-	print("   Done.")
-	s.send('GO')
-
-def main():
-	bind_to = "FLASK-TEST"
-
-	ctx = zmq.Context()
-	s = ctx.socket(zmq.PUB)
-	s.bind(bind_to)
-
-	sync(bind_to)
-
-	print("Sending arrays...")
-	#for i in range(array_count):
-	#	a = numpy.random.rand(array_size, array_size)
-	#	s.send_pyobj(a)
-	#print("   Done.")
-	
-#main()
-
-
-
 
 # This is an endpoint which prints the
 # number we want to print in response
