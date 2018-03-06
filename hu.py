@@ -2124,6 +2124,11 @@ exit()
 # Main loop
 #
 
+while True:
+	message = subscriber.recv()
+	print(message)
+
+	
 #
 # Initialize the mainloop
 #
