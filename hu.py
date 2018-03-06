@@ -2104,7 +2104,10 @@ t = threading.Thread(target=worker_queue_async)
 #p = Process(target=worker_queue_async)
 t.setDaemon(True)
 #p.daemon = True
-t.start()
+
+
+# DISABLED FOR ZMQ:
+#t.start()
 
 
 """
@@ -2123,10 +2126,6 @@ exit()
 #
 # Main loop
 #
-
-while True:
-	message = subscriber.recv()
-	print(message)
 
 	
 #
