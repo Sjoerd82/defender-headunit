@@ -364,12 +364,12 @@ def post_plugin_path():
 # This is an endpoint which prints the
 # number we want to print in response
 # and also publishes a message containing the number
-@app.route("/print/<int:number>", methods = ['GET'])
-def printNumber(number):
-	response = 'Number %d' % number
-	#publish_message('number%d' % number)
-	publish_message1(number)
-	return response
+#@app.route("/print/<int:number>", methods = ['GET'])
+#def printNumber(number):
+#	response = 'Number %d' % number
+#	#publish_message('number%d' % number)
+#	publish_message1(number)
+#	return response
 
 # In python "__name__" will be
 # "__main__" whenever the script
