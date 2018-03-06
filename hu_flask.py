@@ -65,37 +65,8 @@ def hello_world():
 	print pages
 	return render_template('index.html', pages=pages)
 	
-"""app.route('/api_')
-def list_routes():
-	import urllib
-	links = []
-	for rule in app.url_map.iter_rules():
-
-		#if len(rule.defaults) >= len(rule.arguments):
-		#	url = url_for(rule.endpoint, **(rule.defaults or {}))
-		#	links.append((url, rule.endpoint))
-		
-		print("RULE: {0}".format(rule))
-		
-		options = {}
-		for arg in rule.arguments:
-			options[arg] = "[{0}]".format(arg)
-			print("OPTS-ARG: {0} [{1}]".format(arg, options[arg]))
-		
-		#methods = ','.join(rule.methods)
-		#url = url_for(rule.endpoint, **options)
-		#line = urllib.unquote("{:50s} {:20s} {}".format(rule.endpoint, methods, url))
-		#links.append((url, rule.endpoint))
-		#links.append(line)
-		links.append("bla")
-	
-	return render_template("api.html", links=links)
-	#for line in sorted(links):
-	#	print line
-"""
-
 @app.route('/api')
-def list_routes2():
+def list_routes():
 	links = []
     #func_list = {}
     for rule in app.url_map.iter_rules():
