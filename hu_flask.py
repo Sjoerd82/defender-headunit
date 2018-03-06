@@ -102,7 +102,7 @@ def list_routes():
         if rule.endpoint != 'static':
 		
 			#url = url_for(rule.endpoint, **options)
-			print( url_for(rule.endpoint) )
+			print("URL: {0}".format(url_for(rule.endpoint)) )
 			
             func_list[rule.rule] = app.view_functions[rule.endpoint].__doc__
 			
