@@ -74,16 +74,20 @@ def list_routes():
 		#if len(rule.defaults) >= len(rule.arguments):
 		#	url = url_for(rule.endpoint, **(rule.defaults or {}))
 		#	links.append((url, rule.endpoint))
-			
+		
+		print("RULE: {0}".format(rule))
+		
 		options = {}
 		for arg in rule.arguments:
 			options[arg] = "[{0}]".format(arg)
+			print("OPTS-ARG: {0} [{1}]".format(arg, options[arg]))
 		
-		methods = ','.join(rule.methods)
-		url = url_for(rule.endpoint, **options)
+		#methods = ','.join(rule.methods)
+		#url = url_for(rule.endpoint, **options)
 		#line = urllib.unquote("{:50s} {:20s} {}".format(rule.endpoint, methods, url))
-		links.append((url, rule.endpoint))
+		#links.append((url, rule.endpoint))
 		#links.append(line)
+		links.append("bla")
 	
 	return render_template("api.html", links=links)
 	#for line in sorted(links):
