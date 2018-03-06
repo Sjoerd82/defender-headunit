@@ -16,12 +16,6 @@ import time
 zmq_ctx = zmq.Context()
 zmq_sck = zmq_ctx.socket(zmq.PUB)
 
-# TODO! get port number from configuration
-url = "tcp://127.0.0.1:5556"
-zmq_sck.bind(url)
-time.sleep(1)
-
-
 print zmq.pyzmq_version()
 
 def publish_message1(message):
@@ -159,6 +153,12 @@ def printNumber(number):
 # file itself is called instead
 # of being used as a library
 if __name__ == '__main__':
+	
+	# TODO! get port number from configuration
+	url = "tcp://127.0.0.1:5556"
+	zmq_sck.bind(url)
+	time.sleep(1)
+
 	# The default port it will run on here is 5000
 	app.run(host='0.0.0.0', debug=True)
 	
