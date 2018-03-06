@@ -450,7 +450,7 @@ class sourceClass():
 			if playlistCount == "0":
 				# Failed. Returning false will cause caller to try next source
 				self.__printer(' > Nothing in the playlist, giving up. Marking source unavailable.')
-				sourceCtrl.setAvailableIx( ix, False, subSourceIx )
+				sourceCtrl.setAvailableIx( arIx[0], False, arIx[1] )
 				pa_sfx(LL_ERROR)
 				return False
 			else:
