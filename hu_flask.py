@@ -65,7 +65,7 @@ def hello_world():
 	print pages
 	return render_template('index.html', pages=pages)
 	
-@app.route('/api')
+"""app.route('/api_')
 def list_routes():
 	import urllib
 	links = []
@@ -92,7 +92,16 @@ def list_routes():
 	return render_template("api.html", links=links)
 	#for line in sorted(links):
 	#	print line
+""""
 
+@app.route('/api')
+def list_routes():
+
+    func_list = {}
+    for rule in app.url_map.iter_rules():
+        if rule.endpoint != 'static':
+            func_list[rule.rule] = app.view_functions[rule.endpoint].__doc__
+    return jsonify(func_list)
 	
 """
 
@@ -137,6 +146,7 @@ POST /plugin/<path:config>              Set for a plugin
 
 @app.route('/hu/api/v1.0/source', methods=['GET'])
 def get_source():
+	"""This is a function. It does nothing."""
 	#get sources from MQ
 	#stub:
 	sources = [{ "code":"smb" }, { "code":"media" }]
@@ -145,6 +155,7 @@ def get_source():
 
 @app.route('/hu/api/v1.0/source/<int:source_id>', methods=['GET'])
 def get_source_id():
+	"""Another. It does nothing."""
 	stub = [{'a':'a'},{'b':'b'}]
 	return jsonify({'stub':stub})
 
