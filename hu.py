@@ -1731,6 +1731,8 @@ def mq_recv():
 	message = subscriber.recv()
 	if message == '/player/track/next':
 		Sources.sourceSeekNext()
+	else:
+		print("NO MESSAGE! sorry..")
 
 	
 #********************************************************************************
