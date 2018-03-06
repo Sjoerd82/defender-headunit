@@ -14,7 +14,7 @@ import zmq
 import time
 
 zmq_ctx = zmq.Context()
-zmq_sck = ctx.socket(zmq.PUB)
+zmq_sck = zmq_ctx.socket(zmq.PUB)
 
 # TODO! get port number from configuration
 url = "tcp://127.0.0.1:5555"
