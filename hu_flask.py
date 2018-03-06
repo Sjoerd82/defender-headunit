@@ -33,7 +33,7 @@ except Exception as e:
 
 def publish_message(message):
 	try:
-		msg = "{0}|{1}".format("test",message)
+		msg = "{0} |{1}".format("test",message)
 		print("Sending message : {0}".format(msg))
 		zmq_sck.send(msg)
 	except Exception as e:
