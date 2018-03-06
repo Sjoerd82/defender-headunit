@@ -156,8 +156,11 @@ if __name__ == '__main__':
 	
 	# TODO! get port number from configuration
 	url = "tcp://127.0.0.1:5556"
-	zmq_sck.bind(url)
-	time.sleep(1)
+	try:
+		zmq_sck.bind(url)
+		time.sleep(1)
+	except:
+		print("could not bind.. perhaps already bound")
 
 	# The default port it will run on here is 5000
 	app.run(host='0.0.0.0', debug=True)
