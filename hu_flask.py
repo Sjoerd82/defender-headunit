@@ -84,8 +84,7 @@ def list_routes():
 						
 		except Exception as exc:
 		
-			links.append({rule.rule: 
-					"(%s) INVALID ROUTE DEFINITION!!!" % rule.endpoint})
+			links.append({rule.rule: "(%s) INVALID ROUTE DEFINITION!!!" % rule.endpoint})
 			route_info = "%s => %s" % (rule.rule, rule.endpoint)
 			print("Invalid route: %s" % route_info, exc_info=True)
 			# func_list[rule.rule] = obj.__doc__
