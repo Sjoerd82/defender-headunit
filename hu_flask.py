@@ -81,8 +81,9 @@ def list_routes():
 			#print("RULE: {0}".format(rule))
 			#links.append(func_list[rule.rule])
 			#print("FUNC: {0}".format(app.view_functions[rule.endpoint]))
-			print rule.rule
-			links.append(rule.endpoint)
+			#print rule.rule
+			#links.append(rule.endpoint)
+			links.append(rule.rule)
 		
 	return render_template("api.html", links=links)	
     #return jsonify(func_list)
