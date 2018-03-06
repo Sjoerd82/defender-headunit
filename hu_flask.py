@@ -88,8 +88,8 @@ POST /player/state/...                  Set state play|pause|stop, toggle random
 POST /player/random/...                 Set random on|off|toggle|special modes
 POST /player/randommode/<mode>          Set random mode: folder|artist|genre|all
 POST /player/track/<track>              <playlist id>
-POST /player/next                       Next track
-POST /player/prev                       Prev track
+GET  /player/next                       Next track
+GET  /player/prev                       Prev track
 POST /player/seekfwd                    Seek fwd
 POST /player/seekrev                    Seek rev
 POST /player/seek/<incr_sec>            Seek increment (seconds)
@@ -217,8 +217,8 @@ def post_player_track_track(track):
 	return jsonify({'stub':stub})
 
 #Next track
-@app.route('/hu/api/v1.0/player/next', methods=['POST'])
-def post_player_next():
+@app.route('/hu/api/v1.0/player/next', methods=['GET'])
+def get_player_next():
 	publish_message("/player/track/next")
 	stub = [{'a':'a'},{'b':'b'}]
 	return jsonify({'stub':stub})
