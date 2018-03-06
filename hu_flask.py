@@ -78,9 +78,9 @@ def list_routes():
 				if hasattr(app.view_functions[rule.endpoint], 'import_name'):
 					import_name = app.view_functions[rule.endpoint].import_name
 					obj = import_string(import_name)
-						links.append({rule.rule: "%s\n%s" % (",".join(list(rule.methods)), obj.__doc__)})
-					else:
-						links.append({rule.rule: app.view_functions[rule.endpoint].__doc__})
+					links.append({rule.rule: "%s\n%s" % (",".join(list(rule.methods)), obj.__doc__)})
+				else:
+					links.append({rule.rule: app.view_functions[rule.endpoint].__doc__})
 						
 		except Exception as exc:
 		
