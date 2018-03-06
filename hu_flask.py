@@ -97,6 +97,7 @@ def list_routes():
 @app.route('/api')
 def list_routes():
 
+	links=[]
     func_list = {}
     for rule in app.url_map.iter_rules():
         if rule.endpoint != 'static':
