@@ -82,7 +82,7 @@ def list_routes():
 				else:
 					links.append({rule.rule: app.view_functions[rule.endpoint].__doc__})
 						
-		except Exception as exc:
+		except:
 		
 			links.append({rule.rule: "(%s) INVALID ROUTE DEFINITION!!!" % rule.endpoint})
 			route_info = "%s => %s" % (rule.rule, rule.endpoint)
