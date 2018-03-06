@@ -97,7 +97,7 @@ def list_routes():
 @app.route('/api')
 def list_routes2():
 	links = []
-    func_list = {}
+    #func_list = {}
     for rule in app.url_map.iter_rules():
         if rule.endpoint != 'static':
 			
@@ -108,7 +108,9 @@ def list_routes2():
 			
 			#links.append(func_list)
 			print("RULE: {0}".format(rule))
-			links.append(func_list[rule.rule])
+			#links.append(func_list[rule.rule])
+			print("FUNC: {0}".format(app.view_functions[rule.endpoint]))
+			links.append("bla")
 		
 	return render_template("api.html", links=links)	
     #return jsonify(func_list)
