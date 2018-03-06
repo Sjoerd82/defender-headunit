@@ -5,13 +5,43 @@ from flask import render_template
 from flask import url_for
 from flask import jsonify
 
+app = Flask(__name__)
+
+#
+# Zero MQ
+#
 import zmq
 import time
 
-app = Flask(__name__)
+zmq_ctx = zmq.Context()
+zmq_sck = ctx.socket(zmq.PUB)
 
-ctx = zmq.Context()
-pub = ctx.socket(zmq.PUB)
+# TODO! get port number from configuration
+url = "tcp://127.0.0.1:5555"
+
+print zmq.pyzmq_version()
+
+try:
+	zmq_sck.bind(url)
+except Exception as e:
+	print("error {0}".format(e))
+finally:
+	# You wanna unbind the publisher to keep
+	# receiving the published messages
+	# Otherwise you would get a - Adress already in use - error
+	zmq_sck.unbind(url)
+
+def publish_message(message):
+	try:
+		topic = "test"
+		print("Sending message : {0}| {1}".format(topic, message))
+		zmq_sck.send(message)
+	except Exception as e:
+		print("error {0}".format(e))
+
+#
+# Routes
+#
 
 @app.route('/')
 def hello_world():
@@ -129,21 +159,6 @@ def main():
 #main()
 
 
-def publish_message(message):
-	url = "tcp://127.0.0.1:5555"
-	try:
-		pub.bind(url)
-		time.sleep(1)
-		topic = "test"
-		print("sending message : [{0}] {1} {2}".format(topic, message, pub))
-		pub.send(topic,message)
-	except Exception as e:
-		print("error {0}".format(e))
-	finally:
-		# You wanna unbind the publisher to keep
-		# receiving the published messages
-		# Otherwise you would get a - Adress already in use - error
-		pub.unbind(url)
 
 
 # This is an endpoint which prints the

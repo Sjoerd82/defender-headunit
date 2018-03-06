@@ -49,6 +49,9 @@
 		  "http_port": 8289
 		, "password": "(hash)" 
 	}
+	, "zeromq": {
+		"port": 5555
+	}
 	, "auto_update": {
 		  "mode": "all"
 		, "url": "https://github.com/Sjoerd82/defender-headunit"
