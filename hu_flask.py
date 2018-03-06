@@ -159,7 +159,7 @@ def get_source():
 
 
 @app.route('/hu/api/v1.0/source/<int:source_id>', methods=['GET'])
-def get_source_id(id):
+def get_source_id(source_id):
 	"""Another. It does nothing."""
 	stub = [{'a':'a'},{'b':'b'}]
 	return jsonify({'stub':stub})
@@ -170,29 +170,29 @@ def get_source_available():
 	return jsonify({'stub':stub})
 
 @app.route('/hu/api/v1.0/source/<int:source_id>/subsource', methods=['GET'])
-def get_source_id_subsource(id):
+def get_source_id_subsource(source_id):
 	stub = [{'a':'a'},{'b':'b'}]
 	return jsonify({'stub':stub})
 
 @app.route('/hu/api/v1.0/source/<int:source_id>/subsource/<int:subsource_id>', methods=['GET'])
-def get_source_id_subsource_id(id,ss):
+def get_source_id_subsource_id(source_id,subsource_id):
 	stub = [{'a':'a'},{'b':'b'}]
 	return jsonify({'stub':stub})
 
 @app.route('/hu/api/v1.0/source/<int:source_id>/subsource/available', methods=['GET'])
-def get_source_id_subsource_available(id):
+def get_source_id_subsource_available(source_id):
 	stub = [{'a':'a'},{'b':'b'}]
 	return jsonify({'stub':stub})
 
 #Set active source to <id> 
 @app.route('/hu/api/v1.0/source/<int:source_id>', methods=['POST'])
-def post_source_id(id):
+def post_source_id(source_id):
 	stub = [{'a':'a'},{'b':'b'}]
 	return jsonify({'stub':stub})
 
 #Set active subsource to <id>
 @app.route('/hu/api/v1.0/source/<int:source_id>/subsource/<int:subsource_id>', methods=['POST'])
-def post_source_id_subsource_id(id,ss):
+def post_source_id_subsource_id(source_id,subsource_id):
 	stub = [{'a':'a'},{'b':'b'}]
 	return jsonify({'stub':stub})
 
