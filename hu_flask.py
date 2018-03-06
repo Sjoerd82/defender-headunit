@@ -76,8 +76,7 @@ def list_routes():
 				if hasattr(app.view_functions[rule.endpoint], 'import_name'):
 				
 					print app.view_functions[rule.endpoint].import_name
-		
-			links.append(str(app.view_functions[rule.endpoint].import_name))
+					links.append(str(app.view_functions[rule.endpoint].import_name))
 			
 			#url = url_for(rule.endpoint, **options)
 			#print("URL: {0}".format(url_for(rule.endpoint, **options)) )
