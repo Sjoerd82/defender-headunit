@@ -100,13 +100,13 @@ def list_routes():
     func_list = {}
     for rule in app.url_map.iter_rules():
         if rule.endpoint != 'static':
-		
+			
 			#url = url_for(rule.endpoint, **options)
 			print("URL: {0}".format(url_for(rule.endpoint)) )
 			
-            func_list[rule.rule] = app.view_functions[rule.endpoint].__doc__
-			
-    return jsonify(func_list)
+            #func_list[rule.rule] = app.view_functions[rule.endpoint].__doc__
+		
+    #return jsonify(func_list)
 	
 """
 
