@@ -33,9 +33,9 @@ finally:
 
 def publish_message(message):
 	try:
-		topic = "test"
-		print("Sending message : {0}| {1}".format(topic, message))
-		zmq_sck.send(message)
+		msg = "{0}|{1}".format("test",message)
+		print("Sending message : {0}".format(msg))
+		zmq_sck.send(msg)
 	except Exception as e:
 		print("error {0}".format(e))
 
