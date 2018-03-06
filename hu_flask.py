@@ -70,20 +70,41 @@ def list_routes():
 	links = []
 	func_list = {}
 	for rule in app.url_map.iter_rules():
-		if rule.endpoint != 'static':
+	
+		try:
+	
+			if rule.endpoint != 'static':
+				
+				if hasattr(app.view_functions[rule.endpoint], 'import_name'):
+					import_name = app.view_functions[rule.endpoint].import_name
+					obj = import_string(import_name)
+						links.append({rule.rule: "%s\n%s" % (",".join(list(rule.methods)), obj.__doc__)})
+					else:
+						links.append({rule.rule: app.view_functions[rule.endpoint].__doc__})
+						
+		except Exception as exc:
+		
+			links.append({rule.rule: 
+					"(%s) INVALID ROUTE DEFINITION!!!" % rule.endpoint})
+			route_info = "%s => %s" % (rule.rule, rule.endpoint)
+			print("Invalid route: %s" % route_info, exc_info=True)
+			# func_list[rule.rule] = obj.__doc__
+		
+	
 			
 			#url = url_for(rule.endpoint, **options)
 			#print("URL: {0}".format(url_for(rule.endpoint, **options)) )
 			
-			func_list[rule.rule] = app.view_functions[rule.endpoint].__doc__
+	#		func_list[rule.rule] = app.view_functions[rule.endpoint].__doc__
 			
 			#links.append(func_list)
 			#print("RULE: {0}".format(rule))
 			#links.append(func_list[rule.rule])
 			#print("FUNC: {0}".format(app.view_functions[rule.endpoint]))
 			#print rule.rule
-			print app.view_functions[rule.endpoint]
-			links.append(app.view_functions[rule.endpoint])
+	
+	#		print app.view_functions[rule.endpoint]
+	#		links.append(app.view_functions[rule.endpoint])
 		
 	return render_template("api.html", links=links)	
 	#return jsonify(func_list)
