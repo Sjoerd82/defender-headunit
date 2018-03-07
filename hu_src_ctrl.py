@@ -33,7 +33,7 @@ from modules.hu_logger import RemAnsiFormatter
 import socket
 
 
-arg_loglevel = LL_INFO
+arg_loglevel = 20
 arg_source = 'SMB'
 arg_boot = False
 
