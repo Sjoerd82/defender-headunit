@@ -79,8 +79,41 @@ import zmq
 context = zmq.Context()
 subscriber = context.socket (zmq.SUB)
 subscriber.connect ("tcp://localhost:5556")	# TODO: get port from config
-subscriber.setsockopt (zmq.SUBSCRIBE, '/source')
-subscriber.setsockopt (zmq.SUBSCRIBE, '/player')
+
+topics = ['/source','/player']
+for topic in topics:
+	subscriber.setsockopt (zmq.SUBSCRIBE, topic)
+#subscriber.setsockopt (zmq.SUBSCRIBE, '/source')
+#subscriber.setsockopt (zmq.SUBSCRIBE, '/player')
+
+thingy1['player'] = ['track','folders','pause','state','random','randommode']
+
+thingy2 = {
+ 'player':['track','folders','pause','state','random','randommode']
+}
+
+thingy3 = {
+ 'player':[ {'path':'track','command':'GET'},
+            {'path':'track','command':'SET'},
+            {'path':'folders','command':'GET'} ]
+}
+
+thingy4 = {
+ 'player':[ { 'command':'GET', 'path': ['track','folders','pause','state','random','randommode'] }
+           ,{ 'command':'SET', 'path': ['track','pause','state','random','randommode'] }
+  
+}
+
+thingy5 = {
+ 'player':[ { 'command':'GET', 'path': 'track', 'func':test_next_track } ]
+
+}
+
+thingy6 = {
+ 'player': { 'track': { 'GET' : test_next_track, 'SET' : test_next_track } }
+}
+
+
 
 # GLOBAL vars
 Sources = SourceController()	#TODO: rename "Sources" -- confusing name
@@ -824,6 +857,10 @@ def worker_queue_async():
 		qAsync.task_done()
 
 
+def test_next_track():
+	print("WHOPPA! NEXTING!")
+	
+	
 def parse_message(message):
 	
 	# Expected format:
@@ -840,33 +877,64 @@ def parse_message(message):
 	cmd_par = path_cmd[1].split(":")
 
 	if len(cmd_par) == 1:
-		command = cmd_par
+		command = cmd_par[0]
 	elif len(cmd_par) == 2:
 		command = cmd_par[0]
 		param = cmd_par[1]
 
 		for parpart in param.split(","):
 			if parpart:
-				params.append(parpart)		
+				params.append(parpart)
 		
 	else:
 		print("Malformed message!")
 	
 	print("[MQ] Received Path: {0}; Command: {1}; Parameters: {2}".format(path,command,params))
 
-	
-	
 
 def mq_recv():
 	message = subscriber.recv()
-	print message
-	parse_message(message)
+	#print message
+	#parse_message(message)
 	#if message == '/player/track/next':
 	#	Sources.sourceSeekNext()
-	#else:
-	#	print("NO MESSAGE! sorry..")
+
+	#
+	# PARSE
+	#
+	path = []
+	params = []
 	
+	path_cmd = message.split(" ")
+	for pathpart in path_cmd[0].split("/"):
+		if pathpart:
+			path.append(pathpart)
+	
+	cmd_par = path_cmd[1].split(":")
+
+	if len(cmd_par) == 1:
+		command = cmd_par[0]
+	elif len(cmd_par) == 2:
+		command = cmd_par[0]
+		param = cmd_par[1]
+
+		for parpart in param.split(","):
+			if parpart:
+				params.append(parpart)
+	
+	#
+	# ACT
+	#
+	if path[0] == 'player':
+		print "DO STUFF FOR PLAYER"
 		
+	
+	elif path[0] == 'event':
+		print "DO STUFF FOR EVENT"
+
+	
+	print thingy6['player']['track']['GET']
+			
 	return True
 
 	
