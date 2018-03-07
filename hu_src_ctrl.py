@@ -109,8 +109,12 @@ thingy5 = {
 
 }
 
+obj = source_config['sourceModule']	#[0]
+sc = getattr(obj,'sourceClass')()
+
+			
 thingy6 = {
- 'player': { 'track': { 'GET' : test_next_track, 'SET' : test_next_track } }
+ 'player': { 'track': { 'GET' : globals()['test_next_track'), 'SET' : globals()['test_next_track') } }
 }
 
 
