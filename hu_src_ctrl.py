@@ -830,21 +830,27 @@ def parse_message(message):
 	# /path/path/path Command:Param1,Param2
 	
 	path = []
+	params = []
+	
 	path_cmd = message.split(" ")
 	for pathpart in path_cmd[0].split("/"):
 		if pathpart:
 			path.append(pathpart)
-			
-	command = path_cmd[1].split(":")[0]
-	param = path_cmd[1].split(":")[1]
 	
-	params = []
-	#pars = param.split(",")
-	#print pars
-	#for parpart in pars: #path_cmd[1].split(","):
-	for parpart in param.split(","):
-		if parpart:
-			params.append(parpart)
+	cmd_par = path_cmd[1].split(":")
+
+	if len(cmd_par) == 1:
+		command = path_cmd
+	elif len(cmd_par) == 2:
+		command = cmd_par[0]
+		param = cmd_par[1]
+
+		for parpart in param.split(","):
+			if parpart:
+				params.append(parpart)		
+		
+	else:
+		print("Malformed message!")
 	
 	print("[MQ] Received Path: {0}, Command: {1}, Parameters: {2}".format(path,command,params))
 
