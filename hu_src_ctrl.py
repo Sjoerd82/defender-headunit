@@ -98,11 +98,11 @@ thingy3 = {
             {'path':'folders','command':'GET'} ]
 }
 
-thingy4 = {
- 'player':[ { 'command':'GET', 'path': ['track','folders','pause','state','random','randommode'] }
-           ,{ 'command':'SET', 'path': ['track','pause','state','random','randommode'] }
-  
-}
+#thingy4 = {
+# 'player':[ { 'command':'GET', 'path': ['track','folders','pause','state','random','randommode'] }
+#           ,{ 'command':'SET', 'path': ['track','pause','state','random','randommode'] }
+#  
+#}
 
 thingy5 = {
  'player':[ { 'command':'GET', 'path': 'track', 'func':test_next_track } ]
