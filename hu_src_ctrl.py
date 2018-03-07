@@ -838,7 +838,8 @@ def parse_message(message):
 	command = path_cmd[1].split(":")[0]
 	
 	params = []
-	for parpart in path_cmd[1].split(":")[1]
+	pars = path_cmd[1].split(":")[1]
+	for parpart in 
 		if parpart:
 			params.append(parpart)
 	
