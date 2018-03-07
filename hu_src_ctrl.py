@@ -934,7 +934,7 @@ def mq_recv():
 		print "DO STUFF FOR EVENT"
 
 	
-	print thingy6['player']['track']['GET']
+	print thingy6['player']['track']['GET']()
 			
 	return True
 
