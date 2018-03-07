@@ -109,12 +109,13 @@ thingy5 = {
 
 }
 
-obj = source_config['sourceModule']	#[0]
-sc = getattr(obj,'sourceClass')()
+def test_next_track():
+	print("WHOPPA! NEXTING!")
 
-			
+globals()['test_next_track']()
+
 thingy6 = {
- 'player': { 'track': { 'GET' : globals()['test_next_track'], 'SET' : globals()['test_next_track'] } }
+ 'player': { 'track': { 'GET' : globals()['test_next_track'](), 'SET' : globals()['test_next_track']() } }
 }
 
 
@@ -860,10 +861,6 @@ def worker_queue_async():
 		# sign off task
 		qAsync.task_done()
 
-
-def test_next_track():
-	print("WHOPPA! NEXTING!")
-	
 	
 def parse_message(message):
 	
