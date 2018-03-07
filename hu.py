@@ -96,7 +96,10 @@ import logging.config
 import datetime
 import os
 logger = None
-from hu_logger import *
+
+from modules.hu_logger import ColoredFormatter
+from modules.hu_logger import RemAnsiFormatter
+
 # for logging to syslog
 import socket
 
@@ -162,12 +165,12 @@ import subprocess
 #from multiprocessing import Process
 
 # support modules
-from hu_pulseaudio import *
-from hu_volume import *
-from hu_utils import *
-from hu_source import SourceController
-from hu_settings import *
-from hu_mpd import *
+from modules.hu_pulseaudio import *
+from modules.hu_volume import *
+from modules.hu_utils import *
+from modules.hu_source import SourceController
+from modules.hu_settings import *
+from modules.hu_mpd import *
 #from hu_menu import *
 
 # dbus

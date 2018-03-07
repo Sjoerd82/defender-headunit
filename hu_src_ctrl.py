@@ -33,6 +33,11 @@ from modules.hu_logger import RemAnsiFormatter
 import socket
 
 
+arg_loglevel = LL_INFO
+arg_source = 'SMB'
+arg_boot = False
+
+
 #********************************************************************************
 #
 #
@@ -46,12 +51,12 @@ import inspect
 
 
 # support modules, old style
-from hu_pulseaudio import *
-from hu_volume import *
-from hu_utils import *
-from hu_source import SourceController
-from hu_settings import *
-from hu_mpd import *
+from modules.hu_pulseaudio import *
+from modules.hu_volume import *
+from modules.hu_utils import *
+from modules.hu_source import SourceController
+from modules.hu_settings import *
+from modules.hu_mpd import *
 
 # main loop
 import gobject
@@ -90,12 +95,6 @@ PID_FILE = "hu"
 SYSLOG_UDP_PORT=514
 
 hu_details = { 'track':None, 'random':'off', 'repeat':True, 'att':False }
-
-#def volume_att_toggle():
-#	hudispdata = {}
-#	hudispdata['att'] = '1'
-#	disp.dispdata(hudispdata)
-#	return None
 	
 # ********************************************************************************
 # Output wrapper
@@ -763,133 +762,6 @@ def plugin_execute( script ):
 	call(['python',script])
 
 
-def test_match( dTest, dMatchAgainst ):
-	matches = set(dTest.items()) & set(dMatchAgainst.items())
-	if len(matches) == len(dTest):
-		return True
-	else:
-		return False
-
-
-def QuickPlay( prevSource, prevSourceSub ):
-
-	if prevSource == "":
-		printer ('No previous source.', tag='QPLAY')
-		return None
-
-
-	def bla_refactored( prevSourceName, prevSourceSub, doCheck ):
-
-		global Sources
-		retSource = []
-		
-		ix = 0
-		for source in Sources.getAll():
-			#print "{0} Source {1}".format(ix,source["name"])
-			#print source
-			if source['name'] == prevSourceName:
-				if not source['template']:
-					#print "......... Previous Source: {0}; no subsources".format(source['name'])
-					#print "......... Checking if available.."
-					if not Sources.sourceCheck( ix ):
-						#print "---END--- Play first available source."
-						return []
-						#return False
-					else:
-						#print "---END--- CONTINUING playback of this subsource!"
-						retSource.append(ix)
-						return retSource
-
-				else:
-					#print "......... Previous Source: {0}; is template, checking for subsources...>".format(source['name'])
-					if not 'subsources' in source:
-						#print "......... Previous Source: {0}; is template, but has no subsources.".format(source['name'])
-						#print "---END--- no suitable source to continue playing... Play first available source."
-						return []
-						#return False
-					else:
-						#print "......... Previous Source: {0}; is template, and has subsources, testing match...>".format(source['name'])
-						ix_ss = 0
-						for subsource in source['subsources']:
-							#print j
-							#print subsource
-							if test_match( prevSourceSub, subsource ):
-								#print "> ..MATCH! (todo: stop)"
-								if doCheck:
-									# Check if REALLY available...
-									# !!! TODO: MAKE THIS MORE UNIVERSAL..... !!!
-									if source['name'] in ['media','locmus']:
-										#print "OPTION 1 media/locmus"
-										#if not Sources.sourceCheckParams( ix, ['/media/PIHU_DATA'] ):
-										if not Sources.sourceCheck( ix, ix_ss ): #subsource['mountpoint'] ):
-											#print "directory not present or empty [todo: or no music in mpd]"
-											#print "---END--- Play first available source."
-											return []
-											#return False
-										else:
-											#print "---END--- CONTINUING playback of this subsource!"
-											retSource.append(ix)
-											retSource.append(ix_ss)
-											return retSource
-											#return True
-									#TEMPORARY:
-									else:
-										if not Sources.sourceCheck( ix ):
-											#print "---END--- Play first available source."
-											return []
-											#return False
-										else:
-											#print "---END--- CONTINUING playback of this subsource!"
-											retSource.append(ix)
-											retSource.append(ix_ss)
-											return retSource
-											#return True
-										
-								else:
-									# No check, clear for available..
-									#print "---END--- CONTINUING playback of this subsource!"
-									retSource.append(ix)
-									retSource.append(ix_ss)
-									return retSource
-									#return True
-							else:
-								pass
-								#print "> ..no match on this one"
-								#print "---END--- no suitable source or subsource to continue playing... Play first available source."
-							ix_ss+=1
-				# Nothing matched for this source name
-				return []
-				#return False
-			ix+=1
-
-		# Source name was not found.. (strange situation...)
-		return []
-		#return False
-
-	if not prevSource == "":
-		printer("Previous source: {0} {1}".format(prevSource, prevSourceSub), tag='QPLAY' )
-		prevIx = bla_refactored( prevSource, prevSourceSub, True ) #PlayPrevSource()
-		if len(prevIx) == 1:
-			printer ('Continuing playback', tag='QPLAY')
-			hu_play(prevIx[0])
-			#Sources.setCurrent(prevIx[0])
-			#dLoaded = load_current_resume()
-			#Sources.sourcePlay(dLoaded)
-			return True
-						
-		elif len(prevIx) == 2:
-			printer ('Continuing playback (subsource)', tag='QPLAY')
-			hu_play(prevIx[0],prevIx[1])
-			#Sources.setCurrent(prevIx[0],prevIx[1])
-			#dLoaded = load_current_resume()
-			#Sources.sourcePlay(dLoaded)
-			return True
-
-		else:
-			printer ('Continuing playback not available.', tag='QPLAY')
-			return False
-		
-
 def worker_queue_prio():
 	while True:
 	#	while not qPrio.empty():
@@ -1027,141 +899,17 @@ init_logging_f( configuration['directories']['log'],
 init_logging_s( address='/dev/log' )
 
 #
-# Set/Restore volume level
-#
-#
-# Legacy: #TODO
-settings = cSettings.get()
-VolPulse = VolumeController('alsa_output.platform-soc_sound.analog-stereo')
-VolPulse.set( settings['volume'] )
-
-
-#
-# "Splash Screen": Display version and play startup tune
+# "Splash Screen": Display version
 #
 #
 myprint('Headunit.py version {0}'.format(__version__),tag='SYSTEM')
-pa_sfx('startup')
-
-#
-# create menu structure
-#
-#print configuration[
-#huMenu = Menu()
-#testentry = { "entry": "Browse tracks",
-#  "entry_name": "browse_track"}
-#huMenu.add( testentry )
 
 
 #
 # App. Init
 #
 #
-myprint('Loading Source Plugins...',tag='SYSTEM')
-# import sources directory
-import sources
-# read source config files and start source inits
-loadSourcePlugins(os.path.join( os.path.dirname(os.path.abspath(__file__)), 'sources'))
 
-
-#print "TESTING TESTING"
-#Sources.setAvailableIx(0,True)
-#Sources.setCurrent(0)
-#Sources.sourcePlay()
-#exit()
-
-""" DEBUGGING....
-print "DEBUG!"
-prevSource = {'name': 'fm'}
-prevSourceSub = {}
-
-print bla_refactored( prevSource, prevSourceSub )
-	
-print "DEBUG!"
-prevSource = {'name': 'locmus'}
-prevSourceSub = {'mountpoint':'/media/PIHU_DATA'}
-bFound = False
-
-print bla_refactored( prevSource, prevSourceSub )
-
-
-print "DEBUG!"
-prevSource = {'name': 'locmus'}
-prevSourceSub = {'mountpoint':'/media/PIHU_DATA3'}
-bFound = False
-
-print bla_refactored( prevSource, prevSourceSub )
-"""
-
-
-#debug
-#huMenu.menuDisplay( header=True )
-#huMenu.menuDisplay( entry=1, header=True )
-#print huMenu.getMenu( [1,0] )
-
-#
-# import control plugins (disabled)
-#
-"""
-myprint('Loading Control Plugins...',tag='SYSTEM')
-from plugin_control import *
-
-threads = []
-# loop through the control plugin dir
-for filename in os.listdir( configuration['directories']['controls'] ):
-		#if filename.startswith('') and
-		if filename.endswith('.py'):
-			pathfilename = os.path.join( configuration['directories']['controls'], filename )
-			#t = threading.Thread(target=plugin_execute, args=(pathfilename,))
-			#t.setDaemon(True)
-			p = Process(target=plugin_execute, args=(pathfilename,))
-			p.daemon = True
-			threads.append(p)
-			#t.start()	WORKAROUND
-
-# loop through the output plugin dir
-for filename in os.listdir( configuration['directories']['output'] ):
-		#if filename.startswith('') and
-		if filename.endswith('.py'):
-			pathfilename = os.path.join( configuration['directories']['output'], filename )
-			#t = threading.Thread(target=plugin_execute, args=(pathfilename,))
-			#t.setDaemon(True)
-			p = Process(target=plugin_execute, args=(pathfilename,))
-			p.daemon = True
-			threads.append(p)
-			#t.start()	WORKAROUND
-
-# NOTE: Plugins are now loading in the background, in parallel to code below.
-# NOTE: This can really interfere, in a way I don't understand.. executing the threads later helps... somehow..
-# NOTE: For NOW, we'll just execute the threads after the loading of the "other" plugins...
-
-
-#
-# Load mpd dbus listener
-#
-#
-#t = threading.Thread(target=plugin_execute, args=('/mnt/PIHU_APP/defender-headunit/dbus_mpd.py',))
-#t.setDaemon(True)
-p = Process(target=plugin_execute, args=('/mnt/PIHU_APP/defender-headunit/dbus_mpd.py',))
-p.daemon = True
-threads.append(p)
-
-
-#
-# load other plugins
-#
-myprint('Loading Other Plugins...',tag='SYSTEM')
-from plugin_other import *
-
-# WORKAROUND...
-#for p in threads:
-#	p.start()
-"""
-
-# LCD (TODO: move to plugins)
-#from hu_lcd import *
-#disp = lcd_mgr()
-#disp.lcd_text('Welcome v0.1.4.8')
 
 # MPD
 mpdc = mpdController()
@@ -1179,77 +927,6 @@ myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 #
 #def main():
 
-#
-# QuickPlay
-#
-
-prevSource = cSettings.get_key('source')
-prevSourceSub = cSettings.get_key('subsourcekey')
-
-# BOOT is true for 'early boot'
-#if BOOT and not prevSource = "" and not prevSource == SOURCE:
-if not prevSource == SOURCE and not prevSource:
-	print('Quickplay failed due mismatching source')
-	exit()
-
-if SOURCE and not prevSource:
-	prevSource = SOURCE
-
-
-if prevSource == "":
-	printer ('No previous source.', tag='QPLAY')
-	Sources.sourceCheckAll()
-	printSummary(Sources)
-	printer ('Starting first available source', tag='QPLAY')
-	Sources.next()
-	hu_play(resume=False)
-	
-else:
-	ret = QuickPlay( prevSource,
-					 prevSourceSub )
-					 
-	if ret:
-		printer ('Checking other sources...', tag='QPLAY')
-		# TODO: the prev. source is now checked again.. this is not efficient..
-		Sources.sourceCheckAll()
-		printSummary(Sources)
-		
-	else:
-		printer ('Continuing playback not available, checking all sources...', tag='QPLAY')
-		Sources.sourceCheckAll()
-		printSummary(Sources)
-		printer ('Starting first available source', tag='QPLAY')
-		Sources.next()
-		hu_play(resume=False)
-
-# Save Settings
-currSrc = Sources.getComposite()
-cSettings.set('source',currSrc['name'])
-
-# update sub-source key (in case of sub-source)
-if 'subsource' in currSrc:
-	subsource_key = {}
-	for key in currSrc['subsource_key']:
-		subsource_key[key] = currSrc['subsource'][key]
-	cSettings.set('subsourcekey', subsource_key)
-
-cSettings.save()
-
-		
-	   
-"""
-else:
-	for source in Sources.getAll():
-		if source['name'] == prevSource:
-			print("!! PREVIOUS SOURCE: {0}".format(source['name']))
-			#if 'label' in source:
-			index = Sources.getIndex
-			print("!! CHECKING IF IT IS AVAILABLE...")
-			
-			Sources.sourceCheck(
-"""
-# First, try previously active source
-
 
 # on demand...
 #plugin_sources.media.media_add('/media/USBDRIVE', Sources)
@@ -1262,51 +939,6 @@ else:
 #dSettings1 = {"source": -1, 'volume': 99, 'mediasource': -1, 'medialabel': ''}	 # No need to save random, we don't want to save that (?)
 #settings_save( sFileSettings, dSettings1 )
 
-#
-# Setting up worker threads
-#
-printer('Setting up queues and worker threads')
-
-
-qPrio = Queue(maxsize=4)	# Short stuff that can run anytime:
-qBlock = Queue(maxsize=4)	# Blocking stuff that needs to run in sequence
-qAsync = Queue(maxsize=4)	# Long stuff that can run anytime (but may occasionally do a reality check):
-
-t = threading.Thread(target=worker_queue_prio)
-#p = Process(target=worker_queue_prio)
-t.setDaemon(True)
-#p.daemon = True
-t.start()
-#p.join()
-
-# disabled: see idle_add Queue Handler below
-# t = threading.Thread(target=worker_queue_blocking)
-# p = Process(target=worker_queue_blocking)
-# t.setDaemon(True)
-# p.daemon = True
-# t.start()
-
-t = threading.Thread(target=worker_queue_async)
-#p = Process(target=worker_queue_async)
-t.setDaemon(True)
-#p.daemon = True
-
-
-# DISABLED FOR ZMQ:
-#t.start()
-
-
-"""
-qBlock.put("SOURCE")
-qPrio.put("VOL_UP")
-qBlock.put("NEXT")
-qPrio.put("VOL_UP")
-qPrio.put("VOL_ATT")
-qBlock.put("SHUFFLE")
-qPrio.put("SHUTDOWN")
-
-exit()
-"""
 
 #********************************************************************************
 #
@@ -1325,15 +957,6 @@ DBusGMainLoop(set_as_default=True)
 #
 mainloop = gobject.MainLoop()
 
-
-#
-# 30 second timer
-#
-# timer1:
-# - Save settings
-# - check if dbus services still online? (or make this a separate service?)
-gobject.timeout_add_seconds(30,cb_timer1)
-
 #
 # Queue handler
 # NOTE: Remember, everything executed through the qBlock queue blocks, including qPrio!
@@ -1348,44 +971,19 @@ gobject.idle_add(mq_recv)
 #
 #m = MainInstance()
 
-
+"""
 try:
 	bus = dbus.SystemBus()
 except dbus.DBusException:
 	raise RuntimeError("No D-Bus connection")
 
 # Declare a name where our service can be reached
+
 try:
     bus_name = dbus.service.BusName("com.arctura.hu", bus, do_not_queue=True)
 except dbus.exceptions.NameExistsException:
     print("service is already running")
     sys.exit(1)
-
-# Output
-disp = dbusDisplay(bus)
-volm = dbusVolume(bus)
-
-
-"""
-time.sleep(5)	#wait for the plugin to be ready
-
-hudispdata = {}
-hudispdata['rnd'] = "1"
-hudispdata['artist'] = "The Midnight"
-disp.dispdata(hudispdata)
-
-time.sleep(5)
-hudispdata = {}
-hudispdata['rnd'] = "0"
-disp.dispdata(hudispdata)
-
-time.sleep(5)
-hudispdata = {}
-hudispdata['att'] = "1"
-disp.dispdata(hudispdata)
-
-exit()
-"""
 
 #
 # Connect Callback functions to DBus Signals
@@ -1397,16 +995,16 @@ bus.add_signal_receiver(cb_udisk_dev_add, signal_name='DeviceAdded', dbus_interf
 bus.add_signal_receiver(cb_udisk_dev_rem, signal_name='DeviceRemoved', dbus_interface="org.freedesktop.UDisks")
 bus.add_signal_receiver(cb_ifup, signal_name='ifup', dbus_interface="com.arctura.ifup")
 bus.add_signal_receiver(cb_ifdn, signal_name='ifdn', dbus_interface="com.arctura.ifdn")
-
+"""
 
 #
 # Start the blocking main loop...
 #
-with PidFile(PID_FILE) as p:
-	try:
-		mainloop.run()
-	finally:
-		mainloop.quit()
+#with PidFile(PID_FILE) as p:
+try:
+	mainloop.run()
+finally:
+	mainloop.quit()
 
 
 # TODO
