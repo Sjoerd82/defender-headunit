@@ -79,7 +79,7 @@ import zmq
 context = zmq.Context()
 subscriber = context.socket (zmq.SUB)
 subscriber.connect ("tcp://localhost:5556")	# TODO: get port from config
-subscriber.setsockopt (zmq.SUBSCRIBE, '')
+subscriber.setsockopt (zmq.SUBSCRIBE, '/player/')
 
 # GLOBAL vars
 Sources = SourceController()	#TODO: rename "Sources" -- confusing name
@@ -111,21 +111,6 @@ def printer( message, level=20, continuation=False, tag='SYSTEM' ):
 # Headunit functions
 #
 
-def volume_att():
-
-	global volm
-	global hu_details
-	
-	if 'att' in hu_details:
-		hu_details['att'] = not hu_details['att']
-	else:
-		hu_details['att'] = True
-
-	if hu_details['att']:
-		volm.set('20%')
-	else:
-		pre_att_vol = '60%' #TODO	#VolPulse.get()
-		volm.set(pre_att_vol)
 
 def do_source():
 
@@ -837,14 +822,32 @@ def worker_queue_async():
 		# sign off task
 		qAsync.task_done()
 
+
+def parse_message(message):
+	
+	# Expected format:
+	# /path/path/path Command:Params
+	path_cmd = message.split(" ")
+	for pathpart in path_cmd[0].split("/"):
+		print pathpart
+
+	command = path_cmd[1].split(":")[0]
+	print command
+	
+	params = path_cmd[1].split(":")[1]
+	print params
 		
+	
+
 def mq_recv():
 	message = subscriber.recv()
 	print message
+	parse_message(message)
 	#if message == '/player/track/next':
 	#	Sources.sourceSeekNext()
 	#else:
 	#	print("NO MESSAGE! sorry..")
+	
 		
 	return True
 
