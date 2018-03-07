@@ -86,7 +86,7 @@ for topic in topics:
 #subscriber.setsockopt (zmq.SUBSCRIBE, '/source')
 #subscriber.setsockopt (zmq.SUBSCRIBE, '/player')
 
-thingy1['player'] = ['track','folders','pause','state','random','randommode']
+#thingy1['player'] = ['track','folders','pause','state','random','randommode']
 
 thingy2 = {
  'player':['track','folders','pause','state','random','randommode']
