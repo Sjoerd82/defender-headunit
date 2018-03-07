@@ -114,7 +114,7 @@ sc = getattr(obj,'sourceClass')()
 
 			
 thingy6 = {
- 'player': { 'track': { 'GET' : globals()['test_next_track'), 'SET' : globals()['test_next_track') } }
+ 'player': { 'track': { 'GET' : globals()['test_next_track'], 'SET' : globals()['test_next_track'] } }
 }
 
 
