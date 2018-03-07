@@ -104,10 +104,10 @@ thingy3 = {
 #  
 #}
 
-thingy5 = {
- 'player':[ { 'command':'GET', 'path': 'track', 'func':test_next_track } ]
-
-}
+#thingy5 = {
+# 'player':[ { 'command':'GET', 'path': 'track', 'func':test_next_track } ]
+#
+#}
 
 def test_next_track():
 	print("WHOPPA! NEXTING!")
