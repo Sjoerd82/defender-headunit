@@ -827,22 +827,24 @@ def worker_queue_async():
 def parse_message(message):
 	
 	# Expected format:
-	# /path/path/path Command:Params
+	# /path/path/path Command:Param1,Param2
+	
 	path = []
 	path_cmd = message.split(" ")
 	for pathpart in path_cmd[0].split("/"):
 		if pathpart:
 			path.append(pathpart)
-			print pathpart
 			
-	print("list: {0}".format(path))
-
 	command = path_cmd[1].split(":")[0]
-	print command
 	
-	params = path_cmd[1].split(":")[1]
-	print params
-		
+	params = []
+	for parpart in path_cmd[1].split(":")[1]
+		if parpart:
+			params.append(parpart)
+	
+	print("[MQ] Received Path: {0}, Command: {1}, Parameters: {2}".format(path,command,params))
+
+	
 	
 
 def mq_recv():
