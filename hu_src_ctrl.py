@@ -840,7 +840,7 @@ def parse_message(message):
 	
 	params = []
 	#pars = param.split(",")
-	print pars
+	#print pars
 	#for parpart in pars: #path_cmd[1].split(","):
 	for parpart in param.split(","):
 		if parpart:
