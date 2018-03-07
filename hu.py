@@ -202,7 +202,6 @@ subscriber.setsockopt (zmq.SUBSCRIBE, '')
 
 # GLOBAL vars
 Sources = SourceController()	#TODO: rename "Sources" -- confusing name
-mpdc = None
 disp = None
 arMpcPlaylistDirs = [ ]			#TODO: should probably not be global...
 
@@ -871,125 +870,7 @@ def volume_att():
 		volm.set(pre_att_vol)
 
 def do_source():
-
-	global Sources
-	global cSettings
-		
-	# if more than one source available...	
-	if Sources.getAvailableCnt() > 1:
-		# go to next source
-		res = Sources.next()
-		if not res == None:
-
-			# play newly selected source
-			hu_play()
-
-			#
-			# update display
-			#
-			""" dit werkt opzich wel... maar kan beter...
-			currSrc = Sources.get(None)
-			hudispdata = {}
-			if currSrc['name'] == 'fm':
-				hudispdata['src'] = 'FM'
-			elif currSrc['name'] == 'media':
-				hudispdata['src'] = 'USB'
-				hudispdata['info'] = "Removable Media"
-				#hudispdata['info1'] = "label: " + currSrc['subsources'][arCurrIx[1]]['label']
-			elif currSrc['name'] == 'locmus':
-				hudispdata['src'] = 'INT'
-				hudispdata['info'] = "Internal Storage"
-				#if len(currSrc['subsources']) > 1:
-				#	hudispdata['info1'] = "folder: " + currSrc['subsources'][arCurrIx[1]]['label']
-			elif currSrc['name'] == 'bt':
-				hudispdata['src'] = 'BT'
-				hudispdata['info'] = "Bluetooth"
-			elif currSrc['name'] == 'line':
-				hudispdata['src'] = 'AUX'
-				hudispdata['info'] = "AUX Line-In"
-			elif currSrc['name'] == 'stream':
-				hudispdata['src'] = 'WEB'
-				hudispdata['info'] = "Internet Radio"
-			elif currSrc['name'] == 'smb':
-				hudispdata['src'] = 'NET'
-				hudispdata['info'] = "Network Shares"
-			disp.dispdata(hudispdata)
-			"""
-
-			# if source is MPD and supports directories (don't they all?), gather list of dirs, in separate thread..
-			dirList = mpdc.mpc_get_PlaylistDirs()
-			print dirList
-			
-			# TODO: make this better... somehow.
-			"""
-			if currSrc['name'] == 'fm':
-				source_settings = {'freq':'101.10'}	# TODO
-			elif currSrc['name'] == 'media':
-				source_settings = { 'label':currSrc['label'], 'uuid':currSrc['uuid'] }
-			elif currSrc['name'] == 'locmus':
-				source_settings = { 'mountpoint':currSrc['mountpoint'] }
-			elif currSrc['name'] == 'bt':
-				source_settings = {}
-			elif currSrc['name'] == 'line':
-				source_settings = {}				
-			elif currSrc['name'] == 'stream':
-				source_settings = { 'uri':'' }	#TODO
-			elif currSrc['name'] == 'smb':
-				source_settings = { 'mpd_dir':'music' }	#TODO
-			
-			cSettings.set('source_settings',source_settings)
-			"""
-			
-			# TODO!!
-			#printer('TODO!! save subsoure to settings') # add to source_stop() functionss.. #no better to handle it here.. source has no notion of operational settings..
-
-			#testSs = {'mountpoint':'/media/SJOERD'}
-			#cSettings.set('source','media')
-			#cSettings.set('subsource',testSs)
-			
-			"""
-			if currSrc['name'] == 'fm':
-				source_settings = {'freq':'101.10'}	# TODO
-			elif currSrc['name'] == 'media':
-
-				if 'label' in currSrc:
-					cSettings.set('label',currSrc['label'])
-				else:
-					cSettings.set('label',"")
-				if 'uuid' in currSrc:
-					cSettings.set('uuid',currSrc['uuid'])
-				else:
-					cSettings.set('uuid',"")
-
-			elif currSrc['name'] == 'locmus':
-
-				if 'label' in currSrc:
-					cSettings.set('label',currSrc['label'])
-				else:
-					cSettings.set('label',"")
-				if 'uuid' in currSrc:
-					cSettings.set('uuid',currSrc['uuid'])
-				else:
-					cSettings.set('uuid',"")
-			
-			elif currSrc['name'] == 'bt':
-				source_settings = {}
-			elif currSrc['name'] == 'line':
-				source_settings = {}				
-			elif currSrc['name'] == 'stream':
-				source_settings = { 'uri':'' }	#TODO
-			elif currSrc['name'] == 'smb':
-				source_settings = { 'mpd_dir':'music' }	#TODO
-				
-			"""
-		
-		printer('Done switching source [OK]')
-	elif Sources.getAvailableCnt() == 1:
-		printer('Only one source availble. Ignoring button.')
-	elif Sources.getAvailableCnt() == 0:
-		printer('No available sources.')
-
-	printSummary(Sources)
+	pass
 
 		
 
@@ -1982,8 +1863,6 @@ from plugin_other import *
 #disp = lcd_mgr()
 #disp.lcd_text('Welcome v0.1.4.8')
 
-# MPD
-mpdc = mpdController()
 
 #
 # end of initialization
