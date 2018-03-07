@@ -79,7 +79,8 @@ import zmq
 context = zmq.Context()
 subscriber = context.socket (zmq.SUB)
 subscriber.connect ("tcp://localhost:5556")	# TODO: get port from config
-subscriber.setsockopt (zmq.SUBSCRIBE, '/player/')
+subscriber.setsockopt (zmq.SUBSCRIBE, '/source')
+subscriber.setsockopt (zmq.SUBSCRIBE, '/player')
 
 # GLOBAL vars
 Sources = SourceController()	#TODO: rename "Sources" -- confusing name
