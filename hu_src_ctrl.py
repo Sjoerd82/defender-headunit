@@ -827,8 +827,8 @@ def parse_message(message):
 	
 	# Expected format:
 	# /path/path/path Command:Params
-	path_cmd = message.split(" ")
-	for pathpart in path_cmd[0].split("/"):
+	path_cmd = message.split(" ")[0]
+	for pathpart in path_cmd.split("/"):
 		print pathpart
 
 	command = path_cmd[1].split(":")[0]
