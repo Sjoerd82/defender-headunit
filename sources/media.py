@@ -190,7 +190,6 @@ class sourceClass():
 			if not lst_mountpoints:
 				self.__printer(' > No removable media found')
 			else:
-				print lst_mountpoints
 				#lst_mountpoints[:] = (x for x in somelist if determine(x))
 				#yourList[:] = itertools.ifilter(do_the_magic, yourList)
 				# filter out everything that's not mounted on /media or is smb:
@@ -221,7 +220,6 @@ class sourceClass():
 		
 		# add all locations as configured
 		arMedia = media_getAll()
-		#print arMedia
 		for mount in arMedia:
 			
 			# get mountpoint and label

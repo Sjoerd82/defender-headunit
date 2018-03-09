@@ -282,7 +282,7 @@ class SourceController():
 						j += 1
 				i += 1
 			
-			if not iCurrentSource:
+			if not self.iCurrentSource:
 				self.__printer('NEXT: No available sources.',LL_WARNING)
 			
 			return self.iCurrentSource
@@ -693,7 +693,7 @@ class SourceController():
 
 	# execute a init() for given source
 	def sourceInit( self, index ):
-		self.__printer('INIT: {0}'.format(index)) #LL_DEBUG
+		#self.__printer('INIT: {0}'.format(index)) #LL_DEBUG
 		checkResult = self.lSource[index]['sourceClass'].init(self)
 
 	# execute a check() for given source and sets availability accordingly
