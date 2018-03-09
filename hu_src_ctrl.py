@@ -725,6 +725,7 @@ mainloop = gobject.MainLoop()
 # NOTE: Remember, everything executed through the qBlock queue blocks, including qPrio!
 # IDEALLY, WE'D PUT THIS BACK IN A THREAD, IF THAT WOULD PERFORM... (which for some reason it doesn't!)
 gobject.idle_add(mq_recv)
+qBlock = Queue(maxsize=40)		# Blocking stuff that needs to run in sequence
 gobject.idle_add(process_queue)
 
 #
