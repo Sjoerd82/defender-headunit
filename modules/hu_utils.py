@@ -149,7 +149,7 @@ def pa_sfx( sfx ):
 
 # Return dictionary with mounts
 # optionally apply a filter on device and/or fs and/or a list of mountpoints to exclude
-def get_mounts( spec=None, fs=None, mp_exclude=[] ):
+def get_mounts( dev=None, fs=None, mp_exclude=[], fs_exclude=[] ):
 
 	mounts = []
 	with open('/proc/mounts','r') as f:
@@ -160,14 +160,13 @@ def get_mounts( spec=None, fs=None, mp_exclude=[] ):
 			mount['fs'] = line.split()[2]
 
 			# excluded mountpoints
-			if not mount['mountpoint'] in mp_exclude:
-				
+			if not mount['mountpoint'] in mp_exclude and not mount['fs'] in fs_exclude:
 				# filters:
-				if not spec is None and mount['spec'] == spec:
+				if not dev is None and mount['spec'] == dev:
 					mounts.append(mount)
 				elif not fs is None and mount['fs'] == fs:
 					mounts.append(mount)
-				elif spec is None and fs is None and not mount['fs'] in ('devtmpfs','proc','devpts','tmpfs','sysfs'):
+				elif dev is None and fs is None and not mount['fs'] in ('devtmpfs','proc','devpts','tmpfs','sysfs'):
 					mounts.append(mount)
 
 	return mounts

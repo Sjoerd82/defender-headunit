@@ -157,7 +157,7 @@ class sourceClass():
 		sourceCtrl.addSub(ix, subsource)
 	
 	def init( self, sourceCtrl ):
-		self.__printer('Initializing...', level=15)
+		self.__printer('Initializing...')
 
 		# Returns a list of everything mounted on /media, but does not check if it has music.
 		# Returned is 2-dimension list
@@ -185,7 +185,7 @@ class sourceClass():
 			lst_mountpoints[:] = [tup for tup in lst_mountpoints if (not tup[1] == '/media/PIHU_DATA' and not tup[0].startswith('//'))]
 			"""
 			# TODO: remove hardcoded paths
-			lst_mountpoints = get_mounts( mp_exclude=['/mnt/PIHU_APP','/mnt/PIHU_CONFIG','/media/PIHU_DATA'] )
+			lst_mountpoints = get_mounts( mp_exclude=['/','/mnt/PIHU_APP','/mnt/PIHU_CONFIG','/media/PIHU_DATA','/media/PIHU_DATA_'], fs_exclude=['cifs'] )
 			
 			if not lst_mountpoints:
 				self.__printer(' > No removable media found')
@@ -221,7 +221,7 @@ class sourceClass():
 		
 		# add all locations as configured
 		arMedia = media_getAll()
-		print arMedia
+		#print arMedia
 		for mount in arMedia:
 			
 			# get mountpoint and label
@@ -242,6 +242,7 @@ class sourceClass():
 									   ,mount['mountpoint']
 							           ,sourceCtrl)
 
+		self.__printer('Initializing... DONE')
 		return True
 
 	# media_check() returns True or False, depending on availability..
