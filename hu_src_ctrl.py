@@ -128,12 +128,12 @@ def mq_recv():
 #	
 
 def parse_message(message):
-        path = []
-        params = []
-        path_cmd = message.split(" ")
-        for pathpart in path_cmd[0].split("/"):
-                if pathpart:
-                        path.append(pathpart)
+		path = []
+		params = []
+		path_cmd = message.split(" ")
+		for pathpart in path_cmd[0].split("/"):
+			if pathpart:
+				path.append(pathpart)
 		
 		print "1: {0}".format(message)
 		print "2: {0}".format(path_cmd)
@@ -144,19 +144,19 @@ def parse_message(message):
 		base_topic = path[0]
 		cmd_par = path_cmd[1].split(":")
 
-        if len(cmd_par) == 1:
-                command = cmd_par[0]
-        elif len(cmd_par) == 2:
-                command = cmd_par[0]
-                param = cmd_par[1]
+		if len(cmd_par) == 1:
+			command = cmd_par[0]
+		elif len(cmd_par) == 2:
+			command = cmd_par[0]
+			param = cmd_par[1]
 
-                for parpart in param.split(","):
-                        if parpart:
-                                params.append(parpart)
+			for parpart in param.split(","):
+				if parpart:
+					params.append(parpart)
 		else:
 			print("Malformed message!")
 			return False
-	
+
 		print("[MQ] Received Path: {0}; Command: {1}; Parameters: {2}".format(path,command,params))
 
 		item = []	# or set?
