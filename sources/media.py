@@ -8,8 +8,8 @@
 import os
 import subprocess
 
-from hu_utils import *
-from hu_mpd import *
+from modules.hu_utils import *
+from modules.hu_mpd import *
 
 # Logging
 sourceName='media'

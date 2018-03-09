@@ -3,7 +3,7 @@
 # Source: Example
 #
 
-from hu_utils import *
+from modules.hu_utils import *
 
 sourceName='fm'
 

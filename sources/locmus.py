@@ -7,8 +7,8 @@
 
 
 # MISC (myprint, colorize)
-from hu_utils import *
-from hu_settings import getSourceConfig
+from modules.hu_utils import *
+from modules.hu_settings import getSourceConfig
 
 # LOGGING
 sourceName = 'locmus'
