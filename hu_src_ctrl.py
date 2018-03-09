@@ -70,11 +70,12 @@ from slugify import slugify
 sc_sources = SourceController()
 mpdc = None
 arMpcPlaylistDirs = [ ]			#TODO: should probably not be global...
-
+CONFIG_FILE = None
 SYSLOG_UDP_PORT=514
 
 hu_details = { 'track':None, 'random':'off', 'repeat':True, 'att':False }
-	
+
+
 # ********************************************************************************
 # Output wrapper
 #
@@ -599,6 +600,34 @@ def load_sources( plugindir ):
 #def setup():
 
 
+#********************************************************************************
+#
+# Parse command line arguments and environment variables
+# Command line takes precedence over environment variables and settings.json
+#
+import os
+import argparse
+
+ENV_CONFIG_FILE = os.getenv('HU_CONFIG_FILE')
+
+parser = argparse.ArgumentParser(description='Source Controller')
+parser.add_argument('--config','-c', required=False, action='store', help='Configuration file')
+parser.add_argument('--loglevel', action='store', default=LL_INFO, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)
+parser.add_argument('-b', action='store_true')	# background, ie. no output to console
+args = parser.parse_args()
+
+arg_config = args.config
+arg_loglevel = args.loglevel
+arg_b = args.b
+
+if arg_config:
+	CONFIG_FILE = arg_config
+elif ENV_CONFIG_FILE:
+	CONFIG_FILE = ENV_CONFIG_FILE
+else:
+	print("No configuration file given.")
+	exit(0)
+
 #
 # Start logging to console
 #
@@ -612,7 +641,7 @@ init_logging_c()
 #
 
 # TODO, add this function to utils
-configuration = init_load_config()
+configuration = configuration_load(CONFIG_FILE)
 
 #
 # Load PulseAudio SFX
