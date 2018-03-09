@@ -12,6 +12,9 @@ import sys
 # load json source configuration
 import json
 
+# queuing
+from Queue import Queue
+
 # dynamic module loading
 import inspect
 
