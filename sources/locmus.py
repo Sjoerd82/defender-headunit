@@ -137,7 +137,6 @@ class sourceClass():
 		else:
 			return False
 
-		
 	def play( self, sourceCtrl, resume={} ): #, subSourceIx=None ):
 		self.__printer('Start playing')
 		
@@ -210,7 +209,7 @@ class sourceClass():
 	#	mpc_get_PlaylistDirs_thread.start()
 		return True
 
-	def stop( self, sourceCtrl ):
+	def stop( self ):
 		self.__printer('Stopping source: locmus. Saving playlist position and clearing playlist.')
 		# save playlist position (file name + position)
 #		self.mpc.mpc_save_pos_for_label( 'locmus' )
@@ -228,3 +227,44 @@ class sourceClass():
 		self.__printer('Prev track')
 		self.mpc.prevTrack()
 		return True
+
+	def pause( self, mode ):
+		self.__printer('Pause. Mode: {0}'.format(mode))
+		#TODO IMPLEMENT
+		return True
+
+	def random( self, mode ):
+		self.__printer('Random. Mode: {0}'.format(mode))
+		#TODO IMPLEMENT
+		return True
+
+	def seekfwd( self ):
+		self.__printer('Seek FFWD')
+		#TODO IMPLEMENT
+		return True
+
+	def seekrev( self ):
+		self.__printer('Seek FBWD')
+		#TODO IMPLEMENT
+		return True
+
+	def update( self, location ):
+		self.__printer('Update. Location: {0}'.format(location))
+		#TODO IMPLEMENT
+		return True
+
+	def get_details():
+		return False
+
+	def get_state():
+		return False
+
+	def get_playlist():
+		return False
+
+	#def get_folders():
+
+	def source_get_media_details():
+		return False
+		
+	

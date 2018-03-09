@@ -40,7 +40,7 @@ class sourceClass():
 		self.__printer('Start playing FM radio...')
 		return True	
 
-	def stop( self, sourceCtrl ):
+	def stop( self ):
 		self.__printer('Stop CLASS!')
 		return True
 		
@@ -51,7 +51,44 @@ class sourceClass():
 	def prev( self ):
 		self.__printer('NOT IMPLEMENTED')
 		return False
-		
+
+	def pause( self, mode ):
+		self.__printer('Pause. Mode: {0}'.format(mode))
+		#TODO IMPLEMENT
+		return True
+
+	def random( self, mode ):
+		self.__printer('Random. Mode: {0}'.format(mode))
+		#TODO IMPLEMENT
+		return True
+
+	def seekfwd( self ):
+		self.__printer('Seek FFWD')
+		#TODO IMPLEMENT
+		return True
+
+	def seekrev( self ):
+		self.__printer('Seek FBWD')
+		#TODO IMPLEMENT
+		return True
+
+	def update( self ):
+		self.__printer('Update not supported')
+		return True
+
+	def get_details():
+		return False
+
+	def get_state():
+		return False
+
+	def get_playlist():
+		return False
+
+	#def get_folders():
+
+	def source_get_media_details():
+		return False
 
 
 	

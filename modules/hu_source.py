@@ -752,7 +752,7 @@ class SourceController():
 			self.__printer('STOP: No current source',LL_WARNING)
 			return False
 			
-		ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].stop(self)
+		ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].stop()
 		return ret
 
 	# Proxy for pausing. Modes: on | off | toggle | 1 | 0
