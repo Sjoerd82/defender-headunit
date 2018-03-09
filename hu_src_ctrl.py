@@ -134,13 +134,7 @@ def parse_message(message):
 		for pathpart in path_cmd[0].split("/"):
 			if pathpart:
 				path.append(pathpart.lower())
-		
-		print "1: {0}".format(message)
-		print "2: {0}".format(path_cmd)
-		print "3: {0}".format(path_cmd[0])
-		print "4: {0}".format(path)
-		print "5: {0}".format(len(path))
-		
+			
 		base_topic = path[0]
 		cmd_par = path_cmd[1].split(":")
 
@@ -227,8 +221,8 @@ def source(path,cmd,args):
 
 	def set_next(args):
 		# Set active (sub)source to the next available
-		sc_sources.next()
-		return True
+		ret = sc_sources.next()
+		return ret
 
 	def set_prev(args):
 		# Set active (sub)source to the prev available
@@ -243,7 +237,7 @@ def source(path,cmd,args):
 		function_to_call = cmd + '_' + base_path
 		ret = locals()[function_to_call](args)
 		
-	printer('Executed function {0} with result status: {1}'.format(function_to_call,ret))
+	printer('Executed {0} function {1} with result status: {2}'.format(base_path,function_to_call,ret))
 	return True
 		
 def player(path,cmd,args):
