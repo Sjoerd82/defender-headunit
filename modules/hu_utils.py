@@ -36,6 +36,10 @@ LL_DEBUG = 10
 LL_NOTSET = 0
 
 # Defines how to handle output
+def myprint( message, level=LL_INFO, tag=""):
+	logger = logging.getLogger('headunit')
+	logger.log(level, message, extra={'tag': tag})
+
 def printer( message, level=LL_INFO, tag=""):
 	logger = logging.getLogger('headunit')
 	logger.log(level, message, extra={'tag': tag})
