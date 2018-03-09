@@ -5,17 +5,13 @@
 # Plays local music folder(s), as defined in the main configuration
 #
 
+# LOGGING
+sourceName = 'locmus'
 
 # MISC (myprint, colorize)
 from modules.hu_utils import *
 from modules.hu_settings import getSourceConfig
-
-# LOGGING
-sourceName = 'locmus'
-
-
-# MPD
-from hu_mpd import *
+from modules.hu_mpd import *
 
 # SETTINGS
 #LOCAL MUSIC (now also in locmus.py)
