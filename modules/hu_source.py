@@ -206,12 +206,6 @@ class SourceController():
 	    to a previously playing source, instead of the next in line """
 	def next( self, reverse=False ):
 	
-		print ( "DEBUG!" )
-		self.__printer( "DEBUG!!" )
-		
-		print self.lSource
-		print self.iCurrentSource[0]
-	
 		def source_iterator(ix_start, ix_stop, j_start, reverse):
 			#
 			# if no current source, we'll loop through the sources until we find one
@@ -287,6 +281,10 @@ class SourceController():
 							return self.iCurrentSource
 						j += 1
 				i += 1
+			
+			if not iCurrentSource:
+				self.__printer('NEXT: No available sources.',LL_WARNING)
+			
 			return self.iCurrentSource
 			
 		#
