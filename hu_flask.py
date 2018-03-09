@@ -20,17 +20,13 @@ zmq_sck = zmq_ctx.socket(zmq.PUB)
 print zmq.pyzmq_version()
 
 def publish_message(mypath,command="SET"):
-	print ( "Hi" )
-"""
 	try:
-		#msg = "{0} |{1}".format("test",message)
 		msg = "{0) {1}".format(path,command)
 		
 		print("Sending message : {0}".format(msg))
 		zmq_sck.send(msg)
 	except Exception as e:
 		print("error {0}".format(e))
-"""
 
 
 """		
