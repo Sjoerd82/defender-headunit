@@ -12,7 +12,10 @@ import subprocess
 # pathroot
 import os
 
-#json and pickle:
+# pactl
+from subprocess import call
+
+# json and pickle:
 import json
 import pickle
 
