@@ -221,7 +221,7 @@ def post_player_track_track(track):
 #Next track
 @app.route('/hu/api/v1.0/player/next', methods=['GET'])
 def get_player_next():
-	publish_message("/player/next", "SET")
+	#publish_message("/player/next", "SET")
 	#stub = [{'a':'a'},{'b':'b'}]
 	#return jsonify({'stub':stub})
 	return "OK"
