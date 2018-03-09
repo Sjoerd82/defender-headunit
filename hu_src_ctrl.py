@@ -134,7 +134,12 @@ def parse_message(message):
         for pathpart in path_cmd[0].split("/"):
                 if pathpart:
                         path.append(pathpart)
-
+		
+		print message
+		print path_cmd
+		print path
+		print len(path)
+		
 		base_topic = path[0]
 		cmd_par = path_cmd[1].split(":")
 
