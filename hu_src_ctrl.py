@@ -236,7 +236,7 @@ def source(path,cmd,args):
 		return True
 
 	if path:
-		function_to_call = cmd + '_' + '_'.join(path())
+		function_to_call = cmd + '_' + '_'.join(path)
 		ret = locals()[function_to_call](args)
 	else:
 		# called without sub-paths
@@ -353,11 +353,11 @@ def player(path,cmd,args):
 		return ret
 
 	if path:
-		function_to_call = cmd.lower() + '_' + '_'.join(path.lower())
+		function_to_call = cmd + '_' + '_'.join(path)
 		ret = locals()[function_to_call](args)
 	else:
 		# called without sub-paths
-		function_to_call = cmd.lower() + '_' + base_path
+		function_to_call = cmd + '_' + base_path
 		ret = locals()[function_to_call](args)
 		
 	printer('Executed function {0} with result status: {1}'.format(function_to_call,ret))
