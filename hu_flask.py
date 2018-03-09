@@ -21,7 +21,7 @@ print zmq.pyzmq_version()
 
 def publish_message(path,command="SET"):
 	try:
-		msg = "{0) {1}".format(path,command)
+		msg = "{0} {1}".format(path,command)
 		
 		print("Sending message : {0}".format(msg))
 		zmq_sck.send(msg)
