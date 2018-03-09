@@ -19,7 +19,7 @@ zmq_sck = zmq_ctx.socket(zmq.PUB)
 
 print zmq.pyzmq_version()
 
-def publish_message(mypath,command="SET"):
+def publish_message(path,command="SET"):
 	try:
 		msg = "{0) {1}".format(path,command)
 		
