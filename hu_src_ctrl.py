@@ -252,7 +252,7 @@ def player(path,cmd,args):
 		#TODO
 		return True
 	
-	def set_player
+	def set_player(args):
 		#
 		return True
 	
