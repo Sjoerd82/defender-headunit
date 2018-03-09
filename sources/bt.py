@@ -3,7 +3,7 @@
 # Source: Bluetooth
 #
 
-from modules/hu_utils import *
+from modules.hu_utils import *
 
 # Logging
 sourceName='bt'
