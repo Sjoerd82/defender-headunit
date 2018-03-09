@@ -209,7 +209,8 @@ class SourceController():
 		print ( "DEBUG!" )
 		self.__printer( "DEBUG!!" )
 		
-		print lSource
+		print self.lSource
+		print self.iCurrentSource[0]
 	
 		def source_iterator(ix_start, ix_stop, j_start, reverse):
 			#

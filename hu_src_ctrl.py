@@ -699,6 +699,7 @@ import sources
 # read source config files and start source inits
 load_sources( os.path.join(os.path.dirname(os.path.abspath(__file__)),'sources') )
 
+printSummary(sc_sources)
 
 #
 # end of initialization
