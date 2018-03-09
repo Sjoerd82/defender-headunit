@@ -165,7 +165,7 @@ def parse_message(message):
 			# remove first item (base topic)
 			del path[0]
 			# if queue is empty, execute right away, else add to queue
-			if qBlock.empty():
+			if queue_actions.empty():
 				# execute:
 				globals()[base_topic](path, command, params)
 			else:
