@@ -47,19 +47,8 @@ class pa_volume_handler():
 # PulseAudio
 # Use 0-100 for volume.
 #
-def pa_sfx_load( sfxdir ):
-	printer('Loading sound effects')
-	call(["pactl","upload-sample",sfxdir+"/startup.wav", "startup"])
-	call(["pactl","upload-sample",sfxdir+"/beep_60.wav", "beep_60"])
-	call(["pactl","upload-sample",sfxdir+"/beep_70.wav", "beep_70"])
-	call(["pactl","upload-sample",sfxdir+"/beep_60_70.wav", "beep_60_70"])
-	call(["pactl","upload-sample",sfxdir+"/beep_60_x2.wav", "beep_60_x2"])
-	call(["pactl","upload-sample",sfxdir+"/error.wav", "error"])
-	call(["pactl","upload-sample",sfxdir+"/bt.wav", "bt"])
 
-
-#def pa_sfx( sfx ):
-# in hu_utils...
+# pa_sfx_load() and pa_sfx() in hu_utils
 
 def pa_set_volume( volume ):
 	printer('Setting volume')
