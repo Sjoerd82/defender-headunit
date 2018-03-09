@@ -765,7 +765,7 @@ class SourceController():
 			self.__printer('PAUSE: No current source',LL_WARNING)
 			return False
 
-		ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].pause( self, mode )
+		ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].pause( mode )
 		return ret
 
 	# Proxy for next (track/station/...)
@@ -774,7 +774,7 @@ class SourceController():
 			self.__printer('NEXT: No current source',LL_WARNING)
 			return False
 
-		ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].next( self )
+		ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].next()
 		return ret
 
 	# Proxy for previous (track/station/...)
@@ -783,7 +783,7 @@ class SourceController():
 			self.__printer('PREV: No current source',LL_WARNING)
 			return False
 
-		ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].prev( self )
+		ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].prev()
 		return ret
 
 	# Proxy for random. Modes: on | off | toggle | 1 | 0 | "special modes.."
@@ -792,7 +792,7 @@ class SourceController():
 			self.__printer('RANDOM: No current source',LL_WARNING)
 			return False
 
-		ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].random( self, mode )
+		ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].random(mode )
 		return ret
 
 	# Proxy for seeking forward. Optionally provide arguments on how to seek (ie. number of seconds)
@@ -801,7 +801,7 @@ class SourceController():
 			self.__printer('SEEKFWD: No current source',LL_WARNING)
 			return False
 
-		ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].seekfwd( self, kwargs )
+		ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].seekfwd(kwargs )
 		return ret
 
 	# Proxy for seeking backwards. Optionally provide arguments on how to seek (ie. number of seconds)
@@ -810,7 +810,7 @@ class SourceController():
 			self.__printer('SEEKREV: No current source',LL_WARNING)
 			return False
 
-		ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].seekrev( self, kwargs )
+		ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].seekrev(kwargs )
 		return ret
 
 	# Proxy for database update. Optionally provide arguments. Suggestions: location
@@ -819,7 +819,7 @@ class SourceController():
 			self.__printer('UPDATE: No current source',LL_WARNING)
 			return False
 
-		ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].update( self, kwargs )
+		ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].update( kwargs )
 		return ret
 
 
