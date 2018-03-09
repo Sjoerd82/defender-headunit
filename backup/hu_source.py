@@ -1,3 +1,4 @@
+
 # MISC (self.__printer, colorize)
 from hu_utils import *
 
@@ -680,24 +681,18 @@ class SourceController():
 			if subsource['available']:
 				c += 1
 		return c
-
-	"""
-	PROXY functions:
-	================
-	 move into subclass or something?
-	"""
-
+	
 	# execute a init() for given source
 	def sourceInit( self, index ):
 		self.__printer('INIT: {0}'.format(index)) #LL_DEBUG
 		checkResult = self.lSource[index]['sourceClass'].init(self)
-
+	
 	# execute a check() for given source and sets availability accordingly
 	def sourceCheck( self, index, subSourceIx=None ):
 		self.__printer('CHECK: {0}/{1}'.format(index,subSourceIx)) #LL_DEBUG
 		checkResult = self.lSource[index]['sourceClass'].check(self)
 		return checkResult
-
+	
 	# execute a check() for all sources..
 	#  if template set to False (default), exclude template sources..
 	#  if template set to True, include template sources but exclude template based sources?
@@ -706,13 +701,65 @@ class SourceController():
 		for source in self.lSource:
 			self.sourceCheck(i)				
 			i+=1
+	
+	# execute a play() for the current source
+	# optionally, a dictionary may be given containing resume data
+	def sourcePlay( self, resume={} ):
+	
+		if self.iCurrentSource[0] == None:
+			self.__printer('PLAY: No current source',LL_WARNING)
+			return False
+		
+		if not self.lSource[self.iCurrentSource[0]]['available']:
+			self.__printer('PLAY: Source not available: {0}'.format(self.iCurrent),LL_WARNING)
+			return False
+		
+#		if 'sourcePlay' not in self.lSource[self.iCurrent] or self.lSource[self.iCurrent]['sourcePlay'] == None:
+#			self.__printer('PLAY: function not defined',LL_WARNING)
+#			return False
+		
+		if resume:
+			checkResult = self.lSource[self.iCurrentSource[0]]['sourceClass'].play(self,resume)
+		else:
+			checkResult = self.lSource[self.iCurrentSource[0]]['sourceClass'].play(self)
+			
+		if not checkResult:
+			self.__printer('PLAY: failed, marking source unavailable, playing next source...',LL_ERROR)
+			self.setAvailableIx(self.iCurrentSource[0],False,self.iCurrentSource[1])
+			self.next()
+			self.sourcePlay()
+	
+	# execute a stop() for current source
+	def sourceStop( self ):
+		if self.iCurrentSource[0] == None:
+			self.__printer('STOP: No current source',LL_WARNING)
+			return False
+			
+		checkResult = self.lSource[self.iCurrentSource[0]]['sourceClass'].stop(self)
+		
+	# seek/next:
+	def sourceSeekNext( self ):
+		if self.iCurrentSource[0] == None:
+			self.__printer('STOP: No current source',LL_WARNING)
+			return False
+
+		checkResult = self.lSource[self.iCurrentSource[0]]['sourceClass'].next()
+
+	# seek/prev:
+	def sourceSeekPrev( self ):
+		if self.iCurrentSource[0] == None:
+			self.__printer('STOP: No current source',LL_WARNING)
+			return False
+
+
+		checkResult = self.lSource[self.iCurrentSource[0]]['sourceClass'].prev()
 
 
 	def sourceAddSub( self, index, parameters ):
 		# TODO: check if index is valid
 		checkResult = self.lSource[index]['sourceClass'].add_subsource(self,parameters)
 		return checkResult
-
+	
 	"""
 	def sourceExec( self, index, sourceFunction ):
 		obj = self.lSource[index][sourceFunction][0]
@@ -723,147 +770,3 @@ class SourceController():
 		else:
 			checkResult = getattr(obj,func)()
 	"""
-
-	# execute play() for the current source
-	# suggested keywords: position in playlist; a dictionary may be given containing resume data
-	def source_play( self, **kwargs ):
-		if self.iCurrentSource[0] == None:
-			self.__printer('PLAY: No current source',LL_WARNING)
-			return False
-		
-		if not self.lSource[self.iCurrentSource[0]]['available']:
-			self.__printer('PLAY: Source not available: {0}'.format(self.iCurrent),LL_WARNING)
-			return False
-		
-		# pass arguments as-is to play function
-		ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].play( self, kwargs )
-		
-		if not ret:
-			self.__printer('PLAY: failed, marking source unavailable, playing next source...',LL_ERROR)
-			self.setAvailableIx(self.iCurrentSource[0],False,self.iCurrentSource[1])
-			self.next()
-			ret = self.sourcePlay()
-			
-		return ret
-
-	# Proxy for `stopping playback
-	def source_stop( self ):
-		if self.iCurrentSource[0] == None:
-			self.__printer('STOP: No current source',LL_WARNING)
-			return False
-			
-		ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].stop(self)
-		return ret
-
-	# Proxy for pausing. Modes: on | off | toggle | 1 | 0
-	def source_pause( self, mode ):
-		if self.iCurrentSource[0] == None:
-			self.__printer('PAUSE: No current source',LL_WARNING)
-			return False
-
-		ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].pause( self, mode )
-		return ret
-
-	# Proxy for next (track/station/...)
-	def source_next( self ):
-		if self.iCurrentSource[0] == None:
-			self.__printer('NEXT: No current source',LL_WARNING)
-			return False
-
-		ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].next( self )
-		return ret
-
-	# Proxy for previous (track/station/...)
-	def source_prev( self ):
-		if self.iCurrentSource[0] == None:
-			self.__printer('PREV: No current source',LL_WARNING)
-			return False
-
-		ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].prev( self )
-		return ret
-
-	# Proxy for random. Modes: on | off | toggle | 1 | 0 | "special modes.."
-	def source_random( self, mode ):
-		if self.iCurrentSource[0] == None:
-			self.__printer('RANDOM: No current source',LL_WARNING)
-			return False
-
-		ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].random( self, mode )
-		return ret
-
-	# Proxy for seeking forward. Optionally provide arguments on how to seek (ie. number of seconds)
-	def source_seekfwd( self, **kwargs ):
-		if self.iCurrentSource[0] == None:
-			self.__printer('SEEKFWD: No current source',LL_WARNING)
-			return False
-
-		ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].seekfwd( self, kwargs )
-		return ret
-
-	# Proxy for seeking backwards. Optionally provide arguments on how to seek (ie. number of seconds)
-	def source_seekrev( self, **kwargs ):
-		if self.iCurrentSource[0] == None:
-			self.__printer('SEEKREV: No current source',LL_WARNING)
-			return False
-
-		ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].seekrev( self, kwargs )
-		return ret
-
-	# Proxy for database update. Optionally provide arguments. Suggestions: location
-	def source_update( self, **kwargs ):
-		if self.iCurrentSource[0] == None:
-			self.__printer('UPDATE: No current source',LL_WARNING)
-			return False
-
-		ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].update( self, kwargs )
-		return ret
-
-
-	# Return a dictionary containing source capabilities, etc.
-	def source_get_source_details(self):
-		# - available controls/functions
-		# - available random modes
-		if self.iCurrentSource[0] == None:
-			self.__printer('GET DETAILS: No current source',LL_WARNING)
-			return False
-
-		data = self.lSource[self.iCurrentSource[0]]['sourceClass'].get_details( self )
-		return data
-
-	def source_get_state(self):
-		# - playing/paused/stopped
-		# - random, shuffle, repeat, 
-		if self.iCurrentSource[0] == None:
-			self.__printer('GET STATE: No current source',LL_WARNING)
-			return False
-
-		ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].get_state( self )
-		return ret
-
-	# Return current playlist. NO: Optionally: getfolders=True
-	def source_get_playlist(self, **kwargs):
-		if self.iCurrentSource[0] == None:
-			self.__printer('GET PLAYLIST: No current source',LL_WARNING)
-			return False
-
-		data = self.lSource[self.iCurrentSource[0]]['sourceClass'].get_playlist( self, kwargs )
-		return data
-
-	"""
-	def source_get_folders(self, **kwargs):
-		if self.iCurrentSource[0] == None:
-			self.__printer('GET FOLDERS: No current source',LL_WARNING)
-			return False
-
-		data = self.lSource[self.iCurrentSource[0]]['sourceClass'].get_folders( self, kwargs )
-		return data
-	"""
-
-	# Return details on the currently playing media
-	def source_get_media_details(self):
-		if self.iCurrentSource[0] == None:
-			self.__printer('GET MEDIA DETAILS: No current source',LL_WARNING)
-			return False
-
-		data = self.lSource[self.iCurrentSource[0]]['sourceClass'].get_media_details( self, kwargs )
-		return data
