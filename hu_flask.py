@@ -19,10 +19,11 @@ zmq_sck = zmq_ctx.socket(zmq.PUB)
 
 print zmq.pyzmq_version()
 
-def publish_message(message):
+def publish_message(path,command="SET"):
 	try:
 		#msg = "{0} |{1}".format("test",message)
-		msg = message
+		msg = "{0) {1}".format(path,command)
+		
 		print("Sending message : {0}".format(msg))
 		zmq_sck.send(msg)
 	except Exception as e:
@@ -220,7 +221,7 @@ def post_player_track_track(track):
 #Next track
 @app.route('/hu/api/v1.0/player/next', methods=['GET'])
 def get_player_next():
-	publish_message("/player/track/next")
+	publish_message("/player/next", "SET")
 	stub = [{'a':'a'},{'b':'b'}]
 	return jsonify({'stub':stub})
 
