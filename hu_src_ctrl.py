@@ -163,7 +163,7 @@ def parse_message(message):
 		# check if base_topic ('player','event', etc.) function exists
 		if base_topic in globals():
 			# remove first item (base topic)
-			path.remove()
+			del path[0]
 			# if queue is empty, execute right away, else add to queue
 			if qBlock.empty():
 				# execute:
