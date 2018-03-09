@@ -133,7 +133,7 @@ def parse_message(message):
 		path_cmd = message.split(" ")
 		for pathpart in path_cmd[0].split("/"):
 			if pathpart:
-				path.append(pathpart)
+				path.append(pathpart.lower())
 		
 		print "1: {0}".format(message)
 		print "2: {0}".format(path_cmd)
@@ -145,9 +145,9 @@ def parse_message(message):
 		cmd_par = path_cmd[1].split(":")
 
 		if len(cmd_par) == 1:
-			command = cmd_par[0]
+			command = cmd_par[0].lower()
 		elif len(cmd_par) == 2:
-			command = cmd_par[0]
+			command = cmd_par[0].lower()
 			param = cmd_par[1]
 
 			for parpart in param.split(","):
@@ -236,11 +236,11 @@ def source(path,cmd,args):
 		return True
 
 	if path:
-		function_to_call = cmd.lower() + '_' + '_'.join(path.lower())
+		function_to_call = cmd + '_' + '_'.join(path())
 		ret = locals()[function_to_call](args)
 	else:
 		# called without sub-paths
-		function_to_call = cmd.lower() + '_' + base_path
+		function_to_call = cmd + '_' + base_path
 		ret = locals()[function_to_call](args)
 		
 	printer('Executed function {0} with result status: {1}'.format(function_to_call,ret))
