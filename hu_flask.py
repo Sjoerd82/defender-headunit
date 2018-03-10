@@ -36,7 +36,7 @@ def receive_message(path):
 	subscriber.setsockopt(zmq.SUBSCRIBE, path)
 	messagedata = subscriber.recv()
 	data = message[len(path)+1:]
-	message = json.loads(message)
+	message = json.loads(data)
 	return message
 		
 """		

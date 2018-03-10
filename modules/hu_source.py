@@ -570,8 +570,8 @@ class SourceController():
 			else:
 				mycopy = copy.copy(self.lSource[self.iCurrentSource[0]])
 				for source in mycopy:
-					print type(mycopy['sourceClass'])
-					del mycopy['sourceClass']
+					print type(source['sourceClass'])
+					del source['sourceClass']
 				return mycopy
 		else:
 			mycopy = copy.copy(self.lSource[index])
