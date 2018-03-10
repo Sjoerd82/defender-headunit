@@ -62,6 +62,7 @@ def main():
 		backend.bind("tcp://*:{0}".format(port_server))
 
 		zmq.device(zmq.FORWARDER, frontend, backend)
+		print("Zero MQ forwarding enabled")
 	except Exception, e:
 		print e
 		print "Bringing down zmq device"

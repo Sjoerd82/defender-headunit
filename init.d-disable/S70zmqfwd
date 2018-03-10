@@ -11,7 +11,7 @@ PIDFILE=/var/run/zmqfwd.pid
 start() {
         if [ -f $DAEMON ]; then
           echo "Starting $NAME..."
-          start-stop-daemon -x $DAEMON -p $PIDFILE -S -- $DAEMONOPTS
+          start-stop-daemon -b -x $DAEMON -p $PIDFILE -S -- $DAEMONOPTS
           retval=$?
 		else
           echo "$DAEMON not found!"
