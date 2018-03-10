@@ -563,6 +563,26 @@ class SourceController():
 		else:
 			return copy.copy(self.lSource[index])			
 
+	def get_all_simple( self, index=None ):
+		if index == None:
+			if self.iCurrentSource[0] == None:
+				return None
+			else:
+				mycopy = copy.copy(self.lSource[self.iCurrentSource[0]])
+				for source in mycopy:
+					print type(mycopy['sourceClass'])
+					del mycopy['sourceClass']
+				return mycopy
+		else:
+			mycopy = copy.copy(self.lSource[index])
+			for source in mycopy:
+				#TODO: delete based on type()
+				print type(mycopy['sourceClass'])
+				del mycopy['sourceClass']
+				return mycopy
+			
+	
+	
 	# return the current source + subsource
 	# subsource is a dictionary in ['subsource'], containing the curren sub-source
 	# the returned source is stripped of python objects (for no real reason)
