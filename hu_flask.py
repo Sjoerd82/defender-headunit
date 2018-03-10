@@ -26,7 +26,7 @@ def receive_message(topicfilter):
 	#topicfilter = "9"
 	subscriber.setsockopt(zmq.SUBSCRIBE, topicfilter)
 	for update_nbr in range(10):
-		string = socket.recv()
+		string = subscriber.recv()
 		topic, messagedata = string.split()
 		
 """		

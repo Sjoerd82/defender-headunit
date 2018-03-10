@@ -156,6 +156,7 @@ def parse_message(message):
 			return False
 
 		print("[MQ] Received Path: {0}; Command: {1}; Parameters: {2}".format(path,command,params))
+		
 
 		item = []	# or set?
 		# check if base_topic ('player','event', etc.) function exists
@@ -235,13 +236,16 @@ def source(path,cmd,args):
 
 	if path:
 		function_to_call = cmd + '_' + '_'.join(path)
-		ret = locals()[function_to_call](args)
 	else:
 		# called without sub-paths
 		function_to_call = cmd + '_' + base_path
+
+	if function_to_call in locals():
 		ret = locals()[function_to_call](args)
+		printer('Executed {0} function {1} with result status: {2}'.format(base_path,function_to_call,ret))
+	else:
+		printer('Function {0} does not exist'.format(function_to_call))
 		
-	printer('Executed {0} function {1} with result status: {2}'.format(base_path,function_to_call,ret))
 	return True
 		
 def player(path,cmd,args):
@@ -352,13 +356,16 @@ def player(path,cmd,args):
 
 	if path:
 		function_to_call = cmd + '_' + '_'.join(path)
-		ret = locals()[function_to_call](args)
 	else:
 		# called without sub-paths
 		function_to_call = cmd + '_' + base_path
+
+	if function_to_call in locals():
 		ret = locals()[function_to_call](args)
-		
-	printer('Executed function {0} with result status: {1}'.format(function_to_call,ret))
+		printer('Executed {0} function {1} with result status: {2}'.format(base_path,function_to_call,ret))
+	else:
+		printer('Function {0} does not exist'.format(function_to_call))
+
 	return True
 
 
