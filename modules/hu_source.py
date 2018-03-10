@@ -573,8 +573,8 @@ class SourceController():
 				#	del source['sourceClass']
 				#if 'sourceModule' in source:
 				#	del source['sourceModule']
-				for key,val in source:
-					if type(val) == 'instance':
+				for key,value in source.iteritems():
+					if type(value) == 'instance':
 						del source[key]
 
 			return mycopy
