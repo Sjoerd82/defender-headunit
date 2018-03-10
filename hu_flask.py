@@ -25,9 +25,11 @@ def publish_message(path,command="SET"):
 def receive_message(topicfilter):
 	#topicfilter = "9"
 	subscriber.setsockopt(zmq.SUBSCRIBE, topicfilter)
-	for update_nbr in range(10):
-		string = subscriber.recv()
-		topic, messagedata = string.split()
+	message = subscriber.recv()
+	return message
+	#for update_nbr in range(10):
+	#	string = subscriber.recv()
+	#	topic, messagedata = string.split()
 		
 """		
 def publish_message(message):

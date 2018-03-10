@@ -111,6 +111,7 @@ def printer( message, level=20, continuation=False, tag='SYSTEM' ):
 def zmq_send(path,message):
 	#TODO
 	path_send = '/data' + path
+	printer("Sending message: {0} {1}".format(path, message))
 	zmq_sck.send("{0} {1}".format(path, message))
 	time.sleep(1)
 
