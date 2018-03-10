@@ -13,12 +13,6 @@ app = Flask(__name__)
 import zmq
 import time
 
-zmq_ctx = zmq.Context()
-zmq_sck = zmq_ctx.socket(zmq.PUB)
-#zmq_sck_req = zmq_ctx.socket(zmq.REQ)
-
-print zmq.pyzmq_version()
-
 def publish_message(path,command="SET"):
 	try:
 		msg = "{0} {1}".format(path,command)
@@ -28,7 +22,13 @@ def publish_message(path,command="SET"):
 	except Exception as e:
 		print("error {0}".format(e))
 
-
+def receive_message(topicfilter):
+	#topicfilter = "9"
+	socket.setsockopt(zmq.SUBSCRIBE, topicfilter)
+	for update_nbr in range(10):
+		string = socket.recv()
+		topic, messagedata = string.split()
+		
 """		
 def publish_message(message):
 	try:
@@ -111,11 +111,12 @@ POST /plugin/<path:config>              Set for a plugin
 
 @app.route('/hu/api/v1.0/source', methods=['GET'])
 def get_source():
-	"""This is a function. It does nothing."""
-	#get sources from MQ
-	#stub:
-	sources = [{ "code":"smb" }, { "code":"media" }]
-	return jsonify({'sources': sources})
+	# Retrieve list of sources
+	publish_message("/source","GET")
+	msg = receive_message("/data/source")
+	return msg
+	#sources = [{ "code":"smb" }, { "code":"media" }]
+	#return jsonify({'sources': sources})
 
 
 @app.route('/hu/api/v1.0/source/<int:source_id>', methods=['GET'])
@@ -356,12 +357,25 @@ def post_plugin_path(path):
 if __name__ == '__main__':
 	
 	# TODO! get port number from configuration
-	url = "tcp://127.0.0.1:5556"
-	try:
-		zmq_sck.bind(url)
-		time.sleep(1)
-	except:
-		exit(0) # TODO ... IT CANNOT RECOVER .. SOMEHOW!
+	#url = "tcp://127.0.0.1:5556"
+	#try:
+	#	zmq_sck.bind(url)
+	#	time.sleep(1)
+	#except:
+	#	exit(0) # TODO ... IT CANNOT RECOVER .. SOMEHOW!
+
+	print "ZMQ Version {0}". format(zmq.pyzmq_version())
+	
+	port_client = "5559"
+	zmq_ctx = zmq.Context()
+	zmq_sck = zmq_ctx.socket(zmq.PUB)
+	socket.connect("tcp://localhost:{0}".format(port_client))
+	#zmq_sck_req = zmq_ctx.socket(zmq.REQ)
+
+	subscriber = context.socket(zmq.SUB)
+	port_server = "5560" #TODO: get port from config
+	subscriber.connect ("tcp://localhost:{0}".format(port_server)) # connect to server
+
 
 	# The default port it will run on here is 5000
 	app.run(host='0.0.0.0', debug=False, use_reloader=False)

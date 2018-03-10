@@ -105,10 +105,11 @@ def printer( message, level=20, continuation=False, tag='SYSTEM' ):
 # ********************************************************************************
 # MQ functions
 #
-def mq_send(path,message):
+def zmq_send(path,message):
 	#TODO
 	path_send = '/data' + path
-	
+	socket.send("{0} {1}".format(path, message))
+	time.sleep(1)
 
 def process_queue():
 	if not queue_actions.empty(): 
@@ -196,7 +197,7 @@ def source(path,cmd,args):
 		
 		#message = msg_return
 		#mq_send(path_send, msg_return)
-		mq_send('/source', ret_sources) # TODO: use base_path
+		zmq_send('/source', ret_sources) # TODO: use base_path
 		return True
 
 	def set_source(args):
@@ -641,9 +642,6 @@ init_logging_c()
 #
 # Load main configuration
 #
-#
-
-# TODO, add this function to utils
 configuration = configuration_load(CONFIG_FILE)
 
 #
@@ -680,7 +678,13 @@ myprint('{0} version {1}'.format('Source Controller',__version__),tag='SYSTEM')
 #
 context = zmq.Context()
 subscriber = context.socket (zmq.SUB)
-subscriber.connect ("tcp://localhost:5556")	# TODO: get port from config
+port_server = 5560 #TODO: get port from config
+subscriber.connect ("tcp://localhost:{0}".format(port_server)) # connect to server
+
+port_client = "5559"
+zmq_sck = zmq_ctx.socket(zmq.PUB)
+socket.connect("tcp://localhost:{0}".format(port_client))
+
 
 #
 # Subscribe to topics
