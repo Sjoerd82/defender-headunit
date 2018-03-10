@@ -48,28 +48,28 @@ def main():
 	port_client = configuration['zeromq']['port_client']
 	port_server = configuration['zeromq']['port_server']
 
-    try:
-        context = zmq.Context(1)
-        # Socket facing clients
-        frontend = context.socket(zmq.SUB)
-        frontend.bind("tcp://*:{0}".format(port_client))
-        
-		# Don't filter!
-        frontend.setsockopt(zmq.SUBSCRIBE, "")
-        
-        # Socket facing services
-        backend = context.socket(zmq.PUB)
-        backend.bind("tcp://*:{0}".format(port_server))
+	try:
+		context = zmq.Context(1)
+		# Socket facing clients
+		frontend = context.socket(zmq.SUB)
+		frontend.bind("tcp://*:{0}".format(port_client))
 
-        zmq.device(zmq.FORWARDER, frontend, backend)
-    except Exception, e:
-        print e
-        print "Bringing down zmq device"
-    finally:
-        pass
-        frontend.close()
-        backend.close()
-        context.term()
+		# Don't filter!
+		frontend.setsockopt(zmq.SUBSCRIBE, "")
+
+		# Socket facing services
+		backend = context.socket(zmq.PUB)
+		backend.bind("tcp://*:{0}".format(port_server))
+
+		zmq.device(zmq.FORWARDER, frontend, backend)
+	except Exception, e:
+		print e
+		print "Bringing down zmq device"
+	finally:
+		pass
+		frontend.close()
+		backend.close()
+		context.term()
 
 if __name__ == "__main__":
-    main()
+	main()

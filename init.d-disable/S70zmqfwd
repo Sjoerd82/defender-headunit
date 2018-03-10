@@ -2,11 +2,11 @@
 
 # APPLICATION
 NAME="ZMQ forwarder"
-DAEMON="/mnt/PIHU_APP/defender-headunit/d_zmw_forwarder.py"
+DAEMON="/mnt/PIHU_APP/defender-headunit/d_zmq_forwarder.py"
 DAEMONOPTS=""
 
 # PID (created by application)
-#PIDFILE=/var/run/hu.pid
+PIDFILE=/var/run/zmqfwd.pid
 
 start() {
         if [ -f $DAEMON ]; then
