@@ -106,10 +106,9 @@ def printer( message, level=20, continuation=False, tag='SYSTEM' ):
 # MQ functions
 #
 def zmq_send(path,message):
-	global socket
 	#TODO
 	path_send = '/data' + path
-	socket.send("{0} {1}".format(path, message))
+	zmq_sck.send("{0} {1}".format(path, message))
 	time.sleep(1)
 
 def process_queue():
@@ -684,7 +683,7 @@ subscriber.connect ("tcp://localhost:{0}".format(port_server)) # connect to serv
 
 port_client = "5559"
 zmq_sck = zmq_ctx.socket(zmq.PUB)
-socket.connect("tcp://localhost:{0}".format(port_client))
+zmq_sck.connect("tcp://localhost:{0}".format(port_client))
 
 
 #

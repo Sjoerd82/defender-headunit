@@ -369,7 +369,7 @@ if __name__ == '__main__':
 	port_client = "5559"
 	zmq_ctx = zmq.Context()
 	zmq_sck = zmq_ctx.socket(zmq.PUB)
-	socket.connect("tcp://localhost:{0}".format(port_client))
+	zmq_sck.connect("tcp://localhost:{0}".format(port_client))
 	#zmq_sck_req = zmq_ctx.socket(zmq.REQ)
 
 	subscriber = context.socket(zmq.SUB)
