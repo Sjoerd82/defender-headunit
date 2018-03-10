@@ -13,12 +13,15 @@ app = Flask(__name__)
 import zmq
 #from zmq.utils import jsonapi
 from time import sleep
+import json
 
+"""
 def encode_json(self, o):
 	return jsonapi.dumps(o)
   
 def decode_json(self, s):
 	return jsonapi.loads(s)
+"""
 
 def publish_message(path,command="SET"):
 	try:
