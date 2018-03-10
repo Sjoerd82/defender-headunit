@@ -189,17 +189,22 @@ def source(path,cmd,args):
 		# Retrieve list of, or specified source(s)
 		#msg_return ={}
 		if not args:
+			print "DEBUG1"
 			# return all sources
-			ret_sources = sc_sources.get(None)
+			#print sc_sources.getAll(None)
+			ret_sources = sc_sources.getAll(None)
 			# build msg_return # needed?
 		elif len(args) == 1:
+			print "DEBUG2"
 			# return source
 			ret_sources = sc_sources.get(args[0])
 		elif len(args) == 2:
+			print "DEBUG3"
 			# return source + subsource
 			#ret_sources = sc_sources.get(args[0],args[1])
 			ret_sources = None #function not implemented
-		
+			
+		print ret_sources		
 		#message = msg_return
 		#mq_send(path_send, msg_return)
 		zmq_send('/source', ret_sources) # TODO: use base_path
