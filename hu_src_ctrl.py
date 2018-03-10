@@ -676,8 +676,8 @@ myprint('{0} version {1}'.format('Source Controller',__version__),tag='SYSTEM')
 #
 # ZeroMQ
 #
-context = zmq.Context()
-subscriber = context.socket (zmq.SUB)
+zmq_ctx = zmq.Context()
+subscriber = zmq_ctx.socket (zmq.SUB)
 port_server = 5560 #TODO: get port from config
 subscriber.connect ("tcp://localhost:{0}".format(port_server)) # connect to server
 
