@@ -106,6 +106,7 @@ def printer( message, level=20, continuation=False, tag='SYSTEM' ):
 # MQ functions
 #
 def zmq_send(path,message):
+	global socket
 	#TODO
 	path_send = '/data' + path
 	socket.send("{0} {1}".format(path, message))
