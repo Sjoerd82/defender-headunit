@@ -565,7 +565,7 @@ class SourceController():
 
 	def get_all_simple( self, index=None ):
 		if index == None:
-			mycopy = copy.copy(self.lSource[self.iCurrentSource[0]])
+			mycopy = copy.copy(self.lSource)
 			for source in mycopy:
 				print type(source['sourceClass'])
 				del source['sourceClass']
