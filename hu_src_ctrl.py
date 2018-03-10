@@ -192,7 +192,7 @@ def source(path,cmd,args):
 			print "DEBUG1"
 			# return all sources
 			#print sc_sources.getAll(None)
-			ret_sources = sc_sources.getAll(None)
+			ret_sources = sc_sources.getAll()
 			# build msg_return # needed?
 		elif len(args) == 1:
 			print "DEBUG2"
