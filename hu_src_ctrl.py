@@ -22,6 +22,9 @@ import inspect
 import gobject
 from dbus.mainloop.glib import DBusGMainLoop
 
+# sockets
+import time
+
 #********************************************************************************
 #
 # Version

@@ -18,13 +18,13 @@ def publish_message(path,command="SET"):
 		msg = "{0} {1}".format(path,command)
 		
 		print("Sending message : {0}".format(msg))
-		zmq_sck.send(msg)
+		publisher.send(msg)
 	except Exception as e:
 		print("error {0}".format(e))
 
 def receive_message(topicfilter):
 	#topicfilter = "9"
-	socket.setsockopt(zmq.SUBSCRIBE, topicfilter)
+	subscriber.setsockopt(zmq.SUBSCRIBE, topicfilter)
 	for update_nbr in range(10):
 		string = socket.recv()
 		topic, messagedata = string.split()
@@ -368,8 +368,8 @@ if __name__ == '__main__':
 	
 	port_client = "5559"
 	zmq_ctx = zmq.Context()
-	zmq_sck = zmq_ctx.socket(zmq.PUB)
-	zmq_sck.connect("tcp://localhost:{0}".format(port_client))
+	publisher = zmq_ctx.socket(zmq.PUB)
+	publisher.connect("tcp://localhost:{0}".format(port_client))
 	#zmq_sck_req = zmq_ctx.socket(zmq.REQ)
 
 	subscriber = zmq_ctx.socket(zmq.SUB)
