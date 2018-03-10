@@ -567,12 +567,11 @@ class SourceController():
 		if index == None:
 			mycopy = copy.copy(self.lSource)
 			for source in mycopy:
-				print type(source['sourceClass'])
-				#TODO: delete based on type()
-				#if 'sourceClass' in source:
-				#	del source['sourceClass']
-				#if 'sourceModule' in source:
-				#	del source['sourceModule']
+				if 'sourceClass' in source:
+					del source['sourceClass']
+				if 'sourceModule' in source:
+					del source['sourceModule']
+				#TODO: delete based on type(), figure out why this doesn't work:
 				for key,value in source.iteritems():
 					if type(value) == 'instance':
 						del source[key]
