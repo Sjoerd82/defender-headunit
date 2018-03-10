@@ -565,14 +565,11 @@ class SourceController():
 
 	def get_all_simple( self, index=None ):
 		if index == None:
-			if self.iCurrentSource[0] == None:
-				return None
-			else:
-				mycopy = copy.copy(self.lSource[self.iCurrentSource[0]])
-				for source in mycopy:
-					print type(source['sourceClass'])
-					del source['sourceClass']
-				return mycopy
+			mycopy = copy.copy(self.lSource[self.iCurrentSource[0]])
+			for source in mycopy:
+				print type(source['sourceClass'])
+				del source['sourceClass']
+			return mycopy
 		else:
 			mycopy = copy.copy(self.lSource[index])
 			for source in mycopy:
