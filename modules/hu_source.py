@@ -579,7 +579,7 @@ class SourceController():
 			for source in mycopy:
 				for key,val in source:
 					if type(val) == 'instance':
-					del mycopy[key]
+						del mycopy[key]
 				return mycopy
 			
 	
