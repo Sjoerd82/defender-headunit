@@ -11,7 +11,14 @@ app = Flask(__name__)
 # Zero MQ
 #
 import zmq
-import time
+#from zmq.utils import jsonapi
+from time import sleep
+
+def encode_json(self, o):
+	return jsonapi.dumps(o)
+  
+def decode_json(self, s):
+	return jsonapi.loads(s)
 
 def publish_message(path,command="SET"):
 	try:
@@ -24,9 +31,10 @@ def publish_message(path,command="SET"):
 
 def receive_message(path):
 	subscriber.setsockopt(zmq.SUBSCRIBE, path)
-	message = subscriber.recv()
+	messagedata = subscriber.recv()
 	data = message[len(path)+1:]
-	return data
+	message = json.loads(message)
+	return message
 		
 """		
 def publish_message(message):

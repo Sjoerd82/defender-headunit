@@ -111,8 +111,9 @@ def printer( message, level=20, continuation=False, tag='SYSTEM' ):
 def zmq_send(path,message):
 	#TODO
 	path_send = '/data' + path
-	printer("Sending message: {0} {1}".format(path_send, message))
-	zmq_sck.send("{0} {1}".format(path_send, message))
+	data = json.dumps(message)
+	printer("Sending message: {0} {1}".format(path_send, data))
+	zmq_sck.send("{0} {1}".format(path_send, data))
 	time.sleep(1)
 
 def process_queue():
