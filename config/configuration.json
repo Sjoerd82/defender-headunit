@@ -51,6 +51,8 @@
 	}
 	, "zeromq": {
 		"port": 5555
+		, "client_port": 5559
+		, "server_port": 5560
 	}
 	, "auto_update": {
 		  "mode": "all"

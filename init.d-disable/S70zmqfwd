@@ -1,0 +1,43 @@
+#!/bin/sh
+
+# APPLICATION
+NAME="ZMQ forwarder"
+DAEMON="/mnt/PIHU_APP/defender-headunit/d_zmw_forwarder.py"
+DAEMONOPTS=""
+
+# PID (created by application)
+#PIDFILE=/var/run/hu.pid
+
+start() {
+        if [ -f $DAEMON ]; then
+          echo "Starting $NAME..."
+          start-stop-daemon -x $DAEMON -p $PIDFILE -S -- $DAEMONOPTS
+          retval=$?
+		else
+          echo "$DAEMON not found!"
+        fi
+}
+
+stop() {
+        echo "Stopping $NAME"
+        start-stop-daemon -x $DAEMON -p $PIDFILE -K
+        retval=$?
+}
+
+case "$1" in
+  start)
+        start
+        ;;
+  stop)
+        stop
+        ;;
+  restart|reload)
+        stop
+        start
+        ;;
+  *)
+        echo "Usage: $0 {start|stop|restart}"
+        exit 1
+esac
+
+exit $retval
