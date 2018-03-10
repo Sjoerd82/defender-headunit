@@ -1,8 +1,8 @@
+<h1>Sources</h1>
+{% for source in sources %}
 <table>
-{% for dict_item in sources %}
-   {% for key, value in dict_item.items() %}
-      <h1>Key: {{key}}</h1>
-      <h2>Value: {{value}}</h2>
+   {% for key, value in source.items() %}
+      <tr><td>{{key}}</td><td>{{value}}</td></tr>
    {% endfor %}
-{% endfor %}
 </table>
+{% endfor %}

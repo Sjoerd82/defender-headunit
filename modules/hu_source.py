@@ -569,17 +569,21 @@ class SourceController():
 			for source in mycopy:
 				print type(source['sourceClass'])
 				#TODO: delete based on type()
-				if 'sourceClass' in source:
-					del source['sourceClass']
-				if 'sourceModule' in source:
-					del source['sourceModule']
+				#if 'sourceClass' in source:
+				#	del source['sourceClass']
+				#if 'sourceModule' in source:
+				#	del source['sourceModule']
+				for key,val in source:
+					if type(val) == 'instance':
+						del source[key]
+
 			return mycopy
 		else:
 			mycopy = copy.copy(self.lSource[index])
 			for source in mycopy:
 				for key,val in source:
 					if type(val) == 'instance':
-						del mycopy[key]
+						del source[key]
 				return mycopy
 			
 	
