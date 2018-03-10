@@ -22,14 +22,11 @@ def publish_message(path,command="SET"):
 	except Exception as e:
 		print("error {0}".format(e))
 
-def receive_message(topicfilter):
-	#topicfilter = "9"
-	subscriber.setsockopt(zmq.SUBSCRIBE, topicfilter)
+def receive_message(path):
+	subscriber.setsockopt(zmq.SUBSCRIBE, path)
 	message = subscriber.recv()
-	return message
-	#for update_nbr in range(10):
-	#	string = subscriber.recv()
-	#	topic, messagedata = string.split()
+	data = message[len(topicfilter)+1:]
+	return data
 		
 """		
 def publish_message(message):
@@ -116,7 +113,8 @@ def get_source():
 	# Retrieve list of sources
 	publish_message("/source","GET")
 	msg = receive_message("/data/source")
-	return msg
+	#return msg
+	return render_template('sources.html', sources=msg)
 	#sources = [{ "code":"smb" }, { "code":"media" }]
 	#return jsonify({'sources': sources})
 
