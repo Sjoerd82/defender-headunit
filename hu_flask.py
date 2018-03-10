@@ -25,7 +25,7 @@ def publish_message(path,command="SET"):
 def receive_message(path):
 	subscriber.setsockopt(zmq.SUBSCRIBE, path)
 	message = subscriber.recv()
-	data = message[len(topicfilter)+1:]
+	data = message[len(path)+1:]
 	return data
 		
 """		
