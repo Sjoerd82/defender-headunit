@@ -372,7 +372,7 @@ if __name__ == '__main__':
 	zmq_sck.connect("tcp://localhost:{0}".format(port_client))
 	#zmq_sck_req = zmq_ctx.socket(zmq.REQ)
 
-	subscriber = context.socket(zmq.SUB)
+	subscriber = zmq_ctx.socket(zmq.SUB)
 	port_server = "5560" #TODO: get port from config
 	subscriber.connect ("tcp://localhost:{0}".format(port_server)) # connect to server
 
