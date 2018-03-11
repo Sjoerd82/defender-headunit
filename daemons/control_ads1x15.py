@@ -106,12 +106,10 @@ def main():
 	buttonfunc = []
 
 	buttonfunc.append( {
-	   "channel0_lo" = 180
-	 , "channel0_hi" = 190
-	 , "delay" = None
-	 , "zmq_msg" = "\player\update SET"} )
-	
-	
+	   "channel0_lo": 180
+	 , "channel0_hi": 190
+	 , "delay"      : None
+	 , "zmq_msg"    : "\player\update SET" } )
 	
 	adc = Adafruit_ADS1x15.ADS1015()
 	#pavol = pa_volume_handler('alsa_output.platform-soc_sound.analog-stereo')
