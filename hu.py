@@ -176,6 +176,11 @@ SYSLOG_UDP_PORT=514
 
 hu_details = { 'track':None, 'random':'off', 'repeat':True, 'att':False }
 
+# zmq
+subscriber = None
+publisher = None
+
+
 #def volume_att_toggle():
 #	hudispdata = {}
 #	hudispdata['att'] = '1'
@@ -197,6 +202,9 @@ def printer( message, level=20, continuation=False, tag='SYSTEM' ):
 #
 def zmq_connect():
 
+	global subscriber
+	global publisher
+
 	printer("Connecting to ZeroMQ forwarder")
 	
 	zmq_ctx = zmq.Context()
@@ -214,9 +222,12 @@ def zmq_connect():
 	#subscriber.setsockopt (zmq.SUBSCRIBE, '')
 
 def zmq_send(path_send, message):
+
+	global publisher
+
 	data = json.dumps(message)
 	printer("Sending message: {0} {1}".format(path_send, data))
-	zmq_sck.send("{0} {1}".format(path_send, data))
+	publisher.send("{0} {1}".format(path_send, data))
 	time.sleep(1)
 	
 	

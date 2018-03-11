@@ -112,6 +112,10 @@ def printer( message, level=20, continuation=False, tag='SYSTEM' ):
 # Zero MQ functions
 #
 def zmq_connect():
+
+	global subscriber
+	global publisher
+	
 	zmq_ctx = zmq.Context()
 	subscriber = zmq_ctx.socket (zmq.SUB)
 	port_server = "5560" #TODO: get port from config
@@ -130,12 +134,23 @@ def zmq_connect():
 
 
 def zmq_send(path,message):
+
+	global publisher
+
 	#TODO
 	path_send = '/data' + path
 	data = json.dumps(message)
 	printer("Sending message: {0} {1}".format(path_send, data))
 	publisher.send("{0} {1}".format(path_send, data))
 	time.sleep(1)
+
+def zmq_recv():
+
+	global subscriber
+
+	message = subscriber.recv()
+	parse_message(message)
+	return True
 
 def process_queue():
 	if not queue_actions.empty(): 
@@ -146,10 +161,6 @@ def process_queue():
 		queue_actions.task_done()
 	return True
 
-def mq_recv():
-	message = subscriber.recv()
-	parse_message(message)
-	return True
 
 #def check_args(args,count,types):
 #	
@@ -754,7 +765,7 @@ mainloop = gobject.MainLoop()
 # Queue handler
 # NOTE: Remember, everything executed through the qBlock queue blocks, including qPrio!
 # IDEALLY, WE'D PUT THIS BACK IN A THREAD, IF THAT WOULD PERFORM... (which for some reason it doesn't!)
-gobject.idle_add(mq_recv)
+gobject.idle_add(zmq_recv)
 queue_actions = Queue(maxsize=40)		# Blocking stuff that needs to run in sequence
 gobject.idle_add(process_queue)
 
