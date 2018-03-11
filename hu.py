@@ -1875,7 +1875,7 @@ if not SOURCE:
 	#Sources.sourceCheckAll()
 	#printSummary(Sources)
 	printer ('Starting first available source', tag='QPLAY')
-	zmq_send('/source/next')
+	zmq_send('/source/next', 'SET')
 	#Sources.next()
 	zmq_send('/source/state', 'SET:play')
 	#hu_play(resume=False)
