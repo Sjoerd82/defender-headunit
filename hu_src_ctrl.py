@@ -150,7 +150,8 @@ def zmq_recv():
 
 	global subscriber
 
-	message = subscriber.recv()
+	message_encoded = subscriber.recv()
+	message = json.loads(message_encoded)
 	printer("Received message: {0}".format(message))
 	parse_message(message)
 	return True
@@ -261,11 +262,13 @@ def source(path,cmd,args):
 	def set_next(args):
 		# Set active (sub)source to the next available
 		ret = sc_sources.next()
+		printSummary(sc_sources)
 		return ret
 
 	def set_prev(args):
 		# Set active (sub)source to the prev available
 		sc_sources.next(True)
+		printSummary(sc_sources)
 		return True
 
 	#def all_check(args):
