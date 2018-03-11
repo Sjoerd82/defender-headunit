@@ -39,10 +39,10 @@ def printer( message, level=LL_INFO, continuation=False, tag=controlName ):
 # Button presses are NOT asynchronous!! i.e. wait until a button press is handled before the next button can be handled.
 # TODO: Consider making them asynchronous, or at least the update lib (long) / volume (short) buttons
 
-def button_press(self, button):
+def button_press(button):
 	printer("Button was pressed: {0}".format(button))
 	
-def button_down_wait(self):
+def button_down_wait():
 
 	adc = Adafruit_ADS1x15.ADS1015()
 	
@@ -53,7 +53,7 @@ def button_down_wait(self):
 		time.sleep(0.1)
 	printer("...released")
 	
-def button_down_delay(self):
+def button_down_delay():
 
 	adc = Adafruit_ADS1x15.ADS1015()
 	press_count = 0
