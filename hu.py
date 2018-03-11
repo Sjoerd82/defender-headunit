@@ -1676,6 +1676,12 @@ def setup():
 	init_logging_s( address='/dev/log' )
 	
 	#
+	# "Splash Screen": Display version and play startup tune
+	#
+	myprint('Headunit.py version {0}'.format(__version__),tag='SYSTEM')
+	pa_sfx('startup')
+
+	#
 	# Determine starting source
 	#
 	# Order:
@@ -1721,12 +1727,10 @@ def setup():
 
 
 	#
-	# "Splash Screen": Display version and play startup tune
+	# Connect to ZMQ
 	#
-	#
-	myprint('Headunit.py version {0}'.format(__version__),tag='SYSTEM')
-	pa_sfx('startup')
-
+	zmq_connect()
+	
 
 	#
 	# create menu structure
@@ -1737,42 +1741,6 @@ def setup():
 	#  "entry_name": "browse_track"}
 	#huMenu.add( testentry )
 
-
-
-	#print "TESTING TESTING"
-	#Sources.setAvailableIx(0,True)
-	#Sources.setCurrent(0)
-	#Sources.sourcePlay()
-	#exit()
-
-	""" DEBUGGING....
-	print "DEBUG!"
-	prevSource = {'name': 'fm'}
-	prevSourceSub = {}
-
-	print bla_refactored( prevSource, prevSourceSub )
-		
-	print "DEBUG!"
-	prevSource = {'name': 'locmus'}
-	prevSourceSub = {'mountpoint':'/media/PIHU_DATA'}
-	bFound = False
-
-	print bla_refactored( prevSource, prevSourceSub )
-
-
-	print "DEBUG!"
-	prevSource = {'name': 'locmus'}
-	prevSourceSub = {'mountpoint':'/media/PIHU_DATA3'}
-	bFound = False
-
-	print bla_refactored( prevSource, prevSourceSub )
-	"""
-
-
-	#debug
-	#huMenu.menuDisplay( header=True )
-	#huMenu.menuDisplay( entry=1, header=True )
-	#print huMenu.getMenu( [1,0] )
 
 	#
 	# import control plugins (disabled)
@@ -1857,7 +1825,6 @@ def main():
 	global BOOT
 	global LOGLEVEL_C
 
-	
 	#
 	# Check if Source Controller started and available
 	#
