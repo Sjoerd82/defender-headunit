@@ -76,7 +76,9 @@ There are two types of supported plugins:
 
 1. configuration.json
 2. settings.json, HU_SOURCE, HU_VOLUME
-3. state.json
+3. < source >/settings.json
+4. < source >/< key >.p
+5. state.json (deprecate?)
 
 #### configuration.json
 Centralized configuration file. Aims to be the only configuration file you'll ever need to change.
@@ -87,6 +89,12 @@ Will see occasional writing.
 Operational settings which need to be persisted and restores over reboots. The files HU_SOURCE and HU_VOLUME are separate file for easy reading during boot.
 Location: /mnt/PIHU_CONFIG
 Read at boot. Write at shutdown. Optionally write every n seconds. ~to be refined...
+
+#### <source>/settings.json
+Operational settings per source
+
+#### <source>/<key>.p
+Resume playback information (pickled)
 
 #### state.json
 Operational state. May be kept on a ramdrive (no need for persistance).
