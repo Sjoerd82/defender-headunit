@@ -79,6 +79,7 @@
 # ./hu_....py
 
 import sys
+from modules.hu_utils import *
 
 #********************************************************************************
 #
@@ -178,7 +179,6 @@ import zmq
 # support modules
 from modules.hu_pulseaudio import *
 from modules.hu_volume import *
-from modules.hu_utils import *
 from modules.hu_source import SourceController
 from modules.hu_settings import *
 from modules.hu_mpd import *
