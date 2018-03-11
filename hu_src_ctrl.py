@@ -346,9 +346,11 @@ def player(path,cmd,args):
 	def set_state(args):
 		# Set state: play|pause|stop, toggle random
 		# TODO
-		if args == "play":
+		if args[0] == "play":
 			ret = sc_sources.source_play()
 			return ret
+		else:
+			print("not supported: {0}".format(args))
 		return True
 
 	def set_random(args):
