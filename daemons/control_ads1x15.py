@@ -83,37 +83,82 @@ def main():
 	# ADC remote variables
 	GAIN = 2/3
 	BUTTON_LO   = 100
-	BUTTON01_LO = 180	# Bottom button
-	BUTTON01_HI = 190	#   starts at around 185, but then spikes to around 278
-	BUTTON02_LO = 220	# Side button, with raised center line
-	BUTTON02_HI = 260	
-	BUTTON03_LO = 310	# 
-	BUTTON03_HI = 330	
-	BUTTON04_LO = 380	# 
-	BUTTON04_HI = 410	
-	BUTTON05_LO = 460	# 
-	BUTTON05_HI = 490	
+	
 	BUTTON06_LO = 560	# 
 	BUTTON06_HI = 580	
+	
 	BUTTON07_LO = 640	# 
 	BUTTON07_HI = 670	
+	
 	BUTTON08_LO = 740	# "ATT"
 	BUTTON08_HI = 770	
+	
 	BUTTON09_LO = 890	# "SOURCE"
 	BUTTON09_HI = 910	
+	
 	BUTTON10_LO = 1050	# "OFF"
 	BUTTON10_HI = 1100	
 
 	#button-2-function mapper
 	buttonfunc = []
 
+	# Bottom button
 	buttonfunc.append( {
 	   "channel0_lo": 180
-	 , "channel0_hi": 190
+	 , "channel0_hi": 190	# Starts at around 185, but then spikes to around 278
+	 , "wait"       : True	# Wait until button is released (no need to continue updating...)
 	 , "delay"      : None
 	 , "zmq_path"   : "\player\update"
 	 , "zmq_cmd"    : "SET" } )
-	
+
+	# Side button, with raised center line (not assigned any task)
+	buttonfunc.append( {
+	   "channel0_lo": 220
+	 , "channel0_hi": 260
+	 , "wait"       : False
+	 , "delay"      : None } )
+
+	# Volume UP
+	buttonfunc.append( {
+	   "channel0_lo": 310
+	 , "channel0_hi": 330
+	 , "wait"       : False
+	 , "delay"      : None
+	 , "zmq_path"   : "\volume\increase"
+	 , "zmq_cmd"    : "SET" } )
+
+	# Volume DOWN
+	buttonfunc.append( {
+	   "channel0_lo": 380
+	 , "channel0_hi": 410
+	 , "wait"       : False
+	 , "delay"      : None
+	 , "zmq_path"   : "\volume\decrease"
+	 , "zmq_cmd"    : "SET" } )
+
+	# Next Track / Next Dir (if channel 1 engaged)
+	buttonfunc.append( {
+	   "channel0_lo": 460
+	 , "channel0_hi": 490
+	 , "channel1_lo": 0
+	 , "channel1_hi": 300
+	 , "wait"       : False
+	 , "delay"      : None
+	 , "zmq_path"   : "\player\next"
+	 , "zmq_cmd"    : "SET" } )
+
+	# Next Track / Next Dir (if channel 1 engaged)
+	buttonfunc.append( {
+	   "channel0_lo": 460
+	 , "channel0_hi": 490
+	 , "channel1_lo": 301
+	 , "channel1_hi": 1100
+	 , "wait"       : False
+	 , "delay"      : None
+	 , "zmq_path"   : "\player\nextdir"
+	 , "zmq_cmd"    : "SET" } )
+
+	 
 	# ADC
 	adc = Adafruit_ADS1x15.ADS1015()
 	# ZMQ
@@ -150,34 +195,50 @@ def main():
 			time.sleep(0.1)
 		printer("...released/max. delay reached")
 	
+	def handle_button_press( button_spec ):
+		if 'zmq_path' and 'zmq_cmd' in button_spec:
+			zmq_send(button_spec['zmq_path'],button_spec['zmq_cmd'])
+			if button_spec['delay']:
+				button_down_delay()
+			elif button_spec['wait']:
+				button_down_wait()
+		else:
+			printer('No function configured for this button')
+	
+	
 	while True:
 		value_0 = adc.read_adc(0, gain=GAIN)
 		value_1 = adc.read_adc(1, gain=GAIN)
 		
 		if buttonfunc[0]['channel0_lo'] <= value_0 <= buttonfunc[0]['channel0_hi']:
-			#Bottom button
-			zmq_send(buttonfunc[0]['zmq_path'],buttonfunc[0]['zmq_cmd'])
-			#button_press('UPDATE_LOCAL')
-			#Wait until button is released (no need to continue updating...)
-			button_down_wait()			
+			handle_button_press(buttonfunc[0])
 
-		elif BUTTON02_LO <= value_0 <= BUTTON02_HI:
-			#Side button, met streepje
-			print('BUTTON02')
+		elif buttonfunc[1]['channel0_lo'] <= value_0 <= buttonfunc[1]['channel0_hi']:
+			handle_button_press(buttonfunc[1])
 
-		elif BUTTON03_LO <= value_0 <= BUTTON03_HI:
-			button_press('VOL_UP')
+		elif buttonfunc[2]['channel0_lo'] <= value_0 <= buttonfunc[2]['channel0_hi']:
+			handle_button_press(buttonfunc[2])
 			
-		elif BUTTON04_LO <= value_0 <= BUTTON04_HI:
-			button_press('VOL_DOWN')
+		elif buttonfunc[3]['channel0_lo'] <= value_0 <= buttonfunc[3]['channel0_hi']:
+			handle_button_press(buttonfunc[3])
+
+		elif buttonfunc[4]['channel0_lo'] <= value_0 <= buttonfunc[4]['channel0_hi']:
+			if ('channel1_lo' and 'channel1_hi' in buttonfunc[4]
+				and buttonfunc[4]['channel1_lo'] <= value_1 <= buttonfunc[4]['channel1_hi']):
+					handle_button_press(buttonfunc[4])
+
+		elif buttonfunc[5]['channel0_lo'] <= value_0 <= buttonfunc[5]['channel0_hi']:
+			if ('channel1_lo' and 'channel1_hi' in buttonfunc[5]
+				and buttonfunc[5]['channel1_lo'] <= value_1 <= buttonfunc[5]['channel1_hi']):
+					handle_button_press(buttonfunc[5])
 			
-		elif BUTTON05_LO <= value_0 <= BUTTON05_HI:
-			if value_1 < 300:
-				button_press('SEEK_NEXT')
-			else:
-				button_press('DIR_NEXT')
-			#Wait a little...
-			button_down_delay()
+#		elif BUTTON05_LO <= value_0 <= BUTTON05_HI:
+#			if value_1 < 300:
+#				button_press('SEEK_NEXT')
+#			else:
+#				button_press('DIR_NEXT')
+#			#Wait a little...
+#			button_down_delay()
 			
 		elif BUTTON06_LO <= value_0 <= BUTTON06_HI:
 			if value_1 < 300:
