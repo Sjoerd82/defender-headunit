@@ -116,6 +116,8 @@ def zmq_connect():
 	global subscriber
 	global publisher
 	
+	printer("Connecting to ZeroMQ forwarder")
+
 	zmq_ctx = zmq.Context()
 	subscriber = zmq_ctx.socket (zmq.SUB)
 	port_server = "5560" #TODO: get port from config
@@ -149,6 +151,7 @@ def zmq_recv():
 	global subscriber
 
 	message = subscriber.recv()
+	printer("Received message: {0}".format(message))
 	parse_message(message)
 	return True
 
