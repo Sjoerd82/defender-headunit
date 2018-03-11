@@ -199,7 +199,7 @@ def main():
 	 , "channel0_hi": 1110
 	 , "wait"       : True
 	 , "delay"      : None
-	 , "long_press" : 3
+	 , "long_press" : 0.30
 	 , "zmq_path"   : "/system/halt"
 	 , "zmq_cmd"    : "SET" } )
 
@@ -256,13 +256,11 @@ def main():
 	while True:
 		value_0 = adc.read_adc(0, gain=GAIN)
 		value_1 = adc.read_adc(1, gain=GAIN)
-		
-		#if long_press_ix:
-		#	print("DEBUG LP ix   ={0}".format(long_press_ix))
-		#	print("DEBUG LP start={0}".format(long_press_start))
-		#	print("DEBUG LP diff ={0}".format(time.clock()-long_press_start))
-			
-		
+
+		if long_press_ix and value_0 < BUTTON_LO:
+			print "UMM YOU LET GO??"
+			long_press_ix = None
+	
 		ix = 0
 		for button in buttonfunc:
 			if ( button['channel0_lo'] <= value_0 <= button['channel0_hi']):
@@ -287,12 +285,6 @@ def main():
 							long_press_ix = None
 							print "LP finished - failed"
 						handle_button_press(button)
-			
-			#elif long_press_ix:
-			#	print "UMM YOU LET GO??"
-			#	long_press_ix = None
-			
-					
 			ix += 1
 		
 		"""		
