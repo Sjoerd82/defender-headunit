@@ -308,11 +308,11 @@ def main():
 		elif buttonfunc[10]['channel0_lo'] <= value_0 <= buttonfunc[10]['channel0_hi']:
 			if 'long_press' in button_spec:
 				printer("Waiting for button to be pressed long enough")
-				time.sleep(button_spec['long_press'])
+				time.sleep(buttonfunc[10]['long_press'])
 				value_0 = adc.read_adc(0, gain=GAIN)
 				
 				if buttonfunc[10]['channel0_lo'] <= value_0 <= buttonfunc[10]['channel0_hi']:
-					handle_button_press(buttonfunc[11])
+					handle_button_press(buttonfunc[10])
 				else:
 					printer("Not pressed long enough, not shutting down")
 			
