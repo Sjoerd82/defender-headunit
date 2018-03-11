@@ -1852,15 +1852,10 @@ def main():
 	#	exit()
 
 	if not SOURCE:
-		printer ('No previous source.', tag='QPLAY')
-		# following is already done on start by source-controller:
-		#zmq_send('/source/check')
-		#Sources.sourceCheckAll()
-		#printSummary(Sources)
-		printer ('Starting first available source', tag='QPLAY')
+		printer ('No previous source; starting first available source', tag='QPLAY')
 		zmq_send_cmd('/source/next', 'SET')
 		#Sources.next()
-		zmq_send_cmd('/source/state', 'SET:play')
+		zmq_send_cmd('/player/state', 'SET:play')
 		#hu_play(resume=False)
 		
 	else:
