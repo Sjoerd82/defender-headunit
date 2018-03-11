@@ -158,11 +158,11 @@ from slugify import slugify
 
 # GLOBAL vars
 #Sources = SourceController()	# --> micro-service
-Sources = None #Temp..
-disp = None
+Sources = None	#Temp.. REMOVE
+disp = None		# REMOVE
 arMpcPlaylistDirs = [ ]			#TODO: should probably not be global...
 
-# SEMI-CONSTANTS (set at startup):
+# SEMI-CONSTANTS (set at startup)
 SOURCE = None
 SOURCE_SUB = None
 BOOT = None
@@ -174,6 +174,11 @@ CONFIG_FILE = '/mnt/PIHU_CONFIG/configuration.json'
 VERSION = "1.0.0"
 PID_FILE = "hu"
 SYSLOG_UDP_PORT=514
+
+# ENVIRONMENT VARIABLES
+ENV_CONFIG_FILE = os.getenv('HU_CONFIG_FILE')
+ENV_SOURCE = os.getenv('HU_SOURCE')
+
 
 hu_details = { 'track':None, 'random':'off', 'repeat':True, 'att':False }
 
@@ -1593,11 +1598,8 @@ def parse_args():
 	global SOURCE
 	global SOURCE_SUB
 	global BOOT
-	global LOGLEVE_C
+	global LOGLEVEL_C
 	
-	ENV_CONFIG_FILE = os.getenv('HU_CONFIG_FILE')
-	ENV_SOURCE = os.getenv('HU_SOURCE')
-
 	parser = argparse.ArgumentParser(description='Uhmmmsssszzz...')
 	parser.add_argument('--loglevel', action='store', default=LL_INFO, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)
 	parser.add_argument('--source', action='store')
