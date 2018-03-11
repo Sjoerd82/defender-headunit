@@ -79,6 +79,7 @@
 # ./hu_....py
 
 import sys
+import os
 from modules.hu_utils import *
 
 #********************************************************************************
@@ -103,42 +104,6 @@ from modules.hu_logger import RemAnsiFormatter
 
 # for logging to syslog
 import socket
-
-#********************************************************************************
-#
-# Parse command line arguments and environment variables
-# Command line takes precedence over environment variables and settings.json
-#
-import os
-import argparse
-
-ENV_CONFIG_FILE = os.getenv('HU_CONFIG_FILE')
-#ENV_SOURCE = os.getenv('HU_SOURCE')
-
-parser = argparse.ArgumentParser(description='Uhmmmsssszzz...')
-parser.add_argument('--loglevel', action='store', default=LL_INFO, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)
-parser.add_argument('--source', action='store')
-parser.add_argument('--boot', action='store_true')
-parser.add_argument('-b', action='store_true')	# background, ie. no output to console
-args = parser.parse_args()
-
-arg_loglevel = args.loglevel
-arg_source = args.source
-arg_boot = args.boot
-
-if arg_source:
-	SOURCE = arg_source
-#elif ENV_SOURCE:
-#	SOURCE = ENV_SOURCE
-else:
-	SOURCE = None
-
-if arg_boot:
-	BOOT = args.boot
-else:
-	BOOT = False
-	
-print('PLAYING SOURCE: {0}'.format(SOURCE))
 
 
 #********************************************************************************
@@ -226,6 +191,9 @@ def printer( message, level=20, continuation=False, tag='SYSTEM' ):
 # ZeroMQ
 #
 def zmq_connect():
+
+	printer("Connecting to ZeroMQ forwarder")
+	
 	zmq_ctx = zmq.Context()
 	subscriber = zmq_ctx.socket (zmq.SUB)
 	port_server = "5560" #TODO: get port from config
@@ -239,6 +207,12 @@ def zmq_connect():
 	#subscriber = context.socket (zmq.SUB)
 	#subscriber.connect ("tcp://localhost:5556")	# TODO: get port from config
 	#subscriber.setsockopt (zmq.SUBSCRIBE, '')
+
+def zmq_send(path_send, message):
+	data = json.dumps(message)
+	printer("Sending message: {0} {1}".format(path_send, data))
+	zmq_sck.send("{0} {1}".format(path_send, data))
+	time.sleep(1)
 	
 	
 def queue(q, item, sfx=None):
@@ -1589,199 +1563,264 @@ class MainInstance(dbus.service.Object):
 											bus_name=bus_name)
 
 		
+
 #********************************************************************************
 #
-# Initialization
+# Parse command line arguments and environment variables
+# Command line takes precedence over environment variables and settings.json
 #
-#def setup():
+def parse_args():
+	import argparse
 
-#
-# Stop if we're already running
-#
-#if check_running(PID_FILE):
-#	exit()
+	ENV_CONFIG_FILE = os.getenv('HU_CONFIG_FILE')
+	ENV_SOURCE = os.getenv('HU_SOURCE')
 
-#
-# Start logging to console
-#
-# TODO: get settings from configuration.json
-init_logging()
-init_logging_c()
+	parser = argparse.ArgumentParser(description='Uhmmmsssszzz...')
+	parser.add_argument('--loglevel', action='store', default=LL_INFO, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)
+	parser.add_argument('--source', action='store')
+	parser.add_argument('--subsource', action='store')	
+	parser.add_argument('--boot', action='store_true')
+	parser.add_argument('-b', action='store_true')	# background, ie. no output to console
+	args = parser.parse_args()
 
-#
-# Load main configuration
-#
-#
-configuration = init_load_config()
-
-#
-# Load PulseAudio SFX
-#
-#
-pa_sfx_load( configuration['directories']['sfx'] )
-
-	
-#
-# Load operational settings
-#
-#			#TODO: change this name
-cSettings = huSettings( os.path.join(configuration['directories']['config'],configuration['files']['settings']),
-						defaultSettings=configuration['default_settings'] )
+	arg_loglevel = args.loglevel
+	arg_source = args.source
+	arg_subsource = args.subsource
+	arg_boot = args.boot
 
 
-#
-# Start logging to file
-#
-# TODO: get settings from configuration.json
-init_logging_f( configuration['directories']['log'],
-				configuration['files']['log'],
-				cSettings.incrRunCounter( max=999999 ) )
-				#settings['runcount'] )
-
-#
-# Start logging to syslog
-#
-# TODO: get settings from configuration.json
-init_logging_s( address='/dev/log' )
-
-#
-# Set/Restore volume level
-#
-#
-# Legacy: #TODO
-#settings = cSettings.get()
-#VolPulse = VolumeController('alsa_output.platform-soc_sound.analog-stereo')
-#VolPulse.set( settings['volume'] )
-
-
-#
-# "Splash Screen": Display version and play startup tune
-#
-#
-myprint('Headunit.py version {0}'.format(__version__),tag='SYSTEM')
-pa_sfx('startup')
-
-#
-# ZeroMQ
-#
-zmq_connect()
-
-#
-# create menu structure
-#
-#print configuration[
-#huMenu = Menu()
-#testentry = { "entry": "Browse tracks",
-#  "entry_name": "browse_track"}
-#huMenu.add( testentry )
-
-
-
-#print "TESTING TESTING"
-#Sources.setAvailableIx(0,True)
-#Sources.setCurrent(0)
-#Sources.sourcePlay()
-#exit()
-
-""" DEBUGGING....
-print "DEBUG!"
-prevSource = {'name': 'fm'}
-prevSourceSub = {}
-
-print bla_refactored( prevSource, prevSourceSub )
-	
-print "DEBUG!"
-prevSource = {'name': 'locmus'}
-prevSourceSub = {'mountpoint':'/media/PIHU_DATA'}
-bFound = False
-
-print bla_refactored( prevSource, prevSourceSub )
-
-
-print "DEBUG!"
-prevSource = {'name': 'locmus'}
-prevSourceSub = {'mountpoint':'/media/PIHU_DATA3'}
-bFound = False
-
-print bla_refactored( prevSource, prevSourceSub )
-"""
-
-
-#debug
-#huMenu.menuDisplay( header=True )
-#huMenu.menuDisplay( entry=1, header=True )
-#print huMenu.getMenu( [1,0] )
-
-#
-# import control plugins (disabled)
-#
-"""
-myprint('Loading Control Plugins...',tag='SYSTEM')
-from plugin_control import *
-
-threads = []
-# loop through the control plugin dir
-for filename in os.listdir( configuration['directories']['controls'] ):
-		#if filename.startswith('') and
-		if filename.endswith('.py'):
-			pathfilename = os.path.join( configuration['directories']['controls'], filename )
-			#t = threading.Thread(target=plugin_execute, args=(pathfilename,))
-			#t.setDaemon(True)
-			p = Process(target=plugin_execute, args=(pathfilename,))
-			p.daemon = True
-			threads.append(p)
-			#t.start()	WORKAROUND
-
-# loop through the output plugin dir
-for filename in os.listdir( configuration['directories']['output'] ):
-		#if filename.startswith('') and
-		if filename.endswith('.py'):
-			pathfilename = os.path.join( configuration['directories']['output'], filename )
-			#t = threading.Thread(target=plugin_execute, args=(pathfilename,))
-			#t.setDaemon(True)
-			p = Process(target=plugin_execute, args=(pathfilename,))
-			p.daemon = True
-			threads.append(p)
-			#t.start()	WORKAROUND
-
-# NOTE: Plugins are now loading in the background, in parallel to code below.
-# NOTE: This can really interfere, in a way I don't understand.. executing the threads later helps... somehow..
-# NOTE: For NOW, we'll just execute the threads after the loading of the "other" plugins...
-
-
-#
-# Load mpd dbus listener
-#
-#
-#t = threading.Thread(target=plugin_execute, args=('/mnt/PIHU_APP/defender-headunit/dbus_mpd.py',))
-#t.setDaemon(True)
-p = Process(target=plugin_execute, args=('/mnt/PIHU_APP/defender-headunit/dbus_mpd.py',))
-p.daemon = True
-threads.append(p)
-
-
-#
-# load other plugins
-#
-myprint('Loading Other Plugins...',tag='SYSTEM')
-from plugin_other import *
-
-# WORKAROUND...
-#for p in threads:
-#	p.start()
-"""
-
-# LCD (TODO: move to plugins)
-#from hu_lcd import *
-#disp = lcd_mgr()
-#disp.lcd_text('Welcome v0.1.4.8')
-
-
-#
-# end of initialization
-#
 #********************************************************************************
-myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
+#
+# Essential Initialization
+#
+def init():
+	#
+	# Stop if we're already running
+	#
+	#if check_running(PID_FILE):
+	#	exit()
+
+	#
+	# Start logging to console
+	#
+	# TODO: get settings from configuration.json
+	init_logging()
+	init_logging_c()	
+
+#********************************************************************************
+#
+# Setting up prior to mainloop
+#
+def setup():
+
+	#
+	# Load main configuration
+	#
+	configuration = init_load_config()
+
+	#
+	# Load PulseAudio SFX
+	#
+	#
+	pa_sfx_load( configuration['directories']['sfx'] )
+
+	#
+	# Load operational settings
+	#
+	#			#TODO: change this name
+	cSettings = huSettings( os.path.join(configuration['directories']['config'],configuration['files']['settings']),
+							defaultSettings=configuration['default_settings'] )
+
+	#
+	# Start logging to file
+	#
+	# TODO: get settings from configuration.json
+	init_logging_f( configuration['directories']['log'],
+					configuration['files']['log'],
+					cSettings.incrRunCounter( max=999999 ) )
+					#settings['runcount'] )
+
+	#
+	# Start logging to syslog
+	#
+	# TODO: get settings from configuration.json
+	init_logging_s( address='/dev/log' )
+	
+	#
+	# Determine starting source
+	#
+	# Order:
+	# 1) command line
+	# 2) environment variable
+	# 3) settings.json file
+	
+	if arg_source:
+		SOURCE = arg_source
+		SOURCE_SUB = arg_sub_source
+	elif ENV_SOURCE:
+		SOURCE = ENV_SOURCE
+		SOURCE_SUB = None
+	else:
+	
+		prevSource = cSettings.get_key('source')
+		prevSourceSub = cSettings.get_key('subsourcekey')
+
+		if prevSource:
+			SOURCE = prevSource
+			SOURCE_SUB = prevSourceSub
+		else:
+			SOURCE = None
+			SOURCE_SUB = None
+			
+	print('SOURCE,SUBSOURCE: {0},{1}'.format(SOURCE,SOURCE_SUB))
+	
+	#
+	# i forgot, what's this for?
+	#
+	if arg_boot:
+		BOOT = args.boot
+	else:
+		BOOT = False
+	
+	
+	#
+	# Set/Restore volume level
+	#
+	#
+	# Legacy: #TODO
+	#settings = cSettings.get()
+	#VolPulse = VolumeController('alsa_output.platform-soc_sound.analog-stereo')
+	#VolPulse.set( settings['volume'] )
+
+
+	#
+	# "Splash Screen": Display version and play startup tune
+	#
+	#
+	myprint('Headunit.py version {0}'.format(__version__),tag='SYSTEM')
+	pa_sfx('startup')
+
+	#
+	# ZeroMQ
+	#
+	zmq_connect()
+
+	#
+	# create menu structure
+	#
+	#print configuration[
+	#huMenu = Menu()
+	#testentry = { "entry": "Browse tracks",
+	#  "entry_name": "browse_track"}
+	#huMenu.add( testentry )
+
+
+
+	#print "TESTING TESTING"
+	#Sources.setAvailableIx(0,True)
+	#Sources.setCurrent(0)
+	#Sources.sourcePlay()
+	#exit()
+
+	""" DEBUGGING....
+	print "DEBUG!"
+	prevSource = {'name': 'fm'}
+	prevSourceSub = {}
+
+	print bla_refactored( prevSource, prevSourceSub )
+		
+	print "DEBUG!"
+	prevSource = {'name': 'locmus'}
+	prevSourceSub = {'mountpoint':'/media/PIHU_DATA'}
+	bFound = False
+
+	print bla_refactored( prevSource, prevSourceSub )
+
+
+	print "DEBUG!"
+	prevSource = {'name': 'locmus'}
+	prevSourceSub = {'mountpoint':'/media/PIHU_DATA3'}
+	bFound = False
+
+	print bla_refactored( prevSource, prevSourceSub )
+	"""
+
+
+	#debug
+	#huMenu.menuDisplay( header=True )
+	#huMenu.menuDisplay( entry=1, header=True )
+	#print huMenu.getMenu( [1,0] )
+
+	#
+	# import control plugins (disabled)
+	#
+	"""
+	myprint('Loading Control Plugins...',tag='SYSTEM')
+	from plugin_control import *
+
+	threads = []
+	# loop through the control plugin dir
+	for filename in os.listdir( configuration['directories']['controls'] ):
+			#if filename.startswith('') and
+			if filename.endswith('.py'):
+				pathfilename = os.path.join( configuration['directories']['controls'], filename )
+				#t = threading.Thread(target=plugin_execute, args=(pathfilename,))
+				#t.setDaemon(True)
+				p = Process(target=plugin_execute, args=(pathfilename,))
+				p.daemon = True
+				threads.append(p)
+				#t.start()	WORKAROUND
+
+	# loop through the output plugin dir
+	for filename in os.listdir( configuration['directories']['output'] ):
+			#if filename.startswith('') and
+			if filename.endswith('.py'):
+				pathfilename = os.path.join( configuration['directories']['output'], filename )
+				#t = threading.Thread(target=plugin_execute, args=(pathfilename,))
+				#t.setDaemon(True)
+				p = Process(target=plugin_execute, args=(pathfilename,))
+				p.daemon = True
+				threads.append(p)
+				#t.start()	WORKAROUND
+
+	# NOTE: Plugins are now loading in the background, in parallel to code below.
+	# NOTE: This can really interfere, in a way I don't understand.. executing the threads later helps... somehow..
+	# NOTE: For NOW, we'll just execute the threads after the loading of the "other" plugins...
+
+
+	#
+	# Load mpd dbus listener
+	#
+	#
+	#t = threading.Thread(target=plugin_execute, args=('/mnt/PIHU_APP/defender-headunit/dbus_mpd.py',))
+	#t.setDaemon(True)
+	p = Process(target=plugin_execute, args=('/mnt/PIHU_APP/defender-headunit/dbus_mpd.py',))
+	p.daemon = True
+	threads.append(p)
+
+
+	#
+	# load other plugins
+	#
+	myprint('Loading Other Plugins...',tag='SYSTEM')
+	from plugin_other import *
+
+	# WORKAROUND...
+	#for p in threads:
+	#	p.start()
+	"""
+
+	# LCD (TODO: move to plugins)
+	#from hu_lcd import *
+	#disp = lcd_mgr()
+	#disp.lcd_text('Welcome v0.1.4.8')
+
+
+	#
+	# end of initialization
+	#
+	#********************************************************************************
+	myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 
 
 #********************************************************************************
@@ -1794,33 +1833,33 @@ myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 # QuickPlay
 #
 
-prevSource = cSettings.get_key('source')
-prevSourceSub = cSettings.get_key('subsourcekey')
 
 
 print "XX DEBUG XX"
-print prevSource
 print SOURCE
+print SOURCE_SUB
 
-exit()
+print "XX DEBUG XX"
+SOURCE = None
 
 # BOOT is true for 'early boot'
 #if BOOT and not prevSource = "" and not prevSource == SOURCE:
-if not prevSource == SOURCE and not prevSource:
-	print('Quickplay failed due mismatching source')
-	exit()
 
-if SOURCE and not prevSource:
-	prevSource = SOURCE
+#if not prevSource == SOURCE and not prevSource:
+#	print('Quickplay failed due mismatching source')
+#	exit()
 
-
-if prevSource == "":
+if not SOURCE:
 	printer ('No previous source.', tag='QPLAY')
-	Sources.sourceCheckAll()
-	printSummary(Sources)
+	# following is already done on start by source-controller:
+	#zmq_send('/source/check')
+	#Sources.sourceCheckAll()
+	#printSummary(Sources)
 	printer ('Starting first available source', tag='QPLAY')
-	Sources.next()
-	hu_play(resume=False)
+	zmq_send('/source/next')
+	#Sources.next()
+	zmq_send('/source/play')
+	#hu_play(resume=False)
 	
 else:
 	ret = QuickPlay( prevSource,
@@ -1839,6 +1878,9 @@ else:
 		printer ('Starting first available source', tag='QPLAY')
 		Sources.next()
 		hu_play(resume=False)
+
+print "XX DEBUG XX"
+exit()
 
 # Save Settings
 currSrc = Sources.getComposite()
@@ -2030,9 +2072,11 @@ finally:
 # TODO
 # problem is that the setup() imports modules, yielding: SyntaxWarning: import * only allowed at module level
 # another issue is that all global vars need to be defined (not really a problem i think..)
-"""
+
 if __name__ == '__main__':
+	parse_args()
+	init()
 	setup()
 	main()
-"""
+
 	

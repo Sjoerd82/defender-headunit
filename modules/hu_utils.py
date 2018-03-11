@@ -126,6 +126,7 @@ def pa_sfx_load( sfxdir ):
 #
 def pa_sfx( sfx ):
 
+	print("PA SFX: {0}".format(sfx)) # TODO LL_DEBUG
 	#global sPaSfxSink
 	#global bBeep
 	sPaSfxSink = "alsa_output.platform-soc_sound.analog-stereo"

@@ -243,6 +243,9 @@ def source(path,cmd,args):
 		sc_sources.next(True)
 		return True
 
+	#def all_check(args):
+		# Check all sources
+		
 	if path:
 		function_to_call = cmd + '_' + '_'.join(path)
 	else:
