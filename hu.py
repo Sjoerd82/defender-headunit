@@ -162,6 +162,11 @@ Sources = None #Temp..
 disp = None
 arMpcPlaylistDirs = [ ]			#TODO: should probably not be global...
 
+# SEMI-CONSTANTS (set at startup):
+SOURCE = None
+SOURCE_SUB = None
+BOOT = None
+
 # CONSTANTS
 CONFIG_FILE_DEFAULT = '/mnt/PIHU_APP/defender-headunit/config/configuration.json'
 CONFIG_FILE = '/mnt/PIHU_CONFIG/configuration.json'
