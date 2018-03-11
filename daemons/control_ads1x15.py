@@ -259,8 +259,8 @@ def main():
 		value_0 = adc.read_adc(0, gain=GAIN)
 		value_1 = adc.read_adc(1, gain=GAIN)
 
+		# did user let go of a long-press button?
 		if long_press_ix and value_0 < BUTTON_LO:
-			print "UMM YOU LET GO??"
 			long_press_ix = None
 	
 		ix = 0
@@ -273,19 +273,16 @@ def main():
 					if 'long_press' in button:
 						if not long_press_ix:
 							printer("Waiting for button to be pressed at least {0} seconds".format(button['long_press']))
-							print "DEBUG ix={0}".format(ix)
 							long_press_ix = ix
 							long_press_start = time.clock()
 						else:
-							print "going strong!"
 							print "DEBUG LP diff ={0}".format(time.clock()-long_press_start)
 							if time.clock()-long_press_start > button['long_press']:
-								print "WE MADE IT!"
 								handle_button_press(button)
 					else:
+						# check if another button is pressed before completing the long-press
 						if long_press_ix and not ix == long_press_ix:
 							long_press_ix = None
-							print "LP finished - failed"
 						handle_button_press(button)
 			ix += 1
 		

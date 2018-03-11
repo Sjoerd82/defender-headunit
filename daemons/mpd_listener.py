@@ -30,6 +30,7 @@ from hu_utils import *
 #********************************************************************************
 # GLOBAL vars & CONSTANTS
 #
+CONTROL_NAME='mpdlst'
 
 # mpd
 oMpdClient = None
