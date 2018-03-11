@@ -260,7 +260,7 @@ def main():
 		if long_press:
 			print("DEBUG LP ix   ={0}".format(long_press))
 			print("DEBUG LP start={0}".format(long_press_start))
-			print("DEBUG LP diff ={0}".format(time.clock()-long_press_start)))
+			print("DEBUG LP diff ={0}".format(time.clock()-long_press_start))
 			
 		
 		ix = 0
