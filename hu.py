@@ -1680,7 +1680,7 @@ def setup():
 	# 2) environment variable
 	# 3) settings.json file
 	
-	if (not SOURCE:
+	if (not SOURCE
 		    and ENV_SOURCE):
 		SOURCE = ENV_SOURCE
 		SOURCE_SUB = None
