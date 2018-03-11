@@ -1,0 +1,49 @@
+#!/bin/sh
+
+# APPLICATION
+NAME="Headunit Flask HTTP server"
+DAEMON="/mnt/PIHU_APP/defender-headunit/hu_flask.py"
+DAEMONOPTS="run --host=0.0.0.0"
+
+export FLASK_APP="/mnt/PIHU_APP/defender-headunit/hu_flask.py"
+
+retval=0
+
+# PID (created by start-stop-daemon -m)
+PIDFILE=/var/run/flask.pid
+
+start() {
+        echo "Starting $NAME..."
+        start-stop-daemon -b -x $DAEMON -m -p $PIDFILE -S -- $DAEMONOPTS
+        retval=$?
+        #  echo "Starting $NAME..."
+        #  $DAEMON $DAEMONOPTS &
+}
+
+stop() {
+        echo "Stopping $NAME"
+        start-stop-daemon -p $PIDFILE -K
+        retval=$?
+        # --remove-pidfile not supported in busybox
+        if [ -f $PIDFILE ]; then
+            rm -f $PIDFILE
+        fi
+}
+
+case "$1" in
+  start)
+        start
+        ;;
+  stop)
+        stop
+        ;;
+  restart|reload)
+        stop
+        start
+        ;;
+  *)
+        echo "Usage: $0 {start|stop|restart}"
+        exit 1
+esac
+
+exit $retval

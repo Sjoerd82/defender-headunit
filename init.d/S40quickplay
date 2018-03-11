@@ -1,0 +1,77 @@
+#!/bin/sh
+
+#
+# Starts scripts in qp_-folder
+#
+
+#[ -f /root/WLAN-AP ] || exit 0
+export HU_SOURCE=smb
+
+EXEC_PATH=/etc/init.d/qp_smb
+
+retval=0
+
+case "$1" in
+        start)
+                printf "Start QuickPlay"
+                for i in $EXEC_PATH/S??* ;do
+
+                     # Ignore dangling symlinks (if any).
+                     [ ! -f "$i" ] && continue
+
+                     case "$i" in
+                        *.sh)
+                            # Source shell script for speed.
+                            (
+                                trap - INT QUIT TSTP
+                                set start
+                                . $i
+                            )
+                            ;;
+                        *)
+                            # No sh extension, so fork subprocess.
+                            if [[ $i -eq 'S70headunit && $retval_sum != 0 ]]; then
+                                echo "Skipping early Headunit start"
+                            else
+                                $i start
+                                retval_sum=`expr $retval_sum + $?`
+                            fi
+                            ;;
+                    esac
+                done
+
+                ;;
+        stop)
+                printf "Stopping execution of wlan-ap scripts"
+                for i in $(ls -r $EXEC_PATH/S??*) ;do
+
+                     # Ignore dangling symlinks (if any).
+                     [ ! -f "$i" ] && continue
+
+                     case "$i" in
+                        *.sh)
+                            # Source shell script for speed.
+                            (
+                                trap - INT QUIT TSTP
+                                set stop
+                                . $i
+                            )
+                            ;;
+                        *)
+                            # No sh extension, so fork subprocess.
+                            $i stop
+                            ;;
+                    esac
+                done
+
+                ;;
+        restart|reload)
+                $0 stop
+                $0 start
+                ;;
+        *)
+                echo "Usage: $0 {start|stop|restart}"
+                exit 1
+esac
+
+exit 0
