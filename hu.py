@@ -231,7 +231,8 @@ def zmq_send(path_send, message):
 
 	global publisher
 
-	data = json.dumps(message)
+	#data = json.dumps(message)
+	data = message
 	printer("Sending message: {0} {1}".format(path_send, data))
 	publisher.send("{0} {1}".format(path_send, data))
 	time.sleep(1)

@@ -162,10 +162,12 @@ def post_source_id_subsource_id(source_id,subsource_id):
 	return jsonify({'stub':stub})
 
 #Set active (sub)source to the next available
-@app.route('/hu/api/v1.0/source/next', methods=['POST'])
+@app.route('/hu/api/v1.0/source/next', methods=['GET'])
 def post_source_next():
-	stub = [{'a':'a'},{'b':'b'}]
-	return jsonify({'stub':stub})
+	publish_message("/player/next","SET")
+	return "OK"
+	#stub = [{'a':'a'},{'b':'b'}]
+	#return jsonify({'stub':stub})
 
 #Set active (sub)source to the prev available
 @app.route('/hu/api/v1.0/source/prev', methods=['POST'])
