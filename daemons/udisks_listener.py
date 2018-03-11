@@ -153,7 +153,11 @@ def udisk_add( device ):
 	# Please Note:
 	# DeviceFile = dbus.String(u'/dev/sda1', variant_level=1)
 
-	# TODO : SEND MQ MESSAGE
+	# TODO : REFINE
+	media_info = {}	
+	media_info['device'] = str(DeviceFile)
+	media_info['start_playback'] = True
+	zmq_send('/source/addsubsource', media_info )
 	
 	"""
 	ix = Sources.getIndex('name','media')
@@ -196,7 +200,6 @@ def udisk_add( device ):
 
 	# check source, if added successfully
 	"""
-
 		
 
 def udisk_rem( device ):
@@ -221,8 +224,13 @@ def udisk_rem( device ):
 	mountpoint = ""
 	mytag = "UDISKS"
 	
-	# TODO : SEND MQ MESSAGE
+	# TODO : REFINE
+	media_info = {}	
+	partition = "/dev/"+os.path.basename(str(device))
 	
+	media_info['partition'] = partition
+	zmq_send('/source/remsubsource', media_info )
+
 	"""
 	ix = Sources.getIndex('name','media')
 	
