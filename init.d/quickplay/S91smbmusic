@@ -1,0 +1,20 @@
+#!/bin/sh
+#
+# Todo: This should change, obviously
+
+
+start() {
+                mkdir -p /media/PIHU_SMB/music
+                mount -t cifs -o user=root,password=kungfu //172.16.8.11/music/mpd /media/PIHU_SMB/music
+        }
+
+case "$1" in
+  start)
+        start
+        ;;
+  *)
+        echo "Usage: $0 {start}"
+        exit 1
+esac
+
+exit $?
