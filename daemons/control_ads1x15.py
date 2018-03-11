@@ -283,14 +283,14 @@ def main():
 								print "WE MADE IT!"
 								handle_button_press(button)
 					else:
-						if not ix == long_press_ix:
+						if long_press_ix and not ix == long_press_ix:
 							long_press_ix = None
 							print "LP finished - failed"
 						handle_button_press(button)
 			
-			elif long_press_ix:
-				print "UMM YOU LET GO??"
-				long_press_ix = None
+			#elif long_press_ix:
+			#	print "UMM YOU LET GO??"
+			#	long_press_ix = None
 			
 					
 			ix += 1
