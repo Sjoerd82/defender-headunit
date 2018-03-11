@@ -109,7 +109,8 @@ def main():
 	   "channel0_lo": 180
 	 , "channel0_hi": 190
 	 , "delay"      : None
-	 , "zmq_msg"    : "\player\update SET" } )
+	 , "zmq_path"   : "\player\update"
+	 , "zmq_cmd"    : "SET" } )
 	
 	adc = Adafruit_ADS1x15.ADS1015()
 	#pavol = pa_volume_handler('alsa_output.platform-soc_sound.analog-stereo')
@@ -151,7 +152,7 @@ def main():
 		
 		if buttonfunc[0]['channel0_lo'] <= value_0 <= buttonfunc[0]['channel0_hi']:
 			#Bottom button
-			zmq_send(buttonfunc[0]['zmq_msg'])
+			zmq_send(buttonfunc[0]['zmq_path'],buttonfunc[0]['zmq_cmd'])
 			#button_press('UPDATE_LOCAL')
 			#Wait until button is released (no need to continue updating...)
 			button_down_wait()			
