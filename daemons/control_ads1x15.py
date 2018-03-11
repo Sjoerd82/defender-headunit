@@ -200,7 +200,7 @@ def main():
 	 , "wait"       : True
 	 , "delay"      : None
 	 , "long_press" : 3
-	 , "zmq_path"   : "/source/next"
+	 , "zmq_path"   : "/system/halt"
 	 , "zmq_cmd"    : "SET" } )
 
 	 
@@ -256,6 +256,15 @@ def main():
 		value_0 = adc.read_adc(0, gain=GAIN)
 		value_1 = adc.read_adc(1, gain=GAIN)
 		
+		for button in buttonfunc:
+			if ( button['channel0_lo'] <= value_0 <= button['channel0_hi'])
+				if ('channel1_lo' and 'channel1_hi' in button):
+					if (button['channel1_lo'] <= value_1 <= button['channel1_hi']):
+						handle_button_press(button)
+				else:
+					handle_button_press(button)
+		
+		"""		
 		if buttonfunc[0]['channel0_lo'] <= value_0 <= buttonfunc[0]['channel0_hi']:
 			handle_button_press(buttonfunc[0])
 
@@ -319,7 +328,8 @@ def main():
 #				button_press('OFF')
 #			else:
 #				printer("Not pressed long enough, not shutting down")
-			
+		"""
+		
 		time.sleep(0.1)
 
 	
