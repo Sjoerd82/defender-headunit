@@ -1156,6 +1156,7 @@ def init_logging():
 def init_logging_c():
 
 	global logger
+	global LOGLEVEL_C
 
 	# create console handler
 	ch = logging.StreamHandler()
