@@ -11,6 +11,9 @@
 # http://www.ti.com/lit/ds/symlink/ads1115.pdf
 #
 
+# Button presses are NOT asynchronous!! i.e. wait until a button press is handled before the next button can be handled.
+# TODO: Consider making them asynchronous, or at least the update lib (long) / volume (short) buttons
+
 import sys
 import os
 import time
@@ -74,9 +77,16 @@ def printer( message, level=LL_INFO, continuation=False, tag=CONTROL_NAME ):
 	else:
 		myprint( message, level, tag )
 
-# Button presses are NOT asynchronous!! i.e. wait until a button press is handled before the next button can be handled.
-# TODO: Consider making them asynchronous, or at least the update lib (long) / volume (short) buttons
 
+def setup():
+
+	# ADC
+	adc = Adafruit_ADS1x15.ADS1015()
+	# ZMQ
+	zmq_connect()
+	printer('Initialized [OK]')
+
+		
 def main():
 
 	global adc
@@ -199,17 +209,10 @@ def main():
 	 , "channel0_hi": 1110
 	 , "wait"       : True
 	 , "delay"      : None
-	 , "long_press" : 0.30
+	 , "long_press" : 0.10
 	 , "zmq_path"   : "/system/halt"
 	 , "zmq_cmd"    : "SET" } )
-
 	 
-	# ADC
-	adc = Adafruit_ADS1x15.ADS1015()
-	# ZMQ
-	zmq_connect()
-	printer('Initialized [OK]')
-
 	def button_press(button):
 		printer("Button was pressed: {0}".format(button))
 	
@@ -355,6 +358,6 @@ def main():
 		
 		time.sleep(0.1)
 
-	
 if __name__ == "__main__":
+	setup()
 	main()
