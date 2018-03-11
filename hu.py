@@ -227,12 +227,13 @@ def zmq_connect():
 	#subscriber.connect ("tcp://localhost:5556")	# TODO: get port from config
 	#subscriber.setsockopt (zmq.SUBSCRIBE, '')
 
-def zmq_send(path_send, message):
+def zmq_send_cmd(path_send, cmd):
 
 	global publisher
 
+	#data = { "cmd:" cmd }
 	#data = json.dumps(message)
-	data = message
+	data = cmd
 	printer("Sending message: {0} {1}".format(path_send, data))
 	publisher.send("{0} {1}".format(path_send, data))
 	time.sleep(1)
@@ -1857,9 +1858,9 @@ def main():
 		#Sources.sourceCheckAll()
 		#printSummary(Sources)
 		printer ('Starting first available source', tag='QPLAY')
-		zmq_send('/source/next', 'SET')
+		zmq_send_cmd('/source/next', 'SET')
 		#Sources.next()
-		zmq_send('/source/state', 'SET:play')
+		zmq_send_cmd('/source/state', 'SET:play')
 		#hu_play(resume=False)
 		
 	else:
