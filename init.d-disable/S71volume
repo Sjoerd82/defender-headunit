@@ -1,18 +1,37 @@
 #!/bin/sh
 
-DAEMON="/mnt/PIHU_APP/defender-headunit/d_dbus_vol.py"
+# APPLICATION
+NAME="PulseAudio Volume Controller"
+# PID (created by start-stop-daemon -m)
+PID="pavolctrl"
+PID_FILE=/var/run/$PID.pid
+DAEMON="volume.py"
+DAEMON_OPTS=""
+DAEMON_PATH="/mnt/PIHU_APP/defender-headunit/daemons"
+DAEMON_FILE=$DAEMON_PATH/$DAEMON
+
+RETVAL=0
 
 start() {
-        if [ -f $DAEMON ]; then
-          echo "Script: ${DAEMON} found.."
-          $DAEMON &
-        else
-          echo "${DAEMON} not found!"
-        fi
+    if [ -f $DAEMON_FILE ]; then
+        echo "Starting $NAME..."
+        start-stop-daemon -b -x $DAEMON_FILE -m -p $PID_FILE -S -- $DAEMON_OPTS
+        RETVAL=$?
+    else
+	    RETVAL=-1
+        echo "$DAEMON not found!"
+    fi
 }
 
 stop() {
-        echo "Not yet implemented"
+        echo "Stopping $NAME"
+        start-stop-daemon -p $PID_FILE -K
+        RETVAL=$?
+		# --remove-pidfile not supported by busybox
+		#[ $RETVAL = 0 ] && rm -f $PID_FILE
+        if [ -f $PID_FILE ]; then
+            rm -f $PID_FILE
+        fi
 }
 
 case "$1" in
@@ -31,4 +50,11 @@ case "$1" in
         exit 1
 esac
 
-exit $?
+# Print OK/FAIL
+if [ $RETVAL -eq 0 ]; then
+    echo "[ OK ]"
+else
+    echo "[FAIL]"
+fi
+
+exit $RETVAL

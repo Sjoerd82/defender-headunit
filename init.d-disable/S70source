@@ -1,34 +1,36 @@
 #!/bin/sh
 
 # APPLICATION
-NAME="Source Control"
-DAEMON="/mnt/PIHU_APP/defender-headunit/hu_src_ctrl.py"
-DAEMONOPTS=""
-
-[ -x $DAEMON ] || exit 1
-
-retval=0
-
+NAME="Headunit Source Controller"
 # PID (created by start-stop-daemon -m)
-PIDFILE=/var/run/hu_sc.pid
+PID="source"
+PID_FILE=/var/run/$PID.pid
+DAEMON="hu_src_ctrl.py"
+DAEMON_OPTS=""
+DAEMON_PATH="/mnt/PIHU_APP/defender-headunit"
+DAEMON_FILE=$DAEMON_PATH/$DAEMON
+
+RETVAL=0
 
 start() {
-        if [ -f $DAEMON ]; then
-          echo "Starting $NAME..."
-          start-stop-daemon -b -x $DAEMON -m -p $PIDFILE -S -- $DAEMONOPTS
-          retval=$?
-		else
-          echo "$DAEMON not found!"
-        fi
+    if [ -f $DAEMON_FILE ]; then
+        echo "Starting $NAME..."
+        start-stop-daemon -b -x $DAEMON_FILE -m -p $PID_FILE -S -- $DAEMON_OPTS
+        RETVAL=$?
+    else
+	    RETVAL=-1
+        echo "$DAEMON not found!"
+    fi
 }
 
 stop() {
         echo "Stopping $NAME"
-        start-stop-daemon -p $PIDFILE -K
-        retval=$?
+        start-stop-daemon -p $PID_FILE -K
+        RETVAL=$?
 		# --remove-pidfile not supported by busybox
-        if [ -f $PIDFILE ]; then
-            rm -f $PIDFILE
+		#[ $RETVAL = 0 ] && rm -f $PID_FILE
+        if [ -f $PID_FILE ]; then
+            rm -f $PID_FILE
         fi
 }
 
@@ -48,4 +50,11 @@ case "$1" in
         exit 1
 esac
 
-exit $retval
+# Print OK/FAIL
+if [ $RETVAL -eq 0 ]; then
+    echo "[ OK ]"
+else
+    echo "[FAIL]"
+fi
+
+exit $RETVAL

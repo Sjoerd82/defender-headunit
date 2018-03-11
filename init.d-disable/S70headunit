@@ -2,34 +2,35 @@
 
 # APPLICATION
 NAME="Headunit"
-DAEMON="/mnt/PIHU_APP/defender-headunit/hu.py"
+# PID (created by start-stop-daemon -m)
+PID="headunit"
+PID_FILE=/var/run/$PID.pid
+DAEMON="hu.py"
+DAEMON_OPTS=""
+DAEMON_PATH="/mnt/PIHU_APP/defender-headunit"
+DAEMON_FILE=$DAEMON_PATH/$DAEMON
 
-if [ -n "$HU_SOURCE" ]; then
-  DAEMONOPTS="--source $HU_SOURCE"
-else
-  DAEMONOPTS=""
-fi
-
-# PID (created by application)
-PIDFILE=/var/run/hu.pid
+RETVAL=0
 
 start() {
-        if [ -f $DAEMON ]; then
-          echo "Starting $NAME..."
-          $DAEMON $DAEMONOPTS &
-        else
-          echo "$DAEMON not found!"
-        fi
+    if [ -f $DAEMON_FILE ]; then
+        echo "Starting $NAME..."
+        start-stop-daemon -b -x $DAEMON_FILE -m -p $PID_FILE -S -- $DAEMON_OPTS
+        RETVAL=$?
+    else
+	    RETVAL=-1
+        echo "$DAEMON not found!"
+    fi
 }
 
 stop() {
-        if [ -f $PIDFILE ]; then
-            echo "Stopping $NAME"
-            PID=`cat $PIDFILE`
-            kill -HUP $PID
-            rm -f $PIDFILE
-        else
-            echo "$PIDFILE not found, aborting..."
+        echo "Stopping $NAME"
+        start-stop-daemon -p $PID_FILE -K
+        RETVAL=$?
+		# --remove-pidfile not supported by busybox
+		#[ $RETVAL = 0 ] && rm -f $PID_FILE
+        if [ -f $PID_FILE ]; then
+            rm -f $PID_FILE
         fi
 }
 
@@ -49,4 +50,11 @@ case "$1" in
         exit 1
 esac
 
-exit $?
+# Print OK/FAIL
+if [ $RETVAL -eq 0 ]; then
+    echo "[ OK ]"
+else
+    echo "[FAIL]"
+fi
+
+exit $RETVAL
