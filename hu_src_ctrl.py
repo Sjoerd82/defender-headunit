@@ -81,6 +81,9 @@ SYSLOG_UDP_PORT=514
 
 hu_details = { 'track':None, 'random':'off', 'repeat':True, 'att':False }
 
+# zmq
+subscriber = None
+publisher = None
 
 # ********************************************************************************
 # Output wrapper
