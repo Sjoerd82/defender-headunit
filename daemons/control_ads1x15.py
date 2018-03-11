@@ -251,16 +251,16 @@ def main():
 		else:
 			printer('No function configured for this button')
 	
-	long_press = None
+	long_press_ix = None
 	long_press_start = None
 	while True:
 		value_0 = adc.read_adc(0, gain=GAIN)
 		value_1 = adc.read_adc(1, gain=GAIN)
 		
-		if long_press:
-			print("DEBUG LP ix   ={0}".format(long_press))
-			print("DEBUG LP start={0}".format(long_press_start))
-			print("DEBUG LP diff ={0}".format(time.clock()-long_press_start))
+		#if long_press_ix:
+		#	print("DEBUG LP ix   ={0}".format(long_press_ix))
+		#	print("DEBUG LP start={0}".format(long_press_start))
+		#	print("DEBUG LP diff ={0}".format(time.clock()-long_press_start))
 			
 		
 		ix = 0
@@ -271,15 +271,27 @@ def main():
 						handle_button_press(button)
 				else:
 					if 'long_press' in button:
-						if not long_press:
-							printer("Waiting for button to be pressed long enough")
+						if not long_press_ix:
+							printer("Waiting for button to be pressed at least {0} seconds".format(button['long_press']))
 							print "DEBUG ix={0}".format(ix)
-							long_press = ix
+							long_press_ix = ix
 							long_press_start = time.clock()
 						else:
 							print "going strong!"
+							print "DEBUG LP diff ={0}".format(time.clock()-long_press_start)
+							if time.clock()-long_press_start > button['long_press']:
+								print "WE MADE IT!"
+								handle_button_press(button)
 					else:
+						if not ix == long_press_ix:
+							long_press_ix = None
+							print "LP finished - failed"
 						handle_button_press(button)
+			
+			elif long_press_ix:
+				print "UMM YOU LET GO??"
+				long_press_ix = None
+			
 					
 			ix += 1
 		
