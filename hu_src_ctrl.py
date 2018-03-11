@@ -317,7 +317,7 @@ def player(path,cmd,args):
 	def set_state(args):
 		# Set state: play|pause|stop, toggle random
 		# TODO
-		if args = "play":
+		if args == "play":
 			ret = sc_sources.source_play()
 			return ret
 		return True
