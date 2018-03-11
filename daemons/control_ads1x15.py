@@ -85,15 +85,6 @@ def main():
 	GAIN = 2/3
 	BUTTON_LO   = 100
 	
-	BUTTON08_LO = 740	# "ATT"
-	BUTTON08_HI = 770	
-	
-	BUTTON09_LO = 890	# "SOURCE"
-	BUTTON09_HI = 910	
-	
-	BUTTON10_LO = 1050	# "OFF"
-	BUTTON10_HI = 1100	
-
 	#button-2-function mapper
 	buttonfunc = []
 
@@ -205,7 +196,7 @@ def main():
 	# Round smooth button (OFF)
 	buttonfunc.append( {
 	   "channel0_lo": 1050
-	 , "channel0_hi": 110
+	 , "channel0_hi": 1110
 	 , "wait"       : True
 	 , "delay"      : None
 	 , "long_press" : 3
@@ -306,13 +297,16 @@ def main():
 			handle_button_press(buttonfunc[9])
 
 		elif buttonfunc[10]['channel0_lo'] <= value_0 <= buttonfunc[10]['channel0_hi']:
+			handle_button_press(buttonfunc[10])
+
+		elif buttonfunc[11]['channel0_lo'] <= value_0 <= buttonfunc[11]['channel0_hi']:
 			if 'long_press' in button_spec:
 				printer("Waiting for button to be pressed long enough")
-				time.sleep(buttonfunc[10]['long_press'])
+				time.sleep(buttonfunc[11]['long_press'])
 				value_0 = adc.read_adc(0, gain=GAIN)
 				
-				if buttonfunc[10]['channel0_lo'] <= value_0 <= buttonfunc[10]['channel0_hi']:
-					handle_button_press(buttonfunc[10])
+				if buttonfunc[11]['channel0_lo'] <= value_0 <= buttonfunc[11]['channel0_hi']:
+					handle_button_press(buttonfunc[11])
 				else:
 					printer("Not pressed long enough, not shutting down")
 			
