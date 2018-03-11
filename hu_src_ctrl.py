@@ -115,15 +115,23 @@ def zmq_connect():
 	subscriber.connect ("tcp://localhost:{0}".format(port_server)) # connect to server
 
 	port_client = "5559"
-	zmq_sck = zmq_ctx.socket(zmq.PUB)
-	zmq_sck.connect("tcp://localhost:{0}".format(port_client))
+	publisher = zmq_ctx.socket(zmq.PUB)
+	publisher.connect("tcp://localhost:{0}".format(port_client))
+	
+	#
+	# Subscribe to topics
+	#
+	topics = ['/source','/player']
+	for topic in topics:
+		subscriber.setsockopt (zmq.SUBSCRIBE, topic)
+
 
 def zmq_send(path,message):
 	#TODO
 	path_send = '/data' + path
 	data = json.dumps(message)
 	printer("Sending message: {0} {1}".format(path_send, data))
-	zmq_sck.send("{0} {1}".format(path_send, data))
+	publisher.send("{0} {1}".format(path_send, data))
 	time.sleep(1)
 
 def process_queue():
@@ -702,13 +710,6 @@ myprint('{0} version {1}'.format('Source Controller',__version__),tag='SYSTEM')
 # ZeroMQ
 #
 zmq_connect()
-
-#
-# Subscribe to topics
-#
-topics = ['/source','/player']
-for topic in topics:
-	subscriber.setsockopt (zmq.SUBSCRIBE, topic)
 
 #
 # App. Init
