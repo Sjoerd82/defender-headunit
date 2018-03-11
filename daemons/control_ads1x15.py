@@ -31,10 +31,12 @@ from hu_utils import *
 #
 CONTROL_NAME='ad1x15'
 
+# adc
+adc = None
+
 # zmq
 subscriber = None
 publisher = None
-
 
 # ********************************************************************************
 # Zero MQ functions
@@ -77,6 +79,8 @@ def printer( message, level=LL_INFO, continuation=False, tag=CONTROL_NAME ):
 
 def main():
 
+	global adc
+
 	# ADC remote variables
 	GAIN = 2/3
 	BUTTON_LO   = 100
@@ -113,10 +117,8 @@ def main():
 	
 	# ADC
 	adc = Adafruit_ADS1x15.ADS1015()
-	
 	# ZMQ
 	zmq_connect()
-	
 	printer('Initialized [OK]')
 
 	def button_press(button):
