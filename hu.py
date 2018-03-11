@@ -166,6 +166,7 @@ arMpcPlaylistDirs = [ ]			#TODO: should probably not be global...
 SOURCE = None
 SOURCE_SUB = None
 BOOT = None
+LOGLEVE_C = LL_INFO
 
 # CONSTANTS
 CONFIG_FILE_DEFAULT = '/mnt/PIHU_APP/defender-headunit/config/configuration.json'
@@ -1158,7 +1159,7 @@ def init_logging_c():
 
 	# create console handler
 	ch = logging.StreamHandler()
-	ch.setLevel(arg_loglevel)
+	ch.setLevel(LOGLEVEL_C)
 
 	# create formatters
 	fmtr_ch = ColoredFormatter("%(tag)s%(message)s")
@@ -1588,6 +1589,11 @@ class MainInstance(dbus.service.Object):
 def parse_args():
 	import argparse
 
+	global SOURCE
+	global SOURCE_SUB
+	global BOOT
+	global LOGLEVE_C
+	
 	ENV_CONFIG_FILE = os.getenv('HU_CONFIG_FILE')
 	ENV_SOURCE = os.getenv('HU_SOURCE')
 
@@ -1599,10 +1605,10 @@ def parse_args():
 	parser.add_argument('-b', action='store_true')	# background, ie. no output to console
 	args = parser.parse_args()
 
-	arg_loglevel = args.loglevel
-	arg_source = args.source
-	arg_subsource = args.subsource
-	arg_boot = args.boot
+	LOGLEVEL_C = args.loglevel
+	SOURCE = args.source
+	SOURCE_SUB = args.subsource
+	BOOT = args.boot
 
 
 #********************************************************************************
@@ -1631,7 +1637,8 @@ def setup():
 
 	global SOURCE
 	global SOURCE_SUB
-
+	global BOOT
+	global LOGLEVE_C
 	#
 	# Load main configuration
 	#
@@ -1673,14 +1680,12 @@ def setup():
 	# 2) environment variable
 	# 3) settings.json file
 	
-	if arg_source:
-		SOURCE = arg_source
-		SOURCE_SUB = arg_sub_source
-	elif ENV_SOURCE:
+	if (not SOURCE:
+		    and ENV_SOURCE):
 		SOURCE = ENV_SOURCE
 		SOURCE_SUB = None
+		
 	else:
-	
 		prevSource = cSettings.get_key('source')
 		prevSourceSub = cSettings.get_key('subsourcekey')
 
@@ -1696,10 +1701,10 @@ def setup():
 	#
 	# i forgot, what's this for?
 	#
-	if arg_boot:
-		BOOT = args.boot
-	else:
-		BOOT = False
+	#if arg_boot:
+	#	BOOT = args.boot
+	#else:
+	#	BOOT = False
 	
 	
 	#
