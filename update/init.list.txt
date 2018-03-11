@@ -1,0 +1,27 @@
+# list of expected init scripts
+# anything not on this list will be removed by the updater
+
+rcS
+rcK
+S01logging
+S02config
+S02firstboot
+S03modules
+S04fs
+S05gpio
+S09disp1602
+S10udev
+S15watchdog
+S20urandom
+S20dbus
+S30zmqfwd
+S35volume
+S40network
+S40quickplay
+S50dropbear
+S50pulseaudio
+S71ads1x15
+S91update
+S95flask
+#quickplay/..  #todo
+#qp_ ... # todo
