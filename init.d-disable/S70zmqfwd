@@ -2,20 +2,21 @@
 
 # APPLICATION
 NAME="ZMQ forwarder"
-DAEMON="/mnt/PIHU_APP/defender-headunit/d_zmq_forwarder.py"
-DAEMONOPTS=""
+DAEMON="d_zmq_forwarder.py"
+DAEMON_PATH="/mnt/PIHU_APP/defender-headunit/daemons"
+DAEMON_OPTS=""
 
 [ -x $DAEMON ] || exit 1
 
 retval=0
 
 # PID (created by start-stop-daemon -m)
-PIDFILE=/var/run/zmqfwd.pid
+PIDFILE=/var/run/$DAEMON.pid
 
 start() {
-        if [ -f $DAEMON ]; then
+        if [ -f $DAEMON_PATH/$DAEMON ]; then
           echo "Starting $NAME..."
-          start-stop-daemon -b -x $DAEMON -m -p $PIDFILE -S -- $DAEMONOPTS
+          start-stop-daemon -b -x $DAEMON -m -p $PIDFILE -S -- $DAEMON_OPTS
           retval=$?
 		else
           echo "$DAEMON not found!"
