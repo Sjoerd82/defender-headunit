@@ -257,7 +257,7 @@ def main():
 		value_1 = adc.read_adc(1, gain=GAIN)
 		
 		for button in buttonfunc:
-			if ( button['channel0_lo'] <= value_0 <= button['channel0_hi'])
+			if ( button['channel0_lo'] <= value_0 <= button['channel0_hi']):
 				if ('channel1_lo' and 'channel1_hi' in button):
 					if (button['channel1_lo'] <= value_1 <= button['channel1_hi']):
 						handle_button_press(button)
