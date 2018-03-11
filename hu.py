@@ -166,7 +166,7 @@ arMpcPlaylistDirs = [ ]			#TODO: should probably not be global...
 SOURCE = None
 SOURCE_SUB = None
 BOOT = None
-LOGLEVE_C = LL_INFO
+LOGLEVEL_C = LL_INFO
 
 # CONSTANTS
 CONFIG_FILE_DEFAULT = '/mnt/PIHU_APP/defender-headunit/config/configuration.json'
