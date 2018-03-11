@@ -78,21 +78,23 @@ def zmq_send(path_send,message):
 	
 def cb_udisk_dev_add( device ):
 	printer('Device added: {0}'.format(str(device)),tag='UDISKS')
-	item = {}
-	item['command'] = 'DEVADD'
-	item['device'] = device
-	queue('blocking',item,'button_devadd')
+	#item = {}
+	#item['command'] = 'DEVADD'
+	#item['device'] = device
+	#queue('blocking',item,'button_devadd')
+	udisk_add(device)
 
 def cb_udisk_dev_rem( device ):
 	printer('Device removed: {0}'.format(str(device)),tag='UDISKS')
-	item = {}
-	item['command'] = 'DEVREM'
-	item['device'] = device
-	queue('blocking',item,'button_devrem')
+	#item = {}
+	#item['command'] = 'DEVREM'
+	#item['device'] = device
+	#queue('blocking',item,'button_devrem')
+	udisk_rem(device)
 
 def udisk_add( device ):
 
-	global Sources
+	#global Sources
 
 	device_obj = bus.get_object("org.freedesktop.UDisks", device)
 	device_props = dbus.Interface(device_obj, dbus.PROPERTIES_IFACE)
@@ -146,7 +148,10 @@ def udisk_add( device ):
 
 	# Please Note:
 	# DeviceFile = dbus.String(u'/dev/sda1', variant_level=1)
-		
+
+	# TODO : SEND MQ MESSAGE
+	
+	"""
 	ix = Sources.getIndex('name','media')
 	
 	#return DeviceFile
@@ -186,7 +191,7 @@ def udisk_add( device ):
 
 
 	# check source, if added successfully
-	
+	"""
 
 		
 
