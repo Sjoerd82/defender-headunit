@@ -106,8 +106,18 @@ def printer( message, level=20, continuation=False, tag='SYSTEM' ):
 
 
 # ********************************************************************************
-# MQ functions
+# Zero MQ functions
 #
+def zmq_connect():
+	zmq_ctx = zmq.Context()
+	subscriber = zmq_ctx.socket (zmq.SUB)
+	port_server = "5560" #TODO: get port from config
+	subscriber.connect ("tcp://localhost:{0}".format(port_server)) # connect to server
+
+	port_client = "5559"
+	zmq_sck = zmq_ctx.socket(zmq.PUB)
+	zmq_sck.connect("tcp://localhost:{0}".format(port_client))
+
 def zmq_send(path,message):
 	#TODO
 	path_send = '/data' + path
@@ -685,15 +695,7 @@ myprint('{0} version {1}'.format('Source Controller',__version__),tag='SYSTEM')
 #
 # ZeroMQ
 #
-zmq_ctx = zmq.Context()
-subscriber = zmq_ctx.socket (zmq.SUB)
-port_server = 5560 #TODO: get port from config
-subscriber.connect ("tcp://localhost:{0}".format(port_server)) # connect to server
-
-port_client = "5559"
-zmq_sck = zmq_ctx.socket(zmq.PUB)
-zmq_sck.connect("tcp://localhost:{0}".format(port_client))
-
+zmq_connect()
 
 #
 # Subscribe to topics

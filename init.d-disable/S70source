@@ -1,3 +1,6 @@
+#!/bin/sh
+
+# APPLICATION
 NAME="Source Control"
 DAEMON="/mnt/PIHU_APP/defender-headunit/hu_src_ctrl.py"
 DAEMONOPTS=""
@@ -6,21 +9,27 @@ DAEMONOPTS=""
 
 retval=0
 
-# PID (created by application)
-PIDFILE=/var/run/hu.pid
+# PID (created by start-stop-daemon -m)
+PIDFILE=/var/run/hu_sc.pid
 
 start() {
-        echo "Starting $NAME..."
-        start-stop-daemon -b -x $DAEMON -p $PIDFILE -S -- $DAEMONOPTS
-        retval=$?
-        #  echo "Starting $NAME..."
-        #  $DAEMON $DAEMONOPTS &
+        if [ -f $DAEMON ]; then
+          echo "Starting $NAME..."
+          start-stop-daemon -b -x $DAEMON -m -p $PIDFILE -S -- $DAEMONOPTS
+          retval=$?
+		else
+          echo "$DAEMON not found!"
+        fi
 }
 
 stop() {
         echo "Stopping $NAME"
-        start-stop-daemon -x $DAEMON -p $PIDFILE -K
+        start-stop-daemon -p $PIDFILE -K
         retval=$?
+		# --remove-pidfile not supported by busybox
+        if [ -f $PIDFILE ]; then
+            rm -f $PIDFILE
+        fi
 }
 
 case "$1" in

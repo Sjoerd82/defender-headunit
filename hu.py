@@ -164,6 +164,17 @@ import subprocess
 # multiprocessing (disabled)
 #from multiprocessing import Process
 
+# dbus
+import dbus.service
+import dbus.exceptions
+
+# main loop
+import gobject
+from dbus.mainloop.glib import DBusGMainLoop
+
+# ZeroMQ
+import zmq
+
 # support modules
 from modules.hu_pulseaudio import *
 from modules.hu_volume import *
@@ -173,35 +184,16 @@ from modules.hu_settings import *
 from modules.hu_mpd import *
 #from hu_menu import *
 
-# dbus
-import dbus.service
-import dbus.exceptions
-
-# main loop
-import gobject
-from dbus.mainloop.glib import DBusGMainLoop
-
 #********************************************************************************
-#
 # Third party and others...
 #
 
 from slugify import slugify
 
-#********************************************************************************
-#
-# ZeroMQ
-#
-
-import zmq
-
-context = zmq.Context()
-subscriber = context.socket (zmq.SUB)
-subscriber.connect ("tcp://localhost:5556")	# TODO: get port from config
-subscriber.setsockopt (zmq.SUBSCRIBE, '')
 
 # GLOBAL vars
-Sources = SourceController()	#TODO: rename "Sources" -- confusing name
+#Sources = SourceController()	# --> micro-service
+Sources = None #Temp..
 disp = None
 arMpcPlaylistDirs = [ ]			#TODO: should probably not be global...
 
@@ -230,6 +222,25 @@ def printer( message, level=20, continuation=False, tag='SYSTEM' ):
 	else:
 		myprint( message, level, tag )
 
+#********************************************************************************
+# ZeroMQ
+#
+def zmq_connect():
+	zmq_ctx = zmq.Context()
+	subscriber = zmq_ctx.socket (zmq.SUB)
+	port_server = "5560" #TODO: get port from config
+	subscriber.connect ("tcp://localhost:{0}".format(port_server)) # connect to server
+
+	port_client = "5559"
+	publisher = zmq_ctx.socket(zmq.PUB)
+	publisher.connect("tcp://localhost:{0}".format(port_client))
+
+	#context = zmq.Context()
+	#subscriber = context.socket (zmq.SUB)
+	#subscriber.connect ("tcp://localhost:5556")	# TODO: get port from config
+	#subscriber.setsockopt (zmq.SUBSCRIBE, '')
+	
+	
 def queue(q, item, sfx=None):
 	#printer('Blocking Queue Size before: {0}'.format(qBlock.qsize()))
 	try:
@@ -380,8 +391,6 @@ def cb_remote_btn_press2 ( func ):
 # Handle button press
 def cb_remote_btn_press ( func ):
 
-	global Sources
-
 	queue_func = {'command':func}
 	
 	if func == 'SHUFFLE':
@@ -433,7 +442,6 @@ def cb_remote_btn_press ( func ):
 		pa_sfx('error')
 
 def cb_mpd_event( event ):
-	global Sources
 	global settings
 	global mpdc
 
@@ -1272,143 +1280,6 @@ def init_load_config():
 	return configuration
 
 
-# print a source summary
-def printSummary(Sources):
-	#global Sources
-	printer('-- Summary -----------------------------------------------------------', tag='')
-	arCurrIx = Sources.getIndexCurrent()
-	sCurrent = Sources.get(None)
-	
-	if not arCurrIx[0] == None and arCurrIx[1] == None:
-		sCurrDisplay = sCurrent['displayname']
-	elif not arCurrIx[1] == None:
-		sCurrDisplay = "" #TODO
-		#sCurrDisplay = sCurrent['subsources'][arCurrIx[1]]['displayname']
-	else:
-		sCurrDisplay = ""
-	
-	if len(arCurrIx) == 0:
-		printer('Current source: None', tag='')
-	else:
-		printer('Current source: {0} {1}'.format(arCurrIx[0],sCurrDisplay), tag='')
-	
-	i = 0
-	for source in Sources.getAll():
-
-		if 'subsources' in source and len(source['subsources']) > 0:
-			for subsource in source['subsources']:
-			
-				if subsource['available']:
-					available = colorize('available    ','light_green')
-				else:
-					available = colorize('not available','light_red')
-		
-				if 'mountpoint' in subsource:
-					mountpoint = subsource['mountpoint']
-					printer(' {0:2d} {1:17} {2} {3}'.format(i,source['displayname'],available,mountpoint), tag='')
-		else:
-			if source['available']:
-				available = colorize('available    ','light_green')
-			else:
-				available = colorize('not available','light_red')
-			printer(' {0:2d} {1:17} {2}'.format(i,source['displayname'],available), tag='')
-		
-		i += 1
-	printer('----------------------------------------------------------------------', tag='')
-
-# Load Source Plugins
-def loadSourcePlugins( plugindir ):
-	global Sources
-	global configuration
-
-	#
-	# adds the source:
-	# - Load source json configuration
-	# - 
-	#
-	def add_a_source( plugindir, sourcePluginName ):
-		configFileName = os.path.join(plugindir,sourcePluginName+'.json')
-		if not os.path.exists( configFileName ):
-			printer('Configuration not found: {0}'.format(configFileName))
-			return False
-		
-		# load source configuration file
-		jsConfigFile = open( configFileName )
-		config=json.load(jsConfigFile)
-		
-		# test if name is unique
-		# #TODO
-
-		# fetch module from sys.modules
-		# sourceModule = sys.modules['sources.'+sourcePluginName] # MENU..
-		
-		# 
-		for execFunction in ('sourceInit','sourceCheck','sourcePlay','sourceStop','sourceNext','sourcePrev'):
-			if execFunction in config:
-				#overwrite string with reference to module
-				config[execFunction][0] = sys.modules['sources.'+sourcePluginName]
-
-		###if 'sourceClass' in config:
-		###	#overwrite string with reference to module
-		# add a sourceModule item with a ref. to the module
-		config['sourceModule'] = sys.modules['sources.'+sourcePluginName]
-		
-		# register the source
-		isAdded = Sources.add(config)
-		# check if the source has a configuration
-		if 'defaultconfig' in config:
-			# check if configuration is present in the main configuration file
-			if not sourcePluginName in configuration['source_config']:
-				# insert defaultconfig
-				configuration['source_config'][sourcePluginName] = config['defaultconfig']
-				configuration_save( CONFIG_FILE, configuration )
-
-		# check if the source has menu items
-		"""
-		if 'menuitems' in config:
-			for menuitem in config['menuitems']:
-				# do we have a sub menu that needs to be populated?
-				if 'sub' in menuitem:
-					if menuitem['sub'].startswith('!'):
-						func = menuitem['sub'].lstrip('!')
-						menuitem['sub'] = getattr(sourceModule,func)()
-						#menuitem['uuid']
-				#TODO: re-enable
-				#huMenu.add( menuitem )
-		"""
-		# init source, if successfully added
-		if isAdded:
-			indexAdded = Sources.getIndex('name',config['name'])
-			Sources.sourceInit(indexAdded)
-	
-	# check if plugin dir exists
-	if not os.path.exists(plugindir):
-		printer('Source path not found: {0}'.format(plugindir), level=LL_CRITICAL)
-		exit()
-	
-	#
-	# loop through all imported modules, picking out the sources
-	# execute add_a_source() for every found source
-	# #TODO: remove hardcoded reference to "sources.", derive it...
-	#
-	list_of_sources = []
-	for k, v in sys.modules.iteritems():
-		if k[0:8] == 'sources.':
-			sourcePluginName = k[8:]
-			if not str(v).find(plugindir) == -1:
-				list_of_sources.append(sourcePluginName)
-
-	# dictionary of modules may change during the adding of the sources, raising a runtime error..
-	# therefore we save them in a list and iterate over them in a second loop:
-	for sourcePluginName in list_of_sources:
-		add_a_source(plugindir, sourcePluginName)
-
-def plugin_execute( script ):
-	printer('Starting Plugin: {0}'.format(script))
-	#os.system( 'python '+script )
-	call(['python',script])
-
-
 def test_match( dTest, dMatchAgainst ):
 	matches = set(dTest.items()) & set(dMatchAgainst.items())
 	if len(matches) == len(dTest):
@@ -1611,15 +1482,62 @@ def worker_queue_async():
 		# sign off task
 		qAsync.task_done()
 
-		
+"""
 def mq_recv():
 	message = subscriber.recv()
-	if message == '/player/track/next':
-		Sources.sourceSeekNext()
-	else:
-		print("NO MESSAGE! sorry..")
+	parse_message(message)
+	
+	#if message == '/player/track/next':
+	#	Sources.sourceSeekNext()
+	#else:
+	#	print("NO MESSAGE! sorry..")
 		
 	return True
+
+def parse_message(message):
+		path = []
+		params = []
+		path_cmd = message.split(" ")
+		for pathpart in path_cmd[0].split("/"):
+			if pathpart:
+				path.append(pathpart.lower())
+			
+		base_topic = path[0]
+		cmd_par = path_cmd[1].split(":")
+
+		if len(cmd_par) == 1:
+			command = cmd_par[0].lower()
+		elif len(cmd_par) == 2:
+			command = cmd_par[0].lower()
+			param = cmd_par[1]
+
+			for parpart in param.split(","):
+				if parpart:
+					params.append(parpart)
+		else:
+			print("Malformed message!")
+			return False
+
+		print("[MQ] Received Path: {0}; Command: {1}; Parameters: {2}".format(path,command,params))
+		
+
+		item = []	# or set?
+		# check if base_topic ('player','event', etc.) function exists
+		if base_topic in globals():
+			# remove first item (base topic)
+			del path[0]
+			# if queue is empty, execute right away, else add to queue
+			if queue_actions.empty():
+				# execute:
+				globals()[base_topic](path, command, params)
+			else:
+				# put in queue:
+				item.append(base_topic)
+				item.append(path)
+				item.append(command)
+				item.append(params)
+				queue_actions.put(item, False) # False=Non-Blocking
+"""
 	
 #********************************************************************************
 #
@@ -1680,8 +1598,8 @@ class MainInstance(dbus.service.Object):
 #
 # Stop if we're already running
 #
-if check_running(PID_FILE):
-	exit()
+#if check_running(PID_FILE):
+#	exit()
 
 #
 # Start logging to console
@@ -1731,9 +1649,9 @@ init_logging_s( address='/dev/log' )
 #
 #
 # Legacy: #TODO
-settings = cSettings.get()
-VolPulse = VolumeController('alsa_output.platform-soc_sound.analog-stereo')
-VolPulse.set( settings['volume'] )
+#settings = cSettings.get()
+#VolPulse = VolumeController('alsa_output.platform-soc_sound.analog-stereo')
+#VolPulse.set( settings['volume'] )
 
 
 #
@@ -1744,6 +1662,11 @@ myprint('Headunit.py version {0}'.format(__version__),tag='SYSTEM')
 pa_sfx('startup')
 
 #
+# ZeroMQ
+#
+zmq_connect()
+
+#
 # create menu structure
 #
 #print configuration[
@@ -1752,16 +1675,6 @@ pa_sfx('startup')
 #  "entry_name": "browse_track"}
 #huMenu.add( testentry )
 
-
-#
-# App. Init
-#
-#
-myprint('Loading Source Plugins...',tag='SYSTEM')
-# import sources directory
-import sources
-# read source config files and start source inits
-loadSourcePlugins(os.path.join( os.path.dirname(os.path.abspath(__file__)), 'sources'))
 
 
 #print "TESTING TESTING"
@@ -1883,6 +1796,13 @@ myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 
 prevSource = cSettings.get_key('source')
 prevSourceSub = cSettings.get_key('subsourcekey')
+
+
+print "XX DEBUG XX"
+print prevSource
+print SOURCE
+
+exit()
 
 # BOOT is true for 'early boot'
 #if BOOT and not prevSource = "" and not prevSource == SOURCE:
@@ -2088,23 +2008,23 @@ exit()
 #
 # Connect Callback functions to DBus Signals
 #
-bus.add_signal_receiver(cb_mpd_event, dbus_interface = "com.arctura.mpd")
-bus.add_signal_receiver(cb_remote_btn_press, dbus_interface = "com.arctura.remote")
-bus.add_signal_receiver(cb_remote_btn_press2, dbus_interface = "com.arctura.keyboard")
-bus.add_signal_receiver(cb_udisk_dev_add, signal_name='DeviceAdded', dbus_interface="org.freedesktop.UDisks")
-bus.add_signal_receiver(cb_udisk_dev_rem, signal_name='DeviceRemoved', dbus_interface="org.freedesktop.UDisks")
-bus.add_signal_receiver(cb_ifup, signal_name='ifup', dbus_interface="com.arctura.ifup")
-bus.add_signal_receiver(cb_ifdn, signal_name='ifdn', dbus_interface="com.arctura.ifdn")
+#bus.add_signal_receiver(cb_mpd_event, dbus_interface = "com.arctura.mpd")
+#bus.add_signal_receiver(cb_remote_btn_press, dbus_interface = "com.arctura.remote")
+#bus.add_signal_receiver(cb_remote_btn_press2, dbus_interface = "com.arctura.keyboard")
+#bus.add_signal_receiver(cb_udisk_dev_add, signal_name='DeviceAdded', dbus_interface="org.freedesktop.UDisks")
+#bus.add_signal_receiver(cb_udisk_dev_rem, signal_name='DeviceRemoved', dbus_interface="org.freedesktop.UDisks")
+#bus.add_signal_receiver(cb_ifup, signal_name='ifup', dbus_interface="com.arctura.ifup")
+#bus.add_signal_receiver(cb_ifdn, signal_name='ifdn', dbus_interface="com.arctura.ifdn")
 
 
 #
 # Start the blocking main loop...
 #
-with PidFile(PID_FILE) as p:
-	try:
-		mainloop.run()
-	finally:
-		mainloop.quit()
+#with PidFile(PID_FILE) as p:
+try:
+	mainloop.run()
+finally:
+	mainloop.quit()
 
 
 # TODO

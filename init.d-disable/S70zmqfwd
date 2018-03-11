@@ -5,13 +5,17 @@ NAME="ZMQ forwarder"
 DAEMON="/mnt/PIHU_APP/defender-headunit/d_zmq_forwarder.py"
 DAEMONOPTS=""
 
-# PID (created by application)
+[ -x $DAEMON ] || exit 1
+
+retval=0
+
+# PID (created by start-stop-daemon -m)
 PIDFILE=/var/run/zmqfwd.pid
 
 start() {
         if [ -f $DAEMON ]; then
           echo "Starting $NAME..."
-          start-stop-daemon -b -x $DAEMON -p $PIDFILE -S -- $DAEMONOPTS
+          start-stop-daemon -b -x $DAEMON -m -p $PIDFILE -S -- $DAEMONOPTS
           retval=$?
 		else
           echo "$DAEMON not found!"
@@ -20,8 +24,12 @@ start() {
 
 stop() {
         echo "Stopping $NAME"
-        start-stop-daemon -x $DAEMON -p $PIDFILE -K
+        start-stop-daemon -p $PIDFILE -K
         retval=$?
+		# --remove-pidfile not supported by busybox
+        if [ -f $PIDFILE ]; then
+            rm -f $PIDFILE
+        fi
 }
 
 case "$1" in
