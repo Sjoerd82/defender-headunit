@@ -1719,10 +1719,6 @@ def setup():
 	myprint('Headunit.py version {0}'.format(__version__),tag='SYSTEM')
 	pa_sfx('startup')
 
-	#
-	# ZeroMQ
-	#
-	zmq_connect()
 
 	#
 	# create menu structure
@@ -1846,246 +1842,250 @@ def setup():
 #
 # Mainloop
 #
-#def main():
+def main():
 
-#
-# QuickPlay
-#
+	#
+	# Check if Source Controller started and available
+	#
+
+	# !! !! TODO IMPORTANT !! !!
 
 
+	#
+	# QuickPlay
+	#
+	print "XX DEBUG XX"
+	print SOURCE
+	print SOURCE_SUB
 
-print "XX DEBUG XX"
-print SOURCE
-print SOURCE_SUB
+	print "XX DEBUG XX"
+	SOURCE = None
 
-print "XX DEBUG XX"
-SOURCE = None
+	# BOOT is true for 'early boot'
+	#if BOOT and not prevSource = "" and not prevSource == SOURCE:
 
-# BOOT is true for 'early boot'
-#if BOOT and not prevSource = "" and not prevSource == SOURCE:
+	#if not prevSource == SOURCE and not prevSource:
+	#	print('Quickplay failed due mismatching source')
+	#	exit()
 
-#if not prevSource == SOURCE and not prevSource:
-#	print('Quickplay failed due mismatching source')
-#	exit()
-
-if not SOURCE:
-	printer ('No previous source.', tag='QPLAY')
-	# following is already done on start by source-controller:
-	#zmq_send('/source/check')
-	#Sources.sourceCheckAll()
-	#printSummary(Sources)
-	printer ('Starting first available source', tag='QPLAY')
-	zmq_send('/source/next', 'SET')
-	#Sources.next()
-	zmq_send('/source/state', 'SET:play')
-	#hu_play(resume=False)
-	
-else:
-	ret = QuickPlay( prevSource,
-					 prevSourceSub )
-					 
-	if ret:
-		printer ('Checking other sources...', tag='QPLAY')
-		# TODO: the prev. source is now checked again.. this is not efficient..
-		Sources.sourceCheckAll()
-		printSummary(Sources)
+	if not SOURCE:
+		printer ('No previous source.', tag='QPLAY')
+		# following is already done on start by source-controller:
+		#zmq_send('/source/check')
+		#Sources.sourceCheckAll()
+		#printSummary(Sources)
+		printer ('Starting first available source', tag='QPLAY')
+		zmq_send('/source/next', 'SET')
+		#Sources.next()
+		zmq_send('/source/state', 'SET:play')
+		#hu_play(resume=False)
 		
 	else:
-		printer ('Continuing playback not available, checking all sources...', tag='QPLAY')
-		Sources.sourceCheckAll()
-		printSummary(Sources)
-		printer ('Starting first available source', tag='QPLAY')
-		Sources.next()
-		hu_play(resume=False)
+		ret = QuickPlay( prevSource,
+						 prevSourceSub )
+						 
+		if ret:
+			printer ('Checking other sources...', tag='QPLAY')
+			# TODO: the prev. source is now checked again.. this is not efficient..
+			Sources.sourceCheckAll()
+			printSummary(Sources)
+			
+		else:
+			printer ('Continuing playback not available, checking all sources...', tag='QPLAY')
+			Sources.sourceCheckAll()
+			printSummary(Sources)
+			printer ('Starting first available source', tag='QPLAY')
+			Sources.next()
+			hu_play(resume=False)
 
-print "XX DEBUG XX"
-exit()
+	print "XX DEBUG XX"
+	exit()
 
-# Save Settings
-currSrc = Sources.getComposite()
-cSettings.set('source',currSrc['name'])
+	# Save Settings
+	currSrc = Sources.getComposite()
+	cSettings.set('source',currSrc['name'])
 
-# update sub-source key (in case of sub-source)
-if 'subsource' in currSrc:
-	subsource_key = {}
-	for key in currSrc['subsource_key']:
-		subsource_key[key] = currSrc['subsource'][key]
-	cSettings.set('subsourcekey', subsource_key)
+	# update sub-source key (in case of sub-source)
+	if 'subsource' in currSrc:
+		subsource_key = {}
+		for key in currSrc['subsource_key']:
+			subsource_key[key] = currSrc['subsource'][key]
+		cSettings.set('subsourcekey', subsource_key)
 
-cSettings.save()
+	cSettings.save()
+
+			
+		   
+	"""
+	else:
+		for source in Sources.getAll():
+			if source['name'] == prevSource:
+				print("!! PREVIOUS SOURCE: {0}".format(source['name']))
+				#if 'label' in source:
+				index = Sources.getIndex
+				print("!! CHECKING IF IT IS AVAILABLE...")
+				
+				Sources.sourceCheck(
+	"""
+	# First, try previously active source
+
+
+	# on demand...
+	#plugin_sources.media.media_add('/media/USBDRIVE', Sources)
+
+
+	#myprint('A WARNING', level=logging.WARNING, tag="test")
+	#logger.warning('Another WARNING', extra={'tag':'test'})
+
+	# Save operational settings
+	#dSettings1 = {"source": -1, 'volume': 99, 'mediasource': -1, 'medialabel': ''}	 # No need to save random, we don't want to save that (?)
+	#settings_save( sFileSettings, dSettings1 )
+
+	#
+	# Setting up worker threads
+	#
+	printer('Setting up queues and worker threads')
+
+
+	qPrio = Queue(maxsize=4)	# Short stuff that can run anytime:
+	qBlock = Queue(maxsize=4)	# Blocking stuff that needs to run in sequence
+	qAsync = Queue(maxsize=4)	# Long stuff that can run anytime (but may occasionally do a reality check):
+
+	t = threading.Thread(target=worker_queue_prio)
+	#p = Process(target=worker_queue_prio)
+	t.setDaemon(True)
+	#p.daemon = True
+	t.start()
+	#p.join()
+
+	# disabled: see idle_add Queue Handler below
+	# t = threading.Thread(target=worker_queue_blocking)
+	# p = Process(target=worker_queue_blocking)
+	# t.setDaemon(True)
+	# p.daemon = True
+	# t.start()
+
+	t = threading.Thread(target=worker_queue_async)
+	#p = Process(target=worker_queue_async)
+	t.setDaemon(True)
+	#p.daemon = True
+
+
+	# DISABLED FOR ZMQ:
+	#t.start()
+
+
+	"""
+	qBlock.put("SOURCE")
+	qPrio.put("VOL_UP")
+	qBlock.put("NEXT")
+	qPrio.put("VOL_UP")
+	qPrio.put("VOL_ATT")
+	qBlock.put("SHUFFLE")
+	qPrio.put("SHUTDOWN")
+
+	exit()
+	"""
+
+	#********************************************************************************
+	#
+	# Main loop
+	#
 
 		
-	   
-"""
-else:
-	for source in Sources.getAll():
-		if source['name'] == prevSource:
-			print("!! PREVIOUS SOURCE: {0}".format(source['name']))
-			#if 'label' in source:
-			index = Sources.getIndex
-			print("!! CHECKING IF IT IS AVAILABLE...")
-			
-			Sources.sourceCheck(
-"""
-# First, try previously active source
+	#
+	# Initialize the mainloop
+	#
+	DBusGMainLoop(set_as_default=True)
 
 
-# on demand...
-#plugin_sources.media.media_add('/media/USBDRIVE', Sources)
+	#
+	# main loop
+	#
+	mainloop = gobject.MainLoop()
 
 
-#myprint('A WARNING', level=logging.WARNING, tag="test")
-#logger.warning('Another WARNING', extra={'tag':'test'})
+	#
+	# 30 second timer
+	#
+	# timer1:
+	# - Save settings
+	# - check if dbus services still online? (or make this a separate service?)
+	gobject.timeout_add_seconds(30,cb_timer1)
 
-# Save operational settings
-#dSettings1 = {"source": -1, 'volume': 99, 'mediasource': -1, 'medialabel': ''}	 # No need to save random, we don't want to save that (?)
-#settings_save( sFileSettings, dSettings1 )
+	#
+	# Queue handler
+	# NOTE: Remember, everything executed through the qBlock queue blocks, including qPrio!
+	# IDEALLY, WE'D PUT THIS BACK IN A THREAD, IF THAT WOULD PERFORM... (which for some reason it doesn't!)
+	# 
+	gobject.idle_add(mq_recv)
+	#gobject.idle_add(cb_queue)
 
-#
-# Setting up worker threads
-#
-printer('Setting up queues and worker threads')
-
-
-qPrio = Queue(maxsize=4)	# Short stuff that can run anytime:
-qBlock = Queue(maxsize=4)	# Blocking stuff that needs to run in sequence
-qAsync = Queue(maxsize=4)	# Long stuff that can run anytime (but may occasionally do a reality check):
-
-t = threading.Thread(target=worker_queue_prio)
-#p = Process(target=worker_queue_prio)
-t.setDaemon(True)
-#p.daemon = True
-t.start()
-#p.join()
-
-# disabled: see idle_add Queue Handler below
-# t = threading.Thread(target=worker_queue_blocking)
-# p = Process(target=worker_queue_blocking)
-# t.setDaemon(True)
-# p.daemon = True
-# t.start()
-
-t = threading.Thread(target=worker_queue_async)
-#p = Process(target=worker_queue_async)
-t.setDaemon(True)
-#p.daemon = True
+	#
+	# DBus: system bus
+	# On a root only embedded system there may not be a usable session bus
+	#
+	#m = MainInstance()
 
 
-# DISABLED FOR ZMQ:
-#t.start()
+	try:
+		bus = dbus.SystemBus()
+	except dbus.DBusException:
+		raise RuntimeError("No D-Bus connection")
+
+	# Declare a name where our service can be reached
+	try:
+		bus_name = dbus.service.BusName("com.arctura.hu", bus, do_not_queue=True)
+	except dbus.exceptions.NameExistsException:
+		print("service is already running")
+		sys.exit(1)
+
+	# Output
+	disp = dbusDisplay(bus)
+	volm = dbusVolume(bus)
 
 
-"""
-qBlock.put("SOURCE")
-qPrio.put("VOL_UP")
-qBlock.put("NEXT")
-qPrio.put("VOL_UP")
-qPrio.put("VOL_ATT")
-qBlock.put("SHUFFLE")
-qPrio.put("SHUTDOWN")
+	"""
+	time.sleep(5)	#wait for the plugin to be ready
 
-exit()
-"""
+	hudispdata = {}
+	hudispdata['rnd'] = "1"
+	hudispdata['artist'] = "The Midnight"
+	disp.dispdata(hudispdata)
 
-#********************************************************************************
-#
-# Main loop
-#
+	time.sleep(5)
+	hudispdata = {}
+	hudispdata['rnd'] = "0"
+	disp.dispdata(hudispdata)
 
-	
-#
-# Initialize the mainloop
-#
-DBusGMainLoop(set_as_default=True)
+	time.sleep(5)
+	hudispdata = {}
+	hudispdata['att'] = "1"
+	disp.dispdata(hudispdata)
 
+	exit()
+	"""
 
-#
-# main loop
-#
-mainloop = gobject.MainLoop()
-
-
-#
-# 30 second timer
-#
-# timer1:
-# - Save settings
-# - check if dbus services still online? (or make this a separate service?)
-gobject.timeout_add_seconds(30,cb_timer1)
-
-#
-# Queue handler
-# NOTE: Remember, everything executed through the qBlock queue blocks, including qPrio!
-# IDEALLY, WE'D PUT THIS BACK IN A THREAD, IF THAT WOULD PERFORM... (which for some reason it doesn't!)
-# 
-gobject.idle_add(mq_recv)
-#gobject.idle_add(cb_queue)
-
-#
-# DBus: system bus
-# On a root only embedded system there may not be a usable session bus
-#
-#m = MainInstance()
+	#
+	# Connect Callback functions to DBus Signals
+	#
+	#bus.add_signal_receiver(cb_mpd_event, dbus_interface = "com.arctura.mpd")
+	#bus.add_signal_receiver(cb_remote_btn_press, dbus_interface = "com.arctura.remote")
+	#bus.add_signal_receiver(cb_remote_btn_press2, dbus_interface = "com.arctura.keyboard")
+	#bus.add_signal_receiver(cb_udisk_dev_add, signal_name='DeviceAdded', dbus_interface="org.freedesktop.UDisks")
+	#bus.add_signal_receiver(cb_udisk_dev_rem, signal_name='DeviceRemoved', dbus_interface="org.freedesktop.UDisks")
+	#bus.add_signal_receiver(cb_ifup, signal_name='ifup', dbus_interface="com.arctura.ifup")
+	#bus.add_signal_receiver(cb_ifdn, signal_name='ifdn', dbus_interface="com.arctura.ifdn")
 
 
-try:
-	bus = dbus.SystemBus()
-except dbus.DBusException:
-	raise RuntimeError("No D-Bus connection")
-
-# Declare a name where our service can be reached
-try:
-    bus_name = dbus.service.BusName("com.arctura.hu", bus, do_not_queue=True)
-except dbus.exceptions.NameExistsException:
-    print("service is already running")
-    sys.exit(1)
-
-# Output
-disp = dbusDisplay(bus)
-volm = dbusVolume(bus)
-
-
-"""
-time.sleep(5)	#wait for the plugin to be ready
-
-hudispdata = {}
-hudispdata['rnd'] = "1"
-hudispdata['artist'] = "The Midnight"
-disp.dispdata(hudispdata)
-
-time.sleep(5)
-hudispdata = {}
-hudispdata['rnd'] = "0"
-disp.dispdata(hudispdata)
-
-time.sleep(5)
-hudispdata = {}
-hudispdata['att'] = "1"
-disp.dispdata(hudispdata)
-
-exit()
-"""
-
-#
-# Connect Callback functions to DBus Signals
-#
-#bus.add_signal_receiver(cb_mpd_event, dbus_interface = "com.arctura.mpd")
-#bus.add_signal_receiver(cb_remote_btn_press, dbus_interface = "com.arctura.remote")
-#bus.add_signal_receiver(cb_remote_btn_press2, dbus_interface = "com.arctura.keyboard")
-#bus.add_signal_receiver(cb_udisk_dev_add, signal_name='DeviceAdded', dbus_interface="org.freedesktop.UDisks")
-#bus.add_signal_receiver(cb_udisk_dev_rem, signal_name='DeviceRemoved', dbus_interface="org.freedesktop.UDisks")
-#bus.add_signal_receiver(cb_ifup, signal_name='ifup', dbus_interface="com.arctura.ifup")
-#bus.add_signal_receiver(cb_ifdn, signal_name='ifdn', dbus_interface="com.arctura.ifdn")
-
-
-#
-# Start the blocking main loop...
-#
-#with PidFile(PID_FILE) as p:
-try:
-	mainloop.run()
-finally:
-	mainloop.quit()
+	#
+	# Start the blocking main loop...
+	#
+	#with PidFile(PID_FILE) as p:
+	try:
+		mainloop.run()
+	finally:
+		mainloop.quit()
 
 
 # TODO
