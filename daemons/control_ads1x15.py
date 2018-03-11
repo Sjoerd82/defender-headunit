@@ -39,34 +39,6 @@ def printer( message, level=LL_INFO, continuation=False, tag=controlName ):
 # Button presses are NOT asynchronous!! i.e. wait until a button press is handled before the next button can be handled.
 # TODO: Consider making them asynchronous, or at least the update lib (long) / volume (short) buttons
 
-def button_press(button):
-	printer("Button was pressed: {0}".format(button))
-	
-def button_down_wait():
-
-	adc = Adafruit_ADS1x15.ADS1015()
-	
-	printer("Waiting for button to be released...")
-	value_0 = adc.read_adc(0)
-	while value_0 > BUTTON_LO:
-		value_0 = adc.read_adc(0)
-		time.sleep(0.1)
-	printer("...released")
-	
-def button_down_delay():
-
-	adc = Adafruit_ADS1x15.ADS1015()
-	press_count = 0
-	
-	printer("Waiting for button to be released/or max. press count reached")
-	value_0 = adc.read_adc(0)
-	while value_0 > BUTTON_LO and press_count < 2:
-		press_count+=1
-		printer(press_count)
-		value_0 = adc.read_adc(0)
-		time.sleep(0.1)
-	printer("...released/max. delay reached")
-
 def main():
 
 	# ADC remote variables
@@ -97,6 +69,34 @@ def main():
 	#pavol = pa_volume_handler('alsa_output.platform-soc_sound.analog-stereo')
 	printer('Initialized [OK]')
 
+	def button_press(button):
+		printer("Button was pressed: {0}".format(button))
+	
+	def button_down_wait():
+
+		adc = Adafruit_ADS1x15.ADS1015()
+		
+		printer("Waiting for button to be released...")
+		value_0 = adc.read_adc(0)
+		while value_0 > BUTTON_LO:
+			value_0 = adc.read_adc(0)
+			time.sleep(0.1)
+		printer("...released")
+		
+	def button_down_delay():
+
+		adc = Adafruit_ADS1x15.ADS1015()
+		press_count = 0
+		
+		printer("Waiting for button to be released/or max. press count reached")
+		value_0 = adc.read_adc(0)
+		while value_0 > BUTTON_LO and press_count < 2:
+			press_count+=1
+			printer(press_count)
+			value_0 = adc.read_adc(0)
+			time.sleep(0.1)
+		printer("...released/max. delay reached")
+	
 	while True:
 		value_0 = adc.read_adc(0, gain=GAIN)
 		value_1 = adc.read_adc(1, gain=GAIN)
