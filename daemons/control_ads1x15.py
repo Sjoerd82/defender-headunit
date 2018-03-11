@@ -273,7 +273,7 @@ def main():
 					if 'long_press' in button:
 						if not long_press:
 							printer("Waiting for button to be pressed long enough")
-							print "DEBUG ix={0}".format(ix))
+							print "DEBUG ix={0}".format(ix)
 							long_press = ix
 							long_press_start = time.clock()
 						else:
