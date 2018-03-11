@@ -2,7 +2,7 @@
 
 # APPLICATION
 NAME="ZMQ forwarder"
-DAEMON="d_zmq_forwarder.py"
+DAEMON="zmq_forwarder.py"
 DAEMON_PATH="/mnt/PIHU_APP/defender-headunit/daemons"
 DAEMON_OPTS=""
 
