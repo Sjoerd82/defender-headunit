@@ -33,6 +33,9 @@ from hu_utils import *
 #
 CONTROL_NAME='udisks'
 
+# dbus
+bus = None
+
 # zmq
 subscriber = None
 publisher = None
@@ -95,6 +98,7 @@ def cb_udisk_dev_rem( device ):
 def udisk_add( device ):
 
 	#global Sources
+	global bus
 
 	device_obj = bus.get_object("org.freedesktop.UDisks", device)
 	device_props = dbus.Interface(device_obj, dbus.PROPERTIES_IFACE)
@@ -197,7 +201,8 @@ def udisk_add( device ):
 
 def udisk_rem( device ):
 
-	global Sources
+	#global Sources
+	global bus
 
 	device_obj = bus.get_object("org.freedesktop.UDisks", device)
 	device_props = dbus.Interface(device_obj, dbus.PROPERTIES_IFACE)
@@ -215,6 +220,10 @@ def udisk_rem( device ):
 	DeviceFile = ""
 	mountpoint = ""
 	mytag = "UDISKS"
+	
+	# TODO : SEND MQ MESSAGE
+	
+	"""
 	ix = Sources.getIndex('name','media')
 	
 	# The removed mountpoint can be derived from str(device)
@@ -255,7 +264,7 @@ def udisk_rem( device ):
 		printSummary(Sources)
 	else:
 		printer(' > Not a subsource: {0}'.format(partition))	
-		
+	"""
 
 	
 def setup():
@@ -266,6 +275,8 @@ def setup():
 
 def main():
 
+	global bus
+	
 	# Initialize the mainloop
 	DBusGMainLoop(set_as_default=True)
 	mainloop = gobject.MainLoop()
@@ -294,3 +305,5 @@ def main():
 if __name__ == "__main__":
 	setup()
 	main()
+	
+	
