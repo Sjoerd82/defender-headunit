@@ -149,7 +149,7 @@ def main():
 		value_0 = adc.read_adc(0, gain=GAIN)
 		value_1 = adc.read_adc(1, gain=GAIN)
 		
-		if buttonfunc[0]['channel0_lo'] <= value_0 <= buttonfunc[0]['channel0_hi']
+		if buttonfunc[0]['channel0_lo'] <= value_0 <= buttonfunc[0]['channel0_hi']:
 			#Bottom button
 			zmq_send(buttonfunc[0]['zmq_msg'])
 			#button_press('UPDATE_LOCAL')
