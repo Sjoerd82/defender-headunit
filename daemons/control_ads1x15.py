@@ -41,7 +41,6 @@ publisher = None
 #
 def zmq_connect():
 
-	global subscriber
 	global publisher
 	
 	printer("Connecting to ZeroMQ forwarder")
@@ -112,8 +111,12 @@ def main():
 	 , "zmq_path"   : "\player\update"
 	 , "zmq_cmd"    : "SET" } )
 	
+	# ADC
 	adc = Adafruit_ADS1x15.ADS1015()
-	#pavol = pa_volume_handler('alsa_output.platform-soc_sound.analog-stereo')
+	
+	# ZMQ
+	zmq_connect()
+	
 	printer('Initialized [OK]')
 
 	def button_press(button):
