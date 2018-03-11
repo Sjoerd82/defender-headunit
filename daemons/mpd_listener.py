@@ -39,6 +39,21 @@ subscriber = None
 publisher = None
 
 # ********************************************************************************
+# todo
+#
+# TODO!!! the "headunit"-logger is no longer accessible once this script is started "on its own"..
+def myprint( message, level, tag ):
+	print("[{0}] {1}".format(tag,message))
+
+# Wrapper for "myprint"
+def printer( message, level=LL_INFO, continuation=False, tag=CONTROL_NAME ):
+	if continuation:
+		myprint( message, level, '.'+tag )
+	else:
+		myprint( message, level, tag )
+
+
+# ********************************************************************************
 # Zero MQ functions
 #
 def zmq_connect():
