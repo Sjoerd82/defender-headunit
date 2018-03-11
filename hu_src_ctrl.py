@@ -151,7 +151,8 @@ def zmq_recv():
 	global subscriber
 
 	message_encoded = subscriber.recv()
-	message = json.loads(message_encoded)
+	#message = json.loads(message_encoded)
+	message = message_encoded
 	printer("Received message: {0}".format(message))
 	parse_message(message)
 	return True
