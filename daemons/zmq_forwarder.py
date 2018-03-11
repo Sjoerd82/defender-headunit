@@ -16,6 +16,7 @@
 #
 
 import zmq
+import sys
 sys.path.append('../modules')
 from modules.hu_utils import *
 
