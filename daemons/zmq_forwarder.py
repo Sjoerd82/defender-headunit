@@ -16,7 +16,8 @@
 #
 
 import zmq
-from ..modules.hu_utils import *
+sys.path.append('../modules')
+from modules.hu_utils import *
 
 DEFAULT_PORT_CLIENT = 5559
 DEFAULT_PORT_SERVER = 5560
