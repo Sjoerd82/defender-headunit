@@ -1618,6 +1618,9 @@ def init():
 #
 def setup():
 
+	global SOURCE
+	global SOURCE_SUB
+
 	#
 	# Load main configuration
 	#
@@ -1863,7 +1866,7 @@ if not SOURCE:
 	printer ('Starting first available source', tag='QPLAY')
 	zmq_send('/source/next')
 	#Sources.next()
-	zmq_send('/source/play')
+	zmq_send('/source/state', 'SET:play')
 	#hu_play(resume=False)
 	
 else:

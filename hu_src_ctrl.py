@@ -245,7 +245,7 @@ def source(path,cmd,args):
 
 	#def all_check(args):
 		# Check all sources
-		
+			
 	if path:
 		function_to_call = cmd + '_' + '_'.join(path)
 	else:
@@ -262,7 +262,7 @@ def source(path,cmd,args):
 		
 def player(path,cmd,args):
 
-	base_path = 'source'
+	base_path = 'player'
 
 	# in paths are concatenated using underscore
 	# example:
@@ -317,6 +317,9 @@ def player(path,cmd,args):
 	def set_state(args):
 		# Set state: play|pause|stop, toggle random
 		# TODO
+		if args = "play":
+			ret = sc_sources.source_play()
+			return ret
 		return True
 
 	def set_random(args):
