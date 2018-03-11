@@ -60,7 +60,6 @@ def zmq_send(path_send,message):
 	data = json.dumps(message)
 	printer("Sending message: {0} {1}".format(path_send, data))
 	publisher.send("{0} {1}".format(path_send, data))
-	time.sleep(1)
 
 
 # TODO!!! the "headunit"-logger is no longer accessible once this script is started "on its own"..
