@@ -251,18 +251,37 @@ def main():
 		else:
 			printer('No function configured for this button')
 	
-	
+	long_press = None
+	long_press_start = None
 	while True:
 		value_0 = adc.read_adc(0, gain=GAIN)
 		value_1 = adc.read_adc(1, gain=GAIN)
 		
+		if long_press:
+			print("DEBUG LP ix   ={0}".format(long_press))
+			print("DEBUG LP start={0}".format(long_press_start))
+			print("DEBUG LP diff ={0}".format(time.clock()-long_press_start)))
+			
+		
+		ix = 0
 		for button in buttonfunc:
 			if ( button['channel0_lo'] <= value_0 <= button['channel0_hi']):
 				if ('channel1_lo' and 'channel1_hi' in button):
 					if (button['channel1_lo'] <= value_1 <= button['channel1_hi']):
 						handle_button_press(button)
 				else:
-					handle_button_press(button)
+					if 'long_press' in button:
+						if not long_press:
+							printer("Waiting for button to be pressed long enough")
+							print "DEBUG ix={0}".format(ix))
+							long_press = ix
+							long_press_start = time.clock()
+						else:
+							print "going strong!"
+					else:
+						handle_button_press(button)
+					
+			ix += 1
 		
 		"""		
 		if buttonfunc[0]['channel0_lo'] <= value_0 <= buttonfunc[0]['channel0_hi']:
