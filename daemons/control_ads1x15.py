@@ -77,7 +77,6 @@ def printer( message, level=LL_INFO, continuation=False, tag=CONTROL_NAME ):
 	else:
 		myprint( message, level, tag )
 
-
 def setup():
 
 	# ADC
@@ -345,15 +344,6 @@ def main():
 				else:
 					printer("Not pressed long enough, not shutting down")
 			
-#		elif BUTTON10_LO <= value_0 <= BUTTON10_HI:	
-#			printer("Waiting for button to be pressed long enough")
-#			time.sleep(3)
-#			value_0 = adc.read_adc(0, gain=GAIN)
-#			if BUTTON10_LO <= value_0 <= BUTTON10_HI:
-#				printer("Long press, really shutting down...")
-#				button_press('OFF')
-#			else:
-#				printer("Not pressed long enough, not shutting down")
 		"""
 		
 		time.sleep(0.1)

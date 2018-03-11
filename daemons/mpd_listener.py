@@ -52,6 +52,16 @@ def zmq_connect():
 	publisher = zmq_ctx.socket(zmq.PUB)
 	publisher.connect("tcp://localhost:{0}".format(port_client))
 
+def zmq_send(path_send,message):
+
+	global publisher
+
+	#TODO
+	#data = json.dumps(message)
+	data = message
+	printer("Sending message: {0} {1}".format(path_send, data))
+	publisher.send("{0} {1}".format(path_send, data))
+
 def mpd_handle_change(events):
 
 	# loop over the available event(s)
