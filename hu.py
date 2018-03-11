@@ -1852,6 +1852,12 @@ def setup():
 #
 def main():
 
+	global SOURCE
+	global SOURCE_SUB
+	global BOOT
+	global LOGLEVEL_C
+
+	
 	#
 	# Check if Source Controller started and available
 	#
