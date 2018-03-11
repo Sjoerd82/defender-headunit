@@ -69,7 +69,6 @@ import zmq
 from slugify import slugify
 
 #********************************************************************************
-#
 # GLOBAL vars & CONSTANTS
 #
 

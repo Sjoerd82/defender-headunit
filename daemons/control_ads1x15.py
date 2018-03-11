@@ -15,22 +15,59 @@ import sys
 import os
 import time
 
-# Utils
-sys.path.append('../modules')
-from hu_utils import *
+# ZeroMQ
+import zmq
 
 # ADS1x15 module
 import Adafruit_ADS1x15
 
+# Utils
+sys.path.append('../modules')
+from hu_utils import *
 
-controlName='ad1x15'
+
+#********************************************************************************
+# GLOBAL vars & CONSTANTS
+#
+CONTROL_NAME='ad1x15'
+
+# zmq
+subscriber = None
+publisher = None
+
+
+# ********************************************************************************
+# Zero MQ functions
+#
+def zmq_connect():
+
+	global subscriber
+	global publisher
+	
+	printer("Connecting to ZeroMQ forwarder")
+
+	zmq_ctx = zmq.Context()
+	port_client = "5559"
+	publisher = zmq_ctx.socket(zmq.PUB)
+	publisher.connect("tcp://localhost:{0}".format(port_client))
+	
+def zmq_send(path_send,message):
+
+	global publisher
+
+	#TODO
+	data = json.dumps(message)
+	printer("Sending message: {0} {1}".format(path_send, data))
+	publisher.send("{0} {1}".format(path_send, data))
+	time.sleep(1)
+
 
 # TODO!!! the "headunit"-logger is no longer accessible once this script is started "on its own"..
 def myprint( message, level, tag ):
 	print("[{0}] {1}".format(tag,message))
 
 # Wrapper for "myprint"
-def printer( message, level=LL_INFO, continuation=False, tag=controlName ):
+def printer( message, level=LL_INFO, continuation=False, tag=CONTROL_NAME ):
 	if continuation:
 		myprint( message, level, '.'+tag )
 	else:
@@ -65,6 +102,17 @@ def main():
 	BUTTON10_LO = 1050	# "OFF"
 	BUTTON10_HI = 1100	
 
+	#button-2-function mapper
+	buttonfunc = []
+
+	buttonfunc.append( {
+	   "channel0_lo" = 180
+	 , "channel0_hi" = 190
+	 , "delay" = None
+	 , "zmq_msg" = "\player\update SET"} )
+	
+	
+	
 	adc = Adafruit_ADS1x15.ADS1015()
 	#pavol = pa_volume_handler('alsa_output.platform-soc_sound.analog-stereo')
 	printer('Initialized [OK]')
@@ -74,7 +122,8 @@ def main():
 	
 	def button_down_wait():
 
-		adc = Adafruit_ADS1x15.ADS1015()
+		global adc
+		#adc = Adafruit_ADS1x15.ADS1015()
 		
 		printer("Waiting for button to be released...")
 		value_0 = adc.read_adc(0)
@@ -85,7 +134,8 @@ def main():
 		
 	def button_down_delay():
 
-		adc = Adafruit_ADS1x15.ADS1015()
+		#adc = Adafruit_ADS1x15.ADS1015()
+		global adc
 		press_count = 0
 		
 		printer("Waiting for button to be released/or max. press count reached")
@@ -100,9 +150,11 @@ def main():
 	while True:
 		value_0 = adc.read_adc(0, gain=GAIN)
 		value_1 = adc.read_adc(1, gain=GAIN)
-		if BUTTON01_LO <= value_0 <= BUTTON01_HI:
+		
+		if buttonfunc[0]['channel0_lo'] <= value_0 <= buttonfunc[0]['channel0_hi']
 			#Bottom button
-			button_press('UPDATE_LOCAL')
+			zmq_send(buttonfunc[0]['zmq_msg'])
+			#button_press('UPDATE_LOCAL')
 			#Wait until button is released (no need to continue updating...)
 			button_down_wait()			
 
