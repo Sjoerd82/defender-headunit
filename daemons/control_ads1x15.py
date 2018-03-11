@@ -143,7 +143,7 @@ def main():
 	 , "channel1_lo": 0
 	 , "channel1_hi": 300
 	 , "wait"       : False
-	 , "delay"      : None
+	 , "delay"      : True
 	 , "zmq_path"   : "\player\next"
 	 , "zmq_cmd"    : "SET" } )
 
@@ -154,7 +154,7 @@ def main():
 	 , "channel1_lo": 301
 	 , "channel1_hi": 1100
 	 , "wait"       : False
-	 , "delay"      : None
+	 , "delay"      : True
 	 , "zmq_path"   : "\player\nextdir"
 	 , "zmq_cmd"    : "SET" } )
 
@@ -222,15 +222,16 @@ def main():
 		elif buttonfunc[3]['channel0_lo'] <= value_0 <= buttonfunc[3]['channel0_hi']:
 			handle_button_press(buttonfunc[3])
 
-		elif buttonfunc[4]['channel0_lo'] <= value_0 <= buttonfunc[4]['channel0_hi']:
-			if ('channel1_lo' and 'channel1_hi' in buttonfunc[4]
-				and buttonfunc[4]['channel1_lo'] <= value_1 <= buttonfunc[4]['channel1_hi']):
-					handle_button_press(buttonfunc[4])
+		elif (buttonfunc[4]['channel0_lo'] <= value_0 <= buttonfunc[4]['channel0_hi'] and
+				('channel1_lo' and 'channel1_hi' in buttonfunc[4]
+					and buttonfunc[4]['channel1_lo'] <= value_1 <= buttonfunc[4]['channel1_hi']) ):
+			handle_button_press(buttonfunc[4])
 
-		elif buttonfunc[5]['channel0_lo'] <= value_0 <= buttonfunc[5]['channel0_hi']:
-			if ('channel1_lo' and 'channel1_hi' in buttonfunc[5]
-				and buttonfunc[5]['channel1_lo'] <= value_1 <= buttonfunc[5]['channel1_hi']):
-					handle_button_press(buttonfunc[5])
+
+		elif ( buttonfunc[5]['channel0_lo'] <= value_0 <= buttonfunc[5]['channel0_hi'] and
+				('channel1_lo' and 'channel1_hi' in buttonfunc[5]
+					and buttonfunc[5]['channel1_lo'] <= value_1 <= buttonfunc[5]['channel1_hi']) ):
+			handle_button_press(buttonfunc[5])
 			
 #		elif BUTTON05_LO <= value_0 <= BUTTON05_HI:
 #			if value_1 < 300:
