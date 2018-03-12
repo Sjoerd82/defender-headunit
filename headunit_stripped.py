@@ -1380,15 +1380,6 @@ def init():
 	
 #-------------------------------------------------------------------------------
 # Main loop
-print('Headunit v1.0 2017-12-11 1935')
-print('Checking if we\'re already runnning')
-#me = singleton.SingleInstance() # will sys.exit(-1) if other instance is running # uncomment when tendo available
-#with PIDFile("/var/run/pihu.pid"):
-#	pass
-
-		
-DBusGMainLoop(set_as_default=True)
-bus = dbus.SystemBus()
 
 # Initialize
 init()
@@ -1397,14 +1388,6 @@ init()
 agent = BlueAgent(sBtPinCode)
 agent.registerAsDefault()
 agent.startPairing()
-
-# Initialize a main loop
-mainloop = gobject.MainLoop()
-bus.add_signal_receiver(cb_remote_btn_press, dbus_interface = "com.arctura.remote")
-bus.add_signal_receiver(cb_mpd_event, dbus_interface = "com.arctura.mpd")
-bus.add_signal_receiver(cb_udisk_dev_add, signal_name='DeviceAdded', dbus_interface="org.freedesktop.UDisks")
-bus.add_signal_receiver(cb_udisk_dev_rem, signal_name='DeviceRemoved', dbus_interface="org.freedesktop.UDisks")
-#mainloop.timeout_add(5000,cb_periodically,'foo',123)
 
 mainloop.run()
 
