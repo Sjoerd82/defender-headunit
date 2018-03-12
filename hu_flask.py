@@ -69,6 +69,10 @@ def hello_world():
 	]
 	print pages
 	return render_template('index.html', pages=pages)
+
+@app.route('/boot')
+def boostrap():
+	return render_template('bootstrap.html')
 	
 #app.route('/api')
 """

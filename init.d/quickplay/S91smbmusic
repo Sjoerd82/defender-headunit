@@ -5,7 +5,10 @@
 
 start() {
                 mkdir -p /media/PIHU_SMB/music
+				# TODO: check if already mounted
+				#if ! mountpoint -q /media/PIHU_SMB/music; then
                 mount -t cifs -o user=root,password=kungfu //172.16.8.11/music/mpd /media/PIHU_SMB/music
+				#fi
         }
 
 case "$1" in
