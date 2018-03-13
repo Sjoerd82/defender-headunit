@@ -30,7 +30,7 @@ case "$1" in
                             ;;
                         *)
                             # No sh extension, so fork subprocess.
-                            if [[ $i = 'S70headunit' && $retval_sum != 0 ]]; then
+                            if [[ $i -eq 'S70headunit' && $retval_sum != 0 ]]; then
                                 echo "Skipping early Headunit start"
                             else
                                 $i start

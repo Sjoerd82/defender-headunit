@@ -1,3 +1,14 @@
+Program flow:
+
+ 1. Initialization
+    Starts all essentials
+
+ 2. Quickplay
+    Start playing anything as quick as possible.
+
+ 3. Main Loop
+    Start listening to DBus signals.
+
 *********************************************************************************
 Initialization:
 
@@ -37,11 +48,16 @@ Message "[SYSTEM] Initialization finished" will appear after finishing this stag
 Summary of available sources is printed
 
 *********************************************************************************
+Quick Play:
+
+
+
+*********************************************************************************
 Main program:
 
  - Call backs for:
    - Remote control: Resistor, Keyboard
    - MPD
    - Udisks
-
+   - Timer
 
