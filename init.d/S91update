@@ -9,7 +9,19 @@ APP_DIR="/mnt/PIHU_APP/defender-headunit"
 GIT_DIR="/mnt/PIHU_APP/defender-headunit/git"
 FIRSTBOOT=0
 
+# sanity checks
+if [ ! -d $GIT_DIR ]; then
+    echo  "Not found: $GIT_DIR"
+    exit 0
+fi
+
+exit 0
+
 start() {
+
+    ######################################################################
+	# check git status
+
 
         # Application is on /dev/mmcblk0p3
         #  --> Check the partition's label?

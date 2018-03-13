@@ -159,8 +159,26 @@
 			, "follow_outside_symlinks":"yes"
 			, "follow_inside_symlinks": "yes"
 			, "audio_output": [
-				{  "type":"pulse"
-				 , "name":"pulse audio" } ]
+				  {   "type":"alsa" 
+				     , "name":"HiFiberry DAC"
+					 , "device":"hw:0,0"
+				  }
+				, {  "type":"pipe" 
+				     , "name":"DSP crossover/eq 2 channel mono"
+				     , "format":"44100:32:2"
+				     , "mixer_type":"software"
+					 , "command":"ecasound -q -z:nodb -z:mixmode,sum -a:pre -f:s32_le,2,44100 -i:stdin -pf:/etc/pre.ecp -o:loop,1 -a:woofer,tweeter -i:loop,1 -a:woofer -pf:/etc/woofer.ecp -chorder:1,0 -a:tweeter -pf:/etc/tweeter.ecp -chorder:0,2 -a:woofer,tweeter -f:16,4,44100 -o:alsa"
+				  }
+				, {  "type":"pipe" 
+				     , "name":"DSP crossover/eq 4 channel stereo"
+				     , "format":"44100:32:2"
+				     , "mixer_type":"software"
+					 , "command":"ecasound -q -z:nodb -z:mixmode,sum -a:pre -f:s32_le,2,44100 -i:stdin -pf:/etc/pre.ecp -o:loop,1 -a:woofer,tweeter -i:loop,1 -a:woofer -pf:/etc/woofer.ecp -chorder:1,2,0,0 -a:tweeter -pf:/etc/tweeter.ecp -chorder:0,0,1,2 -a:woofer,tweeter -f:16,4,44100 -o:alsa"
+				  }
+				, {  "type":"pulse"
+				    , "name":"pulse audio"
+					, "enabled":"no"
+				   } ]
 		}
 		, "smb": {
 			  "location":           "/etc/samba/smb.conf"
