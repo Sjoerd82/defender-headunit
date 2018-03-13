@@ -15,11 +15,20 @@ if [ ! -d $GIT_DIR ]; then
     exit 0
 fi
 
+COMMIT_LOCAL=$(git --git-dir=git rev-parse HEAD)
+COMMIT_REMOTE=$(git --git-dir=git ls-remote --heads | cut -f1)
+
+echo $COMMIT_LOCAL
+echo $COMMIT_REMOTE
+	
 start() {
 
     ######################################################################
 	# check git status
-
+    if [ $COMMIT_LOCAL == $COMMIT_REMOTE ]; then
+	    echo "Already up to date."
+		exit 0
+	fi
 
         # Application is on /dev/mmcblk0p3
         #  --> Check the partition's label?
