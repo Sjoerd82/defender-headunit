@@ -170,13 +170,12 @@ LOGLEVEL_C = LL_INFO
 
 # CONSTANTS
 CONFIG_FILE_DEFAULT = '/mnt/PIHU_APP/defender-headunit/config/configuration.json'
-CONFIG_FILE = '/mnt/PIHU_CONFIG/configuration.json'
+CONFIG_FILE = '/etc/configuration.json'
 VERSION = "1.0.0"
 PID_FILE = "hu"
 SYSLOG_UDP_PORT=514
 
-# ENVIRONMENT VARIABLES
-ENV_CONFIG_FILE = os.getenv('HU_CONFIG_FILE')
+# ENVIRONMENT VARIABLES (deprecated)
 ENV_SOURCE = os.getenv('HU_SOURCE')
 
 
@@ -1075,6 +1074,7 @@ def init_logging_s( address=('localhost', SYSLOG_UDP_PORT), facility="HEADUNIT",
 	
 	
 def init_load_config():
+
 	configuration = configuration_load( CONFIG_FILE, CONFIG_FILE_DEFAULT )
 	if configuration == None:
 		exit()
