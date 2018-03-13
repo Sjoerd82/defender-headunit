@@ -15,8 +15,8 @@ if [ ! -d $GIT_DIR ]; then
     exit 0
 fi
 
-COMMIT_LOCAL=$(git --git-dir=git rev-parse HEAD)
-COMMIT_REMOTE=$(git --git-dir=git ls-remote --heads | cut -f1)
+COMMIT_LOCAL=$(git --git-dir=$GIT_DIR rev-parse HEAD)
+COMMIT_REMOTE=$(git --git-dir=$GIT_DIR ls-remote --heads | cut -f1)
 
 echo $COMMIT_LOCAL
 echo $COMMIT_REMOTE
