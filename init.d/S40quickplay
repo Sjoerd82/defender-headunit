@@ -30,11 +30,11 @@ case "$1" in
                             ;;
                         *)
                             # No sh extension, so fork subprocess.
-							if [[ "$i" == "S70headunit" -a "$retval_sum" == "0" ]]; then
+							if [[ "$i" == "S70headunit" -a ! "$retval_sum" == "0" ]]; then
                                 echo "Skipping early Headunit start"
                             else
                                 $i start
-                                retval_sum=`expr $retval_sum + $?`
+                                retval_sum=`expr $retval_sum+$?`
                             fi
                             ;;
                     esac
