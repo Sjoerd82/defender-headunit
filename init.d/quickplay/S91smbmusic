@@ -1,4 +1,7 @@
 #!/bin/sh
+
+echo $(date "+%H:%M.%s") $0 $1 >> /root/boot.log
+
 #
 # Todo: This should change, obviously
 

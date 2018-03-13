@@ -1,5 +1,7 @@
 #!/bin/sh
 
+echo $(date "+%H:%M.%s") $0 $1 >> /root/boot.log
+
 # TODO
 DAEMON="/mnt/PIHU_APP/defender-headunit/boot_disp1602.py"
 

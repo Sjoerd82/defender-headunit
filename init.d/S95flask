@@ -1,5 +1,7 @@
 #!/bin/sh
 
+echo $(date "+%H:%M.%s") $0 $1 >> /root/boot.log
+
 # APPLICATION
 NAME="Headunit Flask HTTP server"
 DAEMON="/mnt/PIHU_APP/defender-headunit/hu_flask.py"

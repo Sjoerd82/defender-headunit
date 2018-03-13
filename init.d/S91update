@@ -1,4 +1,7 @@
 #!/bin/sh
+
+echo $(date "+%H:%M.%s") $0 $1 >> /root/boot.log
+
 # Check for updates
 # Requires a working internet connection, therefore, place it after S90wlan
 
