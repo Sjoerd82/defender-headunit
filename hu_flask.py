@@ -58,56 +58,56 @@ nav_items = [{
 	}]
 
 nav_sources = [
-	 { "title":"FM Radio",
+	 { "title":"FM Radio"
 	 , "feather":"radio"
 	 , "href":"#"
 	}
-	,{ "title":"Local Music",
+	,{ "title":"Local Music"
 	 , "feather":"hard-drive"
 	 , "href":"#"
 	}
-	,{ "title":"Internet Radio",
+	,{ "title":"Internet Radio"
 	 , "feather":"bookmark"
 	 , "href":"#"
 	}
-	,{ "title":"SoundCloud",
+	,{ "title":"SoundCloud"
 	 , "feather":"cloud"
 	 , "href":"#"
 	}
-	,{ "title":"Network Shares",
+	,{ "title":"Network Shares"
 	 , "feather":"server"
 	 , "href":"#"
 	}]
 	
 nav_pills = [
-	 { "title":"Locations",
+	 { "title":"Locations"
 	 , "id":"locations"
 	 , "href:":"#" }
-	,{ "title":"Preferences",
+	,{ "title":"Preferences"
 	 , "id":"prefs"
 	 , "href:":"#" }
-	,{ "title":"Volume",
+	,{ "title":"Volume"
 	 , "id":"volume"
 	 , "href:":"#" }
-	,{ "title":"Updates",
+	,{ "title":"Updates"
 	 , "id":"updates"
 	 , "href:":"#" }
-	,{ "title":"MPD",
+	,{ "title":"MPD"
 	 , "id":"mpd"
 	 , "href:":"#" }
-	,{ "title":"SMB",
+	,{ "title":"SMB"
 	 , "id":"smb"
 	 , "href:":"#" }
-	,{ "title":"ZeroMQ",
+	,{ "title":"ZeroMQ"
 	 , "id":"zmq"
 	 , "href:":"#" }
-	,{ "title":"Web",
+	,{ "title":"Web"
 	 , "id":"web"
 	 , "href:":"#" }
-	,{ "title":"System",
+	,{ "title":"System"
 	 , "id":"system"
 	 , "href:":"#" }
-	,{ "title":"Logging",
+	,{ "title":"Logging"
 	 , "id":"logging"
 	 , "href:":"#" } ]
 
