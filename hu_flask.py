@@ -20,39 +20,39 @@ import json
 #
 
 nav_items = [{
-	   "title":"Home",
+	   "title":"Home"
 	 , "feather":"home"
 	 , "href":"#"
 	}
-	,{ "title":"Equalizer",
+	,{ "title":"Equalizer"
 	 , "feather":"sliders"
 	 , "href":"#"
 	}
-	,{ "title":"Plugins",
+	,{ "title":"Plugins"
 	 , "feather":"shopping-bag"
 	 , "href":"#"
 	}
-	,{ "title":"WiFi",
+	,{ "title":"WiFi"
 	 , "feather":"wifi"
 	 , "href":"#"
 	}
-	,{ "title":"Bluetooth",
+	,{ "title":"Bluetooth"
 	 , "feather":"bluetooth"
 	 , "href":"#"
 	}
-	,{ "title":"System",
+	,{ "title":"System"
 	 , "feather":"settings"
 	 , "href":"#"
 	}
-	,{ "title":"Logs",
+	,{ "title":"Logs"
 	 , "feather":"file-text"
 	 , "href":"#"
 	}
-	,{ "title":"API",
+	,{ "title":"API"
 	 , "feather":"share"
 	 , "href":"#"
 	}
-	,{ "title":"Power Off",
+	,{ "title":"Power Off"
 	 , "feather":"power"
 	 , "href":"#"
 	}]
