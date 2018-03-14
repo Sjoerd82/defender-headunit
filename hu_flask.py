@@ -172,7 +172,7 @@ def cfg_locs():
 	global nav_sources
 	global nav_pills
 	page_title = "System Settings"
-	return render_template('dash_cfg_loc.html', title=page_title, nav_items=nav_items, nav_pills=nav_pills)
+	return render_template('dash_config.html', title=page_title, nav_items=nav_items, nav_pills=nav_pills)
 
 @app.route('/poweroff', methods=['GET'])
 def poweroff():
