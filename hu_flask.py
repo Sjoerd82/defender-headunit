@@ -49,12 +49,12 @@ nav_items = [{
 	 , "href":"#"
 	}
 	,{ "title":"API"
-	 , "feather":"share"
+	 , "feather":"share-2"
 	 , "href":"#"
 	}
 	,{ "title":"Power Off"
 	 , "feather":"power"
-	 , "href":"#"
+	 , "href":"poweroff"
 	}]
 
 nav_sources = [
@@ -161,9 +161,24 @@ def home():
 	nav_curr_ix = 1
 	return render_template('dash_base.html', title=page_title, nav_items=nav_items, nav_curr_ix=nav_curr_ix)
 
-@app.route('/boot')
-def boostrap():
-	return render_template('bootstrap.html')
+@app.route('/poweroff', methods=['GET'])
+def poweroff():
+	page_title = "Power Off"
+	# Shows two buttons:
+	# [ Reboot ] [ Power Off ]
+	"""
+	buttons = [ {
+	   btn_reboot = {
+		 "Caption":"Reboot"
+		,"href":"#" }
+	}
+	,{ btn_halt = {
+		 "Caption":"Power Off"
+		,"href":"#" }
+	]
+	"""
+	return render_template('dash_poweroff.html', title=page_title) #, buttons=buttons)
+
 	
 #app.route('/api')
 """

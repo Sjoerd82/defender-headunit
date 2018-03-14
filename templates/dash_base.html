@@ -36,7 +36,7 @@
             <ul class="nav flex-column">
 			  {% for nav_item in nav_items %}
               <li class="nav-item">
-                <a class="nav-link{% if loop.index == nav_curr_ix %}active{% endif %}" href="{{ nav_item.href }}">
+                <a class="nav-link{% if loop.index == nav_curr_ix %} active{% endif %}" href="{{ nav_item.href }}">
                   <span data-feather="{{ nav_item.feather }}"></span>
                   {{ nav_item.title }}{% if loop.index == nav_curr_ix %} <span class="sr-only">(current)</span>{% endif %}
                 </a>
