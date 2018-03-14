@@ -150,10 +150,6 @@ def publish_message(message):
 """
 
 
-@app.context_processor
-def inject_nav():
-    return dict(nav_pills=g.nav_pills)
-	
 #
 # Routes
 #
