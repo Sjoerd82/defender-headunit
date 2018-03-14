@@ -164,6 +164,7 @@ def home():
 @app.route('/poweroff', methods=['GET'])
 def poweroff():
 	page_title = "Power Off"
+	nav_curr_ix = 9
 	# Shows two buttons:
 	# [ Reboot ] [ Power Off ]
 	"""
@@ -177,7 +178,7 @@ def poweroff():
 		,"href":"#" }
 	]
 	"""
-	return render_template('dash_poweroff.html', title=page_title) #, buttons=buttons)
+	return render_template('dash_poweroff.html', title=page_title, nav_items=nav_items, nav_curr_ix=nav_curr_ix) #, buttons=buttons)
 
 	
 #app.route('/api')
