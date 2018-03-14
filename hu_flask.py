@@ -159,7 +159,7 @@ def home():
 	global nav_sources
 	page_title = "Landing page"
 	nav_curr_ix = 1
-	return render_template('dash_base.html', title=page_title, nav_items=nav_items, nav_curr_ix=nav_curr_ix)
+	return render_template('dash_base.html', title=page_title, nav_items=nav_items, nav_curr_ix=nav_curr_ix, nav_sources=nav_sources)
 
 @app.route('/config', methods=['GET'])
 @app.route('/config/locations', methods=['GET'])
@@ -168,7 +168,7 @@ def cfg_locs():
 	global nav_sources
 	global nav_pills
 	page_title = "System Settings"
-	return render_template('dash_config.html', title=page_title, nav_items=nav_items, nav_pills=nav_pills)
+	return render_template('dash_config.html', title=page_title, nav_items=nav_items, nav_pills=nav_pills, nav_sources=nav_sources)
 
 @app.route('/poweroff', methods=['GET'])
 def poweroff():
@@ -187,7 +187,7 @@ def poweroff():
 		,"href":"#" }
 	]
 	"""
-	return render_template('dash_poweroff.html', title=page_title, nav_items=nav_items, nav_curr_ix=nav_curr_ix) #, buttons=buttons)
+	return render_template('dash_poweroff.html', title=page_title, nav_items=nav_items, nav_curr_ix=nav_curr_ix, nav_sources=nav_sources) #, buttons=buttons)
 
 	
 #app.route('/api')
