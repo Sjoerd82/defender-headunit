@@ -2,11 +2,9 @@
 {% block title %}{{ title }}{% endblock %}
 {% block content %}
 
-        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
-          <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-            <h1 class="h2">{{ title }}</h1>	
-          </div>
-        </main>
+		<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+			<h1 class="h2">{{ title }}</h1>	
+		</div>
 
 		<div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
 		  <!-- <a class="nav-link active" id="v-pills- pill.id -tab" data-toggle="pill" href="#v-pills- pill.id " role="tab" aria-controls="v-pills- pill.id " aria-selected="true"> pill.title </a> -->
@@ -16,5 +14,6 @@
 		</div>
 
 		{% include "dash_cfg_loc.html" %}
+
 
 {% endblock %}
