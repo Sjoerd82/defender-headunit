@@ -149,10 +149,14 @@ def publish_message(message):
 		zmq_sck.unbind(url)
 """
 
+
+@app.context_processor
+def inject_nav():
+    return dict(nav_pills=g.nav_pills)
+	
 #
 # Routes
 #
-
 @app.route('/')
 def home():
 	global nav_items
