@@ -15,6 +15,101 @@ import zmq
 from time import sleep
 import json
 
+#********************************************************************************
+# Navigation
+#
+
+nav_items = [{
+	   "title":"Home",
+	 , "feather":"home"
+	 , "href":"#"
+	}
+	,{ "title":"Equalizer",
+	 , "feather":"sliders"
+	 , "href":"#"
+	}
+	,{ "title":"Plugins",
+	 , "feather":"shopping-bag"
+	 , "href":"#"
+	}
+	,{ "title":"WiFi",
+	 , "feather":"wifi"
+	 , "href":"#"
+	}
+	,{ "title":"Bluetooth",
+	 , "feather":"bluetooth"
+	 , "href":"#"
+	}
+	,{ "title":"System",
+	 , "feather":"settings"
+	 , "href":"#"
+	}
+	,{ "title":"Logs",
+	 , "feather":"file-text"
+	 , "href":"#"
+	}
+	,{ "title":"API",
+	 , "feather":"share"
+	 , "href":"#"
+	}
+	,{ "title":"Power Off",
+	 , "feather":"power"
+	 , "href":"#"
+	}]
+
+nav_sources = [
+	 { "title":"FM Radio",
+	 , "feather":"radio"
+	 , "href":"#"
+	}
+	,{ "title":"Local Music",
+	 , "feather":"hard-drive"
+	 , "href":"#"
+	}
+	,{ "title":"Internet Radio",
+	 , "feather":"bookmark"
+	 , "href":"#"
+	}
+	,{ "title":"SoundCloud",
+	 , "feather":"cloud"
+	 , "href":"#"
+	}
+	,{ "title":"Network Shares",
+	 , "feather":"server"
+	 , "href":"#"
+	}]
+	
+nav_pills = [
+	 { "title":"Locations",
+	 , "id":"locations"
+	 , "href:":"#" }
+	,{ "title":"Preferences",
+	 , "id":"prefs"
+	 , "href:":"#" }
+	,{ "title":"Volume",
+	 , "id":"volume"
+	 , "href:":"#" }
+	,{ "title":"Updates",
+	 , "id":"updates"
+	 , "href:":"#" }
+	,{ "title":"MPD",
+	 , "id":"mpd"
+	 , "href:":"#" }
+	,{ "title":"SMB",
+	 , "id":"smb"
+	 , "href:":"#" }
+	,{ "title":"ZeroMQ",
+	 , "id":"zmq"
+	 , "href:":"#" }
+	,{ "title":"Web",
+	 , "id":"web"
+	 , "href:":"#" }
+	,{ "title":"System",
+	 , "id":"system"
+	 , "href:":"#" }
+	,{ "title":"Logging",
+	 , "id":"logging"
+	 , "href:":"#" } ]
 
 def publish_message(path,command="SET"):
 	try:
@@ -59,16 +154,12 @@ def publish_message(message):
 #
 
 @app.route('/')
-def hello_world():
-	pages = [
-	  {"title":"State/Control","id":"state"}
-	 ,{"title":"Playlist","id":"playlist"}
-	 ,{"title":"Config","id":"config"}
-	 ,{"title":"API","id":"api"}
-	 ,{"title":"Logs","id":"log"}
-	]
-	print pages
-	return render_template('index.html', pages=pages)
+def home():
+	global nav_items
+	global nav_sources
+	page_title = "Landing page"
+	nav_curr_ix = 1
+	return render_template('dash_base.html', title=page_title, nav_items=nav_items, nav_curr_ix=nav_curr_ix)
 
 @app.route('/boot')
 def boostrap():
