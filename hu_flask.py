@@ -22,7 +22,7 @@ import json
 nav_items = [{
 	   "title":"Home"
 	 , "feather":"home"
-	 , "href":"#"
+	 , "href":"/"
 	}
 	,{ "title":"Equalizer"
 	 , "feather":"sliders"
@@ -42,7 +42,7 @@ nav_items = [{
 	}
 	,{ "title":"System"
 	 , "feather":"settings"
-	 , "href":"#"
+	 , "href":"/config"
 	}
 	,{ "title":"Logs"
 	 , "feather":"file-text"
@@ -160,6 +160,13 @@ def home():
 	page_title = "Landing page"
 	nav_curr_ix = 1
 	return render_template('dash_base.html', title=page_title, nav_items=nav_items, nav_curr_ix=nav_curr_ix)
+
+@app.route('/config', methods=['GET'])
+@app.route('/config/locations', methods=['GET'])
+def cfg_locs():
+	global nav_pills
+	page_title = "System Settings"
+	return render_template('dash_cfg_loc.html', title=page_title, nav_pills=nav_pills)
 
 @app.route('/poweroff', methods=['GET'])
 def poweroff():
