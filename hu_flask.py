@@ -182,11 +182,11 @@ def cfg_prefs():
 	nav_ix_main = 1
 	nav_ix_sub = 2
 	config = {
-	   'autoplay_media':1
-	 , 'autoplay_aux':0
-	 , 'remember_rnd':0
-	 , 'min_elapsed_sec':42
-	 , 'min_track_sec':666
+	   "autoplay_media":"checked"
+	 , "autoplay_aux":""
+	 , "remember_rnd":""
+	 , "min_elapsed_sec":42
+	 , "min_track_sec":666
 	}
 	return render_template('dash_config.html', title=page_title, nav_items=nav_items, nav_pills=nav_pills, nav_sources=nav_sources, nav_ix_main=nav_ix_main, nav_ix_sub=nav_ix_sub, config=config)
 
