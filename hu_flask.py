@@ -16,6 +16,10 @@ import zmq
 from time import sleep
 import json
 
+CONFIG_FILE = '/etc/configuration.json'
+configuration = configuration_load( CONFIG_FILE, CONFIG_FILE_DEFAULT )
+
+
 #********************************************************************************
 # Navigation
 #
@@ -193,7 +197,7 @@ def cfg_prefs():
 	 , "autoplay_media":"checked"
 	 , "autoplay_aux":""
 	 , "remember_rnd":""
-	 , "min_elapsed_sec":42
+	 , "min_elapsed_sec":configuration['preferences']['threshold_elapsed_sec']
 	 , "min_track_sec":666
 	}
 	return render_template('dash_config.html', title=page_title, nav_items=nav_items, nav_pills=nav_pills, nav_sources=nav_sources, nav_ix_main=nav_ix_main, nav_ix_sub=nav_ix_sub, config=config, startup_opts=startup_opts)
