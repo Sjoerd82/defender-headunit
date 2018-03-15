@@ -9,9 +9,8 @@
 		<div class="row">
 			<div class="col-">
 				<div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-				  <!-- <a class="nav-link active" id="v-pills- pill.id -tab" data-toggle="pill" href="#v-pills- pill.id " role="tab" aria-controls="v-pills- pill.id " aria-selected="true"> pill.title </a> -->
 				  {% for pill in nav_pills %}
-				  <a class="nav-link" id="v-pills-{{ pill.id }}-tab" data-toggle="pill" href="#v-pills-{{ pill.id }}" role="tab" aria-controls="v-pills-{{ pill.id }}" aria-selected="false">{{ pill.title }}</a>
+				  <a class="nav-link{% if loop.index == nav_ix_sub %} active{% endif %}" id="v-pills-{{ pill.id }}-tab" data-toggle="pill" href="#v-pills-{{ pill.id }}" role="tab" aria-controls="v-pills-{{ pill.id }}" aria-selected="{% if loop.index == nav_ix_sub %}true{% else %}false{% endif %}">{{ pill.title }}</a>
 				  {% endfor %}
 				</div>
 			</div>
