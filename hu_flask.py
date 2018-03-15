@@ -170,6 +170,13 @@ def cfg_locs():
 	page_title = "System Settings"
 	return render_template('dash_config.html', title=page_title, nav_items=nav_items, nav_pills=nav_pills, nav_sources=nav_sources)
 
+@app.route('/config/save', methods=['POST'])
+def cfg_save():
+	page_title = "Save!"
+	message = "Your changes have been saved."
+	return render_template('dash_cfg_saved.html', title=page_title, nav_pills=nav_pills, message=message)
+
+	
 @app.route('/poweroff', methods=['GET'])
 def poweroff():
 	page_title = "Power Off"
