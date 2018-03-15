@@ -9,7 +9,7 @@
 						<label for="formGroupExampleInput">Start-up Source</label>
 						<select name="cfg_prf_startup_source" class="form-control col-sm-5">
 							{% for opt in startup_opts %}
-							<option {% if opt.source == config.startup_source %}selected{% endif %}>{{ opt.title }}</option>
+							<option value="{{ opt.source }}" {% if opt.source == config.startup_source %}selected{% endif %}>{{ opt.title }}</option>
 							{% endfor %}
 						</select>
 					</div>

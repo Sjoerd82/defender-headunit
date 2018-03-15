@@ -206,11 +206,21 @@ def cfg_save():
 		print section
 		if section == 'prefs':
 			print request.form['cfg_prf_startup_source']
-			print request.form['cfg_prf_autoplay_media']
-			print request.form['cfg_prf_autoplay_aux']
-			print request.form['cfg_prf_remember_rnd']
-			print request.form['cfg_prf_min_elapsed_sec']
-			print request.form['cfg_prf_min_track_sec']
+
+			if 'cfg_prf_autoplay_media' in request.form:
+				print request.form['cfg_prf_autoplay_media']
+
+			if 'cfg_prf_autoplay_aux' in request.form:
+				print request.form['cfg_prf_autoplay_aux']
+			
+			if 'cfg_prf_remember_rnd' in request.form:
+				print request.form['cfg_prf_remember_rnd']
+			
+			if 'cfg_prf_min_elapsed_sec' in request.form:
+				print request.form['cfg_prf_min_elapsed_sec']
+				
+			if 'cfg_prf_min_track_sec' in request.form:
+				print request.form['cfg_prf_min_track_sec']
 	
 	message = "Your changes have been saved."
 	return render_template('dash_cfg_saved.html', title=page_title, nav_pills=nav_pills, message=message)
