@@ -2,13 +2,10 @@
 {% block title %}{{ title }}{% endblock %}
 {% block content %}
 
-		<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-			<h1 class="h2">{{ title }}</h1>	
-		</div>
-		
-		<div class="btn-group" role="group">
-			<a class="btn btn-warning" href="#" role="button">Reboot</a>
-			<a class="btn btn-danger" href="#" role="button">Shutdown</a>
-		</div>
-
+		<h2 class="h2">{{ title }}</h2>
+		<div class="row justify-content-md-center height: h-100">
+			<div class="col-sm-auto align-self-center"><a class="btn btn-warning" href="#" role="button">Reboot</a></div>
+			<div class="col-sm-auto align-self-center"><a class="btn btn-danger" href="#" role="button">Shutdown</a></div>
+		 </div>
+               
 {% endblock %}
