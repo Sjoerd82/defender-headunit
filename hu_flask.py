@@ -181,14 +181,16 @@ def cfg_prefs():
 	page_title = "System Settings"
 	nav_ix_main = 1
 	nav_ix_sub = 2
+	startup_opts = ["Resume","FM","USB"]
 	config = {
-	   "autoplay_media":"checked"
+	   "startup_source":"FM"
+	 , "autoplay_media":"checked"
 	 , "autoplay_aux":""
 	 , "remember_rnd":""
 	 , "min_elapsed_sec":42
 	 , "min_track_sec":666
 	}
-	return render_template('dash_config.html', title=page_title, nav_items=nav_items, nav_pills=nav_pills, nav_sources=nav_sources, nav_ix_main=nav_ix_main, nav_ix_sub=nav_ix_sub, config=config)
+	return render_template('dash_config.html', title=page_title, nav_items=nav_items, nav_pills=nav_pills, nav_sources=nav_sources, nav_ix_main=nav_ix_main, nav_ix_sub=nav_ix_sub, config=config, startup_opts=startup_opts)
 
 @app.route('/config_save', methods=['POST'])
 def cfg_save():
