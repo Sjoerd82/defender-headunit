@@ -82,10 +82,10 @@ nav_sources = [
 nav_pills = [
 	 { "title":"Locations"
 	 , "id":"locations"
-	 , "href:":"#" }
+	 , "href:":"config_locations" }
 	,{ "title":"Preferences"
 	 , "id":"prefs"
-	 , "href:":"#" }
+	 , "href:":"config_preferences" }
 	,{ "title":"Volume"
 	 , "id":"volume"
 	 , "href:":"#" }
@@ -162,7 +162,7 @@ def home():
 	return render_template('dash_base.html', title=page_title, nav_items=nav_items, nav_curr_ix=nav_curr_ix, nav_sources=nav_sources)
 
 @app.route('/config', methods=['GET'])
-@app.route('/config/locations', methods=['GET'])
+@app.route('/config_locations', methods=['GET'])
 def cfg_locs():
 	global nav_items
 	global nav_sources
@@ -172,7 +172,7 @@ def cfg_locs():
 	nav_ix_sub = 1
 	return render_template('dash_config.html', title=page_title, nav_items=nav_items, nav_pills=nav_pills, nav_sources=nav_sources, nav_ix_main=nav_ix_main, nav_ix_sub=nav_ix_sub)
 
-@app.route('/config/preferences', methods=['GET'])
+@app.route('/config_preferences', methods=['GET'])
 def cfg_prefs():
 	global nav_items
 	global nav_sources
@@ -182,7 +182,7 @@ def cfg_prefs():
 	nav_ix_sub = 2
 	return render_template('dash_config.html', title=page_title, nav_items=nav_items, nav_pills=nav_pills, nav_sources=nav_sources, nav_ix_main=nav_ix_main, nav_ix_sub=nav_ix_sub)
 
-@app.route('/config/save', methods=['POST'])
+@app.route('/config_save', methods=['POST'])
 def cfg_save():
 	page_title = "Save!"
 	message = "Your changes have been saved."
