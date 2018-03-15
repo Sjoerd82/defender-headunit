@@ -182,7 +182,7 @@ def cfg_prefs():
 	nav_ix_main = 1
 	nav_ix_sub = 2
 	#startup_opts = ["Resume","FM","USB"]
-	startup_opt = [
+	startup_opts = [
 	 { "title":"Resume same source","source":"resume" }
 	,{ "title":"FM Radio","source":"fm" }
 	,{ "title":"Local media","source":"locmus" }
