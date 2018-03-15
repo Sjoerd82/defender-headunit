@@ -22,7 +22,7 @@ from time import sleep
 import json
 
 CONFIG_FILE = '/etc/configuration.json'
-configuration = configuration_load( CONFIG_FILE, CONFIG_FILE_DEFAULT )
+configuration = configuration_load( CONFIG_FILE )
 
 
 #********************************************************************************
