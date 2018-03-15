@@ -107,7 +107,7 @@ start() {
 		    #/etc/init.d/S35volume start		
             #/etc/init.d/S40quickplay start
             #/etc/init.d/S71ads1x15 start
-		    #/etc/init.d/S95flask start
+		    /etc/init.d/S95flask start
         fi
 
         #if [ -f $UPDATE ]; then
