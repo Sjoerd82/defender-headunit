@@ -181,9 +181,15 @@ def cfg_prefs():
 	page_title = "System Settings"
 	nav_ix_main = 1
 	nav_ix_sub = 2
-	startup_opts = ["Resume","FM","USB"]
+	#startup_opts = ["Resume","FM","USB"]
+	startup_opt = [
+	 { "title":"Resume same source","source":"resume" }
+	,{ "title":"FM Radio","source":"fm" }
+	,{ "title":"Local media","source":"locmus" }
+	,{ "title":"USB","source":"media" }]
+	#TODO: SubSource!
 	config = {
-	   "startup_source":"FM"
+	   "startup_source":"locmus"
 	 , "autoplay_media":"checked"
 	 , "autoplay_aux":""
 	 , "remember_rnd":""
