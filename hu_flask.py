@@ -9,6 +9,11 @@ from flask import jsonify
 app = Flask(__name__)
 
 #
+# HU Utils
+#
+from modules.hu_utils import *
+
+#
 # Zero MQ
 #
 import zmq
