@@ -173,7 +173,7 @@ def cfg_locs():
 	return render_template('dash_config.html', title=page_title, nav_items=nav_items, nav_pills=nav_pills, nav_sources=nav_sources, nav_ix_main=nav_ix_main, nav_ix_sub=nav_ix_sub)
 
 @app.route('/config/preferences', methods=['GET'])
-def cfg_locs():
+def cfg_prefs():
 	global nav_items
 	global nav_sources
 	global nav_pills
