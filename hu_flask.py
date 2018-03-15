@@ -21,10 +21,11 @@ import zmq
 from time import sleep
 import json
 
+#********************************************************************************
+# Configuration
+#
 CONFIG_FILE = '/etc/configuration.json'
 configuration = configuration_load( CONFIG_FILE )
-print configuration
-
 
 #********************************************************************************
 # Navigation
@@ -232,18 +233,26 @@ def cfg_save():
 
 			if 'cfg_prf_autoplay_media' in request.form:
 				print request.form['cfg_prf_autoplay_media']
+				configuration['preferences']['media_autoplay'] = request.form['cfg_prf_autoplay_media']
 
 			if 'cfg_prf_autoplay_aux' in request.form:
 				print request.form['cfg_prf_autoplay_aux']
+				configuration['preferences']['autoplay_aux'] = request.form['cfg_prf_autoplay_aux']
 			
 			if 'cfg_prf_retain_random' in request.form:
 				print request.form['cfg_prf_retain_random']
+				configuration['preferences']['retain_random'] = request.form['cfg_prf_retain_random']
 			
 			if 'cfg_prf_min_elapsed_sec' in request.form:
 				print request.form['cfg_prf_min_elapsed_sec']
+				configuration['preferences']['threshold_elapsed_sec'] = request.form['cfg_prf_min_elapsed_sec']
 				
 			if 'cfg_prf_min_track_sec' in request.form:
 				print request.form['cfg_prf_min_track_sec']
+				configuration['preferences']['threshold_total_sec'] = request.form['cfg_prf_min_track_sec']
+				
+			with open(CONFIG_FILE,'w') as outfile:
+				json.dump(configuration, outfile)
 	
 	message = "Your changes have been saved."
 	return render_template('dash_cfg_saved.html', title=page_title, nav_pills=nav_pills, message=message)
