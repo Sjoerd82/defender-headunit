@@ -15,7 +15,14 @@
 				</div>
 			</div>
 			<div class="col">
+				{% if nav_ix_sub == 1 %}
 				{% include "dash_cfg_loc.html" %}
+				{% endif %}
+				
+				{% if nav_ix_sub == 2 %}
+				{% include "dash_cfg_prefs.html" %}
+				{% endif %}
+
 			</div>
 		</div>
 

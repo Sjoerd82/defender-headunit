@@ -172,6 +172,16 @@ def cfg_locs():
 	nav_ix_sub = 1
 	return render_template('dash_config.html', title=page_title, nav_items=nav_items, nav_pills=nav_pills, nav_sources=nav_sources, nav_ix_main=nav_ix_main, nav_ix_sub=nav_ix_sub)
 
+@app.route('/config/preferences', methods=['GET'])
+def cfg_locs():
+	global nav_items
+	global nav_sources
+	global nav_pills
+	page_title = "System Settings"
+	nav_ix_main = 1
+	nav_ix_sub = 2
+	return render_template('dash_config.html', title=page_title, nav_items=nav_items, nav_pills=nav_pills, nav_sources=nav_sources, nav_ix_main=nav_ix_main, nav_ix_sub=nav_ix_sub)
+
 @app.route('/config/save', methods=['POST'])
 def cfg_save():
 	page_title = "Save!"
