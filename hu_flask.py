@@ -23,6 +23,7 @@ import json
 
 CONFIG_FILE = '/etc/configuration.json'
 configuration = configuration_load( CONFIG_FILE )
+print configuration
 
 
 #********************************************************************************
@@ -187,6 +188,8 @@ def cfg_prefs():
 	global nav_items
 	global nav_sources
 	global nav_pills
+	global configuration
+	
 	page_title = "System Settings"
 	nav_ix_main = 1
 	nav_ix_sub = 2
@@ -197,14 +200,25 @@ def cfg_prefs():
 	,{ "title":"Local media","source":"locmus" }
 	,{ "title":"USB","source":"media" }]
 	#TODO: SubSource!
+	#TODO: Check if key's are present..
 	config = {
-	   "startup_source":"locmus"
-	 , "autoplay_media":"checked"
+	   "startup_source":configuration['preferences']['start_source']
+	 , "autoplay_media":""
 	 , "autoplay_aux":""
 	 , "remember_rnd":""
 	 , "min_elapsed_sec":configuration['preferences']['threshold_elapsed_sec']
-	 , "min_track_sec":666
+	 , "min_track_sec":configuration['preferences']['threshold_total_sec']
 	}
+	
+	if 'media_autoplay' in configuration['preferences'] and configuration['preferences']['media_autoplay']:
+		config['autoplay_media'] = 'checked'
+		
+	if 'autoplay_aux' in configuration['preferences'] and configuration['preferences']['autoplay_aux']:
+		config['autoplay_aux'] = 'checked'
+
+	if 'retain_random' in configuration['preferences'] and configuration['preferences']['retain_random']:
+		config['retain_random'] = 'checked'
+		
 	return render_template('dash_config.html', title=page_title, nav_items=nav_items, nav_pills=nav_pills, nav_sources=nav_sources, nav_ix_main=nav_ix_main, nav_ix_sub=nav_ix_sub, config=config, startup_opts=startup_opts)
 
 @app.route('/config_save', methods=['POST'])
@@ -222,8 +236,8 @@ def cfg_save():
 			if 'cfg_prf_autoplay_aux' in request.form:
 				print request.form['cfg_prf_autoplay_aux']
 			
-			if 'cfg_prf_remember_rnd' in request.form:
-				print request.form['cfg_prf_remember_rnd']
+			if 'cfg_prf_retain_random' in request.form:
+				print request.form['cfg_prf_retain_random']
 			
 			if 'cfg_prf_min_elapsed_sec' in request.form:
 				print request.form['cfg_prf_min_elapsed_sec']
