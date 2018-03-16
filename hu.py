@@ -1836,7 +1836,7 @@ def main():
 	# IDEALLY, WE'D PUT THIS BACK IN A THREAD, IF THAT WOULD PERFORM... (which for some reason it doesn't!)
 	gobject.idle_add(zmq_recv)
 	queue_actions = Queue(maxsize=40)		# Blocking stuff that needs to run in sequence
-	gobject.idle_add(process_queue)
+	#gobject.idle_add(process_queue)
 
 	#
 	# Start the blocking main loop...
