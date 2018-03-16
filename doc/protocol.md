@@ -4,23 +4,23 @@
 
 ### Sending messages:
 
-Format: <path> <command> [return path]
+Format: `<path> <command> [return path]`
 
 The [return path] is optional and can be used for filtering.
 Examples:
 
-/source/subsource GET:0,4
-/source/subsource GET:0,4 /flask/582
+`/source/subsource GET:0,4`
+`/source/subsource GET:0,4 /flask/582`
 
 ### Sending data:
 
 Data is send over the MQ with root path "/data"
 
-Format: /data/<path> <data>
+Format: `/data/<path> <data>`
 
 Examples:
-/data/source/subsource {data}
-/data/flask/582 {data}
+`/data/source/subsource {data}`
+`/data/flask/582 {data}`
 
 In this example "flask" is the unique* application identifier.
 The flask application can setup a subscription for "/data/flask/", the number can be an iterator to route back the received data to it's intended target.
