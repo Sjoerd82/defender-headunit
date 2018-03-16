@@ -1760,6 +1760,8 @@ def main():
 	#
 	# Setting up worker threads
 	#
+
+	"""
 	printer('Setting up queues and worker threads')
 
 	qPrio = Queue(maxsize=4)	# Short stuff that can run anytime:
@@ -1785,9 +1787,9 @@ def main():
 	t.setDaemon(True)
 	#p.daemon = True
 
-
 	# DISABLED FOR ZMQ:
 	#t.start()
+	"""
 
 
 	"""
