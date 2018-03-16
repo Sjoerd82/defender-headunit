@@ -1,8 +1,8 @@
-#MQ protocol
+# MQ protocol
 
-##Message format:
+## Message format:
 
-###Sending messages:
+### Sending messages:
 
 Format: <path> <command> [return path]
 
@@ -12,7 +12,7 @@ Examples:
 /source/subsource GET:0,4
 /source/subsource GET:0,4 /flask/582
 
-###Sending data:
+### Sending data:
 
 Data is send over the MQ with root path "/data"
 
@@ -25,7 +25,7 @@ Examples:
 In this example "flask" is the unique* application identifier.
 The flask application can setup a subscription for "/data/flask/", the number can be an iterator to route back the received data to it's intended target.
 
-#Data
+# Data
 {data}:
 
 {
