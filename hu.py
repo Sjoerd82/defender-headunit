@@ -237,6 +237,17 @@ def zmq_send_cmd(path_send, cmd):
 	publisher.send("{0} {1}".format(path_send, data))
 	time.sleep(1)
 	
+def zmq_recv():
+
+	global subscriber
+
+	message_encoded = subscriber.recv()
+	#message = json.loads(message_encoded)
+	message = message_encoded
+	printer("Received message: {0}".format(message))
+	#parse_message(message)
+	return True
+
 	
 def queue(q, item, sfx=None):
 	#printer('Blocking Queue Size before: {0}'.format(qBlock.qsize()))
@@ -1702,8 +1713,8 @@ def main():
 			hu_play(resume=False)
 
 	print "XX DEBUG XX"
-	exit()
 
+	"""
 	# Save Settings
 	currSrc = Sources.getComposite()
 	cSettings.set('source',currSrc['name'])
@@ -1717,8 +1728,10 @@ def main():
 
 	cSettings.save()
 
+	"""
 			
-		   
+
+			
 	"""
 	else:
 		for source in Sources.getAll():
@@ -1748,7 +1761,6 @@ def main():
 	# Setting up worker threads
 	#
 	printer('Setting up queues and worker threads')
-
 
 	qPrio = Queue(maxsize=4)	# Short stuff that can run anytime:
 	qBlock = Queue(maxsize=4)	# Blocking stuff that needs to run in sequence
@@ -1820,66 +1832,9 @@ def main():
 	# Queue handler
 	# NOTE: Remember, everything executed through the qBlock queue blocks, including qPrio!
 	# IDEALLY, WE'D PUT THIS BACK IN A THREAD, IF THAT WOULD PERFORM... (which for some reason it doesn't!)
-	# 
-	gobject.idle_add(mq_recv)
-	#gobject.idle_add(cb_queue)
-
-	#
-	# DBus: system bus
-	# On a root only embedded system there may not be a usable session bus
-	#
-	#m = MainInstance()
-
-
-	try:
-		bus = dbus.SystemBus()
-	except dbus.DBusException:
-		raise RuntimeError("No D-Bus connection")
-
-	# Declare a name where our service can be reached
-	try:
-		bus_name = dbus.service.BusName("com.arctura.hu", bus, do_not_queue=True)
-	except dbus.exceptions.NameExistsException:
-		print("service is already running")
-		sys.exit(1)
-
-	# Output
-	disp = dbusDisplay(bus)
-	volm = dbusVolume(bus)
-
-
-	"""
-	time.sleep(5)	#wait for the plugin to be ready
-
-	hudispdata = {}
-	hudispdata['rnd'] = "1"
-	hudispdata['artist'] = "The Midnight"
-	disp.dispdata(hudispdata)
-
-	time.sleep(5)
-	hudispdata = {}
-	hudispdata['rnd'] = "0"
-	disp.dispdata(hudispdata)
-
-	time.sleep(5)
-	hudispdata = {}
-	hudispdata['att'] = "1"
-	disp.dispdata(hudispdata)
-
-	exit()
-	"""
-
-	#
-	# Connect Callback functions to DBus Signals
-	#
-	#bus.add_signal_receiver(cb_mpd_event, dbus_interface = "com.arctura.mpd")
-	#bus.add_signal_receiver(cb_remote_btn_press, dbus_interface = "com.arctura.remote")
-	#bus.add_signal_receiver(cb_remote_btn_press2, dbus_interface = "com.arctura.keyboard")
-	#bus.add_signal_receiver(cb_udisk_dev_add, signal_name='DeviceAdded', dbus_interface="org.freedesktop.UDisks")
-	#bus.add_signal_receiver(cb_udisk_dev_rem, signal_name='DeviceRemoved', dbus_interface="org.freedesktop.UDisks")
-	#bus.add_signal_receiver(cb_ifup, signal_name='ifup', dbus_interface="com.arctura.ifup")
-	#bus.add_signal_receiver(cb_ifdn, signal_name='ifdn', dbus_interface="com.arctura.ifdn")
-
+	gobject.idle_add(zmq_recv)
+	queue_actions = Queue(maxsize=40)		# Blocking stuff that needs to run in sequence
+	gobject.idle_add(process_queue)
 
 	#
 	# Start the blocking main loop...
@@ -1889,6 +1844,7 @@ def main():
 		mainloop.run()
 	finally:
 		mainloop.quit()
+
 
 
 # TODO
