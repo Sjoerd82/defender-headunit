@@ -51,13 +51,13 @@ logger = None
 # Output wrapper
 #
 def printer( message, level=LL_INFO, continuation=False, tag=LOG_TAG ):
-	global logger
+	#global logger
 	#logger = logging.getLogger(__name__)
 	logger.log(level, message, extra={'tag': tag})
 
 
 def init_logging_c():
-	global logger
+	#global logger
 	# Create log handler
 	ch = logging.StreamHandler()						# create console handler
 	ch.setLevel(LOG_LEVEL)								# set log level
@@ -72,7 +72,7 @@ def init_logging_c():
 	
 # address may be a tuple consisting of (host, port) or a string such as '/dev/log'
 def init_logging_s( address=('localhost', SYSLOG_UDP_PORT), socktype=socket.SOCK_DGRAM ):
-	global logger
+	#global logger
 	# Create log handler
 	#sh =logging.handlers.SysLogHandler(address=address, facility=facility, socktype=socktype)
 	sh = logging.handlers.SysLogHandler(address=address, socktype=socktype)	# create syslog handler
@@ -107,6 +107,8 @@ def load_configuration():
 def parse_args():
 
 	import argparse
+	global DAEMONIZED
+	global LOG_LEVEL
 
 	parser = argparse.ArgumentParser(description='ZeroMQ forwarder device')
 	parser.add_argument('--loglevel', action='store', default=LL_INFO, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)
