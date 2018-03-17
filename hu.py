@@ -142,7 +142,7 @@ from dbus.mainloop.glib import DBusGMainLoop
 from modules.hu_msg import MessageController
 from modules.hu_pulseaudio import *
 from modules.hu_volume import *
-from modules.hu_source import SourceController
+#from modules.hu_source import SourceController
 from modules.hu_settings import *
 from modules.hu_mpd import *
 #from hu_menu import *
@@ -1635,7 +1635,7 @@ def main():
 	SOURCE = None
 
 	
-	messaging = hu_msg.MessageController()
+	messaging = MessageController()
 	messaging.connect()
 
 	# BOOT is true for 'early boot'
