@@ -94,7 +94,7 @@ def init_logging_s( address=('localhost', SYSLOG_UDP_PORT), socktype=socket.SOCK
 #
 def load_configuration():
 
-	#global configuration
+	# utils
 	configuration = configuration_load(CONFIG_FILE)
 	
 	if not 'zeromq' in configuration:

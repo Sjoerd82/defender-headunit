@@ -231,6 +231,14 @@ def tag ( tagname, format='ANSI', tagsize=6 ):
 #
 def configuration_load( configfile, defaultconfig=None ):
 
+	# ********************************************************************************
+	# Restore default configuration
+	#
+	def configuration_restore( configfile, defaultconfig ):
+		if os.path.exists(defaultconfig):
+			shutil.copy(defaultconfig,configfile)
+			return True
+
 	# keep track if we restored the config file
 	restored = False
 	
