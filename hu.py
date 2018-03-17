@@ -1,16 +1,16 @@
 #!/usr/bin/python
 
-# A car's headunit.
 #
-# Author: Sjoerd Venema
+# A car's headunit.
+# Venema, S.R.G.
+# 2018-03-17
 # License: MIT
 #
-
-#********************************************************************************
+# HEADUNIT is the main script in a constellation of micro-services.
+# This script acts as a watchdog and serves some basic system functions.
 #
-# ISSUES:
-#  - Plug-in Auto Start outside of this script.
-#  - Not all next() source functions update the settings.
+# The microservices are either started via init.d or via this script.
+#
 
 #********************************************************************************
 # CONFIGURATION and SETTINGS
@@ -163,6 +163,7 @@ SOURCE = None
 SOURCE_SUB = None
 BOOT = None
 LOGLEVEL_C = LL_INFO
+DAEMONIZED = None
 
 # CONSTANTS
 CONFIG_FILE_DEFAULT = '/mnt/PIHU_APP/defender-headunit/config/configuration.json'
@@ -1473,25 +1474,8 @@ def parse_args():
 	SOURCE = args.source
 	SOURCE_SUB = args.subsource
 	BOOT = args.boot
+	DAEMONIZED = args.b
 
-
-#********************************************************************************
-#
-# Essential Initialization
-#
-def init():
-	#
-	# Stop if we're already running
-	#
-	#if check_running(PID_FILE):
-	#	exit()
-
-	#
-	# Start logging to console
-	#
-	# TODO: get settings from configuration.json
-	init_logging()
-	init_logging_c()
 
 #********************************************************************************
 #
@@ -1503,6 +1487,20 @@ def setup():
 	global SOURCE_SUB
 	global BOOT
 	global LOGLEVE_C
+	
+	#
+	# Logging
+	#
+	global logger
+	logger = logging.getLogger(__name__)
+	logger.setLevel(logging.DEBUG)
+
+	# Start logging to console or syslog
+	if DAEMONIZED:
+		init_logging_s( address='/dev/log' )	# output to syslog
+	else:
+		init_logging_c()						# output to console
+	
 	#
 	# Load main configuration
 	#
@@ -1895,7 +1893,6 @@ def main():
 
 if __name__ == '__main__':
 	parse_args()
-	init()
 	setup()
 	main()
 

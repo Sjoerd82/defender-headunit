@@ -3,7 +3,7 @@
 #
 # ZeroMQ forwarder device
 # Venema, S.R.G.
-# 2018-03-10
+# 2018-03-17
 #
 # FORWARDER is like the pub-sub proxy server. It allows both publishers and
 # subscribers to be moving parts and it self becomes the stable hub for 
@@ -27,8 +27,8 @@ from socket import SOCK_DGRAM	# syslog
 #sys.path.append('../modules')
 sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
-from hu_logger import ColoredFormatter
-from hu_logger import RemAnsiFormatter
+#from hu_logger import ColoredFormatter
+#from hu_logger import RemAnsiFormatter
 from hu_msg import MessageController
 
 # Global variables and constants
@@ -39,7 +39,7 @@ configuration = None
 DAEMONIZED = None
 
 # for logging to syslog
-SYSLOG_UDP_PORT=514
+#SYSLOG_UDP_PORT=514
 LOG_LEVEL = LL_INFO
 
 #logging
@@ -61,6 +61,7 @@ def printer( message, level=LL_INFO, continuation=False, tag=LOG_TAG ):
 #						The address may be a tuple consisting of (host, port)
 #						 or a string such as '/dev/log'
 #
+"""
 def init_logging_c():
 	# Create log handler
 	ch = logging.StreamHandler()						# create console handler
@@ -72,7 +73,7 @@ def init_logging_c():
 
 	# Add handler
 	logger.addHandler(ch)								# add ch to logger
-	logger.info('Logging started: Console',extra={'tag':'log'})
+	logger.info('Logging started: Console',extra={'tag':LOG_TAG})
 	
 def init_logging_s( address=('localhost', SYSLOG_UDP_PORT), socktype=socket.SOCK_DGRAM ):
 	# Create log handler
@@ -85,7 +86,8 @@ def init_logging_s( address=('localhost', SYSLOG_UDP_PORT), socktype=socket.SOCK
 
 	# Add handler
 	logger.addHandler(sh)
-	logger.info('Logging started: Syslog',extra={'tag':'log'})
+	logger.info('Logging started: Syslog',extra={'tag':LOG_TAG})
+"""
 
 # ********************************************************************************
 # Load configuration
@@ -131,9 +133,12 @@ def setup():
 	
 	# Start logging to console or syslog
 	if DAEMONIZED:
-		init_logging_s( address='/dev/log' )	# output to syslog
+		#init_logging_s( address='/dev/log' )	# output to syslog
+		logger = log_create_syslog_loghandler(logger, LOG_LEVEL, LOG_TAG, address='/dev/log', socktype=socket.SOCK_DGRAM ):
+		
 	else:
-		init_logging_c()						# output to console
+		#init_logging_c()						# output to console
+		logger = log_create_console_loghandler(logger, LOG_LEVEL, LOG_TAG)
 
 	#
 	# Load configuration

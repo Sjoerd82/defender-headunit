@@ -27,6 +27,17 @@
 		, "subsourcekey": {}
 		, "runcount": 0
 	}
+	, "daemons": [
+		{
+		  "name":"ZMQ Forwarder"
+		, "init.d":"S30zmqfwd"
+		}
+		, {
+		  "name":"Control: ADS1x15"
+		, "init.d":"S71ads1x15"
+		}
+	]
+	}
 	, "audio_output": {
 		"pulse-sink": "alsa_output.platform-soc_sound.analog-stereo"
 	   ,"mpd_output": "pulse audio"

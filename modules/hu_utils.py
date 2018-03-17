@@ -21,6 +21,7 @@ import pickle
 
 #to check for an internet connection
 import socket
+from socket import SOCK_DGRAM	# syslog
 
 #to check an URL
 #import httplib2	# Buildroot is not supporting SSL... somehow...
@@ -38,6 +39,11 @@ LL_INFO = 20
 LL_DEBUG = 10
 LL_NOTSET = 0
 
+SYSLOG_UDP_PORT=514
+from hu_logger import ColoredFormatter
+from hu_logger import RemAnsiFormatter
+
+
 # Defines how to handle output
 def myprint( message, level=LL_INFO, tag=""):
 	logger = logging.getLogger('headunit')
@@ -47,7 +53,43 @@ def printer( message, level=LL_INFO, tag=""):
 	logger = logging.getLogger('headunit')
 	logger.log(level, message, extra={'tag': tag})
 
+
+# ********************************************************************************
+# Logging
+#
+# init_logging_c		Creates a log handler for Console output
+# init_logging_s		Creates a log handler for Syslog output
+#						The address may be a tuple consisting of (host, port)
+#						 or a string such as '/dev/log'
+#
+def log_create_console_loghandler(logger, log_level, log_tag):
+	# Create log handler
+	ch = logging.StreamHandler()						# create console handler
+	ch.setLevel(LOG_LEVEL)								# set log level
 	
+	# Formatter
+	fmtr_ch = ColoredFormatter("%(tag)s%(message)s")	# create formatters
+	ch.setFormatter(fmtr_ch)							# add formatter to handlers
+
+	# Add handler
+	logger.addHandler(ch)								# add ch to logger
+	logger.info('Logging started: Console',extra={'tag':log_tag})
+	return logger
+	
+def log_create_syslog_loghandler(logger, log_level log_tag, address=('localhost', SYSLOG_UDP_PORT), socktype=socket.SOCK_DGRAM ):
+	# Create log handler
+	sh = logging.handlers.SysLogHandler(address=address, socktype=socktype)
+	sh.setLevel(LOG_LEVEL)
+
+	# Formatter
+	fmtr_sh = RemAnsiFormatter("%(asctime)-9s [%(levelname)-8s] %(tag)s %(message)s")
+	sh.setFormatter(fmtr_sh)
+
+	# Add handler
+	logger.addHandler(sh)
+	logger.info('Logging started: Syslog',extra={'tag':log_tag})
+	return logger
+
 # ********************************************************************************
 # Load JSON configuration
 #
