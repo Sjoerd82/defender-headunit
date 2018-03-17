@@ -75,7 +75,7 @@ class Messaging():
 		return retval
 
 	def send_command(path, command, **kwargs):
-		message = "{0} {1}".format(path, command))
+		message = "{0} {1}".format(path, command)
 		print("sending: {0}".format(message))
 		ret_val = zmq_send(publisher, message)
 		return retval
