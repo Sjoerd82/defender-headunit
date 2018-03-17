@@ -138,10 +138,8 @@ import dbus.exceptions
 import gobject
 from dbus.mainloop.glib import DBusGMainLoop
 
-# ZeroMQ
-import zmq
-
 # support modules
+from modules.hu_msg import *
 from modules.hu_pulseaudio import *
 from modules.hu_volume import *
 from modules.hu_source import SourceController
@@ -202,51 +200,7 @@ def printer( message, level=20, continuation=False, tag='SYSTEM' ):
 	else:
 		myprint( message, level, tag )
 
-#********************************************************************************
-# ZeroMQ
-#
-def zmq_connect():
 
-	global subscriber
-	global publisher
-
-	printer("Connecting to ZeroMQ forwarder")
-	
-	zmq_ctx = zmq.Context()
-	subscriber = zmq_ctx.socket (zmq.SUB)
-	port_server = "5560" #TODO: get port from config
-	subscriber.connect ("tcp://localhost:{0}".format(port_server)) # connect to server
-
-	port_client = "5559"
-	publisher = zmq_ctx.socket(zmq.PUB)
-	publisher.connect("tcp://localhost:{0}".format(port_client))
-
-	#context = zmq.Context()
-	#subscriber = context.socket (zmq.SUB)
-	#subscriber.connect ("tcp://localhost:5556")	# TODO: get port from config
-	#subscriber.setsockopt (zmq.SUBSCRIBE, '')
-
-def zmq_send_cmd(path_send, cmd):
-
-	global publisher
-
-	#data = { "cmd:" cmd }
-	#data = json.dumps(message)
-	data = cmd
-	printer("Sending message: {0} {1}".format(path_send, data))
-	publisher.send("{0} {1}".format(path_send, data))
-	time.sleep(1)
-	
-def zmq_recv():
-
-	global subscriber
-
-	message_encoded = subscriber.recv()
-	#message = json.loads(message_encoded)
-	message = message_encoded
-	printer("Received message: {0}".format(message))
-	#parse_message(message)
-	return True
 
 	
 def queue(q, item, sfx=None):
@@ -1680,6 +1634,10 @@ def main():
 	print "XX DEBUG XX"
 	SOURCE = None
 
+	
+	messaging = hu_msg.Messaging()
+	messaging.connect()
+
 	# BOOT is true for 'early boot'
 	#if BOOT and not prevSource = "" and not prevSource == SOURCE:
 
@@ -1689,10 +1647,14 @@ def main():
 
 	if not SOURCE:
 		printer ('No previous source; starting first available source', tag='QPLAY')
-		zmq_send_cmd('/source/next', 'SET')
-		#Sources.next()
-		zmq_send_cmd('/player/state', 'SET:play')
-		#hu_play(resume=False)
+		
+		messaging.send_command('/source/next', 'SET')
+		messaging.send_command('/player/state', 'SET:play')
+		
+		#zmq_send_cmd('/source/next', 'SET')
+		##Sources.next()
+		#zmq_send_cmd('/player/state', 'SET:play')
+		##hu_play(resume=False)
 		
 	else:
 		ret = QuickPlay( prevSource,
@@ -1714,6 +1676,8 @@ def main():
 
 	print "XX DEBUG XX"
 
+
+	
 	"""
 	# Save Settings
 	currSrc = Sources.getComposite()
