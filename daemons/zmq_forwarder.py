@@ -97,7 +97,6 @@ def setup():
 	logger = logging.getLogger(LOGGER_NAME)
 	logger.setLevel(logging.DEBUG)
 
-	print "DEBUG: {0}".format(__name__)
 	# Start logging to console or syslog
 	if DAEMONIZED:
 		#init_logging_s( address='/dev/log' )	# output to syslog
@@ -112,10 +111,7 @@ def main():
 	#
 	# Load configuration
 	#
-	configuration = load_configuration()
-	print configuration
-	#load_configuration()
-	
+	configuration = load_configuration()	
 	port_client = configuration['zeromq']['port_client']
 	port_server = configuration['zeromq']['port_server']
 	backend = None
