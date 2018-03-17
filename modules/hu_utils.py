@@ -76,7 +76,7 @@ def log_create_console_loghandler(logger, log_level, log_tag):
 	logger.info('Logging started: Console',extra={'tag':log_tag})
 	return logger
 	
-def log_create_syslog_loghandler(logger, log_level log_tag, address=('localhost', SYSLOG_UDP_PORT), socktype=socket.SOCK_DGRAM ):
+def log_create_syslog_loghandler(logger, log_level, log_tag, address=('localhost', SYSLOG_UDP_PORT), socktype=socket.SOCK_DGRAM ):
 	# Create log handler
 	sh = logging.handlers.SysLogHandler(address=address, socktype=socktype)
 	sh.setLevel(LOG_LEVEL)
