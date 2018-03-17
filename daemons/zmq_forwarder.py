@@ -94,7 +94,7 @@ def init_logging_s( address=('localhost', SYSLOG_UDP_PORT), socktype=socket.SOCK
 #
 def load_configuration():
 
-	global configuration
+	#global configuration
 	configuration = configuration_load(CONFIG_FILE)
 	
 	if not 'zeromq' in configuration:
@@ -102,6 +102,8 @@ def load_configuration():
 		printer('Client port: {0}'.format(DEFAULT_PORT_CLIENT))
 		printer('Server port: {0}'.format(DEFAULT_PORT_SERVER))
 		configuration = { "zeromq": { "port_client": DEFAULT_PORT_CLIENT, "port_server":DEFAULT_PORT_SERVER } }
+	
+	return configuration
 
 #********************************************************************************
 # Parse command line arguments and environment variables
@@ -140,13 +142,14 @@ def setup():
 		#init_logging_c()						# output to console
 		logger = log_create_console_loghandler(logger, LOG_LEVEL, LOG_TAG)
 
+	
+def main():
+
 	#
 	# Load configuration
 	#
-	#configuration = load_configuration()
-	load_configuration()
-	
-def main():
+	configuration = load_configuration()
+	#load_configuration()
 	
 	port_client = configuration['zeromq']['port_client']
 	port_server = configuration['zeromq']['port_server']
