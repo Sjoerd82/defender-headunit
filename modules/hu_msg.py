@@ -79,7 +79,7 @@ class MessageController():
 	def send_command(self, path, command, **kwargs):
 		message = "{0} {1}".format(path, command)
 		print("sending: {0}".format(message))
-		ret_val = zmq_send(publisher, message)
+		ret_val = zmq_send(self.publisher, message)
 		return retval
 
 	"""
@@ -90,7 +90,7 @@ class MessageController():
 	"""
 
 	def recv_data(self):
-		zmq_recv(subscriber)
+		zmq_recv(self.subscriber)
 	
 	#def recv_message(self):
 	
