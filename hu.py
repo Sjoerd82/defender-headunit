@@ -605,6 +605,8 @@ def cb_mpd_event( event ):
 # Timer 1: executed every 30 seconds
 def cb_timer1():
 
+	exit(0)
+
 	global cSettings
 	#global disp
 
