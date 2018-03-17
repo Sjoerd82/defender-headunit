@@ -177,7 +177,7 @@ def home():
 	global nav_sources
 	page_title = "Landing page"
 	nav_ix_main = 1
-	return render_template('dash_base.html', title=page_title, nav_items=nav_items, nav_curr_ix=nav_curr_ix, nav_sources=nav_sources)
+	return render_template('dash_base.html', title=page_title, nav_items=nav_items, nav_ix_main=nav_ix_main, nav_sources=nav_sources)
 
 @app.route('/config', methods=['GET'])
 @app.route('/config_locations', methods=['GET'])
