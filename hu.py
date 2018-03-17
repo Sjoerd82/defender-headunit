@@ -36,10 +36,14 @@
 # LOGGING and CONSOLE output
 #
 # All output is channeled through the Python logger, in order to both be displayed
-# on the console and written to a logfile.
+# on the console and written to the syslog or a logfile.
 #
-# Please don't use the print() function. Instead use either:
-#  - myprint( message, level="INFO", tag="")	# defined in hu_utils.py
+# When given the -b ("background") argument all output is written to the syslog,
+# otherwise it's written to the console.
+#
+# The logfile writer is currently not used.
+#
+# Please don't use the print() function. Instead use the printer() function. Or:
 #  - logger.info(message, extra={'tag': tag})	# or any other desired log level
 #
 # Default log level can be overridden via command line parameters. Default:
@@ -1456,8 +1460,8 @@ def setup():
 	# Load operational settings
 	#
 	#			#TODO: change this name
-	cSettings = huSettings( os.path.join(configuration['directories']['config'],configuration['files']['settings']),
-							defaultSettings=configuration['default_settings'] )
+	#cSettings = huSettings( os.path.join(configuration['directories']['config'],configuration['files']['settings']),
+	#						defaultSettings=configuration['default_settings'] )
 
 	#
 	# Start logging to file
@@ -1660,15 +1664,9 @@ def main():
 	#	exit()
 
 	if not SOURCE:
-		printer ('No previous source; starting first available source', tag='QPLAY')
-		
+		printer ('No previous source; starting first available source', tag='QPLAY')	
 		messaging.send_command('/source/next', 'SET')
 		messaging.send_command('/player/state', 'SET:play')
-		
-		#zmq_send_cmd('/source/next', 'SET')
-		##Sources.next()
-		#zmq_send_cmd('/player/state', 'SET:play')
-		##hu_play(resume=False)
 		
 	else:
 		ret = QuickPlay( prevSource,
