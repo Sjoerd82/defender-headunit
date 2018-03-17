@@ -66,6 +66,15 @@ def zmq_recv(subscriber):
 	print("Received message: {0}".format(message))
 	#parse_message(message)
 	return True
+
+def zmq_recv_async(subscriber):
+
+	try:
+		message = subscriber.recv(flags=0)
+	except zmq.ZMQError:
+		message = None
+		
+	return message
 	
 #********************************************************************************
 # Abstract functions
@@ -98,8 +107,14 @@ class MessageController():
 		return retval
 	"""
 
-	def receive(self):
+	# Blocking function
+	def receive(self, ):
 		received = zmq_recv(self.subscriber)
+		return received
+
+	# Asynch version
+	def receive_async(self):
+		received = zmq_recv_async(self.subscriber)
 		return received
 	
 	def recv_data(self):
