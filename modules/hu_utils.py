@@ -261,7 +261,7 @@ def configuration_load( configfile, defaultconfig=None ):
 	except:
 		printer('Loading/parsing {0}: [FAIL]'.format(configfile) ,LL_CRITICAL, tag='CONFIG')
 		# if we had not previously restored it, try that and parse again
-		if not restored:
+		if not restored and defaultconfig:
 			printer('Restoring default configuration', tag='CONFIG')
 			configuration_restore( configfile, defaultconfig )
 			jsConfigFile = open(configfile)
