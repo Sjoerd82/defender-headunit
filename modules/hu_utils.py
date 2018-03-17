@@ -65,7 +65,7 @@ def printer( message, level=LL_INFO, tag=""):
 def log_create_console_loghandler(logger, log_level, log_tag):
 	# Create log handler
 	ch = logging.StreamHandler()						# create console handler
-	ch.setLevel(LOG_LEVEL)								# set log level
+	ch.setLevel(log_level)								# set log level
 	
 	# Formatter
 	fmtr_ch = ColoredFormatter("%(tag)s%(message)s")	# create formatters
@@ -79,7 +79,7 @@ def log_create_console_loghandler(logger, log_level, log_tag):
 def log_create_syslog_loghandler(logger, log_level, log_tag, address=('localhost', SYSLOG_UDP_PORT), socktype=socket.SOCK_DGRAM ):
 	# Create log handler
 	sh = logging.handlers.SysLogHandler(address=address, socktype=socktype)
-	sh.setLevel(LOG_LEVEL)
+	sh.setLevel(log_level)
 
 	# Formatter
 	fmtr_sh = RemAnsiFormatter("%(asctime)-9s [%(levelname)-8s] %(tag)s %(message)s")
