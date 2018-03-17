@@ -1436,7 +1436,7 @@ def init():
 	#
 	# TODO: get settings from configuration.json
 	init_logging()
-	init_logging_c()	
+	init_logging_c()
 
 #********************************************************************************
 #

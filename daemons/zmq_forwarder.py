@@ -42,6 +42,7 @@ from hu_logger import RemAnsiFormatter
 import socket
 SYSLOG_UDP_PORT=514
 LOGLEVEL_C = LL_INFO
+DAEMONIZED = None
 
 # Initiate logger.
 def init_logging():
@@ -120,18 +121,33 @@ def load_configuration():
 	
 	return configuration
 
+#********************************************************************************
+#
+# Parse command line arguments and environment variables
+# Command line takes precedence over environment variables and settings.json
+#
+def parse_args():
+	import argparse
+
+	global LOGLEVEL_C
+	global DAEMONIZED
+	
+	parser = argparse.ArgumentParser(description='ZeroMQ forwarder device')
+	parser.add_argument('--loglevel', action='store', default=LL_INFO, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)
+	parser.add_argument('-b', action='store_true')	# background, ie. no output to console
+	args = parser.parse_args()
+
+	LOGLEVEL_C = args.loglevel
+	DAEMONIZED = args.b
+
+	init_logging()	
+	if DAEMONIZED:
+		init_logging_s( address='/dev/log' )	# output to syslog
+	else:
+		init_logging_c()						# output to console
+
 def main():
 
-	#
-	# Parse arguments (TODO)
-	#
-
-	# background/daemon mode: log to syslog
-	
-	init_logging()
-	init_logging_c()
-	init_logging_s( address='/dev/log' )
-	
 	#
 	# Load main configuration
 	#
@@ -168,5 +184,6 @@ def main():
 		context.term()
 
 if __name__ == "__main__":
+	parse_args()
 	main()
 	
