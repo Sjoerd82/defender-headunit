@@ -38,6 +38,8 @@ def zmq_connect(publisher, subscriber):
 	#subscriber.connect ("tcp://localhost:5556")	# TODO: get port from config
 	#subscriber.setsockopt (zmq.SUBSCRIBE, '')
 	
+	return publisher, subscriber
+	
 
 def zmq_send(publisher, message):
 
@@ -73,8 +75,8 @@ class MessageController():
 
 	#todo: port numbers ?
 	def connect(self):
-		retval = zmq_connect(self.publisher, self.subscriber)
-		return retval
+		publisher, subscriber = zmq_connect(self.publisher, self.subscriber)		
+		#return 
 
 	def send_command(self, path, command, **kwargs):
 		message = "{0} {1}".format(path, command)
