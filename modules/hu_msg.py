@@ -10,6 +10,10 @@
 #
 
 
+def printer( message, level=LL_INFO, tag="", logger_name=""):
+	logger = logging.getLogger(logger_name)
+	logger.log(level, message, extra={'tag': tag})
+
 
 #********************************************************************************
 # ZeroMQ
@@ -20,11 +24,6 @@ import time
 
 def zmq_connect(publisher, subscriber):
 
-	#global subscriber
-	#global publisher
-
-	print("Connecting to ZeroMQ forwarder")
-	
 	zmq_ctx = zmq.Context()
 	subscriber = zmq_ctx.socket (zmq.SUB)
 	port_server = "5560" #TODO: get port from config
@@ -33,11 +32,6 @@ def zmq_connect(publisher, subscriber):
 	port_client = "5559"
 	publisher = zmq_ctx.socket(zmq.PUB)
 	publisher.connect("tcp://localhost:{0}".format(port_client))
-
-	#context = zmq.Context()
-	#subscriber = context.socket (zmq.SUB)
-	#subscriber.connect ("tcp://localhost:5556")	# TODO: get port from config
-	#subscriber.setsockopt (zmq.SUBSCRIBE, '')
 
 	return publisher, subscriber
 	

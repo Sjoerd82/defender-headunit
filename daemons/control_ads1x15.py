@@ -91,6 +91,7 @@ def setup():
 	#
 	# ZMQ
 	#
+	printer("Connecting to ZeroMQ forwarder")
 	messaging = MessageController()
 	if not messaging.connect():
 		printer("Failed to connect to messenger", level=LL_CRITICAL)
@@ -260,7 +261,7 @@ def main():
 	
 	def handle_button_press( button_spec ):
 		if 'zmq_path' and 'zmq_cmd' in button_spec:
-
+			printer("Sending message: {0} {1}".format(button_spec['zmq_path'],button_spec['zmq_cmd'])
 			messaging.send_command(button_spec['zmq_path'],button_spec['zmq_cmd'])
 			if button_spec['delay']:
 				button_down_delay()
@@ -292,7 +293,7 @@ def main():
 							long_press_ix = ix
 							long_press_start = time.clock()
 						else:
-							print "DEBUG LP diff ={0}".format(time.clock()-long_press_start)
+							printer "DEBUG LP diff ={0}".format(time.clock()-long_press_start)
 							if time.clock()-long_press_start > button['long_press']:
 								handle_button_press(button)
 					else:

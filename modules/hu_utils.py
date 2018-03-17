@@ -68,10 +68,8 @@ tagcolors = {
  }
 
 
-def printer( message, level=LL_INFO, tag="",logger_name=""): #, logger_name):
-	#logger = logging.getLogger('zmqfwd')
+def printer( message, level=LL_INFO, tag="",logger_name=""):
 	logger = logging.getLogger(logger_name)
-	#logger = logging.getLogger(__name__)
 	logger.log(level, message, extra={'tag': tag})
 
 
