@@ -1491,6 +1491,8 @@ def setup():
 		SOURCE_SUB = None
 		
 	else:
+		print "TODO!"
+		"""
 		prevSource = cSettings.get_key('source')
 		prevSourceSub = cSettings.get_key('subsourcekey')
 
@@ -1500,6 +1502,7 @@ def setup():
 		else:
 			SOURCE = None
 			SOURCE_SUB = None
+		"""
 			
 	print('SOURCE,SUBSOURCE: {0},{1}'.format(SOURCE,SOURCE_SUB))
 	
