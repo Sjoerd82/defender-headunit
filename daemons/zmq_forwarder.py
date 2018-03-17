@@ -21,7 +21,7 @@ import datetime			# logging
 import os				#
 #import logging			#
 #import logging.config	#
-from logging import logger
+from logging import getLogger
 
 
 #sys.path.append('../modules')
