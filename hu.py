@@ -1636,7 +1636,10 @@ def main():
 
 	
 	messaging = MessageController()
-	messaging.connect()
+	if not messaging.connect():
+		printer("Failed to connect to messenger", level=LL_CRITICAL)
+		#TODO: try again later!
+		#TODO: enter holding pattern!
 
 	# BOOT is true for 'early boot'
 	#if BOOT and not prevSource = "" and not prevSource == SOURCE:

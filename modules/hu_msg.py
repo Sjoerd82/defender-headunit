@@ -80,20 +80,15 @@ class MessageController():
 	#todo: port numbers ?
 	def connect(self):
 
-		print self.publisher
-		print self.subscriber
-
 		self.publisher, self.subscriber = zmq_connect(self.publisher, self.subscriber)		
-
-		print self.publisher
-		print self.subscriber
-
-		#return 
+		# todo: check if connected
+		# return True/False
+		return True
 
 	def send_command(self, path, command, **kwargs):
 		message = "{0} {1}".format(path, command)
 		print("sending: {0}".format(message))
-		ret_val = zmq_send(self.publisher, message)
+		retval = zmq_send(self.publisher, message)
 		return retval
 
 	"""
