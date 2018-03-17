@@ -1470,11 +1470,6 @@ def setup():
 	#				configuration['files']['log'],
 	#				cSettings.incrRunCounter( max=999999 ) )
 
-	#
-	# Start logging to syslog
-	#
-	# TODO: get settings from configuration.json
-	init_logging_s( address='/dev/log' )
 	
 	#
 	# "Splash Screen": Display version and play startup tune
