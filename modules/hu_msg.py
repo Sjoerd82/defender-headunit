@@ -67,7 +67,7 @@ def zmq_recv(subscriber):
 def zmq_recv_async(subscriber):
 
 	try:
-		message = subscriber.recv(flags=0)
+		message = subscriber.recv(zmq.NOBLOCK)
 	except zmq.ZMQError:
 		message = None
 		
