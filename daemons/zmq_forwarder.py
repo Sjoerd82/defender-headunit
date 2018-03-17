@@ -41,6 +41,7 @@ from hu_logger import RemAnsiFormatter
 # for logging to syslog
 import socket
 SYSLOG_UDP_PORT=514
+LOGLEVEL_C = LL_INFO
 
 # Initiate logger.
 def init_logging():
