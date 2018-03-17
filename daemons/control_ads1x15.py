@@ -49,6 +49,24 @@ messaging = None
 def printer( message, level=LL_INFO, continuation=False, tag=LOG_TAG ):
 	logger.log(level, message, extra={'tag': tag})
 
+#********************************************************************************
+# Parse command line arguments and environment variables
+#
+def parse_args():
+
+	import argparse
+	
+	global LOG_LEVEL
+	global DAEMONIZED
+
+	parser = argparse.ArgumentParser(description='ADS1x15 Remote Control')
+	parser.add_argument('--loglevel', action='store', default=LL_INFO, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)
+	parser.add_argument('-b', action='store_true')	# background, ie. no output to console
+	args = parser.parse_args()
+
+	LOG_LEVEL = args.loglevel
+	DAEMONIZED = args.b	
+
 def setup():
 
 	global messaging
@@ -324,5 +342,7 @@ def main():
 		time.sleep(0.1)
 
 if __name__ == "__main__":
+	parse_args()
 	setup()
 	main()
+	

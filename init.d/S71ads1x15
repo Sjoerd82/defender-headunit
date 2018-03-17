@@ -10,7 +10,7 @@ NAME="Remote Control: ADS1x15 Resistor Network"
 PID="ctrl_ads1x15"
 PID_FILE=/var/run/$PID.pid
 DAEMON="control_ads1x15.py"
-DAEMON_OPTS=""
+DAEMON_OPTS="-b"
 DAEMON_PATH="/mnt/PIHU_APP/defender-headunit/daemons"
 DAEMON_FILE=$DAEMON_PATH/$DAEMON
 
