@@ -241,10 +241,10 @@ def configuration_load( logger_name, configfile, defaultconfig=None ):
 	# use the default from the config dir, in case the configfile is not found (first run)
 	if not os.path.exists(configfile):
 		if defaultconfig and os.path.exists(defaultconfig):
-			printer('Configuration not present (first run?); loading default: {0}'.format( defaultconfig ), tag='CONFIG', logger_name=LOGGER_NAME)
+			printer('Configuration not present (first run?); loading default: {0}'.format( defaultconfig ), tag='CONFIG', logger_name=logger_name)
 			restored = configuration_restore( configfile, defaultconfig )
 			if not restored:
-				printer('Restoring configuration {0}: [FAIL]'.format(defaultconfig), LL_CRITICAL, tag='CONFIG', logger_name=LOGGER_NAME)
+				printer('Restoring configuration {0}: [FAIL]'.format(defaultconfig), LL_CRITICAL, tag='CONFIG', logger_name=logger_name)
 				return None
 		else:
 			printer('Configuration not present, and default missing')
@@ -255,23 +255,23 @@ def configuration_load( logger_name, configfile, defaultconfig=None ):
 	try:
 		config=json.load(jsConfigFile)
 	except:
-		printer('Loading/parsing {0}: [FAIL]'.format(configfile) ,LL_CRITICAL, tag='CONFIG', logger_name=LOGGER_NAME)
+		printer('Loading/parsing {0}: [FAIL]'.format(configfile) ,LL_CRITICAL, tag='CONFIG', logger_name=logger_name)
 		# if we had not previously restored it, try that and parse again
 		if not restored and defaultconfig:
-			printer('Restoring default configuration', tag='CONFIG', logger_name=LOGGER_NAME)
+			printer('Restoring default configuration', tag='CONFIG', logger_name=logger_name)
 			configuration_restore( configfile, defaultconfig )
 			jsConfigFile = open(configfile)
 			config=json.load(jsConfigFile)
 			return config
 		else:
-			printer('Loading/parsing restored configuration failed!'.format(configfile) ,LL_CRITICAL, tag='CONFIG', logger_name=LOGGER_NAME)
+			printer('Loading/parsing restored configuration failed!'.format(configfile) ,LL_CRITICAL, tag='CONFIG', logger_name=logger_name)
 			return None
 
 	# not sure if this is still possible, but let's check it..
 	if config == None:
-		printer('Loading configuration failed!'.format(configfile) ,LL_CRITICAL, tag='CONFIG', logger_name=LOGGER_NAME)
+		printer('Loading configuration failed!'.format(configfile) ,LL_CRITICAL, tag='CONFIG', logger_name=logger_name)
 	else:
-		printer('Loading configuration [OK]'.format(configfile), tag='CONFIG', logger_name=LOGGER_NAME)
+		printer('Loading configuration [OK]'.format(configfile), tag='CONFIG', logger_name=logger_name)
 		
 	return config
 

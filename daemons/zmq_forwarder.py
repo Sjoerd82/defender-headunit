@@ -96,7 +96,6 @@ def init_logging_s( address=('localhost', SYSLOG_UDP_PORT), socktype=socket.SOCK
 def load_configuration():
 
 	# utils # todo, present with logger
-	LOGGER_NAME = 'zmqfwd'
 	configuration = configuration_load(LOGGER_NAME,CONFIG_FILE)
 	
 	if not configuration or not 'zeromq' in configuration:
@@ -132,7 +131,6 @@ def setup():
 	# Logging
 	#
 	global logger
-	LOGGER_NAME = 'zmqfwd'
 	logger = logging.getLogger(LOGGER_NAME)
 	logger.setLevel(logging.DEBUG)
 
