@@ -17,7 +17,8 @@
 
 import zmq
 import sys
-sys.path.append('../modules')
+#sys.path.append('../modules')
+sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
 
 DEFAULT_PORT_CLIENT = 5559
