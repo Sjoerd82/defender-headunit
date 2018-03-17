@@ -328,6 +328,8 @@ def idle_msg_receiver():
 		parsed_msg = parse_message(msg)
 		print parsed_msg
 		#print("[MQ] Received Path: {0}; Command: {1}; Parameters: {2}".format(path,command,params))
+	else:
+		print "no msg"
 		
 	return True
 
@@ -610,8 +612,6 @@ def cb_mpd_event( event ):
 		
 # Timer 1: executed every 30 seconds
 def cb_timer1():
-
-	exit(0)
 
 	global cSettings
 	#global disp
@@ -1659,6 +1659,8 @@ def main():
 		#TODO: try again later!
 		#TODO: enter holding pattern!
 
+	messaging.subscribe('') #everything
+		
 	# BOOT is true for 'early boot'
 	#if BOOT and not prevSource = "" and not prevSource == SOURCE:
 

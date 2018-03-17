@@ -82,6 +82,7 @@ class MessageController():
 	def __init__(self):
 		self.subscriber = None
 		self.publisher = None
+		self.topics = []
 
 	#todo: port numbers ?
 	def connect(self):
@@ -91,6 +92,10 @@ class MessageController():
 		# return True/False
 		return True
 
+	def subscribe(self, topic):
+		self.subscriber.setsockopt (zmq.SUBSCRIBE, topic)
+		return True
+		
 	def send_command(self, path, command, **kwargs):
 		message = "{0} {1}".format(path, command)
 		print("sending: {0}".format(message))
