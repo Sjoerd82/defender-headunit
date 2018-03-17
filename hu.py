@@ -328,8 +328,6 @@ def idle_msg_receiver():
 		parsed_msg = parse_message(msg)
 		print parsed_msg
 		#print("[MQ] Received Path: {0}; Command: {1}; Parameters: {2}".format(path,command,params))
-	else:
-		print "no msg"
 		
 	return True
 
