@@ -14,6 +14,12 @@ app = Flask(__name__)
 from modules.hu_utils import *
 
 #
+# Messenger
+#
+from modules.hu_msg import MessageController
+messaging = None
+
+#
 # Zero MQ
 #
 import zmq
@@ -277,6 +283,12 @@ def poweroff():
 	"""
 	return render_template('dash_poweroff.html', title=page_title, nav_items=nav_items, nav_curr_ix=nav_curr_ix, nav_sources=nav_sources) #, buttons=buttons)
 
+
+@app.route('/reboot', methods=['GET'])
+def reboot():
+
+	global messaging
+	messaging.send_command('/system/reboot', 'SET')
 	
 #app.route('/api')
 """
@@ -570,6 +582,8 @@ def post_plugin_path(path):
 # of being used as a library
 if __name__ == '__main__':
 	
+	global messaging
+	
 	# TODO! get port number from configuration
 	#url = "tcp://127.0.0.1:5556"
 	#try:
@@ -579,6 +593,12 @@ if __name__ == '__main__':
 	#	exit(0) # TODO ... IT CANNOT RECOVER .. SOMEHOW!
 
 	print "ZMQ Version {0}". format(zmq.pyzmq_version())
+	
+	messaging = MessageController()
+	if not messaging.connect():
+		printer("Failed to connect to messenger", level=LL_CRITICAL)
+	
+	""" 
 	
 	port_client = "5559"
 	zmq_ctx = zmq.Context()
@@ -590,6 +610,7 @@ if __name__ == '__main__':
 	port_server = "5560" #TODO: get port from config
 	subscriber.connect ("tcp://localhost:{0}".format(port_server)) # connect to server
 
+	"""
 
 	# The default port it will run on here is 5000
 	app.run(host='0.0.0.0', debug=False, use_reloader=False)
