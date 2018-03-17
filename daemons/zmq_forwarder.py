@@ -21,7 +21,7 @@ import datetime			# logging
 import os				#
 import logging			#
 import logging.config	#
-from socket import SOCK_DGRAM	# syslog
+#from socket import SOCK_DGRAM	# syslog
 
 
 #sys.path.append('../modules')
@@ -134,7 +134,7 @@ def setup():
 	# Start logging to console or syslog
 	if DAEMONIZED:
 		#init_logging_s( address='/dev/log' )	# output to syslog
-		logger = log_create_syslog_loghandler(logger, LOG_LEVEL, LOG_TAG, address='/dev/log', socktype=socket.SOCK_DGRAM ):
+		logger = log_create_syslog_loghandler(logger, LOG_LEVEL, LOG_TAG, address='/dev/log' )
 		
 	else:
 		#init_logging_c()						# output to console
