@@ -15,13 +15,12 @@
 # http://learning-0mq-with-pyzmq.readthedocs.io/en/latest/pyzmq/devices/forwarder.html
 #
 
-import zmq				# ZeroMQ
-import sys				# path
-import datetime			# logging
-import os				#
-#import logging			#
-#import logging.config	#
-from logging import getLogger
+import zmq						# ZeroMQ
+#import sys						# path
+from sys import path			# path
+#import datetime				# logging
+#import os						#
+from logging import getLogger	# logger
 
 
 #sys.path.append('../modules')
