@@ -9,6 +9,8 @@ import logging.handlers
 import copy
 import re
 
+import shutil	# load config
+
 # call, check_output
 import subprocess
 
