@@ -21,7 +21,6 @@ import datetime			# logging
 import os				#
 import logging			#
 import logging.config	#
-#import socket					# syslog
 from socket import SOCK_DGRAM	# syslog
 
 
@@ -30,12 +29,13 @@ sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
 from hu_logger import ColoredFormatter
 from hu_logger import RemAnsiFormatter
+from hu_msg import MessageController
 
 # Global variables and constants
-
 DEFAULT_PORT_CLIENT = 5559
 DEFAULT_PORT_SERVER = 5560
 CONFIG_FILE = '/etc/configuration.json'
+configuration = None
 DAEMONIZED = None
 
 # for logging to syslog
@@ -51,13 +51,17 @@ logger = None
 # Output wrapper
 #
 def printer( message, level=LL_INFO, continuation=False, tag=LOG_TAG ):
-	#global logger
-	#logger = logging.getLogger(__name__)
 	logger.log(level, message, extra={'tag': tag})
 
-
+# ********************************************************************************
+# Logging
+#
+# init_logging_c		Creates a log handler for Console output
+# init_logging_s		Creates a log handler for Syslog output
+#						The address may be a tuple consisting of (host, port)
+#						 or a string such as '/dev/log'
+#
 def init_logging_c():
-	#global logger
 	# Create log handler
 	ch = logging.StreamHandler()						# create console handler
 	ch.setLevel(LOG_LEVEL)								# set log level
@@ -65,50 +69,47 @@ def init_logging_c():
 	# Formatter
 	fmtr_ch = ColoredFormatter("%(tag)s%(message)s")	# create formatters
 	ch.setFormatter(fmtr_ch)							# add formatter to handlers
-	
+
 	# Add handler
 	logger.addHandler(ch)								# add ch to logger
 	logger.info('Logging started: Console',extra={'tag':'log'})
 	
-# address may be a tuple consisting of (host, port) or a string such as '/dev/log'
 def init_logging_s( address=('localhost', SYSLOG_UDP_PORT), socktype=socket.SOCK_DGRAM ):
-	#global logger
 	# Create log handler
-	#sh =logging.handlers.SysLogHandler(address=address, facility=facility, socktype=socktype)
-	sh = logging.handlers.SysLogHandler(address=address, socktype=socktype)	# create syslog handler
+	sh = logging.handlers.SysLogHandler(address=address, socktype=socktype)
 	sh.setLevel(LOG_LEVEL)
 
 	# Formatter
 	fmtr_sh = RemAnsiFormatter("%(asctime)-9s [%(levelname)-8s] %(tag)s %(message)s")
-	sh.setFormatter(fmtr_sh)							# add formatter to handlers
+	sh.setFormatter(fmtr_sh)
 
 	# Add handler
-	logger.addHandler(sh)								# add sh to logger
+	logger.addHandler(sh)
 	logger.info('Logging started: Syslog',extra={'tag':'log'})
 
+# ********************************************************************************
+# Load configuration
+#
 def load_configuration():
 
-	configuration = {}
-	#configuration = configuration_load(CONFIG_FILE)
+	global configuration
+	configuration = configuration_load(CONFIG_FILE)
 	
 	if not 'zeromq' in configuration:
 		printer('Error: ZeroMQ not in configuration, using defaults:')
 		printer('Client port: {0}'.format(DEFAULT_PORT_CLIENT))
 		printer('Server port: {0}'.format(DEFAULT_PORT_SERVER))
 		configuration = { "zeromq": { "port_client": DEFAULT_PORT_CLIENT, "port_server":DEFAULT_PORT_SERVER } }
-	
-	return configuration
 
 #********************************************************************************
-#
 # Parse command line arguments and environment variables
-# Command line takes precedence over environment variables and settings.json
 #
 def parse_args():
 
 	import argparse
-	global DAEMONIZED
+	
 	global LOG_LEVEL
+	global DAEMONIZED
 
 	parser = argparse.ArgumentParser(description='ZeroMQ forwarder device')
 	parser.add_argument('--loglevel', action='store', default=LL_INFO, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)
@@ -117,30 +118,30 @@ def parse_args():
 
 	LOG_LEVEL = args.loglevel
 	DAEMONIZED = args.b
-
 		
 def setup():
+
+	#
+	# Logging
+	#
 	global logger
-	#
-	# initiate logger
-	#
 	logger = logging.getLogger(__name__)
 	logger.setLevel(logging.DEBUG)
 
+	
+	# Start logging to console or syslog
 	if DAEMONIZED:
 		init_logging_s( address='/dev/log' )	# output to syslog
 	else:
 		init_logging_c()						# output to console
 
-
-def main():
-
 	#
-	# Load main configuration
+	# Load configuration
 	#
+	#configuration = load_configuration()
+	load_configuration()
 	
-	configuration = load_configuration()
-
+def main():
 	
 	port_client = configuration['zeromq']['port_client']
 	port_server = configuration['zeromq']['port_server']
