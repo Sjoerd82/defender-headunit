@@ -287,11 +287,11 @@ def poweroff():
 @app.route('/reboot', methods=['GET'])
 def reboot():
 
-	publish_message('/system/reboot', 'SET')
-	publish_message('/player/next', 'SET')
-	#global messaging
-	#messaging.send_command('/system/reboot', 'SET')
-	#messaging.send_command('/player/next', 'SET')
+	#publish_message('/system/reboot', 'SET')
+	#publish_message('/player/next', 'SET')
+	global messaging
+	messaging.send_command('/system/reboot', 'SET')
+	messaging.send_command('/player/next', 'SET')
 	return "SEND x2"
 	
 #app.route('/api')
@@ -598,11 +598,11 @@ if __name__ == '__main__':
 
 	print "ZMQ Version {0}". format(zmq.pyzmq_version())
 	
-	#messaging = MessageController()
-	#if not messaging.connect():
-	#	printer("Failed to connect to messenger", level=LL_CRITICAL)
+	messaging = MessageController()
+	if not messaging.connect():
+		printer("Failed to connect to messenger", level=LL_CRITICAL)
 	
-	
+	"""
 	port_client = "5559"
 	zmq_ctx = zmq.Context()
 	publisher = zmq_ctx.socket(zmq.PUB)
@@ -612,6 +612,7 @@ if __name__ == '__main__':
 	subscriber = zmq_ctx.socket(zmq.SUB)
 	port_server = "5560" #TODO: get port from config
 	subscriber.connect ("tcp://localhost:{0}".format(port_server)) # connect to server
+	"""
 
 
 	# The default port it will run on here is 5000

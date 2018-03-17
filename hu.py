@@ -1657,7 +1657,7 @@ def main():
 		#TODO: try again later!
 		#TODO: enter holding pattern!
 
-	messaging.subscribe('') #everything
+	messaging.subscribe('/system/') #everything
 		
 	# BOOT is true for 'early boot'
 	#if BOOT and not prevSource = "" and not prevSource == SOURCE:

@@ -142,7 +142,6 @@ def parse_args():
 
 	init_logging()	
 	if DAEMONIZED:
-		print('Daemonizing. All output will be written to the syslog.')
 		init_logging_s( address='/dev/log' )	# output to syslog
 	else:
 		init_logging_c()						# output to console
