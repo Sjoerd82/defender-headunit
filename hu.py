@@ -322,7 +322,7 @@ def load_current_resume():
 def idle_msg_receiver():
 	global messaging
 	print "receiving..."
-	print messaging.receive()
+	print messaging.receive_async()
 	return True
 
 # ********************************************************************************

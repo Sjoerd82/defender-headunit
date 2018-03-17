@@ -39,9 +39,6 @@ def zmq_connect(publisher, subscriber):
 	#subscriber.connect ("tcp://localhost:5556")	# TODO: get port from config
 	#subscriber.setsockopt (zmq.SUBSCRIBE, '')
 
-	print publisher
-	print subscriber
-	
 	return publisher, subscriber
 	
 
