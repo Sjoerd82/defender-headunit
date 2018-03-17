@@ -19,9 +19,9 @@ import zmq				# ZeroMQ
 import sys				# path
 import datetime			# logging
 import os				#
-import logging			#
-import logging.config	#
-#from socket import SOCK_DGRAM	# syslog
+#import logging			#
+#import logging.config	#
+from logging import logger
 
 
 #sys.path.append('../modules')
@@ -55,42 +55,6 @@ def printer( message, level=LL_INFO, continuation=False, tag=LOG_TAG ):
 	logger.log(level, message, extra={'tag': tag})
 
 # ********************************************************************************
-# Logging
-#
-# init_logging_c		Creates a log handler for Console output
-# init_logging_s		Creates a log handler for Syslog output
-#						The address may be a tuple consisting of (host, port)
-#						 or a string such as '/dev/log'
-#
-"""
-def init_logging_c():
-	# Create log handler
-	ch = logging.StreamHandler()						# create console handler
-	ch.setLevel(LOG_LEVEL)								# set log level
-	
-	# Formatter
-	fmtr_ch = ColoredFormatter("%(tag)s%(message)s")	# create formatters
-	ch.setFormatter(fmtr_ch)							# add formatter to handlers
-
-	# Add handler
-	logger.addHandler(ch)								# add ch to logger
-	logger.info('Logging started: Console',extra={'tag':LOG_TAG})
-	
-def init_logging_s( address=('localhost', SYSLOG_UDP_PORT), socktype=socket.SOCK_DGRAM ):
-	# Create log handler
-	sh = logging.handlers.SysLogHandler(address=address, socktype=socktype)
-	sh.setLevel(LOG_LEVEL)
-
-	# Formatter
-	fmtr_sh = RemAnsiFormatter("%(asctime)-9s [%(levelname)-8s] %(tag)s %(message)s")
-	sh.setFormatter(fmtr_sh)
-
-	# Add handler
-	logger.addHandler(sh)
-	logger.info('Logging started: Syslog',extra={'tag':LOG_TAG})
-"""
-
-# ********************************************************************************
 # Load configuration
 #
 def load_configuration():
@@ -99,8 +63,7 @@ def load_configuration():
 	configuration = configuration_load(LOGGER_NAME,CONFIG_FILE)
 	
 	if not configuration or not 'zeromq' in configuration:
-		printer('Error: Configuration file not found, or error parsing OR:')	
-		printer('Error: ZeroMQ not in configuration, using defaults:')
+		printer('Error: Configuration not loaded or missing ZeroMQ, using defaults:')
 		printer('Client port: {0}'.format(DEFAULT_PORT_CLIENT))
 		printer('Server port: {0}'.format(DEFAULT_PORT_SERVER))
 		configuration = { "zeromq": { "port_client": DEFAULT_PORT_CLIENT, "port_server":DEFAULT_PORT_SERVER } }
@@ -144,7 +107,6 @@ def setup():
 		#init_logging_c()						# output to console
 		logger = log_create_console_loghandler(logger, LOG_LEVEL, LOG_TAG)
 
-	
 def main():
 
 	#
