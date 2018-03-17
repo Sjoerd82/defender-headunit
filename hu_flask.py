@@ -289,7 +289,8 @@ def reboot():
 
 	global messaging
 	messaging.send_command('/system/reboot', 'SET')
-	return "SEND"
+	messaging.send_command('/player/next', 'SET')
+	return "SEND x2"
 	
 #app.route('/api')
 """
