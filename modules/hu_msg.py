@@ -70,7 +70,7 @@ class MessageController():
 		self.publisher = None
 
 	#todo: port numbers ?
-	def connect():
+	def connect(self):
 		retval = zmq_connect(self, self.publisher, self.subscriber)
 		return retval
 
