@@ -126,6 +126,10 @@ def main():
 
 	# background/daemon mode: log to syslog
 	
+	init_logging()
+	init_logging_c()
+	init_logging_s( address='/dev/log' )
+	
 	#
 	# Load main configuration
 	#
