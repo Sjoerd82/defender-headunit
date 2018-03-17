@@ -119,3 +119,35 @@ class MessageController():
 	
 	#def recv_message(self):
 	
+	def parse_message(self, message):
+		path = []
+		params = []
+		path_cmd = message.split(" ")
+		for pathpart in path_cmd[0].split("/"):
+			if pathpart:
+				path.append(pathpart.lower())
+			
+		base_topic = path[0]
+		cmd_par = path_cmd[1].split(":")
+
+		if len(cmd_par) == 1:
+			command = cmd_par[0].lower()
+		elif len(cmd_par) == 2:
+			command = cmd_par[0].lower()
+			param = cmd_par[1]
+
+			for parpart in param.split(","):
+				if parpart:
+					params.append(parpart)
+		else:
+			print("Malformed message!")
+			return False
+
+		print("[MQ] Received Path: {0}; Command: {1}; Parameters: {2}".format(path,command,params))
+		
+		parsed_message = {}
+		parsed_message['path'] = path
+		parsed_message['cmd'] = command
+		parsed_message['args'] = params
+		return parsed_message
+		
