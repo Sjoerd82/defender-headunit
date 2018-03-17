@@ -149,6 +149,7 @@ def main():
 	# Load configuration
 	#
 	configuration = load_configuration()
+	print configuration
 	#load_configuration()
 	
 	port_client = configuration['zeromq']['port_client']
