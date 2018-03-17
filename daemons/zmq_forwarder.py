@@ -118,6 +118,7 @@ def parse_args():
 
 		
 def setup():
+	global logger
 	#
 	# initiate logger
 	#
