@@ -63,7 +63,7 @@ def zmq_recv(subscriber):
 # Abstract functions
 #
 
-class Messaging():
+class MessageController():
 
 	def __init__(self):
 		self.subscriber = None
