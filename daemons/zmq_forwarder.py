@@ -95,7 +95,7 @@ def init_logging_s( address=('localhost', SYSLOG_UDP_PORT), facility="zmqfwd", s
 
 # Defines how to handle output
 def myprint1( message, level=LL_INFO, tag=""):
-	logger = logging.getLogger('headunit')
+	logger = logging.getLogger('zmqfwd')
 	logger.log(level, message, extra={'tag': tag})
 	
 def printer( message, level=20, continuation=False, tag='SYSTEM' ):
@@ -141,6 +141,7 @@ def main():
 	
 	port_client = configuration['zeromq']['port_client']
 	port_server = configuration['zeromq']['port_server']
+	backend = None
 
 	try:
 		context = zmq.Context(1)
