@@ -243,11 +243,15 @@ def configuration_load( configfile, defaultconfig=None ):
 	restored = False
 	
 	# use the default from the config dir, in case the configfile is not found (first run)
-	if not os.path.exists(configfile) and os.path.exists(defaultconfig):
-		printer('Configuration not present (first run?); loading default: {0}'.format( defaultconfig ), tag='CONFIG')
-		restored = configuration_restore( configfile, defaultconfig )
-		if not restored:
-			printer('Restoring configuration {0}: [FAIL]'.format(defaultconfig), LL_CRITICAL, tag='CONFIG')
+	if not os.path.exists(configfile):
+		if defaultconfig and os.path.exists(defaultconfig):
+			printer('Configuration not present (first run?); loading default: {0}'.format( defaultconfig ), tag='CONFIG')
+			restored = configuration_restore( configfile, defaultconfig )
+			if not restored:
+				printer('Restoring configuration {0}: [FAIL]'.format(defaultconfig), LL_CRITICAL, tag='CONFIG')
+				return None
+		else:
+			printer('Configuration not present, and default missing')
 			return None
 
 	# open configuration file (restored or original) and Try to parse it
