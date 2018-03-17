@@ -98,6 +98,7 @@ def myprint1( message, level=LL_INFO, tag=""):
 	
 def printer( message, level=20, continuation=False, tag='SYSTEM' ):
 	#TODO: test if headunit logger exist...
+	print(message)
 	if continuation:
 		myprint1( message, level, '.'+tag )
 	else:
