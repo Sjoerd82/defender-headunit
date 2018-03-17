@@ -97,7 +97,7 @@ def load_configuration():
 	# utils
 	configuration = configuration_load(CONFIG_FILE)
 	
-	if not 'zeromq' in configuration:
+	if not configuration or not 'zeromq' in configuration:
 		printer('Error: ZeroMQ not in configuration, using defaults:')
 		printer('Client port: {0}'.format(DEFAULT_PORT_CLIENT))
 		printer('Server port: {0}'.format(DEFAULT_PORT_SERVER))
