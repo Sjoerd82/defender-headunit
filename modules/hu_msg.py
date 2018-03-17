@@ -71,7 +71,7 @@ class MessageController():
 
 	#todo: port numbers ?
 	def connect(self):
-		retval = zmq_connect(self, self.publisher, self.subscriber)
+		retval = zmq_connect(self.publisher, self.subscriber)
 		return retval
 
 	def send_command(self, path, command, **kwargs):
