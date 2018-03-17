@@ -65,7 +65,7 @@ tagcolors = {
  }
 
 
-def printer( message, level=LL_INFO, tag="", logger_name):
+def printer( message, level=LL_INFO, tag=""): #, logger_name):
 	#logger = logging.getLogger('headunit')
 	#logger = logging.getLogger(logger_name)
 	logger = logging.getLogger(__name__)
@@ -225,7 +225,7 @@ def tag ( tagname, format='ANSI', tagsize=6 ):
 # ********************************************************************************
 # Load JSON configuration
 #
-def configuration_load( logger, configfile, defaultconfig=None ):
+def configuration_load( configfile, defaultconfig=None ):
 
 	# ********************************************************************************
 	# Restore default configuration

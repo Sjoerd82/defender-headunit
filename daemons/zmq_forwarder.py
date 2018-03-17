@@ -95,7 +95,7 @@ def init_logging_s( address=('localhost', SYSLOG_UDP_PORT), socktype=socket.SOCK
 def load_configuration():
 
 	# utils # todo, present with logger
-	configuration = configuration_load(logger, CONFIG_FILE)
+	configuration = configuration_load(CONFIG_FILE)
 	
 	if not configuration or not 'zeromq' in configuration:
 		printer('Error: Configuration file not found, or error parsing OR:')	
