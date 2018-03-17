@@ -69,15 +69,35 @@ def parse_args():
 
 def setup():
 
+	global logger
 	global messaging
 	global adc
 
+	#
+	# Logging
+	#
+	logger = logging.getLogger(LOGGER_NAME)
+	logger.setLevel(logging.DEBUG)
+
+	# Start logging to console or syslog
+	if DAEMONIZED:
+		# output to syslog
+		logger = log_create_syslog_loghandler(logger, LOG_LEVEL, LOG_TAG, address='/dev/log' )
+		
+	else:
+		# output to console
+		logger = log_create_console_loghandler(logger, LOG_LEVEL, LOG_TAG)
+	
+	#
 	# ZMQ
+	#
 	messaging = MessageController()
 	if not messaging.connect():
 		printer("Failed to connect to messenger", level=LL_CRITICAL)
 
+	#
 	# ADC
+	#
 	adc = Adafruit_ADS1x15.ADS1015()
 
 	printer('Initialized [OK]')
