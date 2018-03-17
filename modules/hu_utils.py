@@ -114,6 +114,14 @@ def check_running( pid_file ):
 # PulseAudio
 #
 def pa_sfx_load( sfxdir ):
+
+	# TODO: PYTHON3: USE SHUTIL
+	pactl = "/bin/patcl"
+
+	if not os.path.isfile( pactl ):
+		printer("PulseAudio pactl not found, cannot load sound effects")
+		return False
+	
 	printer('Loading sound effects')
 	call(["pactl","upload-sample",sfxdir+"/startup.wav", "startup"])
 	call(["pactl","upload-sample",sfxdir+"/beep_60.wav", "beep_60"])
@@ -122,11 +130,20 @@ def pa_sfx_load( sfxdir ):
 	call(["pactl","upload-sample",sfxdir+"/beep_60_x2.wav", "beep_60_x2"])
 	call(["pactl","upload-sample",sfxdir+"/error.wav", "error"])
 	call(["pactl","upload-sample",sfxdir+"/bt.wav", "bt"])
+	return True
 
 #
 def pa_sfx( sfx ):
 
 	print("PA SFX: {0}".format(sfx)) # TODO LL_DEBUG
+
+	# TODO: PYTHON3: USE SHUTIL
+	pactl = "/bin/patcl"
+
+	if not os.path.isfile( pactl ):
+		printer("PulseAudio pactl not found, cannot load sound effects")
+		return False
+	
 	#global sPaSfxSink
 	#global bBeep
 	sPaSfxSink = "alsa_output.platform-soc_sound.analog-stereo"
@@ -147,6 +164,8 @@ def pa_sfx( sfx ):
 			subprocess.call(["pactl", "play-sample", "bt", sPaSfxSink])
 		elif sfx == 'reset_shuffle':
 			subprocess.call(["pactl", "play-sample", "beep_60_x2", sPaSfxSink])
+	
+	return True
 
 # Return dictionary with mounts
 # optionally apply a filter on device and/or fs and/or a list of mountpoints to exclude
