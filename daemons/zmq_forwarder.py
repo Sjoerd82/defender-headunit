@@ -16,35 +16,27 @@
 #
 
 import zmq						# ZeroMQ
-#import sys						# path
 from sys import path			# path
-#import datetime				# logging
-#import os						#
 from logging import getLogger	# logger
-
 
 #sys.path.append('../modules')
 sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
-#from hu_logger import ColoredFormatter
-#from hu_logger import RemAnsiFormatter
 from hu_msg import MessageController
 
 # Global variables and constants
+CONFIG_FILE = '/etc/configuration.json'
 DEFAULT_PORT_CLIENT = 5559
 DEFAULT_PORT_SERVER = 5560
-CONFIG_FILE = '/etc/configuration.json'
-configuration = None
+
+# Logging
 DAEMONIZED = None
-
-# for logging to syslog
-#SYSLOG_UDP_PORT=514
-LOG_LEVEL = LL_INFO
-
-#logging
 LOG_TAG = 'ZMQFWD'
 LOGGER_NAME = 'zmqfwd'
+LOG_LEVEL = LL_INFO
 logger = None
+
+configuration = None
 
 
 # ********************************************************************************
@@ -98,11 +90,11 @@ def setup():
 
 	# Start logging to console or syslog
 	if DAEMONIZED:
-		#init_logging_s( address='/dev/log' )	# output to syslog
+		# output to syslog
 		logger = log_create_syslog_loghandler(logger, LOG_LEVEL, LOG_TAG, address='/dev/log' )
 		
 	else:
-		#init_logging_c()						# output to console
+		# output to console
 		logger = log_create_console_loghandler(logger, LOG_LEVEL, LOG_TAG)
 
 def main():

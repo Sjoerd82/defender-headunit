@@ -92,18 +92,20 @@ from version import __version__
 #
 # Logging
 #
-import logging
-import logging.config
-#from logging import Formatter
-import datetime
+from logging import getLogger	# logger
+
 import os
 logger = None
 
-from modules.hu_logger import ColoredFormatter
-from modules.hu_logger import RemAnsiFormatter
-
 # for logging to syslog
 import socket
+
+#logging
+DAEMONIZED = None
+LOG_TAG = 'HEDUNT'
+LOGGER_NAME = 'hedunt'
+LOG_LEVEL = LL_INFO
+logger = None
 
 
 #********************************************************************************
@@ -178,11 +180,6 @@ ENV_SOURCE = os.getenv('HU_SOURCE')
 
 hu_details = { 'track':None, 'random':'off', 'repeat':True, 'att':False }
 
-# zmq
-subscriber = None
-publisher = None
-
-
 #def volume_att_toggle():
 #	hudispdata = {}
 #	hudispdata['att'] = '1'
@@ -192,15 +189,8 @@ publisher = None
 # ********************************************************************************
 # Output wrapper
 #
-def printer( message, level=20, continuation=False, tag='SYSTEM' ):
-	#TODO: test if headunit logger exist...
-	if continuation:
-		myprint( message, level, '.'+tag )
-	else:
-		myprint( message, level, tag )
-
-
-
+def printer( message, level=LL_INFO, continuation=False, tag=LOG_TAG ):
+	logger.log(level, message, extra={'tag': tag})
 	
 def queue(q, item, sfx=None):
 	#printer('Blocking Queue Size before: {0}'.format(qBlock.qsize()))
@@ -988,37 +978,6 @@ def shutdown():
 #  - Operational settings
 #
 
-# Initiate logger.
-def init_logging():
-
-	global logger
-
-	# logging is global
-	logger = logging.getLogger('headunit')
-	logger.setLevel(logging.DEBUG)
-
-# Initiate logging to console.
-# Use logger.info instead of print.
-def init_logging_c():
-
-	global logger
-	global LOGLEVEL_C
-
-	# create console handler
-	ch = logging.StreamHandler()
-	ch.setLevel(LOGLEVEL_C)
-
-	# create formatters
-	fmtr_ch = ColoredFormatter("%(tag)s%(message)s")
-
-	# add formatter to handlers
-	ch.setFormatter(fmtr_ch)
-
-	# add ch to logger
-	logger.addHandler(ch)
-	
-	logger.info('Logging started: Console',extra={'tag':'log'})
-
 # Initiate logging to log file.
 # Use logger.info instead of print.
 def init_logging_f( logdir, logfile, runcount ):
@@ -1065,28 +1024,6 @@ def init_logging_f( logdir, logfile, runcount ):
 				os.remove(os.path.join(logdir, filename))
 				logger.debug('Removing old log file: {0}'.format(filename),extra={'tag':'log'})
 
-
-# address may be a tuple consisting of (host, port) or a string such as '/dev/log'
-def init_logging_s( address=('localhost', SYSLOG_UDP_PORT), facility="HEADUNIT", socktype=socket.SOCK_DGRAM ):
-
-	global logger
-	
-	# create syslog handler
-	#sh = logging.handlers.SysLogHandler(address=address, facility=facility, socktype=socktype)
-	sh = logging.handlers.SysLogHandler(address=address, socktype=socktype)
-	sh.setLevel(logging.DEBUG)
-
-	# create formatters
-	fmtr_sh = RemAnsiFormatter("%(asctime)-9s [%(levelname)-8s] %(tag)s %(message)s")
-		
-	# add formatter to handlers
-	sh.setFormatter(fmtr_sh)
-
-	# add sh to logger
-	logger.addHandler(sh)
-	
-	logger.info('Logging started',extra={'tag':'log'})
-	
 	
 def init_load_config():
 
@@ -1492,14 +1429,18 @@ def setup():
 	# Logging
 	#
 	global logger
-	logger = logging.getLogger(__name__)
+	logger = logging.getLogger(LOGGER_NAME)
 	logger.setLevel(logging.DEBUG)
 
 	# Start logging to console or syslog
 	if DAEMONIZED:
-		init_logging_s( address='/dev/log' )	# output to syslog
+		# output to syslog
+		logger = log_create_syslog_loghandler(logger, LOG_LEVEL, LOG_TAG, address='/dev/log' )
+		
 	else:
-		init_logging_c()						# output to console
+		# output to console
+		logger = log_create_console_loghandler(logger, LOG_LEVEL, LOG_TAG)
+
 	
 	#
 	# Load main configuration
