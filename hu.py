@@ -1477,7 +1477,7 @@ def setup():
 	#
 	# "Splash Screen": Display version and play startup tune
 	#
-	myprint('Headunit.py version {0}'.format(__version__),tag='SYSTEM')
+	printer('Headunit.py version {0}'.format(__version__),tag='SYSTEM')
 	pa_sfx('startup')
 
 	#

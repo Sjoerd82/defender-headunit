@@ -35,8 +35,7 @@
 		, {
 		  "name":"Control: ADS1x15"
 		, "init.d":"S71ads1x15"
-		}
-	]
+		} ]
 	}
 	, "audio_output": {
 		"pulse-sink": "alsa_output.platform-soc_sound.analog-stereo"
