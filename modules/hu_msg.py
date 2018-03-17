@@ -11,6 +11,7 @@
 
 import zmq
 import time
+import sys
 from logging import getLogger	# logger
 
 sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
