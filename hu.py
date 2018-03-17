@@ -1466,11 +1466,9 @@ def setup():
 	#
 	# Start logging to file
 	#
-	# TODO: get settings from configuration.json
-	init_logging_f( configuration['directories']['log'],
-					configuration['files']['log'],
-					cSettings.incrRunCounter( max=999999 ) )
-					#settings['runcount'] )
+	#init_logging_f( configuration['directories']['log'],
+	#				configuration['files']['log'],
+	#				cSettings.incrRunCounter( max=999999 ) )
 
 	#
 	# Start logging to syslog

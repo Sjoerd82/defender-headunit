@@ -56,8 +56,8 @@ def load_configuration():
 	
 	if not configuration or not 'zeromq' in configuration:
 		printer('Error: Configuration not loaded or missing ZeroMQ, using defaults:')
-		printer('Client port: {0}'.format(DEFAULT_PORT_CLIENT))
-		printer('Server port: {0}'.format(DEFAULT_PORT_SERVER))
+		printer('Default Client port: {0}'.format(DEFAULT_PORT_CLIENT))
+		printer('Default Server port: {0}'.format(DEFAULT_PORT_SERVER))
 		configuration = { "zeromq": { "port_client": DEFAULT_PORT_CLIENT, "port_server":DEFAULT_PORT_SERVER } }
 	
 	return configuration
@@ -121,8 +121,11 @@ def main():
 		backend = context.socket(zmq.PUB)
 		backend.bind("tcp://*:{0}".format(port_server))
 
+		printer("Enabling Zero MQ forwarding on ports:")
+		printer('Client port: {0}'.format(port_client))
+		printer('Server port: {0}'.format(port_server))
 		zmq.device(zmq.FORWARDER, frontend, backend)
-		printer("Zero MQ forwarding enabled")
+
 	except Exception, e:
 		printer(e)
 		printer("Bringing down zmq device")
