@@ -1625,6 +1625,8 @@ def main():
 	global BOOT
 	global LOGLEVEL_C
 
+	global messaging
+
 	#
 	# Check if Source Controller started and available
 	#
