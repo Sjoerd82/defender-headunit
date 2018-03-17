@@ -314,8 +314,44 @@ def load_current_resume():
 		dLoad = pickle.load( open( pckl_file, "rb" ) )
 	return dLoad
 	
-	
 
+def dispatcher(path, command, arguments):
+	print("[MQ] Received Path: {0}; Command: {1}; Parameters: {2}".format(path,command,arguments))
+	handler_function = 'handle_path_' + path[0]
+	if handler_function in globals():
+		globals()[handler_function](item[1], item[2], item[3])
+	else:
+		print("No handler for: {0}".format(handler_function))
+	
+# Handler for path: /system/
+def handle_path_system(path,cmd,args):
+	base_path = 'system'
+	
+	# remove base path
+	del path[0]
+	
+	def put_reboot(**kwargs):
+		print("Rebooting!")
+		return True
+	
+	def put_halt(**kwargs):
+		print("Halting!")
+		return True
+		
+	if path:
+		function_to_call = cmd + '_' + '_'.join(path)
+	else:
+		# called without sub-paths
+		function_to_call = cmd + '_' + base_path
+
+	if function_to_call in locals():
+		ret = locals()[function_to_call](args)
+		printer('Executed {0} function {1} with result status: {2}'.format(base_path,function_to_call,ret))
+	else:
+		printer('Function {0} does not exist'.format(function_to_call))
+
+	
+	
 # ********************************************************************************
 # euuhh.
 
@@ -326,8 +362,7 @@ def idle_msg_receiver():
 	if msg:
 		print "Received message: {0}".format(msg)
 		parsed_msg = messaging.parse_message(msg)
-		print parsed_msg
-		#print("[MQ] Received Path: {0}; Command: {1}; Parameters: {2}".format(path,command,params))
+		dispatcher(parsed_msg['path'],parsed_msg['cmd'],parsed_msg['args'])
 		
 	return True
 
@@ -1285,6 +1320,26 @@ def worker_queue_async():
 		# sign off task
 		qAsync.task_done()
 
+
+# turn off the device
+def shutdown():
+	global configuration
+	global cSettings
+	global Sources
+
+	# save settings (hu_settings)
+	cSettings.save()
+
+	# stop source (hu_source)
+	Sources.sourceStop()
+	
+	# call shutdown command
+	"""  This command may be different on different distributions, therefore it's saved in the configuration
+	     Debian:    call(["systemctl", "poweroff", "-i"])
+	     Buildroot: call(["halt"])
+	"""
+	call(configuration['shutdown_cmd'])
+
 """
 def mq_recv():
 	message = subscriber.recv()
@@ -1657,7 +1712,7 @@ def main():
 		#TODO: try again later!
 		#TODO: enter holding pattern!
 
-	messaging.subscribe('/system/') #everything
+	messaging.subscribe('/system/')
 		
 	# BOOT is true for 'early boot'
 	#if BOOT and not prevSource = "" and not prevSource == SOURCE:

@@ -15,98 +15,73 @@
 # http://learning-0mq-with-pyzmq.readthedocs.io/en/latest/pyzmq/devices/forwarder.html
 #
 
-import zmq
-import sys
+import zmq				# ZeroMQ
+import sys				# path
+import datetime			# logging
+import os				#
+import logging			#
+import logging.config	#
+#import socket					# syslog
+from socket import SOCK_DGRAM	# syslog
+
+
 #sys.path.append('../modules')
 sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
-
-DEFAULT_PORT_CLIENT = 5559
-DEFAULT_PORT_SERVER = 5560
-
-CONFIG_FILE = '/etc/configuration.json'
-
-
-#logging
-import logging
-import logging.config
-#from logging import Formatter
-import datetime
-import os
-logger = None
-
 from hu_logger import ColoredFormatter
 from hu_logger import RemAnsiFormatter
 
-# for logging to syslog
-import socket
-SYSLOG_UDP_PORT=514
-LOGLEVEL_C = LL_INFO
+# Global variables and constants
+
+DEFAULT_PORT_CLIENT = 5559
+DEFAULT_PORT_SERVER = 5560
+CONFIG_FILE = '/etc/configuration.json'
 DAEMONIZED = None
 
-# Initiate logger.
-def init_logging():
+# for logging to syslog
+SYSLOG_UDP_PORT=514
+LOG_LEVEL = LL_INFO
 
-	global logger
+#logging
+LOG_TAG = 'ZMQFWD'
+logger = None
 
-	# logging is global
-	logger = logging.getLogger('zmqfwd')
-	logger.setLevel(logging.DEBUG)
-	
+
+# ********************************************************************************
+# Output wrapper
+#
+def printer( message, level=LL_INFO, continuation=False, tag=LOG_TAG ):
+	#logger = logging.getLogger(__name__)
+	logger.log(level, message, extra={'tag': tag})
+
+
 def init_logging_c():
-
-	global logger
-	global LOGLEVEL_C
-
-	# create console handler
-	ch = logging.StreamHandler()
-	ch.setLevel(LOGLEVEL_C)
-
-	# create formatters
-	fmtr_ch = ColoredFormatter("%(tag)s%(message)s")
-
-	# add formatter to handlers
-	ch.setFormatter(fmtr_ch)
-
-	# add ch to logger
-	logger.addHandler(ch)
+	# Create log handler
+	ch = logging.StreamHandler()						# create console handler
+	ch.setLevel(LOG_LEVEL)								# set log level
 	
+	# Formatter
+	fmtr_ch = ColoredFormatter("%(tag)s%(message)s")	# create formatters
+	ch.setFormatter(fmtr_ch)							# add formatter to handlers
+	
+	# Add handler
+	logger.addHandler(ch)								# add ch to logger
 	logger.info('Logging started: Console',extra={'tag':'log'})
 	
 # address may be a tuple consisting of (host, port) or a string such as '/dev/log'
-def init_logging_s( address=('localhost', SYSLOG_UDP_PORT), facility="zmqfwd", socktype=socket.SOCK_DGRAM ):
+def init_logging_s( address=('localhost', SYSLOG_UDP_PORT), socktype=socket.SOCK_DGRAM ):
+	# Create log handler
+	#sh =logging.handlers.SysLogHandler(address=address, facility=facility, socktype=socktype)
+	sh = logging.handlers.SysLogHandler(address=address, socktype=socktype)	# create syslog handler
+	sh.setLevel(LOG_LEVEL)
 
-	global logger
-	
-	# create syslog handler
-	#sh = logging.handlers.SysLogHandler(address=address, facility=facility, socktype=socktype)
-	sh = logging.handlers.SysLogHandler(address=address, socktype=socktype)
-	sh.setLevel(logging.DEBUG)
-
-	# create formatters
+	# Formatter
 	fmtr_sh = RemAnsiFormatter("%(asctime)-9s [%(levelname)-8s] %(tag)s %(message)s")
-		
-	# add formatter to handlers
-	sh.setFormatter(fmtr_sh)
+	sh.setFormatter(fmtr_sh)							# add formatter to handlers
 
-	# add sh to logger
-	logger.addHandler(sh)
-	
-	logger.info('Logging started',extra={'tag':'log'})
-
-# Defines how to handle output
-def myprint1( message, level=LL_INFO, tag=""):
-	logger = logging.getLogger('zmqfwd')
-	logger.log(level, message, extra={'tag': tag})
-	
-def printer( message, level=20, continuation=False, tag='SYSTEM' ):
-	#TODO: test if headunit logger exist...
-	print(message)
-	if continuation:
-		myprint1( message, level, '.'+tag )
-	else:
-		myprint1( message, level, tag )
-
+	# Add handler
+	logger.addHandler(sh)								# add sh to logger
+	logger.info('Logging started: Syslog',extra={'tag':'log'})
 
 def load_configuration():
 
@@ -127,24 +102,30 @@ def load_configuration():
 # Command line takes precedence over environment variables and settings.json
 #
 def parse_args():
+
 	import argparse
 
-	global LOGLEVEL_C
-	global DAEMONIZED
-	
 	parser = argparse.ArgumentParser(description='ZeroMQ forwarder device')
 	parser.add_argument('--loglevel', action='store', default=LL_INFO, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)
 	parser.add_argument('-b', action='store_true')	# background, ie. no output to console
 	args = parser.parse_args()
 
-	LOGLEVEL_C = args.loglevel
+	LOG_LEVEL = args.loglevel
 	DAEMONIZED = args.b
 
-	init_logging()	
+		
+def setup():
+	#
+	# initiate logger
+	#
+	logger = logging.getLogger(__name__)
+	logger.setLevel(logging.DEBUG)
+
 	if DAEMONIZED:
 		init_logging_s( address='/dev/log' )	# output to syslog
 	else:
 		init_logging_c()						# output to console
+
 
 def main():
 
@@ -185,5 +166,6 @@ def main():
 
 if __name__ == "__main__":
 	parse_args()
+	setup()
 	main()
 	
