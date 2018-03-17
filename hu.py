@@ -1610,7 +1610,7 @@ def setup():
 	# end of initialization
 	#
 	#********************************************************************************
-	myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
+	printer('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 
 
 #********************************************************************************
