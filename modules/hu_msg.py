@@ -98,6 +98,10 @@ class MessageController():
 		return retval
 	"""
 
+	def receive(self):
+		received = zmq_recv(self.subscriber)
+		return received
+	
 	def recv_data(self):
 		zmq_recv(self.subscriber)
 	

@@ -142,10 +142,8 @@ from dbus.mainloop.glib import DBusGMainLoop
 from modules.hu_msg import MessageController
 from modules.hu_pulseaudio import *
 from modules.hu_volume import *
-#from modules.hu_source import SourceController
 from modules.hu_settings import *
 from modules.hu_mpd import *
-#from hu_menu import *
 
 #********************************************************************************
 # Third party and others...
@@ -155,7 +153,7 @@ from slugify import slugify
 
 
 # GLOBAL vars
-#Sources = SourceController()	# --> micro-service
+messaging = None
 Sources = None	#Temp.. REMOVE
 disp = None		# REMOVE
 arMpcPlaylistDirs = [ ]			#TODO: should probably not be global...
@@ -317,6 +315,16 @@ def load_current_resume():
 	return dLoad
 	
 	
+
+# ********************************************************************************
+# euuhh.
+
+def idle_msg_receiver():
+	global messaging
+	print "receiving..."
+	print message.receive()
+	return True
+
 # ********************************************************************************
 # Callback functions
 #
@@ -1801,7 +1809,7 @@ def main():
 	# Queue handler
 	# NOTE: Remember, everything executed through the qBlock queue blocks, including qPrio!
 	# IDEALLY, WE'D PUT THIS BACK IN A THREAD, IF THAT WOULD PERFORM... (which for some reason it doesn't!)
-	gobject.idle_add(zmq_recv)
+	gobject.idle_add(idle_msg_receiver)
 	queue_actions = Queue(maxsize=40)		# Blocking stuff that needs to run in sequence
 	#gobject.idle_add(process_queue)
 
