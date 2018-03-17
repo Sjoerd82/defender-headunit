@@ -14,77 +14,55 @@
 # Button presses are NOT asynchronous!! i.e. wait until a button press is handled before the next button can be handled.
 # TODO: Consider making them asynchronous, or at least the update lib (long) / volume (short) buttons
 
-import sys
-import os
-import time
+import sys						# path
+import os						# 
+import time						# sleep
+from logging import getLogger	# logger
+import Adafruit_ADS1x15			# ADS1x15 module
 
-# ZeroMQ
-import zmq
-
-# ADS1x15 module
-import Adafruit_ADS1x15
-
-# Utils
-sys.path.append('../modules')
+#sys.path.append('../modules')
+sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
+from hu_msg import MessageController
 
-
-#********************************************************************************
-# GLOBAL vars & CONSTANTS
+# *******************************************************************************
+# Global variables and constants
 #
 CONTROL_NAME='ad1x15'
 
 # adc
 adc = None
 
-# zmq
-subscriber = None
-publisher = None
+# Logging
+DAEMONIZED = None
+LOG_TAG = 'AD1X15'
+LOGGER_NAME = 'ad1x15'
+LOG_LEVEL = LL_INFO
+logger = None
+
+# Messaging
+messaging = None
 
 # ********************************************************************************
-# Zero MQ functions
+# Output wrapper
 #
-def zmq_connect():
-
-	global publisher
-	
-	printer("Connecting to ZeroMQ forwarder")
-
-	zmq_ctx = zmq.Context()
-	port_client = "5559"
-	publisher = zmq_ctx.socket(zmq.PUB)
-	publisher.connect("tcp://localhost:{0}".format(port_client))
-	
-def zmq_send(path_send,message):
-
-	global publisher
-
-	#TODO
-	#data = json.dumps(message)
-	data = message
-	printer("Sending message: {0} {1}".format(path_send, data))
-	publisher.send("{0} {1}".format(path_send, data))
-
-
-# TODO!!! the "headunit"-logger is no longer accessible once this script is started "on its own"..
-def myprint( message, level, tag ):
-	print("[{0}] {1}".format(tag,message))
-
-# Wrapper for "myprint"
-def printer( message, level=LL_INFO, continuation=False, tag=CONTROL_NAME ):
-	if continuation:
-		myprint( message, level, '.'+tag )
-	else:
-		myprint( message, level, tag )
+def printer( message, level=LL_INFO, continuation=False, tag=LOG_TAG ):
+	logger.log(level, message, extra={'tag': tag})
 
 def setup():
 
+	global messaging
+	global adc
+
+	# ZMQ
+	messaging = MessageController()
+	if not messaging.connect():
+		printer("Failed to connect to messenger", level=LL_CRITICAL)
+
 	# ADC
 	adc = Adafruit_ADS1x15.ADS1015()
-	# ZMQ
-	zmq_connect()
-	printer('Initialized [OK]')
 
+	printer('Initialized [OK]')
 		
 def main():
 
@@ -245,7 +223,7 @@ def main():
 	def handle_button_press( button_spec ):
 		if 'zmq_path' and 'zmq_cmd' in button_spec:
 
-			zmq_send(button_spec['zmq_path'],button_spec['zmq_cmd'])
+			send_command(button_spec['zmq_path'],button_spec['zmq_cmd'])
 			if button_spec['delay']:
 				button_down_delay()
 			elif button_spec['wait']:

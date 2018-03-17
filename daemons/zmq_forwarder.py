@@ -16,8 +16,7 @@
 #
 
 import zmq						# ZeroMQ
-#from sys import path			# path
-import sys
+import sys						# path
 from logging import getLogger	# logger
 
 #sys.path.append('../modules')
@@ -25,7 +24,9 @@ sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
 from hu_msg import MessageController
 
+# *******************************************************************************
 # Global variables and constants
+#
 CONFIG_FILE = '/etc/configuration.json'
 DEFAULT_PORT_CLIENT = 5559
 DEFAULT_PORT_SERVER = 5560
