@@ -1521,7 +1521,7 @@ def setup():
 	#
 	# Connect to ZMQ
 	#
-	zmq_connect()
+	#zmq_connect()
 	
 
 	#
