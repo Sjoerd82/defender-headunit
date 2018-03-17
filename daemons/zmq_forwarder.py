@@ -34,8 +34,8 @@ import datetime
 import os
 logger = None
 
-from modules.hu_logger import ColoredFormatter
-from modules.hu_logger import RemAnsiFormatter
+from hu_logger import ColoredFormatter
+from hu_logger import RemAnsiFormatter
 
 # for logging to syslog
 import socket
