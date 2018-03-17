@@ -172,7 +172,6 @@ CONFIG_FILE_DEFAULT = '/mnt/PIHU_APP/defender-headunit/config/configuration.json
 CONFIG_FILE = '/etc/configuration.json'
 VERSION = "1.0.0"
 PID_FILE = "hu"
-SYSLOG_UDP_PORT=514
 
 # ENVIRONMENT VARIABLES (deprecated)
 ENV_SOURCE = os.getenv('HU_SOURCE')
@@ -1027,7 +1026,7 @@ def init_logging_f( logdir, logfile, runcount ):
 	
 def init_load_config():
 
-	configuration = configuration_load( CONFIG_FILE, CONFIG_FILE_DEFAULT )
+	configuration = configuration_load( LOGGER_NAME, CONFIG_FILE, CONFIG_FILE_DEFAULT )
 	if configuration == None:
 		exit()
 

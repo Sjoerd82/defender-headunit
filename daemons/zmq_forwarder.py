@@ -16,7 +16,8 @@
 #
 
 import zmq						# ZeroMQ
-from sys import path			# path
+#from sys import path			# path
+import sys
 from logging import getLogger	# logger
 
 #sys.path.append('../modules')
