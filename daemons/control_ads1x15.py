@@ -16,7 +16,9 @@
 
 import sys						# path
 import os						# 
-import time						# sleep
+#import time						# sleep
+from time import sleep
+from time import clock
 from logging import getLogger	# logger
 import Adafruit_ADS1x15			# ADS1x15 module
 
@@ -293,7 +295,7 @@ def main():
 							long_press_ix = ix
 							long_press_start = time.clock()
 						else:
-							printer "DEBUG LP diff ={0}".format(time.clock()-long_press_start)
+							printer("DEBUG LP diff ={0}".format(time.clock()-long_press_start))
 							if time.clock()-long_press_start > button['long_press']:
 								handle_button_press(button)
 					else:
