@@ -243,7 +243,7 @@ def main():
 		value_0 = adc.read_adc(0)
 		while value_0 > BUTTON_LO:
 			value_0 = adc.read_adc(0)
-			time.sleep(0.1)
+			sleep(0.1)
 		printer("...released")
 		
 	def button_down_delay():
@@ -258,7 +258,7 @@ def main():
 			press_count+=1
 			printer(press_count)
 			value_0 = adc.read_adc(0)
-			time.sleep(0.1)
+			sleep(0.1)
 		printer("...released/max. delay reached")
 	
 	def handle_button_press( button_spec ):
@@ -293,10 +293,10 @@ def main():
 						if not long_press_ix:
 							printer("Waiting for button to be pressed at least {0} seconds".format(button['long_press']))
 							long_press_ix = ix
-							long_press_start = time.clock()
+							long_press_start = clock()
 						else:
-							printer("DEBUG LP diff ={0}".format(time.clock()-long_press_start))
-							if time.clock()-long_press_start > button['long_press']:
+							printer("DEBUG LP diff ={0}".format(clock()-long_press_start))
+							if clock()-long_press_start > button['long_press']:
 								handle_button_press(button)
 					else:
 						# check if another button is pressed before completing the long-press
@@ -362,7 +362,7 @@ def main():
 			
 		"""
 		
-		time.sleep(0.1)
+		sleep(0.1)
 
 if __name__ == "__main__":
 	parse_args()
