@@ -9,6 +9,8 @@
 # any other MQ software
 #
 
+
+
 #********************************************************************************
 # ZeroMQ
 #
@@ -20,7 +22,7 @@ def zmq_connect(publisher, subscriber):
 	#global subscriber
 	#global publisher
 
-	printer("Connecting to ZeroMQ forwarder")
+	print("Connecting to ZeroMQ forwarder")
 	
 	zmq_ctx = zmq.Context()
 	subscriber = zmq_ctx.socket (zmq.SUB)
@@ -55,7 +57,7 @@ def zmq_recv(subscriber):
 	message_encoded = subscriber.recv()
 	#message = json.loads(message_encoded)
 	message = message_encoded
-	printer("Received message: {0}".format(message))
+	print("Received message: {0}".format(message))
 	#parse_message(message)
 	return True
 	
