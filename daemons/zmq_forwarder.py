@@ -25,21 +25,106 @@ DEFAULT_PORT_SERVER = 5560
 
 CONFIG_FILE = '/etc/configuration.json'
 
+
+#logging
+import logging
+import logging.config
+#from logging import Formatter
+import datetime
+import os
+logger = None
+
+from modules.hu_logger import ColoredFormatter
+from modules.hu_logger import RemAnsiFormatter
+
+# for logging to syslog
+import socket
+
+
+# Initiate logger.
+def init_logging():
+
+	global logger
+
+	# logging is global
+	logger = logging.getLogger('zmqfwd')
+	logger.setLevel(logging.DEBUG)
+	
+def init_logging_c():
+
+	global logger
+	global LOGLEVEL_C
+
+	# create console handler
+	ch = logging.StreamHandler()
+	ch.setLevel(LOGLEVEL_C)
+
+	# create formatters
+	fmtr_ch = ColoredFormatter("%(tag)s%(message)s")
+
+	# add formatter to handlers
+	ch.setFormatter(fmtr_ch)
+
+	# add ch to logger
+	logger.addHandler(ch)
+	
+	logger.info('Logging started: Console',extra={'tag':'log'})
+	
+# address may be a tuple consisting of (host, port) or a string such as '/dev/log'
+def init_logging_s( address=('localhost', SYSLOG_UDP_PORT), facility="zmqfwd", socktype=socket.SOCK_DGRAM ):
+
+	global logger
+	
+	# create syslog handler
+	#sh = logging.handlers.SysLogHandler(address=address, facility=facility, socktype=socktype)
+	sh = logging.handlers.SysLogHandler(address=address, socktype=socktype)
+	sh.setLevel(logging.DEBUG)
+
+	# create formatters
+	fmtr_sh = RemAnsiFormatter("%(asctime)-9s [%(levelname)-8s] %(tag)s %(message)s")
+		
+	# add formatter to handlers
+	sh.setFormatter(fmtr_sh)
+
+	# add sh to logger
+	logger.addHandler(sh)
+	
+	logger.info('Logging started',extra={'tag':'log'})
+
+# Defines how to handle output
+def myprint1( message, level=LL_INFO, tag=""):
+	logger = logging.getLogger('headunit')
+	logger.log(level, message, extra={'tag': tag})
+	
+def printer( message, level=20, continuation=False, tag='SYSTEM' ):
+	#TODO: test if headunit logger exist...
+	if continuation:
+		myprint1( message, level, '.'+tag )
+	else:
+		myprint1( message, level, tag )
+
+
 def load_configuration():
 
 	configuration = {}
 	#configuration = configuration_load(CONFIG_FILE)
 	
 	if not 'zeromq' in configuration:
-		print('Error: ZeroMQ not in configuration, using defaults:')
-		print('Client port: {0}'.format(DEFAULT_PORT_CLIENT))
-		print('Server port: {0}'.format(DEFAULT_PORT_SERVER))
+		printer('Error: ZeroMQ not in configuration, using defaults:')
+		printer('Client port: {0}'.format(DEFAULT_PORT_CLIENT))
+		printer('Server port: {0}'.format(DEFAULT_PORT_SERVER))
 		configuration = { "zeromq": { "port_client": DEFAULT_PORT_CLIENT, "port_server":DEFAULT_PORT_SERVER } }
 	
 	return configuration
 
 def main():
 
+	#
+	# Parse arguments (TODO)
+	#
+
+	# background/daemon mode: log to syslog
+	
 	#
 	# Load main configuration
 	#
@@ -64,10 +149,10 @@ def main():
 		backend.bind("tcp://*:{0}".format(port_server))
 
 		zmq.device(zmq.FORWARDER, frontend, backend)
-		print("Zero MQ forwarding enabled")
+		printer("Zero MQ forwarding enabled")
 	except Exception, e:
-		print e
-		print "Bringing down zmq device"
+		printer(e)
+		printer("Bringing down zmq device")
 	finally:
 		pass
 		frontend.close()
@@ -76,3 +161,4 @@ def main():
 
 if __name__ == "__main__":
 	main()
+	
