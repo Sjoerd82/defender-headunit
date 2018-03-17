@@ -3,7 +3,6 @@
 # Has no dependencies*
 #
 
-# myprint()
 import logging
 from logging import Formatter
 import copy
@@ -66,13 +65,10 @@ tagcolors = {
  }
 
 
-# Defines how to handle output
-def myprint( message, level=LL_INFO, tag=""):
-	logger = logging.getLogger('headunit')
-	logger.log(level, message, extra={'tag': tag})
-
-def printer( message, level=LL_INFO, tag=""):
-	logger = logging.getLogger('headunit')
+def printer( message, level=LL_INFO, tag="", logger_name):
+	#logger = logging.getLogger('headunit')
+	#logger = logging.getLogger(logger_name)
+	logger = logging.getLogger(__name__)
 	logger.log(level, message, extra={'tag': tag})
 
 
@@ -229,7 +225,7 @@ def tag ( tagname, format='ANSI', tagsize=6 ):
 # ********************************************************************************
 # Load JSON configuration
 #
-def configuration_load( configfile, defaultconfig=None ):
+def configuration_load( logger, configfile, defaultconfig=None ):
 
 	# ********************************************************************************
 	# Restore default configuration
