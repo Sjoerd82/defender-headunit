@@ -44,6 +44,7 @@ LOG_LEVEL = LL_INFO
 
 #logging
 LOG_TAG = 'ZMQFWD'
+LOGGER_NAME = 'zmqfwd'
 logger = None
 
 
@@ -95,7 +96,7 @@ def init_logging_s( address=('localhost', SYSLOG_UDP_PORT), socktype=socket.SOCK
 def load_configuration():
 
 	# utils # todo, present with logger
-	configuration = configuration_load(__name__,CONFIG_FILE)
+	configuration = configuration_load(LOGGER_NAME,CONFIG_FILE)
 	
 	if not configuration or not 'zeromq' in configuration:
 		printer('Error: Configuration file not found, or error parsing OR:')	
@@ -130,10 +131,10 @@ def setup():
 	# Logging
 	#
 	global logger
-	logger = logging.getLogger(__name__)
+	logger = logging.getLogger(LOGGER_NAME)
 	logger.setLevel(logging.DEBUG)
 
-	print __name__
+	print "DEBUG: {0}".format(__name__)
 	# Start logging to console or syslog
 	if DAEMONIZED:
 		#init_logging_s( address='/dev/log' )	# output to syslog
