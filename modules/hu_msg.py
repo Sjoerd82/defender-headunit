@@ -9,8 +9,15 @@
 # any other MQ software
 #
 
+import zmq
+import time
+from logging import getLogger	# logger
 
-def printer( message, level=LL_INFO, tag="", logger_name=""):
+sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
+from hu_utils import *
+
+
+def printer( message, level=LL_INFO, tag="", logger_name=__name__):
 	logger = logging.getLogger(logger_name)
 	logger.log(level, message, extra={'tag': tag})
 
@@ -18,9 +25,6 @@ def printer( message, level=LL_INFO, tag="", logger_name=""):
 #********************************************************************************
 # ZeroMQ
 #
-
-import zmq
-import time
 
 def zmq_connect(publisher, subscriber):
 
