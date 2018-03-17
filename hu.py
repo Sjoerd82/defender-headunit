@@ -325,7 +325,7 @@ def idle_msg_receiver():
 	msg = messaging.receive_async()
 	if msg:
 		print "Received message: {0}".format(msg)
-		parsed_msg = parse_message(msg)
+		parsed_msg = messaging.parse_message(msg)
 		print parsed_msg
 		#print("[MQ] Received Path: {0}; Command: {1}; Parameters: {2}".format(path,command,params))
 		
