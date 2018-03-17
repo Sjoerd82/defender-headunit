@@ -261,7 +261,7 @@ def main():
 	
 	def handle_button_press( button_spec ):
 		if 'zmq_path' and 'zmq_cmd' in button_spec:
-			printer("Sending message: {0} {1}".format(button_spec['zmq_path'],button_spec['zmq_cmd'])
+			printer("Sending message: {0} {1}".format(button_spec['zmq_path'],button_spec['zmq_cmd']))
 			messaging.send_command(button_spec['zmq_path'],button_spec['zmq_cmd'])
 			if button_spec['delay']:
 				button_down_delay()
