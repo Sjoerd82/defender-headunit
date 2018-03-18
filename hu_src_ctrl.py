@@ -723,7 +723,7 @@ def setup():
 	#
 	# Load main configuration
 	#
-	configuration = configuration_load(CONFIG_FILE)
+	configuration = load_configuration()
 
 	#
 	# Load PulseAudio SFX
