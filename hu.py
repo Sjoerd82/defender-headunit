@@ -313,7 +313,7 @@ def dispatcher(path, command, arguments):
 	print("[MQ] Received Path: {0}; Command: {1}; Parameters: {2}".format(path,command,arguments))
 	handler_function = 'handle_path_' + path[0]
 	if handler_function in globals():
-		globals()[handler_function](item[1], item[2], item[3])
+		globals()[handler_function](path, command, arguments)
 	else:
 		print("No handler for: {0}".format(handler_function))
 	
