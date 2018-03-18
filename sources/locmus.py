@@ -103,19 +103,19 @@ class sourceClass():
 			
 			# check if the dir exists:
 			if not os.path.exists(mountpoint):
-				self.__printer(" > Local music directory does not exist.. creating...",LL_WARNING,True)
+				self.__printer(" > Local music directory does not exist.. creating...",LL_WARNING)
 				os.makedirs(mountpoint)
 				# obviously there will no be any music in that new directory, so marking it unavailable..
 				sourceCtrl.setAvailableIx( ix, False, ssIx )
 
 			if not os.path.exists(mountpoint):
-				self.__printer(" > Local music directory does not exist.. Failed creating?",LL_WARNING,True)
+				self.__printer(" > Local music directory does not exist.. Failed creating?",LL_WARNING)
 			else:
 				
 				if not os.listdir(mountpoint):
-					self.__printer(" > Local music directory is empty.",LL_WARNING,True)
+					self.__printer(" > Local music directory is empty.",LL_WARNING)
 				else:
-					self.__printer(" > Local music directory present and has files.",LL_INFO,True)
+					self.__printer(" > Local music directory present and has files.",LL_INFO)
 					
 					if not self.mpc.dbCheckDirectory( mpd_dir ):
 						self.__printer(" > Running MPD update for this directory.. ALERT! LONG BLOCKING OPERATION AHEAD...")

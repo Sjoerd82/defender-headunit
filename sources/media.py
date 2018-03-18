@@ -289,9 +289,9 @@ class sourceClass():
 			mpd_dir = location[1]
 			self.__printer('Media folder: {0}'.format(mountpoint))
 			if not os.listdir(mountpoint):
-				self.__printer(" > Removable music directory is empty.",LL_WARNING,True)
+				self.__printer(" > Removable music directory is empty.",LL_WARNING)
 			else:
-				self.__printer(" > Removable music directory present and has files.",LL_INFO,True)
+				self.__printer(" > Removable music directory present and has files.",LL_INFO)
 				if not self.mpc.dbCheckDirectory( mpd_dir ):
 					self.__printer(" > Running MPD update for this directory.. ALERT! LONG BLOCKING OPERATION AHEAD...")
 					self.mpc.update( mpd_dir, True )	#TODO: don't wait! set available on return of update..
