@@ -138,9 +138,18 @@ def handle_path_source(path,cmd,args):
 	# \player\track\next must be processed by the function called:
 	# track_next
 
-	def get_source(args):
-		# Retrieve list of, or specified source(s)
-		#msg_return ={}
+	def get_primary(args):
+		"""
+		Retrieve Primary Sources
+		
+		Arguments:
+			None			Retrieve list of all sources
+			<source_id>		Retrieve list of specified source
+			
+		Returns:
+			List of Sources
+			Specified Source
+		"""
 		if not args:
 			# return all sources
 			ret_sources = sc_sources.get_all_simple()
@@ -151,12 +160,25 @@ def handle_path_source(path,cmd,args):
 			# return source + subsource
 			#ret_sources = sc_sources.get(args[0],args[1])
 			ret_sources = None #function not implemented
-			
+		
 		data_path = "/data/sources" # TODO: use base_path
 		messaging.send_data(data_path,ret_sources)
 		return True
 
-	def set_source(args):
+	def put_primary(args):
+		"""
+		Set active (sub)source to <(sub)source_id>
+		Starts playback if P is specified, or not (default)
+		Does not start playback if S specified
+		
+		Arguments:
+			<source_id>
+			<source_id>,[subsource_id]
+			<source_id>,[subsource_id],[S|P]
+
+		Returns:
+			Nothing
+		"""
 		# Set active (sub)source to <id> (<subid>)
 		if not args:
 			printer('Function arguments missing', level=LL_ERROR)
@@ -167,29 +189,92 @@ def handle_path_source(path,cmd,args):
 			printer('More than two arguments given, ignoring extra arguments', level=LL_WARNING)
 			sc_sources.setCurrent(args[0],args[1])
 		return True
+	
+	def post_primary(args):
+		"""
+		Arguments:
+		Returns:
+		"""
+		return True
 		
+	def del_primary(args):
+		"""
+		Arguments:
+		Returns:
+		"""
+		return True
+	
 	def get_subsource(args):
+		"""
+		Arguments:
+		Returns:
+		"""
 		# Retrieve list of subsources for current or specified source
 		return True
 
-	def set_available(args):
+	def put_subsource(args):
+		"""
+		Arguments:
+		Returns:
+		"""
+		return True
+
+	def post_subsource(args):
+		"""
+		Arguments:
+		Returns:
+		"""
+		return True
+
+	def del_subsource(args):
+		"""
+		Arguments:
+		Returns:
+		"""
+		return True
+		
+	def get_available(args):
+		"""
+		Arguments:
+		Returns:
+		"""
 		# Retrieve list of available sources / Set available (F=Force)
 		return True
 
-	def set_next(args):
+	def set_available(args):
+		"""
+		Arguments:
+		Returns:
+		"""
+		# Retrieve list of available sources / Set available (F=Force)
+		return True
+
+	def put_next(args):
+		"""
+		Arguments:
+		Returns:
+		"""
 		# Set active (sub)source to the next available
 		ret = sc_sources.next()
 		printSummary(sc_sources)
 		return ret
 
-	def set_prev(args):
+	def put_prev(args):
+		"""
+		Arguments:
+		Returns:
+		"""
 		# Set active (sub)source to the prev available
 		sc_sources.next(True)
 		printSummary(sc_sources)
 		return True
-
-	#def all_check(args):
-		# Check all sources
+		
+	def put_check(args):
+		"""
+		Arguments:
+		Returns:
+		"""
+		return True
 			
 	if path:
 		function_to_call = cmd + '_' + '_'.join(path)

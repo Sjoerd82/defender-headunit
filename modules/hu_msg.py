@@ -128,6 +128,18 @@ class MessageController():
 		received = zmq_recv_async(self.subscriber)
 		return received
 	
+	def receive_poll(self,path,timeout):
+		self.subscriber.setsockopt (zmq.SUBSCRIBE, path)
+		print("Waiting for {0}ms for a message on {1}".format(timeout,path))
+		retval = self.subscriber.poll(timeout,zmq.POLLIN)
+		if retval == 0:
+			print "NOTHING RECEIVED WITHIN TIMEOUT"
+			return None
+		else:
+			print retval
+			received = zmq_recv(self.subscriber)
+			return received
+	
 	def recv_data(self):
 		zmq_recv(self.subscriber)
 	

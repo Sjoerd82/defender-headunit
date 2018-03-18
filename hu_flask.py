@@ -379,10 +379,11 @@ POST /plugin/<path:config>              Set for a plugin
 def get_source():
 	# Retrieve list of sources
 	messaging.send_command('/source','GET')
-	return "OK"
-	#msg = receive_message("/data/source")
+	#messaging.subscribe('/data/source')
+	sources = receive_poll('/data/source',5000)
+	
 	#return msg
-	return render_template('sources.html', sources=msg)
+	return render_template('sources.html', sources=sources)
 	#sources = [{ "code":"smb" }, { "code":"media" }]
 	#return jsonify({'sources': sources})
 
@@ -490,7 +491,7 @@ def post_player_track_track(track):
 #Next track
 @app.route('/hu/api/v1.0/player/next', methods=['GET'])
 def get_player_next():
-	publish_message("/player/next","SET")
+	publish_message("/player/next","SET")	
 	#stub = [{'a':'a'},{'b':'b'}]
 	#return jsonify({'stub':stub})
 	return "OK"
@@ -665,6 +666,8 @@ def setup():
 	messaging = MessageController()
 	if not messaging.connect():
 		printer("Failed to connect to messenger", level=LL_CRITICAL)
+		
+	#TODO? SUBSCRIBE TO TOPICS
 
 def main():
 
