@@ -619,6 +619,25 @@ def load_sources( plugindir ):
 		add_a_source(plugindir, sourcePluginName)
 
 
+def dispatcher(path, command, arguments):
+	print("[MQ] Received Path: {0}; Command: {1}; Parameters: {2}".format(path,command,arguments))
+	handler_function = 'handle_path_' + path[0]
+	if handler_function in globals():
+		globals()[handler_function](item[1], item[2], item[3])
+	else:
+		print("No handler for: {0}".format(handler_function))
+
+def idle_msg_receiver():
+	global messaging
+	
+	msg = messaging.receive_async()
+	if msg:
+		print "Received message: {0}".format(msg)
+		parsed_msg = messaging.parse_message(msg)
+		dispatcher(parsed_msg['path'],parsed_msg['cmd'],parsed_msg['args'])
+		
+	return True
+
 #********************************************************************************
 # Version
 #
@@ -757,7 +776,7 @@ def main():
 	# Queue handler
 	# NOTE: Remember, everything executed through the qBlock queue blocks, including qPrio!
 	# IDEALLY, WE'D PUT THIS BACK IN A THREAD, IF THAT WOULD PERFORM... (which for some reason it doesn't!)
-	gobject.idle_add(zmq_recv)
+	gobject.idle_add(idle_msg_receiver)
 	queue_actions = Queue(maxsize=40)		# Blocking stuff that needs to run in sequence
 	gobject.idle_add(process_queue)
 
