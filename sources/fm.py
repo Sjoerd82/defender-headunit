@@ -19,7 +19,7 @@ class sourceClass():
 	def __printer( self, message, level=LL_INFO, tag=LOG_TAG):
 		self.logger.log(level, message, extra={'tag': tag})
 
-	def __init__( self, logger ):
+	def __init__(self, logger):
 		self.logger = logger
 		
 	#def __del__( self ):

@@ -44,7 +44,7 @@ class SourceController():
 		# create a class object and store the reference to it
 		if 'sourceModule' in source_config:
 			obj = source_config['sourceModule']	#[0]
-			sc = getattr(obj,'sourceClass')()
+			sc = getattr(obj,'sourceClass')(self.logger)
 			self.lSourceClasses.append(sc)
 			#self.lSourceClasses.append(getattr(obj,'sourceClass')())
 			# add a class field containing the class
