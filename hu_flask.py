@@ -385,7 +385,8 @@ def get_source():
 	if not sources:
 		return "Nothing returned"
 	else:
-		return render_template('sources.html', sources=sources)
+		return sources
+		#return render_template('sources.html', sources=sources)
 
 
 @app.route('/hu/api/v1.0/source/<int:source_id>', methods=['GET'])
