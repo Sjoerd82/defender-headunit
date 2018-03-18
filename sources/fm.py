@@ -16,12 +16,11 @@ lFmStations = [ 96.40, 99.10, 101.20, 102.54 ]
 class sourceClass():
 
 	# output wrapper
-	def __printer( self, message, level=LL_INFO, continuation=False, tag=LOG_TAG, logger_name=LOGGER_NAME ):
-		logger = logging.getLogger(logger_name)
-		logger.log(level, message, extra={'tag': tag})
+	def __printer( self, message, level=LL_INFO, tag=LOG_TAG):
+		self.logger.log(level, message, extra={'tag': tag})
 
-	#def __init__( self ):
-		#self.__printer('Initialized')
+	def __init__( self, logger ):
+		self.logger = logger
 		
 	#def __del__( self ):
 		#self.__printer('FM CLASS DELETE!')		# 	ERROR! } Exception TypeError: TypeError("'NoneType' object is not iterable",)

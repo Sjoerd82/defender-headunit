@@ -27,11 +27,11 @@ class sourceClass():
 	mpc = None
 
 	# output wrapper
-	def __printer( self, message, level=LL_INFO, continuation=False, tag=LOG_TAG, logger_name=LOGGER_NAME ):
-		logger = logging.getLogger(logger_name)
-		logger.log(level, message, extra={'tag': tag})
+	def __printer( self, message, level=LL_INFO, tag=LOG_TAG):
+		self.logger.log(level, message, extra={'tag': tag})
 
-	def __init__( self ):
+	def __init__( self, logger ):
+		self.logger = logger
 		self.__printer('Source Class Init', level=LL_DEBUG)
 		self.mpc = mpdController()
 		
