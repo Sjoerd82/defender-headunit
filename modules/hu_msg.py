@@ -108,11 +108,11 @@ class MessageController():
 		return retval
 	"""
 
-	def send_data(self, path, data, retval='200'):
+	def send_data(self, path, payload, retval='200'):
 		# todo: check if already prefixed with "/data"-topic
 		data={}
 		data['retval'] = retval
-		data['payload'] = data
+		data['payload'] = payload
 		message = '{0} {1}'.format(path,data)
 		print("sending: {0}".format(message))
 		retval = zmq_send(self.publisher, message)
