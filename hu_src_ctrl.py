@@ -6,6 +6,8 @@
 # 2018-03-18
 # License: MIT
 #
+# Loads source plugins from /sources folder
+#
 
 import sys
 import json					# load json source configuration
@@ -44,11 +46,11 @@ LOG_TAG = 'SRCTRL'
 LOGGER_NAME = 'srctrl'
 LOG_LEVEL = LL_INFO
 
-sc_sources = SourceController()
 arMpcPlaylistDirs = [ ]			#TODO: should probably not be global...
 
 hu_details = { 'track':None, 'random':'off', 'repeat':True, 'att':False }
 
+sc_sources = None		# Source Controller
 mpdc = None				# MPD Controller
 messaging = None		# Messaging
 logger = None			# Logging
@@ -620,7 +622,6 @@ def load_sources( plugindir ):
 #********************************************************************************
 # Version
 #
-
 from version import __version__
 
 # ********************************************************************************
@@ -675,6 +676,7 @@ def setup():
 	global logger
 	global messaging
 	global configuration
+	global sc_sources
 
 	#
 	# Logging
@@ -707,57 +709,31 @@ def setup():
 	#
 	# Load PulseAudio SFX
 	#
-	#
 	pa_sfx_load( configuration['directories']['sfx'] )
-
-		
-	#
-	# Start logging to file
-	#
-	# TODO: get settings from configuration.json
-	#init_logging_f( configuration['directories']['log'],
-	#				configuration['files']['log'],
-	#				cSettings.incrRunCounter( max=999999 ) )
-	#				#settings['runcount'] )
-
-	#
-	# Start logging to syslog
-	#
-	# TODO: get settings from configuration.json
-	#init_logging_s( address='/dev/log' )
 
 	#
 	# "Splash Screen": Display version
 	#
-	#
-	printer('{0} version {1}'.format('Source Controller',__version__),tag='SYSTEM')
+	printer('{0} version {1}'.format('Source Controller',__version__))
 
 
 	#
-	# ZeroMQ
+	# Initialize Source Controller
 	#
-	#zmq_connect()
-
+	sc_sources = SourceController(logger)
+	
 	#
-	# App. Init
+	# Load Source Plugins
 	#
-	#
-	printer('Loading Source Plugins...',tag='SYSTEM')
-	# import sources directory
+	printer('Loading Source Plugins...')
 	import sources
-	# read source config files and start source inits
 	load_sources( os.path.join(os.path.dirname(os.path.abspath(__file__)),'sources') )
-
-	sc_sources.sourceCheckAll()
-	printSummary(sc_sources)
 
 	#
 	# end of initialization
 	#
 	#********************************************************************************
-	printer('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
 	printer('Initialized [OK]')
-
 
 
 #********************************************************************************
@@ -765,7 +741,8 @@ def setup():
 #
 def main():
 
-	exit(0)
+	sc_sources.sourceCheckAll()
+	printSummary(sc_sources)
 	
 	#
 	# Initialize the mainloop

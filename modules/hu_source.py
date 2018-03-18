@@ -5,7 +5,12 @@ import copy
 
 class SourceController():
 
-	def __init__(self):
+	def __printer( self, message, level=LL_INFO, continuation=False, tag='SOURCE'): #, logger_name='SOURCE' ):
+		#logger = logging.getLogger(logger_name)
+		self.__logger.log(level, message, extra={'tag': tag})
+	
+	def __init__(self, logger):
+		self.logger = logger
 		self.__printer('INIT', level=LL_DEBUG)
 		
 		# initialize instance variables:
@@ -16,10 +21,6 @@ class SourceController():
 		self.lSourceClasses = []
 		self.iRecentSS = None
 
-	def __printer( self, message, level=LL_INFO, continuation=False, tag='SOURCE', logger_name='SOURCE' ):
-		logger = logging.getLogger(logger_name)
-		logger.log(level, message, extra={'tag': tag})
-	
 	# add source
 	def add( self, source_config ):
 		# check required fields:
