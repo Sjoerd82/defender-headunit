@@ -294,6 +294,9 @@ def handle_path_player(path,cmd,args):
 
 	base_path = 'player'
 
+	# remove base path
+	del path[0]
+
 	# in paths are concatenated using underscore
 	# example:
 	# \player\track\next must be processed by the function called:

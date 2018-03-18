@@ -382,10 +382,10 @@ def get_source():
 	#messaging.subscribe('/data/source')
 	sources = messaging.receive_poll('/data/source',5000)
 	
-	#return msg
-	return render_template('sources.html', sources=sources)
-	#sources = [{ "code":"smb" }, { "code":"media" }]
-	#return jsonify({'sources': sources})
+	if not sources:
+		return "Nothing returned"
+	else:
+		return render_template('sources.html', sources=sources)
 
 
 @app.route('/hu/api/v1.0/source/<int:source_id>', methods=['GET'])
