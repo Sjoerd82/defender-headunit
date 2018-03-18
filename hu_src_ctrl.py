@@ -1,45 +1,32 @@
 #!/usr/bin/python
 
-# A car's headunit.
-# Source Controller
+# A car's Headunit Source Controller
 #
-# Author: Sjoerd Venema
+# Venema, S.R.G.
+# 2018-03-18
 # License: MIT
 #
 
 import sys
+import json					# load json source configuration
+from Queue import Queue		# queuing
+import inspect				# dynamic module loading
 
-# load json source configuration
-import json
-
-# queuing
-from Queue import Queue
-
-# dynamic module loading
-import inspect
-
-# main loop
-import gobject
+import gobject				# main loop
 from dbus.mainloop.glib import DBusGMainLoop
 
-# sockets
 import time
 
-#********************************************************************************
-#
-# Version
-#
-
-from version import __version__
 
 #********************************************************************************
 #
 # Logging
 #
 
-import logging
-import logging.config
+#import logging
+#import logging.config
 #from logging import Formatter
+from logging import getLogger
 import datetime
 import os
 logger = None
@@ -68,9 +55,11 @@ from modules.hu_utils import * #init_load_config
 import zmq
 from slugify import slugify
 
-#********************************************************************************
-# GLOBAL vars & CONSTANTS
+# *******************************************************************************
+# Global variables and constants
 #
+CONFIG_FILE = '/etc/configuration.json'
+
 
 sc_sources = SourceController()
 mpdc = None
@@ -79,20 +68,6 @@ CONFIG_FILE = None
 SYSLOG_UDP_PORT=514
 
 hu_details = { 'track':None, 'random':'off', 'repeat':True, 'att':False }
-
-# zmq
-subscriber = None
-publisher = None
-
-# ********************************************************************************
-# Output wrapper
-#
-def printer( message, level=20, continuation=False, tag='SYSTEM' ):
-	#TODO: test if headunit logger exist...
-	if continuation:
-		myprint( message, level, '.'+tag )
-	else:
-		myprint( message, level, tag )
 
 
 # ********************************************************************************
@@ -110,6 +85,7 @@ def printer( message, level=20, continuation=False, tag='SYSTEM' ):
 # ********************************************************************************
 # Zero MQ functions
 #
+"""
 def zmq_connect():
 
 	global subscriber
@@ -155,6 +131,7 @@ def zmq_recv():
 	printer("Received message: {0}".format(message))
 	parse_message(message)
 	return True
+"""
 
 def process_queue():
 	if not queue_actions.empty(): 
@@ -422,6 +399,7 @@ def player(path,cmd,args):
 #  - Summary printer
 #
 
+"""
 # Initiate logger.
 def init_logging():
 
@@ -519,7 +497,7 @@ def init_logging_s( address=('localhost', SYSLOG_UDP_PORT), facility="HEADUNIT",
 	logger.addHandler(sh)
 	
 	logger.info('Logging started',extra={'tag':'log'})
-	
+"""
 	
 # print a source summary
 def printSummary(Sources):
@@ -653,146 +631,188 @@ def load_sources( plugindir ):
 
 
 #********************************************************************************
+# Version
 #
-# Initialization
-#
-#def setup():
 
+from version import __version__
+
+# ********************************************************************************
+# Output wrapper
+#
+def printer( message, level=LL_INFO, continuation=False, tag=LOG_TAG ):
+	logger.log(level, message, extra={'tag': tag})
 
 #********************************************************************************
+# Parse command line arguments
 #
-# Parse command line arguments and environment variables
-# Command line takes precedence over environment variables and settings.json
-#
-import os
-import argparse
+def parse_args():
 
-ENV_CONFIG_FILE = os.getenv('HU_CONFIG_FILE')
-
-parser = argparse.ArgumentParser(description='Source Controller')
-parser.add_argument('--config','-c', required=False, action='store', help='Configuration file')
-parser.add_argument('--loglevel', action='store', default=LL_INFO, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)
-parser.add_argument('-b', action='store_true')	# background, ie. no output to console
-args = parser.parse_args()
-
-arg_config = args.config
-arg_loglevel = args.loglevel
-arg_b = args.b
-
-if arg_config:
-	CONFIG_FILE = arg_config
-elif ENV_CONFIG_FILE:
-	CONFIG_FILE = ENV_CONFIG_FILE
-else:
-	print("No configuration file given.")
-	exit(0)
-
-#
-# Start logging to console
-#
-# TODO: get settings from configuration.json
-init_logging()
-init_logging_c()
-
-#
-# Load main configuration
-#
-configuration = configuration_load(CONFIG_FILE)
-
-#
-# Load PulseAudio SFX
-#
-#
-pa_sfx_load( configuration['directories']['sfx'] )
-
+	import argparse
 	
-#
-# Start logging to file
-#
-# TODO: get settings from configuration.json
-#init_logging_f( configuration['directories']['log'],
-#				configuration['files']['log'],
-#				cSettings.incrRunCounter( max=999999 ) )
-#				#settings['runcount'] )
+	global LOG_LEVEL
+	global DAEMONIZED
 
-#
-# Start logging to syslog
-#
-# TODO: get settings from configuration.json
-init_logging_s( address='/dev/log' )
+	parser = argparse.ArgumentParser(description='Source Controller')
+	parser.add_argument('--config','-c', required=False, action='store', help='Configuration file')
+	parser.add_argument('--loglevel', action='store', default=LL_INFO, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)
+	parser.add_argument('-b', action='store_true')	# background, ie. no output to console
+	args = parser.parse_args()
 
-#
-# "Splash Screen": Display version
-#
-#
-myprint('{0} version {1}'.format('Source Controller',__version__),tag='SYSTEM')
+	LOG_LEVEL = args.loglevel
+	DAEMONIZED = args.b	
 
+	if args.config:
+		CONFIG_FILE = args.config
 
+# ********************************************************************************
+# Load configuration
 #
-# ZeroMQ
-#
-zmq_connect()
+def load_configuration():
 
-#
-# App. Init
-#
-#
-myprint('Loading Source Plugins...',tag='SYSTEM')
-# import sources directory
-import sources
-# read source config files and start source inits
-load_sources( os.path.join(os.path.dirname(os.path.abspath(__file__)),'sources') )
-
-sc_sources.sourceCheckAll()
-printSummary(sc_sources)
-
-#
-# end of initialization
-#
-#********************************************************************************
-myprint('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
-
+	# utils # todo, present with logger
+	configuration = configuration_load(LOGGER_NAME,CONFIG_FILE)
+	
+	if not configuration or not 'zeromq' in configuration:
+		printer('Error: Configuration not loaded or missing ZeroMQ, using defaults:')
+		printer('Default Client port: {0}'.format(DEFAULT_PORT_CLIENT))
+		printer('Default Server port: {0}'.format(DEFAULT_PORT_SERVER))
+		configuration = { "zeromq": { "port_client": DEFAULT_PORT_CLIENT, "port_server":DEFAULT_PORT_SERVER } }
+	
+	return configuration
 
 #********************************************************************************
+# Setup
 #
+def setup():
+
+	global logger
+	global messaging
+
+	#
+	# Logging
+	#
+	logger = logging.getLogger(LOGGER_NAME)
+	logger.setLevel(logging.DEBUG)
+
+	# Start logging to console or syslog
+	if DAEMONIZED:
+		# output to syslog
+		logger = log_create_syslog_loghandler(logger, LOG_LEVEL, LOG_TAG, address='/dev/log' )
+		
+	else:
+		# output to console
+		logger = log_create_console_loghandler(logger, LOG_LEVEL, LOG_TAG)
+	
+	#
+	# ZMQ
+	#
+	printer("Connecting to ZeroMQ forwarder")
+	messaging = MessageController()
+	if not messaging.connect():
+		printer("Failed to connect to messenger", level=LL_CRITICAL)
+
+	#
+	# Load main configuration
+	#
+	configuration = configuration_load(CONFIG_FILE)
+
+	#
+	# Load PulseAudio SFX
+	#
+	#
+	pa_sfx_load( configuration['directories']['sfx'] )
+
+		
+	#
+	# Start logging to file
+	#
+	# TODO: get settings from configuration.json
+	#init_logging_f( configuration['directories']['log'],
+	#				configuration['files']['log'],
+	#				cSettings.incrRunCounter( max=999999 ) )
+	#				#settings['runcount'] )
+
+	#
+	# Start logging to syslog
+	#
+	# TODO: get settings from configuration.json
+	#init_logging_s( address='/dev/log' )
+
+	#
+	# "Splash Screen": Display version
+	#
+	#
+	printer('{0} version {1}'.format('Source Controller',__version__),tag='SYSTEM')
+
+
+	#
+	# ZeroMQ
+	#
+	#zmq_connect()
+
+	#
+	# App. Init
+	#
+	#
+	printer('Loading Source Plugins...',tag='SYSTEM')
+	# import sources directory
+	import sources
+	# read source config files and start source inits
+	load_sources( os.path.join(os.path.dirname(os.path.abspath(__file__)),'sources') )
+
+	sc_sources.sourceCheckAll()
+	printSummary(sc_sources)
+
+	#
+	# end of initialization
+	#
+	#********************************************************************************
+	printer('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
+	printer('Initialized [OK]')
+
+
+
+#********************************************************************************
 # Mainloop
 #
-#def main():
+def main():
 
+	exit(0)
 	
-#
-# Initialize the mainloop
-DBusGMainLoop(set_as_default=True)
+	#
+	# Initialize the mainloop
+	DBusGMainLoop(set_as_default=True)
 
 
-#
-# main loop
-mainloop = gobject.MainLoop()
+	#
+	# main loop
+	mainloop = gobject.MainLoop()
 
-#
-# Queue handler
-# NOTE: Remember, everything executed through the qBlock queue blocks, including qPrio!
-# IDEALLY, WE'D PUT THIS BACK IN A THREAD, IF THAT WOULD PERFORM... (which for some reason it doesn't!)
-gobject.idle_add(zmq_recv)
-queue_actions = Queue(maxsize=40)		# Blocking stuff that needs to run in sequence
-gobject.idle_add(process_queue)
+	#
+	# Queue handler
+	# NOTE: Remember, everything executed through the qBlock queue blocks, including qPrio!
+	# IDEALLY, WE'D PUT THIS BACK IN A THREAD, IF THAT WOULD PERFORM... (which for some reason it doesn't!)
+	gobject.idle_add(zmq_recv)
+	queue_actions = Queue(maxsize=40)		# Blocking stuff that needs to run in sequence
+	gobject.idle_add(process_queue)
 
-#
-# Start the blocking main loop...
-#
-#with PidFile(PID_FILE) as p:
-try:
-	mainloop.run()
-finally:
-	mainloop.quit()
+	#
+	# Start the blocking main loop...
+	#
+	#with PidFile(PID_FILE) as p:
+	try:
+		mainloop.run()
+	finally:
+		mainloop.quit()
 
 
-# TODO
-# problem is that the setup() imports modules, yielding: SyntaxWarning: import * only allowed at module level
-# another issue is that all global vars need to be defined (not really a problem i think..)
-"""
+	# TODO
+	# problem is that the setup() imports modules, yielding: SyntaxWarning: import * only allowed at module level
+	# another issue is that all global vars need to be defined (not really a problem i think..)
+
 if __name__ == '__main__':
+	parse_args()
 	setup()
 	main()
-"""
+
 	

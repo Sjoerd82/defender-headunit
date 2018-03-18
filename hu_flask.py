@@ -5,10 +5,10 @@ from flask import render_template
 from flask import request
 from flask import url_for
 from flask import jsonify
-from flask_restful import Resource, Api
+#from flask_restful import Resource, Api
 
 app = Flask(__name__)
-api = Api(app)
+#api = Api(app)
 #
 # HU Utils
 #
@@ -44,6 +44,8 @@ logger = None
 
 configfile_found = None
 configuration = None
+
+API_VERSION = '/hu/api/v1.0'
 
 # ********************************************************************************
 # Output wrapper
@@ -175,23 +177,6 @@ nav_pills = [
 	 , "href:":"#" } ]
 
 	 
-class HelloWorld(Resource):
-    def get(self):
-        return {'hello': 'world'}
-
-api.add_resource(HelloWorld, '/hi')
-
-
-	 
-def publish_message(path,command="SET"):
-	try:
-		msg = "{0} {1}".format(path,command)
-		
-		print("Sending message : {0}".format(msg))
-		publisher.send(msg)
-	except Exception as e:
-		print("error {0}".format(e))
-
 def receive_message(path):
 	subscriber.setsockopt(zmq.SUBSCRIBE, path)
 	messagedata = subscriber.recv()
@@ -220,9 +205,6 @@ def publish_message(message):
 		# Otherwise you would get a - Adress already in use - error
 		zmq_sck.unbind(url)
 """
-
-
-
 
 #
 # Routes
@@ -392,11 +374,13 @@ GET  /plugin/api                        Get api from plugin
 POST /plugin/<path:config>              Set for a plugin
 """
 
-@app.route('/hu/api/v1.0/source', methods=['GET'])
+#@app.route('/hu/api/v1.0/source', methods=['GET'])
+@app.route(API_VERSION+'/source', methods=['GET'])
 def get_source():
 	# Retrieve list of sources
-	publish_message("/source","GET")
-	msg = receive_message("/data/source")
+	messaging.send_command('/source','GET')
+	
+	#msg = receive_message("/data/source")
 	#return msg
 	return render_template('sources.html', sources=msg)
 	#sources = [{ "code":"smb" }, { "code":"media" }]
@@ -444,7 +428,7 @@ def post_source_id_subsource_id(source_id,subsource_id):
 #Set active (sub)source to the next available
 @app.route('/hu/api/v1.0/source/next', methods=['GET'])
 def post_source_next():
-	publish_message("/player/next","SET")
+	messaging.send_command(("/player/next","SET")
 	return "OK"
 	#stub = [{'a':'a'},{'b':'b'}]
 	#return jsonify({'stub':stub})
