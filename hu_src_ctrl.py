@@ -71,58 +71,6 @@ queue_actions = None
 #
 
 
-
-# ********************************************************************************
-# Zero MQ functions
-#
-"""
-def zmq_connect():
-
-	global subscriber
-	global publisher
-	
-	printer("Connecting to ZeroMQ forwarder")
-
-	zmq_ctx = zmq.Context()
-	subscriber = zmq_ctx.socket (zmq.SUB)
-	port_server = "5560" #TODO: get port from config
-	subscriber.connect ("tcp://localhost:{0}".format(port_server)) # connect to server
-
-	port_client = "5559"
-	publisher = zmq_ctx.socket(zmq.PUB)
-	publisher.connect("tcp://localhost:{0}".format(port_client))
-	
-	#
-	# Subscribe to topics
-	#
-	topics = ['/source','/player']
-	for topic in topics:
-		subscriber.setsockopt (zmq.SUBSCRIBE, topic)
-
-
-def zmq_send(path,message):
-
-	global publisher
-
-	#TODO
-	path_send = '/data' + path
-	data = json.dumps(message)
-	printer("Sending message: {0} {1}".format(path_send, data))
-	publisher.send("{0} {1}".format(path_send, data))
-	time.sleep(1)
-
-def zmq_recv():
-
-	global subscriber
-
-	message_encoded = subscriber.recv()
-	#message = json.loads(message_encoded)
-	message = message_encoded
-	printer("Received message: {0}".format(message))
-	parse_message(message)
-	return True
-"""
-
 def process_queue():
 	if not queue_actions.empty(): 
  		item = queue_actions.get()
@@ -180,7 +128,7 @@ def parse_message(message):
 				item.append(params)
 				queue_actions.put(item, False) # False=Non-Blocking
 
-def source(path,cmd,args):
+def handle_path_source(path,cmd,args):
 
 	base_path = 'source'
 	
@@ -255,7 +203,7 @@ def source(path,cmd,args):
 		
 	return True
 		
-def player(path,cmd,args):
+def handle_path_player(path,cmd,args):
 
 	base_path = 'player'
 

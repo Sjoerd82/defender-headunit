@@ -379,7 +379,7 @@ POST /plugin/<path:config>              Set for a plugin
 def get_source():
 	# Retrieve list of sources
 	messaging.send_command('/source','GET')
-	msg = "X"
+	return "OK"
 	#msg = receive_message("/data/source")
 	#return msg
 	return render_template('sources.html', sources=msg)
