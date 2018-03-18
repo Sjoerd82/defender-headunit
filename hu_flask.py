@@ -428,7 +428,7 @@ def post_source_id_subsource_id(source_id,subsource_id):
 #Set active (sub)source to the next available
 @app.route('/hu/api/v1.0/source/next', methods=['GET'])
 def post_source_next():
-	messaging.send_command(("/player/next","SET")
+	messaging.send_command("/player/next","SET")
 	return "OK"
 	#stub = [{'a':'a'},{'b':'b'}]
 	#return jsonify({'stub':stub})
