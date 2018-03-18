@@ -60,12 +60,20 @@ from slugify import slugify
 #
 CONFIG_FILE = '/etc/configuration.json'
 
+# Logging
+DAEMONIZED = None
+LOG_TAG = 'AD1X15'
+LOGGER_NAME = 'ad1x15'
+LOG_LEVEL = LL_INFO
+logger = None
+
+# Messaging
+messaging = None
 
 sc_sources = SourceController()
 mpdc = None
 arMpcPlaylistDirs = [ ]			#TODO: should probably not be global...
-CONFIG_FILE = None
-SYSLOG_UDP_PORT=514
+#SYSLOG_UDP_PORT=514
 
 hu_details = { 'track':None, 'random':'off', 'repeat':True, 'att':False }
 
