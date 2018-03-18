@@ -152,7 +152,8 @@ def handle_path_source(path,cmd,args):
 			#ret_sources = sc_sources.get(args[0],args[1])
 			ret_sources = None #function not implemented
 			
-		zmq_send('/source', ret_sources) # TODO: use base_path
+		data_path = "/data/sources" # TODO: use base_path
+		messaging.send_data(data_path,ret_sources)
 		return True
 
 	def set_source(args):

@@ -108,6 +108,16 @@ class MessageController():
 		return retval
 	"""
 
+	def send_data(self, path, data, retval='200'):
+		# todo: check if already prefixed with "/data"-topic
+		data={}
+		data['retval'] = retval
+		data['payload'] = data
+		message = '{0} {1}'.format(path,data)
+		print("sending: {0}".format(message))
+		retval = zmq_send(self.publisher, message)
+		return retval	
+	
 	# Blocking function
 	def receive(self, ):
 		received = zmq_recv(self.subscriber)
