@@ -5,9 +5,10 @@ from flask import render_template
 from flask import request
 from flask import url_for
 from flask import jsonify
+from flask_restful import Resource, Api
 
 app = Flask(__name__)
-
+api = Api(app)
 #
 # HU Utils
 #
@@ -173,6 +174,15 @@ nav_pills = [
 	 , "id":"logging"
 	 , "href:":"#" } ]
 
+	 
+class HelloWorld(Resource):
+    def get(self):
+        return {'hello': 'world'}
+
+api.add_resource(HelloWorld, '/hi')
+
+
+	 
 def publish_message(path,command="SET"):
 	try:
 		msg = "{0} {1}".format(path,command)
@@ -210,6 +220,8 @@ def publish_message(message):
 		# Otherwise you would get a - Adress already in use - error
 		zmq_sck.unbind(url)
 """
+
+
 
 
 #
