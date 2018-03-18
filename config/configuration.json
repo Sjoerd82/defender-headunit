@@ -32,6 +32,10 @@
 		  "name":"ZMQ Forwarder"
 		, "init.d":"S30zmqfwd"
 		}
+		{
+		  "name":"Flask HTTP server"
+		, "init.d":"S95flask"
+		}
 		, {
 		  "name":"Control: ADS1x15"
 		, "init.d":"S71ads1x15"
@@ -55,8 +59,8 @@
 		, "start_min": "20"
 		, "start_max": "70"
 	}
-	, "webserver": {
-		  "http_port": 8289
+	, "flask": {
+		  "port_www": 8289
 		, "password": "(hash)" 
 	}
 	, "zeromq": {
@@ -174,19 +178,29 @@
 					 , "device":"hw:0,0"
 				  }
 				, {  "type":"pipe" 
-				     , "name":"DSP crossover/eq 2 channel mono"
+				     , "name":"Alsa: DSP crossover/eq 2 channel mono"
 				     , "format":"44100:32:2"
 				     , "mixer_type":"software"
 					 , "command":"ecasound -q -z:nodb -z:mixmode,sum -a:pre -f:s32_le,2,44100 -i:stdin -pf:/etc/pre.ecp -o:loop,1 -a:woofer,tweeter -i:loop,1 -a:woofer -pf:/etc/woofer.ecp -chorder:1,0 -a:tweeter -pf:/etc/tweeter.ecp -chorder:0,2 -a:woofer,tweeter -f:16,4,44100 -o:alsa"
 				  }
 				, {  "type":"pipe" 
-				     , "name":"DSP crossover/eq 4 channel stereo"
+				     , "name":"Jack: DSP crossover/eq 2 channel mono"
+				     , "format":"44100:32:2"
+				     , "mixer_type":"software"
+					 , "command":"ecasound -q -z:nodb -z:mixmode,sum -a:pre -f:s32_le,2,44100 -i:stdin -pf:/etc/pre.ecp -o:loop,1 -a:woofer,tweeter -i:loop,1 -a:woofer -pf:/etc/woofer.ecp -chorder:1,0 -a:tweeter -pf:/etc/tweeter.ecp -chorder:0,2 -a:woofer,tweeter -f:16,4,44100 -o:jack"
+				  }
+				, {  "type":"pipe" 
+				     , "name":"Alsa: DSP crossover/eq 4 channel stereo"
 				     , "format":"44100:32:2"
 				     , "mixer_type":"software"
 					 , "command":"ecasound -q -z:nodb -z:mixmode,sum -a:pre -f:s32_le,2,44100 -i:stdin -pf:/etc/pre.ecp -o:loop,1 -a:woofer,tweeter -i:loop,1 -a:woofer -pf:/etc/woofer.ecp -chorder:1,2,0,0 -a:tweeter -pf:/etc/tweeter.ecp -chorder:0,0,1,2 -a:woofer,tweeter -f:16,4,44100 -o:alsa"
 				  }
+				, {  "type":"jack"
+				    , "name":"Jack"
+					, "enabled":"yes"
+				   }
 				, {  "type":"pulse"
-				    , "name":"pulse audio"
+				    , "name":"PulseAudio"
 					, "enabled":"no"
 				   } ]
 		}

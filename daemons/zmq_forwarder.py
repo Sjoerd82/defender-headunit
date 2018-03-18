@@ -104,7 +104,7 @@ def main():
 	#
 	# Load configuration
 	#
-	configuration = load_configuration()	
+	configuration = load_configuration()
 	port_client = configuration['zeromq']['port_client']
 	port_server = configuration['zeromq']['port_server']
 	backend = None

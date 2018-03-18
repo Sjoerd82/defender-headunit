@@ -27,12 +27,56 @@ import zmq
 from time import sleep
 import json
 
-#********************************************************************************
-# Configuration
+# *******************************************************************************
+# Global variables and constants
 #
 CONFIG_FILE = '/etc/configuration.json'
-configuration = configuration_load( CONFIG_FILE )
+DEFAULT_PORT_WWW = 8289
+DEFAULT_PASSWORD = None
 
+# Logging
+DAEMONIZED = None
+LOG_TAG = 'FLASK'
+LOGGER_NAME = 'flask'
+LOG_LEVEL = LL_INFO
+logger = None
+
+configfile_found = None
+configuration = None
+
+# ********************************************************************************
+# Output wrapper
+#
+def printer( message, level=LL_INFO, continuation=False, tag=LOG_TAG ):
+	logger.log(level, message, extra={'tag': tag})
+
+# ********************************************************************************
+# Load configuration
+#
+def load_configuration():
+
+	# utils # todo, present with logger
+	configuration = configuration_load(LOGGER_NAME,CONFIG_FILE)
+	
+	if not configuration: or not 'flask' in configuration:
+		printer('Error: Configuration not loaded or missing Flask, using defaults:')
+		printer('HTTP port: {0}'.format(DEFAULT_PORT_WWW))
+		printer('Default Password: {0}'.format(DEFAULT_PASSWORD))
+		configfile_found = False
+		configuration = { "flask": { "port_www": DEFAULT_PORT_WWW, "password":DEFAULT_PASSWORD } }
+	else:
+		if not 'port_www' in configuration['flask']:
+			configuration['flask']['port_www'] = DEFAULT_PORT_WWW
+			printer('Port missing in configuration, using default HTTP port: {0}'.format(DEFAULT_PORT_WWW))
+		
+		if not 'password'  in configuration['flask']:
+			configuration['flask']['password'] = DEFAULT_PASSWORD
+			printer('Password missing in configuration, using default password: {0}'.format(DEFAULT_PORT_WWW))
+			
+		configfile_found = True
+	
+	return configuration
+	
 #********************************************************************************
 # Navigation
 #
@@ -580,41 +624,67 @@ def post_plugin_path(path):
 #	publish_message1(number)
 #	return response
 
-# In python "__name__" will be
-# "__main__" whenever the script
-# file itself is called instead
-# of being used as a library
-if __name__ == '__main__':
-	
-	global messaging
-	
-	# TODO! get port number from configuration
-	#url = "tcp://127.0.0.1:5556"
-	#try:
-	#	zmq_sck.bind(url)
-	#	time.sleep(1)
-	#except:
-	#	exit(0) # TODO ... IT CANNOT RECOVER .. SOMEHOW!
+#********************************************************************************
+# Parse command line arguments and environment variables
+#
+def parse_args():
 
-	print "ZMQ Version {0}". format(zmq.pyzmq_version())
+	import argparse
 	
+	global LOG_LEVEL
+	global DAEMONIZED
+
+	parser = argparse.ArgumentParser(description='Flask HTTP server')
+	parser.add_argument('--loglevel', action='store', default=LL_INFO, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)
+	parser.add_argument('-b', action='store_true')	# background, ie. no output to console
+	args = parser.parse_args()
+
+	LOG_LEVEL = args.loglevel
+	DAEMONIZED = args.b
+	
+def setup():
+
+	global logger
+	global messaging
+
+	#
+	# Logging
+	#
+	logger = logging.getLogger(LOGGER_NAME)
+	logger.setLevel(logging.DEBUG)
+
+	# Start logging to console or syslog
+	if DAEMONIZED:
+		# output to syslog
+		logger = log_create_syslog_loghandler(logger, LOG_LEVEL, LOG_TAG, address='/dev/log' )
+		
+	else:
+		# output to console
+		logger = log_create_console_loghandler(logger, LOG_LEVEL, LOG_TAG)
+
+	#
+	# ZMQ
+	#
+	printer("Connecting to ZeroMQ forwarder")
 	messaging = MessageController()
 	if not messaging.connect():
 		printer("Failed to connect to messenger", level=LL_CRITICAL)
+
+def main():
+
+	#
+	# Load configuration
+	#
+	configuration = load_configuration()
 	
-	"""
-	port_client = "5559"
-	zmq_ctx = zmq.Context()
-	publisher = zmq_ctx.socket(zmq.PUB)
-	publisher.connect("tcp://localhost:{0}".format(port_client))
-	#zmq_sck_req = zmq_ctx.socket(zmq.REQ)
-
-	subscriber = zmq_ctx.socket(zmq.SUB)
-	port_server = "5560" #TODO: get port from config
-	subscriber.connect ("tcp://localhost:{0}".format(port_server)) # connect to server
-	"""
-
-
 	# The default port it will run on here is 5000
 	app.run(host='0.0.0.0', debug=False, use_reloader=False)
+
+	
+if __name__ == '__main__':
+	
+	parse_args()
+	setup()
+	main()
+
 	
