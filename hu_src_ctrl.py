@@ -17,32 +17,20 @@ from dbus.mainloop.glib import DBusGMainLoop
 
 import time
 
-
 #********************************************************************************
 # Logging
 from logging import getLogger
-import datetime
-import os
-logger = None
-
-configuration = None
-
-arg_loglevel = 20
+#import datetime
+#import os
 
 #********************************************************************************
-#
 # Headunit modules
-#
-
 from modules.hu_source import SourceController
 from modules.hu_msg import MessageController
 from modules.hu_utils import * #init_load_config
 
 #********************************************************************************
-#
 # Third party and others...
-#
-
 from slugify import slugify
 
 # *******************************************************************************
@@ -52,19 +40,21 @@ CONFIG_FILE = '/etc/configuration.json'
 
 # Logging
 DAEMONIZED = None
-LOG_TAG = 'AD1X15'
-LOGGER_NAME = 'ad1x15'
+LOG_TAG = 'SRCTRL'
+LOGGER_NAME = 'srctrl'
 LOG_LEVEL = LL_INFO
-logger = None
-
-# Messaging
-messaging = None
 
 sc_sources = SourceController()
-mpdc = None
 arMpcPlaylistDirs = [ ]			#TODO: should probably not be global...
 
 hu_details = { 'track':None, 'random':'off', 'repeat':True, 'att':False }
+
+mpdc = None				# MPD Controller
+messaging = None		# Messaging
+logger = None			# Logging
+configuration = None	# Configuration
+
+arg_loglevel = 20
 
 
 # ********************************************************************************
