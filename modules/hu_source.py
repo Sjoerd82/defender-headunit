@@ -7,7 +7,7 @@ class SourceController():
 
 	def __printer( self, message, level=LL_INFO, continuation=False, tag='SOURCE'): #, logger_name='SOURCE' ):
 		#logger = logging.getLogger(logger_name)
-		self.__logger.log(level, message, extra={'tag': tag})
+		self.logger.log(level, message, extra={'tag': tag})
 	
 	def __init__(self, logger):
 		self.logger = logger
