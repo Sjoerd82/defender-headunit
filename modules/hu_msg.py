@@ -53,15 +53,8 @@ def zmq_send(publisher, message):
 	time.sleep(1)
 	
 def zmq_recv(subscriber):
-
-	#global subscriber
-
-	message_encoded = subscriber.recv()
-	#message = json.loads(message_encoded)
-	message = message_encoded
-	print("Received message: {0}".format(message))
-	#parse_message(message)
-	return True
+	message = subscriber.recv()
+	return message
 
 def zmq_recv_async(subscriber):
 
@@ -129,14 +122,13 @@ class MessageController():
 		return received
 	
 	def receive_poll(self,path,timeout):
-		self.subscriber.setsockopt (zmq.SUBSCRIBE, path)
+		self.subscriber.setsockopt(zmq.SUBSCRIBE, path)
 		print("Waiting for {0}ms for a message on {1}".format(timeout,path))
 		retval = self.subscriber.poll(timeout,zmq.POLLIN)
 		if retval == 0:
 			print "NOTHING RECEIVED WITHIN TIMEOUT"
 			return None
 		else:
-			print retval
 			received = zmq_recv(self.subscriber)
 			return received
 	
