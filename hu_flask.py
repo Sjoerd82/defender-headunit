@@ -58,7 +58,7 @@ def load_configuration():
 	# utils # todo, present with logger
 	configuration = configuration_load(LOGGER_NAME,CONFIG_FILE)
 	
-	if not configuration: or not 'flask' in configuration:
+	if not configuration or not 'flask' in configuration:
 		printer('Error: Configuration not loaded or missing Flask, using defaults:')
 		printer('HTTP port: {0}'.format(DEFAULT_PORT_WWW))
 		printer('Default Password: {0}'.format(DEFAULT_PASSWORD))
