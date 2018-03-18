@@ -19,23 +19,13 @@ import time
 
 
 #********************************************************************************
-#
 # Logging
-#
-
-#import logging
-#import logging.config
-#from logging import Formatter
 from logging import getLogger
 import datetime
 import os
 logger = None
 
-#from modules.hu_logger import ColoredFormatter
-#from modules.hu_logger import RemAnsiFormatter
-
-# for logging to syslog
-#import socket
+configuration = None
 
 arg_loglevel = 20
 
@@ -53,7 +43,6 @@ from modules.hu_utils import * #init_load_config
 # Third party and others...
 #
 
-#import zmq
 from slugify import slugify
 
 # *******************************************************************************
@@ -74,7 +63,6 @@ messaging = None
 sc_sources = SourceController()
 mpdc = None
 arMpcPlaylistDirs = [ ]			#TODO: should probably not be global...
-#SYSLOG_UDP_PORT=514
 
 hu_details = { 'track':None, 'random':'off', 'repeat':True, 'att':False }
 
