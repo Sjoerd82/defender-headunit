@@ -6,6 +6,8 @@
 from modules.hu_utils import *
 
 sourceName='fm'
+LOG_TAG = 'FM'
+LOGGER_NAME = 'fm'
 
 # Station list
 #  TODO: load/save. In configuration(?)
@@ -13,12 +15,10 @@ lFmStations = [ 96.40, 99.10, 101.20, 102.54 ]
 
 class sourceClass():
 
-	# Wrapper for "myprint"
-	def __printer( self, message, level=LL_INFO, continuation=False, tag=sourceName ):
-		if continuation:
-			myprint( message, level, '.'+tag )
-		else:
-			myprint( message, level, tag )
+	# output wrapper
+	def __printer( self, message, level=LL_INFO, continuation=False, tag=LOG_TAG, logger_name=LOGGER_NAME ):
+		logger = logging.getLogger(logger_name)
+		logger.log(level, message, extra={'tag': tag})
 
 	#def __init__( self ):
 		#self.__printer('Initialized')

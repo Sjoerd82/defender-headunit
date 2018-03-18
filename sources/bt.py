@@ -8,6 +8,9 @@ from modules.hu_utils import *
 # Logging
 sourceName='bt'
 mytag='bt'
+LOG_TAG = 'BT'
+LOGGER_NAME = 'bt'
+
 
 #BLUETOOTH
 sBtPinCode = "0000"
@@ -19,12 +22,10 @@ sBtPlayer = "/org/bluez/hci0/dev_08_D4_0C_62_08_DF/player0"		# DESKTOP-HUEL5LB
 
 class sourceClass():
 
-	# Wrapper for "myprint"
-	def __printer( self, message, level=LL_INFO, continuation=False, tag=sourceName ):
-		if continuation:
-			myprint( message, level, '.'+tag )
-		else:
-			myprint( message, level, tag )
+	# output wrapper
+	def __printer( self, message, level=LL_INFO, continuation=False, tag=LOG_TAG, logger_name=LOGGER_NAME ):
+		logger = logging.getLogger(logger_name)
+		logger.log(level, message, extra={'tag': tag})
 
 	def __init__( self ):
 		self.__printer('Source Class Init', level=LL_DEBUG)

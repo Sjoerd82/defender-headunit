@@ -7,17 +7,18 @@ from modules.hu_utils import *
 from modules.hu_mpd import *
 
 sourceName = 'stream'
+LOG_TAG = 'STREAM'
+LOGGER_NAME = 'stream'
+
 
 class sourceClass():
 
 	mpc1 = None
 
-	# Wrapper for "myprint"
-	def __printer( self, message, level=LL_INFO, continuation=False, tag=sourceName ):
-		if continuation:
-			myprint( message, level, '.'+tag )
-		else:
-			myprint( message, level, tag )
+	# output wrapper
+	def __printer( self, message, level=LL_INFO, continuation=False, tag=LOG_TAG, logger_name=LOGGER_NAME ):
+		logger = logging.getLogger(logger_name)
+		logger.log(level, message, extra={'tag': tag})
 
 	def __init__( self ):
 		self.__printer('Source Class Init', level=LL_DEBUG)
