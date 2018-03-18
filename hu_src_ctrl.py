@@ -45,6 +45,7 @@ arg_loglevel = 20
 #
 
 from modules.hu_source import SourceController
+from modules.hu_msg import MessageController
 from modules.hu_utils import * #init_load_config
 
 #********************************************************************************
