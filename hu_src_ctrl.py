@@ -684,6 +684,7 @@ def setup():
 
 	global logger
 	global messaging
+	global configuration
 
 	#
 	# Logging
