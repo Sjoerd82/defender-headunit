@@ -57,6 +57,7 @@ logger = None			# Logging
 configuration = None	# Configuration
 
 arg_loglevel = 20
+queue_actions = None
 
 
 # ********************************************************************************
@@ -759,6 +760,8 @@ def setup():
 # Mainloop
 #
 def main():
+
+	global queue_actions
 
 	sc_sources.sourceCheckAll()
 	printSummary(sc_sources)
