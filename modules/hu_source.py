@@ -16,12 +16,10 @@ class SourceController():
 		self.lSourceClasses = []
 		self.iRecentSS = None
 
-	def __printer( self, message, level=LL_INFO, continuation=False, tag='SOURCE' ):
-		if continuation:
-			myprint( message, level, '.'+tag )
-		else:
-			myprint( message, level, tag )
-		
+	def __printer( self, message, level=LL_INFO, continuation=False, tag='SOURCE', logger_name='SOURCE' ):
+		logger = logging.getLogger(logger_name)
+		logger.log(level, message, extra={'tag': tag})
+	
 	# add source
 	def add( self, source_config ):
 		# check required fields:
