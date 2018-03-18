@@ -721,6 +721,11 @@ def setup():
 	if not messaging.connect():
 		printer("Failed to connect to messenger", level=LL_CRITICAL)
 
+	topics = ['/source','/player']
+	for topic in topics:
+		subscriber.setsockopt (zmq.SUBSCRIBE, topic)
+
+	
 	#
 	# Load main configuration
 	#
