@@ -14,13 +14,9 @@ from hu_utils import *
 # Output wrapper
 #
 
-def printer( message, level=20, continuation=False, tag='MPD' ):
-	#TODO: test if headunit logger exist...
-	if continuation:
-		myprint( message, level, '.'+tag )
-	else:
-		myprint( message, level, tag )
-
+def printer( message, level=20, continuation=False, tag='MPD',logger_name='mpd' ):
+		logger = logging.getLogger(logger_name)
+		logger.log(level, message, extra={'tag': tag})
 
 
 #TODO
@@ -30,28 +26,32 @@ class mpdController():
 
 	#self.mpdc = MPDClient()		# class attribute -- shared by all instances... gives irrelevant connect errors... not sure if this is good or bad
 
+	def __printer( self, message, level=LL_INFO, continuation=False, tag='MPD', logger_name='MPD' ):
+		logger = logging.getLogger(logger_name)
+		logger.log(level, message, extra={'tag': tag})
+
 	def __init__( self ):
 		# Connect to MPD
 		try:
-			printer('Initializing MPD client', level=LL_DEBUG)
+			self.__printer('Initializing MPD client', level=LL_DEBUG)
 			self.mpdc = MPDClient()				# per instance !
 			self.mpdc.timeout = 10                # network timeout in seconds (floats allowed), default: None
 			self.mpdc.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
 			self.mpdc.connect("localhost", 6600)
-			printer(' > Version: {0}'.format(self.mpdc.mpd_version), level=LL_DEBUG)          # print the MPD version
+			self.__printer(' > Version: {0}'.format(self.mpdc.mpd_version), level=LL_DEBUG)          # print the MPD version
 			self.mpdc.random(0)
 			self.mpdc.repeat(1)	
 			#self.mpdc.idle()		#keep the connection open... But this blocks :(
 			self.mpdc.send_idle()	#keep the connection open... Non-blocking..
 		except:
-			printer('Failed to connect to MPD server: {0}'.format(sys.exc_info()[0]), level=LL_ERROR)
+			self.__printer('Failed to connect to MPD server: {0}'.format(sys.exc_info()[0]), level=LL_ERROR)
 	
 	def __del__( self ):
 			print('Disconnecting')	#, level=LL_DEBUG
 			#self.mpdc.disconnect()		#often fails __del__ seems quite unstable
-		
+
 	def playlistClear( self ):
-		printer('Emptying MPD playlist')
+		self.__printer('Emptying MPD playlist')
 		#todo: how about cropping, populating, and removing the first? item .. for faster continuity???
 		#self.mpdc.command_list_ok_begin()
 
@@ -77,20 +77,20 @@ class mpdController():
 
 
 	def playlistPop( self, type, sMpdDir ):
-		printer('Populating playlist, folder: {0}'.format(sMpdDir))
+		self.__printer('Populating playlist, folder: {0}'.format(sMpdDir))
 
 		try:
 			self.mpdc.noidle()
 		except MPDConnectionError:
 			self.mpdc.connect("localhost", 6600)
 		except:
-			printer('WEIRD... no idle was set..')
+			self.__printer('WEIRD... no idle was set..')
 	
 		if type == 'locmus' or type == 'smb' or type == 'media':
 			try:
 				self.mpdc.findadd('base',sMpdDir)
 			except:
-				printer('ERROR: folder not in MPD database?')
+				self.__printer('ERROR: folder not in MPD database?')
 		elif type == 'stream':
 			# Using the command line:
 			#  ..but this generates some problems with special characters
@@ -116,14 +116,14 @@ class mpdController():
 		self.mpdc.send_idle()
 		
 	def playlistIsPop( self ):
-		printer('Checking if playlist is populated')
+		self.__printer('Checking if playlist is populated')
 
 		try:
 			self.mpdc.noidle()
 		except MPDConnectionError:
 			self.mpdc.connect("localhost", 6600)
 		except:
-			printer('WEIRD... no idle was set..')
+			self.__printer('WEIRD... no idle was set..')
 		
 		self.mpdc.command_list_ok_begin()
 		self.mpdc.status()
@@ -133,7 +133,7 @@ class mpdController():
 		return results[0]['playlistlength']
 
 	def dbCheckDirectory( self, directory ):
-		printer("Checking existance of folder in MPD db..")
+		self.__printer("Checking existance of folder in MPD db..")
 		taskcmd = "mpc listall "+directory+" | wc -l"
 		# if directory is not in mpd db, "mpd error: No such directory" will be returned
 		task = subprocess.Popen(taskcmd, shell=True, stdout=subprocess.PIPE)
@@ -141,10 +141,10 @@ class mpdController():
 		assert task.wait() == 0
 		
 		if mpcOut.rstrip('\n') == '0':
-			printer(' > {0}: nothing in the database for this source.'.format(directory))
+			self.__printer(' > {0}: nothing in the database for this source.'.format(directory))
 			return False
 		else:
-			printer(' > {0}: found {1:s} tracks'.format(directory,mpcOut.rstrip('\n')))
+			self.__printer(' > {0}: found {1:s} tracks'.format(directory,mpcOut.rstrip('\n')))
 			return True
 
 	# location must be a path relative to MPD
@@ -153,12 +153,12 @@ class mpdController():
 		#Sound effect
 		pa_sfx('mpd_update_db')
 		#Debug info
-		printer('Updating database for location: {0}'.format(location))
+		self.__printer('Updating database for location: {0}'.format(location))
 		#Update
 		if wait:
 			printer(' > Please wait, this may take some time...')
 			subprocess.call(["mpc", "--wait", "-q", "update", location])
-			printer(' > Update finished')
+			self.__printer(' > Update finished')
 		else:
 			subprocess.call(["mpc", "-q", "update", location])
 			#bMpdUpdateSmb
@@ -168,20 +168,20 @@ class mpdController():
 		#Sound effect
 		pa_sfx('mpd_update_db')
 		#Debug info
-		printer('Updating database for location: {0}'.format(location))
+		self.__printer('Updating database for location: {0}'.format(location))
 
 		try:
 			self.mpdc.noidle()
 		except MPDConnectionError:
 			self.mpdc.connect("localhost", 6600)
 		except:
-			printer('WEIRD... no idle was set..')
+			self.__printer('WEIRD... no idle was set..')
 
 		#Update
 		if wait:
-			printer(' > Please wait, this may take some time...')
+			self.__printer(' > Please wait, this may take some time...')
 			self.mpdc.update(location)
-			printer(' > Update finished')
+			self.__printer(' > Update finished')
 		else:
 			self.mpdc.update(location)
 
@@ -205,11 +205,11 @@ class mpdController():
 		# open pickle_file, if it exists
 		pickle_file = sDirSave + "/mp_" + id + ".p"
 		if os.path.isfile(pickle_file):
-			printer('Retrieving last known position from lkp file: {0:s}'.format(pickle_file))
+			self.__printer('Retrieving last known position from lkp file: {0:s}'.format(pickle_file))
 			try:
 				dSavePosition = pickle.load( open( pickle_file, "rb" ) )
 			except:
-				printer('PICKLE: Loading {0:s} failed!'.format(pickle_file))
+				self.__printer('PICKLE: Loading {0:s} failed!'.format(pickle_file))
 				return pos
 
 			#otherwise continue:
@@ -223,17 +223,17 @@ class mpdController():
 			
 			#in the unlikely case of multiple matches, we'll just take the first, psfind[0]
 			if len(psfind) == 0:
-				printer(' > File not found in loaded playlist')
+				self.__printer(' > File not found in loaded playlist')
 			else:
 				pos['pos'] = int(psfind[0]['pos'])+1
 				timeElapsed,timeTotal = map(int, dSavePosition['time'].split(':'))
-				printer('Match found: {0}. Continuing playback at #{1}'.format(dSavePosition['file'],pos['pos']))
-				printer(' > Elapsed/Total time: {0}s/{1}s'.format(timeElapsed,timeTotal))
+				self.__printer('Match found: {0}. Continuing playback at #{1}'.format(dSavePosition['file'],pos['pos']))
+				self.__printer(' > Elapsed/Total time: {0}s/{1}s'.format(timeElapsed,timeTotal))
 				if timeElapsed > iThrElapsed and timeTotal > iThrTotal:
 					pos['time'] = str(timeElapsed)
-					printer(' > Elapsed time over threshold: continuing at last position.')
+					self.__printer(' > Elapsed time over threshold: continuing at last position.')
 				else:
-					printer(' > Elapsed time below threshold or short track: restarting at beginning of track.')
+					self.__printer(' > Elapsed time below threshold or short track: restarting at beginning of track.')
 
 		return pos
 
@@ -251,24 +251,24 @@ class mpdController():
 		except MPDConnectionError:
 			self.mpdc.connect("localhost", 6600)
 		except:
-			printer('WEIRD... no idle was set..')
+			self.__printer('WEIRD... no idle was set..')
 		
 		psfind = self.mpdc.playlistfind('filename',filename)
 		self.mpdc.send_idle()
 		
 		#in the unlikely case of multiple matches, we'll just take the first, psfind[0]
 		if len(psfind) == 0:
-			printer(' > File not found in loaded playlist')
+			self.__printer(' > File not found in loaded playlist')
 		else:
 			pos['pos'] = int(psfind[0]['pos'])+1
 			timeElapsed,timeTotal = map(int, time.split(':'))
-			printer('Match found: {0}. Continuing playback at #{1}'.format(filename,pos['pos']))
-			printer(' > Elapsed/Total time: {0}s/{1}s'.format(timeElapsed,timeTotal))
+			self.__printer('Match found: {0}. Continuing playback at #{1}'.format(filename,pos['pos']))
+			self.__printer(' > Elapsed/Total time: {0}s/{1}s'.format(timeElapsed,timeTotal))
 			if timeElapsed > iThrElapsed and timeTotal > iThrTotal:
 				pos['time'] = str(timeElapsed)
-				printer(' > Elapsed time over threshold: continuing at last position.')
+				self.__printer(' > Elapsed time over threshold: continuing at last position.')
 			else:
-				printer(' > Elapsed time below threshold or short track: restarting at beginning of track.')
+				self.__printer(' > Elapsed time below threshold or short track: restarting at beginning of track.')
 
 		return pos
 		
@@ -278,7 +278,7 @@ class mpdController():
 
 	def mpc_get_PlaylistDirs( self ):
 
-		printer('Building playlist directory structure...')
+		self.__printer('Building playlist directory structure...')
 
 		# local variables
 		dirname_current = ''
@@ -330,7 +330,7 @@ class mpdController():
 		except MPDConnectionError:
 			self.mpdc.connect("localhost", 6600)
 		except:
-			printer('WEIRD... no idle was set..')
+			self.__printer('WEIRD... no idle was set..')
 			
 		self.mpdc.command_list_ok_begin()
 		self.mpdc.currentsong()
@@ -350,7 +350,7 @@ class mpdController():
 		except MPDConnectionError:
 			self.mpdc.connect("localhost", 6600)
 		except:
-			printer('WEIRD... no idle was set..')
+			self.__printer('WEIRD... no idle was set..')
 
 		self.mpdc.command_list_ok_begin()
 		self.mpdc.status()
