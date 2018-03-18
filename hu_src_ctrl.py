@@ -132,7 +132,10 @@ def parse_message(message):
 def handle_path_source(path,cmd,args):
 
 	base_path = 'source'
-	
+
+	# remove base path
+	del path[0]
+
 	# in paths are concatenated using underscore
 	# example:
 	# \player\track\next must be processed by the function called:
