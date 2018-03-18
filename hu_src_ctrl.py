@@ -31,11 +31,11 @@ import datetime
 import os
 logger = None
 
-from modules.hu_logger import ColoredFormatter
-from modules.hu_logger import RemAnsiFormatter
+#from modules.hu_logger import ColoredFormatter
+#from modules.hu_logger import RemAnsiFormatter
 
 # for logging to syslog
-import socket
+#import socket
 
 arg_loglevel = 20
 
@@ -52,7 +52,7 @@ from modules.hu_utils import * #init_load_config
 # Third party and others...
 #
 
-import zmq
+#import zmq
 from slugify import slugify
 
 # *******************************************************************************
