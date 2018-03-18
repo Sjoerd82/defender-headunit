@@ -723,7 +723,7 @@ def setup():
 
 	topics = ['/source','/player']
 	for topic in topics:
-		subscriber.setsockopt (zmq.SUBSCRIBE, topic)
+		messaging.subscribe(topic)
 
 	
 	#
