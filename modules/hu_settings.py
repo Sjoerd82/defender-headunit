@@ -13,12 +13,10 @@ import pickle
 # Output wrapper
 #
 
-def printer( message, level=20, continuation=False, tag='STTNGS' ):
-	#TODO: test if headunit logger exist...
-	if continuation:
-		myprint( message, level, '.'+tag )
-	else:
-		myprint( message, level, tag )
+def printer( message, level=20, continuation=False, tag='STTNGS',logger_name='SETTINGS' ):
+		logger = logging.getLogger(logger_name)
+		logger.log(level, message, extra={'tag': tag})
+
 
 
 # ********************************************************************************
