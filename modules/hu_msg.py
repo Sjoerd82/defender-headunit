@@ -82,8 +82,8 @@ class MessageController():
 		
 	# todo: args: which sockets to poll?
 	def poll_register(self):
-		self.poller.register(server, zmq.POLLIN)
-		self.poller.register(subscriber, zmq.POLLIN)
+		self.poller.register(self.server, zmq.POLLIN)
+		self.poller.register(self.subscriber, zmq.POLLIN)
 	
 	def poll(self):
 		socks = dict(self.poller.poll())
