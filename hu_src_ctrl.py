@@ -768,9 +768,8 @@ def setup():
 
 	printer("ZeroMQ: Starting server at port 5555")
 	messaging.start_server('tcp://127.0.0.1:5555')
+	printer("ZeroMQ: Register for polling")
 	messaging.poll_register()
-	
-	print messaging.poll()
 	
 	#
 	# Load main configuration
