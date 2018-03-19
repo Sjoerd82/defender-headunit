@@ -59,7 +59,8 @@ class MessageController():
 
 	def __init__(self):
 
-		context = zmq.Context()
+		# Context
+		self.context = zmq.Context()
 		
 		# Pub-Sub
 		self.publisher = None
