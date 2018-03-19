@@ -687,7 +687,7 @@ def idle_msg_receiver_ASYNC():
 def idle_msg_receiver():
 
 	msgtype, msg = messaging.poll()
-	if message:
+	if msg:
 		print "Received message: {0}".format(msg)
 		parsed_msg = messaging.parse_message(msg)
 		retval = dispatcher(parsed_msg['path'],parsed_msg['cmd'],parsed_msg['args'])
