@@ -117,6 +117,8 @@ class MessageController():
 
 	def send_to_server(self, message):
 		self.client.send(message)
+		retmsg = self.client.recv()
+		return retmsg
 	
 	def send_to_client(self, message):
 		self.server.send(message)
