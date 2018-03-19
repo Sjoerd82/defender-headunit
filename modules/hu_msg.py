@@ -75,9 +75,9 @@ class MessageController():
 		self.poller = zmq.Poller()
 		
 	def start_server(self, address):
-		self.server = context.socket(zmq.REP)
+		self.server = self.context.socket(zmq.REP)
 		#self.client = context.socket(zmq.REQ)
-		server.bind(address)
+		self.server.bind(address)
 		time.sleep(1)
 		
 	# todo: args: which sockets to poll?
