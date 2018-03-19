@@ -698,6 +698,9 @@ def idle_msg_receiver():
 			print "Returning retval.."
 			messaging.send_to_client(retval)
 			
+	#important!
+	return True
+			
 				
 #********************************************************************************
 # Version
