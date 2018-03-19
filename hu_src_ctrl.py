@@ -696,7 +696,7 @@ def idle_msg_receiver():
 			print retval
 		if msgtype == "server":
 			print "Returning retval.."
-			messaging.send_to_client(retval)
+			messaging.send_to_client("retval")
 			
 				
 #********************************************************************************
