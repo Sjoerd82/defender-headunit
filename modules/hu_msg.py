@@ -120,7 +120,9 @@ class MessageController():
 
 	def send_to_server(self, message):
 		self.client.send(message)
+		print "send_to_server() is waiting for a message...."
 		retmsg = self.client.recv()
+		print "....send_to_server() received a message"
 		return retmsg
 	
 	def send_to_client(self, message):
