@@ -124,7 +124,8 @@ class MessageController():
 		return retmsg
 	
 	def send_to_client(self, message):
-		self.server.send(message)
+		msg_json = json.dumps(message)
+		self.server.send(msg_json)
 	
 	def subscribe(self, topic):
 		self.subscriber.setsockopt (zmq.SUBSCRIBE, topic)
