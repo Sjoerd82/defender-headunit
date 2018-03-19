@@ -810,6 +810,7 @@ def setup():
 		message = messaging.poll()
 		if message:
 			print message
+			messaging.send_to_client('OK')
 		
 
 #********************************************************************************

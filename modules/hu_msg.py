@@ -118,6 +118,9 @@ class MessageController():
 	def send_to_server(self, message):
 		self.client.send(message)
 	
+	def send_to_client(self, message):
+		self.server.send(message)
+	
 	def subscribe(self, topic):
 		self.subscriber.setsockopt (zmq.SUBSCRIBE, topic)
 		return True
