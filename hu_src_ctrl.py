@@ -757,7 +757,7 @@ def setup():
 	#
 	# ZMQ
 	#
-	printer("Connecting to ZeroMQ forwarder")
+	printer("ZeroMQ: Connecting to ZeroMQ forwarder")
 	messaging = MessageController()
 	if not messaging.connect():
 		printer("Failed to connect to messenger", level=LL_CRITICAL)
@@ -766,6 +766,11 @@ def setup():
 	for topic in topics:
 		messaging.subscribe(topic)
 
+	printer("ZeroMQ: Starting server at port 5555")
+	messaging.start_server('tcp://localhost:5555')
+	messaging.poll_register()
+	
+	print messaging.poll()
 	
 	#
 	# Load main configuration

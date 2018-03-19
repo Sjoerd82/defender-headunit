@@ -29,7 +29,6 @@ def printer( message, level=LL_INFO, tag="", logger_name=__name__):
 
 def zmq_connect(publisher, subscriber):
 
-	zmq_ctx = zmq.Context()
 	subscriber = zmq_ctx.socket (zmq.SUB)
 	port_server = "5560" #TODO: get port from config
 	subscriber.connect ("tcp://localhost:{0}".format(port_server)) # connect to server
@@ -66,24 +65,54 @@ def zmq_recv_async(subscriber):
 	return message
 	
 #********************************************************************************
-# Abstract functions
+# ZeroMQ Wrapper
 #
 
 class MessageController():
 
 	def __init__(self):
-		self.subscriber = None
-		self.publisher = None
-		self.topics = []
 
+		context = zmq.Context()
+		
+		# Pub-Sub
+		self.publisher = None
+		self.subscriber = None
+		self.topics = []
+		
+		# Req-Rep
+		self.server = None
+		self.client = None
+
+		# Poller
+		self.poller = zmq.Poller()
+		
+	def start_server(self, address):
+		self.server = context.socket(zmq.REP)
+		#self.client = context.socket(zmq.REQ)
+		server.bind(address)
+		time.sleep(1)
+		
+	# todo: args: which sockets to poll?
+	def poll_register(self):
+		self.poller.register(server, zmq.POLLIN)
+		self.poller.register(subscriber, zmq.POLLIN)
+	
+	def poll(self):
+		socks = dict(self.poller.poll())
+		return socks
+	
 	#todo: port numbers ?
+	#todo: rename to connect_pub_sub or something..
+	#def connect(self):
 	def connect(self):
 
+	
 		self.publisher, self.subscriber = zmq_connect(self.publisher, self.subscriber)		
 		# todo: check if connected
 		# return True/False
 		return True
 
+	
 	def subscribe(self, topic):
 		self.subscriber.setsockopt (zmq.SUBSCRIBE, topic)
 		return True
