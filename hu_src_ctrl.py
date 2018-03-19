@@ -807,10 +807,12 @@ def setup():
 
 	while True:
 		
-		message = messaging.poll()
+		msgtype, message = messaging.poll()
 		if message:
 			print message
-			messaging.send_to_client('OK')
+			if msgtype = "server":
+				print "Returning thanks.."
+				messaging.send_to_client('OK')
 		
 
 #********************************************************************************
