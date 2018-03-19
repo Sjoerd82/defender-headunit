@@ -377,6 +377,7 @@ POST /plugin/<path:config>              Set for a plugin
 #@app.route('/hu/api/v1.0/source', methods=['GET'])
 @app.route(API_VERSION+'/source', methods=['GET'])
 def get_source():
+	print "DEBUG!! get_source()"
 	# Retrieve list of sources
 	#messaging.send_command('/source/primary','GET')
 	#messaging.subscribe('/data/source')
