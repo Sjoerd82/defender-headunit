@@ -672,7 +672,7 @@ def setup():
 	#TODO? SUBSCRIBE TO TOPICS
 	
 	# Connect to SourceController
-	messaging.connect_client('tcp://127.0.0.1:5555')
+	messaging.start_client('tcp://127.0.0.1:5555')
 
 def main():
 
