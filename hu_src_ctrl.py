@@ -810,7 +810,7 @@ def setup():
 		msgtype, message = messaging.poll()
 		if message:
 			print message
-			if msgtype = "server":
+			if msgtype == "server":
 				print "Returning thanks.."
 				messaging.send_to_client('OK')
 		
