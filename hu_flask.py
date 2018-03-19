@@ -378,9 +378,12 @@ POST /plugin/<path:config>              Set for a plugin
 @app.route(API_VERSION+'/source', methods=['GET'])
 def get_source():
 	# Retrieve list of sources
-	messaging.send_command('/source/primary','GET')
+	#messaging.send_command('/source/primary','GET')
 	#messaging.subscribe('/data/source')
-	sources = messaging.receive_poll('/data/source',5000)
+	#sources = messaging.receive_poll('/data/source',5000)
+	
+	retmsg = messaging.send_to_server('/source/primary GET')
+	return retmsg
 	
 	if not sources:
 		return "Nothing returned"
