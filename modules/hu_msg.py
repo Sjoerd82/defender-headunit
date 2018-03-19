@@ -93,13 +93,13 @@ class MessageController():
 	#def connect(self):
 	def connect(self):
 
-		subscriber = context.socket (zmq.SUB)
+		self.subscriber = self.context.socket (zmq.SUB)
 		port_server = "5560" #TODO: get port from config
-		subscriber.connect ("tcp://localhost:{0}".format(port_server)) # connect to server
+		self.subscriber.connect ("tcp://localhost:{0}".format(port_server)) # connect to server
 
 		port_client = "5559"
-		publisher = context.socket(zmq.PUB)
-		publisher.connect("tcp://localhost:{0}".format(port_client))
+		self.publisher = self.context.socket(zmq.PUB)
+		self.publisher.connect("tcp://localhost:{0}".format(port_client))
 	
 		#self.publisher, self.subscriber = zmq_connect(self.publisher, self.subscriber)		
 		# todo: check if connected
