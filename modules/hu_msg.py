@@ -119,6 +119,7 @@ class MessageController():
 		return True
 
 	def send_to_server(self, message):
+		print "sending message: {0}".format(message)
 		self.client.send(message)
 		print "send_to_server() is waiting for a message...."
 		retmsg = self.client.recv()
