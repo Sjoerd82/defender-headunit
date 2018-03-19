@@ -431,6 +431,7 @@ def post_source_id_subsource_id(source_id,subsource_id):
 @app.route('/hu/api/v1.0/source/next', methods=['GET'])
 def post_source_next():
 	messaging.send_command("/player/next","SET")
+	messaging.send_to_server("Hoi Oliebol!")
 	return "OK"
 	#stub = [{'a':'a'},{'b':'b'}]
 	#return jsonify({'stub':stub})
@@ -669,6 +670,9 @@ def setup():
 		printer("Failed to connect to messenger", level=LL_CRITICAL)
 		
 	#TODO? SUBSCRIBE TO TOPICS
+	
+	# Connect to SourceController
+	messaging.connect_client('tcp://127.0.0.1:5555')
 
 def main():
 

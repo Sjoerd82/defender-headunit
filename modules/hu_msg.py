@@ -107,6 +107,11 @@ class MessageController():
 		# return True/False
 		return True
 
+	def connect_client(self, address):
+		self.client.connect(address)
+	
+	def send_to_server(self, message):
+		self.client.send(message)
 	
 	def subscribe(self, topic):
 		self.subscriber.setsockopt (zmq.SUBSCRIBE, topic)

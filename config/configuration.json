@@ -32,7 +32,12 @@
 		  "name":"ZMQ Forwarder"
 		, "init.d":"S30zmqfwd"
 		}
-		{
+		, {
+		  "name":"Source Controller"
+		, "init.d":"S40source"
+		, "port": 5555
+		}
+		, {
 		  "name":"Flask HTTP server"
 		, "init.d":"S95flask"
 		}
