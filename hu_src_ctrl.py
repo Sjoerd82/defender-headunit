@@ -164,9 +164,10 @@ def handle_path_source(path,cmd,args):
 			#ret_sources = sc_sources.get(args[0],args[1])
 			ret_sources = None #function not implemented
 		
-		data_path = "/data/sources" # TODO: use base_path
-		messaging.send_data(data_path,ret_sources)
-		return True
+		#data_path = "/data/sources" # TODO: use base_path
+		#messaging.send_data(data_path,ret_sources)
+		#return True
+		return ret_sources
 
 	def put_primary(args):
 		"""
@@ -291,7 +292,7 @@ def handle_path_source(path,cmd,args):
 	else:
 		printer('Function {0} does not exist'.format(function_to_call))
 		
-	return True
+	return ret
 		
 def handle_path_player(path,cmd,args):
 
@@ -665,11 +666,14 @@ def dispatcher(path, command, arguments):
 	print("[MQ] Received Path: {0}; Command: {1}; Parameters: {2}".format(path,command,arguments))
 	handler_function = 'handle_path_' + path[0]
 	if handler_function in globals():
-		globals()[handler_function](path, command, arguments)
+		ret = globals()[handler_function](path, command, arguments)
+		return ret
 	else:
 		print("No handler for: {0}".format(handler_function))
+		return None
+	
 
-def idle_msg_receiver():
+def idle_msg_receiver_ASYNC():
 	global messaging
 	
 	msg = messaging.receive_async()
@@ -680,6 +684,21 @@ def idle_msg_receiver():
 		
 	return True
 
+def idle_msg_receiver():
+
+	msgtype, msg = messaging.poll()
+	if message:
+		print "Received message: {0}".format(msg)
+		parsed_msg = messaging.parse_message(msg)
+		retval = dispatcher(parsed_msg['path'],parsed_msg['cmd'],parsed_msg['args'])
+		if msgtype == "subscriber":
+			print "Maybe we should reply to this??"
+			print retval
+		if msgtype == "server":
+			print "Returning retval.."
+			messaging.send_to_client(retval)
+			
+				
 #********************************************************************************
 # Version
 #
@@ -805,6 +824,7 @@ def setup():
 	#********************************************************************************
 	printer('Initialized [OK]')
 
+	""" POC WORKS:!! 
 	while True:
 		
 		msgtype, message = messaging.poll()
@@ -813,6 +833,7 @@ def setup():
 			if msgtype == "server":
 				print "Returning thanks.."
 				messaging.send_to_client('OK')
+	"""
 		
 
 #********************************************************************************
