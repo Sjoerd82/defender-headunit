@@ -90,7 +90,12 @@ class MessageController():
 	
 	def poll(self):
 		socks = dict(self.poller.poll())
-		return socks
+		message = None
+		if self.server in socks:
+			message = self.server.recv()
+		if self.subscriber in socks:
+			message = self.subscriber.recv()
+		return message
 	
 	#todo: port numbers ?
 	#todo: rename to connect_pub_sub or something..
