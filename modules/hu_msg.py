@@ -27,19 +27,6 @@ def printer( message, level=LL_INFO, tag="", logger_name=__name__):
 # ZeroMQ
 #
 
-def zmq_connect(publisher, subscriber):
-
-	subscriber = zmq_ctx.socket (zmq.SUB)
-	port_server = "5560" #TODO: get port from config
-	subscriber.connect ("tcp://localhost:{0}".format(port_server)) # connect to server
-
-	port_client = "5559"
-	publisher = zmq_ctx.socket(zmq.PUB)
-	publisher.connect("tcp://localhost:{0}".format(port_client))
-
-	return publisher, subscriber
-	
-
 def zmq_send(publisher, message):
 
 	#global publisher
@@ -106,8 +93,15 @@ class MessageController():
 	#def connect(self):
 	def connect(self):
 
+		subscriber = context.socket (zmq.SUB)
+		port_server = "5560" #TODO: get port from config
+		subscriber.connect ("tcp://localhost:{0}".format(port_server)) # connect to server
+
+		port_client = "5559"
+		publisher = context.socket(zmq.PUB)
+		publisher.connect("tcp://localhost:{0}".format(port_client))
 	
-		self.publisher, self.subscriber = zmq_connect(self.publisher, self.subscriber)		
+		#self.publisher, self.subscriber = zmq_connect(self.publisher, self.subscriber)		
 		# todo: check if connected
 		# return True/False
 		return True
