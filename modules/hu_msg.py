@@ -150,7 +150,7 @@ class MessageController():
 		message = "{0} {1}:{2}".format(path,request,arguments)
 		# setup a temporary poller for the server socket
 		reply_poller = zmq.Poller()
-		reply.poller.register(self.client, zmq.POLLIN)
+		reply_poller.register(self.client, zmq.POLLIN)
 		# send client message to the server
 		self.client.send(message)
 		# poll for a reply

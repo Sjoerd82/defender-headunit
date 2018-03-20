@@ -325,8 +325,8 @@ def reboot():
 	#publish_message('/system/reboot', 'SET')
 	#publish_message('/player/next', 'SET')
 	global messaging
-	messaging.publish_request('/system/reboot', 'SET')
-	messaging.publish_request('/player/next', 'SET')
+	messaging.publish_request('/system/reboot', 'SET', None)
+	messaging.publish_request('/player/next', 'SET', None)
 	return "SEND x2"
 	
 #app.route('/api')
