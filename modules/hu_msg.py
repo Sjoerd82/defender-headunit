@@ -56,7 +56,7 @@ def zmq_recv_async(subscriber):
 
 class MessageController():
 
-def __init__(self):
+	def __init__(self):
 
 		# Context
 		self.context = zmq.Context()
