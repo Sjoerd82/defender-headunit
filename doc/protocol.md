@@ -128,7 +128,9 @@ Field | Value
 `performer` | The artist who performed the song
 `album` | Album name
 `albumartist` | On multi-artist albums, this is the artist name which shall be used for the whole album
-`title` | Song title.
+`title` | Song title
+`length` | Track length (ms)
+`elapsed` | Elapsed time (ms) --?
 `track` | Decimal track number within the album
 `disc` | The decimal disc number in a multi-disc album.
 `genre` | Music genre, multiple genre's might be delimited by semicolon, though this is not really standardized
@@ -141,7 +143,7 @@ Field | Value
 --- | ---
 `system` | "alsa", "jack", "pulseaudio", "mpd"(?)
 `device` | Ex. "hw:0,0", "default-sink", etc.
-`channel` | `[{level}]` list of levels
+`channels` | `[{level}]` list of levels
 
 #### {level}
 
@@ -149,6 +151,9 @@ Field | Value
 --- | ---
 `channel` | Channel number, zero-based
 `level` | 0-100 (?)
+
+### {equalizer}
+TODO
 
 ### {device}
 Details about a (removable) device. Only devicefile is mandatory, however, most fields will usually be populated.
