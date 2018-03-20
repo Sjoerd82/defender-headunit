@@ -119,7 +119,7 @@ class MessageController():
 		#self.client = self.context.socket (zmq.REQ)
 		self.client = self.context.socket (zmq.SUB)
 		self.client.setsockopt (zmq.SUBSCRIBE, topic)
-		self.client.connect(address)
+		self.client.connect(server_address)
 		self.poller.register(self.client, zmq.POLLIN)
 
 	def publish_request(self, path, request, arguments):
