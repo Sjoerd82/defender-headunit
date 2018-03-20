@@ -24,7 +24,8 @@ from select import select
 from mpd import MPDClient
 
 # Utils
-sys.path.append('../modules')
+#sys.path.append('../modules')
+sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
 
 #********************************************************************************
@@ -34,49 +35,24 @@ CONTROL_NAME='mpdlst'
 
 # mpd
 oMpdClient = None
-	
-# zmq
-subscriber = None
-publisher = None
 
-# ********************************************************************************
-# todo
-#
-# TODO!!! the "headunit"-logger is no longer accessible once this script is started "on its own"..
-def myprint( message, level, tag ):
-	print("[{0}] {1}".format(tag,message))
+# Logging
+DAEMONIZED = None
+LOG_TAG = 'MPDLST'
+LOGGER_NAME = 'mpdlst'
+LOG_LEVEL = LL_INFO
+logger = None
 
-# Wrapper for "myprint"
-def printer( message, level=LL_INFO, continuation=False, tag=CONTROL_NAME ):
-	if continuation:
-		myprint( message, level, '.'+tag )
-	else:
-		myprint( message, level, tag )
+# messaging
+mq_address_pub = 'tcp://localhost:5559'
+messaging = None
 
 
 # ********************************************************************************
-# Zero MQ functions
+# Output wrapper
 #
-def zmq_connect():
-
-	global publisher
-	
-	printer("Connecting to ZeroMQ forwarder")
-
-	zmq_ctx = zmq.Context()
-	port_client = "5559"
-	publisher = zmq_ctx.socket(zmq.PUB)
-	publisher.connect("tcp://localhost:{0}".format(port_client))
-
-def zmq_send(path_send,message):
-
-	global publisher
-
-	#TODO
-	#data = json.dumps(message)
-	data = message
-	printer("Sending message: {0} {1}".format(path_send, data))
-	publisher.send("{0} {1}".format(path_send, data))
+def printer( message, level=LL_INFO, continuation=False, tag=LOG_TAG ):
+	logger.log(level, message, extra={'tag': tag})
 
 def mpd_handle_change(events):
 
@@ -128,7 +104,12 @@ def mpd_handle_change(events):
 			# {'songid': '180', 'playlistlength': '36', 'playlist': '18', 'repeat': '1', 'consume': '0', 'mixrampdb': '0.000000', 'random': '0', 'state': 'play', 'elapsed': '0.000', 'volume': '100', 'single': '0', 'nextsong': '31', 'time': '0:193', 'duration': '193.328', 'song': '30', 'audio': '44100:24:2', 'bitrate': '0', 'nextsongid': '181'}
 			
 			#mpd_control('player')
-			zmq_send('/event/mpd/player','SET')
+			#zmq_send('/event/mpd/player','SET')
+			state={}
+			state['state'] = "Bla1"
+			state['random'] = "off"
+			state['repeat'] = "off"
+			messaging.publish_event('/events/player', 'INFO', state)
 			# do not add code after here... (will not be executed)
 		
 		#elif e == "subscription":
@@ -140,16 +121,61 @@ def mpd_handle_change(events):
 		#		print(r)		
 		elif e == "database":
 			#mpd_control('database')
-			zmq_send('/event/mpd/update','SET')
+			#zmq_send('/event/mpd/update','SET')
+			messaging.publish_event('/events/update', 'INFO', None)
 		elif e == "options":
 			print "OPTIONS! RANDOM??"
 		else:
 			print(' ...  unmanaged event')
 	
+
+#********************************************************************************
+# Parse command line arguments and environment variables
+#
+def parse_args():
+
+	import argparse
+	
+	global LOG_LEVEL
+	global DAEMONIZED
+
+	parser = argparse.ArgumentParser(description='MPD Listener')
+	parser.add_argument('--loglevel', action='store', default=LL_INFO, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)
+	parser.add_argument('-b', action='store_true')	# background, ie. no output to console
+	args = parser.parse_args()
+
+	LOG_LEVEL = args.loglevel
+	DAEMONIZED = args.b	
+
 def setup():
 
+	global logger
+	global messaging
+
+	#
+	# Logging
+	#
+	logger = logging.getLogger(LOGGER_NAME)
+	logger.setLevel(logging.DEBUG)
+
+	# Start logging to console or syslog
+	if DAEMONIZED:
+		# output to syslog
+		logger = log_create_syslog_loghandler(logger, LOG_LEVEL, LOG_TAG, address='/dev/log' )
+		
+	else:
+		# output to console
+		logger = log_create_console_loghandler(logger, LOG_LEVEL, LOG_TAG)
+
+	#
 	# ZMQ
-	zmq_connect()
+	#
+	printer("ZeroMQ: Initializing")
+	messaging = MessageController()
+	
+	printer("ZeroMQ: Creating Publisher: {0}".format(mq_address_pub))
+	messaging.create_publisher(mq_address_pub)
+
 	printer('Initialized [OK]')
 
 def main():
@@ -207,5 +233,7 @@ def main():
 
 
 if __name__ == "__main__":
+	parse_args()
 	setup()
 	main()
+	

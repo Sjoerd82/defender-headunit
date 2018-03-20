@@ -25,7 +25,8 @@ import gobject
 from dbus.mainloop.glib import DBusGMainLoop
 
 # Utils
-sys.path.append('../modules')
+#sys.path.append('../modules')
+sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
 
 #********************************************************************************
@@ -36,9 +37,9 @@ CONTROL_NAME='udisks'
 # dbus
 bus = None
 
-# zmq
-subscriber = None
-publisher = None
+# messaging
+mq_address_pub = 'tcp://localhost:5559'
+messaging = None
 
 # ********************************************************************************
 # todo
@@ -277,8 +278,15 @@ def udisk_rem( device ):
 	
 def setup():
 
+	#
 	# ZMQ
-	zmq_connect()
+	#
+	printer("ZeroMQ: Initializing")
+	messaging = MessageController()
+	
+	printer("ZeroMQ: Creating Publisher: {0}".format(mq_address_pub))
+	messaging.create_publisher(mq_address_pub)
+	
 	printer('Initialized [OK]')
 
 def main():

@@ -4,10 +4,10 @@ echo $(date "+%H:%M.%s") $0 $1 >> /root/boot.log
 
 # APPLICATION
 NAME="Headunit Flask HTTP server"
-DAEMON="/mnt/PIHU_APP/defender-headunit/hu_flask.py"
+DAEMON="/mnt/PIHU_APP/defender-headunit/daemons/flask.py"
 DAEMONOPTS="run --host=0.0.0.0"
 
-export FLASK_APP="/mnt/PIHU_APP/defender-headunit/hu_flask.py"
+export FLASK_APP="/mnt/PIHU_APP/defender-headunit/flask.py"
 
 retval=0
 

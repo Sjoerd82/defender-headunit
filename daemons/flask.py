@@ -9,16 +9,12 @@ from flask import jsonify
 
 app = Flask(__name__)
 #api = Api(app)
-#
-# HU Utils
-#
-from modules.hu_utils import *
 
-#
-# Messenger
-#
-from modules.hu_msg import MessageController
-messaging = None
+
+#sys.path.append('../modules')
+sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
+from hu_utils import *
+from hu_msg import MessageController
 
 #
 # Zero MQ
@@ -27,6 +23,7 @@ import zmq
 #from zmq.utils import jsonapi
 from time import sleep
 import json
+
 
 # *******************************************************************************
 # Global variables and constants
@@ -46,6 +43,11 @@ configfile_found = None
 configuration = None
 
 API_VERSION = '/hu/api/v1.0'
+
+# messaging
+mq_address_pub = 'tcp://localhost:5559'
+messaging = None
+
 
 # ********************************************************************************
 # Output wrapper
@@ -668,10 +670,12 @@ def setup():
 	#
 	# ZMQ
 	#
-	printer("Connecting to ZeroMQ forwarder")
+	printer("ZeroMQ: Initializing")
 	messaging = MessageController()
-	if not messaging.connect():
-		printer("Failed to connect to messenger", level=LL_CRITICAL)
+	
+	printer("ZeroMQ: Creating Publisher: {0}".format(mq_address_pub))
+	messaging.create_publisher(mq_address_pub)
+
 		
 	#TODO? SUBSCRIBE TO TOPICS
 	

@@ -1,12 +1,10 @@
 #
 # Messaging layer
 # Venema, S.R.G.
-# 2018-03-17
+# 2018-03-20
 #
-# Abstracted communication layer.
-#
-# Currently a wrapper for ZeroMQ Pub/Sub, but can be adapted to accommodate
-# any other MQ software
+# A wrapper for ZeroMQ Pub/Sub
+# 
 #
 
 import zmq
@@ -26,7 +24,7 @@ def printer( message, level=LL_INFO, tag="", logger_name=__name__):
 #********************************************************************************
 # ZeroMQ
 #
-
+"""
 def zmq_send(publisher, message):
 
 	#global publisher
@@ -50,6 +48,7 @@ def zmq_recv_async(subscriber):
 		message = None
 		
 	return message
+"""
 	
 #********************************************************************************
 # ZeroMQ Wrapper
@@ -57,7 +56,7 @@ def zmq_recv_async(subscriber):
 
 class MessageController():
 
-	def __init__(self):
+def __init__(self):
 
 		# Context
 		self.context = zmq.Context()
@@ -67,27 +66,118 @@ class MessageController():
 		self.subscriber = None
 		self.topics = []
 		
-		# Req-Rep
+		# Srv-Cli
 		self.server = None
+		self.server_topic = None
 		self.client = None
 
+		# Servers, access by address
+		#self.servers = {}
+		self.sockets = []
+		self.addresses = {}
+		
 		# Poller
 		self.poller = zmq.Poller()
-		
-	def start_server(self, server_address):
-		self.server = self.context.socket(zmq.REP)
-		self.server.bind(server_address)
-		time.sleep(1)
-
-	def start_client(self, server_address):
-		self.client = self.context.socket (zmq.REQ)
-		self.client.connect(server_address)
-
-	# todo: args: which sockets to poll?
-	def poll_register(self):
-		self.poller.register(self.server, zmq.POLLIN)
-		self.poller.register(self.subscriber, zmq.POLLIN)
 	
+	# Setup a publisher to the given (forwarder) address
+	# This function does not do a bind on the address, so it can be used in combination with a forwarder.
+	def create_publisher(self, address):
+		self.publisher = self.context.socket(zmq.PUB)
+		self.publisher.connect(address)
+
+	# Setup a subscription for the given address and topic(s)
+	# The publisher does not need to be created first, necessarily.
+	# This function also registers the subscription with the poller
+	def create_subscriber(self, address, topics=['/']):
+		self.subscriber = self.context.socket (zmq.SUB)
+		self.subscriber.connect(address)
+		for topic in topics:
+			self.subscriber.setsockopt (zmq.SUBSCRIBE, topic)
+		self.poller.register(self.subscriber, zmq.POLLIN)
+		
+	# Setup a server on the given address
+	# This function does a bind, but it uses the PUB-SUB socket type to prevent deadlocks.
+	# It should always return a message immediately after receiving one.
+	# A unique topic must be given so the server can prefix it's output to be directed to the client.
+	# This function also registers the server with a poller
+	def create_server(self, server_address, topic):
+		#self.server = self.context.socket(zmq.REP)
+		# for supporting multiple servers, use this:
+		"""
+		self.servers[server_address] = self.context.socket(zmq.PUB)
+		self.servers[server_address].bind(server_address)
+		"""
+		self.server = self.context.socket(zmq.PUB)
+		self.server.bind(server_address)
+		#self.server_topic = topic
+		self.poller.register(self.server, zmq.POLLIN)
+		time.sleep(1)	# still needed when polling?
+
+	# Setup a client on the given address. Use the same (unique) topic as used by the server
+	# This function also registers the client with a poller
+	def create_client(self, server_address, topic):
+		#self.client = self.context.socket (zmq.REQ)
+		self.client = self.context.socket (zmq.SUB)
+		self.client.setsockopt (zmq.SUBSCRIBE, topic)
+		self.client.connect(address)
+		self.poller.register(self.client, zmq.POLLIN)
+
+	def publish_request(self, path, request, arguments):
+		if request not in ('GET','PUT','POST','DEL'):
+			return None
+		message = "{0} {1}:{2}".format(path,request,arguments)	#TODO: add return path
+		self.publisher.send(message)
+		time.sleep(1)	# required?
+	
+	def publish_response(self, path, payload, retval='200'):
+		data={}
+		data['retval'] = retval
+		data['payload'] = payload
+		message = "{0} RESP {1}".format(path, data)
+		self.publisher.send(message)
+		time.sleep(1)	# required?
+
+	def publish_event(self, path, payload):
+		data={}
+		data['retval'] = None
+		data['payload'] = payload
+		message = "{0} INFO {1}".format(path, data)
+		self.publisher.send(message)
+		time.sleep(1)	# required?
+	
+	# Request from CLIENT to SERVER; timeout in ms
+	def client_request(self, path, request, arguments, timeout=5000):
+		message = "{0} {1}:{2}".format(path,request,arguments)
+		# setup a temporary poller for the server socket
+		reply_poller = zmq.Poller()
+		reply.poller.register(self.client, zmq.POLLIN)
+		# send client message to the server
+		self.client.send(message)
+		# poll for a reply
+		events = self.poller.poll(timeout)
+		if events:
+			# todo: have a look at what's returned?
+			# read response from the server
+			response = self.client.recv()
+			return response
+		else:
+			return None
+	
+	# Response from SERVER to CLIENT
+	def server_response(self, path, payload, retval='200'):
+		data={}
+		data['retval'] = retval
+		data['payload'] = payload
+		message = "{0} RESP {1}".format(path, data)
+		self.server.send(message)
+		time.sleep(1)	# required?
+		
+	
+	def send_event(self):
+	def send_data(self):
+	
+	# Return a tuple with the socket type and message, or None if no data
+	# Possible socket types: server, subscriber (client doesn't poll here, it polls in the client_request function)
 	def poll(self):
 		socks = dict(self.poller.poll())
 		msgtype = None
@@ -99,24 +189,6 @@ class MessageController():
 			message = self.subscriber.recv()
 			msgtype = "subscriber"
 		return msgtype, message
-	
-	#todo: port numbers ?
-	#todo: rename to connect_pub_sub or something..
-	#def connect(self):
-	def connect(self):
-
-		self.subscriber = self.context.socket (zmq.SUB)
-		port_server = "5560" #TODO: get port from config
-		self.subscriber.connect ("tcp://localhost:{0}".format(port_server)) # connect to server
-
-		port_client = "5559"
-		self.publisher = self.context.socket(zmq.PUB)
-		self.publisher.connect("tcp://localhost:{0}".format(port_client))
-	
-		#self.publisher, self.subscriber = zmq_connect(self.publisher, self.subscriber)		
-		# todo: check if connected
-		# return True/False
-		return True
 
 	def send_to_server(self, message):
 		print "sending message: {0}".format(message)

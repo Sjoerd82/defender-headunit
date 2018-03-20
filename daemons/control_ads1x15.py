@@ -43,6 +43,7 @@ LOG_LEVEL = LL_INFO
 logger = None
 
 # Messaging
+mq_address_pub = 'tcp://localhost:5559'
 messaging = None
 
 # ********************************************************************************
@@ -93,10 +94,11 @@ def setup():
 	#
 	# ZMQ
 	#
-	printer("Connecting to ZeroMQ forwarder")
+	printer("ZeroMQ: Initializing")
 	messaging = MessageController()
-	if not messaging.connect():
-		printer("Failed to connect to messenger", level=LL_CRITICAL)
+	
+	printer("ZeroMQ: Creating Publisher: {0}".format(mq_address_pub))
+	messaging.create_publisher(mq_address_pub)
 
 	#
 	# ADC
@@ -123,7 +125,7 @@ def main():
 	 , "wait"       : True	# Wait until button is released (no need to continue updating...)
 	 , "delay"      : None
 	 , "zmq_path"   : "/player/update"
-	 , "zmq_cmd"    : "SET" } )
+	 , "zmq_cmd"    : "PUT" } )
 
 	# Side button, with raised center line (not assigned any task)
 	buttonfunc.append( {
@@ -139,7 +141,7 @@ def main():
 	 , "wait"       : False
 	 , "delay"      : None
 	 , "zmq_path"   : "/volume/increase"
-	 , "zmq_cmd"    : "SET" } )
+	 , "zmq_cmd"    : "PUT" } )
 
 	# Volume DOWN
 	buttonfunc.append( {
@@ -148,7 +150,7 @@ def main():
 	 , "wait"       : False
 	 , "delay"      : None
 	 , "zmq_path"   : "/volume/decrease"
-	 , "zmq_cmd"    : "SET" } )
+	 , "zmq_cmd"    : "PUT" } )
 
 	# Next Track 
 	buttonfunc.append( {
@@ -159,7 +161,7 @@ def main():
 	 , "wait"       : False
 	 , "delay"      : True
 	 , "zmq_path"   : "/player/next"
-	 , "zmq_cmd"    : "SET" } )
+	 , "zmq_cmd"    : "PUT" } )
 
 	# Next Track / Next Dir (if channel 1 engaged)
 	buttonfunc.append( {
@@ -170,7 +172,7 @@ def main():
 	 , "wait"       : False
 	 , "delay"      : True
 	 , "zmq_path"   : "/player/nextdir"
-	 , "zmq_cmd"    : "SET" } )
+	 , "zmq_cmd"    : "PUT" } )
 
 	# Prev Track
 	buttonfunc.append( {
@@ -181,7 +183,7 @@ def main():
 	 , "wait"       : False
 	 , "delay"      : True
 	 , "zmq_path"   : "/player/prev"
-	 , "zmq_cmd"    : "SET" } )
+	 , "zmq_cmd"    : "PUT" } )
 
 	# Prev Track / Prev Dir (if channel 1 engaged)
 	buttonfunc.append( {
@@ -192,7 +194,7 @@ def main():
 	 , "wait"       : False
 	 , "delay"      : True
 	 , "zmq_path"   : "/player/prevdir"
-	 , "zmq_cmd"    : "SET" } )
+	 , "zmq_cmd"    : "PUT" } )
 
 	# Big trianlge (Shuffle)
 	buttonfunc.append( {
@@ -201,7 +203,7 @@ def main():
 	 , "wait"       : True
 	 , "delay"      : None
 	 , "zmq_path"   : "/player/random"
-	 , "zmq_cmd"    : "SET" } )
+	 , "zmq_cmd"    : "PUT" } )
 
 	# Round button with dot (ATT)
 	buttonfunc.append( {
@@ -210,7 +212,7 @@ def main():
 	 , "wait"       : True
 	 , "delay"      : None
 	 , "zmq_path"   : "/volume/att"
-	 , "zmq_cmd"    : "SET" } )
+	 , "zmq_cmd"    : "PUT" } )
 
 	# Source
 	buttonfunc.append( {
@@ -219,7 +221,7 @@ def main():
 	 , "wait"       : True
 	 , "delay"      : None
 	 , "zmq_path"   : "/source/next"
-	 , "zmq_cmd"    : "SET" } )
+	 , "zmq_cmd"    : "PUT" } )
 
 	# Round smooth button (OFF)
 	buttonfunc.append( {
@@ -229,7 +231,7 @@ def main():
 	 , "delay"      : None
 	 , "long_press" : 0.10
 	 , "zmq_path"   : "/system/halt"
-	 , "zmq_cmd"    : "SET" } )
+	 , "zmq_cmd"    : "PUT" } )
 	 
 	def button_press(button):
 		printer("Button was pressed: {0}".format(button))
@@ -264,7 +266,8 @@ def main():
 	def handle_button_press( button_spec ):
 		if 'zmq_path' and 'zmq_cmd' in button_spec:
 			printer("Sending message: {0} {1}".format(button_spec['zmq_path'],button_spec['zmq_cmd']))
-			messaging.send_command(button_spec['zmq_path'],button_spec['zmq_cmd'])
+			#messaging.send_command(button_spec['zmq_path'],button_spec['zmq_cmd'])
+			messaging.publish_request((button_spec['zmq_path'],button_spec['zmq_cmd'])
 			if button_spec['delay']:
 				button_down_delay()
 			elif button_spec['wait']:
