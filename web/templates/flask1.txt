@@ -1,0 +1,424 @@
+  Version 1
+> Only Basic HTML, the "frames" only.
+> No mpd library integration, yet.
+> No Basic/Advanced hide options
+> Basic api at http://<host:port>/hu/api/v1.0/
+
+
+Main Sections:
+* Home (Landing page)
+ 
+ 		  Track Title
+ Player Controls: [SOURCE] Seek Prev Play/Pause Stop Next Seek 
+ 		  Progress bar 
+		  Volume
+
+ Separate section
+ Playlist/Lib:	  Current Playlist 
+
+* Config
+  - System
+    - Core (files, dirs, volume, preferences, update, logging)
+	- System (klogd, syslogd, dbus, commands)
+	- ZeroMQ
+	- Web
+    - MPD
+    - SMB
+  - WiFi
+  - Plugins
+  - Equalizer
+
+* API
+* Logs
+* Power Off
+
+
+======================
+
+nav_items = [{
+	   "title":"Home",
+	 , "feather":"home"
+	 , "href":"#"
+	}
+	,{ "title":"Equalizer",
+	 , "feather":"sliders"
+	 , "href":"#"
+	}
+	,{ "title":"Plugins",
+	 , "feather":"shopping-bag"
+	 , "href":"#"
+	}
+	,{ "title":"WiFi",
+	 , "feather":"wifi"
+	 , "href":"#"
+	}
+	,{ "title":"Bluetooth",
+	 , "feather":"bluetooth"
+	 , "href":"#"
+	}
+	,{ "title":"System",
+	 , "feather":"settings"
+	 , "href":"#"
+	}
+	,{ "title":"Logs",
+	 , "feather":"file-text"
+	 , "href":"#"
+	}
+	,{ "title":"API",
+	 , "feather":"share"
+	 , "href":"#"
+	}
+	,{ "title":"Power Off",
+	 , "feather":"power"
+	 , "href":"#"
+	}]
+
+
+nav_sources = [
+	 { "title":"FM Radio",
+	 , "feather":"radio"
+	 , "href:"#"
+	}
+	,{ "title":"Local Music",
+	 , "feather":"hard-drive"
+	 , "href:"#"
+	}
+	,{ "title":"Internet Radio",
+	 , "feather":"bookmark"
+	 , "href:"#"
+	}
+	,{ "title":"SoundCloud",
+	 , "feather":"cloud"
+	 , "href:"#"
+	}
+	,{ "title":"Network Shares",
+	 , "feather":"server"
+	 , "href:"#"
+	}]
+	
+nav_pills = [
+	 { "title":"Locations",
+	 , "id":"locations"
+	 , "href:":"#" }
+	,{ "title":"Preferences",
+	 , "id":"prefs"
+	 , "href:":"#" }
+	,{ "title":"Volume",
+	 , "id":"volume"
+	 , "href:":"#" }
+	,{ "title":"Updates",
+	 , "id":"updates"
+	 , "href:":"#" }
+	,{ "title":"MPD",
+	 , "id":"mpd"
+	 , "href:":"#" }
+	,{ "title":"SMB",
+	 , "id":"smb"
+	 , "href:":"#" }
+	,{ "title":"ZeroMQ",
+	 , "id":"zmq"
+	 , "href:":"#" }
+	,{ "title":"Web",
+	 , "id":"web"
+	 , "href:":"#" }
+	,{ "title":"System",
+	 , "id":"system"
+	 , "href:":"#" }
+	,{ "title":"Logging",
+	 , "id":"logging"
+	 , "href:":"#" } ]
+
+
+@app.route('/', methods=['GET'])
+def home():
+	global nav_items
+	global nav_sources
+	page_title = "Landing page"
+	nav_curr_ix = 1
+	return render_template('dash_base.html', title=page_title, nav_items=nav_items, nav_curr_ix=nav_curr_ix)
+
+@app.route('/equalizer', methods=['GET'])
+def equalizer():
+	page_title = "Equalizer"
+	return "TODO"
+
+@app.route('/plugins', methods=['GET'])
+def plugins():
+	page_title = "Plugins"
+	return "TODO"
+
+@app.route('/wifi', methods=['GET'])
+def wifi():
+	page_title = "WiFi"
+	
+	#	ci = {
+	#		 "caption":"IP address"
+	#		,"type
+
+	"""
+	 IP address
+	 (*)  DHCP
+	 ( ) [Static IP    ]
+
+	 Default WiFi mode
+	 (*) Network if available, else accesspoint
+	 ( ) Network only
+	 ( ) Accesspoint only
+	 ( ) Off
+
+	 List of WiFi networks:
+	 {list}
+	 <Add> <Edit> <Remove>
+
+	 Accesspoint Settings
+	 Name (SSID): [   ]
+	 Password:    [   ] (psk)
+	"""
+	return "TODO"
+
+@app.route('/bt', methods=['GET'])
+def ():
+	page_title = "Bluetooth"
+	return "TODO"
+
+@app.route('/config', methods=['GET'])
+@app.route('/config/locations', methods=['GET'])
+def cfg_locs():
+	global nav_pills
+	page_title = "System Settings"
+	return render_template('dash_cfg_loc.html', title=page_title, nav_pills=nav_pills)
+
+@app.route('/config/prefs', methods=['GET'])
+def cfg_prefs():
+	global nav_pills
+	page_title = "Preferences"
+	return render_template('dash_cfg_prefs.html', title=page_title, nav_pills=nav_pills)
+
+@app.route('/config/save', methods=['POST'])
+def cfg_save():
+	page_title = "Save!"
+	message = "Your changes have been saved."
+	return render_template('dash_cfg_saved.html', title=page_title, nav_pills=nav_pills, message=message)
+
+	
+@app.route('/logs', methods=['GET'])
+def ():
+	page_title = "Logs"
+	return "TODO"
+
+@app.route('/api', methods=['GET'])
+def ():
+	page_title = "API"
+	return "TODO"
+
+@app.route('/poweroff', methods=['GET'])
+def ():
+	page_title = "Power Off"
+	# Shows two buttons:
+	# [ Reboot ] [ Power Off ]
+	buttons = [ {
+	   btn_reboot = {
+		 "Caption":"Reboot"
+		,"href":"#" }
+	}
+	,{ btn_halt = {
+		 "Caption":"Power Off"
+		,"href":"#" }
+	]
+	return render_template('dash_poweroff.html', title=page_title, buttons=buttons)
+
+
+@app.route('/source/fm', methods=['GET'])
+def ():
+	page_title = "FM Radio"
+	return "TODO"
+
+@app.route('/source/local', methods=['GET'])
+def ():
+	page_title = "Local Music"
+	return "TODO"
+
+@app.route('/source/stream', methods=['GET'])
+def ():
+	page_title = "Internet Radio"
+	return "TODO"
+
+@app.route('/source/soundcloud', methods=['GET'])
+def ():
+	page_title = "SoundCloud"
+	return "TODO"
+
+@app.route('/source/network', methods=['GET'])
+def ():
+	page_title = "Network Shares"
+	return "TODO"
+
+
+
+
+API
+======================
+https://blog.miguelgrinberg.com/post/designing-a-restful-api-with-python-and-flask/page/5
+
+/source
+/player
+/playlist
+/volume
+/config
+/plugin
+
+#TBD: stuff like: (setting source-specific items, e.g. freq, but this example is also in the configuration.json)
+# so.... probably not needed...
+GET  /source/<source_code>
+
+
+GET  /player				Retrieve current player state (pause/play/stopped, random)
+GET  /player/track			Retrieve current playing track (incl. ID3)
+GET  /player/folders			Retrieve list of folders
+POST /player/pause/...			Set pause on|off|toggle
+POST /player/state/...			Set state play|pause|stop, toggle random
+POST /player/random/...			Set random on|off|toggle|special modes
+POST /player/randommode/<mode>		Set random mode: folder|artist|genre|all
+POST /player/track/<track>		<playlist id>
+POST /player/next			Next track
+POST /player/prev			Prev track
+POST /player/seekfwd			Seek fwd
+POST /player/seekrev			Seek rev
+POST /player/seek/<incr_sec>		Seek increment (seconds)
+
+GET  /playlist				Retrieve current playlist
+GET  /playlist/<..>			Retrieve saved playist #todo
+
+GET  /volume				Retrieve current volume
+GET  /equalizer/<band>			Retrieve EQ
+POST /volume/<vol>			Set volume. Vol= up|down|+n|-n|att (incr,decr is in %)
+POST /volume/att/<level>		Set ATT volume. Level in %.
+POST /volume/increment/<incr>		Set increments for Volume up/down
+POST /equalizer/<band>/<level>		Set EQ level for band
+
+GET  /config				Retrieve current configuration
+GET  /config/<path:config>		Retrieve a ci group or ci item
+POST /config/<path:config>/<value>	Set ci item
+
+GET  /plugin/<path:config>		Get from a plugin
+GET  /plugin/api			Get api from plugin
+POST /plugin/<path:config> 		Set for a plugin
+
+
+
+
+
+
+State/Control/Playlist
+======================
+ - Headunit Control
+   > Next Source
+
+ - Player controls
+   > Play/Pause/Stop
+   > Next, Prev track/stream
+   > Next, Prev folder (+list?)
+   > Seek FWD, REV
+   > Random, Repeat, (Shuffle?)
+   > TODO: FM controls
+   > TODO: Stream controls
+
+ - Volume/EQ
+   > Vol Up, Dn, ATT
+   > Equaliser, Treble, Bass
+
+ - Playlist (not editable, for now..)
+   > Show (paginated)
+
+
+Config/Settings
+======================
+
+WiFi
+--------------
+
+ IP address
+ (*)  DHCP
+ ( ) [Static IP    ]
+
+ Default WiFi mode
+ (*) Network if available, else accesspoint
+ ( ) Network only
+ ( ) Accesspoint only
+ ( ) Off
+
+ List of WiFi networks:
+ {list}
+ <Add> <Edit> <Remove>
+
+ Accesspoint Settings
+ Name (SSID): [   ]
+ Password:    [   ] (psk)
+
+
+Preferences
+--------------
+
+ [ ] Retain Random
+ [X] Media autoplay
+ Mount Media Options:    [ro    ]
+
+ Start-up source:
+ (*) Resume
+ ( ) [ source |v]
+ ( ) None
+
+ Resume track thresholds:
+  Min. elapsed      [20 ]sec.
+  Min. total length [30 ]sec.
+
+Volume
+--------------
+
+ Default:     [30 ]%
+ ATT:         [20 ]%
+ Max:         [100]%
+
+ Limit volume at startup
+  Min startup: [20 ]% (must be lower than max.)
+  Max startup: [70 ]% (must be higher than min.)
+
+
+Plugins: Source
+------------------------
+Loop: {list}
+ {Plugin Name}
+ {Specific settings}
+ [ ] Disable
+
+ - Internet radio
+	A/R/E Stations/Streams
+ - FM
+	Freq. range
+
+Plugins: Remote Control
+------------------------
+Loop: {list}
+ {Specific settings}
+ [ ] Disable
+
+ - Remote Control
+	Infrared (select remote control)
+	Wired; select/configure (button functions)
+
+Plugins: Display
+------------------------
+Loop: {list}
+ {Specific settings}
+ [ ] Disable
+
+Plugins: Other
+------------------------
+Loop: {list}
+ {Specific settings}
+ [ ] Disable
+
+ - Scrobbler
+	Set username
+	Set password
+	Set url
