@@ -161,7 +161,12 @@ class MessageController():
 		# send client message to the server
 		self.server.send(message)
 		# poll for a reply
-		events = self.poller.poll(timeout)
+		try:
+			events = self.poller.poll(timeout)
+		except zmq.ZMQError:
+			# No Message Available
+			return None
+		
 		if events:
 			# todo: have a look at what's returned?
 			# read response from the server
