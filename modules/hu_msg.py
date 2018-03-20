@@ -172,9 +172,8 @@ class MessageController():
 		self.server.send(message)
 		time.sleep(1)	# required?
 		
-	
-	def send_event(self):
-	def send_data(self):
+	#def send_event(self):
+	#def send_data(self):
 	
 	# Return a tuple with the socket type and message, or None if no data
 	# Possible socket types: server, subscriber (client doesn't poll here, it polls in the client_request function)
