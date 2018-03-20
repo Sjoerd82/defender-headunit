@@ -10,19 +10,14 @@ from flask import jsonify
 app = Flask(__name__)
 #api = Api(app)
 
+import sys
+from time import sleep
+import json
 
 #sys.path.append('../modules')
 sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
 from hu_msg import MessageController
-
-#
-# Zero MQ
-#
-import zmq
-#from zmq.utils import jsonapi
-from time import sleep
-import json
 
 
 # *******************************************************************************
