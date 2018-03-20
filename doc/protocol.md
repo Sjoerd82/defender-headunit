@@ -26,32 +26,48 @@ In this example "flask" is the unique* application identifier.
 The flask application can setup a subscription for "/data/flask/", the number can be an iterator to route back the received data to it's intended target.
 
 # Data
-{data}:
 
+### {data}:
+
+Field | Value
+--- | ---
+`retval` | Return Code
+`data` | Payload (can be anything, string, dict, etc.)
+
+Example:
+```
 {
  "retval":200,
- "data": {}		<-- optional
+ "data": { payload* }
 }
+```
 
-
-{bool}
-{source}
-{subsource}
-
-
-{source}:
+### {source}:
 Fields are partly defined by the source's .json file. The following fields are mandatory and are always be present:
- - name
- - displayname
- - order
- - controls
- - template
+
+Field | Value
+--- | ---
+`name` | Source identifying name (fm, bt, locmus, media, line)
+`displayname` | Name for display purposes
+`order` | Used to order the sources by
+`controls` | List of available controls (used?)
+`template` | Boolean; If true, this source can have subsources.
 
 The following fields are added by the Source Controller, and are thus also always available:
- - available
+
+Field | Value
+--- | ---
+`available` | Boolean; If true, the source is available
+
+Optional fields:
+
+Field | Value
+--- | ---
+`depNetwork` | Is dependent on WiFi/Internet
+`random` | List of available random modes
 
 If the source has subsources, then these are included in the "subsources" key.
-
+```
 Example:
 { "name": "media",
   "displayname": "Removeable Media",
@@ -65,17 +81,98 @@ Example:
   "subsource_key": ["uuid","label"],
   "filename_save": ["uuid","label"]
 }
+```
 
-{subsource}:
+### {subsource}:
 Fields are partly defined by the source's python code (add subsource function). The following fields are mandatory and are always present:
- - displayname
- - order
+
+Field | Value
+--- | ---
+`displayname` | Name for display purposes
+`order` | Used to order the sources by
 
 The following fields are added by the Source Controller, and are thus also always available:
- - available
+
+Field | Value
+--- | ---
+`available` | Boolean; If true, the source is available
 
 Example:
+```
 { "displayname": "/mnt/FlashDrive",
   "order": 1,
   "available": true
 }
+```
+
+### {state}
+Details about the player state. Only the state field is mandatory.
+
+Field | Value
+--- | ---
+`state` | "play", "stop" or "paused"
+`random` | "on", "off", "..."
+`repeat` | "on", "off"
+
+### {track}
+Details about what's playing. Only display is mandatory.
+Which fields are present strongly depends on the type of source and the availability of metadata.
+Sources are free to add their own tags. The ones mentioned below are the standardized.
+
+Field | Value
+--- | ---
+`display` | Formatted string
+`rds` | RDS information (FM)
+`artist` | Artist name
+`composer` | The artist who composed the song
+`performer` | The artist who performed the song
+`album` | Album name
+`albumartist` | On multi-artist albums, this is the artist name which shall be used for the whole album
+`title` | Song title
+`length` | Track length (ms)
+`elapsed` | Elapsed time (ms) --?
+`track` | Decimal track number within the album
+`disc` | The decimal disc number in a multi-disc album.
+`genre` | Music genre, multiple genre's might be delimited by semicolon, though this is not really standardized
+`date` | The song's release date, may be only the year part (most often), but could be a full data (format?)
+
+### {volume}
+Volume level. Todo: mute?
+
+Field | Value
+--- | ---
+`system` | "alsa", "jack", "pulseaudio", "mpd"(?)
+`device` | Ex. "hw:0,0", "default-sink", etc.
+`channels` | `[{level}]` list of levels
+
+#### {level}
+
+Field | Value
+--- | ---
+`channel` | Channel number, zero-based
+`level` | 0-100 (?)
+
+### {equalizer}
+TODO
+
+### {device}
+Details about a (removable) device. Only devicefile is mandatory, however, most fields will usually be populated.
+
+Field | Value
+--- | ---
+`devicefile` | Name of de Linux device
+`label` | Partition label
+`uuid` | Partition UUID
+`mountpoint` | Mountpoint
+
+Example:
+```
+{
+    "devicefile": "/dev/sda1",
+    "label": "Summer_Music",
+    "uuid": "f9",
+    "mountpoint": "/media/Summer_Music"
+}
+```
+
+{bool}
