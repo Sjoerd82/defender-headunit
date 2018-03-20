@@ -121,6 +121,13 @@ class MessageController():
 		self.client.setsockopt (zmq.SUBSCRIBE, topic)
 		self.client.connect(server_address)
 		self.poller.register(self.client, zmq.POLLIN)
+		
+		# also create a publisher, but don't bind
+		self.server = self.context.socket(zmq.PUB)
+		
+		# WE MUST NOT CALL CREATE_SERVER ANYMORE!
+		
+		
 
 	def publish_request(self, path, request, arguments):
 		if request not in ('GET','PUT','POST','DEL'):
@@ -152,7 +159,7 @@ class MessageController():
 		reply_poller = zmq.Poller()
 		reply_poller.register(self.client, zmq.POLLIN)
 		# send client message to the server
-		self.client.send(message)
+		self.server.send(message)
 		# poll for a reply
 		events = self.poller.poll(timeout)
 		if events:
@@ -162,6 +169,7 @@ class MessageController():
 			return response
 		else:
 			return None
+	#	return "bla!"
 	
 	# Response from SERVER to CLIENT
 	def server_response(self, path, payload, retval='200'):
