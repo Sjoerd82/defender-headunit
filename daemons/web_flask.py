@@ -671,12 +671,9 @@ def setup():
 	printer("ZeroMQ: Creating Publisher: {0}".format(mq_address_pub))
 	messaging.create_publisher(mq_address_pub)
 
-		
-	#TODO? SUBSCRIBE TO TOPICS
-	
 	# Connect to SourceController
 	printer("Connecting to SourceController on port 5555")
-	messaging.start_client('tcp://127.0.0.1:5555')
+	messaging.create_client('tcp://127.0.0.1:5555')
 
 def main():
 
