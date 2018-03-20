@@ -325,8 +325,8 @@ def reboot():
 	#publish_message('/system/reboot', 'SET')
 	#publish_message('/player/next', 'SET')
 	global messaging
-	messaging.send_command('/system/reboot', 'SET')
-	messaging.send_command('/player/next', 'SET')
+	messaging.publish_request('/system/reboot', 'SET')
+	messaging.publish_request('/player/next', 'SET')
 	return "SEND x2"
 	
 #app.route('/api')
@@ -380,7 +380,8 @@ def get_source():
 	#messaging.subscribe('/data/source')
 	#sources = messaging.receive_poll('/data/source',5000)
 	
-	retmsg = messaging.send_to_server('/source/primary GET')
+	#retmsg = messaging.send_to_server('/source/primary GET')
+	retmsg = messaging.client_request('/source/primary','GET', None, 5000)
 	return retmsg
 	
 	if not sources:
