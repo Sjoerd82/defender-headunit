@@ -59,6 +59,8 @@ configuration = None	# Configuration
 arg_loglevel = 20
 queue_actions = None
 
+mq_address_sub = 'tcp://localhost:5560'
+mq_address_srv = 'tcp://127.0.0.1:5555'
 
 # ********************************************************************************
 # Source Plugin Wrapper
@@ -696,7 +698,8 @@ def idle_msg_receiver():
 			print retval
 		if msgtype == "server":
 			print "Returning retval.."
-			messaging.send_to_client(retval)
+			#messaging.send_to_client(retval)
+			messaging.server_response( path,payload,retval )
 			
 	#important!
 	return True
@@ -779,19 +782,22 @@ def setup():
 	#
 	# ZMQ
 	#
-	printer("ZeroMQ: Connecting to ZeroMQ forwarder")
+	printer("ZeroMQ: Initializing")
 	messaging = MessageController()
-	if not messaging.connect():
-		printer("Failed to connect to messenger", level=LL_CRITICAL)
+	
+	printer("ZeroMQ: Creating Subscriber: {0}".format(mq_address_sub))
+	messaging.create_subscriber(mq_address_sub,['/source','/player'])
 
-	topics = ['/source','/player']
-	for topic in topics:
-		messaging.subscribe(topic)
+	printer("ZeroMQ: Creating Server: {0}".format(mq_address_srv))
+	messaging.create_server(mq_address_srv,'/srcctrl')
+	
+	#printer("ZeroMQ: Creating Publisher: {0}".format(mq_address_pub))
+	#messaging.create_publisher(mq_address_pub)
 
-	printer("ZeroMQ: Starting server at port 5555")
-	messaging.start_server('tcp://127.0.0.1:5555')
-	printer("ZeroMQ: Register for polling")
-	messaging.poll_register()
+	#printer("ZeroMQ: Starting server at port 5555")
+	#messaging.start_server('tcp://127.0.0.1:5555')
+	#printer("ZeroMQ: Register for polling")
+	#messaging.poll_register()
 	
 	#
 	# Load main configuration
