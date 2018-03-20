@@ -28,30 +28,45 @@ The flask application can setup a subscription for "/data/flask/", the number ca
 # Data
 {data}:
 
+Field | Value
+--- | ---
+`retval` | Return Code
+`data` | Payload (can be anything, string, dict, etc.)
+
+Example:
+```
 {
  "retval":200,
- "data": {}		<-- optional
+ "data": { payload* }
 }
-
-
-{bool}
-{source}
-{subsource}
-
+```
 
 {source}:
 Fields are partly defined by the source's .json file. The following fields are mandatory and are always be present:
- - name
- - displayname
- - order
- - controls
- - template
+
+Field | Value
+--- | ---
+`name` | Source identifying name (fm, bt, locmus, media, line)
+`displayname` | Source name for display purposes
+`order` | Used to order the sources by
+`controls` | List of available controls (used?)
+`template` | Boolean; If true, this source can have subsources.
 
 The following fields are added by the Source Controller, and are thus also always available:
- - available
+
+Field | Value
+--- | ---
+`available` | Boolean; If true, the source is available
+
+Optional fields:
+
+Field | Value
+--- | ---
+`depNetwork` | Is dependent on WiFi/Internet
+`random` | List of available random modes
 
 If the source has subsources, then these are included in the "subsources" key.
-
+```
 Example:
 { "name": "media",
   "displayname": "Removeable Media",
@@ -65,11 +80,14 @@ Example:
   "subsource_key": ["uuid","label"],
   "filename_save": ["uuid","label"]
 }
+```
 
 {subsource}:
 Fields are partly defined by the source's python code (add subsource function). The following fields are mandatory and are always present:
- - displayname
- - order
+Field | Value
+--- | ---
+`displayname` | 
+`order` | 
 
 The following fields are added by the Source Controller, and are thus also always available:
  - available
@@ -79,3 +97,8 @@ Example:
   "order": 1,
   "available": true
 }
+
+
+{source}
+{subsource}
+{bool}
