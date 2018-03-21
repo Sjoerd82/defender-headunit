@@ -114,7 +114,7 @@ class MessageController():
 		#self.server.bind(server_address)
 		self.server.bind('tcp://*:5555')
 		time.sleep(1)	# still needed when polling?
-
+		self.server.connect(address)
 
 		self.is_server = True
 		
@@ -138,6 +138,7 @@ class MessageController():
 		
 		# also create a publisher, but don't bind
 		self.server = self.context.socket(zmq.PUB)
+		self.server.connect(address)
 		
 		# WE MUST NOT CALL CREATE_SERVER ANYMORE!
 		self.is_server = False
