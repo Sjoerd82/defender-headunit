@@ -118,7 +118,7 @@ class MessageController():
 		# also create a client for listening
 		self.client = self.context.socket (zmq.SUB)
 		self.client.setsockopt (zmq.SUBSCRIBE, topic)
-		self.poller.register(self.client, zmq.POLLIN)
+		self.poller.register(self.server, zmq.POLLIN)	# mssgs come in here
 		
 
 	# Setup a client on the given address. Use the same (unique) topic as used by the server
