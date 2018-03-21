@@ -212,9 +212,9 @@ class MessageController():
 		print "DEBUG: poll returns: {0}".format(socks)
 		msgtype = None
 		message = None
-		if self.server in socks:
-			message = self.server.recv()
-			msgtype = "server"
+		#if self.server in socks:
+		#	message = self.server.recv()
+		#	msgtype = "server"
 		if self.client in socks:
 			message = self.client.recv()
 			msgtype = "server"
