@@ -171,7 +171,7 @@ Example:
 ```
 {
     "position": "33"
-    "folder": "/Foo Fighters - Walk"
+    "folder": "/MyMusic/Foo Fighters - Walk"
 }
 ```
 
