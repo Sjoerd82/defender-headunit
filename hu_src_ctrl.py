@@ -60,7 +60,7 @@ arg_loglevel = 20
 queue_actions = None
 
 mq_address_sub = 'tcp://localhost:5560'
-mq_address_srv = 'tcp://*:5555'
+mq_address_srv = 'tcp://localhost:5555'
 
 # ********************************************************************************
 # Source Plugin Wrapper

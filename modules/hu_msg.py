@@ -111,7 +111,8 @@ class MessageController():
 		self.servers[server_address].bind(server_address)
 		"""
 		self.server = self.context.socket(zmq.PUB)
-		self.server.bind(server_address)
+		#self.server.bind(server_address)
+		self.server.bind('tcp://*:5555')
 		time.sleep(1)	# still needed when polling?
 
 
