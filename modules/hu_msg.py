@@ -114,8 +114,6 @@ class MessageController():
 		self.server.bind(server_address)
 		time.sleep(1)	# still needed when polling?
 
-		self.poller.register(self.client, zmq.POLLIN)	# mssgs come in here?
-		#self.poller.register(self.server, zmq.POLLIN)	# mssgs come in here?
 
 		self.is_server = True
 		
@@ -124,7 +122,10 @@ class MessageController():
 		self.client.connect(server_address)
 		self.client.setsockopt (zmq.SUBSCRIBE, topic)
 		
+		self.poller.register(self.client, zmq.POLLIN)	# mssgs come in here?
+		#self.poller.register(self.server, zmq.POLLIN)	# mssgs come in here?
 
+		
 	# Setup a client on the given address. Use the same (unique) topic as used by the server
 	# This function also registers the client with a poller
 	def create_client(self, server_address, topic):
