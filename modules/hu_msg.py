@@ -76,6 +76,9 @@ class MessageController():
 		self.sockets = []
 		self.addresses = {}
 		
+		# Client-Server
+		self.is_server = None
+		
 		# Poller
 		self.poller = zmq.Poller()
 	
@@ -113,6 +116,13 @@ class MessageController():
 		self.poller.register(self.server, zmq.POLLIN)
 		time.sleep(1)	# still needed when polling?
 
+		self.is_server = True
+		#self.server = self.context.socket(zmq.PUB)
+		#self.client = self.context.socket (zmq.SUB)
+		#self.server.bind(server_address)
+		#self.client.setsockopt (zmq.SUBSCRIBE, topic)
+		
+
 	# Setup a client on the given address. Use the same (unique) topic as used by the server
 	# This function also registers the client with a poller
 	def create_client(self, server_address, topic):
@@ -126,6 +136,7 @@ class MessageController():
 		self.server = self.context.socket(zmq.PUB)
 		
 		# WE MUST NOT CALL CREATE_SERVER ANYMORE!
+		self.is_server = False
 		
 		
 
