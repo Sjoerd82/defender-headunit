@@ -195,4 +195,11 @@ Example:
 }
 ```
 
-{bool}
+### {mode}
+
+Example:
+```
+{
+    "mode": "random-genre"
+}
+```
