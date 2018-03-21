@@ -674,7 +674,7 @@ def setup():
 
 	# Connect to SourceController
 	printer("Connecting to SourceController on port 5555")
-	messaging.create_client('tcp://127.0.0.1:5555','/srcctrl')
+	messaging.create_client('tcp://localhost:5555','/srcctrl')
 
 def main():
 
