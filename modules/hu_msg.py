@@ -163,15 +163,18 @@ class MessageController():
 	
 	# Request from CLIENT to SERVER; timeout in ms
 	def client_request(self, path, request, arguments, timeout=5000):
+		print "DEBUG: client_request()"
 		message = "/srcctrl/{0} {1}:{2}".format(path,request,arguments)
 		# setup a temporary poller for the server socket
 		reply_poller = zmq.Poller()
 		reply_poller.register(self.client, zmq.POLLIN)
 		# send client message to the server
+
+		print "DEBUG: @SERVER (PUB) Sending message: {0}".format(message)
 		self.server.send(message)
 		# poll for a reply
 		try:
-			events = self.poller.poll(timeout)
+			events = reply_poller.poll(timeout)
 		except zmq.ZMQError:
 			# No Message Available
 			return None
