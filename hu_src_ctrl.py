@@ -688,6 +688,7 @@ def idle_msg_receiver_ASYNC():
 
 def idle_msg_receiver():
 
+	print "DEBUG: idle_msg_receiver()"
 	msgtype, msg = messaging.poll()
 	if msg:
 		print "Received message: {0}".format(msg)

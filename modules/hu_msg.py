@@ -114,11 +114,15 @@ class MessageController():
 		self.server.bind(server_address)
 		time.sleep(1)	# still needed when polling?
 
+		self.poller.register(self.client, zmq.POLLIN)	# mssgs come in here?
+		self.poller.register(self.server, zmq.POLLIN)	# mssgs come in here?
+
 		self.is_server = True
+		
 		# also create a client for listening
 		self.client = self.context.socket (zmq.SUB)
+		self.client.connect(server_address)
 		self.client.setsockopt (zmq.SUBSCRIBE, topic)
-		self.poller.register(self.server, zmq.POLLIN)	# mssgs come in here
 		
 
 	# Setup a client on the given address. Use the same (unique) topic as used by the server
@@ -166,27 +170,27 @@ class MessageController():
 		print "DEBUG: client_request()"
 		message = "/srcctrl{0} {1}:{2}".format(path,request,arguments)
 		# setup a temporary poller for the server socket
-		reply_poller = zmq.Poller()
-		reply_poller.register(self.client, zmq.POLLIN)
+	#	reply_poller = zmq.Poller()
+	#	reply_poller.register(self.client, zmq.POLLIN)
 		# send client message to the server
 
 		print "DEBUG: @SERVER (PUB) Sending message: {0}".format(message)
 		self.server.send(message)
 		# poll for a reply
-		try:
-			events = reply_poller.poll(timeout)
-		except zmq.ZMQError:
+	#	try:
+	#		events = reply_poller.poll(timeout)
+	#	except zmq.ZMQError:
 			# No Message Available
-			return None
+	#		return None
 		
-		if events:
+	#	if events:
 			# todo: have a look at what's returned?
 			# read response from the server
-			response = self.client.recv()
-			return response
-		else:
-			return None
-	#	return "bla!"
+	#		response = self.client.recv()
+	#		return response
+	#	else:
+	#		return None
+		return "bla!"
 	
 	# Response from SERVER to CLIENT
 	def server_response(self, path, payload, retval='200'):
