@@ -115,7 +115,7 @@ class MessageController():
 		time.sleep(1)	# still needed when polling?
 
 		self.poller.register(self.client, zmq.POLLIN)	# mssgs come in here?
-		self.poller.register(self.server, zmq.POLLIN)	# mssgs come in here?
+		#self.poller.register(self.server, zmq.POLLIN)	# mssgs come in here?
 
 		self.is_server = True
 		
