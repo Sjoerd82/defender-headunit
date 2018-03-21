@@ -42,6 +42,13 @@ Example:
 }
 ```
 
+### {bool}:
+Boolean value
+
+Field | Value
+--- | ---
+`boolean` | `true` or `false`
+
 ### {source}:
 Fields are partly defined by the source's .json file. The following fields are mandatory and are always be present:
 
@@ -154,6 +161,19 @@ Field | Value
 
 ### {equalizer}
 TODO
+
+### {pos_folder}
+
+Field | Value
+--- | ---
+
+Example:
+```
+{
+    "position": "33"
+    "folder": "/Foo Fighters - Walk"
+}
+```
 
 ### {device}
 Details about a (removable) device. Only devicefile is mandatory, however, most fields will usually be populated.
