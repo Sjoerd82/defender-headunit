@@ -117,10 +117,9 @@ class MessageController():
 		time.sleep(1)	# still needed when polling?
 
 		self.is_server = True
-		#self.server = self.context.socket(zmq.PUB)
-		#self.client = self.context.socket (zmq.SUB)
-		#self.server.bind(server_address)
-		#self.client.setsockopt (zmq.SUBSCRIBE, topic)
+		# also create a client for listening
+		self.client = self.context.socket (zmq.SUB)
+		self.client.setsockopt (zmq.SUBSCRIBE, topic)
 		
 
 	# Setup a client on the given address. Use the same (unique) topic as used by the server
