@@ -165,7 +165,7 @@ class MessageController():
 	
 	# Request from CLIENT to SERVER; timeout in ms
 	def client_request(self, path, request, arguments, timeout=5000):
-		message = "{0} {1}:{2}".format(path,request,arguments)
+		message = "/srcctrl/{0} {1}:{2}".format(path,request,arguments)
 		# setup a temporary poller for the server socket
 		reply_poller = zmq.Poller()
 		reply_poller.register(self.client, zmq.POLLIN)
