@@ -164,7 +164,7 @@ class MessageController():
 	# Request from CLIENT to SERVER; timeout in ms
 	def client_request(self, path, request, arguments, timeout=5000):
 		print "DEBUG: client_request()"
-		message = "/srcctrl/{0} {1}:{2}".format(path,request,arguments)
+		message = "/srcctrl{0} {1}:{2}".format(path,request,arguments)
 		# setup a temporary poller for the server socket
 		reply_poller = zmq.Poller()
 		reply_poller.register(self.client, zmq.POLLIN)
@@ -203,7 +203,9 @@ class MessageController():
 	# Return a tuple with the socket type and message, or None if no data
 	# Possible socket types: server, subscriber (client doesn't poll here, it polls in the client_request function)
 	def poll(self):
+		print "DEBUG: poll()"
 		socks = dict(self.poller.poll())
+		print "DEBUG: poll returns: {0}".format(socks)
 		msgtype = None
 		message = None
 		if self.server in socks:
