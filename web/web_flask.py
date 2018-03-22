@@ -24,8 +24,13 @@ from hu_msg import MessageController
 # Global variables and constants
 #
 CONFIG_FILE = '/etc/configuration.json'
+DESCRIPTION = "Flask HTTP server"
+DEFAULT_CONFIG_FILE = '/etc/configuration.json'
 DEFAULT_PORT_WWW = 8289
 DEFAULT_PASSWORD = None
+DEFAULT_LOG_LEVEL = LL_INFO
+DEFAULT_PORT_SUB = 5560
+DEFAULT_PORT_PUB = 5559
 
 # Logging
 DAEMONIZED = None
@@ -40,7 +45,6 @@ configuration = None
 API_VERSION = '/hu/api/v1.0'
 
 # messaging
-mq_address_pub = 'tcp://localhost:5559'
 messaging = None
 
 
@@ -381,7 +385,8 @@ def get_source():
 	#sources = messaging.receive_poll('/data/source',5000)
 	
 	#retmsg = messaging.send_to_server('/source/primary GET')
-	retmsg = messaging.client_request('/source/primary','GET', None, 5000)
+	#retmsg = messaging.client_request('/source/primary','GET', None, 5000)
+	retmsg = messaging.publish_command('/source/primary','GET', None, True, 5000, '/bladiebla/'):
 	return retmsg
 	
 	if not sources:
@@ -667,14 +672,14 @@ def setup():
 	# ZMQ
 	#
 	printer("ZeroMQ: Initializing")
-	messaging = MessageController()
+	messaging = MqPubSubFwdController('localhost',DEFAULT_PORT_PUB,DEFAULT_PORT_SUB)
 	
-	printer("ZeroMQ: Creating Publisher: {0}".format(mq_address_pub))
-	messaging.create_publisher(mq_address_pub)
+	printer("ZeroMQ: Creating Publisher: {0}".format(DEFAULT_PORT_PUB))
+	messaging.create_publisher()
 
-	# Connect to SourceController
-	printer("Connecting to SourceController on port 5555")
-	messaging.create_client('tcp://localhost:5555','/srcctrl')
+	printer("ZeroMQ: Creating Subscriber: {0}".format(DEFAULT_PORT_SUB))
+	messaging.create_subscriber(['/source','/player'])
+
 
 def main():
 
