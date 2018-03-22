@@ -196,11 +196,12 @@ class MqPubSubFwdController:
 		print("[MQ] Received Path: {0}; Command: {1}; Parameters: {2}; Response path: {3}".format(path,command,params,resp_path))
 		
 		# return as a tuple:
-		return path, command, params, resp_path
+		#return path, command, params, resp_path
 		
 		# return as a dict:
 		parsed_message = {}
 		parsed_message['path'] = path
 		parsed_message['cmd'] = command
 		parsed_message['args'] = params
+		parsed_message['resp_path'] = resp_path
 		return parsed_message

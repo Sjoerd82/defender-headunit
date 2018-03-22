@@ -715,8 +715,8 @@ def idle_msg_receiver():
 	if msg:
 		print "Received message: {0}".format(msg)
 		parsed_msg = messaging.parse_message(msg)
-		retval = dispatcher(parsed_msg['path'],parsed_msg['cmd'],parsed_msg['args'])
-			
+		retval = dispatcher(parsed_msg['path'],parsed_msg['cmd'],parsed_msg['args'],parsed_msg['resp_path'])
+		print retval
 	#important!
 	return True
 	
