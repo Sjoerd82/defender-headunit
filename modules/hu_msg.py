@@ -1,7 +1,7 @@
 #
 # Messaging layer
 # Venema, S.R.G.
-# 2018-03-20
+# 2018-03-22
 #
 # A wrapper for ZeroMQ Pub/Sub
 # 
@@ -20,43 +20,12 @@ def printer( message, level=LL_INFO, tag="", logger_name=__name__):
 	logger = logging.getLogger(logger_name)
 	logger.log(level, message, extra={'tag': tag})
 
-
 #********************************************************************************
-# ZeroMQ
+# ZeroMQ Wrapper for Pub-Sub Forwarder Device
 #
-"""
-def zmq_send(publisher, message):
+class MqPubSubFwdController:
 
-	#global publisher
-
-	#data = { "cmd:" cmd }
-	#data = json.dumps(message)
-	#data = cmd
-	#printer("Sending message: {0} {1}".format(path_send, data))
-	publisher.send(message)
-	time.sleep(1)
-	
-def zmq_recv(subscriber):
-	message = subscriber.recv()
-	return message
-
-def zmq_recv_async(subscriber):
-
-	try:
-		message = subscriber.recv(zmq.NOBLOCK)
-	except zmq.ZMQError:
-		message = None
-		
-	return message
-"""
-	
-#********************************************************************************
-# ZeroMQ Wrapper
-#
-
-class MessageController():
-
-	def __init__(self):
+	def __init__(self, address, port_pub, port_sub):
 
 		# Context
 		self.context = zmq.Context()
@@ -64,244 +33,146 @@ class MessageController():
 		# Pub-Sub
 		self.publisher = None
 		self.subscriber = None
-		self.topics = []
-		
-		# Srv-Cli
-		self.server = None
-		self.server_topic = None
-		self.client = None
 
-		# Servers, access by address
-		#self.servers = {}
-		self.sockets = []
-		self.addresses = {}
-		
-		# Client-Server
-		self.is_server = None
-		
 		# Poller
 		self.poller = zmq.Poller()
-	
-	# Setup a publisher to the given (forwarder) address
-	# This function does not do a bind on the address, so it can be used in combination with a forwarder.
-	def create_publisher(self, address):
-		self.publisher = self.context.socket(zmq.PUB)
-		self.publisher.connect(address)
+		
+		self.address = address
+		self.port_pub = port_pub
+		self.port_sub = port_sub
+		
+		self.VALID_COMMANDS = ['GET','PUT','POST','DEL']
 
-	# Setup a subscription for the given address and topic(s)
-	# The publisher does not need to be created first, necessarily.
-	# This function also registers the subscription with the poller
-	def create_subscriber(self, address, topics=['/']):
+	def __send(self, message):
+		self.publisher.send(message)
+		time.sleep(1)	# required??? don't think so.. TODO: Remove, once we seen everything works..
+		return True
+
+	def __recv(self):
+		message = self.subscriber.recv()
+		return message
+		
+	def create_publisher(self):
+		"""
+		Setup and connect a publisher. Does not bind (uses the forwarder).
+		"""
+		self.publisher = self.context.socket(zmq.PUB)
+		self.publisher.connect("tcp://{0}:{1}".format(self.address, self.port_pub))
+
+	def create_subscriber(self, topics=['/']):
+		"""
+		Setup and connect a subscriber for the given topic(s).
+		This function also registers the subscription with the poller.
+		"""
 		self.subscriber = self.context.socket (zmq.SUB)
-		self.subscriber.connect(address)
+		self.subscriber.connect("tcp://{0}:{1}".format(self.address, self.port_sub))
+		self.poller.register(self.subscriber, zmq.POLLIN)
 		for topic in topics:
 			self.subscriber.setsockopt (zmq.SUBSCRIBE, topic)
-		self.poller.register(self.subscriber, zmq.POLLIN)
 		
-	# Setup a server on the given address
-	# This function does a bind, but it uses the PUB-SUB socket type to prevent deadlocks.
-	# It should always return a message immediately after receiving one.
-	# A unique topic must be given so the server can prefix it's output to be directed to the client.
-	# This function also registers the server with a poller
-	def create_server(self, server_address, topic):
-		#self.server = self.context.socket(zmq.REP)
-		# for supporting multiple servers, use this:
+	def publish_command(self, path, command, arguments=None, wait_for_reply=False, timeout=5000, response_path=None):
 		"""
-		self.servers[server_address] = self.context.socket(zmq.PUB)
-		self.servers[server_address].bind(server_address)
+		Publish a message. If wait_for_reply, then block until a reply is received.
+		Parameters:
+		 - path: (list) path
+		 - command: (string) command
+		 - arguments: (list)
+		Returns:
+		 - None (invalid command, send unsuccesful)
+		 ? Raw return message
+		 ? Tuple/Dict (#tbd)
+		
 		"""
-		self.server = self.context.socket(zmq.PUB)
-		#self.server.bind(server_address)
-		self.server.bind('tcp://*:5555')
-		time.sleep(1)	# still needed when polling?
-		self.server.connect(server_address)
+		if command not in self.VALID_COMMANDS:
+			return False
+			
+		if wait_for_reply and not response_path:
+			response_path = '/myuniquereplypath/'
+		
+		message = "{0} {1}".format(path,command)
+		
+		# append arguments
+		if arguments:
+			message = "{0}{1}".format(message, ",".join(arguments))
+			
+		# append response path
+		if response_path:
+			message = "{0} {1}".format(message,response_path)
+		
+		if wait_for_reply:
+			# create a subscription socket, listening to the response path
+			reply_subscriber = self.context.socket (zmq.SUB)
+			reply_subscriber.connect(self.address)
+			reply_subscriber.setsockopt (zmq.SUBSCRIBE,response_path)
 
-		self.is_server = True
-		
-		# also create a client for listening
-		self.client = self.context.socket (zmq.SUB)
-		self.client.connect(server_address)
-		self.client.setsockopt (zmq.SUBSCRIBE, topic)
-		
-		self.poller.register(self.client, zmq.POLLIN)	# mssgs come in here?
-		#self.poller.register(self.server, zmq.POLLIN)	# mssgs come in here?
-
-		
-	# Setup a client on the given address. Use the same (unique) topic as used by the server
-	# This function also registers the client with a poller
-	def create_client(self, server_address, topic):
-		#self.client = self.context.socket (zmq.REQ)
-		self.client = self.context.socket (zmq.SUB)
-		self.client.setsockopt (zmq.SUBSCRIBE, topic)
-		self.client.connect(server_address)
-		self.poller.register(self.client, zmq.POLLIN)
-		
-		# also create a publisher, but don't bind
-		self.server = self.context.socket(zmq.PUB)
-		self.server.connect(server_address)
-		
-		# WE MUST NOT CALL CREATE_SERVER ANYMORE!
-		self.is_server = False
-		
-		
-
-	def publish_request(self, path, request, arguments):
-		if request not in ('GET','PUT','POST','DEL'):
-			return None
-		message = "{0} {1}:{2}".format(path,request,arguments)	#TODO: add return path
-		self.publisher.send(message)
-		time.sleep(1)	# required?
-	
-	def publish_response(self, path, payload, retval='200'):
+			# setup a temporary poller for the new socket
+			reply_poller = zmq.Poller()
+			reply_poller.register(reply_subscriber, zmq.POLLIN)
+				
+		retval = self.__send(message):
+		if not retval:
+			return False
+		elif not wait_for_reply:
+			return True
+		else:
+			# poll for a reply
+			#try:
+			response = None
+			events = reply_poller.poll(timeout)
+			#except zmq.ZMQError:
+				# No Message Available
+			#	return None
+			
+			if events:
+				# todo: have a look at what's returned?
+				# read response from the server
+				response = reply_subscriber.recv()
+				parsed_response = parse_message(response)
+				
+			#TODO: DO WE NEED TO DISCONNECT??
+			reply_subscriber.disconnect(self.address)
+			return parsed_response
+			
+	def publish_data(self, path, payload, retval='200'):
+		"""
+		Publish a "payload" message
+		"""
 		data={}
 		data['retval'] = retval
 		data['payload'] = payload
-		message = "{0} RESP {1}".format(path, data)
+		message = "{0} DATA {1}".format(path, data)
 		self.publisher.send(message)
 		time.sleep(1)	# required?
-
-	def publish_event(self, path, payload):
-		data={}
-		data['retval'] = None
-		data['payload'] = payload
-		message = "{0} INFO {1}".format(path, data)
-		self.publisher.send(message)
-		time.sleep(1)	# required?
-	
-	# Request from CLIENT to SERVER; timeout in ms
-	def client_request(self, path, request, arguments, timeout=5000):
-		print "DEBUG: client_request()"
-		message = "/srcctrl{0} {1}:{2}".format(path,request,arguments)
-		# setup a temporary poller for the server socket
-	#	reply_poller = zmq.Poller()
-	#	reply_poller.register(self.client, zmq.POLLIN)
-		# send client message to the server
-
-		print "DEBUG: @SERVER (PUB) Sending message: {0}".format(message)
-		self.server.send(message)
-		# poll for a reply
-	#	try:
-	#		events = reply_poller.poll(timeout)
-	#	except zmq.ZMQError:
-			# No Message Available
-	#		return None
 		
-	#	if events:
-			# todo: have a look at what's returned?
-			# read response from the server
-	#		response = self.client.recv()
-	#		return response
-	#	else:
-	#		return None
-		return "bla!"
-	
-	# Response from SERVER to CLIENT
-	def server_response(self, path, payload, retval='200'):
-		data={}
-		data['retval'] = retval
-		data['payload'] = payload
-		message = "{0} RESP {1}".format(path, data)
-		self.server.send(message)
-		time.sleep(1)	# required?
-		
-	#def send_event(self):
-	#def send_data(self):
-	
-	# Return a tuple with the socket type and message, or None if no data
-	# Possible socket types: server, subscriber (client doesn't poll here, it polls in the client_request function)
-	def poll(self):
+	def poll(self, timeout=None):
+		"""
+		Blocking call, if no timeout specified.
+		Returns raw message, or None if no data.
+		"""
 		print "DEBUG: poll()"
 		socks = dict(self.poller.poll())
-		print "DEBUG: poll returns: {0}".format(socks)
-		msgtype = None
 		message = None
-		#if self.server in socks:
-		#	message = self.server.recv()
-		#	msgtype = "server"
-		if self.client in socks:
-			message = self.client.recv()
-			msgtype = "server"
 		if self.subscriber in socks:
-			message = self.subscriber.recv()
-			msgtype = "subscriber"
-		return msgtype, message
+			message = self.__recv()
+		return message
 
-	def send_to_server(self, message):
-		print "sending message: {0}".format(message)
-		self.client.send(message)
-		print "send_to_server() is waiting for a message...."
-		retmsg = self.client.recv()
-		print "....send_to_server() received a message"
-		return retmsg
-	
-	def send_to_client(self, message):
-		msg_json = json.dumps(message)
-		self.server.send(msg_json)
-	
-	def subscribe(self, topic):
-		self.subscriber.setsockopt (zmq.SUBSCRIBE, topic)
-		return True
-		
-	def send_command(self, path, command, **kwargs):
-		message = "{0} {1}".format(path, command)
-		print("sending: {0}".format(message))
-		retval = zmq_send(self.publisher, message)
-		return retval
-
-	"""
-	def send_command_return(self, path, return_path, command, **kwargs=None):
-		message =
-		retval = zmq_send(publisher, message)
-		return retval
-	"""
-
-	def send_data(self, path, payload, retval='200'):
-		# todo: check if already prefixed with "/data"-topic
-		data={}
-		data['retval'] = retval
-		data['payload'] = payload
-		message = '{0} {1}'.format(path,data)
-		print("sending: {0}".format(message))
-		retval = zmq_send(self.publisher, message)
-		return retval	
-	
-	# Blocking function
-	def receive(self, ):
-		received = zmq_recv(self.subscriber)
-		return received
-
-	# Asynch version
-	def receive_async(self):
-		received = zmq_recv_async(self.subscriber)
-		return received
-	
-	def receive_poll(self,path,timeout):
-		self.subscriber.setsockopt(zmq.SUBSCRIBE, path)
-		print("Waiting for {0}ms for a message on {1}".format(timeout,path))
-		retval = self.subscriber.poll(timeout,zmq.POLLIN)
-		if retval == 0:
-			print "NOTHING RECEIVED WITHIN TIMEOUT"
-			return None
-		else:
-			received = zmq_recv(self.subscriber)
-			return received
-	
-	def recv_data(self):
-		zmq_recv(self.subscriber)
-	
-	#def recv_message(self):
-	
 	def parse_message(self, message):
+		"""
+		Format: <path> <command>[:arg1,argn] [response_path]
+		Returns a tuple/dict (#tbd) + data?
+		"""
 		path = []
 		params = []
-		path_cmd = message.split(" ")
-		for pathpart in path_cmd[0].split("/"):
+		resp_path = []
+		path_cmd_resp = message.split(" ")
+		
+		# extract path
+		for pathpart in path_cmd_resp[0].split("/"):
 			if pathpart:
 				path.append(pathpart.lower())
 			
-		base_topic = path[0]
-		cmd_par = path_cmd[1].split(":")
-
+		# extract command and params
+		cmd_par = path_cmd_resp[1].split(":")
 		if len(cmd_par) == 1:
 			command = cmd_par[0].lower()
 		elif len(cmd_par) == 2:
@@ -314,12 +185,21 @@ class MessageController():
 		else:
 			print("Malformed message!")
 			return False
-
-		print("[MQ] Received Path: {0}; Command: {1}; Parameters: {2}".format(path,command,params))
 		
+		# extract response path
+		for pathpart in path_cmd_resp[2].split("/"):
+			if pathpart:
+				resp_path.append(pathpart.lower())
+		
+		# debugging
+		print("[MQ] Received Path: {0}; Command: {1}; Parameters: {2}; Response path: {3}".format(path,command,params,resp_path))
+		
+		# return as a tuple:
+		return path, command, params, resp_path
+		
+		# return as a dict:
 		parsed_message = {}
 		parsed_message['path'] = path
 		parsed_message['cmd'] = command
 		parsed_message['args'] = params
 		return parsed_message
-		

@@ -14,6 +14,17 @@
 #
 # http://learning-0mq-with-pyzmq.readthedocs.io/en/latest/pyzmq/devices/forwarder.html
 #
+# USAGE
+# MQ Subscribers should connect to the forwarders Publishers port,
+# publishers should connect to the forwarders Subscribers port.
+#
+# ARGUMENTS
+# -l, --loglevel     log level
+# -c, --config       configuration file
+# -b                 background/daemon mode: all output goes to the syslog instead of console
+# --port_publisher   publisher port number
+# --port_subscriber  subscriber port number 
+
 
 import zmq						# ZeroMQ
 import sys						# path
@@ -27,18 +38,20 @@ from hu_msg import MessageController
 # *******************************************************************************
 # Global variables and constants
 #
-CONFIG_FILE = '/etc/configuration.json'
-DEFAULT_PORT_CLIENT = 5559
-DEFAULT_PORT_SERVER = 5560
+DESCRIPTION = "ZeroMQ forwarder device"
+DEFAULT_CONFIG_FILE = '/etc/configuration.json'
+DEFAULT_LOG_LEVEL = LL_INFO
+DEFAULT_PORT_SUB = 5560		# FWD: used by Pub
+DEFAULT_PORT_PUB = 5559		# FWD: used by Sub
+
+args = None
+configuration = None
 
 # Logging
-DAEMONIZED = None
 LOG_TAG = 'ZMQFWD'
 LOGGER_NAME = 'zmqfwd'
-LOG_LEVEL = LL_INFO
 logger = None
 
-configuration = None
 
 
 # ********************************************************************************
@@ -50,16 +63,34 @@ def printer( message, level=LL_INFO, continuation=False, tag=LOG_TAG ):
 # ********************************************************************************
 # Load configuration
 #
-def load_configuration():
-
-	# utils # todo, present with logger
-	configuration = configuration_load(LOGGER_NAME,CONFIG_FILE)
+def load_zeromq_configuration():
+	# This is a Forwarder, thus the Pub/Sub ports must be reversed!!
+	# ... this could be done with less code ;-)	
+	
+	configuration = configuration_load(LOGGER_NAME,args.config)
 	
 	if not configuration or not 'zeromq' in configuration:
 		printer('Error: Configuration not loaded or missing ZeroMQ, using defaults:')
-		printer('Default Client port: {0}'.format(DEFAULT_PORT_CLIENT))
-		printer('Default Server port: {0}'.format(DEFAULT_PORT_SERVER))
-		configuration = { "zeromq": { "port_client": DEFAULT_PORT_CLIENT, "port_server":DEFAULT_PORT_SERVER } }
+		printer('Publisher port: {0}'.format(args.port_publisher))
+		printer('Subscriber port: {0}'.format(args.port_subscriber))
+		configuration = { "zeromq": { "port_publisher": DEFAULT_PORT_SUB, "port_subscriber":DEFAULT_PORT_PUB } }
+		return configuration
+		
+	else:
+		# Get portnumbers from either the config, or default value
+		if 'port_publisher' in configuration['zeromq']:
+			config_pub = configuration['zeromq']['publisher']
+		else:
+			config_pub = DEFAULT_PORT_PUB
+			
+		if 'port_subscriber' in configuration['zeromq']:
+			config_sub = configuration['zeromq']['subscriber']
+		else:
+			config_sub = DEFAULT_PORT_SUB
+		
+		# Reverse ports
+		configuration['zeromq']['port_publisher'] =  config_sub
+		configuration['zeromq']['port_subscriber'] = config_pub
 	
 	return configuration
 
@@ -69,62 +100,72 @@ def load_configuration():
 def parse_args():
 
 	import argparse
-	
-	global LOG_LEVEL
-	global DAEMONIZED
+	global args
 
-	parser = argparse.ArgumentParser(description='ZeroMQ forwarder device')
-	parser.add_argument('--loglevel', action='store', default=LL_INFO, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)
-	parser.add_argument('-b', action='store_true')	# background, ie. no output to console
+	parser = argparse.ArgumentParser(description=DESCRIPTION)
+	parser.add_argument('--loglevel', action='store', default=DEFAULT_LOG_LEVEL, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)
+	parser.add_argument('--config','-c', action='store', help='Configuration file', default=DEFAULT_CONFIG_FILE)
+	parser.add_argument('-b', action='store_true', default=False)
+	parser.add_argument('--port_publisher', action='store')
+	parser.add_argument('--port_subscriber', action='store')
 	args = parser.parse_args()
-
-	LOG_LEVEL = args.loglevel
-	DAEMONIZED = args.b
 		
 def setup():
 
 	#
 	# Logging
+	# -> Output will be logged to the syslog, if -b specified, otherwise output will be printed to console
 	#
 	global logger
 	logger = logging.getLogger(LOGGER_NAME)
 	logger.setLevel(logging.DEBUG)
 
-	# Start logging to console or syslog
-	if DAEMONIZED:
-		# output to syslog
-		logger = log_create_syslog_loghandler(logger, LOG_LEVEL, LOG_TAG, address='/dev/log' )
-		
+	if args.b:
+		logger = log_create_syslog_loghandler(logger, args.loglevel, LOG_TAG, address='/dev/log') 	# output to syslog
 	else:
-		# output to console
-		logger = log_create_console_loghandler(logger, LOG_LEVEL, LOG_TAG)
-
-def main():
+		logger = log_create_console_loghandler(logger, args.loglevel, LOG_TAG) 						# output to console
 
 	#
 	# Load configuration
 	#
-	configuration = load_configuration()
-	port_client = configuration['zeromq']['port_client']
-	port_server = configuration['zeromq']['port_server']
+	global configuration
+	if not args.port_publisher and not args.port_subscriber:
+		configuration = load_zeromq_configuration()
+	else:
+		if args.port_publisher and args.port_subscriber:
+			pass
+		else:
+			configuration = load_zeromq_configuration()
+	
+		# Pub/Sub port override
+		if args.port_publisher:
+			configuration['zeromq']['port_subscriber'] = args.port_publisher
+		if args.port_subscriber:
+			configuration['zeromq']['port_publisher'] = args.port_subscriber
+	
+
+def main():	
+	
+	port_subscriber = configuration['zeromq']['port_subscriber']
+	port_publisher = configuration['zeromq']['port_publisher']
 	backend = None
 
 	try:
 		context = zmq.Context(1)
 		# Socket facing clients
 		frontend = context.socket(zmq.SUB)
-		frontend.bind("tcp://*:{0}".format(port_client))
+		frontend.bind("tcp://*:{0}".format(port_subscriber))
 
 		# Don't filter!
 		frontend.setsockopt(zmq.SUBSCRIBE, "")
 
 		# Socket facing services
 		backend = context.socket(zmq.PUB)
-		backend.bind("tcp://*:{0}".format(port_server))
+		backend.bind("tcp://*:{0}".format(port_publisher))
 
 		printer("Enabling Zero MQ forwarding on ports:")
-		printer('Client port: {0}'.format(port_client))
-		printer('Server port: {0}'.format(port_server))
+		printer('Connect Publishers to port: {0}'.format(port_subscriber))
+		printer('Connect Subscribers to port: {0}'.format(port_publisher))
 		zmq.device(zmq.FORWARDER, frontend, backend)
 
 	except Exception, e:
