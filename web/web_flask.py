@@ -386,7 +386,9 @@ def get_source():
 	
 	#retmsg = messaging.send_to_server('/source/primary GET')
 	#retmsg = messaging.client_request('/source/primary','GET', None, 5000)
-	retmsg = messaging.publish_command('/source/primary','GET', None, True, 5000, '/bladiebla/'):
+	retmsg = messaging.publish_command('/source/primary','GET')
+	sleep(1)
+	retmsg = messaging.publish_command('/source/primary','GET', None, True, 5000, '/bladiebla/')
 	return retmsg
 	
 	if not sources:
