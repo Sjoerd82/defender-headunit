@@ -28,7 +28,7 @@ from logging import getLogger
 #********************************************************************************
 # Headunit modules
 from modules.hu_source import SourceController
-from modules.hu_msg import MessageController
+from modules.hu_msg import MqPubSubFwdController
 from modules.hu_utils import * #init_load_config
 
 #********************************************************************************
@@ -59,8 +59,6 @@ configuration = None	# Configuration
 arg_loglevel = 20
 queue_actions = None
 
-mq_address_sub = 'tcp://localhost:5560'
-mq_address_srv = 'tcp://localhost:5555'
 
 # ********************************************************************************
 # Source Plugin Wrapper
@@ -686,7 +684,7 @@ def idle_msg_receiver_ASYNC():
 		
 	return True
 
-def idle_msg_receiver():
+def idle_msg_receiver_OLD():
 
 	print "DEBUG: idle_msg_receiver()"
 	msgtype, msg = messaging.poll()
@@ -704,7 +702,19 @@ def idle_msg_receiver():
 			
 	#important!
 	return True
+
+def idle_msg_receiver():
+
+	print "DEBUG: idle_msg_receiver()"
+	msg = messaging.poll()
+	if msg:
+		print "Received message: {0}".format(msg)
+		parsed_msg = messaging.parse_message(msg)
+		retval = dispatcher(parsed_msg['path'],parsed_msg['cmd'],parsed_msg['args'])
 			
+	#important!
+	return True
+	
 				
 #********************************************************************************
 # Version
@@ -784,22 +794,14 @@ def setup():
 	# ZMQ
 	#
 	printer("ZeroMQ: Initializing")
-	messaging = MessageController()
+	messaging = MqPubSubFwdController('localhost',DEFAULT_PORT_PUB,DEFAULT_PORT_SUB)
 	
-	printer("ZeroMQ: Creating Subscriber: {0}".format(mq_address_sub))
-	messaging.create_subscriber(mq_address_sub,['/source','/player'])
+	printer("ZeroMQ: Creating Publisher: {0}".format(DEFAULT_PORT_PUB))
+	messaging.create_publisher()
 
-	printer("ZeroMQ: Creating Server: {0}".format(mq_address_srv))
-	messaging.create_server(mq_address_srv,'/srcctrl')
-	
-	#printer("ZeroMQ: Creating Publisher: {0}".format(mq_address_pub))
-	#messaging.create_publisher(mq_address_pub)
+	printer("ZeroMQ: Creating Subscriber: {0}".format(DEFAULT_PORT_SUB))
+	messaging.create_subscriber(['/source','/player'])
 
-	#printer("ZeroMQ: Starting server at port 5555")
-	#messaging.start_server('tcp://127.0.0.1:5555')
-	#printer("ZeroMQ: Register for polling")
-	#messaging.poll_register()
-	
 	#
 	# Load main configuration
 	#
