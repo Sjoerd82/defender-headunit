@@ -187,7 +187,7 @@ class MqPubSubFwdController:
 			return False
 		
 		# extract response path
-		if len(path_cmd_resp) >= 2:
+		if len(path_cmd_resp) >= 3:
 			for pathpart in path_cmd_resp[2].split("/"):
 				if pathpart:
 					resp_path.append(pathpart.lower())
