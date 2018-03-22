@@ -4,13 +4,17 @@ The "Hidden Headless Headunit"; Until a better name comes up..
 Software for easy control of a headless "head unit".
 Designed for "hidden" applications, such as classic- or custom cars, yachts, suitcase boomboxes or bookshelve audio.
 
-Intended for Raspberry Pi embedded Linux, and build upon PulseAudio and MPD.
+Intended for Raspberry Pi embedded Linux.
 
 *Primary goals:*
 - Intuitive and easy to control without display
 - Ultrashort time-to-play (fast boot, start/resume playback)
 - Audiophile quality
 - Modular
+
+## Short description
+
+This application is a set of micro services, communicating using ZeroMQ, and build on a customized Buildroot image for the Raspberry Pi Zero. The core micro services are "source control", "volume control" and "remote control". Additional micro services are a "quick-play/plugin controller", "flask web server", "udisks controller" and "display controller". Additional input, output or general purpose plugins are easily added.
 
 ## Features
 
