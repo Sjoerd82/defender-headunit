@@ -187,9 +187,10 @@ class MqPubSubFwdController:
 			return False
 		
 		# extract response path
-		for pathpart in path_cmd_resp[2].split("/"):
-			if pathpart:
-				resp_path.append(pathpart.lower())
+		if len(path_cmd_resp) >= 2:
+			for pathpart in path_cmd_resp[2].split("/"):
+				if pathpart:
+					resp_path.append(pathpart.lower())
 		
 		# debugging
 		print("[MQ] Received Path: {0}; Command: {1}; Parameters: {2}; Response path: {3}".format(path,command,params,resp_path))
