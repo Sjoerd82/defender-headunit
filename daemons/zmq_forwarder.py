@@ -80,13 +80,13 @@ def load_zeromq_configuration():
 		if 'port_publisher' in configuration['zeromq']:
 			config_pub = configuration['zeromq']['publisher']
 		else:
-			printer('port_publisher not in configuration, using default ({0})'.format(DEFAULT_PORT_PUB))
+			printer('port_publisher not in configuration, using default')
 			config_pub = DEFAULT_PORT_PUB
 			
 		if 'port_subscriber' in configuration['zeromq']:
 			config_sub = configuration['zeromq']['subscriber']
 		else:
-			printer('port_subscriber not in configuration, using default ({0})'.format(DEFAULT_PORT_PUB))
+			printer('port_subscriber not in configuration, using default')
 			config_sub = DEFAULT_PORT_SUB
 		
 		# Reverse ports
