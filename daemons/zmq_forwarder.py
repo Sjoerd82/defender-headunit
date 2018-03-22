@@ -33,7 +33,6 @@ from logging import getLogger	# logger
 #sys.path.append('../modules')
 sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
-from hu_msg import MessageController
 
 # *******************************************************************************
 # Global variables and constants
