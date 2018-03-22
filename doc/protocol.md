@@ -27,7 +27,7 @@ The flask application can setup a subscription for "/data/flask/", the number ca
 
 # Data
 
-### {data}:
+## {data}:
 
 Field | Value
 --- | ---
@@ -41,6 +41,28 @@ Example:
  "data": { payload* }
 }
 ```
+
+Payloads:
+{int}
+{bool}
+{source}
+{subsource}
+{state}
+{track}
+{volume}
+{level}
+{equalizer}
+{level}
+{device}
+{mode}
+{timer}
+
+### {int}:
+Integer value
+
+Field | Value
+--- | ---
+`int` | integer value
 
 ### {bool}:
 Boolean value
@@ -201,5 +223,18 @@ Example:
 ```
 {
     "mode": "random-genre"
+}
+```
+
+### {timer}
+
+Field | Value
+--- | ---
+`timer_sec` | Time in seconds
+
+Example:
+```
+{
+    "timer_sec": "60"
 }
 ```
