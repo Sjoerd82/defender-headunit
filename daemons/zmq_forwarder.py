@@ -80,11 +80,13 @@ def load_zeromq_configuration():
 		if 'port_publisher' in configuration['zeromq']:
 			config_pub = configuration['zeromq']['publisher']
 		else:
+			printer('port_publisher not in configuration, using default ({0})'.format(DEFAULT_PORT_PUB))
 			config_pub = DEFAULT_PORT_PUB
 			
 		if 'port_subscriber' in configuration['zeromq']:
 			config_sub = configuration['zeromq']['subscriber']
 		else:
+			printer('port_subscriber not in configuration, using default ({0})'.format(DEFAULT_PORT_PUB))
 			config_sub = DEFAULT_PORT_SUB
 		
 		# Reverse ports
@@ -141,7 +143,6 @@ def setup():
 			configuration['zeromq']['port_subscriber'] = args.port_publisher
 		if args.port_subscriber:
 			configuration['zeromq']['port_publisher'] = args.port_subscriber
-	
 
 def main():	
 	
@@ -162,7 +163,7 @@ def main():
 		backend = context.socket(zmq.PUB)
 		backend.bind("tcp://*:{0}".format(port_publisher))
 
-		printer("Enabling Zero MQ forwarding on ports:")
+		printer("Zero MQ forwarding ready")
 		printer('Connect Publishers to port: {0}'.format(port_subscriber))
 		printer('Connect Subscribers to port: {0}'.format(port_publisher))
 		zmq.device(zmq.FORWARDER, frontend, backend)
