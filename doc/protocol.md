@@ -45,19 +45,19 @@ Example:
 Payloads:
 Structure | Value
 --- | ---
-{int} | 
-{bool} | 
-{source} | 
-{subsource} | 
-{state} | 
-{track} | 
-{volume} | 
-{level} | 
-{equalizer} | 
-{level} | 
-{device} | 
-{mode} | 
-{timer} | 
+`{int}` | [int](#int)
+{bool} | x
+{source} | x
+{subsource} | x
+{state} | x
+{track} | x
+{volume} | x
+{level} | x
+{equalizer} | x
+{level} | x
+{device} | x
+{mode} | x
+{timer} | x
 
 ### {int}:
 Integer value
