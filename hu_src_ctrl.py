@@ -38,7 +38,12 @@ from slugify import slugify
 # *******************************************************************************
 # Global variables and constants
 #
+DESCRIPTION = "Source Controller"
 CONFIG_FILE = '/etc/configuration.json'
+DEFAULT_CONFIG_FILE = '/etc/configuration.json'
+DEFAULT_LOG_LEVEL = LL_INFO
+DEFAULT_PORT_SUB = 5560
+DEFAULT_PORT_PUB = 5559
 
 # Logging
 DAEMONIZED = None
