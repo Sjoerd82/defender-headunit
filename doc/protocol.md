@@ -43,21 +43,22 @@ Example:
 ```
 
 Payloads:
+
 Structure | Value
 --- | ---
 `{int}` | [int](#int)
-{bool} | x
-{source} | x
-{subsource} | x
-{state} | x
-{track} | x
-{volume} | x
-{level} | x
-{equalizer} | x
-{level} | x
-{device} | x
-{mode} | x
-{timer} | x
+{bool} | [bool](#bool)
+{source} | [source](#source)
+{subsource} | [subsource](#subsource)
+{state} | [state](#state)
+{track} | [track](#track)
+{volume} | [volume](#volume)
+{level} | [level](#level)
+{equalizer} | [equalizer](#equalizer)
+{level} | [level](#level)
+{device} | [device](#device)
+{mode} | [mode](#mode)
+{timer} | [timer](#timer)
 
 ### {int}:
 Integer value
