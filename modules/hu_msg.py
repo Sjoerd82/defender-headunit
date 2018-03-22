@@ -109,7 +109,7 @@ class MqPubSubFwdController:
 			reply_poller = zmq.Poller()
 			reply_poller.register(reply_subscriber, zmq.POLLIN)
 				
-		retval = self.__send(message):
+		retval = self.__send(message)
 		if not retval:
 			return False
 		elif not wait_for_reply:
