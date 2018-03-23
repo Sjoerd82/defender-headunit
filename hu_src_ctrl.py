@@ -720,7 +720,7 @@ def idle_message_receiver():
 			return None
 		
 	rawmsg = messaging.poll(timeout=None)				#None=Blocking
-	if msg:
+	if rawmsg:
 		printer("Received message: {0}".format(rawmsg))	#TODO: debug
 		parsed_msg = parse_message(rawmsg)
 		print parsed_msg
