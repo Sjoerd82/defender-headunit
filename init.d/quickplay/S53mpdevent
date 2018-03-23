@@ -10,7 +10,7 @@ NAME="MPD Event Listener"
 PID="mpd_listener"
 PID_FILE=/var/run/$PID.pid
 DAEMON="mpd_listener.py"
-DAEMON_OPTS=""
+DAEMON_OPTS="-b"
 DAEMON_PATH="/mnt/PIHU_APP/defender-headunit/daemons"
 DAEMON_FILE=$DAEMON_PATH/$DAEMON
 

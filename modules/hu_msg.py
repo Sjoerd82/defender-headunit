@@ -20,7 +20,7 @@ def printer( message, level=LL_INFO, tag="", logger_name=__name__):
 	logger = logging.getLogger(logger_name)
 	logger.log(level, message, extra={'tag': tag})
 
-def parse_message(self, message):
+def parse_message(message):
 	"""
 	Format: <path> <command>[:arg1,argn] [response_path]
 	Returns a tuple/dict (#tbd) + data?
