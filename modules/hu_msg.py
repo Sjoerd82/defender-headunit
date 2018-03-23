@@ -91,7 +91,7 @@ class MqPubSubFwdController:
 		self.port_pub = port_pub
 		self.port_sub = port_sub
 		
-		self.VALID_COMMANDS = ['GET','PUT','POST','DEL']
+		self.VALID_COMMANDS = ['GET','PUT','POST','DEL','DATA']
 
 	def __send(self, message):
 		self.publisher.send(message)
@@ -171,6 +171,7 @@ class MqPubSubFwdController:
 			#try:
 			print "DEBUG: POLLING !"
 			response = None
+			parsed_response = None
 			events = reply_poller.poll(timeout)
 			#except zmq.ZMQError:
 				# No Message Available
