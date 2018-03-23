@@ -155,13 +155,13 @@ class MqPubSubFwdController:
 		if wait_for_reply:
 			print "DEBUG: SETUP WAIT_FOR_REPLY; TOPIC={0}".format(response_path)
 			# create a subscription socket, listening to the response path
-			reply_subscriber = self.context.socket (zmq.SUB)
-			reply_subscriber.connect("tcp://{0}:{1}".format(self.address, self.port_sub))
-			reply_subscriber.setsockopt(zmq.SUBSCRIBE,response_path)
+	#		reply_subscriber = self.context.socket (zmq.SUB)
+	#		reply_subscriber.connect("tcp://{0}:{1}".format(self.address, self.port_sub))
+	#		reply_subscriber.setsockopt(zmq.SUBSCRIBE,response_path)
 
 			# setup a temporary poller for the new socket
-			reply_poller = zmq.Poller()
-			reply_poller.register(reply_subscriber, zmq.POLLIN)
+	#		reply_poller = zmq.Poller()
+	#		reply_poller.register(reply_subscriber, zmq.POLLIN)
 		
 		print "DEBUG: SENDING MESSAGE: {0}".format(message)
 		retval = self.__send(message)
@@ -175,10 +175,13 @@ class MqPubSubFwdController:
 			print "DEBUG: POLLING !"
 			response = None
 			parsed_response = None
-			events = reply_poller.poll(timeout)
+	#		events = reply_poller.poll(timeout)
+			events = dict(self.poller.poll())
 			#except zmq.ZMQError:
 				# No Message Available
 			#	return None
+			if self.subscriber in events:
+				print "OHYEAHBABY!"
 			
 			if events:
 				print "DEBUG: YES!"

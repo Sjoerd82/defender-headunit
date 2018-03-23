@@ -736,7 +736,7 @@ def idle_message_receiver():
 			print retval
 			test = []
 			test.append(retval)
-			messaging.publish_command('/bladiebla','DATA',test)
+			messaging.publish_command('/bladiebla','DATA',retval)
 		
 	
 	return True #important, returning true re-enables idle routine.

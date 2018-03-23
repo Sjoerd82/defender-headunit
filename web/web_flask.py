@@ -27,7 +27,7 @@ DESCRIPTION = "Flask HTTP server"
 LOG_TAG = 'FLASK'
 LOGGER_NAME = 'flask'
 API_VERSION = '/hu/api/v1.0'
-SUBSCRIPTIONS = ['/source/','/player/']
+SUBSCRIPTIONS = ['/source/','/player/','/bladiebla']
 
 DEFAULT_CONFIG_FILE = '/etc/configuration.json'
 DEFAULT_PORT_WWW = 8289
