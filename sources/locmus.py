@@ -78,7 +78,7 @@ class sourceClass():
 	def check( self, sourceCtrl, subSourceIx=None  ):
 		self.__printer('Checking availability...', level=15)
 	
-		ix = sourceCtrl.getIndex('name','locmus')	# source index
+		ix = sourceCtrl.index('name','locmus')	# source index
 		locations = []								# list of tuples; index: 0 = mountpoint, 1 = mpd dir.
 		foundStuff = 0								#
 						
