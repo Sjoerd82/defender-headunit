@@ -188,7 +188,7 @@ class MqPubSubFwdController:
 				# No Message Available
 			#	return None
 	#		if self.subscriber in events:
-			if self.reply_subscriber in events:
+			if reply_subscriber in events:
 				print "OHYEAHBABY! AGAIN"
 			
 			if events:
