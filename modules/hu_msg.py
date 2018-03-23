@@ -126,7 +126,7 @@ class MqPubSubFwdController:
 		Parameters:
 		 - path: (list) path
 		 - command: (string) command
-		 - arguments: (list)
+		 - arguments: list of words or anything, but a list
 		Returns:
 		 - None (invalid command, send unsuccesful)
 		 ? Raw return message
@@ -143,7 +143,10 @@ class MqPubSubFwdController:
 		
 		# append arguments
 		if arguments:
-			message = "{0}:{1}".format(message, ",".join(arguments))
+			if type(arguments) = 'list':
+				message = "{0}:{1}".format(message, ",".join(arguments))
+			else:
+				message = "{0}:{1}".format(message, arguments)
 			
 		# append response path
 		if response_path:
