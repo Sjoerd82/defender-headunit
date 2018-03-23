@@ -516,7 +516,7 @@ def handle_path_player(path,cmd,args):
 	else:
 		printer('Function {0} does not exist'.format(function_to_call))
 
-	return True
+	return ret
 
 
 # ********************************************************************************
@@ -714,6 +714,7 @@ def idle_message_receiver():
 		handler_function = 'handle_path_' + path[0]
 		if handler_function in globals():
 			ret = globals()[handler_function](path, command, arguments)
+			print "DEBUG: DISPATCHER() We got back a {0}: {1}".format(type(ret),ret)
 			return ret
 		else:
 			print("No handler for: {0}".format(handler_function))
@@ -726,13 +727,16 @@ def idle_message_receiver():
 		print parsed_msg
 		# send message to dispatcher for handling
 		
-		retval = list(dispatcher(parsed_msg['path'],parsed_msg['cmd'],parsed_msg['args']))
+		retval = dispatcher(parsed_msg['path'],parsed_msg['cmd'],parsed_msg['args'])
+		print "DEBUG: idle_msg_receiver() We got back a {0}: {1}".format(type(retval),retval)
 		
 		if parsed_msg['resp_path']:
 			print "DEBUG: Resp Path present.. returing message.."
 			print parsed_msg['resp_path']
 			print retval
-			messaging.publish_command('/bladiebla','DATA',retval)
+			test = []
+			test.append(retval)
+			messaging.publish_command('/bladiebla','DATA',test)
 		
 	
 	return True #important, returning true re-enables idle routine.
