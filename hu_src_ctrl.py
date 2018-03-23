@@ -710,11 +710,9 @@ def idle_message_receiver():
 	print "DEBUG: idle_msg_receiver()"
 	
 	def dispatcher(path, command, arguments):
-		print("Dispatcher. Path: {0}; Command: {1}; Parameters: {2}".format(path,command,arguments))
 		handler_function = 'handle_path_' + path[0]
 		if handler_function in globals():
 			ret = globals()[handler_function](path, command, arguments)
-			print "DEBUG: DISPATCHER() We got back a {0}: {1}".format(type(ret),ret)
 			return ret
 		else:
 			print("No handler for: {0}".format(handler_function))
@@ -728,15 +726,10 @@ def idle_message_receiver():
 		# send message to dispatcher for handling
 		
 		retval = dispatcher(parsed_msg['path'],parsed_msg['cmd'],parsed_msg['args'])
-		print "DEBUG: idle_msg_receiver() We got back a {0}: {1}".format(type(retval),retval)
 		
 		if parsed_msg['resp_path']:
 			print "DEBUG: Resp Path present.. returing message.."
-			print parsed_msg['resp_path']
-			print retval
-			test = []
-			test.append(retval)
-			messaging.publish_command('/bladiebla','DATA',retval)
+			messaging.publish_command(parsed_msg['resp_path'],'DATA',retval)
 		
 	
 	return True #important, returning true re-enables idle routine.

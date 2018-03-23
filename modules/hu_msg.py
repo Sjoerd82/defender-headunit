@@ -171,7 +171,7 @@ class MqPubSubFwdController:
 			self.poller.register(self.reply_subscriber, zmq.POLLIN)
 	#		reply_subscriber.setsockopt(zmq.SUBSCRIBE,response_path)
 		
-		print "DEBUG: SENDING MESSAGE: {0}".format(message)
+		print "DEBUG: SENDING MESSAGE "
 		retval = self.__send(message)
 		if not retval:
 			return False
