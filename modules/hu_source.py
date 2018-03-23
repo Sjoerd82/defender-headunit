@@ -607,7 +607,7 @@ class SourceController():
 		#self.__printer('INIT: {0}'.format(index)) #LL_DEBUG
 		checkResult = self.lSource[index]['sourceClass'].init(self)
 
-	def source_check( self, index, subSourceIx=None ):
+	def source_check( self, index=None, subSourceIx=None ):
 		""" Execute a check() for given source and sets availability accordingly
 		"""
 		if index:
