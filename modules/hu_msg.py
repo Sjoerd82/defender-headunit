@@ -131,7 +131,7 @@ class MqPubSubFwdController:
 		"""
 		Publish a message. If wait_for_reply, then block until a reply is received.
 		Parameters:
-		 - path: (list) path
+		 - path: (list) path or string
 		 - command: (string) command
 		 - arguments: list of words or anything, but a list
 		Returns:
@@ -146,7 +146,11 @@ class MqPubSubFwdController:
 		if wait_for_reply and not response_path:
 			response_path = '/myuniquereplypath/'
 		
-		message = "{0} {1}".format(path,command)
+		# path and command
+		if type(path) == 'list':
+			message = "{0} {1}".format(message, ",".join(path),command)
+		else:
+			message = "{0} {1}".format(path,command)
 		
 		# append arguments
 		if arguments:
