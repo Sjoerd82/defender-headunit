@@ -162,7 +162,7 @@ class MqPubSubFwdController:
 			# create a subscription socket, listening to the response path
 			reply_subscriber = self.context.socket (zmq.SUB)
 			reply_subscriber.connect("tcp://{0}:{1}".format(self.address, self.port_sub))
-			sleep(1)
+			time.sleep(1)
 			# setup a temporary poller for the new socket
 	#		reply_poller = zmq.Poller()
 	#		reply_poller.register(reply_subscriber, zmq.POLLIN)
