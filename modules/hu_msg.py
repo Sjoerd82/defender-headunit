@@ -129,7 +129,7 @@ class MqPubSubFwdController:
 		self.reply_subscriber = self.context.socket (zmq.SUB)
 		self.reply_subscriber.connect("tcp://{0}:{1}".format(self.address, self.port_sub))
 		#self.poller.register(self.reply_subscriber, zmq.POLLIN)
-		self.reply_subscriber.setsockopt (zmq.SUBSCRIBE, '/bladiebla')
+		#self.reply_subscriber.setsockopt (zmq.SUBSCRIBE, '/bladiebla')
 		
 	def publish_command(self, path, command, arguments=None, wait_for_reply=False, timeout=5000, response_path=None):
 		"""
@@ -177,6 +177,7 @@ class MqPubSubFwdController:
 	#		reply_poller = zmq.Poller()
 	#		reply_poller.register(reply_subscriber, zmq.POLLIN)
 			self.poller.register(self.reply_subscriber, zmq.POLLIN)
+			self.reply_subscriber.setsockopt (zmq.SUBSCRIBE, response_path)
 	#		reply_subscriber.setsockopt(zmq.SUBSCRIBE,response_path)
 		
 		print "DEBUG: SENDING MESSAGE: {0}".format(message)
