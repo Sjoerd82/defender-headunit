@@ -160,8 +160,9 @@ class MqPubSubFwdController:
 			reply_subscriber.setsockopt(zmq.SUBSCRIBE,response_path)
 
 			# setup a temporary poller for the new socket
-			reply_poller = zmq.Poller()
-			reply_poller.register(reply_subscriber, zmq.POLLIN)
+	#		reply_poller = zmq.Poller()
+	#		reply_poller.register(reply_subscriber, zmq.POLLIN)
+			self.poller.register(reply_subscriber, zmq.POLLIN)
 		
 		print "DEBUG: SENDING MESSAGE: {0}".format(message)
 		retval = self.__send(message)
@@ -175,8 +176,8 @@ class MqPubSubFwdController:
 			print "DEBUG: POLLING !"
 			response = None
 			parsed_response = None
-			events = dict(reply_poller.poll()) #timeout
-	#		events = dict(self.poller.poll())
+	#		events = dict(reply_poller.poll()) #timeout
+			events = dict(self.poller.poll())
 			#except zmq.ZMQError:
 				# No Message Available
 			#	return None
