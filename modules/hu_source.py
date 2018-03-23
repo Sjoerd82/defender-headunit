@@ -617,11 +617,9 @@ class SourceController():
 		else:
 			i=0
 			for source in self.lSource:
-				self.__printer('CHECK: {0}/{1}'.format(index,subSourceIx)) #LL_DEBUG
-				checkResult = self.lSource[index]['sourceClass'].check(self)
-				return None
-			self.sourceCheck(i)				
-			i+=1		
+				self.__printer('CHECK: {0}/{1}'.format(i,'-')) #LL_DEBUG
+				checkResult = self.lSource[i]['sourceClass'].check(self)
+				i+=1		
 
 	#TODO - INVESTIGATE
 	def sourceAddSub( self, index, parameters ):
