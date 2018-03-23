@@ -75,7 +75,7 @@ LOG_TAG = 'SOURCE'
 
 class SourceController():
 
-	def __printer( self, message, level=LL_INFO, continuation=False):
+	def __printer( self, message, level=LL_INFO, tag=LOG_TAG):
 		self.logger.log(level, message, extra={'tag': tag})
 	
 	def __init__(self, logger):
@@ -93,7 +93,7 @@ class SourceController():
 		# check required fields:
 		if not all (k in source_config for k in ('name','displayname','order','controls','template')):
 			self.__printer('ADD: source NOT added, missing one or more required field(s)...',LL_ERROR)
-			self.__printer('Required fields are: name,displayname,order,controls,template',LL_ERROR,True)
+			self.__printer('Required fields are: name,displayname,order,controls,template',LL_ERROR)
 			return False
 
 		# availability = False for all new sources, until cleared by the check() function
@@ -125,7 +125,7 @@ class SourceController():
 		# check required fields:
 		if not all (k in subsource_config for k in ('displayname','order')):
 			self.__printer('ADD SUB: sub-source NOT added, missing one or more required field(s)...',LL_ERROR)
-			self.__printer('Required fields are: displayname and order',LL_ERROR,True)
+			self.__printer('Required fields are: displayname and order',LL_ERROR)
 			return False
 		
 		# check key:
@@ -199,7 +199,7 @@ class SourceController():
 			del self.lSource[index]
 			self.__printer('Source removed: {0}'.format(sourceName))
 		else:
-			self.__printer('ERROR: Cannot remove active source. Doing nothing.',LL_ERROR,self.mytag)
+			self.__printer('ERROR: Cannot remove active source. Doing nothing.',LL_ERROR)
 
 	def rem_sub( self, index, index_subsource ):
 		"""Remove subsource by index

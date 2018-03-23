@@ -106,6 +106,8 @@ start() {
             /etc/init.d/S30zmqfwd start
 		    #/etc/init.d/S35volume start		
             #/etc/init.d/S40quickplay start
+			/etc/init.d/quickplay/S53mpdevent start
+			/etc/init.d/S60udisks-glue start
             /etc/init.d/S71ads1x15 start
 		    #/etc/init.d/S95flask start
         fi
