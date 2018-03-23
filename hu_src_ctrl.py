@@ -579,8 +579,8 @@ def init_logging_f( logdir, logfile, runcount ):
 def printSummary(Sources):
 	#global Sources
 	printer('-- Summary -----------------------------------------------------------', tag='')
-	arCurrIx = Sources.getIndexCurrent()
-	sCurrent = Sources.get(None)
+	arCurrIx = Sources.index_current()
+	sCurrent = Sources.source(None)
 	
 	if not arCurrIx[0] == None and arCurrIx[1] == None:
 		sCurrDisplay = sCurrent['displayname']
@@ -596,7 +596,7 @@ def printSummary(Sources):
 		printer('Current source: {0} {1}'.format(arCurrIx[0],sCurrDisplay), tag='')
 	
 	i = 0
-	for source in Sources.getAll():
+	for source in Sources.source_all():
 
 		if 'subsources' in source and len(source['subsources']) > 0:
 			for subsource in source['subsources']:
