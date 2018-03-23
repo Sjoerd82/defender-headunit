@@ -143,7 +143,7 @@ class MqPubSubFwdController:
 		
 		# append arguments
 		if arguments:
-			message = "{0}{1}".format(message, ",".join(arguments))
+			message = "{0}:{1}".format(message, ",".join(arguments))
 			
 		# append response path
 		if response_path:
