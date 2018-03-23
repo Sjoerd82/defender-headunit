@@ -143,7 +143,7 @@ class MqPubSubFwdController:
 		
 		# append arguments
 		if arguments:
-			if type(arguments) = 'list':
+			if type(arguments) == 'list':
 				message = "{0}:{1}".format(message, ",".join(arguments))
 			else:
 				message = "{0}:{1}".format(message, arguments)
