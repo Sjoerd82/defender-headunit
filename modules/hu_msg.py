@@ -51,14 +51,14 @@ def parse_message(message):
 		return False
 	
 	# extract response path
-	if len(path_cmd_resp) >= 3:
-		for pathpart in path_cmd_resp[2].split("/"):
-			if pathpart:
-				resp_path.append(pathpart.lower())
+	#if len(path_cmd_resp) >= 3:
+	#	for pathpart in path_cmd_resp[2].split("/"):
+	#		if pathpart:
+	#			resp_path.append(pathpart.lower())
 				
 	# extract response path, as a whole..
-	#if len(path_cmd_resp) >= 3:
-	#	resp_path = path_cmd_resp[2]
+	if len(path_cmd_resp) >= 3:
+		resp_path = path_cmd_resp[2]
 	
 	# debugging
 	print("[MQ] Received Path: {0}; Command: {1}; Parameters: {2}; Response path: {3}".format(path,command,params,resp_path))
@@ -151,10 +151,10 @@ class MqPubSubFwdController:
 			response_path = '/myuniquereplypath/'
 		
 		# path and command
-		if type(path) == 'list':
-			message = "/{0} {1}".format(message, "/".join(path),command)
-		else:
-			message = "{0} {1}".format(path,command)
+		#if type(path) == 'list':
+		#	message = "/{0} {1}".format(message, "/".join(path),command)
+		#else:
+		message = "{0} {1}".format(path,command)
 		
 		# append arguments
 		if arguments:
