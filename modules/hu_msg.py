@@ -195,13 +195,14 @@ class MqPubSubFwdController:
 				# todo: have a look at what's returned?
 				# read response from the server
 				response = self.reply_subscriber.recv()
-				parsed_response = parse_message(response)
+				#parsed_response = parse_message(response)
 			else:
 				print "DEBUG: NOPE"
 				
 			#TODO: DO WE NEED TO DISCONNECT??
 			#reply_subscriber.disconnect(self.address)
-			return parsed_response
+			#return parsed_response
+			return response
 			
 	def publish_data(self, path, payload, retval='200'):
 		"""
