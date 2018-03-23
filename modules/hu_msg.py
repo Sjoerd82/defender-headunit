@@ -144,7 +144,7 @@ class MqPubSubFwdController:
 			return False
 			
 		if wait_for_reply and not response_path:
-			response_path = '/myuniquereplypath/'
+			response_path = '/myuniquereplypath/'		#todo
 		
 		message = "{0} {1}".format(path,command)
 		
@@ -184,7 +184,7 @@ class MqPubSubFwdController:
 			response = None
 			parsed_response = None
 	#		events = dict(reply_poller.poll()) #timeout
-			events = dict(self.poller.poll())
+			events = dict(self.poller.poll(timeout))
 			self.poller.unregister(self.reply_subscriber)
 			#except zmq.ZMQError:
 				# No Message Available

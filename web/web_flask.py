@@ -28,6 +28,7 @@ LOG_TAG = 'FLASK'
 LOGGER_NAME = 'flask'
 API_VERSION = '/hu/api/v1.0'
 SUBSCRIPTIONS = ['/source/','/player/']
+RETURN_PATH = '/bladiebla/'
 
 DEFAULT_CONFIG_FILE = '/etc/configuration.json'
 DEFAULT_PORT_WWW = 8289
@@ -383,7 +384,7 @@ def get_source():
 	#retmsg = messaging.client_request('/source/primary','GET', None, 5000)
 	#retmsg = messaging.publish_command('/source/primary','GET')
 	#sleep(1)
-	retmsg = messaging.publish_command('/source/primary','GET', None, True, 5000, '/bladiebla/')
+	retmsg = messaging.publish_command('/source/primary','GET', None, True, 5000, RETURN_PATH)
 	print retmsg
 	return retmsg
 	

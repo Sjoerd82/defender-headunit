@@ -389,7 +389,7 @@ def handle_path_source(path,cmd,args):
 
 	if function_to_call in locals():
 		ret = locals()[function_to_call](args)
-		printer('Executed {0} function {1} with result status: {2}'.format(base_path,function_to_call,ret))
+		printer('Executed {0} function {1} with result status: {2}'.format(base_path,function_to_call,ret)) # TODO: LL_DEBUG
 	else:
 		printer('Function {0} does not exist'.format(function_to_call))
 		
