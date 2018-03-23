@@ -3,18 +3,13 @@
 #
 # Udisks D-Bus event listener
 # Venema, S.R.G.
-# 2018-03-11
+# 2018-03-23
 #
 # Udisks D-Bus event listener forwards events on regarding Udisks-glue to ZeroMQ
 #
 
-
 import sys
 import os
-import time
-
-# ZeroMQ
-import zmq
 
 # dbus
 import dbus.service
@@ -28,60 +23,81 @@ from dbus.mainloop.glib import DBusGMainLoop
 #sys.path.append('../modules')
 sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
+from hu_msg import MqPubSubFwdController
 
-#********************************************************************************
-# GLOBAL vars & CONSTANTS
+# *******************************************************************************
+# Global variables and constants
 #
-CONTROL_NAME='udisks'
+DESCRIPTION = "UDisks listener"
+LOG_TAG = 'UDISKS'
+LOGGER_NAME = 'udisks'
 
-# dbus
+DEFAULT_CONFIG_FILE = '/etc/configuration.json'
+DEFAULT_LOG_LEVEL = LL_INFO
+DEFAULT_PORT_SUB = 5560
+DEFAULT_PORT_PUB = 5559
+
+PATH_EVENT_ADD = '/events/udisks/added'
+PATH_EVENT_REM = '/events/udisks/removed'
+
+logger = None
+args = None
+messaging = None
 bus = None
 
-# messaging
-mq_address_pub = 'tcp://localhost:5559'
-messaging = None
+# ********************************************************************************
+# Output wrapper
+#
+def printer( message, level=LL_INFO, continuation=False, tag=LOG_TAG ):
+	logger.log(level, message, extra={'tag': tag})
 
 # ********************************************************************************
-# todo
+# Load configuration
 #
-# TODO!!! the "headunit"-logger is no longer accessible once this script is started "on its own"..
-def myprint( message, level, tag ):
-	print("[{0}] {1}".format(tag,message))
-
-# Wrapper for "myprint"
-def printer( message, level=LL_INFO, continuation=False, tag=CONTROL_NAME ):
-	if continuation:
-		myprint( message, level, '.'+tag )
+def load_zeromq_configuration():
+	
+	configuration = configuration_load(LOGGER_NAME,args.config)
+	
+	if not configuration or not 'zeromq' in configuration:
+		printer('Error: Configuration not loaded or missing ZeroMQ, using defaults:')
+		printer('Publisher port: {0}'.format(args.port_publisher))
+		printer('Subscriber port: {0}'.format(args.port_subscriber))
+		configuration = { "zeromq": { "port_publisher": DEFAULT_PORT_PUB, "port_subscriber":DEFAULT_PORT_SUB } }
+		return configuration
+		
 	else:
-		myprint( message, level, tag )
+		# Get portnumbers from either the config, or default value
+		if not 'port_publisher' in configuration['zeromq']:
+			configuration['zeromq']['port_publisher'] = DEFAULT_PORT_PUB
+			
+		if not 'port_subscriber' in configuration['zeromq']:
+			configuration['zeromq']['port_subscriber'] = DEFAULT_PORT_SUB
+			
+	return configuration
 
-
-# ********************************************************************************
-# Zero MQ functions
+#********************************************************************************
+# Parse command line arguments
 #
-def zmq_connect():
+def parse_args():
 
-	global publisher
-	
-	printer("Connecting to ZeroMQ forwarder")
+	import argparse
+	global args
 
-	zmq_ctx = zmq.Context()
-	port_client = "5559"
-	publisher = zmq_ctx.socket(zmq.PUB)
-	publisher.connect("tcp://localhost:{0}".format(port_client))
+	parser = argparse.ArgumentParser(description=DESCRIPTION)
+	parser.add_argument('--loglevel', action='store', default=DEFAULT_LOG_LEVEL, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)
+	parser.add_argument('--config','-c', action='store', help='Configuration file', default=DEFAULT_CONFIG_FILE)
+	parser.add_argument('-b', action='store_true', default=False)
+	parser.add_argument('--port_publisher', action='store')
+	parser.add_argument('--port_subscriber', action='store')
+	args = parser.parse_args()
 
-def zmq_send(path_send,message):
-
-	global publisher
-
-	#TODO
-	#data = json.dumps(message)
-	data = message
-	printer("Sending message: {0} {1}".format(path_send, data))
-	publisher.send("{0} {1}".format(path_send, data))
-	
+#********************************************************************************
+# CALLBACK functions:
+#  cb_udisk_dev_add
+#  cb_udisk_dev_rem
+#
 def cb_udisk_dev_add( device ):
-	printer('Device added: {0}'.format(str(device)),tag='UDISKS')
+	printer('Device added: {0}'.format(str(device)))
 	#item = {}
 	#item['command'] = 'DEVADD'
 	#item['device'] = device
@@ -89,17 +105,17 @@ def cb_udisk_dev_add( device ):
 	udisk_add(device)
 
 def cb_udisk_dev_rem( device ):
-	printer('Device removed: {0}'.format(str(device)),tag='UDISKS')
+	printer('Device removed: {0}'.format(str(device)))
 	#item = {}
 	#item['command'] = 'DEVREM'
 	#item['device'] = device
 	#queue('blocking',item,'button_devrem')
 	udisk_rem(device)
 
+#********************************************************************************
+# Device added
+#
 def udisk_add( device ):
-
-	#global Sources
-	global bus
 
 	device_obj = bus.get_object("org.freedesktop.UDisks", device)
 	device_props = dbus.Interface(device_obj, dbus.PROPERTIES_IFACE)
@@ -116,97 +132,60 @@ def udisk_add( device ):
 	# Variables
 	DeviceFile = ""
 	mountpoint = ""
-	mytag = "UDISKS"
 	
 	try:
 		DeviceFile = device_props.Get('org.freedesktop.UDisks.Device',"DeviceFile")
-		printer(" > DeviceFile: {0}".format(DeviceFile),tag=mytag)
-		
+		printer(" > DeviceFile: {0}".format(DeviceFile))
 	except:
-		printer(" > DeviceFile is unset... Aborting...",tag=mytag)
+		printer(" > DeviceFile is unset... Aborting...")
 		return None
 	
 	# Check if DeviceIsMediaAvailable...
 	try:
 		is_media_available = device_props.Get('org.freedesktop.UDisks.Device', "DeviceIsMediaAvailable")
 		if is_media_available:
-			printer(" > Media available",tag=mytag)
+			printer(" > Media available")
 		else:
-			printer(" > Media not available... Aborting...",tag=mytag)
+			printer(" > Media not available... Aborting...")
 			return None
 	except:
-		printer(" > DeviceIsMediaAvailable is not set... Aborting...",tag=mytag)
+		printer(" > DeviceIsMediaAvailable is not set... Aborting...")
 		return None
 	
 	# Check if it is a Partition...
 	try:
 		is_partition = device_props.Get('org.freedesktop.UDisks.Device', "DeviceIsPartition")
 		if is_partition:
-			printer(" > Device is partition",tag=mytag)
+			printer(" > Device is partition")
 	except:
-		printer(" > DeviceIsPartition is not set... Aborting...",tag=mytag)
+		printer(" > DeviceIsPartition is not set... Aborting...")
 		return None
 
 	if not is_partition:
-		printer(" > DeviceIsPartition is not set... Aborting...",tag=mytag)
+		printer(" > DeviceIsPartition is not set... Aborting...")
 		return None
 
 	# Please Note:
 	# DeviceFile = dbus.String(u'/dev/sda1', variant_level=1)
 
-	# TODO : REFINE
 	media_info = {}	
 	media_info['device'] = str(DeviceFile)
-	media_info['start_playback'] = True
-	zmq_send('/source/addsubsource', media_info )
+	media_info['label'] = ""
+	media_info['uuid'] = get_part_uuid(str(DeviceFile))
+	media_info['mountpoint'] = ""
 	
-	"""
-	ix = Sources.getIndex('name','media')
+	messaging.publish_command(PATH_EVENT_ADD,'DATA',media_info)
 	
-	#return DeviceFile
-	parameters = {}
-	parameters['index'] = ix
-	parameters['device'] = str(DeviceFile)
-	isAdded = Sources.sourceAddSub(ix,parameters)
-	
-	if isAdded:
-	
-		#get ix, ix_ss
-		ix_ss = Sources.getIndexSub(ix,'device',str(DeviceFile))
-		
-		# check, and if available play
-		if Sources.sourceCheck( ix, ix_ss ):
-			#Sources.setCurrent( ix, ix_ss )
-			#TODO: move to queue
-			#Sources.sourcePlay()
-			hu_play(ix, ix_ss)
-
-			
-		printSummary(Sources)
-		return True
-	else:
-		return False
-	
-	#queue('blocking','DEVREM','button_devrem')
-
 	#IdLabel: SJOERD
 	#DriveSerial: 0014857749DCFD20C7F95F31
 	#DeviceMountPaths: dbus.Array([dbus.String(u'/media/SJOERD')], signature=dbus.Signature('s'), variant_level=1)
 	#DeviceFileById: dbus.Array([dbus.String(u'/dev/disk/by-id/usb-Kingston_DataTraveler_SE9_0014857749DCFD20C7F95F31-0:0-part1'), dbus.String(u'/dev/disk/by-uuid/D2B6-F8B3')], signature=dbus.Signature('s'), variant_level=1)
 	
-	#
-	# DeviceFile contains the device name of the added device..
-	#
-
-
-	# check source, if added successfully
-	"""
 		
-
+#********************************************************************************
+# Device removed
+#
 def udisk_rem( device ):
-
-	#global Sources
-	global bus
 
 	device_obj = bus.get_object("org.freedesktop.UDisks", device)
 	device_props = dbus.Interface(device_obj, dbus.PROPERTIES_IFACE)
@@ -223,15 +202,19 @@ def udisk_rem( device ):
 	# Variables
 	DeviceFile = ""
 	mountpoint = ""
-	mytag = "UDISKS"
 	
 	# TODO : REFINE
 	media_info = {}	
 	partition = "/dev/"+os.path.basename(str(device))
 	
 	media_info['partition'] = partition
-	zmq_send('/source/remsubsource', media_info )
-
+	media_info['device'] = str(DeviceFile)
+	media_info['label'] = ""
+	media_info['uuid'] = ""
+	media_info['mountpoint'] = ""
+	
+	messaging.publish_command(PATH_EVENT_REM,'DATA',media_info)
+	
 	"""
 	ix = Sources.getIndex('name','media')
 	
@@ -275,18 +258,51 @@ def udisk_rem( device ):
 		printer(' > Not a subsource: {0}'.format(partition))	
 	"""
 
-	
+#********************************************************************************	
 def setup():
 
+	global messaging
+
+	#
+	# Logging
+	# -> Output will be logged to the syslog, if -b specified, otherwise output will be printed to console
+	#
+	global logger
+	logger = logging.getLogger(LOGGER_NAME)
+	logger.setLevel(logging.DEBUG)
+
+	if args.b:
+		logger = log_create_syslog_loghandler(logger, args.loglevel, LOG_TAG, address='/dev/log') 	# output to syslog
+	else:
+		logger = log_create_console_loghandler(logger, args.loglevel, LOG_TAG) 						# output to console
+	
+	#
+	# Load configuration
+	#
+	global configuration
+	if not args.port_publisher and not args.port_subscriber:
+		configuration = load_zeromq_configuration()
+	else:
+		if args.port_publisher and args.port_subscriber:
+			pass
+		else:
+			configuration = load_zeromq_configuration()
+	
+		# Pub/Sub port override
+		if args.port_publisher:
+			configuration['zeromq']['port_publisher'] = args.port_publisher
+		if args.port_subscriber:
+			configuration['zeromq']['port_subscriber'] = args.port_subscriber
+			
 	#
 	# ZMQ
 	#
 	printer("ZeroMQ: Initializing")
-	messaging = MessageController()
+	messaging = MqPubSubFwdController('localhost',DEFAULT_PORT_PUB,DEFAULT_PORT_SUB)
 	
-	printer("ZeroMQ: Creating Publisher: {0}".format(mq_address_pub))
-	messaging.create_publisher(mq_address_pub)
-	
+	printer("ZeroMQ: Creating Publisher: {0}".format(DEFAULT_PORT_PUB))
+	messaging.create_publisher()
+
 	printer('Initialized [OK]')
 
 def main():
@@ -319,6 +335,7 @@ def main():
 
 
 if __name__ == "__main__":
+	parse_args()
 	setup()
 	main()
 	

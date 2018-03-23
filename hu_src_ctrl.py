@@ -1,13 +1,21 @@
 #!/usr/bin/python
 
-# A car's Headunit Source Controller
+# MUSIC SOURCE CONTROLLER is used as part of a music playing platform.
+# Similar to the source knob on a HiFi receiver or car headunit, this
+# script can cycle through its connected sources.
+#
+# The Source Controller can be used to control playback of the source.
 #
 # Venema, S.R.G.
-# 2018-03-18
+# 2018-03-23
 # License: MIT
 #
 # Loads source plugins from /sources folder
 #
+
+
+## IGNORING QUEUING FOR NOW ! ##
+
 
 import sys
 import json					# load json source configuration
@@ -17,58 +25,61 @@ import inspect				# dynamic module loading
 import gobject				# main loop
 from dbus.mainloop.glib import DBusGMainLoop
 
-import time
-
 #********************************************************************************
 # Logging
 from logging import getLogger
-#import datetime
-#import os
 
 #********************************************************************************
 # Headunit modules
 from modules.hu_source import SourceController
 from modules.hu_msg import MqPubSubFwdController
+from modules.hu_msg import parse_message
 from modules.hu_utils import * #init_load_config
 
 #********************************************************************************
 # Third party and others...
 from slugify import slugify
 
+#********************************************************************************
+# Version
+#
+from version import __version__
+
 # *******************************************************************************
 # Global variables and constants
 #
 DESCRIPTION = "Source Controller"
-CONFIG_FILE = '/etc/configuration.json'
+LOG_TAG = 'SRCTRL'
+LOGGER_NAME = 'srctrl'
+
 DEFAULT_CONFIG_FILE = '/etc/configuration.json'
 DEFAULT_LOG_LEVEL = LL_INFO
 DEFAULT_PORT_SUB = 5560
 DEFAULT_PORT_PUB = 5559
+SUBSCRIPTIONS = ['/source/','/player/','/events/udisks/']
 
-# Logging
-DAEMONIZED = None
-LOG_TAG = 'SRCTRL'
-LOGGER_NAME = 'srctrl'
-LOG_LEVEL = LL_INFO
+logger = None			# logging
+args = None				# command line arguments
+messaging = None		# mq messaging
+configuration = None	# configuration
+sc_sources = None		# source controller
+mpdc = None				# mpd controller
 
-arMpcPlaylistDirs = [ ]			#TODO: should probably not be global...
-
-hu_details = { 'track':None, 'random':'off', 'repeat':True, 'att':False }
-
-sc_sources = None		# Source Controller
-mpdc = None				# MPD Controller
-messaging = None		# Messaging
-logger = None			# Logging
-configuration = None	# Configuration
-
-arg_loglevel = 20
+# still used?
 queue_actions = None
+#hu_details = { 'track':None, 'random':'off', 'repeat':True, 'att':False }
+
+
+# ********************************************************************************
+# Output wrapper
+#
+def printer( message, level=LL_INFO, continuation=False, tag=LOG_TAG ):
+	logger.log(level, message, extra={'tag': tag})
 
 
 # ********************************************************************************
 # Source Plugin Wrapper
 #
-
 
 
 # ********************************************************************************
@@ -86,54 +97,6 @@ def process_queue():
 	return True
 
 
-#def check_args(args,count,types):
-#	
-"""
-def parse_message(message):
-		path = []
-		params = []
-		path_cmd = message.split(" ")
-		for pathpart in path_cmd[0].split("/"):
-			if pathpart:
-				path.append(pathpart.lower())
-			
-		base_topic = path[0]
-		cmd_par = path_cmd[1].split(":")
-
-		if len(cmd_par) == 1:
-			command = cmd_par[0].lower()
-		elif len(cmd_par) == 2:
-			command = cmd_par[0].lower()
-			param = cmd_par[1]
-
-			for parpart in param.split(","):
-				if parpart:
-					params.append(parpart)
-		else:
-			print("Malformed message!")
-			return False
-
-		print("[MQ] Received Path: {0}; Command: {1}; Parameters: {2}".format(path,command,params))
-		
-
-		item = []	# or set?
-		# check if base_topic ('player','event', etc.) function exists
-		if base_topic in globals():
-			# remove first item (base topic)
-			del path[0]
-			# if queue is empty, execute right away, else add to queue
-			if queue_actions.empty():
-				# execute:
-				globals()[base_topic](path, command, params)
-			else:
-				# put in queue:
-				item.append(base_topic)
-				item.append(path)
-				item.append(command)
-				item.append(params)
-				queue_actions.put(item, False) # False=Non-Blocking
-"""
-
 def handle_path_source(path,cmd,args):
 
 	base_path = 'source'
@@ -141,130 +104,263 @@ def handle_path_source(path,cmd,args):
 	# remove base path
 	del path[0]
 
-	# in paths are concatenated using underscore
-	# example:
-	# \player\track\next must be processed by the function called:
-	# track_next
-
+	# Sub Functions must return None (invalid params) or a {data} object.
+	
 	def get_primary(args):
+		"""	Retrieve Primary Sources
+
+			Arguments:
+				None			Retrieve list of all sources
+			Return data:
+				List of Sources
+				
+			Arguments:
+				<source_id>		Retrieve specified source
+			Return data:
+				Specified source
+				
+			Return codes:
+				200		OK
+				500		Error
 		"""
-		Retrieve Primary Sources
-		
-		Arguments:
-			None			Retrieve list of all sources
-			<source_id>		Retrieve list of specified source
-			
-		Returns:
-			List of Sources
-			Specified Source
-		"""
+		max_args = 1
+		if len(args) > max_args:
+			printer('More than {0} argument(s) given, ignoring extra arguments'.format(max_args), level=LL_WARNING)
+			args = args[:max_args]
+
 		if not args:
-			# return all sources
-			ret_sources = sc_sources.get_all_simple()
+			ret = sc_sources.source_all()
 		elif len(args) == 1:
-			# return source
-			ret_sources = sc_sources.get(args[0])
-		elif len(args) == 2:
-			# return source + subsource
-			#ret_sources = sc_sources.get(args[0],args[1])
-			ret_sources = None #function not implemented
-		
-		#data_path = "/data/sources" # TODO: use base_path
-		#messaging.send_data(data_path,ret_sources)
-		#return True
-		return ret_sources
+			ret = sc_sources.source(args[0])
+			
+		if ret:
+			retcode = 200
+		else:
+			retcode = 500
+				
+		data={}
+		data['retval'] = retcode
+		data['payload'] = ret
+		return data
 
 	def put_primary(args):
-		"""
-		Set active (sub)source to <(sub)source_id>
-		Starts playback if P is specified, or not (default)
-		Does not start playback if S specified
-		
-		Arguments:
-			<source_id>
-			<source_id>,[subsource_id]
-			<source_id>,[subsource_id],[S|P]
+		""" Set active (sub)source to <id> (<subid>). If "P" then also start playing.
 
-		Returns:
-			Nothing
+			? Starts playback if P is specified, or not (default)
+			? Does not start playback if S specified
+			
+			Arguments:
+				<int:source_id>,[int:subsource_id][,S|P]
+			Return data:
+				Nothing
+			Return codes:
+				200		OK
+				500		Error
 		"""
-		# Set active (sub)source to <id> (<subid>)
 		if not args:
 			printer('Function arguments missing', level=LL_ERROR)
-			return False
-		elif len(args) > 1:
-			sc_sources.setCurrent(args[0])
-		elif len(args) > 2:
-			printer('More than two arguments given, ignoring extra arguments', level=LL_WARNING)
-			sc_sources.setCurrent(args[0],args[1])
-		return True
+			return None
+
+		max_args = 3
+		if len(args) > max_args:
+			printer('More than {0} argument(s) given, ignoring extra arguments'.format(max_args), level=LL_WARNING)
+			args = args[:max_args]
+			
+		elif len(args) == 1:
+			ret = sc_sources.select(args[0])
+		elif len(args) == 2:
+			ret = sc_sources.select(args[0],args[1])
+		elif len(args) == 3:
+			ret = sc_sources.select(args[0],args[1])
+			#TODO: not implemented
+
+		if ret:
+			retcode = 200
+		else:
+			retcode = 500
+
+		data={}
+		data['retval'] = retcode
+		data['payload'] = None
+		return data
 	
 	def post_primary(args):
+		"""	Add a new source
+			Arguments:
+				{source}
+			Return data:
+				Nothing
+			Return codes:
+				200		OK
+				500		Error
 		"""
-		Arguments:
-		Returns:
-		"""
-		return True
+		if not args:
+			printer('Function arguments missing', level=LL_ERROR)
+			return None
+
+		max_args = 1
+		if len(args) > max_args:
+			printer('More than {0} argument(s) given, ignoring extra arguments'.format(max_args), level=LL_WARNING)
+			args = args[:max_args]
+
+		ret = sc_sources.add(args[0])
+		
+		if ret:
+			retcode = 200
+		else:
+			retcode = 500
+
+		data={}
+		data['retval'] = retcode
+		data['payload'] = None
+		return data
 		
 	def del_primary(args):
 		"""
-		Arguments:
-		Returns:
+			Arguments:
+			Return dat:
+			Return codes:
+				200		OK
+				500		Error
 		"""
-		return True
+		if ret:
+			retcode = 200
+		else:
+			retcode = 500
+
+		data={}
+		data['retval'] = retcode
+		data['payload'] = ret
+		return data
 	
 	def get_subsource(args):
 		"""
-		Arguments:
-		Returns:
+			Arguments:
+			Return dat:
+			Return codes:
+				200		OK
+				500		Error
 		"""
-		# Retrieve list of subsources for current or specified source
-		return True
+		if ret:
+			retcode = 200
+		else:
+			retcode = 500
+
+		data={}
+		data['retval'] = retcode
+		data['payload'] = ret
+		return data
 
 	def put_subsource(args):
 		"""
-		Arguments:
-		Returns:
+			Arguments:
+			Return dat:
+			Return codes:
+				200		OK
+				500		Error
 		"""
-		return True
+		if ret:
+			retcode = 200
+		else:
+			retcode = 500
+
+		data={}
+		data['retval'] = retcode
+		data['payload'] = ret
+		return data
 
 	def post_subsource(args):
 		"""
-		Arguments:
-		Returns:
+			Arguments:
+			Return dat:
+			Return codes:
+				200		OK
+				500		Error
 		"""
-		return True
+		if ret:
+			retcode = 200
+		else:
+			retcode = 500
+
+		data={}
+		data['retval'] = retcode
+		data['payload'] = ret
+		return data
 
 	def del_subsource(args):
 		"""
-		Arguments:
-		Returns:
+			Arguments:
+			Return dat:
+			Return codes:
+				200		OK
+				500		Error
 		"""
-		return True
+		if ret:
+			retcode = 200
+		else:
+			retcode = 500
+
+		data={}
+		data['retval'] = retcode
+		data['payload'] = ret
+		return data
 		
 	def get_available(args):
 		"""
-		Arguments:
-		Returns:
+			Arguments:
+			Return dat:
+			Return codes:
+				200		OK
+				500		Error
 		"""
-		# Retrieve list of available sources / Set available (F=Force)
-		return True
+		if ret:
+			retcode = 200
+		else:
+			retcode = 500
+
+		data={}
+		data['retval'] = retcode
+		data['payload'] = ret
+		return data
 
 	def set_available(args):
 		"""
-		Arguments:
-		Returns:
+			Arguments:
+			Return dat:
+			Return codes:
+				200		OK
+				500		Error
 		"""
-		# Retrieve list of available sources / Set available (F=Force)
+		if ret:
+			retcode = 200
+		else:
+			retcode = 500
+
+		data={}
+		data['retval'] = retcode
+		data['payload'] = ret
+		return data
 		return True
 
 	def put_next(args):
 		"""
-		Arguments:
-		Returns:
+			Arguments:
+			Return dat:
+			Return codes:
+				200		OK
+				500		Error
 		"""
-		# Set active (sub)source to the next available
-		ret = sc_sources.next()
+		if ret:
+			retcode = 200
+		else:
+			retcode = 500
+
+		data={}
+		data['retval'] = retcode
+		data['payload'] = ret
+		return data
+		
+		ret = sc_sources.select_next()
 		printSummary(sc_sources)
 		return ret
 
@@ -274,7 +370,7 @@ def handle_path_source(path,cmd,args):
 		Returns:
 		"""
 		# Set active (sub)source to the prev available
-		sc_sources.next(True)
+		sc_sources.select_next(True)
 		printSummary(sc_sources)
 		return True
 		
@@ -305,11 +401,6 @@ def handle_path_player(path,cmd,args):
 
 	# remove base path
 	del path[0]
-
-	# in paths are concatenated using underscore
-	# example:
-	# \player\track\next must be processed by the function called:
-	# track_next
 	
 	def get_player(args):
 		#
@@ -431,42 +522,11 @@ def handle_path_player(path,cmd,args):
 # ********************************************************************************
 # Initialization functions
 #
-#  - Loggers
 #  - Load source plugins
 #  - Summary printer
 #
 
 """
-# Initiate logger.
-def init_logging():
-
-	global logger
-
-	# logging is global
-	logger = logging.getLogger('headunit')
-	logger.setLevel(logging.DEBUG)
-
-# Initiate logging to console.
-# Use logger.info instead of print.
-def init_logging_c():
-
-	global logger
-
-	# create console handler
-	ch = logging.StreamHandler()
-	ch.setLevel(arg_loglevel)
-
-	# create formatters
-	fmtr_ch = ColoredFormatter("%(tag)s%(message)s")
-
-	# add formatter to handlers
-	ch.setFormatter(fmtr_ch)
-
-	# add ch to logger
-	logger.addHandler(ch)
-	
-	logger.info('Logging started: Console',extra={'tag':'log'})
-
 # Initiate logging to log file.
 # Use logger.info instead of print.
 def init_logging_f( logdir, logfile, runcount ):
@@ -513,27 +573,6 @@ def init_logging_f( logdir, logfile, runcount ):
 				os.remove(os.path.join(logdir, filename))
 				logger.debug('Removing old log file: {0}'.format(filename),extra={'tag':'log'})
 
-
-# address may be a tuple consisting of (host, port) or a string such as '/dev/log'
-def init_logging_s( address=('localhost', SYSLOG_UDP_PORT), facility="HEADUNIT", socktype=socket.SOCK_DGRAM ):
-
-	global logger
-	
-	# create syslog handler
-	#sh = logging.handlers.SysLogHandler(address=address, facility=facility, socktype=socktype)
-	sh = logging.handlers.SysLogHandler(address=address, socktype=socktype)
-	sh.setLevel(logging.DEBUG)
-
-	# create formatters
-	fmtr_sh = RemAnsiFormatter("%(asctime)-9s [%(levelname)-8s] %(tag)s %(message)s")
-		
-	# add formatter to handlers
-	sh.setFormatter(fmtr_sh)
-
-	# add sh to logger
-	logger.addHandler(sh)
-	
-	logger.info('Logging started',extra={'tag':'log'})
 """
 	
 # print a source summary
@@ -624,7 +663,7 @@ def load_sources( plugindir ):
 			if not sourcePluginName in configuration['source_config']:
 				# insert defaultconfig
 				configuration['source_config'][sourcePluginName] = config['defaultconfig']
-				configuration_save( CONFIG_FILE, configuration )
+				configuration_save( args.config, configuration )
 
 		# check if the source has menu items
 		"""
@@ -641,8 +680,8 @@ def load_sources( plugindir ):
 		"""
 		# init source, if successfully added
 		if isAdded:
-			indexAdded = sc_sources.getIndex('name',config['name'])
-			sc_sources.sourceInit(indexAdded)
+			indexAdded = sc_sources.index('name',config['name'])
+			sc_sources.source_init(indexAdded)
 	
 	# check if plugin dir exists
 	if not os.path.exists(plugindir):
@@ -665,73 +704,39 @@ def load_sources( plugindir ):
 	# therefore we save them in a list and iterate over them in a second loop:
 	for sourcePluginName in list_of_sources:
 		add_a_source(plugindir, sourcePluginName)
-
-
-def dispatcher(path, command, arguments):
-	print("[MQ] Received Path: {0}; Command: {1}; Parameters: {2}".format(path,command,arguments))
-	handler_function = 'handle_path_' + path[0]
-	if handler_function in globals():
-		ret = globals()[handler_function](path, command, arguments)
-		return ret
-	else:
-		print("No handler for: {0}".format(handler_function))
-		return None
 	
 
-def idle_msg_receiver_ASYNC():
-	global messaging
+def idle_message_receiver():
+	print "DEBUG: idle_msg_receiver()"
 	
-	msg = messaging.receive_async()
-	if msg:
-		print "Received message: {0}".format(msg)
-		parsed_msg = messaging.parse_message(msg)
-		dispatcher(parsed_msg['path'],parsed_msg['cmd'],parsed_msg['args'])
+	def dispatcher(path, command, arguments):
+		print("Dispatcher. Path: {0}; Command: {1}; Parameters: {2}".format(path,command,arguments))
+		handler_function = 'handle_path_' + path[0]
+		if handler_function in globals():
+			ret = globals()[handler_function](path, command, arguments)
+			return ret
+		else:
+			print("No handler for: {0}".format(handler_function))
+			return None
 		
-	return True
-
-def idle_msg_receiver_OLD():
-
-	print "DEBUG: idle_msg_receiver()"
-	msgtype, msg = messaging.poll()
+	rawmsg = messaging.poll(timeout=None)				#None=Blocking
 	if msg:
-		print "Received message: {0}".format(msg)
-		parsed_msg = messaging.parse_message(msg)
-		retval = dispatcher(parsed_msg['path'],parsed_msg['cmd'],parsed_msg['args'])
-		if msgtype == "subscriber":
-			print "Maybe we should reply to this??"
-			print retval
-		if msgtype == "server":
-			print "Returning retval.."
-			#messaging.send_to_client(retval)
-			messaging.server_response( path,payload,retval )
-			
-	#important!
-	return True
-
-def idle_msg_receiver():
-
-	print "DEBUG: idle_msg_receiver()"
-	msg = messaging.poll()
-	if msg:
-		print "Received message: {0}".format(msg)
-		parsed_msg = messaging.parse_message(msg)
+		printer("Received message: {0}".format(rawmsg))	#TODO: debug
+		parsed_msg = parse_message(rawmsg)
 		print parsed_msg
+		# send message to dispatcher for handling
+		
 		retval = dispatcher(parsed_msg['path'],parsed_msg['cmd'],parsed_msg['args'])
 		print retval
-	#important!
-	return True
+		
+		if parsed_msg['resp_path']:
+			print "DEBUG: Resp Path present.. returing message.."
+			messaging.publish_command(parsed_msg['resp_path'],'DATA',retval)
+		
+	
+	return True #important, returning true re-enables idle routine.
 	
 				
-#********************************************************************************
-# Version
-#
-from version import __version__
-
-# ********************************************************************************
-# Output wrapper
-#
-def printer( message, level=LL_INFO, continuation=False, tag=LOG_TAG ):
-	logger.log(level, message, extra={'tag': tag})
 
 #********************************************************************************
 # Parse command line arguments
@@ -739,21 +744,15 @@ def printer( message, level=LL_INFO, continuation=False, tag=LOG_TAG ):
 def parse_args():
 
 	import argparse
-	
-	global LOG_LEVEL
-	global DAEMONIZED
+	global args
 
-	parser = argparse.ArgumentParser(description='Source Controller')
-	parser.add_argument('--config','-c', required=False, action='store', help='Configuration file')
-	parser.add_argument('--loglevel', action='store', default=LL_INFO, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)
-	parser.add_argument('-b', action='store_true')	# background, ie. no output to console
+	parser = argparse.ArgumentParser(description=DESCRIPTION)
+	parser.add_argument('--loglevel', action='store', default=DEFAULT_LOG_LEVEL, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)
+	parser.add_argument('--config','-c', action='store', help='Configuration file', default=DEFAULT_CONFIG_FILE)
+	parser.add_argument('-b', action='store_true', default=False)
+	parser.add_argument('--port_publisher', action='store')
+	parser.add_argument('--port_subscriber', action='store')
 	args = parser.parse_args()
-
-	LOG_LEVEL = args.loglevel
-	DAEMONIZED = args.b	
-
-	if args.config:
-		CONFIG_FILE = args.config
 
 # ********************************************************************************
 # Load configuration
@@ -761,7 +760,7 @@ def parse_args():
 def load_configuration():
 
 	# utils # todo, present with logger
-	configuration = configuration_load(LOGGER_NAME,CONFIG_FILE)
+	configuration = configuration_load(LOGGER_NAME,args.config)
 	
 	if not configuration or not 'zeromq' in configuration:
 		printer('Error: Configuration not loaded or missing ZeroMQ, using defaults:')
@@ -776,29 +775,29 @@ def load_configuration():
 #
 def setup():
 
-	global logger
-	global messaging
-	global configuration
-	global sc_sources
-
 	#
 	# Logging
+	# -> Output will be logged to the syslog, if -b specified, otherwise output will be printed to console
 	#
+	global logger
 	logger = logging.getLogger(LOGGER_NAME)
 	logger.setLevel(logging.DEBUG)
 
-	# Start logging to console or syslog
-	if DAEMONIZED:
-		# output to syslog
-		logger = log_create_syslog_loghandler(logger, LOG_LEVEL, LOG_TAG, address='/dev/log' )
-		
+	if args.b:
+		logger = log_create_syslog_loghandler(logger, args.loglevel, LOG_TAG, address='/dev/log') 	# output to syslog
 	else:
-		# output to console
-		logger = log_create_console_loghandler(logger, LOG_LEVEL, LOG_TAG)
+		logger = log_create_console_loghandler(logger, args.loglevel, LOG_TAG) 						# output to console
+
+	#
+	# Load main configuration
+	#
+	global configuration
+	configuration = load_configuration()
 	
 	#
 	# ZMQ
 	#
+	global messaging
 	printer("ZeroMQ: Initializing")
 	messaging = MqPubSubFwdController('localhost',DEFAULT_PORT_PUB,DEFAULT_PORT_SUB)
 	
@@ -806,12 +805,7 @@ def setup():
 	messaging.create_publisher()
 
 	printer("ZeroMQ: Creating Subscriber: {0}".format(DEFAULT_PORT_SUB))
-	messaging.create_subscriber(['/source','/player'])
-
-	#
-	# Load main configuration
-	#
-	configuration = load_configuration()
+	messaging.create_subscriber(SUBSCRIPTIONS)
 
 	#
 	# Load PulseAudio SFX
@@ -823,10 +817,10 @@ def setup():
 	#
 	printer('{0} version {1}'.format('Source Controller',__version__))
 
-
 	#
 	# Initialize Source Controller
 	#
+	global sc_sources
 	sc_sources = SourceController(logger)
 	
 	#
@@ -840,19 +834,7 @@ def setup():
 	# end of initialization
 	#
 	#********************************************************************************
-	printer('Initialized [OK]')
-
-	""" POC WORKS:!! 
-	while True:
-		
-		msgtype, message = messaging.poll()
-		if message:
-			print message
-			if msgtype == "server":
-				print "Returning thanks.."
-				messaging.send_to_client('OK')
-	"""
-		
+	printer('Initialized [OK]')		
 
 #********************************************************************************
 # Mainloop
@@ -861,7 +843,7 @@ def main():
 
 	global queue_actions
 
-	sc_sources.sourceCheckAll()
+	sc_sources.source_check()
 	printSummary(sc_sources)
 	
 	#
@@ -877,7 +859,7 @@ def main():
 	# Queue handler
 	# NOTE: Remember, everything executed through the qBlock queue blocks, including qPrio!
 	# IDEALLY, WE'D PUT THIS BACK IN A THREAD, IF THAT WOULD PERFORM... (which for some reason it doesn't!)
-	gobject.idle_add(idle_msg_receiver)
+	gobject.idle_add(idle_message_receiver)
 	queue_actions = Queue(maxsize=40)		# Blocking stuff that needs to run in sequence
 	gobject.idle_add(process_queue)
 
@@ -889,11 +871,6 @@ def main():
 		mainloop.run()
 	finally:
 		mainloop.quit()
-
-
-	# TODO
-	# problem is that the setup() imports modules, yielding: SyntaxWarning: import * only allowed at module level
-	# another issue is that all global vars need to be defined (not really a problem i think..)
 
 if __name__ == '__main__':
 	parse_args()

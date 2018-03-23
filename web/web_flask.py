@@ -23,8 +23,12 @@ from hu_msg import MqPubSubFwdController
 # *******************************************************************************
 # Global variables and constants
 #
-CONFIG_FILE = '/etc/configuration.json'
 DESCRIPTION = "Flask HTTP server"
+LOG_TAG = 'FLASK'
+LOGGER_NAME = 'flask'
+API_VERSION = '/hu/api/v1.0'
+SUBSCRIPTIONS = ['/source/','/player/']
+
 DEFAULT_CONFIG_FILE = '/etc/configuration.json'
 DEFAULT_PORT_WWW = 8289
 DEFAULT_PASSWORD = None
@@ -32,20 +36,11 @@ DEFAULT_LOG_LEVEL = LL_INFO
 DEFAULT_PORT_SUB = 5560
 DEFAULT_PORT_PUB = 5559
 
-# Logging
-DAEMONIZED = None
-LOG_TAG = 'FLASK'
-LOGGER_NAME = 'flask'
-LOG_LEVEL = LL_INFO
 logger = None
-
+args = None
+messaging = None
 configfile_found = None
 configuration = None
-
-API_VERSION = '/hu/api/v1.0'
-
-# messaging
-messaging = None
 
 
 # ********************************************************************************
@@ -60,7 +55,7 @@ def printer( message, level=LL_INFO, continuation=False, tag=LOG_TAG ):
 def load_configuration():
 
 	# utils # todo, present with logger
-	configuration = configuration_load(LOGGER_NAME,CONFIG_FILE)
+	configuration = configuration_load(LOGGER_NAME,args.config)
 	
 	if not configuration or not 'flask' in configuration:
 		printer('Error: Configuration not loaded or missing Flask, using defaults:')
@@ -296,7 +291,7 @@ def cfg_save():
 				print request.form['cfg_prf_min_track_sec']
 				configuration['preferences']['threshold_total_sec'] = request.form['cfg_prf_min_track_sec']
 				
-			with open(CONFIG_FILE,'w') as outfile:
+			with open(args.config,'w') as outfile:
 				json.dump(configuration, outfile)
 	
 	message = "Your changes have been saved."
@@ -386,8 +381,8 @@ def get_source():
 	
 	#retmsg = messaging.send_to_server('/source/primary GET')
 	#retmsg = messaging.client_request('/source/primary','GET', None, 5000)
-	retmsg = messaging.publish_command('/source/primary','GET')
-	sleep(1)
+	#retmsg = messaging.publish_command('/source/primary','GET')
+	#sleep(1)
 	retmsg = messaging.publish_command('/source/primary','GET', None, True, 5000, '/bladiebla/')
 	return retmsg
 	
@@ -638,41 +633,36 @@ def post_plugin_path(path):
 def parse_args():
 
 	import argparse
-	
-	global LOG_LEVEL
-	global DAEMONIZED
+	global args
 
-	parser = argparse.ArgumentParser(description='Flask HTTP server')
-	parser.add_argument('--loglevel', action='store', default=LL_INFO, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)
-	parser.add_argument('-b', action='store_true')	# background, ie. no output to console
+	parser = argparse.ArgumentParser(description=DESCRIPTION)
+	parser.add_argument('--loglevel', action='store', default=DEFAULT_LOG_LEVEL, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)
+	parser.add_argument('--config','-c', action='store', help='Configuration file', default=DEFAULT_CONFIG_FILE)
+	parser.add_argument('-b', action='store_true', default=False)
+	parser.add_argument('--port_publisher', action='store')
+	parser.add_argument('--port_subscriber', action='store')
 	args = parser.parse_args()
-
-	LOG_LEVEL = args.loglevel
-	DAEMONIZED = args.b
 	
 def setup():
 
-	global logger
-	global messaging
-
 	#
 	# Logging
+	# -> Output will be logged to the syslog, if -b specified, otherwise output will be printed to console
 	#
+	global logger
 	logger = logging.getLogger(LOGGER_NAME)
 	logger.setLevel(logging.DEBUG)
 
-	# Start logging to console or syslog
-	if DAEMONIZED:
-		# output to syslog
-		logger = log_create_syslog_loghandler(logger, LOG_LEVEL, LOG_TAG, address='/dev/log' )
-		
+	if args.b:
+		logger = log_create_syslog_loghandler(logger, args.loglevel, LOG_TAG, address='/dev/log') 	# output to syslog
 	else:
-		# output to console
-		logger = log_create_console_loghandler(logger, LOG_LEVEL, LOG_TAG)
+		logger = log_create_console_loghandler(logger, args.loglevel, LOG_TAG) 						# output to console
+
 
 	#
 	# ZMQ
 	#
+	global messaging
 	printer("ZeroMQ: Initializing")
 	messaging = MqPubSubFwdController('localhost',DEFAULT_PORT_PUB,DEFAULT_PORT_SUB)
 	
@@ -680,7 +670,7 @@ def setup():
 	messaging.create_publisher()
 
 	printer("ZeroMQ: Creating Subscriber: {0}".format(DEFAULT_PORT_SUB))
-	messaging.create_subscriber(['/source','/player'])
+	messaging.create_subscriber(SUBSCRIPTIONS)
 
 
 def main():

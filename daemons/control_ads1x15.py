@@ -30,22 +30,18 @@ from hu_msg import MqPubSubFwdController
 # Global variables and constants
 #
 DESCRIPTION = "ADS1x15 Remote Control"
+LOG_TAG = 'AD1X15'
+LOGGER_NAME = 'ad1x15'
+
 DEFAULT_CONFIG_FILE = '/etc/configuration.json'
 DEFAULT_LOG_LEVEL = LL_INFO
 DEFAULT_PORT_SUB = 5560
 DEFAULT_PORT_PUB = 5559
 
-CONTROL_NAME='ad1x15'
+logger = None
 args = None
 messaging = None
-
-# adc
 adc = None
-
-# Logging
-LOG_TAG = 'AD1X15'
-LOGGER_NAME = 'ad1x15'
-logger = None
 
 
 # ********************************************************************************
@@ -79,7 +75,7 @@ def load_zeromq_configuration():
 	return configuration
 
 #********************************************************************************
-# Parse command line arguments and environment variables
+# Parse command line arguments
 #
 def parse_args():
 
@@ -96,7 +92,6 @@ def parse_args():
 
 def setup():
 
-	global messaging
 	global adc
 
 	#
@@ -133,6 +128,7 @@ def setup():
 	#
 	# ZMQ
 	#
+	global messaging
 	printer("ZeroMQ: Initializing")
 	messaging = MqPubSubFwdController('localhost',DEFAULT_PORT_PUB,DEFAULT_PORT_SUB)
 	

@@ -61,7 +61,7 @@ class sourceClass():
 	def __smb_add( self, dir, path, sourceCtrl ):
 
 		# get index (name is unique)
-		ix = sourceCtrl.getIndex('name','smb')
+		ix = sourceCtrl.index('name','smb')
 		
 		# construct the subsource
 		subsource = {}
@@ -72,7 +72,7 @@ class sourceClass():
 		subsource['mpd_dir'] = dir[7:]		# TODO -- ASSUMING /media/PIHU_SMB
 		subsource['path'] = path
 
-		sourceCtrl.addSub(ix, subsource)
+		sourceCtrl.add_sub(ix, subsource)
 
 	def init( self, sourceCtrl ):
 		self.__printer('Initializing...', level=15)
@@ -94,18 +94,18 @@ class sourceClass():
 	def check( self, sourceCtrl, subSourceIx=None  ):
 		self.__printer('Checking availability...', level=15)
 		
-		ix = sourceCtrl.getIndex('name','smb')
+		ix = sourceCtrl.index('name','smb')
 		mountpoints = []
 		locations = []
 		foundStuff = 0
 
 		if subSourceIx == None:
-			subsources = sourceCtrl.getSubSources( ix )
+			subsources = sourceCtrl.subsource_all( ix )
 			for subsource in subsources:
 				locations.append( (subsource['mountpoint'], subsource['mpd_dir']) )
 			ssIx = 0
 		else:
-			subsource = sourceCtrl.getSubSource( ix, subSourceIx )
+			subsource = sourceCtrl.subsource( ix, subSourceIx )
 			locations.append( (subsource['mountpoint'], subsource['mpd_dir']) )
 			ssIx = subSourceIx
 
@@ -129,10 +129,10 @@ class sourceClass():
 						self.__printer(" > Nothing to play marking unavailable...")
 					else:
 						self.__printer(" > Music found after updating")
-						sourceCtrl.setAvailableIx( ix, True, ssIx )
+						sourceCtrl.set_available( ix, True, ssIx )
 						foundStuff += 1
 				else:
-					sourceCtrl.setAvailableIx( ix, True, ssIx )
+					sourceCtrl.set_available( ix, True, ssIx )
 					foundStuff += 1
 			ssIx+=1
 		
@@ -171,8 +171,8 @@ class sourceClass():
 		#
 		# variables
 		#
-		arIx = sourceCtrl.getIndexCurrent()
-		subsource = sourceCtrl.getSubSource( arIx[0], arIx[1] )
+		arIx = sourceCtrl.index_current()
+		subsource = sourceCtrl.subsource( arIx[0], arIx[1] )
 		sLocalMusicMPD = subsource['mpd_dir']
 
 		#
@@ -197,7 +197,7 @@ class sourceClass():
 			if playlistCount == "0":
 				# Failed. Returning false will cause caller to try next source
 				self.__printer(' > Nothing in the playlist, giving up. Marking source unavailable.')
-				sourceCtrl.setAvailableIx( ix, False, subSourceIx )
+				sourceCtrl.set_available( ix, False, subSourceIx )
 				pa_sfx(LL_ERROR)
 				return False
 			else:

@@ -44,7 +44,7 @@ class sourceClass():
 		mpd_musicdir = '/media'
 
 		# get index (name is unique)
-		ix = sourceCtrl.getIndex('name','locmus')
+		ix = sourceCtrl.index('name','locmus')
 
 		# construct the subsource
 		subsource = {}
@@ -56,7 +56,7 @@ class sourceClass():
 		subsource['label'] = label
 		#subsource['uuid'] = None		# not relevant for local sources
 
-		sourceCtrl.addSub( ix, subsource )
+		sourceCtrl.add_sub( ix, subsource )
 
 	def init( self, sourceCtrl ):
 		self.__printer('Initializing...', level=15)
@@ -83,12 +83,12 @@ class sourceClass():
 		foundStuff = 0								#
 						
 		if subSourceIx == None:
-			subsources = sourceCtrl.getSubSources( ix )
+			subsources = sourceCtrl.subsource_all( ix )
 			for subsource in subsources:
 				locations.append( (subsource['mountpoint'], subsource['mpd_dir']) )
 			ssIx = 0
 		else:
-			subsource = sourceCtrl.getSubSource( ix, subSourceIx )
+			subsource = sourceCtrl.subsource( ix, subSourceIx )
 			locations.append( (subsource['mountpoint'], subsource['mpd_dir']) )
 			ssIx = subSourceIx
 
@@ -106,7 +106,7 @@ class sourceClass():
 				self.__printer(" > Local music directory does not exist.. creating...",LL_WARNING)
 				os.makedirs(mountpoint)
 				# obviously there will no be any music in that new directory, so marking it unavailable..
-				sourceCtrl.setAvailableIx( ix, False, ssIx )
+				sourceCtrl.set_available( ix, False, ssIx )
 
 			if not os.path.exists(mountpoint):
 				self.__printer(" > Local music directory does not exist.. Failed creating?",LL_WARNING)
@@ -124,10 +124,10 @@ class sourceClass():
 							self.__printer(" > Nothing to play marking unavailable...")
 						else:
 							self.__printer(" > Music found after updating")
-							sourceCtrl.setAvailableIx( ix, True, ssIx )
+							sourceCtrl.set_available( ix, True, ssIx )
 							foundStuff += 1
 					else:
-						sourceCtrl.setAvailableIx( ix, True, ssIx )
+						sourceCtrl.set_available( ix, True, ssIx )
 						foundStuff += 1
 			
 			ssIx+=1
@@ -146,8 +146,8 @@ class sourceClass():
 
 		# get directory to play, directory is relative to MPD music dir.
 		#ix = sourceCtrl.getIndex('name','locmus')
-		arIx = sourceCtrl.getIndexCurrent()
-		subsource = sourceCtrl.getSubSource( arIx[0], arIx[1] )# subSourceIx )
+		arIx = sourceCtrl.index_current()
+		subsource = sourceCtrl.subsource( arIx[0], arIx[1] )# subSourceIx )
 		sLocalMusicMPD = subsource['mpd_dir']
 		sLabel = subsource['label']
 		
@@ -176,7 +176,7 @@ class sourceClass():
 			if playlistCount == "0":
 				# Failed. Returning false will cause caller to try next source
 				self.__printer(' > Nothing in the playlist, giving up. Marking source unavailable.')
-				sourceCtrl.setAvailableIx( arIx[0], False, arIx[1] )
+				sourceCtrl.set_available( arIx[0], False, arIx[1] )
 				pa_sfx(LL_ERROR)
 				return False
 			else:

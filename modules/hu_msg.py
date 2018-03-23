@@ -20,6 +20,56 @@ def printer( message, level=LL_INFO, tag="", logger_name=__name__):
 	logger = logging.getLogger(logger_name)
 	logger.log(level, message, extra={'tag': tag})
 
+def parse_message(self, message):
+	"""
+	Format: <path> <command>[:arg1,argn] [response_path]
+	Returns a tuple/dict (#tbd) + data?
+	"""
+	path = []
+	params = []
+	resp_path = []
+	path_cmd_resp = message.split(" ")
+	
+	# extract path
+	for pathpart in path_cmd_resp[0].split("/"):
+		if pathpart:
+			path.append(pathpart.lower())
+		
+	# extract command and params
+	cmd_par = path_cmd_resp[1].split(":")
+	if len(cmd_par) == 1:
+		command = cmd_par[0].lower()
+	elif len(cmd_par) == 2:
+		command = cmd_par[0].lower()
+		param = cmd_par[1]
+
+		for parpart in param.split(","):
+			if parpart:
+				params.append(parpart)
+	else:
+		print("Malformed message!")
+		return False
+	
+	# extract response path
+	if len(path_cmd_resp) >= 3:
+		for pathpart in path_cmd_resp[2].split("/"):
+			if pathpart:
+				resp_path.append(pathpart.lower())
+	
+	# debugging
+	print("[MQ] Received Path: {0}; Command: {1}; Parameters: {2}; Response path: {3}".format(path,command,params,resp_path))
+	
+	# return as a tuple:
+	#return path, command, params, resp_path
+	
+	# return as a dict:
+	parsed_message = {}
+	parsed_message['path'] = path
+	parsed_message['cmd'] = command
+	parsed_message['args'] = params
+	parsed_message['resp_path'] = resp_path
+	return parsed_message
+
 #********************************************************************************
 # ZeroMQ Wrapper for Pub-Sub Forwarder Device
 #
@@ -155,53 +205,3 @@ class MqPubSubFwdController:
 		if self.subscriber in socks:
 			message = self.__recv()
 		return message
-
-	def parse_message(self, message):
-		"""
-		Format: <path> <command>[:arg1,argn] [response_path]
-		Returns a tuple/dict (#tbd) + data?
-		"""
-		path = []
-		params = []
-		resp_path = []
-		path_cmd_resp = message.split(" ")
-		
-		# extract path
-		for pathpart in path_cmd_resp[0].split("/"):
-			if pathpart:
-				path.append(pathpart.lower())
-			
-		# extract command and params
-		cmd_par = path_cmd_resp[1].split(":")
-		if len(cmd_par) == 1:
-			command = cmd_par[0].lower()
-		elif len(cmd_par) == 2:
-			command = cmd_par[0].lower()
-			param = cmd_par[1]
-
-			for parpart in param.split(","):
-				if parpart:
-					params.append(parpart)
-		else:
-			print("Malformed message!")
-			return False
-		
-		# extract response path
-		if len(path_cmd_resp) >= 3:
-			for pathpart in path_cmd_resp[2].split("/"):
-				if pathpart:
-					resp_path.append(pathpart.lower())
-		
-		# debugging
-		print("[MQ] Received Path: {0}; Command: {1}; Parameters: {2}; Response path: {3}".format(path,command,params,resp_path))
-		
-		# return as a tuple:
-		#return path, command, params, resp_path
-		
-		# return as a dict:
-		parsed_message = {}
-		parsed_message['path'] = path
-		parsed_message['cmd'] = command
-		parsed_message['args'] = params
-		parsed_message['resp_path'] = resp_path
-		return parsed_message

@@ -118,7 +118,7 @@ class sourceClass():
 		
 		# Source index
 		if 'index' not in parameters:
-			index = sourceCtrl.getIndex('name','media')
+			index = sourceCtrl.index('name','media')
 		else:
 			index = parameters['index']
 
@@ -136,13 +136,13 @@ class sourceClass():
 		subsource['uuid'] = uuid
 		subsource['device'] = device
 
-		ret = sourceCtrl.addSub(index, subsource)
+		ret = sourceCtrl.add_sub(index, subsource)
 		return ret
 		
 	
 	def __media_add_subsource( self, dir, label, uuid, device, sourceCtrl ):
 		# get index (name is unique)
-		ix = sourceCtrl.getIndex('name','media')
+		ix = sourceCtrl.index('name','media')
 		
 		# construct the subsource
 		subsource = {}
@@ -155,7 +155,7 @@ class sourceClass():
 		subsource['uuid'] = uuid
 		subsource['device'] = device
 
-		sourceCtrl.addSub(ix, subsource)
+		sourceCtrl.add_sub(ix, subsource)
 	
 	def init( self, sourceCtrl ):
 		self.__printer('Initializing...')
@@ -268,17 +268,17 @@ class sourceClass():
 		arMedia = grepOut.split()
 		"""
 
-		ix = sourceCtrl.getIndex('name','media')	# index
+		ix = sourceCtrl.index('name','media')	# index
 		locations = []								# list of tuples; index: 0 = mountpoint, 1 = mpd dir.
 		foundStuff = 0								#
 						
 		if subSourceIx == None:
-			subsources = sourceCtrl.getSubSources( ix )
+			subsources = sourceCtrl.subsource_all( ix )
 			for subsource in subsources:
 				locations.append( (subsource['mountpoint'], subsource['mpd_dir']) )
 			ssIx = 0
 		else:
-			subsource = sourceCtrl.getSubSource( ix, subSourceIx )
+			subsource = sourceCtrl.subsource( ix, subSourceIx )
 			locations.append( (subsource['mountpoint'], subsource['mpd_dir']) )
 			ssIx = subSourceIx
 			
@@ -299,10 +299,10 @@ class sourceClass():
 						self.__printer(" > Nothing to play marking unavailable...")
 					else:
 						self.__printer(" > Music found after updating")
-						sourceCtrl.setAvailableIx( ix, True, ssIx )
+						sourceCtrl.set_available( ix, True, ssIx )
 						foundStuff += 1
 				else:
-					sourceCtrl.setAvailableIx( ix, True, ssIx )
+					sourceCtrl.set_available( ix, True, ssIx )
 					foundStuff += 1
 			ssIx+=1
 		
@@ -421,8 +421,8 @@ class sourceClass():
 		#
 		# variables
 		#
-		arIx = sourceCtrl.getIndexCurrent()
-		subsource = sourceCtrl.getSubSource( arIx[0], arIx[1] )
+		arIx = sourceCtrl.index_current()
+		subsource = sourceCtrl.subsource( arIx[0], arIx[1] )
 		sLocalMusicMPD = subsource['mpd_dir']
 		sUsbLabel = subsource['label']
 
@@ -450,7 +450,7 @@ class sourceClass():
 			if playlistCount == "0":
 				# Failed. Returning false will cause caller to try next source
 				self.__printer(' > Nothing in the playlist, giving up. Marking source unavailable.')
-				sourceCtrl.setAvailableIx( arIx[0], False, arIx[1] )
+				sourceCtrl.set_available( arIx[0], False, arIx[1] )
 				pa_sfx(LL_ERROR)
 				return False
 			else:

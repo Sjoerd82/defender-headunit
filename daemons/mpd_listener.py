@@ -27,25 +27,24 @@ from mpd import MPDClient
 #sys.path.append('../modules')
 sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
+from hu_msg import MqPubSubFwdController
 
-#********************************************************************************
-# GLOBAL vars & CONSTANTS
+# *******************************************************************************
+# Global variables and constants
 #
-CONTROL_NAME='mpdlst'
-
-# mpd
-oMpdClient = None
-
-# Logging
-DAEMONIZED = None
+DESCRIPTION = "MPD Listener"
 LOG_TAG = 'MPDLST'
 LOGGER_NAME = 'mpdlst'
-LOG_LEVEL = LL_INFO
-logger = None
 
-# messaging
-mq_address_pub = 'tcp://localhost:5559'
+DEFAULT_CONFIG_FILE = '/etc/configuration.json'
+DEFAULT_LOG_LEVEL = LL_INFO
+DEFAULT_PORT_SUB = 5560
+DEFAULT_PORT_PUB = 5559
+
+logger = None
+args = None
 messaging = None
+oMpdClient = None
 
 
 # ********************************************************************************
@@ -54,6 +53,30 @@ messaging = None
 def printer( message, level=LL_INFO, continuation=False, tag=LOG_TAG ):
 	logger.log(level, message, extra={'tag': tag})
 
+# ********************************************************************************
+# Load configuration
+#
+def load_zeromq_configuration():
+	
+	configuration = configuration_load(LOGGER_NAME,args.config)
+	
+	if not configuration or not 'zeromq' in configuration:
+		printer('Error: Configuration not loaded or missing ZeroMQ, using defaults:')
+		printer('Publisher port: {0}'.format(args.port_publisher))
+		printer('Subscriber port: {0}'.format(args.port_subscriber))
+		configuration = { "zeromq": { "port_publisher": DEFAULT_PORT_PUB, "port_subscriber":DEFAULT_PORT_SUB } }
+		return configuration
+		
+	else:
+		# Get portnumbers from either the config, or default value
+		if not 'port_publisher' in configuration['zeromq']:
+			configuration['zeromq']['port_publisher'] = DEFAULT_PORT_PUB
+			
+		if not 'port_subscriber' in configuration['zeromq']:
+			configuration['zeromq']['port_subscriber'] = DEFAULT_PORT_SUB
+			
+	return configuration
+	
 def mpd_handle_change(events):
 
 	# loop over the available event(s)
@@ -130,51 +153,65 @@ def mpd_handle_change(events):
 	
 
 #********************************************************************************
-# Parse command line arguments and environment variables
+# Parse command line arguments
 #
 def parse_args():
 
 	import argparse
-	
-	global LOG_LEVEL
-	global DAEMONIZED
+	global args
 
-	parser = argparse.ArgumentParser(description='MPD Listener')
-	parser.add_argument('--loglevel', action='store', default=LL_INFO, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)
-	parser.add_argument('-b', action='store_true')	# background, ie. no output to console
+	parser = argparse.ArgumentParser(description=DESCRIPTION)
+	parser.add_argument('--loglevel', action='store', default=DEFAULT_LOG_LEVEL, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)
+	parser.add_argument('--config','-c', action='store', help='Configuration file', default=DEFAULT_CONFIG_FILE)
+	parser.add_argument('-b', action='store_true', default=False)
+	parser.add_argument('--port_publisher', action='store')
+	parser.add_argument('--port_subscriber', action='store')
 	args = parser.parse_args()
 
-	LOG_LEVEL = args.loglevel
-	DAEMONIZED = args.b	
 
 def setup():
 
-	global logger
 	global messaging
 
 	#
 	# Logging
+	# -> Output will be logged to the syslog, if -b specified, otherwise output will be printed to console
 	#
+	global logger
 	logger = logging.getLogger(LOGGER_NAME)
 	logger.setLevel(logging.DEBUG)
 
-	# Start logging to console or syslog
-	if DAEMONIZED:
-		# output to syslog
-		logger = log_create_syslog_loghandler(logger, LOG_LEVEL, LOG_TAG, address='/dev/log' )
-		
+	if args.b:
+		logger = log_create_syslog_loghandler(logger, args.loglevel, LOG_TAG, address='/dev/log') 	# output to syslog
 	else:
-		# output to console
-		logger = log_create_console_loghandler(logger, LOG_LEVEL, LOG_TAG)
-
+		logger = log_create_console_loghandler(logger, args.loglevel, LOG_TAG) 						# output to console
+	
+	#
+	# Load configuration
+	#
+	global configuration
+	if not args.port_publisher and not args.port_subscriber:
+		configuration = load_zeromq_configuration()
+	else:
+		if args.port_publisher and args.port_subscriber:
+			pass
+		else:
+			configuration = load_zeromq_configuration()
+	
+		# Pub/Sub port override
+		if args.port_publisher:
+			configuration['zeromq']['port_publisher'] = args.port_publisher
+		if args.port_subscriber:
+			configuration['zeromq']['port_subscriber'] = args.port_subscriber
+			
 	#
 	# ZMQ
 	#
 	printer("ZeroMQ: Initializing")
-	messaging = MessageController()
+	messaging = MqPubSubFwdController('localhost',DEFAULT_PORT_PUB,DEFAULT_PORT_SUB)
 	
-	printer("ZeroMQ: Creating Publisher: {0}".format(mq_address_pub))
-	messaging.create_publisher(mq_address_pub)
+	printer("ZeroMQ: Creating Publisher: {0}".format(DEFAULT_PORT_PUB))
+	messaging.create_publisher()
 
 	printer('Initialized [OK]')
 
