@@ -205,7 +205,7 @@ Details about a (removable) device. Only devicefile is mandatory, however, most 
 
 Field | Value
 --- | ---
-`devicefile` | Name of de Linux device
+`device` | Name of de Linux device
 `label` | Partition label
 `uuid` | Partition UUID
 `mountpoint` | Mountpoint
@@ -213,7 +213,7 @@ Field | Value
 Example:
 ```
 {
-    "devicefile": "/dev/sda1",
+    "device": "/dev/sda1",
     "label": "Summer_Music",
     "uuid": "f9",
     "mountpoint": "/media/Summer_Music"
