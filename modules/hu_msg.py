@@ -120,10 +120,10 @@ class MqPubSubFwdController:
 		for topic in topics:
 			self.subscriber.setsockopt (zmq.SUBSCRIBE, topic)
 		
-		self.reply_subscriber = self.context.socket (zmq.SUB)
-		self.reply_subscriber.connect("tcp://{0}:{1}".format(self.address, self.port_sub))
+	#	self.reply_subscriber = self.context.socket (zmq.SUB)
+	#	self.reply_subscriber.connect("tcp://{0}:{1}".format(self.address, self.port_sub))
 		#self.poller.register(self.reply_subscriber, zmq.POLLIN)
-		self.reply_subscriber.setsockopt (zmq.SUBSCRIBE, '/bladiebla')
+	#	self.reply_subscriber.setsockopt (zmq.SUBSCRIBE, '/bladiebla')
 		
 	def publish_command(self, path, command, arguments=None, wait_for_reply=False, timeout=5000, response_path=None):
 		"""
@@ -160,14 +160,14 @@ class MqPubSubFwdController:
 		if wait_for_reply:
 			print "DEBUG: SETUP WAIT_FOR_REPLY; TOPIC={0}".format(response_path)
 			# create a subscription socket, listening to the response path
-	#		reply_subscriber = self.context.socket (zmq.SUB)
-	#		reply_subscriber.connect("tcp://{0}:{1}".format(self.address, self.port_sub))
-	#		reply_subscriber.setsockopt(zmq.SUBSCRIBE,response_path)
-
+			reply_subscriber = self.context.socket (zmq.SUB)
+			reply_subscriber.connect("tcp://{0}:{1}".format(self.address, self.port_sub))
+			sleep(1)
 			# setup a temporary poller for the new socket
 	#		reply_poller = zmq.Poller()
 	#		reply_poller.register(reply_subscriber, zmq.POLLIN)
-			self.poller.register(self.reply_subscriber, zmq.POLLIN)
+			self.poller.register(reply_subscriber, zmq.POLLIN)
+			reply_subscriber.setsockopt(zmq.SUBSCRIBE,response_path)
 		
 		print "DEBUG: SENDING MESSAGE: {0}".format(message)
 		retval = self.__send(message)
@@ -183,7 +183,7 @@ class MqPubSubFwdController:
 			parsed_response = None
 	#		events = dict(reply_poller.poll()) #timeout
 			events = dict(self.poller.poll())
-			self.poller.unregister(self.reply_subscriber)
+			self.poller.unregister(reply_subscriber)
 			#except zmq.ZMQError:
 				# No Message Available
 			#	return None
