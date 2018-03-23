@@ -121,7 +121,7 @@ class MqPubSubFwdController:
 			self.subscriber.setsockopt (zmq.SUBSCRIBE, topic)
 		
 		# TODO; FOR SOME REASON WE NEED TO DEFINE IT HERE..
-		# .. DEFINING IT LATER, IN PUBLISH_COMMAND() DOESN'T WORK !?
+		# .. DEFINING IT LATER, IN PUBLISH_COMMAND() DOESN'T WORK ?!
 		self.reply_subscriber = self.context.socket (zmq.SUB)
 		self.reply_subscriber.connect("tcp://{0}:{1}".format(self.address, self.port_sub))
 		#self.poller.register(self.reply_subscriber, zmq.POLLIN)
@@ -144,7 +144,7 @@ class MqPubSubFwdController:
 			return False
 			
 		if wait_for_reply and not response_path:
-			response_path = '/myuniquereplypath/'		#todo
+			response_path = '/myuniquereplypath/'
 		
 		message = "{0} {1}".format(path,command)
 		
@@ -171,7 +171,7 @@ class MqPubSubFwdController:
 			self.poller.register(self.reply_subscriber, zmq.POLLIN)
 	#		reply_subscriber.setsockopt(zmq.SUBSCRIBE,response_path)
 		
-		print "DEBUG: SENDING MESSAGE "
+		print "DEBUG: SENDING MESSAGE: {0}".format(message)
 		retval = self.__send(message)
 		if not retval:
 			return False
@@ -184,7 +184,7 @@ class MqPubSubFwdController:
 			response = None
 			parsed_response = None
 	#		events = dict(reply_poller.poll()) #timeout
-			events = dict(self.poller.poll(timeout))
+			events = dict(self.poller.poll())
 			self.poller.unregister(self.reply_subscriber)
 			#except zmq.ZMQError:
 				# No Message Available
