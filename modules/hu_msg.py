@@ -150,6 +150,7 @@ class MqPubSubFwdController:
 			message = "{0} {1}".format(message,response_path)
 		
 		if wait_for_reply:
+			print "DEBUG: SETUP WAIT_FOR_REPLY; TOPIC={0}".format(response_path)
 			# create a subscription socket, listening to the response path
 			reply_subscriber = self.context.socket (zmq.SUB)
 			reply_subscriber.connect("tcp://{0}:{1}".format(self.address, self.port_sub))
@@ -158,7 +159,8 @@ class MqPubSubFwdController:
 			# setup a temporary poller for the new socket
 			reply_poller = zmq.Poller()
 			reply_poller.register(reply_subscriber, zmq.POLLIN)
-				
+		
+		print "DEBUG: SENDING MESSAGE: {0}".format(message)
 		retval = self.__send(message)
 		if not retval:
 			return False
@@ -167,6 +169,7 @@ class MqPubSubFwdController:
 		else:
 			# poll for a reply
 			#try:
+			print "DEBUG: POLLING !"
 			response = None
 			events = reply_poller.poll(timeout)
 			#except zmq.ZMQError:
@@ -174,13 +177,16 @@ class MqPubSubFwdController:
 			#	return None
 			
 			if events:
+				print "DEBUG: YES!"
 				# todo: have a look at what's returned?
 				# read response from the server
 				response = reply_subscriber.recv()
 				parsed_response = parse_message(response)
+			else:
+				print "DEBUG: NOPE"
 				
 			#TODO: DO WE NEED TO DISCONNECT??
-			reply_subscriber.disconnect(self.address)
+			#reply_subscriber.disconnect(self.address)
 			return parsed_response
 			
 	def publish_data(self, path, payload, retval='200'):

@@ -384,6 +384,7 @@ def get_source():
 	#retmsg = messaging.publish_command('/source/primary','GET')
 	#sleep(1)
 	retmsg = messaging.publish_command('/source/primary','GET', None, True, 5000, '/bladiebla/')
+	print retmsg
 	return retmsg
 	
 	if not sources:
