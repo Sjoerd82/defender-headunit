@@ -7,6 +7,12 @@
 #
 # Provide a logger object to __init__ to get output from this class.
 #
+# CONVENTIONS:
+# 
+# - Leave (sub)index parameter None (default) to indicate current source
+# - Returns
+#
+#
 #	add					Add a source
 #	add_sub				Add a sub-source
 #	check				Check if (sub)source is available
@@ -87,10 +93,10 @@ class SourceController():
 		self.lSourceClasses = []
 		self.iRecentSS = None
 
-	def __check_index(self, test_index, function_name=None):
+	def __check_index(self, test_index, index_name, function_name=None):
 		index = int(test_index)
-		if test_index >= len(self.lSource):
-			self.__printer('ERROR {0}: Index ({1}) out of bounds'.format(function_name, index),LL_ERROR)
+		if index >= len(self.lSource):
+			self.__printer('ERROR {0}: {1} ({2}) out of bounds'.format(function_name, index_name, index),LL_ERROR)
 			return None
 		return index
 
@@ -130,7 +136,7 @@ class SourceController():
 	def add_sub( self, index, subsource_config ):
 		""" Add a sub-source
 		"""
-		index = self.__check_index(index, 'add_sub')
+		index = self.__check_index(index, 'index', 'add_sub')
 		
 		# check required fields:
 		if not all (k in subsource_config for k in ('displayname','order')):
@@ -200,27 +206,57 @@ class SourceController():
 		self.lSource[index]['subsources'].sort( key=lambda k: k['order'] )
 		return True
 	
-	def rem( self, index, force ):
+	def rem( self, index=None, force=False ):
 		"""Remove source by index. Set force to True to allow removal of active source.
 		"""
+		if index:
+			index = self.__check_index(index,'index','source')
+			if not index:
+				Return False #?
+				
+		if index == self.iCurrentSource[0] and not force:
+			self.__printer('ERROR: Cannot remove active source. Doing nothing.',LL_ERROR)
+			return None #?
+			
 		if not index == self.iCurrentSource[0] or force:
 			sourceName = self.lSource[index]['displayname']
 			#self.lSource.remove(index)
 			del self.lSource[index]
 			self.__printer('Source removed: {0}'.format(sourceName))
-		else:
-			self.__printer('ERROR: Cannot remove active source. Doing nothing.',LL_ERROR)
+			return None #?
+			
 
-	def rem_sub( self, index, index_subsource ):
-		"""Remove subsource by index
+	def rem_sub( self, index=None, index_subsource=None ):
+		"""	Remove subsource by index
+			Remove current subsource, if no indexes given
 		"""
-		del self.lSource[index]['subsources'][index_subsource]
+
+		if index and index_subsource:
+			index = self.__check_index(index,'index','rem_sub')
+			index_subsource = self.__check_index(index,'index_subsource','rem_sub')
+			if not index or not index_subsource
+				return None #?
+							
+		elif not index and not index_subsource:
+			index = self.iCurrentSource[0]
+			index_subsource = self.iCurrentSource[1]
 		
+		elif index and not index_subsource:
+			printer('ERROR rem_sub: Sub-Source index missing')
+			return None #?
+			
+		elif index_subsource and not index:
+			printer('ERROR rem_sub: Source index missing')
+			return None #?
+			
+		del self.lSource[index]['subsources'][index_subsource]
+			
 		#Check if there are any available subsources left, if not mark source unavailable..
 		if self.getAvailableSubCnt(index) == 0:
 			self.setAvailableIx(index, False)
 		
 		return True
+
 
 	def index( self, key, value ):
 		"""Return index based on key-value pair
@@ -485,7 +521,7 @@ class SourceController():
 			else:
 				return copy.copy(self.lSource[self.iCurrentSource[0]])
 		else:
-			index = self.__check_index(index, 'add_sub')
+			index = self.__check_index(index,'index','source')
 			if index:
 				return copy.copy(self.lSource[index])			
 			else:

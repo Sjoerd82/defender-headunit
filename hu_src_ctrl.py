@@ -294,13 +294,22 @@ def handle_path_source(path,cmd,args):
 		return data
 
 	def del_subsource(args):
-		"""
+		""" Remove a subsource
 			Arguments:
-			Return dat:
+				None:						Remove current subsource
+				source_id, subsource_id		Remove specified subsource
+			Return data:
+				Nothing
 			Return codes:
 				200		OK
 				500		Error
 		"""
+
+		if not args:
+			ret = sc_sources.rem()
+		elif len(args) == 2:
+			ret = sc_sources.rem(args[0],args[1])
+
 		if ret:
 			retcode = 200
 		else:
