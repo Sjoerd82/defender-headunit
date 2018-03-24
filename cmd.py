@@ -35,6 +35,7 @@ def setup():
 	global messaging
 	messaging = MqPubSubFwdController('localhost',DEFAULT_PORT_PUB,DEFAULT_PORT_SUB)
 	messaging.create_publisher()
+	messaging.create_subscriber()
 	#messaging.create_subscriber(SUBSCRIPTIONS)
 
 	
