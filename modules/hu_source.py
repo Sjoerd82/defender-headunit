@@ -87,6 +87,14 @@ class SourceController():
 		self.lSourceClasses = []
 		self.iRecentSS = None
 
+	def __check_index(self, test_index, function_name=None):
+		index = int(test_index)
+		if test_index >= len(self.lSource):
+			self.__printer('ERROR {0}: Index ({1}) out of bounds'.format(function_name, index),LL_ERROR)
+			return None
+		return index
+
+		
 	def add( self, source_config ):
 		""" Add a Source
 		"""
@@ -122,8 +130,9 @@ class SourceController():
 	def add_sub( self, index, subsource_config ):
 		""" Add a sub-source
 		"""
-		# check required fields:
+		index = self.__check_index(index, 'add_sub')
 		
+		# check required fields:
 		if not all (k in subsource_config for k in ('displayname','order')):
 			self.__printer('ADD SUB: sub-source NOT added, missing one or more required field(s)...',LL_ERROR)
 			self.__printer('Required fields are: displayname and order',LL_ERROR)
@@ -468,16 +477,20 @@ class SourceController():
 	#def get( self, index=self.iCurrent ):	syntax not allowed?
 	def source( self, index=None ):
 		""" Return source for given index, returns current source, if no index provided
-		"""
-		index = int(index)
+		"""	
 		
-		if index == None:
+		if not index:
 			if self.iCurrentSource[0] == None:
 				return None
 			else:
 				return copy.copy(self.lSource[self.iCurrentSource[0]])
 		else:
-			return copy.copy(self.lSource[index])			
+			index = self.__check_index(index, 'add_sub')
+			if index:
+				return copy.copy(self.lSource[index])			
+			else:
+				return None
+				
 
 	#def get_all_simple( self, index=None ):
 	
