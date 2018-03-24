@@ -354,6 +354,14 @@ def pa_sfx( sfx ):
 	
 	return True
 
+def str2bool( string ):
+	if string.lower() in ("true","1"):
+		return True
+	elif string.lower() in ("false","0"):
+		return False
+	else:
+		return None
+
 # Return dictionary with mounts
 # optionally apply a filter on device and/or fs and/or a list of mountpoints to exclude
 def get_mounts( dev=None, fs=None, mp_exclude=[], fs_exclude=[] ):
