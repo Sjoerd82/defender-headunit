@@ -310,7 +310,7 @@ def handle_path_source(path,cmd,args):
 			ret = sc_sources.rem()
 		elif len(args) == 2:
 			ret = sc_sources.rem(args[0],args[1])
-		elif len(args) == 2:
+		elif len(args) == 3:
 			ret = sc_sources.rem(args[0],args[1],args[2])
 		
 		# LL_DEBUG:

@@ -10,7 +10,8 @@
 # CONVENTIONS:
 # 
 # - Leave (sub)index parameter None (default) to indicate current source
-# - Returns
+# - Returns True or data, if succesful
+# - Return None if failure
 #
 #
 #	add					Add a source
@@ -95,9 +96,13 @@ class SourceController():
 
 	def __check_index(self, test_index, index_name, function_name=None):
 		index = int(test_index)
-		if index >= len(self.lSource):
+		if index_name = 'index' and index >= len(self.lSource):
 			self.__printer('ERROR {0}: {1} ({2}) out of bounds'.format(function_name, index_name, index),LL_ERROR)
 			return None
+		# TODO, check subsource index !!
+		#if index_name = 'index_subsource' and index >= len(self.lSource):
+		#	self.__printer('ERROR {0}: {1} ({2}) out of bounds'.format(function_name, index_name, index),LL_ERROR)
+		#	return None
 		return index
 
 		
@@ -233,8 +238,9 @@ class SourceController():
 
 		if index and index_subsource:
 			index = self.__check_index(index,'index','rem_sub')
-			index_subsource = self.__check_index(index,'index_subsource','rem_sub')
+			index_subsource = self.__check_index(index_subsource,'index_subsource','rem_sub')
 			if not index or not index_subsource:
+				print "DEBUG!! XYZZ"
 				return None #?
 							
 		elif not index and not index_subsource:
@@ -253,6 +259,7 @@ class SourceController():
 			
 		#Check if there are any available subsources left, if not mark source unavailable..
 		if self.getAvailableSubCnt(index) == 0:
+			printer('No subsources left, marking source ({0}) as unavailable'.format(index))
 			self.setAvailableIx(index, False)
 		
 		return True
