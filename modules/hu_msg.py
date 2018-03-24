@@ -145,6 +145,7 @@ class MqPubSubFwdController:
 		
 		"""
 		if command not in self.VALID_COMMANDS:
+			print "invalid command"
 			return False
 			
 		if wait_for_reply and not response_path:

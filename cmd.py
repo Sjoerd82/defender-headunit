@@ -23,6 +23,7 @@ def parse_args():
 	parser = argparse.ArgumentParser(description=DESCRIPTION)
 	parser.add_argument('-p', action='store', required=True)
 	parser.add_argument('-c', action='store', required=True)
+	parser.add_argument('-a', action='store')
 	parser.add_argument('-r', action='store_true')
 	parser.add_argument('--port_publisher', action='store')
 	parser.add_argument('--port_subscriber', action='store')
@@ -51,7 +52,7 @@ def main():
 	if args.r:
 		ret = messaging.publish_command(args.p,args.c,response_path=RETURN_PATH)
 	else:
-		ret = messaging.publish_command(args.p,args.c)
+		ret = messaging.publish_command(args.p,args.c,args.a)
 		
 	print ret
 
