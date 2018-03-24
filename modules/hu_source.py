@@ -228,7 +228,7 @@ class SourceController():
 			#self.lSource.remove(index)
 			del self.lSource[index]
 			self.__printer('Source removed: {0}'.format(sourceName))
-			return None #?
+			return True
 			
 
 	def rem_sub( self, index=None, index_subsource=None ):
@@ -246,17 +246,17 @@ class SourceController():
 			index_subsource = self.iCurrentSource[1]
 		
 		elif index and not index_subsource:
-			self.__printer('ERROR rem_sub: Sub-Source index missing')
+			self.__printer('ERROR rem_sub: Sub-Source index missing',LL_ERROR)
 			return None #?
 			
 		elif index_subsource and not index:
-			self.__printer('ERROR rem_sub: Source index missing')
+			self.__printer('ERROR rem_sub: Source index missing',LL_ERROR)
 			return None #?
 		
 		if 'subsources' in self.lSource[index] and len(self.lSource[index]['subsources']) > index_subsource:
 			del self.lSource[index]['subsources'][index_subsource]
 		else:
-			self.__printer('ERROR rem_sub: Invalid sub-source index')
+			self.__printer('ERROR rem_sub: Invalid index or sub-source index',LL_ERROR)
 			return None
 			
 		#Check if there are any available subsources left, if not mark source unavailable..

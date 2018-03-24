@@ -222,15 +222,27 @@ def handle_path_source(path,cmd,args):
 		return data
 		
 	def del_primary(args):
-		"""
+		""" Remove a source
 			Arguments:
-			Return dat:
+				None:			Remove current source
+				source_id		Remove specified source
+			Return data:
+				Nothing
 			Return codes:
 				200		OK
 				500		Error
 		"""
+		if not args:
+			ret = sc_sources.rem()
+		elif len(args) == 1:
+			ret = sc_sources.rem(args[0])
+		
+		# LL_DEBUG:
+		printSummary(sc_sources)
+
 		if ret:
 			retcode = 200
+			ret = None
 		else:
 			retcode = 500
 
@@ -298,27 +310,23 @@ def handle_path_source(path,cmd,args):
 			Arguments:
 				None:						Remove current subsource
 				source_id, subsource_id		Remove specified subsource
-				source_id, subsource_id, F	Remove specified subsource, FORCED
 			Return data:
 				Nothing
 			Return codes:
 				200		OK
 				500		Error
 		"""
-
 		if not args:
 			ret = sc_sources.rem_sub()
 		elif len(args) == 2:
 			ret = sc_sources.rem_sub(args[0],args[1])
-		elif len(args) == 3:
-			ret = None 	# TODO: not implemented yet
-			#ret = sc_sources.rem_sub(args[0],args[1],args[2])
 		
 		# LL_DEBUG:
 		printSummary(sc_sources)
 			
 		if ret:
 			retcode = 200
+			ret = None
 		else:
 			retcode = 500
 
