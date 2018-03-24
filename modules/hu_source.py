@@ -218,9 +218,10 @@ class SourceController():
 		if index:
 			index = self.__check_index(index,'index','source')
 			if not index:
+				self.__printer('ERROR rem: Not a valid index. Doing nothing.',LL_ERROR)
 				return None
 
-		elif not index:
+		elif index is None:
 			index = self.iCurrentSource[0]
 			if index is None:
 				self.__printer('ERROR rem: No current source. Doing nothing.',LL_ERROR)
