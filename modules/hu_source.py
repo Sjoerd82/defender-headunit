@@ -240,12 +240,7 @@ class SourceController():
 			index = self.__check_index(index,'index','rem_sub')
 			index_subsource = self.__check_index(index_subsource,'index_subsource','rem_sub')
 			if index is None or index_subsource is None:
-				print index
-				print index_subsource
-				print type(index)
-				print type(index_subsource)
-				print "DEBUG!! XYZZ"
-				return None #?
+				return None
 							
 		elif not index and not index_subsource:
 			index = self.iCurrentSource[0]
@@ -264,7 +259,7 @@ class SourceController():
 		#Check if there are any available subsources left, if not mark source unavailable..
 		if self.getAvailableSubCnt(index) == 0:
 			printer('No subsources left, marking source ({0}) as unavailable'.format(index))
-			self.setAvailableIx(index, False)
+			self.set_available(index, False)
 		
 		return True
 
