@@ -232,6 +232,10 @@ class SourceController():
 	def select( self, index, subIndex=None ):
 		"""Set current source, by index
 		"""
+		print type(index)
+		if index >= 7:
+			print "Huh?"
+			
 		if index == None:
 			self.__printer('Setting active source to None')
 			return True
