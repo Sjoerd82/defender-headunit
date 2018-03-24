@@ -648,7 +648,7 @@ class SourceController():
 				self.__printer('Availability: ERROR could not set availability',LL_ERROR)
 				
 		
-		elif index and index_subsource:
+		if not index is None and not index_subsource is None:
 		
 			print "DEBUG! 2"
 		
