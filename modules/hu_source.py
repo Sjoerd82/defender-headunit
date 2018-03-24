@@ -626,14 +626,16 @@ class SourceController():
 		"""
 		#TODO: cleanup this code
 		
-		print type(available)
-		print available
-		
-		index = self.__check_index(index,'index','source')
+		index = self.__check_index(index,'index','set_available')
 		if index_subsource:
 			index_subsource = int(index_subsource)	#TODO: pass through a ix check function
 		
+		print index
+		print index_subsource
+		
 		if index and not index_subsource:
+
+			print "DEBUG! 1"
 		
 			try:
 				self.lSource[index]['available'] = available
@@ -647,6 +649,8 @@ class SourceController():
 				
 		
 		elif index and index_subsource:
+		
+			print "DEBUG! 2"
 		
 			try:
 				# also make parent source available
