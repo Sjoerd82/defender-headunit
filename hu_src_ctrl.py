@@ -307,11 +307,12 @@ def handle_path_source(path,cmd,args):
 		"""
 
 		if not args:
-			ret = sc_sources.rem()
+			ret = sc_sources.rem_sub()
 		elif len(args) == 2:
-			ret = sc_sources.rem(args[0],args[1])
+			ret = sc_sources.rem_sub(args[0],args[1])
 		elif len(args) == 3:
-			ret = sc_sources.rem(args[0],args[1],args[2])
+			ret = None 	# TODO: not implemented yet
+			#ret = sc_sources.rem_sub(args[0],args[1],args[2])
 		
 		# LL_DEBUG:
 		printSummary(sc_sources)
