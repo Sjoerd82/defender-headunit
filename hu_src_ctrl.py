@@ -180,7 +180,8 @@ def handle_path_source(path,cmd,args):
 		if ret:
 			retcode = 200
 			curr_source = sc_sources.source()
-			settings['source'] = curr_source['name']
+			print curr_source
+			#settings['source'] = curr_source['name']
 			save_settings()
 		else:
 			retcode = 500

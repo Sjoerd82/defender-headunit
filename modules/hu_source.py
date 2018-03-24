@@ -232,15 +232,7 @@ class SourceController():
 	def select( self, index, subIndex=None ):
 		"""Set current source, by index
 		"""
-		print type(index)
-		if index >= 7:
-			print "Huh1?"
-		if int(index) >= 7:
-			print "Huh2?"
-		index = int(index)
-		if index >= 7:
-			print "Huh3?"
-		print type(index)
+		index = int(index)		# not sure why, by since passing through MQ this is needed
 			
 		if index == None:
 			self.__printer('Setting active source to None')
