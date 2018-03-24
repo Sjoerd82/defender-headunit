@@ -123,6 +123,7 @@ class SourceController():
 		""" Add a sub-source
 		"""
 		# check required fields:
+		
 		if not all (k in subsource_config for k in ('displayname','order')):
 			self.__printer('ADD SUB: sub-source NOT added, missing one or more required field(s)...',LL_ERROR)
 			self.__printer('Required fields are: displayname and order',LL_ERROR)
@@ -468,6 +469,8 @@ class SourceController():
 	def source( self, index=None ):
 		""" Return source for given index, returns current source, if no index provided
 		"""
+		index = int(index)
+		
 		if index == None:
 			if self.iCurrentSource[0] == None:
 				return None
