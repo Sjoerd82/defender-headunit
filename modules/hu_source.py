@@ -236,10 +236,12 @@ class SourceController():
 			self.__printer('Setting active source to None')
 			return True
 		elif index >= len(self.lSource):
-			self.__printer('ERROR: Index ({0}) out of bounds'.format(index),LL_ERROR)
+			self.__printer('ERROR selecting source: Index ({0}) out of bounds'.format(index),LL_ERROR)
+			print len(self.lSource)
+			print self.lSource
 			return False
 		elif not self.lSource[index]['available']:
-			self.__printer('ERROR: Requested source ({0}: {1:s}) is not available.'.format(index,self.lSource[index]['displayname']),LL_ERROR)
+			self.__printer('ERROR selecting source: Requested source ({0}: {1:s}) is not available.'.format(index,self.lSource[index]['displayname']),LL_ERROR)
 			return False
 		#elif self.lSource[index]['template']:
 		#	self.__printer('ERROR: Requested source ({0}: {1:s}) is a template.'.format(index,self.lSource[index]['displayname']),LL_ERROR)
