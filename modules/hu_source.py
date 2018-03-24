@@ -235,7 +235,6 @@ class SourceController():
 		"""	Remove subsource by index
 			Remove current subsource, if no indexes given
 		"""
-
 		if index and index_subsource:
 			index = self.__check_index(index,'index','rem_sub')
 			index_subsource = self.__check_index(index_subsource,'index_subsource','rem_sub')
@@ -247,22 +246,22 @@ class SourceController():
 			index_subsource = self.iCurrentSource[1]
 		
 		elif index and not index_subsource:
-			printer('ERROR rem_sub: Sub-Source index missing')
+			self.__printer('ERROR rem_sub: Sub-Source index missing')
 			return None #?
 			
 		elif index_subsource and not index:
-			printer('ERROR rem_sub: Source index missing')
+			self.__printer('ERROR rem_sub: Source index missing')
 			return None #?
 		
 		if 'subsources' in self.lSource[index] and len(self.lSource[index]['subsources']) > index_subsource:
 			del self.lSource[index]['subsources'][index_subsource]
 		else:
-			printer('ERROR rem_sub: Invalid sub-source index')
+			self.__printer('ERROR rem_sub: Invalid sub-source index')
 			return None
 			
 		#Check if there are any available subsources left, if not mark source unavailable..
 		if self.getAvailableSubCnt(index) == 0:
-			printer('No subsources left, marking source ({0}) as unavailable'.format(index))
+			self.__printer('No subsources left, marking source ({0}) as unavailable'.format(index))
 			self.set_available(index, False)
 		
 		return True
