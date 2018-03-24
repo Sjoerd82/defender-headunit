@@ -52,7 +52,9 @@ DESCRIPTION = "Source Controller"
 LOG_TAG = 'SRCTRL'
 LOGGER_NAME = 'srctrl'
 
-DEFAULT_CONFIG_FILE = '/etc/configuration.json'
+DEFAULT_CONFIG_FILE = '/etc/hu/configuration.json'
+#SETTINGS = '/etc/hu/source.json'
+SETTINGS = '/mnt/PIHU_CONFIG/source.json'
 DEFAULT_LOG_LEVEL = LL_INFO
 DEFAULT_PORT_SUB = 5560
 DEFAULT_PORT_PUB = 5559
@@ -62,6 +64,7 @@ logger = None			# logging
 args = None				# command line arguments
 messaging = None		# mq messaging
 configuration = None	# configuration
+settings = None			# operational settings
 sc_sources = None		# source controller
 mpdc = None				# mpd controller
 
@@ -176,6 +179,9 @@ def handle_path_source(path,cmd,args):
 
 		if ret:
 			retcode = 200
+			curr_source = sc_sources.source()
+			settings['source'] = curr_source['name']
+			save_settings()
 		else:
 			retcode = 500
 
@@ -768,6 +774,26 @@ def load_configuration():
 	
 	return configuration
 
+def load_settings():
+
+	settings = configuration_load(LOGGER_NAME,SETTINGS)
+	if not settings:
+		settings = {}
+		settings['source'] = None
+		settings['subsource_key'] = None
+		
+	return settings
+
+def save_settings():
+
+	printer('Saving Settings')
+	try:
+		json.dump( settings, open( SETTINGS, "wb" ) )
+	except:
+		printer(' > ERROR saving configuration',LL_CRITICAL,True)
+		pa_sfx(LL_ERROR)
+
+
 #********************************************************************************
 # Setup
 #
@@ -828,6 +854,12 @@ def setup():
 	import sources
 	load_sources( os.path.join(os.path.dirname(os.path.abspath(__file__)),'sources') )
 
+	#
+	# Load Operational Settings
+	#
+	
+	
+	
 	#
 	# end of initialization
 	#

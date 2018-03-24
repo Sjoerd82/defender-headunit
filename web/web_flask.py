@@ -371,6 +371,13 @@ GET  /plugin/api                        Get api from plugin
 POST /plugin/<path:config>              Set for a plugin
 """
 
+
+@app.route(API_VERSION+'/source/primary', methods=['PUT'])
+def put_primary():
+	retmsg = messaging.publish_command('/source/primary','PUT', None, True, 5000, RETURN_PATH)
+	print retmsg
+	return retmsg
+
 #@app.route('/hu/api/v1.0/source', methods=['GET'])
 @app.route(API_VERSION+'/source', methods=['GET'])
 def get_source():

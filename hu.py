@@ -11,6 +11,11 @@
 #
 # The microservices are either started via init.d or via this script.
 #
+# ARGUMENTS:
+#? --resume
+#? --source		resume|source name
+#? --subsource	
+#
 
 #********************************************************************************
 # CONFIGURATION and SETTINGS
@@ -142,7 +147,6 @@ mpdc = None				# mpd controller
 # SEMI-CONSTANTS (set at startup)
 SOURCE = None
 SOURCE_SUB = None
-BOOT = None
 
 #OLD AND REMOVE:
 PID_FILE = "hu"
@@ -1368,23 +1372,16 @@ def parse_args():
 	import argparse
 	global args
 
-	global SOURCE
-	global SOURCE_SUB
-
 	parser = argparse.ArgumentParser(description=DESCRIPTION)
 	parser.add_argument('--loglevel', action='store', default=DEFAULT_LOG_LEVEL, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)
 	parser.add_argument('--config','-c', action='store', help='Configuration file', default=DEFAULT_CONFIG_FILE)
 	parser.add_argument('-b', action='store_true', default=False)
 	parser.add_argument('--port_publisher', action='store')
 	parser.add_argument('--port_subscriber', action='store')
-	parser.add_argument('--source', action='store')
-	parser.add_argument('--subsource', action='store')	
-	parser.add_argument('--boot', action='store_true')
+	#parser.add_argument('--source', action='store', required=True)
+	#parser.add_argument('--subsource', action='store')
+	#parser.add_argument('--boot', action='store_true')
 	args = parser.parse_args()
-
-	SOURCE = args.source
-	SOURCE_SUB = args.subsource
-	BOOT = args.boot
 
 
 #********************************************************************************
@@ -1393,9 +1390,6 @@ def parse_args():
 #
 def setup():
 
-	global SOURCE
-	global SOURCE_SUB
-	
 	#
 	# Logging
 	# -> Output will be logged to the syslog, if -b specified, otherwise output will be printed to console
@@ -1458,7 +1452,7 @@ def setup():
 	# 1) command line
 	# 2) environment variable
 	# 3) settings.json file
-	
+	'''
 	if (not SOURCE
 		    and ENV_SOURCE):
 		SOURCE = ENV_SOURCE
@@ -1479,6 +1473,7 @@ def setup():
 		"""
 			
 	print('SOURCE,SUBSOURCE: {0},{1}'.format(SOURCE,SOURCE_SUB))
+	''' 
 	
 	#
 	# i forgot, what's this for?
