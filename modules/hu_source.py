@@ -215,7 +215,7 @@ class SourceController():
 		"""Remove source by index. Set force to True to allow removal of active source.
 		"""
 		if not index and not self.iCurrentSource[0]:
-			self.__printer('ERROR: No current source. Doing nothing.',LL_ERROR)
+			self.__printer('ERROR rem: No current source. Doing nothing.',LL_ERROR)
 			return None
 		
 		if index:
@@ -224,15 +224,19 @@ class SourceController():
 				return None
 				
 		if index == self.iCurrentSource[0] and not force:
-			self.__printer('ERROR: Cannot remove active source. Doing nothing.',LL_ERROR)
+			self.__printer('ERROR rem: Cannot remove active source. Doing nothing.',LL_ERROR)
 			return None
 			
 		if not index == self.iCurrentSource[0] or force:
 			sourceName = self.lSource[index]['displayname']
-			#self.lSource.remove(index)
-			del self.lSource[index]
-			self.__printer('Source removed: {0}'.format(sourceName))
-			return True
+			
+			if len(self.lSource[index]) > index:
+				del self.lSource[index]
+				self.__printer('Source removed: {0}'.format(sourceName))
+				return True
+			else:
+				self.__printer('ERROR rem: Invalid index: {0}'.format(index),LL_ERROR)
+				return None
 			
 	def rem_sub( self, index=None, index_subsource=None ):
 		"""	Remove subsource by index

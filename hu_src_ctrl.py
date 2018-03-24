@@ -335,32 +335,27 @@ def handle_path_source(path,cmd,args):
 		data['payload'] = ret
 		return data
 		
-	def get_available(args):
-		"""
+	def put_available(args):
+		"""	Mark (sub)source as (un)available
 			Arguments:
-			Return dat:
-			Return codes:
-				200		OK
-				500		Error
-		"""
-		if ret:
-			retcode = 200
-		else:
-			retcode = 500
-
-		data={}
-		data['retval'] = retcode
-		data['payload'] = ret
-		return data
-
-	def set_available(args):
-		"""
-			Arguments:
+				True|False, source_id					Mark Source ID
+				True|False, source_id, sub-source_id	Mark Sub-Source ID
 			Return data:
+				None
 			Return codes:
 				200		OK
 				500		Error
 		"""
+		if not args:
+			pass
+		elif len(args) == 2:
+			ret = sc_sources.set_available(args[0],args[1])
+		elif len(args) == 3:
+			ret = sc_sources.set_available(args[0],args[1],args[2])
+		
+		# LL_DEBUG
+		printSummary(sc_sources)
+
 		if ret:
 			retcode = 200
 		else:
@@ -426,11 +421,37 @@ def handle_path_source(path,cmd,args):
 		return data
 		
 	def put_check(args):
+		"""	Do an availability check on given or current source
+			Arguments:
+				None						Check current source
+				source_id					Check source
+				source_id, sub-source_id	Check sub-source
+			Return data:
+				None
+			Return codes:
+				200		OK
+				500		Error
 		"""
-		Arguments:
-		Returns:
-		"""
-		return True
+		if not args:
+			ret = sc_sources.source_check()
+		elif len(args) == 1:
+			ret = sc_sources.source_check(args[0])
+		elif len(args) == 2:
+			ret = sc_sources.source_check(args[0],args[1])
+
+		# LL_DEBUG
+		printSummary(sc_sources)
+
+		if ret:
+			retcode = 200
+			ret = None
+		else:
+			retcode = 500
+
+		data={}
+		data['retval'] = retcode
+		data['payload'] = ret
+		return data		
 			
 	if path:
 		function_to_call = cmd + '_' + '_'.join(path)
