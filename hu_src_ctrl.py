@@ -349,9 +349,9 @@ def handle_path_source(path,cmd,args):
 		if not args:
 			pass
 		elif len(args) == 2:
-			ret = sc_sources.set_available(args[0],args[1])
+			ret = sc_sources.set_available(args[1],args[0])
 		elif len(args) == 3:
-			ret = sc_sources.set_available(args[0],args[1],args[2])
+			ret = sc_sources.set_available(args[1],args[0],args[2])
 		
 		# LL_DEBUG
 		printSummary(sc_sources)

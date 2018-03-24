@@ -279,7 +279,6 @@ class SourceController():
 		
 		return True
 
-
 	def index( self, key, value ):
 		"""Return index based on key-value pair
 		Tip: the "name" key is unique
@@ -622,15 +621,15 @@ class SourceController():
 						
 				self.__printer('Source availability set to: {0} - {1}'.format(availableText,source['displayname']))
 
-	def set_available( self, index, available, subIndex=None ):
+	def set_available( self, index, available, index_subsource=None ):
 		""" Set (sub)source availability
 		"""
 		#TODO: cleanup this code
-		if subIndex == None:
-			# NOW ALLOWED:
-			#if self.lSource[index]['template']:
-			#	self.__printer('Availability: ERROR cannot make templates available.',LL_ERROR)
-			#	return False
+		
+		index = self.__check_index(index,'index','source')
+		index_subsource = int(index_subsource)	#TODO: pass through a ix check function
+		
+		if index and not index_subsource:
 		
 			try:
 				self.lSource[index]['available'] = available
@@ -641,16 +640,18 @@ class SourceController():
 				self.__printer('Source {0} availability set to {1} - {2}'.format(index,availableText,self.lSource[index]['displayname']))
 			except:
 				self.__printer('Availability: ERROR could not set availability',LL_ERROR)
-		else:
+		
+		elif index and index_subsource:
+		
 			try:
 				# also make parent source available
 				self.lSource[index]['available'] = available
-				self.lSource[index]['subsources'][subIndex]['available'] = available
+				self.lSource[index]['subsources'][index_subsource]['available'] = available
 				if available:
 					availableText = colorize('[available    ]','light_green')
 				else:
 					availableText = colorize('[not available]','light_red')
-				self.__printer('Sub-Source {0} availability set to {1} - {2}'.format(subIndex,availableText,self.lSource[index]['subsources'][subIndex]['displayname']))
+				self.__printer('Sub-Source {0} availability set to {1} - {2}'.format(index_subsource,availableText,self.lSource[index]['subsources'][index_subsource]['displayname']))
 			except:
 				self.__printer('Availability: ERROR could not set availability',LL_ERROR)
 	
