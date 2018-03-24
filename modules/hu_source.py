@@ -632,48 +632,35 @@ class SourceController():
 	def set_available( self, index, available, index_subsource=None ):
 		""" Set (sub)source availability
 		"""
-		#TODO: cleanup this code
 		
 		index = self.__check_index(index,'index','set_available')
 		if index_subsource:
 			index_subsource = int(index_subsource)	#TODO: pass through a ix check function
-		
-		print index
-		print index_subsource
-		
+			
 		if not index is None and index_subsource is None:
+		
+			self.lSource[index]['available'] = available		
+			if available:
+				availableText = colorize('[available    ]','light_green')
+			else:
+				availableText = colorize('[not available]','light_red')
+			self.__printer('Source {0} availability set to {1} - {2}'.format(index,availableText,self.lSource[index]['displayname']))
+			return True
+						
+		elif not index is None and not index_subsource is None:
+		
+			# also make parent source available
+			self.lSource[index]['available'] = available
+			self.lSource[index]['subsources'][index_subsource]['available'] = available
+			if available:
+				availableText = colorize('[available    ]','light_green')
+			else:
+				availableText = colorize('[not available]','light_red')
+			self.__printer('Sub-Source {0} availability set to {1} - {2}'.format(index_subsource,availableText,self.lSource[index]['subsources'][index_subsource]['displayname']))
+			return True
 
-			print "DEBUG! 1"
-		
-			try:
-				self.lSource[index]['available'] = available
-				if available:
-					availableText = colorize('[available    ]','light_green')
-				else:
-					availableText = colorize('[not available]','light_red')
-				self.__printer('Source {0} availability set to {1} - {2}'.format(index,availableText,self.lSource[index]['displayname']))
-			except:
-				self.__printer('Availability: ERROR could not set availability',LL_ERROR)
-				
-		
-		if not index is None and not index_subsource is None:
-		
-			print "DEBUG! 2"
-		
-			try:
-				# also make parent source available
-				self.lSource[index]['available'] = available
-				self.lSource[index]['subsources'][index_subsource]['available'] = available
-				if available:
-					availableText = colorize('[available    ]','light_green')
-				else:
-					availableText = colorize('[not available]','light_red')
-				self.__printer('Sub-Source {0} availability set to {1} - {2}'.format(index_subsource,availableText,self.lSource[index]['subsources'][index_subsource]['displayname']))
-			except:
-				self.__printer('Availability: ERROR could not set availability',LL_ERROR)
-
-		print self.lSource[index]
-		return True
+		else:
+			return None
 				
 	# return number of available sources, including sub-sources
 	def getAvailableCnt( self ):
