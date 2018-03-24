@@ -86,55 +86,17 @@ import sys
 import os
 from modules.hu_utils import *
 
-#********************************************************************************
-#
-# Version
-#
-from version import __version__
-
-#********************************************************************************
-#
-# Logging
-#
-from logging import getLogger	# logger
-
-import os
-logger = None
-
-# for logging to syslog
-import socket
-
-#logging
-DAEMONIZED = None
-LOG_TAG = 'HEDUNT'
-LOGGER_NAME = 'hedunt'
-LOG_LEVEL = LL_INFO
-logger = None
+from version import __version__		# Version
+from logging import getLogger		# Logging
 
 
-#********************************************************************************
-#
-#
-#
+import time					# temporary / debugging:
+import json					# load json source configuration
+import inspect				# dynamic module loading
+from Queue import Queue		# queuing
 
-# temporary / debugging:
-import time
-
-# load json source configuration
-import json
-
-# dynamic module loading
-import inspect
-
-# queuing
-from Queue import Queue
-
-# multithreading
-import threading
-import subprocess
-
-# multiprocessing (disabled)
-#from multiprocessing import Process
+import threading			# multithreading
+import subprocess			# multithreading
 
 # dbus
 import dbus.service
@@ -145,7 +107,7 @@ import gobject
 from dbus.mainloop.glib import DBusGMainLoop
 
 # support modules
-from modules.hu_msg import MessageController
+from modules.hu_msg import MqPubSubFwdController
 from modules.hu_pulseaudio import *
 from modules.hu_volume import *
 from modules.hu_settings import *
@@ -154,34 +116,41 @@ from modules.hu_mpd import *
 #********************************************************************************
 # Third party and others...
 #
-
 from slugify import slugify
 
+# *******************************************************************************
+# Global variables and constants
+#
+DESCRIPTION = "Headunit"
+LOG_TAG = 'HEDUNT'
+LOGGER_NAME = 'hedunt'
 
-# GLOBAL vars
-messaging = None
-Sources = None	#Temp.. REMOVE
-disp = None		# REMOVE
-arMpcPlaylistDirs = [ ]			#TODO: should probably not be global...
+DEFAULT_CONFIG_FILE = '/etc/configuration.json'
+CONFIG_FILE_DEFAULT = '/mnt/PIHU_APP/defender-headunit/config/configuration.json'
+DEFAULT_LOG_LEVEL = LL_INFO
+DEFAULT_PORT_SUB = 5560
+DEFAULT_PORT_PUB = 5559
+SUBSCRIPTIONS = ['/events/']
+
+logger = None			# logging
+args = None				# command line arguments
+messaging = None		# mq messaging
+configuration = None	# configuration
+sc_sources = None		# source controller
+mpdc = None				# mpd controller
 
 # SEMI-CONSTANTS (set at startup)
 SOURCE = None
 SOURCE_SUB = None
 BOOT = None
-LOGLEVEL_C = LL_INFO
-DAEMONIZED = None
 
-# CONSTANTS
-CONFIG_FILE_DEFAULT = '/mnt/PIHU_APP/defender-headunit/config/configuration.json'
-CONFIG_FILE = '/etc/configuration.json'
-VERSION = "1.0.0"
+#OLD AND REMOVE:
 PID_FILE = "hu"
-
-# ENVIRONMENT VARIABLES (deprecated)
 ENV_SOURCE = os.getenv('HU_SOURCE')
-
-
+Sources = None			#Temp.. REMOVE
+disp = None				# REMOVE
 hu_details = { 'track':None, 'random':'off', 'repeat':True, 'att':False }
+arMpcPlaylistDirs = [ ]			#TODO: should probably not be global...
 
 #def volume_att_toggle():
 #	hudispdata = {}
@@ -1030,7 +999,7 @@ def init_logging_f( logdir, logfile, runcount ):
 	
 def init_load_config():
 
-	configuration = configuration_load( LOGGER_NAME, CONFIG_FILE, CONFIG_FILE_DEFAULT )
+	configuration = configuration_load( LOGGER_NAME, args.config, CONFIG_FILE_DEFAULT )
 	if configuration == None:
 		exit()
 
@@ -1395,26 +1364,27 @@ class MainInstance(dbus.service.Object):
 # Command line takes precedence over environment variables and settings.json
 #
 def parse_args():
+
 	import argparse
+	global args
 
 	global SOURCE
 	global SOURCE_SUB
-	global BOOT
-	global LOGLEVEL_C
-	
-	parser = argparse.ArgumentParser(description='Uhmmmsssszzz...')
-	parser.add_argument('--loglevel', action='store', default=LL_INFO, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)
+
+	parser = argparse.ArgumentParser(description=DESCRIPTION)
+	parser.add_argument('--loglevel', action='store', default=DEFAULT_LOG_LEVEL, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)
+	parser.add_argument('--config','-c', action='store', help='Configuration file', default=DEFAULT_CONFIG_FILE)
+	parser.add_argument('-b', action='store_true', default=False)
+	parser.add_argument('--port_publisher', action='store')
+	parser.add_argument('--port_subscriber', action='store')
 	parser.add_argument('--source', action='store')
 	parser.add_argument('--subsource', action='store')	
 	parser.add_argument('--boot', action='store_true')
-	parser.add_argument('-b', action='store_true')	# background, ie. no output to console
 	args = parser.parse_args()
 
-	LOGLEVEL_C = args.loglevel
 	SOURCE = args.source
 	SOURCE_SUB = args.subsource
 	BOOT = args.boot
-	DAEMONIZED = args.b
 
 
 #********************************************************************************
@@ -1425,30 +1395,34 @@ def setup():
 
 	global SOURCE
 	global SOURCE_SUB
-	global BOOT
-	global LOGLEVE_C
 	
 	#
 	# Logging
+	# -> Output will be logged to the syslog, if -b specified, otherwise output will be printed to console
 	#
 	global logger
 	logger = logging.getLogger(LOGGER_NAME)
 	logger.setLevel(logging.DEBUG)
 
-	# Start logging to console or syslog
-	if DAEMONIZED:
-		# output to syslog
-		logger = log_create_syslog_loghandler(logger, LOG_LEVEL, LOG_TAG, address='/dev/log' )
-		
+	if args.b:
+		logger = log_create_syslog_loghandler(logger, args.loglevel, LOG_TAG, address='/dev/log') 	# output to syslog
 	else:
-		# output to console
-		logger = log_create_console_loghandler(logger, LOG_LEVEL, LOG_TAG)
+		logger = log_create_console_loghandler(logger, args.loglevel, LOG_TAG) 						# output to console
 
-	
 	#
 	# Load main configuration
 	#
 	configuration = init_load_config()
+
+	#
+	# ZMQ
+	#
+	global messaging
+	printer("ZeroMQ: Initializing")
+	messaging = MqPubSubFwdController('localhost',DEFAULT_PORT_PUB,DEFAULT_PORT_SUB)
+	
+	printer("ZeroMQ: Creating Subscriber: {0}".format(DEFAULT_PORT_SUB))
+	messaging.create_subscriber(SUBSCRIPTIONS)
 
 	#
 	# Load PulseAudio SFX
@@ -1610,7 +1584,7 @@ def setup():
 	# end of initialization
 	#
 	#********************************************************************************
-	printer('INITIALIZATION FINISHED', level=logging.INFO, tag="SYSTEM")
+	printer('INITIALIZATION FINISHED', level=logging.INFO)
 
 
 #********************************************************************************
@@ -1622,9 +1596,6 @@ def main():
 	global SOURCE
 	global SOURCE_SUB
 	global BOOT
-	global LOGLEVEL_C
-
-	global messaging
 
 	#
 	# Check if Source Controller started and available
@@ -1643,14 +1614,6 @@ def main():
 	print "XX DEBUG XX"
 	SOURCE = None
 
-	
-	messaging = MessageController()
-	if not messaging.connect():
-		printer("Failed to connect to messenger", level=LL_CRITICAL)
-		#TODO: try again later!
-		#TODO: enter holding pattern!
-
-	messaging.subscribe('/system/')
 		
 	# BOOT is true for 'early boot'
 	#if BOOT and not prevSource = "" and not prevSource == SOURCE:
