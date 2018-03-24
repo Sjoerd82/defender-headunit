@@ -326,7 +326,7 @@ class SourceController():
 			return False
 
 	def select_prev( self ):
-		return select_next(True)
+		return self.select_next(True)
 		
 	def select_next( self, reverse=False ):
 		""" Make the next available source the current, returns the new active source index
@@ -360,7 +360,7 @@ class SourceController():
 			
 				# source available and has *no* sub-sources:
 				if not source['template'] and source['available']:
-					print('NEXT: Switching {0} {1}: {2:s}'.format(logtext,ix_start,source['displayname']))
+					self.__printer('NEXT: Switching {0} {1}: {2:s}'.format(logtext,ix_start,source['displayname']))
 					self.iCurrentSource[0] = ix_start
 					self.iCurrentSource[1] = None
 					return iCurrentSource
@@ -380,7 +380,7 @@ class SourceController():
 					for subsource in source['subsources'][j_start::step]:
 
 						if subsource['available']:
-							print('NEXT: Switching {0}: {1}/{2}: {3:s}'.format(logtext,ix_start,j_start,subsource['displayname']))
+							self.__printer('NEXT: Switching {0}: {1}/{2}: {3:s}'.format(logtext,ix_start,j_start,subsource['displayname']))
 							self.iCurrentSource[0] = ix_start
 							self.iCurrentSource[1] = j_start
 							return self.iCurrentSource
@@ -393,7 +393,7 @@ class SourceController():
 			
 		#
 		# check if iCurrentSource is set
-		# (in that case, set the next available, and return index)
+		# (in that case, set the next available)
 		#
 		if self.iCurrentSource[0] is None:
 			i = 0
@@ -414,8 +414,10 @@ class SourceController():
 			
 			if not self.iCurrentSource:
 				self.__printer('NEXT: No available sources.',LL_WARNING)
+				return None
 			
-			return self.iCurrentSource
+			#return self.iCurrentSource
+			return True
 			
 		#
 		# check if we have at least two sources
@@ -424,9 +426,11 @@ class SourceController():
 
 		if iSourceCnt == 0:
 			self.__printer('NEXT: No available sources.',LL_WARNING)
-			return self.iCurrentSource
+			return None
+			
 		elif iSourceCnt == 1:
 			self.__printer('NEXT: Only one source, cannot switch.',LL_WARNING)
+			return True
 
 		#
 		# determine starting positions
