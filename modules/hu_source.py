@@ -626,6 +626,9 @@ class SourceController():
 		"""
 		#TODO: cleanup this code
 		
+		print type(available)
+		print available
+		
 		index = self.__check_index(index,'index','source')
 		if index_subsource:
 			index_subsource = int(index_subsource)	#TODO: pass through a ix check function
@@ -641,6 +644,7 @@ class SourceController():
 				self.__printer('Source {0} availability set to {1} - {2}'.format(index,availableText,self.lSource[index]['displayname']))
 			except:
 				self.__printer('Availability: ERROR could not set availability',LL_ERROR)
+				
 		
 		elif index and index_subsource:
 		
@@ -655,7 +659,10 @@ class SourceController():
 				self.__printer('Sub-Source {0} availability set to {1} - {2}'.format(index_subsource,availableText,self.lSource[index]['subsources'][index_subsource]['displayname']))
 			except:
 				self.__printer('Availability: ERROR could not set availability',LL_ERROR)
-	
+
+		print self.lSource[index]
+		return True
+				
 	# return number of available sources, including sub-sources
 	def getAvailableCnt( self ):
 		c = 0

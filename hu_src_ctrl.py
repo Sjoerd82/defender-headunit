@@ -349,9 +349,9 @@ def handle_path_source(path,cmd,args):
 		if not args:
 			pass
 		elif len(args) == 2:
-			ret = sc_sources.set_available(str2bool(args[1]),args[0])
+			ret = sc_sources.set_available(args[1],str2bool(args[0]))
 		elif len(args) == 3:
-			ret = sc_sources.set_available(str2bool(args[1]),args[0],args[2])
+			ret = sc_sources.set_available(args[1],str2bool(args[0]),args[2])
 		
 		# LL_DEBUG
 		printSummary(sc_sources)
@@ -365,7 +365,6 @@ def handle_path_source(path,cmd,args):
 		data['retval'] = retcode
 		data['payload'] = ret
 		return data
-		return True
 
 	def put_next(args):
 		"""	Change to next available (sub)source and start playing
@@ -392,8 +391,7 @@ def handle_path_source(path,cmd,args):
 		data['retval'] = retcode
 		data['payload'] = ret
 		return data
-		
-
+	
 	def put_prev(args):
 		"""	Change to prev available (sub)source and start playing
 			Arguments:
