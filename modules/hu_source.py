@@ -234,7 +234,7 @@ class SourceController():
 		if index and index_subsource:
 			index = self.__check_index(index,'index','rem_sub')
 			index_subsource = self.__check_index(index,'index_subsource','rem_sub')
-			if not index or not index_subsource
+			if not index or not index_subsource:
 				return None #?
 							
 		elif not index and not index_subsource:
