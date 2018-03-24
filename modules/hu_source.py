@@ -214,6 +214,9 @@ class SourceController():
 	def rem( self, index=None, force=False ):
 		"""Remove source by index. Set force to True to allow removal of active source.
 		"""
+		if not index and not self.iCurrentSource[0]:
+			self.__printer('ERROR: No current source. Doing nothing.',LL_ERROR)
+		
 		if index:
 			index = self.__check_index(index,'index','source')
 			if not index:
@@ -244,6 +247,8 @@ class SourceController():
 		elif not index and not index_subsource:
 			index = self.iCurrentSource[0]
 			index_subsource = self.iCurrentSource[1]
+			if index is None or index_subsource is None:
+				return None
 		
 		elif index and not index_subsource:
 			self.__printer('ERROR rem_sub: Sub-Source index missing',LL_ERROR)
