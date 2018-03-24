@@ -40,7 +40,7 @@ def setup():
 	
 def main():
 	if args.r:
-		ret = messaging.publish_command(args.p,args.c,return_path='/cmd/')
+		ret = messaging.publish_command(args.p,args.c,response_path='/bladiebla/')
 	else:
 		ret = messaging.publish_command(args.p,args.c)
 		
