@@ -235,6 +235,11 @@ class SourceController():
 		print type(index)
 		if index >= 7:
 			print "Huh?"
+		if int(index) >= 7:
+			print "Huh?"
+		index = int(index)
+		if index >= 7:
+			print "Huh?"
 			
 		if index == None:
 			self.__printer('Setting active source to None')
