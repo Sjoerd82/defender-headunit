@@ -234,12 +234,13 @@ class SourceController():
 		"""
 		print type(index)
 		if index >= 7:
-			print "Huh?"
+			print "Huh1?"
 		if int(index) >= 7:
-			print "Huh?"
+			print "Huh2?"
 		index = int(index)
 		if index >= 7:
-			print "Huh?"
+			print "Huh3?"
+		print type(index)
 			
 		if index == None:
 			self.__printer('Setting active source to None')
@@ -472,7 +473,7 @@ class SourceController():
 				return mycopy
 
 	#def get( self, index=self.iCurrent ):	syntax not allowed?
-	def source( self, index ):
+	def source( self, index=None ):
 		""" Return source for given index, returns current source, if no index provided
 		"""
 		if index == None:
