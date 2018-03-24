@@ -96,7 +96,7 @@ class SourceController():
 
 	def __check_index(self, test_index, index_name, function_name=None):
 		index = int(test_index)
-		if index_name = 'index' and index >= len(self.lSource):
+		if index_name == 'index' and index >= len(self.lSource):
 			self.__printer('ERROR {0}: {1} ({2}) out of bounds'.format(function_name, index_name, index),LL_ERROR)
 			return None
 		# TODO, check subsource index !!
