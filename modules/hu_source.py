@@ -698,7 +698,10 @@ class SourceController():
 	def source_check( self, index=None, subSourceIx=None ):
 		""" Execute a check() for given source and sets availability accordingly
 		"""
-		if index:
+		index = int(index) #TODO
+		subSourceIx = int(subSourceIx) #TODO
+		
+		if index is not None:
 			self.__printer('CHECK: {0}/{1}'.format(index,subSourceIx)) #LL_DEBUG
 			checkResult = self.lSource[index]['sourceClass'].check(self)
 			return checkResult
@@ -706,7 +709,10 @@ class SourceController():
 			i=0
 			for source in self.lSource:
 				self.__printer('CHECK: {0}/{1}'.format(i,'-')) #LL_DEBUG
-				checkResult = self.lSource[i]['sourceClass'].check(self)
+				if 'sourceClass' not in self.lSource[i]:
+					self.__printer('has no sourceClass: {0}'.format(self.lSource[i]['name']))
+				else:
+					checkResult = self.lSource[i]['sourceClass'].check(self)
 				i+=1		
 
 	#TODO - INVESTIGATE
