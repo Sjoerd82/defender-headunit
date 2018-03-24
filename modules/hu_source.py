@@ -627,7 +627,8 @@ class SourceController():
 		#TODO: cleanup this code
 		
 		index = self.__check_index(index,'index','source')
-		index_subsource = int(index_subsource)	#TODO: pass through a ix check function
+		if index_subsource:
+			index_subsource = int(index_subsource)	#TODO: pass through a ix check function
 		
 		if index and not index_subsource:
 		
