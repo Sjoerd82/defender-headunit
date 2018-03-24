@@ -633,7 +633,7 @@ class SourceController():
 		print index
 		print index_subsource
 		
-		if index and not index_subsource:
+		if index and index_subsource is None:
 
 			print "DEBUG! 1"
 		
