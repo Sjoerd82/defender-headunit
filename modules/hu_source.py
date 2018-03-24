@@ -212,7 +212,7 @@ class SourceController():
 		if index:
 			index = self.__check_index(index,'index','source')
 			if not index:
-				Return False #?
+				return False #?
 				
 		if index == self.iCurrentSource[0] and not force:
 			self.__printer('ERROR: Cannot remove active source. Doing nothing.',LL_ERROR)
