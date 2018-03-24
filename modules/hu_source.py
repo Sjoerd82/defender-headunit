@@ -325,7 +325,10 @@ class SourceController():
 			self.__printer('ERROR: Requested source ({0}: {1:s}) cannot be set.'.format(index,self.lSource[index]['displayname']),LL_ERROR)
 			return False
 
-	def next( self, reverse=False ):
+	def select_prev( self ):
+		return select_next(True)
+		
+	def select_next( self, reverse=False ):
 		""" Make the next available source the current, returns the new active source index
 			return None if not succesful
 			
