@@ -372,7 +372,7 @@ POST /plugin/<path:config>              Set for a plugin
 """
 
 
-@app.route(API_VERSION+'/source/primary', methods=['PUT'])
+@app.route(API_VERSION+'/source/primary', methods=['GET'])
 def put_primary():
 	retmsg = messaging.publish_command('/source/primary','PUT', None, True, 5000, RETURN_PATH)
 	print retmsg
