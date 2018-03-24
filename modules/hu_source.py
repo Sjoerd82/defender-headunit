@@ -240,6 +240,10 @@ class SourceController():
 			index = self.__check_index(index,'index','rem_sub')
 			index_subsource = self.__check_index(index_subsource,'index_subsource','rem_sub')
 			if not index or not index_subsource:
+				print index
+				print index_subsource
+				print type(index)
+				print type(index_subsource)
 				print "DEBUG!! XYZZ"
 				return None #?
 							
