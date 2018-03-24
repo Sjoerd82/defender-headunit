@@ -17,8 +17,9 @@ def parse_args():
 	global args
 
 	parser = argparse.ArgumentParser(description=DESCRIPTION)
-	parser.add_argument('-p', action='store')
-	parser.add_argument('-c', action='store')	
+	parser.add_argument('-p', action='store', required=True)
+	parser.add_argument('-c', action='store', required=True)
+	parser.add_argument('-r', action='store_true')
 	parser.add_argument('--port_publisher', action='store')
 	parser.add_argument('--port_subscriber', action='store')
 	args = parser.parse_args()
@@ -38,7 +39,11 @@ def setup():
 
 	
 def main():
-	ret = messaging.publish_command(args.p,args.c)
+	if args.r:
+		ret = messaging.publish_command(args.p,args.c,return_path='/cmd/')
+	else:
+		ret = messaging.publish_command(args.p,args.c)
+		
 	print ret
 
 	
