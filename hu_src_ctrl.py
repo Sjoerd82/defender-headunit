@@ -356,7 +356,7 @@ def handle_path_source(path,cmd,args):
 	def set_available(args):
 		"""
 			Arguments:
-			Return dat:
+			Return data:
 			Return codes:
 				200		OK
 				500		Error
@@ -373,15 +373,23 @@ def handle_path_source(path,cmd,args):
 		return True
 
 	def put_next(args):
-		"""
+		"""	Change to next available (sub)source and start playing
 			Arguments:
-			Return dat:
+				None
+			Return data:
+				None
 			Return codes:
 				200		OK
 				500		Error
 		"""
+		ret = sc_sources.select_next()
+
+		# LL_DEBUG
+		printSummary(sc_sources)
+
 		if ret:
 			retcode = 200
+			ret = None
 		else:
 			retcode = 500
 
@@ -390,19 +398,32 @@ def handle_path_source(path,cmd,args):
 		data['payload'] = ret
 		return data
 		
-		ret = sc_sources.select_next()
-		printSummary(sc_sources)
-		return ret
 
 	def put_prev(args):
+		"""	Change to prev available (sub)source and start playing
+			Arguments:
+				None
+			Return data:
+				None
+			Return codes:
+				200		OK
+				500		Error
 		"""
-		Arguments:
-		Returns:
-		"""
-		# Set active (sub)source to the prev available
-		sc_sources.select_next(True)
+		ret = sc_sources.select_prev()
+
+		# LL_DEBUG
 		printSummary(sc_sources)
-		return True
+
+		if ret:
+			retcode = 200
+			ret = None
+		else:
+			retcode = 500
+
+		data={}
+		data['retval'] = retcode
+		data['payload'] = ret
+		return data
 		
 	def put_check(args):
 		"""

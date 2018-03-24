@@ -216,15 +216,16 @@ class SourceController():
 		"""
 		if not index and not self.iCurrentSource[0]:
 			self.__printer('ERROR: No current source. Doing nothing.',LL_ERROR)
+			return None
 		
 		if index:
 			index = self.__check_index(index,'index','source')
 			if not index:
-				return False #?
+				return None
 				
 		if index == self.iCurrentSource[0] and not force:
 			self.__printer('ERROR: Cannot remove active source. Doing nothing.',LL_ERROR)
-			return None #?
+			return None
 			
 		if not index == self.iCurrentSource[0] or force:
 			sourceName = self.lSource[index]['displayname']
@@ -233,7 +234,6 @@ class SourceController():
 			self.__printer('Source removed: {0}'.format(sourceName))
 			return True
 			
-
 	def rem_sub( self, index=None, index_subsource=None ):
 		"""	Remove subsource by index
 			Remove current subsource, if no indexes given
@@ -242,6 +242,7 @@ class SourceController():
 			index = self.__check_index(index,'index','rem_sub')
 			index_subsource = self.__check_index(index_subsource,'index_subsource','rem_sub')
 			if index is None or index_subsource is None:
+				self.__printer('ERROR: No current source or sub-source. Doing nothing.',LL_ERROR)
 				return None
 							
 		elif not index and not index_subsource:
