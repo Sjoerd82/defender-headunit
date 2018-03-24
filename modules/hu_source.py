@@ -214,24 +214,31 @@ class SourceController():
 	def rem( self, index=None, force=False ):
 		"""Remove source by index. TODO: remove force variable
 		"""
-
+		print "DEBUG 1"
 		if index:
+			print "DEBUG 2"
 			index = self.__check_index(index,'index','source')
 			if not index:
+				print "DEBUG 3"
 				self.__printer('ERROR rem: Not a valid index. Doing nothing.',LL_ERROR)
 				return None
 
 		elif index is None:
+			print "DEBUG 4"		
 			index = self.iCurrentSource[0]
 			if index is None:
+				print "DEBUG 5"
 				self.__printer('ERROR rem: No current source. Doing nothing.',LL_ERROR)
 				return None
+
+		print "DEBUG 6"
 				
 		#if index == self.iCurrentSource[0] and not force:
 		#	self.__printer('ERROR rem: Cannot remove active source. Doing nothing.',LL_ERROR)
 		#	return None
 			
 		if not index == self.iCurrentSource[0]: #or force:
+			print "DEBUG 7"
 			sourceName = self.lSource[index]['displayname']
 			
 			if len(self.lSource[index]) > index:
@@ -634,7 +641,7 @@ class SourceController():
 		print index
 		print index_subsource
 		
-		if index and index_subsource is None:
+		if not index is None and index_subsource is None:
 
 			print "DEBUG! 1"
 		
