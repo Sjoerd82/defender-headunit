@@ -773,13 +773,10 @@ class SourceController():
 		"""
 		index = self.__check_index2(index)
 		if index is False:
-			print "DEBUG: invalid index: {0}".format(index)
-			print type(index)
 			return False
 		
 		index_subsource = self.__check_subindex(index,index_subsource)
 		if index_subsource is False:
-			print "DEBUG: invalid subindex"
 			return False
 		
 		changed_sources = []
@@ -793,12 +790,13 @@ class SourceController():
 				if 'sourceClass' not in self.lSource[i]:
 					self.__printer('has no sourceClass: {0}'.format(self.lSource[i]['name']))
 				else:
-					checked_source_is_available = self.lSource[i]['available']
+					#checked_source_is_available = self.lSource[i]['available']
 					check_result = self.lSource[i]['sourceClass'].check(self)	#returns a list of dicts with changes
+					changed_sources.append(check_result)
 										
-					if checked_source_is_available != check_result:
-						self.lSource[i]['available'] = check_result
-						changed_sources.append(i)
+					#if checked_source_is_available != check_result:
+					#	self.lSource[i]['available'] = check_result
+					#	changed_sources.append(i)
 						
 				i+=1
 				
@@ -812,7 +810,7 @@ class SourceController():
 			if index_subsource is not None:	
 				self.__printer('Checking index/subindex: {0}/{1}'.format(index,index_subsource)) #LL_DEBUG
 				
-				checked_source_is_available = self.lSource[index]['subsources'][index_subsource]['available']
+				#checked_source_is_available = self.lSource[index]['subsources'][index_subsource]['available']
 				check_result = self.lSource[index]['sourceClass'].check(self,index_subsource)	#returns a list of dicts with changes
 				
 				return check_result
@@ -830,7 +828,7 @@ class SourceController():
 			elif index is not None:
 				self.__printer('Checking index: {0}'.format(index)) #LL_DEBUG
 				
-				checked_source_is_available = self.lSource[index]['available']
+				#checked_source_is_available = self.lSource[index]['available']
 				check_result = self.lSource[index]['sourceClass'].check(self,index_subsource)	#returns a list of dicts with changes
 				
 				return check_result
