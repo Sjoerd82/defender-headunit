@@ -27,13 +27,28 @@ class sourceClass():
 		return True
 
 	def check( self, sourceCtrl, subSourceIx=None  ):
-		self.__printer('Checking availability...', level=15)
-		#global Sources
-		self.__printer('Checking if Line-In is available... not available')
-		#arSourceAvailable[4]=0 # not available
-		#Sources.setAvailable('name','alsa',False) # not available
-		#echo "Source 4 Unavailable; Line-In / ALSA"
-		return False
+		"""	Check source
+		
+			Checks to see if AUX is available (SUBSOURCE INDEX will be ignored)
+			Returns a list with dict containing changes in availability
+			
+			TODO: Will now simply return TRUE.
+		"""
+		self.__printer('CHECK availability...')
+
+		subsource_availability_changes = []
+		new_availability = True
+		
+		ix = sourceCtrl.index('name','line')	# source index
+		line_source = sourceCtrl.source(ix)		
+		original_availability = line_source['available']
+		
+		if new_availability is not None and new_availability != original_availability:
+			sourceCtrl.set_available( ix, new_availability )
+			subsource_availability_changes.append({"index":ix,"available":new_availability})
+		
+		return subsource_availability_changes
+		
 		
 	def play( self, sourceCtrl, subSourceIx=None ):
 		self.__printer('Start playing')

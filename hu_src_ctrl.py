@@ -450,6 +450,8 @@ def handle_path_source(path,cmd,args):
 			
 			printSummary(sc_sources)		# LL_DEBUG
 			
+			# TODO: MOVE "check_all" LOOP HERE SO WE CAN SEND OUT EVENTS EARLIER !
+			
 			for change in ret:
 				print "CHANGED: {0}".format(change)
 				#available_source = {}
@@ -973,7 +975,7 @@ def main():
 
 	global queue_actions
 
-	#sc_sources.source_check()
+	sc_sources.source_check()
 	printSummary(sc_sources)
 	
 	#

@@ -37,8 +37,27 @@ class sourceClass():
 		return True
 
 	def check( self, sourceCtrl, subSourceIx=None  ):
-		self.__printer('Checking availability...', level=15)
-		return False
+		"""	Check source
+		
+			Checks to see if FM is available (SUBSOURCE INDEX will be ignored)
+			Returns a list with dict containing changes in availability
+			
+			TODO: Will now simply return TRUE.
+		"""
+		self.__printer('CHECK availability...')
+
+		subsource_availability_changes = []
+		new_availability = True
+		
+		ix = sourceCtrl.index('name','bt')	# source index
+		bt_source = sourceCtrl.source(ix)		
+		original_availability = bt_source['available']
+		
+		if new_availability is not None and new_availability != original_availability:
+			sourceCtrl.set_available( ix, new_availability )
+			subsource_availability_changes.append({"index":ix,"available":new_availability})
+		
+		return subsource_availability_changes
 		
 	def play( self, sourceCtrl, subSourceIx=None ):
 		self.__printer('Start playing')
