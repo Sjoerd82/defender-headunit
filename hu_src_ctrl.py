@@ -441,16 +441,12 @@ def handle_path_source(path,cmd,args):
 
 		if not args:
 			ret = sc_sources.source_check()
-			print "XXYYZZ"
-			#print type(ret)
-			print ret
 		elif len(args) == 1:
 			ret = sc_sources.source_check(args[0])
 		elif len(args) == 2:
 			ret = sc_sources.source_check(args[0],args[1])
 
-		#if ret != False:
-		if type(ret) == 'list': #and ret:
+		if ret != False:
 			
 			printSummary(sc_sources)		# LL_DEBUG
 			
