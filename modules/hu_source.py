@@ -11,7 +11,8 @@
 # 
 # - Leave (sub)index parameter None (default) to indicate current source
 # - Returns True or data, if succesful
-# - Return None if failure
+# - Return None if nothing to do / no change
+# - Return False if failure
 #
 #
 #	add					Add a source
@@ -792,8 +793,8 @@ class SourceController():
 					self.__printer('has no sourceClass: {0}'.format(self.lSource[i]['name']))
 				else:
 					checked_source_is_available = self.lSource[i]['available']
-					check_result = self.lSource[i]['sourceClass'].check(self)
-					
+					check_result = self.lSource[i]['sourceClass'].check(self)	#returns a list of dicts with changes
+										
 					if checked_source_is_available != check_result:
 						self.lSource[i]['available'] = check_result
 						changed_sources.append(i)
@@ -811,12 +812,14 @@ class SourceController():
 				self.__printer('Checking index/subindex: {0}/{1}'.format(index,index_subsource)) #LL_DEBUG
 				
 				checked_source_is_available = self.lSource[index]['subsources'][index_subsource]['available']
-				check_result = self.lSource[index]['sourceClass'].check(self,index_subsource)
+				check_result = self.lSource[index]['sourceClass'].check(self,index_subsource)	#returns a list of dicts with changes
 				
-				if checked_source_is_available != check_result:
-					self.lSource[index]['available'] = check_result
-					changed_sources.append( [index,index_subsource] )
-					return changed_sources
+				if len(check_results) > 0
+				
+					#if checked_source_is_available != check_result:
+					#	self.lSource[index]['available'] = check_result
+					#	changed_sources.append( [index,index_subsource] )
+					#	return changed_sources
 				else:
 					return None
 						
@@ -825,7 +828,7 @@ class SourceController():
 				self.__printer('Checking index: {0}'.format(index)) #LL_DEBUG
 				
 				checked_source_is_available = self.lSource[index]['available']
-				check_result = self.lSource[index]['sourceClass'].check(self,index_subsource)
+				check_result = self.lSource[index]['sourceClass'].check(self,index_subsource)	#returns a list of dicts with changes
 				
 			if checked_source_is_available != check_result:
 				self.lSource[index]['available'] = check_result

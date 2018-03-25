@@ -78,46 +78,69 @@ class sourceClass():
 	
 	def check( self, sourceCtrl, subSourceIx=None  ):
 		"""	Check
-			if subsource index given, will only check mountpoint of that subsource index
+			if subsource index given, will only check mountpoint of that subsource index.
+			
+			Returns TRUE, if subsource is available or if any subsource is available, when only provided with a source index.
+			Returns FALSE, if subsource is NOT available or if NONE subsource is available, when only provided with a source index.
+
+			User will have to check ['available']-fields himself to know which specific subsources are (un)available
+			
+		OR:
+		
+			Returns TRUE, if a change in availability has occurred
+			Returns None, if no change
+			
+		OR:
+		
+			Returns a list of changed subsource indexes (True or source index when no subsources)
+			
+		OR
+			
+		->	Return a dict of changed subsources, including availability
+			
 		"""
 		self.__printer('Checking availability...', level=15)
 	
+		subsource_availability_changes = []
+	
 		ix = sourceCtrl.index('name','locmus')	# source index
 		locations = []								# list of tuples; index: 0 = mountpoint, 1 = mpd dir.
-		foundStuff = 0								#
 						
 		if subSourceIx is None:
 			subsources = sourceCtrl.subsource_all( ix )
 			for subsource in subsources:
-				locations.append( (subsource['mountpoint'], subsource['mpd_dir']) )
+				locations.append( (subsource['mountpoint'], subsource['mpd_dir'], subsource['available']) )
 			ssIx = 0
 		else:
 			subsource = sourceCtrl.subsource( ix, subSourceIx )
-			locations.append( (subsource['mountpoint'], subsource['mpd_dir']) )
+			locations.append( (subsource['mountpoint'], subsource['mpd_dir'], subsource['available']) )
 			ssIx = subSourceIx
 
 		# check mountpoint(s)
 		for location in locations:
 		
-			# get mountpoint and mpd dir
 			mountpoint = location[0]
 			mpd_dir = location[1]
+			original_availability = location[2]
+			new_availability = None
 
-			self.__printer('Local folder: {0}'.format(mountpoint))
+			self.__printer('Checking local folder: {0}, current availability: {1}'.format(mountpoint,original_availability))
 			
 			# check if the dir exists:
 			if not os.path.exists(mountpoint):
-				self.__printer(" > Local music directory does not exist.. creating...",LL_WARNING)
+				self.__printer(" > Local music directory does not exist.. creating {0}".format(mountpoint),LL_WARNING)
 				os.makedirs(mountpoint)
+				if not os.path.exists(mountpoint):
+					self.__printer(" > [FAIL] Could not create directory",LL_WARNING)
+					
 				# obviously there will no be any music in that new directory, so marking it unavailable..
-				sourceCtrl.set_available( ix, False, ssIx )
-
-			if not os.path.exists(mountpoint):
-				self.__printer(" > Local music directory does not exist.. Failed creating?",LL_WARNING)
+				new_availability = False
+				
 			else:
 				
 				if not os.listdir(mountpoint):
 					self.__printer(" > Local music directory is empty.",LL_WARNING)
+					new_availability = False
 				else:
 					self.__printer(" > Local music directory present and has files.",LL_INFO)
 					
@@ -126,20 +149,20 @@ class sourceClass():
 						self.mpc.update( mpd_dir, True )	#TODO: don't wait! set available on return of update..
 						if not self.mpc.dbCheckDirectory( mpd_dir ):
 							self.__printer(" > Nothing to play marking unavailable...")
+							new_availability = False
 						else:
 							self.__printer(" > Music found after updating")
-							sourceCtrl.set_available( ix, True, ssIx )
-							foundStuff += 1
+							new_availability = True
 					else:
-						sourceCtrl.set_available( ix, True, ssIx )
-						foundStuff += 1
+						new_availability = True
 			
+			if new_availability is not None and new_availability != original_availability 
+				sourceCtrl.set_available( ix, new_availability, ssIx )
+				subsource_availability_changes.append({"index":ix,"subindex":ssIx,"available":new_availability})
+
 			ssIx+=1
 		
-		if foundStuff > 0:
-			return True
-		else:
-			return False
+		return subsource_availability_changes
 
 	def play( self, sourceCtrl, resume={} ): #, subSourceIx=None ):
 		self.__printer('Start playing')

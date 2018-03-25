@@ -452,7 +452,18 @@ def handle_path_source(path,cmd,args):
 		if ret:
 			
 			printSummary(sc_sources)		# LL_DEBUG
+			
+			for change in ret:
+				print "CHANGED: {0}".format(change)
+				#available_source = {}
+				#available_source['index'] = change['index']
+				#available_source['subindex'] = change['subindex']
+				#available_source['available'] = change['available']
+				#messaging.publish_command('/events/source/available','DATA',available_source)
+				messaging.publish_command('/events/source/available','DATA',change)
 				
+			
+			"""
 			for indexes in ret:
 				print "FOR INDEX IN RET: index={0}".format(indexes)	# [1,0], [1]
 				index = indexes[0]
@@ -471,6 +482,8 @@ def handle_path_source(path,cmd,args):
 					available_source['index'] = index
 					available_source['available'] = source['available']
 					messaging.publish_command('/events/source/available','DATA',available_source)
+					
+			"""
 					
 		ret = True	
 		data = get_data(ret)
@@ -964,7 +977,7 @@ def main():
 
 	global queue_actions
 
-	sc_sources.source_check()
+	#sc_sources.source_check()
 	printSummary(sc_sources)
 	
 	#
