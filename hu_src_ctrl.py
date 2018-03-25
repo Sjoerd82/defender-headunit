@@ -107,7 +107,7 @@ def handle_path_source(path,cmd,args):
 	# remove base path
 	del path[0]
 
-	def get_data(ret,eventpath=None,eventdata=None):
+	def get_data(ret,eventpath=None):
 	
 		data = {}
 		
@@ -128,6 +128,8 @@ def handle_path_source(path,cmd,args):
 			data['payload'] = ret
 
 		if eventpath is not None:
+		
+			#TODO: AVAILABLE EVENTS FOR EVERY AVAILABLE SOURCE ON CHECK() !!! !!! !!!
 		
 			if eventpath == '/events/source/active' or eventpath == '/events/source/available':
 				curr_source = sc_sources.source()
@@ -205,17 +207,7 @@ def handle_path_source(path,cmd,args):
 			ret = sc_sources.select(args[0],args[1])
 			#TODO: not implemented
 
-		if ret:
-			retcode = 200
-			curr_source = sc_sources.source()
-			settings['source'] = curr_source['name']
-			save_settings()
-		else:
-			retcode = 500
-
-		data={}
-		data['retval'] = retcode
-		data['payload'] = None
+		data = get_data(ret,'/events/source/active')
 		return data
 	
 	def post_primary(args):
@@ -242,14 +234,7 @@ def handle_path_source(path,cmd,args):
 
 		ret = sc_sources.add(args[0])
 		
-		if ret:
-			retcode = 200
-		else:
-			retcode = 500
-
-		data={}
-		data['retval'] = retcode
-		data['payload'] = None
+		data = get_data(ret)
 		return data
 		
 	def del_primary(args):
@@ -271,15 +256,7 @@ def handle_path_source(path,cmd,args):
 		# LL_DEBUG:
 		printSummary(sc_sources)
 
-		if ret:
-			retcode = 200
-			ret = None
-		else:
-			retcode = 500
-
-		data={}
-		data['retval'] = retcode
-		data['payload'] = ret
+		data = get_data(ret)
 		return data
 	
 	def get_subsource(args):
@@ -303,14 +280,7 @@ def handle_path_source(path,cmd,args):
 		elif len(args) == 2:
 			ret = sc_sources.subsource(args[0],args[1])
 
-		if ret:
-			retcode = 200
-		else:
-			retcode = 500
-
-		data={}
-		data['retval'] = retcode
-		data['payload'] = ret
+		data = get_data(ret)
 		return data
 
 	def put_subsource(args):
@@ -345,24 +315,7 @@ def handle_path_source(path,cmd,args):
 			ret = sc_sources.select(args[0],args[1])
 			#TODO: not implemented
 
-		data = ding(ret,'/events/source/active','source')
-			
-		data={}
-
-		if ret:
-			curr_source = sc_sources.source()
-			settings['source'] = curr_source['name']
-			save_settings()
-
-			data['retval'] = 200
-			data['payload'] = curr_source
-
-			# PUT sends out an /events
-			messaging.publish_command('/events/source/active','DATA',data)
-		else:
-			data['retval'] = 500
-
-		data['payload'] = None
+		data = get_data(ret,'/events/source/active')
 		return data
 
 	def post_subsource(args):
@@ -388,15 +341,7 @@ def handle_path_source(path,cmd,args):
 		# LL_DEBUG:
 		printSummary(sc_sources)
 			
-		if ret:
-			retcode = 200
-			ret = None
-		else:
-			retcode = 500
-
-		data={}
-		data['retval'] = retcode
-		data['payload'] = ret
+		data = get_data(ret)
 		return data
 		
 	def put_available(args):
@@ -420,14 +365,7 @@ def handle_path_source(path,cmd,args):
 		# LL_DEBUG
 		printSummary(sc_sources)
 
-		if ret:
-			retcode = 200
-		else:
-			retcode = 500
-
-		data={}
-		data['retval'] = retcode
-		data['payload'] = ret
+		data = get_data(ret,'/events/source/available')
 		return data
 
 	def put_next(args):
@@ -445,15 +383,7 @@ def handle_path_source(path,cmd,args):
 		# LL_DEBUG
 		printSummary(sc_sources)
 
-		if ret:
-			retcode = 200
-			ret = None
-		else:
-			retcode = 500
-
-		data={}
-		data['retval'] = retcode
-		data['payload'] = ret
+		data = get_data(ret,'/events/source/active')
 		return data
 	
 	def put_prev(args):
@@ -471,15 +401,7 @@ def handle_path_source(path,cmd,args):
 		# LL_DEBUG
 		printSummary(sc_sources)
 
-		if ret:
-			retcode = 200
-			ret = None
-		else:
-			retcode = 500
-
-		data={}
-		data['retval'] = retcode
-		data['payload'] = ret
+		data = get_data(ret,'/events/source/active')
 		return data
 		
 	def put_check(args):
@@ -504,17 +426,10 @@ def handle_path_source(path,cmd,args):
 		# LL_DEBUG
 		printSummary(sc_sources)
 
-		if ret:
-			retcode = 200
-			ret = None
-		else:
-			retcode = 500
+		data = get_data(ret,'/events/source/available')
+		return data
 
-		data={}
-		data['retval'] = retcode
-		data['payload'] = ret
-		return data		
-			
+	# -------------------------------------------------------------------------
 	if path:
 		function_to_call = cmd + '_' + '_'.join(path)
 	else:
