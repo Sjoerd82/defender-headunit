@@ -683,7 +683,18 @@ def init_logging_f( logdir, logfile, runcount ):
 
 """
 	
-#def check_source():
+def check_all_sources_send_event():
+
+	all_sources = sc_sources.source_all()
+	
+	i=0
+	for source in all_sources:
+		check_result = sc_source.source_check(i)
+		#check_result = source['sourceClass'].check(self)	#returns a list of dicts with changes
+		if check_result:
+			#for result in check_result:
+			messaging.publish_command('/events/source/available','DATA',check_result)
+
 
 
 # print a source summary
@@ -979,7 +990,8 @@ def main():
 
 	global queue_actions
 
-	sc_sources.source_check()
+	#sc_sources.source_check()
+	check_all_sources_send_event()
 	printSummary(sc_sources)
 	
 	#

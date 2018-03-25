@@ -1588,14 +1588,12 @@ def setup():
 #
 def main():
 
-	global SOURCE
-	global SOURCE_SUB
-	global BOOT
-
 	#
 	# Check if Source Controller started and available
 	#
-
+	printer('Checking if Source Controller is online...')	
+	messaging.publish_command('/source/next', 'SET')
+	
 	# !! !! TODO IMPORTANT !! !!
 
 

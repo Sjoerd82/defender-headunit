@@ -761,13 +761,7 @@ class SourceController():
 			if ONLY a SOURCE INDEX is given, it will check the source and if it's a template will also check all subsources
 			if BOTH INDEXES are given will check the specified sub-source
 			
-		X	Returns a list of sources that became available or unavailable or None if no changes
-		X	[ 1,3,6 ]
-		
-			Returns a list of (sub)sources that became available or unavailable or None if no changes
-			[ [1],[3],[6] ]			<- only primary sources
-			[ [1,0] [3] [6,1] ]		<- combination
-			[ [1,0] ]				<- only subsource 0 of source 1
+		X	Returns a list of dicts
 			
 			(Some soureces may themselves also set the available flag, but we do it here too....)
 		"""
