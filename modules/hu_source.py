@@ -742,13 +742,11 @@ class SourceController():
 				if 'sourceClass' not in self.lSource[i]:
 					self.__printer('has no sourceClass: {0}'.format(self.lSource[i]['name']))
 				else:
-					print "DEBUG:"
-					print self.lSource[index]
-					checked_source_is_available = False #self.lSource[index]['available']
+					checked_source_is_available = self.lSource[i]['available']
 					check_result = self.lSource[i]['sourceClass'].check(self)
 					
 					if checked_source_is_available != check_result:
-						changed_sources.append(index)
+						changed_sources.append(i)
 						
 				i+=1
 				
