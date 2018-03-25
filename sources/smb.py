@@ -108,6 +108,10 @@ class sourceClass():
 			locations.append( (subsource['mountpoint'], subsource['mpd_dir'], subsource['available']) )
 			ssIx = subSourceIx
 
+		print locations
+		if not locations:
+			self.__printer('Nothing to check',LL_WARNING)
+		
 		# check mountpoint(s)
 		for location in locations:
 		
@@ -119,10 +123,10 @@ class sourceClass():
 
 			self.__printer('SMB folder: {0}'.format(mountpoint))
 			if not os.listdir(mountpoint):
-				self.__printer(" > SMB directory is empty.",LL_WARNING,True)
+				self.__printer(" > SMB directory is empty.",LL_WARNING)
 				new_availability = False
 			else:
-				self.__printer(" > SMB directory present and has files.",LL_INFO,True)
+				self.__printer(" > SMB directory present and has files.",LL_INFO)
 				
 				if not self.mpc.dbCheckDirectory( mpd_dir ):
 					self.__printer(" > Running MPD update for this directory.. ALERT! LONG BLOCKING OPERATION AHEAD...")
