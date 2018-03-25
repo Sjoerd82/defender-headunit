@@ -33,6 +33,18 @@ class sourceClass():
 
 	def check( self, sourceCtrl, subSourceIx=None  ):
 		self.__printer('CHECK availability...')
+
+		subsource_availability_changes = []
+		new_availability = True
+		
+		ix = sourceCtrl.index('name','fm')	# source index
+		fm_source = sourceCtrl.source(ix)		
+		original_availability = fm_source['available']
+		
+		if new_availability is not None and new_availability != original_availability:
+			sourceCtrl.set_available( ix, new_availability, ssIx )
+			subsource_availability_changes.append({"index":ix,"available":new_availability})
+		
 		return True
 		
 	def play( self, sourceCtrl, subSourceIx=None ):
