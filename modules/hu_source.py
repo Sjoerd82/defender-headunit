@@ -615,7 +615,7 @@ class SourceController():
 			#print len(self.lSource[index]['subsources'])
 			if len(self.lSource[index]['subsources']) > 0:
 				#print self.lSource[index]['subsources']
-				return self.lSource[index]['subsources'][ssIndex]
+				return self.lSource[index]['subsources'][index_subsource]
 
 	def set_available_kw( self, key, value, available ):
 		"""
