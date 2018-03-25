@@ -33,20 +33,21 @@ class sourceClass():
 
 	def check( self, sourceCtrl, subSourceIx=None  ):
 		self.__printer('Checking availability...')
-		
+		subsource_availability_changes = []		# list of changes
+
+		ix = sourceCtrl.index('name','stream')	# source index
+		stream_source = sourceCtrl.source(ix)		
+		original_availability = stream_source['available']
+
 		#TODO!!
 		sDirSave = "/mnt/PIHU_CONFIG"
-
-		# Default to not available
-		#arSourceAvailable[5]=0
-		#Sources.setAvailable('name','strea',False)
 		
 		# Test internet connection
 		connected = internet()
 		if not connected:
 			self.__printer(' > Internet: [FAIL]')
 			self.__printer(' > Marking source not available')
-			return False
+			new_availability = False
 		else:
 			self.__printer(' > Internet: [OK]')
 
@@ -57,7 +58,7 @@ class sourceClass():
 		else:
 			self.__printer(' > Stream URL\'s: File not found [FAIL]')
 			self.__printer(' > Marking source not available')
-			return False
+			new_availability = False
 
 		# Check if at least one stream is good
 		self.__printer('Checking to see we have at least one valid stream')
@@ -71,11 +72,16 @@ class sourceClass():
 						#arSourceAvailable[5]=1
 						#Sources.setAvailable('name','stream',True)
 						#break
-						return True
+						new_availability = True
 					else:
 						self.__printer(' > Stream [FAIL]: {0}'.format(uri))
-						return False
+						new_availability = False
 
+		if new_availability is not None and new_availability != original_availability:
+			sourceCtrl.set_available( ix, new_availability, ssIx )
+			subsource_availability_changes.append({"index":ix,"available":new_availability})
+
+		return subsource_availability_changes
 	
 	def play( self, sourceCtrl, subSourceIx=None ):
 		self.__printer('Start playing')

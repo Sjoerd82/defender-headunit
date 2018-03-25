@@ -92,21 +92,20 @@ class sourceClass():
 		return True
 
 	def check( self, sourceCtrl, subSourceIx=None  ):
-		self.__printer('Checking availability...', level=15)
+		self.__printer('Checking availability...')
 		
 		ix = sourceCtrl.index('name','smb')
-		mountpoints = []
-		locations = []
-		foundStuff = 0
+		locations = []							# list of tuples; index: 0 = mountpoint, 1 = mpd dir, 2 = availability.
+		subsource_availability_changes = []		# list of changes
 
 		if subSourceIx == None:
 			subsources = sourceCtrl.subsource_all( ix )
 			for subsource in subsources:
-				locations.append( (subsource['mountpoint'], subsource['mpd_dir']) )
+				locations.append( (subsource['mountpoint'], subsource['mpd_dir'], subsource['available']) )
 			ssIx = 0
 		else:
 			subsource = sourceCtrl.subsource( ix, subSourceIx )
-			locations.append( (subsource['mountpoint'], subsource['mpd_dir']) )
+			locations.append( (subsource['mountpoint'], subsource['mpd_dir'], subsource['available']) )
 			ssIx = subSourceIx
 
 		# check mountpoint(s)
@@ -115,10 +114,13 @@ class sourceClass():
 			# get mountpoint and mpd dir
 			mountpoint = location[0]
 			mpd_dir = location[1]
-			
+			original_availability = location[2]
+			new_availability = None
+
 			self.__printer('SMB folder: {0}'.format(mountpoint))
 			if not os.listdir(mountpoint):
 				self.__printer(" > SMB directory is empty.",LL_WARNING,True)
+				new_availability = False
 			else:
 				self.__printer(" > SMB directory present and has files.",LL_INFO,True)
 				
@@ -127,13 +129,17 @@ class sourceClass():
 					self.mpc.update( mpd_dir )
 					if not self.mpc.dbCheckDirectory( mpd_dir ):
 						self.__printer(" > Nothing to play marking unavailable...")
+						new_availability = False
 					else:
 						self.__printer(" > Music found after updating")
-						sourceCtrl.set_available( ix, True, ssIx )
-						foundStuff += 1
+						new_availability = True
 				else:
-					sourceCtrl.set_available( ix, True, ssIx )
-					foundStuff += 1
+					new_availability = True
+					
+			if new_availability is not None and new_availability != original_availability:
+				sourceCtrl.set_available( ix, new_availability, ssIx )
+				subsource_availability_changes.append({"index":ix,"subindex":ssIx,"available":new_availability})
+
 			ssIx+=1
 		
 	
@@ -159,10 +165,7 @@ class sourceClass():
 		#arSourceAvailable[6]=1
 		#Sources.setAvailable('name','smb', True)
 
-		if foundStuff > 0:
-			return True
-		else:
-			return False
+		return subsource_availability_changes
 
 		
 	def play( self, sourceCtrl, position=None, resume={} ):

@@ -32,7 +32,12 @@ class sourceClass():
 		return True
 
 	def check( self, sourceCtrl, subSourceIx=None  ):
-		"""	Returns a availability structure containing changes
+		"""	Check source
+		
+			Checks to see if FM is available (SUBSOURCE INDEX will be ignored)
+			Returns a list with dict containing changes in availability
+			
+			TODO: Will now simply return TRUE.
 		"""
 		self.__printer('CHECK availability...')
 

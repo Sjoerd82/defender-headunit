@@ -77,34 +77,19 @@ class sourceClass():
 	#def locmus_check( sourceCtrl, mountpoint=None ):
 	
 	def check( self, sourceCtrl, subSourceIx=None  ):
-		"""	Check
-			if subsource index given, will only check mountpoint of that subsource index.
-			
-			Returns TRUE, if subsource is available or if any subsource is available, when only provided with a source index.
-			Returns FALSE, if subsource is NOT available or if NONE subsource is available, when only provided with a source index.
-
-			User will have to check ['available']-fields himself to know which specific subsources are (un)available
-			
-		OR:
+		"""	Check source
 		
-			Returns TRUE, if a change in availability has occurred
-			Returns None, if no change
-			
-		OR:
+			Checks all configured mountpoints
+			if SUBSOURCE INDEX given, will only check mountpoint of that subsource index.
+			Returns a list with dict containing changed subsources
 		
-			Returns a list of changed subsource indexes (True or source index when no subsources)
-			
-		OR
-			
-		->	Return a dict of changed subsources, including availability
-			
+			TODO: check if new mountpoints were added in the configuration.
 		"""
-		self.__printer('Checking availability...', level=15)
-	
-		subsource_availability_changes = []
+		self.__printer('Checking availability...')
 	
 		ix = sourceCtrl.index('name','locmus')	# source index
-		locations = []								# list of tuples; index: 0 = mountpoint, 1 = mpd dir.
+		locations = []							# list of tuples; index: 0 = mountpoint, 1 = mpd dir, 2 = availability.
+		subsource_availability_changes = []		# list of changes
 						
 		if subSourceIx is None:
 			subsources = sourceCtrl.subsource_all( ix )
