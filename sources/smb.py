@@ -95,6 +95,10 @@ class sourceClass():
 		self.__printer('Checking availability...')
 		
 		ix = sourceCtrl.index('name','smb')
+		smb_source = sourceCtrl.source(ix)		
+		original_availability_pri = smb_source['available']
+
+		
 		locations = []							# list of tuples; index: 0 = mountpoint, 1 = mpd dir, 2 = availability.
 		subsource_availability_changes = []		# list of changes
 
@@ -108,9 +112,12 @@ class sourceClass():
 			locations.append( (subsource['mountpoint'], subsource['mpd_dir'], subsource['available']) )
 			ssIx = subSourceIx
 
-		print locations
+		# stop, if nothing to check
 		if not locations:
-			self.__printer('Nothing to check',LL_WARNING)
+			self.__printer('No network shares available',LL_WARNING)
+			if original_availability_pri not is False:
+				subsource_availability_changes.append({"index":ix,"available":False})
+			return subsource_availability_changes
 		
 		# check mountpoint(s)
 		for location in locations:
