@@ -446,11 +446,13 @@ def handle_path_source(path,cmd,args):
 		elif len(args) == 2:
 			ret = sc_sources.source_check(args[0],args[1])
 
-		if ret != False:
+		#if ret != False:
+		if type(ret) == 'list' and ret:
 			
 			printSummary(sc_sources)		# LL_DEBUG
 			
 			# TODO: MOVE "check_all" LOOP HERE SO WE CAN SEND OUT EVENTS EARLIER !
+			# TODO-INSTEAD: local def function check_all()
 			
 			for change in ret:
 				print "CHANGED: {0}".format(change)
