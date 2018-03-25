@@ -442,7 +442,7 @@ def handle_path_source(path,cmd,args):
 		if not args:
 			ret = sc_sources.source_check()
 			print "XXYYZZ"
-			print type(ret)
+			#print type(ret)
 			print ret
 		elif len(args) == 1:
 			ret = sc_sources.source_check(args[0])
@@ -450,7 +450,7 @@ def handle_path_source(path,cmd,args):
 			ret = sc_sources.source_check(args[0],args[1])
 
 		#if ret != False:
-		if type(ret) == 'list' and ret:
+		if type(ret) == 'list': #and ret:
 			
 			printSummary(sc_sources)		# LL_DEBUG
 			
