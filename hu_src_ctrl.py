@@ -107,6 +107,19 @@ def handle_path_source(path,cmd,args):
 	# remove base path
 	del path[0]
 
+	def validate_args(args, min_args, max_args):
+	
+		if len(args) < min_args:
+			printer('Function arguments missing', level=LL_ERROR)
+			return False
+			
+		if len(args) > max_args:
+			printer('More than {0} argument(s) given, ignoring extra arguments'.format(max_args), level=LL_WARNING)
+			#args = args[:max_args]
+			
+		return True
+	
+	
 	def get_data(ret,eventpath=None):
 	
 		data = {}
@@ -144,6 +157,7 @@ def handle_path_source(path,cmd,args):
 
 		return data
 	
+	# -------------------------------------------------------------------------
 	
 	# Sub Functions must return None (invalid params) or a {data} object.
 	def get_primary(args):
@@ -163,11 +177,10 @@ def handle_path_source(path,cmd,args):
 				200		OK
 				500		Error
 		"""
-		max_args = 1
-		if len(args) > max_args:
-			printer('More than {0} argument(s) given, ignoring extra arguments'.format(max_args), level=LL_WARNING)
-			args = args[:max_args]
-
+		valid = validate_args(args,0,1)
+		if not valid:
+			return None
+		
 		if not args:
 			ret = sc_sources.source_all()
 		elif len(args) == 1:
@@ -190,14 +203,9 @@ def handle_path_source(path,cmd,args):
 				200		OK
 				500		Error
 		"""
-		if not args:
-			printer('Function arguments missing', level=LL_ERROR)
+		valid = validate_args(args,0,3)
+		if not valid:
 			return None
-
-		max_args = 3
-		if len(args) > max_args:
-			printer('More than {0} argument(s) given, ignoring extra arguments'.format(max_args), level=LL_WARNING)
-			args = args[:max_args]
 			
 		elif len(args) == 1:
 			ret = sc_sources.select(args[0])
@@ -222,18 +230,7 @@ def handle_path_source(path,cmd,args):
 		"""
 		#TODO
 		return None
-
-		if not args:
-			printer('Function arguments missing', level=LL_ERROR)
-			return None
-
-		max_args = 1
-		if len(args) > max_args:
-			printer('More than {0} argument(s) given, ignoring extra arguments'.format(max_args), level=LL_WARNING)
-			args = args[:max_args]
-
-		ret = sc_sources.add(args[0])
-		
+		ret = sc_sources.add(args[0])	
 		data = get_data(ret)
 		return data
 		
@@ -248,6 +245,11 @@ def handle_path_source(path,cmd,args):
 				200		OK
 				500		Error
 		"""
+		
+		valid = validate_args(args,0,1)
+		if not valid:
+			return None
+
 		if not args:
 			ret = sc_sources.rem()
 		elif len(args) == 1:
@@ -272,7 +274,10 @@ def handle_path_source(path,cmd,args):
 				200		OK
 				500		Error
 		"""
-		
+		valid = validate_args(args,0,2)
+		if not valid:
+			return None
+
 		if not args:
 			ret = sc_sources.subsource_all()
 		elif len(args) == 1:
@@ -297,19 +302,11 @@ def handle_path_source(path,cmd,args):
 				200		OK
 				500		Error
 		"""
-		if not args:
-			printer('Function arguments missing', level=LL_ERROR)
+		valid = validate_args(args,1,3)
+		if not valid:
 			return None
-		
-		max_args = 3
-		if len(args) > max_args:
-			printer('More than {0} argument(s) given, ignoring extra arguments'.format(max_args), level=LL_WARNING)
-			args = args[:max_args]
 			
-		elif len(args) == 1:
-			printer('Not enough arguments given. Stopping')
-			return None
-		elif len(args) == 2:
+		if len(args) == 2:
 			ret = sc_sources.select(args[0],args[1])
 		elif len(args) == 3:
 			ret = sc_sources.select(args[0],args[1])
@@ -325,16 +322,24 @@ def handle_path_source(path,cmd,args):
 	def del_subsource(args):
 		""" Remove a subsource
 			Arguments:
-				None:						Remove current subsource
-				source_id, subsource_id		Remove specified subsource
+				None:							Remove current subsource
+				<source_id>, <subsource_id>		Remove specified subsource
 			Return data:
 				Nothing
 			Return codes:
 				200		OK
 				500		Error
 		"""
+		valid = validate_args(args,0,2)
+		if not valid:
+			return None
+
+			
 		if not args:
 			ret = sc_sources.rem_sub()
+		elif len(args) == 1:
+			printer('This function requires an index and subindex', level=LL_ERROR)
+			return None
 		elif len(args) == 2:
 			ret = sc_sources.rem_sub(args[0],args[1])
 		
@@ -355,9 +360,11 @@ def handle_path_source(path,cmd,args):
 				200		OK
 				500		Error
 		"""
-		if not args:
-			pass
-		elif len(args) == 2:
+		valid = validate_args(args,2,3)
+		if not valid:
+			return None
+
+		if len(args) == 2:
 			ret = sc_sources.set_available(args[1],str2bool(args[0]))
 		elif len(args) == 3:
 			ret = sc_sources.set_available(args[1],str2bool(args[0]),args[2])
@@ -378,6 +385,10 @@ def handle_path_source(path,cmd,args):
 				200		OK
 				500		Error
 		"""
+		valid = validate_args(args,0,0)
+		if not valid:
+			return None
+
 		ret = sc_sources.select_next()
 
 		# LL_DEBUG
@@ -396,6 +407,10 @@ def handle_path_source(path,cmd,args):
 				200		OK
 				500		Error
 		"""
+		valid = validate_args(args,0,0)
+		if not valid:
+			return None
+
 		ret = sc_sources.select_prev()
 
 		# LL_DEBUG
@@ -416,6 +431,10 @@ def handle_path_source(path,cmd,args):
 				200		OK
 				500		Error
 		"""
+		valid = validate_args(args,0,2)
+		if not valid:
+			return None
+
 		if not args:
 			ret = sc_sources.source_check()
 		elif len(args) == 1:
