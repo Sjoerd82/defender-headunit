@@ -694,6 +694,7 @@ def check_all_sources_send_event():
 		if check_result:
 			#for result in check_result:
 			messaging.publish_command('/events/source/available','DATA',check_result)
+		i+=1
 
 
 
