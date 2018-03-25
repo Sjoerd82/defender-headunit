@@ -441,6 +441,9 @@ def handle_path_source(path,cmd,args):
 
 		if not args:
 			ret = sc_sources.source_check()
+			print "XXYYZZ"
+			print type(ret)
+			print ret
 		elif len(args) == 1:
 			ret = sc_sources.source_check(args[0])
 		elif len(args) == 2:
@@ -684,6 +687,9 @@ def init_logging_f( logdir, logfile, runcount ):
 
 """
 	
+#def check_source():
+
+
 # print a source summary
 def printSummary(Sources):
 	#global Sources

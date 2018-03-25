@@ -792,6 +792,8 @@ class SourceController():
 				else:
 					#checked_source_is_available = self.lSource[i]['available']
 					check_result = self.lSource[i]['sourceClass'].check(self)	#returns a list of dicts with changes
+					print "AAABBBCCCC"
+					print check_result
 					changed_sources.append(check_result)
 										
 					#if checked_source_is_available != check_result:
