@@ -779,7 +779,7 @@ class SourceController():
 			self.__printer('Checking all sources') #LL_DEBUG
 			i=0
 			for source in self.lSource:
-				self.__printer('Checking: {0}'.format(i) #LL_DEBUG
+				self.__printer('Checking: {0}'.format(i)) #LL_DEBUG
 				if 'sourceClass' not in self.lSource[i]:
 					self.__printer('has no sourceClass: {0}'.format(self.lSource[i]['name']))
 				else:
