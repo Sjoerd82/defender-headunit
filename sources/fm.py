@@ -42,7 +42,7 @@ class sourceClass():
 		original_availability = fm_source['available']
 		
 		if new_availability is not None and new_availability != original_availability:
-			sourceCtrl.set_available( ix, new_availability, ssIx )
+			sourceCtrl.set_available( ix, new_availability )
 			subsource_availability_changes.append({"index":ix,"available":new_availability})
 		
 		return True
