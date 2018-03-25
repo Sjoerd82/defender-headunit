@@ -120,7 +120,7 @@ def handle_path_source(path,cmd,args):
 		return True
 	
 	
-	def get_data(ret,eventpath=None):
+	def get_data(ret,returndata=False,eventpath=None):
 	
 		data = {}
 		
@@ -155,6 +155,9 @@ def handle_path_source(path,cmd,args):
 			if eventpath == '/events/source/available':
 				data['payload'] = None
 
+		if not returndata:
+			data['payload'] = None
+			
 		return data
 	
 	# -------------------------------------------------------------------------
@@ -186,7 +189,7 @@ def handle_path_source(path,cmd,args):
 		elif len(args) == 1:
 			ret = sc_sources.source(args[0])
 		
-		data = get_data(ret)
+		data = get_data(ret,True)
 		return data
 
 	def put_primary(args):
@@ -215,7 +218,7 @@ def handle_path_source(path,cmd,args):
 			ret = sc_sources.select(args[0],args[1])
 			#TODO: not implemented
 
-		data = get_data(ret,'/events/source/active')
+		data = get_data(ret,False,'/events/source/active')
 		return data
 	
 	def post_primary(args):
@@ -285,7 +288,7 @@ def handle_path_source(path,cmd,args):
 		elif len(args) == 2:
 			ret = sc_sources.subsource(args[0],args[1])
 
-		data = get_data(ret)
+		data = get_data(ret,True)
 		return data
 
 	def put_subsource(args):
@@ -312,7 +315,7 @@ def handle_path_source(path,cmd,args):
 			ret = sc_sources.select(args[0],args[1])
 			#TODO: not implemented
 
-		data = get_data(ret,'/events/source/active')
+		data = get_data(ret,False,'/events/source/active')
 		return data
 
 	def post_subsource(args):
@@ -372,7 +375,7 @@ def handle_path_source(path,cmd,args):
 		# LL_DEBUG
 		printSummary(sc_sources)
 
-		data = get_data(ret,'/events/source/available')
+		data = get_data(ret,False,'/events/source/available')
 		return data
 
 	def put_next(args):
@@ -394,7 +397,7 @@ def handle_path_source(path,cmd,args):
 		# LL_DEBUG
 		printSummary(sc_sources)
 
-		data = get_data(ret,'/events/source/active')
+		data = get_data(ret,False,'/events/source/active')
 		return data
 	
 	def put_prev(args):
@@ -416,7 +419,7 @@ def handle_path_source(path,cmd,args):
 		# LL_DEBUG
 		printSummary(sc_sources)
 
-		data = get_data(ret,'/events/source/active')
+		data = get_data(ret,False,'/events/source/active')
 		return data
 		
 	def put_check(args):
@@ -445,7 +448,7 @@ def handle_path_source(path,cmd,args):
 		# LL_DEBUG
 		printSummary(sc_sources)
 
-		data = get_data(ret,'/events/source/available')
+		data = get_data(ret,False,'/events/source/available')
 		return data
 
 	# -------------------------------------------------------------------------
