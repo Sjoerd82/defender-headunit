@@ -692,8 +692,8 @@ def check_all_sources_send_event():
 		check_result = sc_sources.source_check(i)
 		#check_result = source['sourceClass'].check(self)	#returns a list of dicts with changes
 		if check_result:
-			#for result in check_result:
-			messaging.publish_command('/events/source/available','DATA',check_result)
+			for result in check_result:
+				messaging.publish_command('/events/source/available','DATA',result)
 		i+=1
 
 
