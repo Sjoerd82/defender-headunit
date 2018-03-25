@@ -586,16 +586,31 @@ class SourceController():
 			del composite_current_source['sourceClass']		# what did we use this for again??? #TODO
 			return composite_current_source
 	
-	def subsource_all( self, index ):
+	def subsource_all( self, index=None ):
 		""" Return all subsources for given index
 			TODO: check if index is valid
 		"""
-		return self.lSource[index]['subsources']
+		if index:
+			index = self.__check_index(index,'index','set_available')
+		else:
+			index = self.iCurrentSource[0]
+		
+		if not index:
+			self.__printer('Could not determine index')
+			return None
+
+		if 'subsources' in self.lSource[index]:
+			return self.lSource[index]['subsources']
+			
 
 	def subsource( self, index, ssIndex ):
 		""" Return subsource by given index
 			TODO: check if indexes are valid
 		"""
+		index = int(index)
+		index_subsource = int(index_subsource)
+		# TODO
+		
 		if 'subsources' in self.lSource[index]:
 			#print len(self.lSource[index]['subsources'])
 			if len(self.lSource[index]['subsources']) > 0:

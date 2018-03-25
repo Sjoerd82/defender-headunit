@@ -254,11 +254,24 @@ def handle_path_source(path,cmd,args):
 	def get_subsource(args):
 		"""
 			Arguments:
-			Return dat:
+				None						Return list of sub-sources for current index
+				source_id					Return list of sub-sources for specified index
+				source_id, subsource_id		Return specified subsource
+			Return data:
+				List of sub-sources
+				Sub-source
 			Return codes:
 				200		OK
 				500		Error
 		"""
+		
+		if not args:
+			ret = sc_sources.subsource_all()
+		elif len(args) == 1:
+			ret = sc_sources.subsource_all(args[0])
+		elif len(args) == 2:
+			ret = sc_sources.subsource(args[0],args[1])
+
 		if ret:
 			retcode = 200
 		else:
