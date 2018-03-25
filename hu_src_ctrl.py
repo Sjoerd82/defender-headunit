@@ -446,14 +446,31 @@ def handle_path_source(path,cmd,args):
 		elif len(args) == 2:
 			ret = sc_sources.source_check(args[0],args[1])
 
-		# ret is a list of indexes	
+		# ret is a list of a list of indexes
+		print ret
+		
 		if ret:
-			# LL_DEBUG
-			printSummary(sc_sources)
 			
-			for index in ret:
-				available_source = sc_sources.source(index)
-				messaging.publish_command('/events/source/available','DATA',available_source)
+			printSummary(sc_sources)		# LL_DEBUG
+				
+			for indexes in ret:
+				print "FOR INDEX IN RET: index={0}".format(indexes)	# [1,0], [1]
+				index = indexes[0]
+				if len(indexes) > 1:
+					for subindex in indexes[1:]:
+						print "FOR SUBINDEX IN {0}".format(indexes[1:])
+						subsource = sc_sources.subsource(index,subindex)
+						available_source = {}
+						available_source['index'] = index
+						available_source['subindex'] = subindex
+						available_source['available'] = subsource['available']
+						messaging.publish_command('/events/source/available','DATA',available_source)
+				else:
+					source = sc_sources.source(index)
+					available_source = {}
+					available_source['index'] = index
+					available_source['available'] = source['available']
+					messaging.publish_command('/events/source/available','DATA',available_source)
 					
 		ret = True	
 		data = get_data(ret)

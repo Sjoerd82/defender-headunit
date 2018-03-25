@@ -33,7 +33,9 @@
 #	composite			Returns composite source (source+subsource)
 #	select				Set source
 #	select_next			Next source
+#>>>select_next_pri		Next primary source (skipping over sub-sources)
 #	select_prev			Prev source
+#>>>select_prev_pri		Prev primary source (skipping over sub-sources)
 #
 #   SOURCE PROXY FUNCTIONS:
 #	Executes functions in the source class
@@ -758,7 +760,13 @@ class SourceController():
 			if ONLY a SOURCE INDEX is given, it will check the source and if it's a template will also check all subsources
 			if BOTH INDEXES are given will check the specified sub-source
 			
-			Returns a list of sources that became available or unavailable or None if no changes
+		X	Returns a list of sources that became available or unavailable or None if no changes
+		X	[ 1,3,6 ]
+		
+			Returns a list of (sub)sources that became available or unavailable or None if no changes
+			[ [1],[3],[6] ]			<- only primary sources
+			[ [1,0] [3] [6,1] ]		<- combination
+			[ [1,0] ]				<- only subsource 0 of source 1
 			
 			(Some soureces may themselves also set the available flag, but we do it here too....)
 		"""
@@ -805,6 +813,13 @@ class SourceController():
 				
 				checked_source_is_available = self.lSource[index]['subsources'][index_subsource]['available']
 				check_result = self.lSource[index]['sourceClass'].check(self,index_subsource)
+				
+				if checked_source_is_available != check_result:
+					self.lSource[index]['available'] = check_result
+					changed_sources.append( [index,index_subsource] )
+					return changed_sources
+				else:
+					return None
 						
 			# Check specified index
 			elif index is not None:
@@ -815,7 +830,7 @@ class SourceController():
 				
 			if checked_source_is_available != check_result:
 				self.lSource[index]['available'] = check_result
-				changed_sources.append(index)
+				changed_sources.append( [index] )
 				return changed_sources
 			else:
 				return None
