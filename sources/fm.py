@@ -32,6 +32,8 @@ class sourceClass():
 		return True
 
 	def check( self, sourceCtrl, subSourceIx=None  ):
+		"""	Returns a availability structure containing changes
+		"""
 		self.__printer('CHECK availability...')
 
 		subsource_availability_changes = []
@@ -45,7 +47,7 @@ class sourceClass():
 			sourceCtrl.set_available( ix, new_availability )
 			subsource_availability_changes.append({"index":ix,"available":new_availability})
 		
-		return True
+		return subsource_availability_changes
 		
 	def play( self, sourceCtrl, subSourceIx=None ):
 		self.__printer('Start playing FM radio...')
