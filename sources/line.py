@@ -39,7 +39,7 @@ class sourceClass():
 		subsource_availability_changes = []
 		new_availability = True
 		
-		ix = sourceCtrl.index('name','line')	# source index
+		ix = sourceCtrl.index('name','alsa')	# source index
 		line_source = sourceCtrl.source(ix)		
 		original_availability = line_source['available']
 		

@@ -814,7 +814,7 @@ def load_sources( plugindir ):
 	
 
 def idle_message_receiver():
-	print "DEBUG: idle_msg_receiver()"
+	#print "DEBUG: idle_msg_receiver()"
 	
 	def dispatcher(path, command, arguments):
 		handler_function = 'handle_path_' + path[0]
@@ -835,7 +835,7 @@ def idle_message_receiver():
 		retval = dispatcher(parsed_msg['path'],parsed_msg['cmd'],parsed_msg['args'])
 		
 		if parsed_msg['resp_path']:
-			print "DEBUG: Resp Path present.. returing message.."
+			#print "DEBUG: Resp Path present.. returing message.."
 			messaging.publish_command(parsed_msg['resp_path'],'DATA',retval)
 		
 	
