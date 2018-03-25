@@ -814,14 +814,16 @@ class SourceController():
 				checked_source_is_available = self.lSource[index]['subsources'][index_subsource]['available']
 				check_result = self.lSource[index]['sourceClass'].check(self,index_subsource)	#returns a list of dicts with changes
 				
-				if len(check_results) > 0
+				return check_result
+				
+				#if len(check_result) > 0
 				
 					#if checked_source_is_available != check_result:
 					#	self.lSource[index]['available'] = check_result
 					#	changed_sources.append( [index,index_subsource] )
 					#	return changed_sources
-				else:
-					return None
+				#else:
+				#	return None
 						
 			# Check specified index
 			elif index is not None:
