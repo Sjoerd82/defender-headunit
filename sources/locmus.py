@@ -75,14 +75,18 @@ class sourceClass():
 	# Source Check: Return True/False (available/not available)
 	# Optionally, provide list of mountpoint(s) to check
 	#def locmus_check( sourceCtrl, mountpoint=None ):
+	
 	def check( self, sourceCtrl, subSourceIx=None  ):
+		"""	Check
+			if subsource index given, will only check mountpoint of that subsource index
+		"""
 		self.__printer('Checking availability...', level=15)
 	
 		ix = sourceCtrl.index('name','locmus')	# source index
 		locations = []								# list of tuples; index: 0 = mountpoint, 1 = mpd dir.
 		foundStuff = 0								#
 						
-		if subSourceIx == None:
+		if subSourceIx is None:
 			subsources = sourceCtrl.subsource_all( ix )
 			for subsource in subsources:
 				locations.append( (subsource['mountpoint'], subsource['mpd_dir']) )

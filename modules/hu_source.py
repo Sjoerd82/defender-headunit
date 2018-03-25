@@ -99,12 +99,54 @@ class SourceController():
 		if index_name == 'index' and index >= len(self.lSource):
 			self.__printer('ERROR {0}: {1} ({2}) out of bounds'.format(function_name, index_name, index),LL_ERROR)
 			return None
-		# TODO, check subsource index !!
-		#if index_name = 'index_subsource' and index >= len(self.lSource):
-		#	self.__printer('ERROR {0}: {1} ({2}) out of bounds'.format(function_name, index_name, index),LL_ERROR)
-		#	return None
 		return index
 
+	def __check_index2(self, test_index):
+		"""	Check if a given index is valid
+			Returns False if not valid
+			If provided None, will return None
+			Returns the index as int, if valid
+		"""
+		if test_index is None:
+			return None
+		else:
+			index = int(test_index)
+			
+		if index >= len(self.lSource):
+			self.__printer('ERROR: subsource index ({0}) out of bounds'.format(index),LL_ERROR)
+			return False
+		else:
+			return index
+	
+	def __check_subindex(self, test_index, test_index_subsource):
+		"""	Check if a given subsource index is valid
+			Returns False if not valid
+			If provided None, will return None
+			Returns the subsource index as int, if valid
+		"""
+	
+		if test_index_subsource is None:
+			return None
+		else:
+			index_subsource = int(test_index_subsource)
+		
+		# index MUST be given, if a subsource_index is given
+		if test_index is None:
+			return False
+		else:
+			index = int(test_index)
+
+		# test if the soures has subsources
+		if not 'subsources' in self.lSource[index]:
+			self.__printer('ERROR: index {0} has no subsources'.format(index),LL_ERROR)	
+			return False
+		
+		# test if the subsource_index exists:
+		if index_subsource >= len(self.lSource[index]):
+			self.__printer('ERROR: subsource index ({0}) out of bounds'.format(index_subsource),LL_ERROR)
+			return False
+		else:
+			return index_subsource
 		
 	def add( self, source_config ):
 		""" Add a Source
@@ -709,39 +751,35 @@ class SourceController():
 		#self.__printer('INIT: {0}'.format(index)) #LL_DEBUG
 		checkResult = self.lSource[index]['sourceClass'].init(self)
 
-	def source_check( self, index=None, subSourceIx=None ):
-		""" Execute a check() for given source and sets availability accordingly
+	def source_check( self, index=None, index_subsource=None ):
+		""" Execute a check() for given source or subsource and sets availability accordingly
+			
+			if NO INDEXES are given, all sources and sub-sources will be checked.
+			if ONLY a SOURCE INDEX is given, it will check the source and if it's a template will also check all subsources
+			if BOTH INDEXES are given will check the specified sub-source
+			
 			Returns a list of sources that became available or unavailable or None if no changes
 			
-			Some soureces may themselves also set the available flag, but we do it here too....
+			(Some soureces may themselves also set the available flag, but we do it here too....)
 		"""
-		if index:
-			index = int(index) #TODO
-		if subSourceIx:
-			subSourceIx = int(subSourceIx) #TODO
+		index = self.__check_index2(index)
+		if not index:
+			print "DEBUG: invalid index"
+			return False
+		
+		index_subsource = self.__check_subindex(index,index_subsource)
+		if not index_subsource:
+			print "DEBUG: invalid subindex"
+			return False
 		
 		changed_sources = []
 		
-		# Check specified index
-		if index is not None:
-		
-			self.__printer('Checking index/subindex: {0}/{1}'.format(index,subSourceIx)) #LL_DEBUG
-			
-			checked_source_is_available = self.lSource[index]['available']
-			check_result = self.lSource[index]['sourceClass'].check(self)
-			
-			if checked_source_is_available != check_result:
-				self.lSource[index]['available'] = check_result
-				changed_sources.append(index)
-				return changed_sources
-			else:
-				return None
-				
 		# Check all indexes
-		else:
+		if index is None and index_subsource is None:
+			self.__printer('Checking all sources') #LL_DEBUG
 			i=0
 			for source in self.lSource:
-				self.__printer('CHECK: {0}/{1}'.format(i,'-')) #LL_DEBUG
+				self.__printer('Checking: {0}'.format(i) #LL_DEBUG
 				if 'sourceClass' not in self.lSource[i]:
 					self.__printer('has no sourceClass: {0}'.format(self.lSource[i]['name']))
 				else:
@@ -758,6 +796,31 @@ class SourceController():
 				return changed_sources
 			else:
 				return None
+				
+		else:
+			# Check specified subindex
+			if index_subsource is not None:	
+				self.__printer('Checking index/subindex: {0}/{1}'.format(index,index_subsource)) #LL_DEBUG
+				
+				checked_source_is_available = self.lSource[index]['subsources'][index_subsource]['available']
+				check_result = self.lSource[index]['sourceClass'].check(self,index_subsource)
+						
+			# Check specified index
+			elif index is not None:
+				self.__printer('Checking index: {0}'.format(index)) #LL_DEBUG
+				
+				checked_source_is_available = self.lSource[index]['available']
+				check_result = self.lSource[index]['sourceClass'].check(self,index_subsource)
+				
+			if checked_source_is_available != check_result:
+				self.lSource[index]['available'] = check_result
+				changed_sources.append(index)
+				return changed_sources
+			else:
+				return None
+
+
+				
 
 	#TODO - INVESTIGATE
 	def sourceAddSub( self, index, parameters ):
