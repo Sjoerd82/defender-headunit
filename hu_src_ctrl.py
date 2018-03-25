@@ -460,7 +460,7 @@ def handle_path_source(path,cmd,args):
 				messaging.publish_command('/events/source/available','DATA',available_source)
 					
 		ret = True	
-		data = get_data(ret):
+		data = get_data(ret)
 		return data
 
 	# -------------------------------------------------------------------------
