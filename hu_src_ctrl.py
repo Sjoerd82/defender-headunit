@@ -200,6 +200,9 @@ def handle_path_source(path,cmd,args):
 				200		OK
 				500		Error
 		"""
+		#TODO
+		return None
+
 		if not args:
 			printer('Function arguments missing', level=LL_ERROR)
 			return None
@@ -283,40 +286,53 @@ def handle_path_source(path,cmd,args):
 		return data
 
 	def put_subsource(args):
-		"""
+		"""Set active subsource to <subid>. If "P" then also start playing.
+
+			? Starts playback if P is specified, or not (default)
+			? Does not start playback if S specified
+			
 			Arguments:
-			Return dat:
+				<int:source_id>,<int:subsource_id>[,S|P]
+			Return data:
+				Nothing
 			Return codes:
 				200		OK
 				500		Error
 		"""
+		if not args:
+			printer('Function arguments missing', level=LL_ERROR)
+			return None
+		
+		max_args = 3
+		if len(args) > max_args:
+			printer('More than {0} argument(s) given, ignoring extra arguments'.format(max_args), level=LL_WARNING)
+			args = args[:max_args]
+			
+		elif len(args) == 1:
+			printer('Not enough arguments given. Stopping')
+			return None
+		elif len(args) == 2:
+			ret = sc_sources.select(args[0],args[1])
+		elif len(args) == 3:
+			ret = sc_sources.select(args[0],args[1])
+			#TODO: not implemented
+
 		if ret:
 			retcode = 200
+			curr_source = sc_sources.source()
+			settings['source'] = curr_source['name']
+			save_settings()
 		else:
 			retcode = 500
 
 		data={}
 		data['retval'] = retcode
-		data['payload'] = ret
+		data['payload'] = None
 		return data
 
 	def post_subsource(args):
-		"""
-			Arguments:
-			Return dat:
-			Return codes:
-				200		OK
-				500		Error
-		"""
-		if ret:
-			retcode = 200
-		else:
-			retcode = 500
-
-		data={}
-		data['retval'] = retcode
-		data['payload'] = ret
-		return data
+		#TODO
+		return None
 
 	def del_subsource(args):
 		""" Remove a subsource
