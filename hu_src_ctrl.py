@@ -317,16 +317,21 @@ def handle_path_source(path,cmd,args):
 			ret = sc_sources.select(args[0],args[1])
 			#TODO: not implemented
 
+		data={}
+
 		if ret:
-			retcode = 200
 			curr_source = sc_sources.source()
 			settings['source'] = curr_source['name']
 			save_settings()
-		else:
-			retcode = 500
 
-		data={}
-		data['retval'] = retcode
+			data['retval'] = 200
+			data['payload'] = curr_source
+
+			# PUT sends out an /events
+			messaging.publish_command('/events/source/active','DATA',data)
+		else:
+			data['retval'] = 500
+
 		data['payload'] = None
 		return data
 
