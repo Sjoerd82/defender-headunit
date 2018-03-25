@@ -588,18 +588,17 @@ class SourceController():
 	def source( self, index=None ):
 		""" Return source for given index, returns current source, if no index provided
 		"""	
-		
-		if not index:
-			if self.iCurrentSource[0] == None:
+		index = self.__check_index2(index)
+		if index is False:
+			return False
+
+		if index is None:
+			if self.iCurrentSource[0] is None:
 				return None
 			else:
 				return copy.copy(self.lSource[self.iCurrentSource[0]])
 		else:
-			index = self.__check_index(index,'index','source')
-			if index:
-				return copy.copy(self.lSource[index])			
-			else:
-				return None
+			return copy.copy(self.lSource[index])			
 				
 
 	#def get_all_simple( self, index=None ):
