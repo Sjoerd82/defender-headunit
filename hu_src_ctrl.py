@@ -107,8 +107,43 @@ def handle_path_source(path,cmd,args):
 	# remove base path
 	del path[0]
 
-	# Sub Functions must return None (invalid params) or a {data} object.
+	def get_data(ret,eventpath=None,eventdata=None):
 	
+		data = {}
+		
+		if ret is None:
+			data['retval'] = 500
+			data['payload'] = None
+			
+		elif ret is False:
+			data['retval'] = 500
+			data['payload'] = None
+			
+		elif ret is True:
+			data['retval'] = 200
+			data['payload'] = None
+
+		else:
+			data['retval'] = 200
+			data['payload'] = ret
+
+		if eventpath is not None:
+		
+			if eventpath == '/events/source/active' or eventpath == '/events/source/available':
+				curr_source = sc_sources.source()
+				data['payload'] = curr_source
+				messaging.publish_command(eventpath,'DATA',data)
+				
+				settings['source'] = curr_source['name']
+				save_settings()
+				
+			if eventpath == '/events/source/available':
+				data['payload'] = None
+
+		return data
+	
+	
+	# Sub Functions must return None (invalid params) or a {data} object.
 	def get_primary(args):
 		"""	Retrieve Primary Sources
 
@@ -135,15 +170,8 @@ def handle_path_source(path,cmd,args):
 			ret = sc_sources.source_all()
 		elif len(args) == 1:
 			ret = sc_sources.source(args[0])
-			
-		if ret:
-			retcode = 200
-		else:
-			retcode = 500
-				
-		data={}
-		data['retval'] = retcode
-		data['payload'] = ret
+		
+		data = get_data(ret)
 		return data
 
 	def put_primary(args):
@@ -317,6 +345,8 @@ def handle_path_source(path,cmd,args):
 			ret = sc_sources.select(args[0],args[1])
 			#TODO: not implemented
 
+		data = ding(ret,'/events/source/active','source')
+			
 		data={}
 
 		if ret:
