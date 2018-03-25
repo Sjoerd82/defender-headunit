@@ -156,7 +156,7 @@ class sourceClass():
 					else:
 						new_availability = True
 			
-			if new_availability is not None and new_availability != original_availability 
+			if new_availability is not None and new_availability != original_availability:
 				sourceCtrl.set_available( ix, new_availability, ssIx )
 				subsource_availability_changes.append({"index":ix,"subindex":ssIx,"available":new_availability})
 

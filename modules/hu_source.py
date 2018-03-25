@@ -816,7 +816,7 @@ class SourceController():
 				
 				return check_result
 				
-				#if len(check_result) > 0
+				#if len(check_result) > 0:
 				
 					#if checked_source_is_available != check_result:
 					#	self.lSource[index]['available'] = check_result
