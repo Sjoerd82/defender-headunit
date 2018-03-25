@@ -446,10 +446,7 @@ def handle_path_source(path,cmd,args):
 		elif len(args) == 2:
 			ret = sc_sources.source_check(args[0],args[1])
 
-		# ret is a list of a list of indexes
-		print ret
-		
-		if ret:
+		if ret != False:
 			
 			printSummary(sc_sources)		# LL_DEBUG
 			
@@ -485,7 +482,7 @@ def handle_path_source(path,cmd,args):
 					
 			"""
 					
-		ret = True	
+		ret = True
 		data = get_data(ret)
 		return data
 
