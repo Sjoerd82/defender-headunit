@@ -152,9 +152,9 @@ def handle_path_source(path,cmd,args):
 				settings['source'] = curr_source['name']
 				save_settings()
 				
-			if eventpath == '/events/source/available':
-				now_available, now_unavailable = sc_sources.che
-				data['payload'] = None
+			#if eventpath == '/events/source/available':
+			#	now_available, now_unavailable = sc_sources.che
+			#	data['payload'] = None
 
 		if not returndata:
 			data['payload'] = None
