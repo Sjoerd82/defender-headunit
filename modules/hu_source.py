@@ -711,16 +711,30 @@ class SourceController():
 
 	def source_check( self, index=None, subSourceIx=None ):
 		""" Execute a check() for given source and sets availability accordingly
+			Returns a list of sources that became available or unavailable
 		"""
 		if index:
 			index = int(index) #TODO
 		if subSourceIx:
 			subSourceIx = int(subSourceIx) #TODO
 		
+		changed_sources = []
+		
+		# Check specified index
 		if index is not None:
-			self.__printer('CHECK: {0}/{1}'.format(index,subSourceIx)) #LL_DEBUG
-			checkResult = self.lSource[index]['sourceClass'].check(self)
-			return checkResult
+		
+			self.__printer('Checking index/subindex: {0}/{1}'.format(index,subSourceIx)) #LL_DEBUG
+			
+			checked_source_is_available = self.lSource[index]['available']
+			check_result = self.lSource[index]['sourceClass'].check(self)
+			
+			if checked_source_is_available != check_result:
+				changed_sources.append(index)
+				return changed_sources
+			else:
+				return None
+				
+		# Check all indexes
 		else:
 			i=0
 			for source in self.lSource:
@@ -728,8 +742,18 @@ class SourceController():
 				if 'sourceClass' not in self.lSource[i]:
 					self.__printer('has no sourceClass: {0}'.format(self.lSource[i]['name']))
 				else:
-					checkResult = self.lSource[i]['sourceClass'].check(self)
-				i+=1		
+					checked_source_is_available = self.lSource[index]['available']
+					check_result = self.lSource[i]['sourceClass'].check(self)
+					
+					if checked_source_is_available != check_result:
+						changed_sources.append(index)
+						
+				i+=1
+				
+			if changed_sources:
+				return changed_sources
+			else:
+				return None
 
 	#TODO - INVESTIGATE
 	def sourceAddSub( self, index, parameters ):

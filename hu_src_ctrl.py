@@ -144,7 +144,7 @@ def handle_path_source(path,cmd,args):
 		
 			#TODO: AVAILABLE EVENTS FOR EVERY AVAILABLE SOURCE ON CHECK() !!! !!! !!!
 		
-			if eventpath == '/events/source/active' or eventpath == '/events/source/available':
+			if eventpath == '/events/source/active': # or eventpath == '/events/source/available':
 				curr_source = sc_sources.source()
 				data['payload'] = curr_source
 				messaging.publish_command(eventpath,'DATA',data)
@@ -153,6 +153,7 @@ def handle_path_source(path,cmd,args):
 				save_settings()
 				
 			if eventpath == '/events/source/available':
+				now_available, now_unavailable = sc_sources.che
 				data['payload'] = None
 
 		if not returndata:
@@ -445,10 +446,21 @@ def handle_path_source(path,cmd,args):
 		elif len(args) == 2:
 			ret = sc_sources.source_check(args[0],args[1])
 
-		# LL_DEBUG
-		printSummary(sc_sources)
-
-		data = get_data(ret,False,'/events/source/available')
+		# ret is a list of indexes
+			
+		print "!! DEBUG !!"
+		print ret
+		
+		if ret:
+			# LL_DEBUG
+			printSummary(sc_sources)
+			
+			for index in ret:
+				available_source = sc_sources.source(index)
+				messaging.publish_command('/events/source/available','DATA',available_source)
+					
+		ret = True	
+		data = get_data(ret):
 		return data
 
 	# -------------------------------------------------------------------------
