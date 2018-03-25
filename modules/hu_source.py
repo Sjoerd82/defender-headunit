@@ -764,7 +764,8 @@ class SourceController():
 		"""
 		index = self.__check_index2(index)
 		if not index:
-			print "DEBUG: invalid index"
+			print "DEBUG: invalid index: {0}".format(index)
+			print type(index)
 			return False
 		
 		index_subsource = self.__check_subindex(index,index_subsource)
