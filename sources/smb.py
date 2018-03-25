@@ -115,7 +115,7 @@ class sourceClass():
 		# stop, if nothing to check
 		if not locations:
 			self.__printer('No network shares available',LL_WARNING)
-			if original_availability_pri not is False:
+			if original_availability_pri != False:
 				subsource_availability_changes.append({"index":ix,"available":False})
 			return subsource_availability_changes
 		
