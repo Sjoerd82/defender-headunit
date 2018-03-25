@@ -711,7 +711,7 @@ class SourceController():
 
 	def source_check( self, index=None, subSourceIx=None ):
 		""" Execute a check() for given source and sets availability accordingly
-			Returns a list of sources that became available or unavailable
+			Returns a list of sources that became available or unavailable or None if no changes
 		"""
 		if index:
 			index = int(index) #TODO
@@ -742,7 +742,9 @@ class SourceController():
 				if 'sourceClass' not in self.lSource[i]:
 					self.__printer('has no sourceClass: {0}'.format(self.lSource[i]['name']))
 				else:
-					checked_source_is_available = self.lSource[index]['available']
+					print "DEBUG:"
+					print self.lSource[index]
+					checked_source_is_available = False #self.lSource[index]['available']
 					check_result = self.lSource[i]['sourceClass'].check(self)
 					
 					if checked_source_is_available != check_result:
