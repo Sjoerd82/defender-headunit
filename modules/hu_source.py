@@ -139,13 +139,16 @@ class SourceController():
 		else:
 			index = int(test_index)
 
+		print "DEBUG AA"
+		print self.lSource[index]
 		# test if the soures has subsources
 		if not 'subsources' in self.lSource[index]:
 			self.__printer('ERROR: index {0} has no subsources'.format(index),LL_ERROR)	
 			return False
-		
+
+		print "DEBUG BB"
 		# test if the subsource_index exists:
-		if index_subsource >= len(self.lSource[index]):
+		if index_subsource >= len(self.lSource[index]['subsources']):
 			self.__printer('ERROR: subsource index ({0}) out of bounds'.format(index_subsource),LL_ERROR)
 			return False
 		else:
