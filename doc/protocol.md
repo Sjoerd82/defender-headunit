@@ -59,6 +59,7 @@ Structure | Value
 {device} | [device](#device)
 {mode} | [mode](#mode)
 {timer} | [timer](#timer)
+{available} | [available](#available)
 
 ### {int}:
 Integer value
@@ -239,5 +240,22 @@ Example:
 ```
 {
     "timer_sec": "60"
+}
+```
+
+### {available}
+
+Field | Value
+--- | ---
+`index` | Source index
+`subindex` | Sub-Source index, will be ommited if not a sub-source
+`availability` | True|False
+
+Example:
+```
+{
+  "index":1,
+  "sub_index":0,
+  "available":"True"
 }
 ```

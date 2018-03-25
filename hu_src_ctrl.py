@@ -100,25 +100,24 @@ def process_queue():
 	return True
 
 
+def validate_args(args, min_args, max_args):
+
+	if len(args) < min_args:
+		printer('Function arguments missing', level=LL_ERROR)
+		return False
+		
+	if len(args) > max_args:
+		printer('More than {0} argument(s) given, ignoring extra arguments'.format(max_args), level=LL_WARNING)
+		#args = args[:max_args]
+		
+	return True
+	
 def handle_path_source(path,cmd,args):
 
 	base_path = 'source'
 
 	# remove base path
 	del path[0]
-
-	def validate_args(args, min_args, max_args):
-	
-		if len(args) < min_args:
-			printer('Function arguments missing', level=LL_ERROR)
-			return False
-			
-		if len(args) > max_args:
-			printer('More than {0} argument(s) given, ignoring extra arguments'.format(max_args), level=LL_WARNING)
-			#args = args[:max_args]
-			
-		return True
-	
 	
 	def get_data(ret,returndata=False,eventpath=None):
 	
@@ -510,107 +509,270 @@ def handle_path_player(path,cmd,args):
 	# remove base path
 	del path[0]
 	
-	def get_player(args):
-		#
-		currmedia = source_get_media_details()
-		print currmedia
-		#TODO
-		return True
-	
-	def set_player(args):
-		#
-		return True
-	
 	def get_track(args):
-		#return track
-		currmedia = source_get_media_details()
-		print currmedia
-		#TODO
-		return True
-		
-	def set_track(args):
-		#set playlist position
-		if len(args) == 0:
-			printer('Function arguments missing', level=LL_ERROR)
-			return False
-		elif len(args) > 1:
-			printer('More than one argument given, ignoring', level=LL_WARNING)
-			ret = sc_sources.source_play( args[0] )
-			return ret
-	
-	def get_folders(args):
-		# Retrieve list of folders
-		return True
+		"""	Retrieve Track details
+			Arguments:		None
+			Return data:	Track Details	
+		"""
+		valid = validate_args(args,0,0)
+		if not valid:
+			return None
 
-	def set_pause(args):
+		if not args:
+			ret = sc_sources.source_get_media_details()
+
+		data = get_data(ret,True)
+		return data
+		
+	def put_track(args):
+		"""	Play track at specified playlist position
+			Arguments:		Playlist position
+			Return data:	Nothing
+		"""
+		valid = validate_args(args,1,1)
+		if not valid:
+			return None
+
+		if len(args) == 1:
+			ret = sc_sources.source_play(args[0])
+
+		data = get_data(ret,True)
+		return data
+
+	'''
+	TODO
+	def get_folders(args):
+		"""	Retrieve list of playlist-folder mappings
+			Arguments:		None
+			Return data:	playlist-folder mapping
+		"""
+		valid = validate_args(args,0,0)
+		if not valid:
+			return None
+
+		if not args:
+			ret = sc_sources.()
+
+		data = get_data(ret,True)
+		return data
+	'''
+
+	def put_pause(args):
+		"""	Enable/Disable Pause
+			Arguments:		on|off|toggle
+			Return data:	Nothing
+		"""
+		valid = validate_args(args,1,1)
+		if not valid:
+			return None
+			
+		if len(args) == 1:
+			ret = sc_sources.source_pause(args[0])
+
 		# Set pause: on|off|toggle
-		# TODO: validate input
-		ret = sc_sources.source_pause( args[0] )
-		return ret
+		
+		data = get_data(ret,True)
+		return data
 
 	def get_state(args):
+		"""	Get play state
+			Arguments:		None
+			Return data:	State
+		"""
+		valid = validate_args(args,0,0)
+		if not valid:
+			return None
+
+		if not args:
+			ret = sc_sources.get_state()
+
+			
 		# Get state: play|pause|stop, toggle random
-		state = sc_sources.source_get_details()
-		# TODO: ehmm, do something with the state
-		print state
-		return True
+		data = get_data(ret,True)
+		return data
 
-	def set_state(args):
+
+	'''
+	TODO
+	def put_state(args):
+		"""	Set play state
+			Arguments:		{State}
+			Return data:	Nothing
+		"""
+		valid = validate_args(args,1,1)
+		if not valid:
+			return None
+
+		if len(args) == 1:
+			ret = sc_sources.(args[0])
+
 		# Set state: play|pause|stop, toggle random
-		# TODO
-		if args[0] == "play":
-			ret = sc_sources.source_play()
-			return ret
-		else:
-			print("not supported: {0}".format(args))
-		return True
+		data = get_data(ret,True)
+		return data
 
-	def set_random(args):
+	'''
+
+	def put_random(args):
+		"""	Set random mode
+			Arguments:		on|off|toggle|mode
+			Return data:	Nothing
+		"""
+		valid = validate_args(args,1,1)
+		if not valid:
+			return None
+
 		# Set random on|off|toggle|special modes
-		# TODO: validate input
-		ret = sc_sources.source_random( args[0] )
-		return ret
 
+		if len(args) == 1:
+			ret = sc_sources.source_random(args[0])
+
+		data = get_data(ret,True)
+		return data
+
+
+	'''
+	TODO
 	def get_randommode(args):
-		# Get list of (supported) random modes
-		details = sc_sources.source_get_details()
-		# TODO: get random modes
+		"""	Get list of supported random modes
+			Arguments:		None
+			Return data:	{randommodes}
+		"""
+		valid = validate_args(args,0,0)
+		if not valid:
+			return None
+
+		if not args:
+			ret = sc_sources.()
+
+			# Get list of (supported) random modes
+		data = get_data(ret,True)
+		return data
+	'''
+
+	def put_next(args):
+		"""	Next track
+			Arguments:
+				None		Advance by 1
+				<int>		Advance by <int>
+			Return data:	Nothing
+		"""
+		valid = validate_args(args,0,1)
+		if not valid:
+			return None
+
+		if not args:
+			ret = sc_sources.source_next()
+		elif len(args) == 1:
+			ret = sc_sources.source_next(args[0])
+
+		data = get_data(ret,True)
+		return data
+
+	def put_prev(args):
+		"""	Prev track
+			Arguments:
+				None		Go back 1
+				<int>		Go back <int>
+			Return data:	Nothing
+		"""
+		valid = validate_args(args,0,1)
+		if not valid:
+			return None
+
+		if not args:
+			ret = sc_sources.source_prev()
+		elif len(args) == 1:
+			ret = sc_sources.source_prev(args[0])
+
+		data = get_data(ret,True)
+		return data
+
+	"""
+	def put_nextfolder(args):
 		return True
-
-	def set_next(args):
-		# Next track
-		# TODO: ignoring args, for now...
-		#mpdc.trackNext()
-		sc_sources.source_next()
+		
+	def put_prevfolder(args):
 		return True
+	"""
+	
+	def put_seekfwd(args):
+		"""	Seek FWD
+			Arguments:
+				None		Seek Fwd by ? seconds
+				<int>		Seek Fwd by <int> seconds
+			Return data:	Nothing
+		"""
+		valid = validate_args(args,0,1)
 
-	def set_prev(args):
-		# Prev track
-		# TODO: ignoring args, for now...
-		sc_sources.source_prev()
-		return True
+		if not args:
+			ret = sc_sources.seekfwd()
+		elif len(args) == 1:
+			ret = sc_sources.seekfwd(args[0])
 
-	def set_seekfwd(args):
-		# Seek fwd
-		ret = sc_sources.source_seekfwd()
-		return ret
+		data = get_data(ret,True)
+		return data
 
-	def set_seekrev(args):
-		# Seek rev
-		ret = sc_sources.source_seekprev()
-		return ret
+	def put_seekrev(args):
+		"""	Seek REV
+			Arguments:
+				None		Seek back by ? seconds
+				<int>		Seek back by <int> seconds
+			Return data:	Nothing
+		"""
+		valid = validate_args(args,0,1)
 
+		if not args:
+			ret = sc_sources.seekrev()
+		elif len(args) == 1:
+			ret = sc_sources.seekrev(args[0])
+
+		data = get_data(ret,True)
+		return data
+
+	"""
 	def get_playlist(args):
 		# Retrieve current or specified playlist
 		playlist = sc_sources.source_get_playlist()
 		print playlist
 		# TODO: ehmm, do something with the state
 		return True
+	"""
 
-	def set_update(args):
+	'''
+	TODO
+	def put_update_location(args):
+		"""	Update MPD, preferably set a location
+			Arguments:
+				None		Update entire database
+				<location>	Update <location>
+			Return data:	Nothing
+		"""
+		valid = validate_args(args,0,1)
+
+		if not args:
+			ret = sc_sources.()
+		elif len(args) == 1:
+			ret = sc_sources.(args[0])
+
 		# Update MPD, preferablly specify a location
 		ret = sc_sources.source_update()
 		return ret
+	'''
+	
+	def put_update_source(args):
+		"""	Update MPD for source
+			Arguments:		Source index
+			Return data:	Nothing
+		"""
+		valid = validate_args(args,1,1)
+		
+		if not args:
+			ret = sc_sources.source_update()
+		elif len(args) == 1:
+			ret = sc_sources.source_update(args[0])
+
+		data = get_data(ret,True)
+		return data
 
 	if path:
 		function_to_call = cmd + '_' + '_'.join(path)
