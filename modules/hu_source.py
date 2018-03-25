@@ -729,6 +729,8 @@ class SourceController():
 			check_result = self.lSource[index]['sourceClass'].check(self)
 			
 			if checked_source_is_available != check_result:
+				print "VOOR: {0}".format(checked_source_is_available)
+				print "NA: {0}".format(check_result)
 				changed_sources.append(index)
 				return changed_sources
 			else:

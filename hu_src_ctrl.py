@@ -446,11 +446,7 @@ def handle_path_source(path,cmd,args):
 		elif len(args) == 2:
 			ret = sc_sources.source_check(args[0],args[1])
 
-		# ret is a list of indexes
-			
-		print "!! DEBUG !!"
-		print ret
-		
+		# ret is a list of indexes	
 		if ret:
 			# LL_DEBUG
 			printSummary(sc_sources)
