@@ -603,7 +603,7 @@ class SourceController():
 			return self.lSource[index]['subsources']
 			
 
-	def subsource( self, index, ssIndex ):
+	def subsource( self, index, index_subsource ):
 		""" Return subsource by given index
 			TODO: check if indexes are valid
 		"""
