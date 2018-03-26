@@ -44,6 +44,7 @@ def parse_message(message):
 		#param = cmd_par[1]
 		param = json.loads(cmd_par[1])
 		print param
+		print type(param)
 
 		for parpart in param.split(","):
 			if parpart:
