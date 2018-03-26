@@ -378,10 +378,12 @@ class mpdController():
 		
 	def nextTrack( self ):
 		print('Next track')
+		#todo: start playing if not playing
 		subprocess.call(["mpc", "-q", "next"])
 		
 	def prevTrack( self ):
 		print('Prev. track')
+		#todo: start playing if not playing
 		subprocess.call(["mpc", "-q", "prev"])
 
 	def stop( self ):

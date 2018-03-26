@@ -592,25 +592,36 @@ def handle_path_player(path,cmd,args):
 		return data
 
 
-	'''
-	TODO
 	def put_state(args):
 		"""	Set play state
-			Arguments:		{State}
+			Arguments:		{state}
 			Return data:	Nothing
 		"""
 		valid = validate_args(args,1,1)
 		if not valid:
 			return None
 
-		if len(args) == 1:
-			ret = sc_sources.(args[0])
-
+		# PARSE STATE -- IS THIS THE RIGHT PLACE TO DO THIS?
+		if not isinstance(args[0],dict):
+			#return False	#?
+			printer ("argument is not a dictionary")
+			return None
+					
+		if 'state' in args[0]:
+			if args[0]['state'] in ('play','playing'):
+				ret = sc_sources.play()
+			elif args[0]['state'] in ('stop'):
+				ret = sc_sources.stop()
+			elif args[0]['state'] in ('pause','paused'):
+				ret = sc_sources.pause()
+			else:
+				print "UNKNOWN state: {0}".format(args[0]['state'])
+				return None #?
+			
 		# Set state: play|pause|stop, toggle random
 		data = get_data(ret,True)
 		return data
 
-	'''
 
 	def put_random(args):
 		"""	Set random mode

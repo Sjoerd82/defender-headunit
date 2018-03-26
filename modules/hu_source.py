@@ -844,6 +844,8 @@ class SourceController():
 		checkResult = self.lSource[index]['sourceClass'].add_subsource(self,parameters)
 		return checkResult
 
+	#def source_set_state( self, state ):
+	
 	# execute play() for the current source
 	# suggested keywords: position in playlist; a dictionary may be given containing resume data
 	def source_play( self, **kwargs ):
