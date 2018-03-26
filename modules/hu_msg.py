@@ -36,7 +36,7 @@ def parse_message(message):
 			path.append(pathpart.lower())
 		
 	# extract command and params
-	cmd_par = path_cmd_resp[1].split(":")
+	cmd_par = path_cmd_resp[1].split(":",1)	#maxsplit=1
 	if len(cmd_par) == 1:
 		command = cmd_par[0].lower()
 	elif len(cmd_par) == 2:
