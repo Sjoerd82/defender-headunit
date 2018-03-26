@@ -111,54 +111,54 @@ def validate_args(args, min_args, max_args):
 		#args = args[:max_args]
 		
 	return True
+
+def get_data(ret,returndata=False,eventpath=None):
+
+	data = {}
 	
+	if ret is None:
+		data['retval'] = 500
+		data['payload'] = None
+		
+	elif ret is False:
+		data['retval'] = 500
+		data['payload'] = None
+		
+	elif ret is True:
+		data['retval'] = 200
+		data['payload'] = None
+
+	else:
+		data['retval'] = 200
+		data['payload'] = ret
+
+	if eventpath is not None:
+	
+		#TODO: AVAILABLE EVENTS FOR EVERY AVAILABLE SOURCE ON CHECK() !!! !!! !!!
+	
+		if eventpath == '/events/source/active': # or eventpath == '/events/source/available':
+			curr_source = sc_sources.source()
+			data['payload'] = curr_source
+			messaging.publish_command(eventpath,'DATA',data)
+			
+			settings['source'] = curr_source['name']
+			save_settings()
+			
+		#if eventpath == '/events/source/available':
+		#	now_available, now_unavailable = sc_sources.che
+		#	data['payload'] = None
+
+	if not returndata:
+		data['payload'] = None
+		
+	return data
+		
 def handle_path_source(path,cmd,args):
 
 	base_path = 'source'
 
 	# remove base path
 	del path[0]
-	
-	def get_data(ret,returndata=False,eventpath=None):
-	
-		data = {}
-		
-		if ret is None:
-			data['retval'] = 500
-			data['payload'] = None
-			
-		elif ret is False:
-			data['retval'] = 500
-			data['payload'] = None
-			
-		elif ret is True:
-			data['retval'] = 200
-			data['payload'] = None
-
-		else:
-			data['retval'] = 200
-			data['payload'] = ret
-
-		if eventpath is not None:
-		
-			#TODO: AVAILABLE EVENTS FOR EVERY AVAILABLE SOURCE ON CHECK() !!! !!! !!!
-		
-			if eventpath == '/events/source/active': # or eventpath == '/events/source/available':
-				curr_source = sc_sources.source()
-				data['payload'] = curr_source
-				messaging.publish_command(eventpath,'DATA',data)
-				
-				settings['source'] = curr_source['name']
-				save_settings()
-				
-			#if eventpath == '/events/source/available':
-			#	now_available, now_unavailable = sc_sources.che
-			#	data['payload'] = None
-
-		if not returndata:
-			data['payload'] = None
-			
-		return data
 	
 	# -------------------------------------------------------------------------
 	
