@@ -35,13 +35,15 @@ def parse_message(message):
 		if pathpart:
 			path.append(pathpart.lower())
 		
-	# extract command and params
+	# extract command and arguments
 	cmd_par = path_cmd_resp[1].split(":",1)	#maxsplit=1
 	if len(cmd_par) == 1:
 		command = cmd_par[0].lower()
 	elif len(cmd_par) == 2:
 		command = cmd_par[0].lower()
-		param = cmd_par[1]
+		#param = cmd_par[1]
+		param = loads(cmd_par[1])
+		print param
 
 		for parpart in param.split(","):
 			if parpart:
@@ -162,7 +164,8 @@ class MqPubSubFwdController:
 			if type(arguments) == 'list':
 				message = "{0}:{1}".format(message, ",".join(arguments))
 			else:
-				message = "{0}:{1}".format(message, arguments)
+				jsonified_args = json.dumps(arguments)
+				message = "{0}:{1}".format(message, jsonified_args)
 			
 		# append response path
 		if response_path:
