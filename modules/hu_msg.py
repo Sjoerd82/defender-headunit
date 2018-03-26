@@ -42,7 +42,7 @@ def parse_message(message):
 	elif len(cmd_par) == 2:
 		command = cmd_par[0].lower()
 		#param = cmd_par[1]
-		param = loads(cmd_par[1])
+		param = json.loads(cmd_par[1])
 		print param
 
 		for parpart in param.split(","):
