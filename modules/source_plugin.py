@@ -8,6 +8,7 @@ LOGGER_NAME = 'locmus'
 class BaseSourceClass(object):
 
 	def __init__(self):
+		print('__INIT__ BASESOURCECLASS')
 		self.printer('C Base Source Class Init', level=LL_DEBUG)
 		#pass
 
@@ -83,4 +84,53 @@ class BaseSourceClass(object):
 		return subsource_availability_changes
 		
 		
-	#def play( self, sourceCtrl, resume={} ):
+	def play( self, sourceCtrl, resume={} ):
+		self.printer('Playing Source')
+		return True
+		
+	def stop( self ):
+		self.printer('Stopping source: locmus. Saving playlist position and clearing playlist.')
+		return True
+		
+	def next( self ):
+		self.printer('Next track')
+		return True
+		
+	def prev( self ):
+		self.printer('Prev track')
+		return True
+
+	def pause( self, mode ):
+		self.printer('Pause. Mode: {0}'.format(mode))
+		return True
+
+	def random( self, mode ):
+		self.printer('Random. Mode: {0}'.format(mode))
+		return True
+
+	def seekfwd( self ):
+		self.printer('Seek FFWD')
+		return True
+
+	def seekrev( self ):
+		self.printer('Seek FBWD')
+		return True
+
+	def update( self, location ):
+		self.printer('Update. Location: {0}'.format(location))
+		return True
+		
+	def get_details():
+		return False
+
+	def get_state():
+		return False
+
+	def get_playlist():
+		return False
+
+	def get_folders():
+		return False
+
+	def source_get_media_details():
+		return False

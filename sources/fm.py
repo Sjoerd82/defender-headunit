@@ -4,6 +4,7 @@
 #
 
 from modules.hu_utils import *
+from modules.source_plugin import BaseSourceClass
 
 sourceName='fm'
 LOG_TAG = 'FM'
@@ -13,7 +14,7 @@ LOGGER_NAME = 'fm'
 #  TODO: load/save. In configuration(?)
 lFmStations = [ 96.40, 99.10, 101.20, 102.54 ]
 
-class sourceClass():
+class sourceClass(BaseSourceClass):
 
 	# output wrapper
 	def __printer( self, message, level=LL_INFO, tag=LOG_TAG):
@@ -62,14 +63,6 @@ class sourceClass():
 		self.__printer('Stop CLASS!')
 		return True
 		
-	def next( self ):
-		self.__printer('NOT IMPLEMENTED')
-		return False
-		
-	def prev( self ):
-		self.__printer('NOT IMPLEMENTED')
-		return False
-
 	def pause( self, mode ):
 		self.__printer('Pause. Mode: {0}'.format(mode))
 		#TODO IMPLEMENT

@@ -27,10 +27,10 @@ sSambaMusic="/media/PIHU_SMB/music"
 sSambaMusicMPD="PIHU_SMB"			# directory from a MPD pov.
 
 	
-	
 class MpdSourceClass(object):
 
 	def __init__( self ):
+		print('__INIT__ MPDSOURCECLASS')
 		self.printer('B Mpd Source Class Init', level=LL_DEBUG)
 		self.mpdc = MpdController(self.logger)
 
@@ -97,6 +97,7 @@ class MpdSourceClass(object):
 class sourceClass(BaseSourceClass,MpdSourceClass):
 
 	def __init__( self, logger ):
+		print('__INIT__ SOURCECLASS')
 		self.logger = logger
 		self.printer('A Source Class Init', level=LL_DEBUG)
 		BaseSourceClass.__init__(self)
