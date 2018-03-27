@@ -112,12 +112,12 @@ class MpdController():
 			self.__printer('Failed to connect to MPD server: {0}'.format(sys.exc_info()[0]), level=LL_ERROR)
 	
 	def play ( self, pos=None, time=0 ):
-	#TODO: add id=None
-	"""	Start playback
-		Optionally provde:
-			- position in playlist OR song id
-			- time in track
-	"""
+		#TODO: add id=None
+		"""	Start playback
+			Optionally provde:
+				- position in playlist OR song id
+				- time in track
+		"""
 		if pos is not None: # and time is not None:
 			self.seek(pos,time)
 			self.mpdc.play(pos)	#TODO: pos param needed?
