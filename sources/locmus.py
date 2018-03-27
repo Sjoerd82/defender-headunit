@@ -179,7 +179,7 @@ class sourceClass(BaseSourceClass,MpdSourceClass):
 
 	def __init__( self, logger ):
 		self.logger = logger
-		self.__printer('Source Class Init', level=LL_DEBUG)
+		BaseSourceClass.__printer('Source Class Init', level=LL_DEBUG)
 		MpdSourceClass.__init__()
 		
 	def __locmus_add( self, label, dir, mpd_dir, sourceCtrl ):
