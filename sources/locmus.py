@@ -17,7 +17,7 @@ LOGGER_NAME = 'locmus'
 from modules.hu_utils import *
 from modules.hu_settings import getSourceConfig
 from modules.hu_mpd import MpdController
-from sources.source_plugin import BaseSourceClass
+from modules.source_plugin import BaseSourceClass
 
 # SETTINGS
 #LOCAL MUSIC (now also in locmus.py)
