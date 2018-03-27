@@ -31,7 +31,7 @@ class BaseSourceClass(object):
 		pass
 
 	# output wrapper
-	def printer(self, message, level=LL_INFO, tag=LOG_TAG):
+	def __printer(self, message, level=LL_INFO, tag=LOG_TAG):
 		self.logger.log(level, message, extra={'tag': tag})
 		
 	def check( self, sourceCtrl, subSourceIx=None ):
@@ -183,7 +183,7 @@ class sourceClass(BaseSourceClass,MpdSourceClass):
 	def __init__( self, logger ):
 		BaseSourceClass.__init__(self)
 		self.logger = logger
-		self.printer('Source Class Init', level=LL_DEBUG)
+		self.__printer('Source Class Init', level=LL_DEBUG)
 		MpdSourceClass.__init__(self)
 		
 	def __locmus_add( self, label, dir, mpd_dir, sourceCtrl ):
