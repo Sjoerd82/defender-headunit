@@ -207,7 +207,7 @@ class sourceClass(BaseSourceClass,MpdSourceClass):
 		sourceCtrl.add_sub( ix, subsource )
 
 	def init( self, sourceCtrl ):
-		super(self, init)(sourceCtrl)
+		super(sourceClass, self).init(sourceCtrl)
 
 	# Source Check: Return True/False (available/not available)
 	# Optionally, provide list of mountpoint(s) to check
