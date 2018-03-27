@@ -113,7 +113,7 @@ class BaseSourceClass(object):
 class MpdSourceClass(object):
 
 	def __init__( self ):
-		self.mpdc = MpdController()
+		self.mpdc = MpdController(self.logger)
 
 	def play( self ):
 		return True
