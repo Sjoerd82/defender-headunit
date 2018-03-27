@@ -214,7 +214,7 @@ class sourceClass(BaseSourceClass,MpdSourceClass):
 	#def locmus_check( sourceCtrl, mountpoint=None ):
 	
 	def check( self, sourceCtrl, subSourceIx=None ):
-		super(self, check)(sourceCtrl, subSourceIx)
+		super(sourceClass, self).check(sourceCtrl, subSourceIx)
 		"""	Check source
 		
 			Checks all configured mountpoints
