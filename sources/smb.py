@@ -1,6 +1,7 @@
-#********************************************************************************
 #
-# Source: Samba Network Shares
+# SOURCE PLUGIN: Samba Network Shares
+# Venema, S.R.G.
+# 2018-03-27
 #
 # Plays everything mounted on /media/PIHU_SMB
 #
@@ -9,17 +10,14 @@ import os
 import subprocess
 
 from modules.hu_utils import *
-from modules.hu_mpd import *
+from modules.hu_mpd import MpdController
 
 # Logging
 sourceName='smb'
 LOG_TAG = 'SMB'
 LOGGER_NAME = 'smb'
 
-
 class sourceClass():
-
-	mpc = None
 
 	# output wrapper
 	def __printer( self, message, level=LL_INFO, tag=LOG_TAG):
@@ -28,7 +26,7 @@ class sourceClass():
 	def __init__( self, logger ):
 		self.logger = logger
 		self.__printer('Source Class Init', level=LL_DEBUG)
-		self.mpc = mpdController()
+		self.mpdc = MpdController()
 		
 	def __del__( self ):
 		print('Source Class Deleted {0}'.format(sourceName))
@@ -135,10 +133,10 @@ class sourceClass():
 			else:
 				self.__printer(" > SMB directory present and has files.",LL_INFO)
 				
-				if not self.mpc.dbCheckDirectory( mpd_dir ):
+				if not self.mpdc.is_dbdir( mpd_dir ):
 					self.__printer(" > Running MPD update for this directory.. ALERT! LONG BLOCKING OPERATION AHEAD...")
-					self.mpc.update( mpd_dir )
-					if not self.mpc.dbCheckDirectory( mpd_dir ):
+					self.mpdc.update_db( mpd_dir )
+					if not self.mpdc.is_dbdir( mpd_dir ):
 						self.__printer(" > Nothing to play marking unavailable...")
 						new_availability = False
 					else:
@@ -194,20 +192,18 @@ class sourceClass():
 		#
 
 		# populate playlist
-		self.mpc.playlistClear()
-		self.mpc.playlistPop('smb',sLocalMusicMPD)
+		self.mpdc.pls_clear()
+		playlistCount = self.mpdc.pls_pop(sLocalMusicMPD)
 		
 		# check if succesful...
-		playlistCount = self.mpc.playlistIsPop()
 		if playlistCount == "0":
 			self.__printer(' > Nothing in the playlist, trying to update database...')
 			
 			# update and try again...
-			self.mpc.update( sLocalMusicMPD, True )
-			self.mpc.playlistPop('locmus',sLocalMusicMPD)
+			self.mpdc.update_db( sLocalMusicMPD, True )
+			playlistCount = self.mpdc.pls_pop(sLocalMusicMPD)
 			
 			# check if succesful...
-			playlistCount = self.mpc.mpc_playlist_is_populated()
 			if playlistCount == "0":
 				# Failed. Returning false will cause caller to try next source
 				self.__printer(' > Nothing in the playlist, giving up. Marking source unavailable.')
@@ -222,8 +218,11 @@ class sourceClass():
 		#
 		# continue where left
 		#
+		
+		# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		
 		if resume:
-			playslist_pos = self.mpc.lastKnownPos2( resume['file'], resume['time'] )	
+			playslist_pos = self.mpdc.lastKnownPos2( resume['file'], resume['time'] )	
 		else:
 			playslist_pos = {'pos': 1, 'time': 0}
 		
@@ -252,12 +251,12 @@ class sourceClass():
 		
 	def next( self ):
 		self.__printer('Next track')
-		self.mpc.nextTrack()
+		self.mpdc.next()
 		return True
 		
 	def prev( self ):
 		self.__printer('Prev track')
-		self.mpc.prevTrack()
+		self.mpdc.prev()
 		return True
 	def pause( self, mode ):
 		self.__printer('Pause. Mode: {0}'.format(mode))

@@ -1,10 +1,15 @@
+#
+# SOURCE PLUGIN: Streaming URL's
+# Venema, S.R.G.
+# 2018-03-27
+#
+# Plays Streaming URL's
+#
 
 import os
 
 from modules.hu_utils import *
-
-# MPD
-from modules.hu_mpd import *
+from modules.hu_mpd import MpdController
 
 sourceName = 'stream'
 LOG_TAG = 'STREAM'
