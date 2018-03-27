@@ -27,7 +27,7 @@ sSambaMusicMPD="PIHU_SMB"			# directory from a MPD pov.
 
 class BaseSourceClass(object):
 
-	def __init__():
+	def __init__(self):
 		pass
 
 	# output wrapper
