@@ -28,7 +28,8 @@ sSambaMusicMPD="PIHU_SMB"			# directory from a MPD pov.
 class BaseSourceClass(object):
 
 	def __init__(self):
-		pass
+		self.printer('C Base Source Class Init', level=LL_DEBUG)
+		#pass
 
 	# output wrapper
 	def printer(self, message, level=LL_INFO, tag=LOG_TAG):
@@ -101,21 +102,11 @@ class BaseSourceClass(object):
 	def init( self, sourceCtrl ):
 		self.printer('Initializing...')
 		
-		# get source configuration from main configuration
-		locmusConfig = getSourceConfig('locmus')
-		
-		# add all locations as configured
-		for location in locmusConfig:
-			self.__locmus_add( location['label']
-					          ,location['musicdir']
-					          ,location['musicdir_mpd']
-					          ,sourceCtrl )
-
-		return True
 	
 class MpdSourceClass(object):
 
 	def __init__( self ):
+		self.printer('B Mpd Source Class Init', level=LL_DEBUG)
 		self.mpdc = MpdController(self.logger)
 
 	def play( self ):
@@ -181,9 +172,9 @@ class MpdSourceClass(object):
 class sourceClass(BaseSourceClass,MpdSourceClass):
 
 	def __init__( self, logger ):
-		BaseSourceClass.__init__(self)
 		self.logger = logger
-		self.printer('Source Class Init', level=LL_DEBUG)
+		self.printer('A Source Class Init', level=LL_DEBUG)
+		BaseSourceClass.__init__(self)
 		MpdSourceClass.__init__(self)
 		
 	def __locmus_add( self, label, dir, mpd_dir, sourceCtrl ):
@@ -209,6 +200,18 @@ class sourceClass(BaseSourceClass,MpdSourceClass):
 	def init( self, sourceCtrl ):
 		super(sourceClass, self).init(sourceCtrl)
 
+		# get source configuration from main configuration
+		locmusConfig = getSourceConfig('locmus')
+		
+		# add all locations as configured
+		for location in locmusConfig:
+			self.__locmus_add( location['label']
+					          ,location['musicdir']
+					          ,location['musicdir_mpd']
+					          ,sourceCtrl )
+
+		return True
+		
 	# Source Check: Return True/False (available/not available)
 	# Optionally, provide list of mountpoint(s) to check
 	#def locmus_check( sourceCtrl, mountpoint=None ):
