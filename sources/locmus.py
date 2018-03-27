@@ -27,6 +27,9 @@ sSambaMusicMPD="PIHU_SMB"			# directory from a MPD pov.
 
 class BaseSourceClass(object):
 
+	def __init__():
+		pass
+
 	# output wrapper
 	def printer( self, message, level=LL_INFO, tag=LOG_TAG):
 		self.logger.log(level, message, extra={'tag': tag})
@@ -178,6 +181,7 @@ class MpdSourceClass(object):
 class sourceClass(BaseSourceClass,MpdSourceClass):
 
 	def __init__( self, logger ):
+		BaseSourceClass.__init__(self)
 		self.logger = logger
 		BaseSourceClass.printer('Source Class Init', level=LL_DEBUG)
 		MpdSourceClass.__init__()
