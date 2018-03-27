@@ -87,7 +87,7 @@ from hu_utils import *
 
 LOG_TAG = 'MPD'
 
-class MpdController():
+class MpdController(object):
 
 	#self.mpdc = MPDClient()		# class attribute -- shared by all instances... gives irrelevant connect errors... not sure if this is good or bad
 
