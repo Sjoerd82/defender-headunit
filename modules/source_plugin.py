@@ -1,5 +1,10 @@
 from modules.hu_utils import *
 
+sourceName = 'locmus'
+LOG_TAG = 'LOCMUS'
+LOGGER_NAME = 'locmus'
+
+
 class BaseSourceClass(object):
 
 	def __init__(self):
