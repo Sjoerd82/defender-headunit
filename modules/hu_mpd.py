@@ -117,7 +117,7 @@ class MpdController():
 		Optionally provde:
 			- position in playlist OR song id
 			- time in track
-	"""		
+	"""
 		if pos is not None: # and time is not None:
 			self.seek(pos,time)
 			self.mpdc.play(pos)	#TODO: pos param needed?
