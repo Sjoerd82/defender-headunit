@@ -83,7 +83,7 @@ import copy
 
 LOG_TAG = 'SOURCE'
 
-class SourceController():
+class SourceController(object):
 
 	def __printer( self, message, level=LL_INFO, tag=LOG_TAG):
 		self.logger.log(level, message, extra={'tag': tag})

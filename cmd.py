@@ -25,6 +25,7 @@ def parse_args():
 	parser.add_argument('-c', action='store', required=True)
 	parser.add_argument('-a', action='store')
 	parser.add_argument('-r', action='store_true')
+	parser.add_argument('-j','--json', action='store_true')	
 	parser.add_argument('--port_publisher', action='store')
 	parser.add_argument('--port_subscriber', action='store')
 	args = parser.parse_args()
@@ -49,10 +50,15 @@ def main():
 
 	#ret = messaging.publish_command('/source/primary','GET', None, True, 5000, RETURN_PATH)
 	#print ret
+	
+	params = args.a
+	#if args.j is True:
+	params = u'{"state":"play"}'
+	
 	if args.r:
 		ret = messaging.publish_command(args.p,args.c,response_path=RETURN_PATH)
 	else:
-		ret = messaging.publish_command(args.p,args.c,args.a)
+		ret = messaging.publish_command(args.p,args.c,params)
 		
 	print ret
 
