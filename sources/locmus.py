@@ -28,7 +28,7 @@ sSambaMusicMPD="PIHU_SMB"			# directory from a MPD pov.
 class BaseSourceClass(object):
 
 	# output wrapper
-	def __printer( self, message, level=LL_INFO, tag=LOG_TAG):
+	def printer( self, message, level=LL_INFO, tag=LOG_TAG):
 		self.logger.log(level, message, extra={'tag': tag})
 		
 	def check( self, sourceCtrl, subSourceIx=None ):
@@ -179,7 +179,7 @@ class sourceClass(BaseSourceClass,MpdSourceClass):
 
 	def __init__( self, logger ):
 		self.logger = logger
-		BaseSourceClass.__printer('Source Class Init', level=LL_DEBUG)
+		BaseSourceClass.printer('Source Class Init', level=LL_DEBUG)
 		MpdSourceClass.__init__()
 		
 	def __locmus_add( self, label, dir, mpd_dir, sourceCtrl ):
