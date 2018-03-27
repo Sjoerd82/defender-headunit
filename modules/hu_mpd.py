@@ -132,7 +132,7 @@ class MpdController():
 		self.mpdc.stop()
 		
 	def next(self, count=1):
-		for range(count):	#TODO: can we say for range()?
+		for i in range(count):
 			self.mpdc.next()
 		
 	def prev(self, count=1):
