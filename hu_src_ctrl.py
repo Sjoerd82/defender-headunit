@@ -66,7 +66,6 @@ messaging = None		# mq messaging
 configuration = None	# configuration
 settings = None			# operational settings
 sc_sources = None		# source controller
-mpdc = None				# mpd controller
 
 # still used?
 queue_actions = None
