@@ -1,323 +1,56 @@
-#
+# ********************************************************************************
 # Wrapper for python-mpd2
-# Venema, S.R.G.
-# 2018-03-27
 #
-# This is a WRAPPER for python-mpd2
-# https://pypi.python.org/pypi/python-mpd2
-#
-# Provide a logger object to __init__ to get output from this class.
-#
-# MpdController()
-#
-# CONTROL & PLAYBACK
-# play					Play
-# pause					Pause
-# stop					Stop
-# next					Next track
-# prev					Prev track
-# seek					Seek
-# random				Set Random mode
-# repeat				Set Repeat mode
-#
-# DATABASE
-# is_dbdir				Checks if given directory is in database
-# update_db				Updates database
-#
-# INFO, STATS & METADATA
-# state					Returns {state}
-# track					Returns {track}
-# stats					Returns {stats} #TODO
-#
-# PLAYLIST
-# pls_load				Load playlist
-# pls_pop				Populate playlist for given MPD directory, return count
-# pls_is_populated		Check if the playlist is populated (deprecate?)
-# pls_dirs				Generate a directory-playlist position mapping
-# pls_clear				Clear playlist
-#
-# STREAMING
-#
-# strm_load_file?
-#
-# locmus.py [OK]
-# media.py [OK]
-# smb.py [OK]
-#
-# playlistClear		=> pls_clear
-# playlistPop		=> pls_pop
-# playlistIsPop		=> pls_is_populated
-# dbCheckDirectory	=> is_dbdir
-# update_call		-> } update_db
-# update			=> }
-# lastKnowPos	-> MOVE
-# lastKnowPos2	-> MOVE
-# playStart			=> play
-# mpc_get_PlaylistDirs	=> pls_dirs
-# mpc_get_currentsong	=> track
-# mpc_get_status		=> state
-# mpc_get_trackcount	deprecate?
-# channelSubscribe		=> REMOVED
-# nextTrack			=> next
-# prevTrack			=> prev
-# stop				=> stop
-# random
-
-"""
-mpc_random_get
-mpc_random_get
-mpc_get_PlaylistDirs
-mpc_current_folder
-mpc_next_folder_pos
-mpc_prev_folder_pos
-mpc_next_folder
-mpc_prev_folder
-mpc_stop
-mpc_lkp
-mpc_populate_playlist
-mpc_db_label_exist
-"""
-#
-
 import os
+import subprocess
+import pickle
+
 import sys
-from subprocess import call
+
 from mpd import MPDClient
+
 from hu_utils import *
+# ********************************************************************************
+# Output wrapper
+#
 
-LOG_TAG = 'MPD'
+def printer( message, level=20, continuation=False, tag='MPD',logger_name='mpd' ):
+		logger = logging.getLogger(logger_name)
+		logger.log(level, message, extra={'tag': tag})
 
-class MpdController():
+
+#TODO
+sDirSave = "/mnt/PIHU_CONFIG"
+
+class mpdController():
 
 	#self.mpdc = MPDClient()		# class attribute -- shared by all instances... gives irrelevant connect errors... not sure if this is good or bad
 
-	def __printer( self, message, level=LL_INFO, tag=LOG_TAG):
-		self.logger.log(level, message, extra={'tag': tag})
+	def __printer( self, message, level=LL_INFO, continuation=False, tag='MPD', logger_name='MPD' ):
+		logger = logging.getLogger(logger_name)
+		logger.log(level, message, extra={'tag': tag})
 
-	def __init__( self, logger, repeat=1, random=0 ):
-		self.logger = logger
+	def __init__( self ):
 		# Connect to MPD
 		try:
 			self.__printer('Initializing MPD client', level=LL_DEBUG)
 			self.mpdc = MPDClient()				# per instance !
-			self.mpdc.timeout = None                # network timeout in seconds (floats allowed), default: None
+			self.mpdc.timeout = 10                # network timeout in seconds (floats allowed), default: None
 			self.mpdc.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
 			self.mpdc.connect("localhost", 6600)
 			self.__printer(' > Version: {0}'.format(self.mpdc.mpd_version), level=LL_DEBUG)          # print the MPD version
-			self.mpdc.random(random)
-			self.mpdc.repeat(repeat)	
+			self.mpdc.random(0)
+			self.mpdc.repeat(1)	
 			#self.mpdc.idle()		#keep the connection open... But this blocks :(
 			self.mpdc.send_idle()	#keep the connection open... Non-blocking..
 		except:
 			self.__printer('Failed to connect to MPD server: {0}'.format(sys.exc_info()[0]), level=LL_ERROR)
 	
-	def play ( self, pos=None, time=0 ):
-	#TODO: add id=None
-	"""	Start playback
-		Optionally provde:
-			- position in playlist OR song id
-			- time in track
-	"""		
-		if pos is not None: # and time is not None:
-			self.seek(pos,time)
-			self.mpdc.play(pos)	#TODO: pos param needed?
-			return True #?
-		else:
-			self.mpdc.play()
+	def __del__( self ):
+			print('Disconnecting')	#, level=LL_DEBUG
+			#self.mpdc.disconnect()		#often fails __del__ seems quite unstable
 
-	def pause (self):
-		self.mpdc.pause()
-		
-	def stop (self):
-		self.mpdc.stop()
-		
-	def next(self, count=1):
-		for i in range(count):	#TODO: can we say for range()?
-			self.mpdc.next()
-		
-	def prev(self, count=1):
-		for in in range(count):
-			self.mpdc.prev()
-
-	def seek(self, seeksec='+1'):
-		self.mpdc.seekcur(seeksec)
-
-	def random(self, mode='toggle'):
-		"""	Set random mode. Modes:
-			- On (1)
-			- Off (0)
-			- Toggle
-			Not supported:
-			- Folder
-			- Genre
-		"""
-		if mode in ('on','1'):
-			#subprocess.call(["mpc", "-q", "random", "on"])
-			#subprocess.call(["mpc", "-q", "next"])
-			self.mpdc.random(1)
-		elif mode in ('off','0'):
-			#subprocess.call(["mpc", "-q", "random", "off"])
-			self.mpdc.random(0)
-		# toggle
-		else:
-			#TODO: current_mode = self.mpdc.status()
-			print('[MPC] Toggling random')
-			subprocess.call(["mpc", "-q", "random"])
-		
-	def repeat(self, mode='toggle'):
-		"""	Set random mode. Modes:
-			- On (1)
-			- Off (0)
-			- Toggle
-		"""
-		if mode in ('on','1'):
-			self.mpdc.repeat(1)
-		elif mode in ('off','0'):
-			self.mpdc.repeat(0)
-		# toggle
-		else:
-			#todo
-			pass
-	
-	def is_dbdir(self, directory):
-		self.__printer("Checking existance of folder in MPD db..")
-		taskcmd = "mpc listall "+directory+" | wc -l"
-		# if directory is not in mpd db, "mpd error: No such directory" will be returned
-		task = subprocess.Popen(taskcmd, shell=True, stdout=subprocess.PIPE)
-		mpcOut = task.stdout.read()
-		assert task.wait() == 0
-		
-		if mpcOut.rstrip('\n') == '0':
-			self.__printer(' > {0}: nothing in the database for this source.'.format(directory))
-			return False
-		else:
-			self.__printer(' > {0}: found {1:s} tracks'.format(directory,mpcOut.rstrip('\n')))
-			return True
-	
-	def update_db (self, directory, wait=True):
-		#Sound effect
-		pa_sfx('mpd_update_db')
-		#Debug info
-		self.__printer('Updating database for location: {0}'.format(directory))
-
-		try:
-			self.mpdc.noidle()
-		except MPDConnectionError:
-			self.mpdc.connect("localhost", 6600)
-		except:
-			self.__printer('WEIRD... no idle was set..')
-
-		#Update
-		if wait:
-			self.__printer(' > Please wait, this may take some time...')
-			self.mpdc.update(directory)
-			self.__printer(' > Update finished')
-		else:
-			self.mpdc.update(directory)
-
-		self.mpdc.command_list_ok_begin()
-		self.mpdc.status()
-		results = self.mpdc.command_list_end()
-		print results
-		
-		#self.mpdc.idle()
-		self.mpdc.send_idle()
-	
-	def state(self):
-		#mpd_state = self.mpdc.status()
-		state = {}
-		return state
-		
-	def track(self):
-		#mpd_track = self.mpdc.currentsong()
-		track = {}
-		return track
-		# ORIG:
-		try:
-			self.mpdc.noidle()
-		except MPDConnectionError:
-			self.mpdc.connect("localhost", 6600)
-		except:
-			self.__printer('WEIRD... no idle was set..')
-			
-		self.mpdc.command_list_ok_begin()
-		self.mpdc.currentsong()
-		results = self.mpdc.command_list_end()
-		self.mpdc.send_idle()
-		
-		# print results[0]
-		#{'album': 'Exodus', 'composer': 'Andy Hunter/Tedd T.', 'title': 'Go', 'track': '1', 'duration': '411.480', 'artist': 'Andy Hunter', 'pos': '0', 'last-modified': '2013-10-12T15:53:13Z', 'albumartist': 'Andy Hunter', 'file': 'PIHU_SMB/music/electric/Andy Hunter/Andy Hunter - 2002 - Exodus/01 - Andy Hunter - Go.mp3', 'time': '411', 'date': '2002', 'genre': 'Electronic/Dance', 'id': '44365'}
-		
-		#return self.mpdc.currentsong()
-		return results[0]
-	
-	"""
-	def stats(self):
-		mpd_stats = self.mpdc.stats()
-		stats = {}
-		return stats
-	"""
-	
-	'''TODO
-	def pls_load(self):
-		"""	Load playlist
-		"""
-	`'''
-	
-	def pls_pop(self, location):
-		"""	Populate playlist for given MPD directory
-			Returns: count
-		"""
-		#def playlistPop( self, type, sMpdDir ):
-		self.__printer('Populating playlist, folder: {0}'.format(sMpdDir))
-
-		try:
-			self.mpdc.noidle()
-		except MPDConnectionError:
-			self.mpdc.connect("localhost", 6600)
-		except:
-			self.__printer('WEIRD... no idle was set..')
-	
-		try:
-			self.mpdc.findadd('base',sMpdDir)
-			
-			# get count
-			self.mpdc.command_list_ok_begin()
-			self.mpdc.status()
-			results = self.mpdc.command_list_end()
-
-		except:
-			self.__printer('ERROR: folder not in MPD database?')
-		
-		self.mpdc.send_idle()
-		return results[0]['playlistlength']
-
-	def pls_is_populated(self):
-		"""	Check if the playlist is populated (deprecate?)
-		"""
-		self.__printer('Checking if playlist is populated')
-
-		try:
-			self.mpdc.noidle()
-		except MPDConnectionError:
-			self.mpdc.connect("localhost", 6600)
-		except:
-			self.__printer('WEIRD... no idle was set..')
-		
-		self.mpdc.command_list_ok_begin()
-		self.mpdc.status()
-		results = self.mpdc.command_list_end()
-		self.mpdc.send_idle()
-
-		return results[0]['playlistlength']
-		
-	def pls_dirs(self):
-		"""	Generate a directory-playlist position mapping
-		"""
-		
-	def pls_clear(self):
-		"""	Clear playlist
-		"""
+	def playlistClear( self ):
 		self.__printer('Emptying MPD playlist')
 		#todo: how about cropping, populating, and removing the first? item .. for faster continuity???
 		#self.mpdc.command_list_ok_begin()
@@ -341,11 +74,208 @@ class MpdController():
 		#print self.mpdc.command_list_end()
 		subprocess.call(["mpc", "-q", "stop"])
 		subprocess.call(["mpc", "-q", "clear"])
-	# --
 
+
+	def playlistPop( self, type, sMpdDir ):
+		self.__printer('Populating playlist, folder: {0}'.format(sMpdDir))
+
+		try:
+			self.mpdc.noidle()
+		except MPDConnectionError:
+			self.mpdc.connect("localhost", 6600)
+		except:
+			self.__printer('WEIRD... no idle was set..')
 	
-
+		if type == 'locmus' or type == 'smb' or type == 'media':
+			try:
+				self.mpdc.findadd('base',sMpdDir)
+			except:
+				self.__printer('ERROR: folder not in MPD database?')
+		elif type == 'stream':
+			# Using the command line:
+			#  ..but this generates some problems with special characters
+			streams_file = sDirSave + "/streams.txt"
+			#p1 = subprocess.Popen(["cat", streams_file], stdout=subprocess.PIPE)
+			#p2 = subprocess.Popen(["mpc", "add"], stdin=p1.stdout, stdout=subprocess.PIPE)
+			#p1.stdout.close()  # Allow p1 to receive a SIGPIPE if p2 exits.
+			#output,err = p2.communicate()		
+			streams=open(streams_file,'r')
+			with open(streams_file,'r') as streams:
+				for l in streams:
+					uri = l.rstrip()
+					if not uri[:1] == '#' and not uri == '':
+						uri_OK = url_check(uri)
+						if uri_OK:
+							print(' ....  . Stream [OK]: {0}'.format(uri))
+							subprocess.call(["mpc", "-q", "add", uri])
+						else:
+							print(' ....  . Stream [FAIL]: {0}'.format(uri))
+		else:
+			self.mpdc.findadd('base',type)
 		
+		self.mpdc.send_idle()
+		
+	def playlistIsPop( self ):
+		self.__printer('Checking if playlist is populated')
+
+		try:
+			self.mpdc.noidle()
+		except MPDConnectionError:
+			self.mpdc.connect("localhost", 6600)
+		except:
+			self.__printer('WEIRD... no idle was set..')
+		
+		self.mpdc.command_list_ok_begin()
+		self.mpdc.status()
+		results = self.mpdc.command_list_end()
+		self.mpdc.send_idle()
+
+		return results[0]['playlistlength']
+
+	def dbCheckDirectory( self, directory ):
+		self.__printer("Checking existance of folder in MPD db..")
+		taskcmd = "mpc listall "+directory+" | wc -l"
+		# if directory is not in mpd db, "mpd error: No such directory" will be returned
+		task = subprocess.Popen(taskcmd, shell=True, stdout=subprocess.PIPE)
+		mpcOut = task.stdout.read()
+		assert task.wait() == 0
+		
+		if mpcOut.rstrip('\n') == '0':
+			self.__printer(' > {0}: nothing in the database for this source.'.format(directory))
+			return False
+		else:
+			self.__printer(' > {0}: found {1:s} tracks'.format(directory,mpcOut.rstrip('\n')))
+			return True
+
+	# location must be a path relative to MPD
+	def update_call( self, location, wait=True ):
+
+		#Sound effect
+		pa_sfx('mpd_update_db')
+		#Debug info
+		self.__printer('Updating database for location: {0}'.format(location))
+		#Update
+		if wait:
+			printer(' > Please wait, this may take some time...')
+			subprocess.call(["mpc", "--wait", "-q", "update", location])
+			self.__printer(' > Update finished')
+		else:
+			subprocess.call(["mpc", "-q", "update", location])
+			#bMpdUpdateSmb
+	
+	def update( self, location, wait=True ):
+
+		#Sound effect
+		pa_sfx('mpd_update_db')
+		#Debug info
+		self.__printer('Updating database for location: {0}'.format(location))
+
+		try:
+			self.mpdc.noidle()
+		except MPDConnectionError:
+			self.mpdc.connect("localhost", 6600)
+		except:
+			self.__printer('WEIRD... no idle was set..')
+
+		#Update
+		if wait:
+			self.__printer(' > Please wait, this may take some time...')
+			self.mpdc.update(location)
+			self.__printer(' > Update finished')
+		else:
+			self.mpdc.update(location)
+
+		self.mpdc.command_list_ok_begin()
+		self.mpdc.status()
+		results = self.mpdc.command_list_end()
+		print results
+		
+		#self.mpdc.idle()
+		self.mpdc.send_idle()
+			
+	def lastKnownPos( self, id ):
+	
+		#default
+		pos = {'pos': 1, 'time': 0}
+
+		#TODO!
+		iThrElapsed = 20	 # Minimal time that must have elapsed into a track in order to resume position
+		iThrTotal = 30		 # Minimal track length required in order to resume position
+		
+		# open pickle_file, if it exists
+		pickle_file = sDirSave + "/mp_" + id + ".p"
+		if os.path.isfile(pickle_file):
+			self.__printer('Retrieving last known position from lkp file: {0:s}'.format(pickle_file))
+			try:
+				dSavePosition = pickle.load( open( pickle_file, "rb" ) )
+			except:
+				self.__printer('PICKLE: Loading {0:s} failed!'.format(pickle_file))
+				return pos
+
+			#otherwise continue:
+#			self.mpdc.noidle()
+#			psfind = self.mpdc.playlistfind('filename',dSavePosition['file'])
+#			self.mpdc.idle()
+#
+# SEEMS TO HANG?
+#
+			psfind = []
+			
+			#in the unlikely case of multiple matches, we'll just take the first, psfind[0]
+			if len(psfind) == 0:
+				self.__printer(' > File not found in loaded playlist')
+			else:
+				pos['pos'] = int(psfind[0]['pos'])+1
+				timeElapsed,timeTotal = map(int, dSavePosition['time'].split(':'))
+				self.__printer('Match found: {0}. Continuing playback at #{1}'.format(dSavePosition['file'],pos['pos']))
+				self.__printer(' > Elapsed/Total time: {0}s/{1}s'.format(timeElapsed,timeTotal))
+				if timeElapsed > iThrElapsed and timeTotal > iThrTotal:
+					pos['time'] = str(timeElapsed)
+					self.__printer(' > Elapsed time over threshold: continuing at last position.')
+				else:
+					self.__printer(' > Elapsed time below threshold or short track: restarting at beginning of track.')
+
+		return pos
+
+	def lastKnownPos2( self, filename, time ):
+	
+		#default
+		pos = {'pos': 1, 'time': 0}
+
+		#TODO!
+		iThrElapsed = 20	 # Minimal time that must have elapsed into a track in order to resume position
+		iThrTotal = 30		 # Minimal track length required in order to resume position
+		
+		try:
+			self.mpdc.noidle()
+		except MPDConnectionError:
+			self.mpdc.connect("localhost", 6600)
+		except:
+			self.__printer('WEIRD... no idle was set..')
+		
+		psfind = self.mpdc.playlistfind('filename',filename)
+		self.mpdc.send_idle()
+		
+		#in the unlikely case of multiple matches, we'll just take the first, psfind[0]
+		if len(psfind) == 0:
+			self.__printer(' > File not found in loaded playlist')
+		else:
+			pos['pos'] = int(psfind[0]['pos'])+1
+			timeElapsed,timeTotal = map(int, time.split(':'))
+			self.__printer('Match found: {0}. Continuing playback at #{1}'.format(filename,pos['pos']))
+			self.__printer(' > Elapsed/Total time: {0}s/{1}s'.format(timeElapsed,timeTotal))
+			if timeElapsed > iThrElapsed and timeTotal > iThrTotal:
+				pos['time'] = str(timeElapsed)
+				self.__printer(' > Elapsed time over threshold: continuing at last position.')
+			else:
+				self.__printer(' > Elapsed time below threshold or short track: restarting at beginning of track.')
+
+		return pos
+		
+#	def playStart( str(playslist_pos['pos']), playslist_pos['time'] ):
+	def playStart( self, pos, time ):
+		print('todo')
+
 	def mpc_get_PlaylistDirs( self ):
 
 		self.__printer('Building playlist directory structure...')
@@ -393,7 +323,25 @@ class MpdController():
 			
 		return arMpcPlaylistDirs
 		
-
+	def mpc_get_currentsong( self ):
+	
+		try:
+			self.mpdc.noidle()
+		except MPDConnectionError:
+			self.mpdc.connect("localhost", 6600)
+		except:
+			self.__printer('WEIRD... no idle was set..')
+			
+		self.mpdc.command_list_ok_begin()
+		self.mpdc.currentsong()
+		results = self.mpdc.command_list_end()
+		self.mpdc.send_idle()
+		
+		# print results[0]
+		#{'album': 'Exodus', 'composer': 'Andy Hunter/Tedd T.', 'title': 'Go', 'track': '1', 'duration': '411.480', 'artist': 'Andy Hunter', 'pos': '0', 'last-modified': '2013-10-12T15:53:13Z', 'albumartist': 'Andy Hunter', 'file': 'PIHU_SMB/music/electric/Andy Hunter/Andy Hunter - 2002 - Exodus/01 - Andy Hunter - Go.mp3', 'time': '411', 'date': '2002', 'genre': 'Electronic/Dance', 'id': '44365'}
+		
+		#return self.mpdc.currentsong()
+		return results[0]
 
 	def mpc_get_status( self ):
 
@@ -428,8 +376,37 @@ class MpdController():
 		self.mpdc.subscribe(channel)
 		self.mpdc.send_idle()
 		
+	def nextTrack( self ):
+		print('Next track')
+		#todo: start playing if not playing
+		subprocess.call(["mpc", "-q", "next"])
+		
+	def prevTrack( self ):
+		print('Prev. track')
+		#todo: start playing if not playing
+		subprocess.call(["mpc", "-q", "prev"])
 
-			
+	def stop( self ):
+		print('Stop')
+
+	def random( self, state ):
+		global dSettings
+				
+		# on
+		if state == 'on':
+			print('[MPC] Random ON + Next track')
+			subprocess.call(["mpc", "-q", "random", "on"])
+			subprocess.call(["mpc", "-q", "next"])
+
+		# off
+		elif state == 'off':
+			print('[MPC] Random OFF')
+			subprocess.call(["mpc", "-q", "random", "off"])
+
+		# toggle
+		else: 
+			print('[MPC] Toggling random')
+			subprocess.call(["mpc", "-q", "random"])
 
 def mpc_random_get():
 
@@ -574,7 +551,23 @@ def mpc_prev_folder():
 	print('[MPC] Prev folder')
 	subprocess.call(["mpc", "-q", "play", str(mpc_prev_folder_pos())])
 	
+def mpc_stop():
+	print('[MPC] Stopping MPC [pause]')
+	subprocess.call(["mpc", "-q", "pause"])
 
+	
+"""
+def mpc_save_pos( source ):
+	global dSettings
+	if source == 1:
+		mpc_save_pos_for_label ( dSettings['medialabel'] )	
+	elif source == 2:
+		mpc_save_pos_for_label ('locmus')
+	elif source == 5:
+		mpc_save_pos_for_label ('stream')
+	elif source == 6:
+		mpc_save_pos_for_label ('smb')
+"""
 
 
 
@@ -682,4 +675,19 @@ def mpc_populate_playlist ( label ):
 	#oMpdClient.send_idle()
 
 
-		
+	
+
+def mpc_db_label_exist( label ):
+	print('[MPC] Checking if {0} occurs in the MPD database'.format(label))
+	taskcmd = "mpc ls "+label+" | wc -l"
+	task = subprocess.Popen(taskcmd, shell=True, stdout=subprocess.PIPE)
+	mpcOut = task.stdout.read()
+	assert task.wait() == 0
+	
+	if mpcOut.rstrip('\n') == '0':
+		print(' ...  directory not found in mpd database')
+		return False
+	else:
+		print(' ...  directory found in mpd database')
+		return True
+	

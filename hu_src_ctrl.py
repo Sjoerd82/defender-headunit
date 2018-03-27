@@ -606,7 +606,7 @@ def handle_path_player(path,cmd,args):
 		print type(state)
 			
 		# PARSE STATE -- IS THIS THE RIGHT PLACE TO DO THIS?
-		if not isinstance(args[0],dict):
+		if not isinstance(state,dict):
 			#return False	#?
 			printer ("argument is not a dictionary")
 			return None
