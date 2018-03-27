@@ -31,11 +31,11 @@ class BaseSourceClass(object):
 		pass
 
 	# output wrapper
-	def __printer(self, message, level=LL_INFO, tag=LOG_TAG):
+	def printer(self, message, level=LL_INFO, tag=LOG_TAG):
 		self.logger.log(level, message, extra={'tag': tag})
 		
 	def check( self, sourceCtrl, subSourceIx=None ):
-		self.__printer('Checking availability...')
+		self.printer('Checking availability...')
 		ix = sourceCtrl.index('name','locmus')	# source index
 		locations = []							# list of tuples; index: 0 = mountpoint, 1 = mpd dir, 2 = availability.
 		subsource_availability_changes = []		# list of changes
@@ -58,14 +58,14 @@ class BaseSourceClass(object):
 			original_availability = location[2]
 			new_availability = None
 
-			self.__printer('Checking local folder: {0}, current availability: {1}'.format(mountpoint,original_availability))
+			self.printer('Checking local folder: {0}, current availability: {1}'.format(mountpoint,original_availability))
 			
 			# check if the dir exists:
 			if not os.path.exists(mountpoint):
-				self.__printer(" > Local music directory does not exist.. creating {0}".format(mountpoint),LL_WARNING)
+				self.printer(" > Local music directory does not exist.. creating {0}".format(mountpoint),LL_WARNING)
 				os.makedirs(mountpoint)
 				if not os.path.exists(mountpoint):
-					self.__printer(" > [FAIL] Could not create directory",LL_WARNING)
+					self.printer(" > [FAIL] Could not create directory",LL_WARNING)
 					
 				# obviously there will no be any music in that new directory, so marking it unavailable..
 				new_availability = False
@@ -73,19 +73,19 @@ class BaseSourceClass(object):
 			else:
 				
 				if not os.listdir(mountpoint):
-					self.__printer(" > Local music directory is empty.",LL_WARNING)
+					self.printer(" > Local music directory is empty.",LL_WARNING)
 					new_availability = False
 				else:
-					self.__printer(" > Local music directory present and has files.",LL_INFO)
+					self.printer(" > Local music directory present and has files.",LL_INFO)
 					
 					if not self.mpdc.is_dbdir( mpd_dir ):
-						self.__printer(" > Running MPD update for this directory.. (wait=True) ALERT! LONG BLOCKING OPERATION AHEAD...")
+						self.printer(" > Running MPD update for this directory.. (wait=True) ALERT! LONG BLOCKING OPERATION AHEAD...")
 						self.mpdc.update_db( mpd_dir, True )	#TODO: don't wait! set available on return of update..
 						if not self.mpdc.is_dbdir( mpd_dir ):
-							self.__printer(" > Nothing to play marking unavailable...")
+							self.printer(" > Nothing to play marking unavailable...")
 							new_availability = False
 						else:
-							self.__printer(" > Music found after updating")
+							self.printer(" > Music found after updating")
 							new_availability = True
 					else:
 						new_availability = True
@@ -99,7 +99,7 @@ class BaseSourceClass(object):
 		return subsource_availability_changes
 		
 	def init( self, sourceCtrl ):
-		self.__printer('Initializing...')
+		self.printer('Initializing...')
 		
 		# get source configuration from main configuration
 		locmusConfig = getSourceConfig('locmus')
@@ -122,44 +122,44 @@ class MpdSourceClass(object):
 		return True
 		
 	def stop( self ):
-		self.__printer('Stopping source: locmus. Saving playlist position and clearing playlist.')
+		self.printer('Stopping source: locmus. Saving playlist position and clearing playlist.')
 		# save playlist position (file name + position)
 		# self.mpdc.mpc_save_pos_for_label( 'locmus' )
 		self.mpdc.stop()
 		return True
 		
 	def next( self ):
-		self.__printer('Next track')
+		self.printer('Next track')
 		self.mpdc.next()
 		return True
 		
 	def prev( self ):
-		self.__printer('Prev track')
+		self.printer('Prev track')
 		self.mpdc.prev()
 		return True
 
 	def pause( self, mode ):
-		self.__printer('Pause. Mode: {0}'.format(mode))
+		self.printer('Pause. Mode: {0}'.format(mode))
 		self.mpdc.pause(mode)
 		return True
 
 	def random( self, mode ):
-		self.__printer('Random. Mode: {0}'.format(mode))
+		self.printer('Random. Mode: {0}'.format(mode))
 		self.mpdc.random(mode)
 		return True
 
 	def seekfwd( self ):
-		self.__printer('Seek FFWD')
+		self.printer('Seek FFWD')
 		self.mpdc.seek('+1')
 		return True
 
 	def seekrev( self ):
-		self.__printer('Seek FBWD')
+		self.printer('Seek FBWD')
 		self.mpdc.seek('-1')
 		return True
 
 	def update( self, location ):
-		self.__printer('Update. Location: {0}'.format(location))
+		self.printer('Update. Location: {0}'.format(location))
 		self.mpdc.update(location)
 		return True
 		
@@ -183,7 +183,7 @@ class sourceClass(BaseSourceClass,MpdSourceClass):
 	def __init__( self, logger ):
 		BaseSourceClass.__init__(self)
 		self.logger = logger
-		self.__printer('Source Class Init', level=LL_DEBUG)
+		self.printer('Source Class Init', level=LL_DEBUG)
 		MpdSourceClass.__init__(self)
 		
 	def __locmus_add( self, label, dir, mpd_dir, sourceCtrl ):
@@ -225,7 +225,7 @@ class sourceClass(BaseSourceClass,MpdSourceClass):
 		"""
 
 	def play( self, sourceCtrl, resume={} ): #, subSourceIx=None ):
-		self.__printer('Start playing')
+		self.printer('Start playing')
 		
 		#
 		# variables
@@ -251,7 +251,7 @@ class sourceClass(BaseSourceClass,MpdSourceClass):
 
 		# check if succesful...
 		if playlistCount == "0":
-			self.__printer(' > Nothing in the playlist, trying to update database...')
+			self.printer(' > Nothing in the playlist, trying to update database...')
 			
 			# update and try again...
 			self.mpdc.update_db( sLocalMusicMPD, True )
@@ -260,14 +260,14 @@ class sourceClass(BaseSourceClass,MpdSourceClass):
 			# check if succesful...
 			if playlistCount == "0":
 				# Failed. Returning false will cause caller to try next source
-				self.__printer(' > Nothing in the playlist, giving up. Marking source unavailable.')
+				self.printer(' > Nothing in the playlist, giving up. Marking source unavailable.')
 				sourceCtrl.set_available( arIx[0], False, arIx[1] )
 				pa_sfx(LL_ERROR)
 				return False
 			else:
-				self.__printer(' > Found {0:s} tracks'.format(playlistCount))
+				self.printer(' > Found {0:s} tracks'.format(playlistCount))
 		else:
-			self.__printer(' > Found {0:s} tracks'.format(playlistCount))
+			self.printer(' > Found {0:s} tracks'.format(playlistCount))
 
 		#
 		# continue where left
@@ -280,12 +280,12 @@ class sourceClass(BaseSourceClass,MpdSourceClass):
 		else:
 			playslist_pos = {'pos': 1, 'time': 0}
 			
-		self.__printer(' > Starting playback')
+		self.printer(' > Starting playback')
 		#mpc.playStart( str(playslist_pos['pos']), playslist_pos['time'] )
 		subprocess.call(["mpc", "-q" , "stop"])
 		subprocess.call(["mpc", "-q" , "play", str(playslist_pos['pos'])])
 		if playslist_pos['time'] > 0:
-			self.__printer(' ...  Seeking to {0} sec.'.format(playslist_pos['time']))
+			self.printer(' ...  Seeking to {0} sec.'.format(playslist_pos['time']))
 			subprocess.call(["mpc", "-q" , "seek", str(playslist_pos['time'])])
 			
 		# double check if source is up-to-date
