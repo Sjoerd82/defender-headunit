@@ -17,7 +17,7 @@ sourceName='media'
 LOG_TAG = 'MEDIA'
 LOGGER_NAME = 'media'
 
-class sourceClass():
+class sourceClass(object):
 
 	# output wrapper
 	def __printer( self, message, level=LL_INFO, tag=LOG_TAG):
@@ -26,7 +26,7 @@ class sourceClass():
 	def __init__( self, logger ):
 		self.logger = logger
 		self.__printer('Source Class Init', level=LL_DEBUG)
-		self.mdpc = MpdController()
+		self.mdpc = MpdController(self.logger)
 		
 	def __del__( self ):
 		print('Source Class Deleted {0}'.format(sourceName))
