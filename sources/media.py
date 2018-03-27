@@ -26,7 +26,7 @@ class sourceClass(object):
 	def __init__( self, logger ):
 		self.logger = logger
 		self.__printer('Source Class Init', level=LL_DEBUG)
-		self.mdpc = MpdController(self.logger)
+		self.mpdc = MpdController(self.logger)
 		
 	def __del__( self ):
 		print('Source Class Deleted {0}'.format(sourceName))
