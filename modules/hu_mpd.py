@@ -132,11 +132,11 @@ class MpdController():
 		self.mpdc.stop()
 		
 	def next(self, count=1):
-		for i in range(count):	#TODO: can we say for range()?
+		for range(count):	#TODO: can we say for range()?
 			self.mpdc.next()
 		
 	def prev(self, count=1):
-		for in in range(count):
+		for i in range(count):
 			self.mpdc.prev()
 
 	def seek(self, seeksec='+1'):
