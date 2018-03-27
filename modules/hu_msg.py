@@ -80,7 +80,7 @@ def parse_message(message):
 #********************************************************************************
 # ZeroMQ Wrapper for Pub-Sub Forwarder Device
 #
-class MqPubSubFwdController:
+class MqPubSubFwdController(object):
 
 	def __init__(self, address, port_pub, port_sub):
 

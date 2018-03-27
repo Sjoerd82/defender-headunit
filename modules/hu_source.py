@@ -562,21 +562,21 @@ class SourceController(object):
 			return res
 			
 	def source_all( self, index=None ):
-		""" Return a COPY of the complete lSource
+		""" Return a DEEPCOPY of the complete lSource
 		"""
 		#return copy.copy(self.lSource)
 		# Integrated get_all_simple:
 		if index == None:
-			mycopy = copy.copy(self.lSource)
-#			for source in mycopy:
-#				if 'sourceClass' in source:
-#					del source['sourceClass']
-#				if 'sourceModule' in source:
-#					del source['sourceModule']
+			mycopy = copy.deepcopy(self.lSource)
+			for source in mycopy:
+				if 'sourceClass' in source:
+					del source['sourceClass']
+				if 'sourceModule' in source:
+					del source['sourceModule']
 				#TODO: delete based on type(), figure out why this doesn't work:
-#				for key,value in source.iteritems():
-#					if type(value) == 'instance':
-#						del source[key]
+				for key,value in source.iteritems():
+					if type(value) == 'instance':
+						del source[key]
 			return mycopy
 		else:
 			mycopy = copy.copy(self.lSource[index])
