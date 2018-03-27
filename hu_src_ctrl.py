@@ -601,21 +601,25 @@ def handle_path_player(path,cmd,args):
 		if not valid:
 			return None
 
+		state = json.loads(args[0])
+		print state
+		print type(state)
+			
 		# PARSE STATE -- IS THIS THE RIGHT PLACE TO DO THIS?
 		if not isinstance(args[0],dict):
 			#return False	#?
 			printer ("argument is not a dictionary")
 			return None
 					
-		if 'state' in args[0]:
-			if args[0]['state'] in ('play','playing'):
+		if 'state' in state:
+			if state['state'] in ('play','playing'):
 				ret = sc_sources.play()
-			elif args[0]['state'] in ('stop'):
+			elif state['state'] in ('stop'):
 				ret = sc_sources.stop()
-			elif args[0]['state'] in ('pause','paused'):
+			elif state['state'] in ('pause','paused'):
 				ret = sc_sources.pause()
 			else:
-				print "UNKNOWN state: {0}".format(args[0]['state'])
+				print "UNKNOWN state: {0}".format(state['state'])
 				return None #?
 			
 		# Set state: play|pause|stop, toggle random
