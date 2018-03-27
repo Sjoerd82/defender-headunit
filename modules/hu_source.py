@@ -566,7 +566,7 @@ class SourceController(object):
 		"""
 		#return copy.copy(self.lSource)
 		# Integrated get_all_simple:
-		if index == None:
+		if index is None:
 			mycopy = copy.deepcopy(self.lSource)
 			for source in mycopy:
 				if 'sourceClass' in source:
@@ -577,7 +577,8 @@ class SourceController(object):
 	#			for key,value in source.iteritems():
 	#				if type(value) == 'instance':
 	#					del source[key]
-			return mycopy
+		#	return mycopy
+			return None
 		else:
 			mycopy = copy.copy(self.lSource[index])
 			for source in mycopy:
