@@ -877,8 +877,15 @@ class SourceController(object):
 			elif index is not None:
 				self.__printer('Checking index: {0}'.format(index)) #LL_DEBUG
 				
-				#checked_source_is_available = self.lSource[index]['available']
+				## todo  !! !!  ##
 				check_result = self.lSource[index]['sourceClass'].check(self,index_subsource)	#returns a list of dicts with changes
+
+				source_name = self.lSource[index]['name']
+				the_source = self.source_manager.getPluginByName(source_name)	
+				the_source.plugin_object.check(self,index_subsource)	#returns a list of dicts with changes
+				# OR:
+				#self.source_manager.getPluginByName(source_name).plugin_object.init(self)
+
 				
 				return check_result
 				
