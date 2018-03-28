@@ -807,8 +807,8 @@ class SourceController(object):
 		the_source = self.source_manager.getPluginByName("FM")
 		print the_source
 
-		the_source = self.source_manager.getPluginByName("Default.FM")
-		print the_source
+		#the_source = self.source_manager.getPluginByName("Default.FM")
+		#print the_source
 		
 		the_source.plugin_object.init(self)
 		# OR:
