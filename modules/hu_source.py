@@ -882,7 +882,7 @@ class SourceController(object):
 
 				source_name = self.lSource[index]['name']
 				the_source = self.source_manager.getPluginByName(source_name)	
-				the_source.plugin_object.check(self,index_subsource)	#returns a list of dicts with changes
+				check_result = the_source.plugin_object.check(self,index_subsource)	#returns a list of dicts with changes
 				# OR:
 				#self.source_manager.getPluginByName(source_name).plugin_object.init(self)
 
