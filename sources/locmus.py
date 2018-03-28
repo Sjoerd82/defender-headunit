@@ -26,7 +26,7 @@ class LocalMusic(IPlugin,MpdSourcePlugin,SourcePlugin):
 		print('__INIT__ SOURCECLASS')
 		#self.printer('A Source Class Init', level=LL_DEBUG)
 		#SourcePlugin.__init__(self, logger, 'locmus', 'Local Music')
-		#MpdSourcePlugin.__init__(self)
+		MpdSourcePlugin.__init__(self)
 		
 	def __locmus_add( self, label, dir, mpd_dir, sourceCtrl ):
 
