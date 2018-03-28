@@ -100,7 +100,11 @@ class SourceController(object):
 		self.iRecentSS = None
 
 		self.source_manager = PluginManager()
-		logging.getLogger('yapsy').setLevel(logging.DEBUG)
+		logyapsy = logging.getLogger('yapsy')
+		logyapsy.setLevel(logging.DEBUG)
+		logyapsy = log_create_console_loghandler(logyapsy, logging.DEBUG, 'YAPSY')
+		
+		
 		#self.__load_plugins('sources')	# let's call it from the caller's side
 
 	def __check_index(self, test_index, index_name, function_name=None):
