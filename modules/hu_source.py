@@ -3,7 +3,8 @@
 # Venema, S.R.G.
 # 2018-03-23
 #
-# SOURCE CONTROL
+# SOURCE CONTROL provides source control functionality to act on proxy classes
+# Source Plugins are managed via YAPSY.
 #
 # Provide a logger object to __init__ to get output from this class.
 #
@@ -78,6 +79,7 @@
 #	
 # TODO: can we omit class fields from getAll return? => if so, we won't need the get_all_simple
 
+from yapsy.PluginManager import PluginManager
 from hu_utils import *
 import copy
 
@@ -96,6 +98,9 @@ class SourceController(object):
 		self.iCurrentSource = [ None, None ]	#Source, Sub-Source
 		self.lSourceClasses = []
 		self.iRecentSS = None
+
+		self.source_manager = PluginManager()
+		#self.__load_plugins('sources')	# let's call it from the caller's side
 
 	def __check_index(self, test_index, index_name, function_name=None):
 		index = int(test_index)
@@ -152,6 +157,35 @@ class SourceController(object):
 		else:
 			return index_subsource
 		
+	def load_source_plugins(self, plugindir):
+		# check if plugin dir exists
+		if not os.path.exists(plugindir):
+			self.__printer('Source path not found: {0}'.format(plugindir), level=LL_CRITICAL)
+			#exit()
+			Return False
+		
+		# Load the plugins from the plugin directory.
+		self.source_manager.setPluginPlaces([plugindir])
+		self.source_manager.collectPlugins()
+
+		# Activate all loaded plugins
+		for plugin in self.source_manager.getAllPlugins():
+			self.source_manager.activatePluginByName(plugin.name)
+			print plugin.name
+			
+		# Loop round the plugins and print their names.
+		#for plugin in source_manager.getAllPlugins():
+		#	plugin.plugin_object.print_name()
+		
+		# Loop through the source plugins, adding the sources
+		for plugin in self.source_manager.getAllPlugins():
+			#add_a_source(plugindir, sourcePluginName)
+			config = plugin.plugin_object.configuration()
+			isAdded = self.add(config)
+			if isAdded:
+				indexAdded = self.index('name',config['name'])
+				self.source_init(indexAdded)
+	
 	def add( self, source_config ):
 		""" Add a Source
 		"""
@@ -174,6 +208,8 @@ class SourceController(object):
 		self.lSource.sort( key=lambda k: k['order'] )
 		
 		# create a class object and store the reference to it
+		# REPLACED BY YAPSY...
+		'''
 		if 'sourceModule' in source_config:
 			obj = source_config['sourceModule']	#[0]
 			sc = getattr(obj,'sourceClass')(self.logger)
@@ -181,7 +217,7 @@ class SourceController(object):
 			#self.lSourceClasses.append(getattr(obj,'sourceClass')())
 			# add a class field containing the class
 			source_config['sourceClass'] = sc
-			
+		'''
 		return True
 
 	def add_sub( self, index, subsource_config ):
@@ -562,23 +598,22 @@ class SourceController(object):
 			return res
 			
 	def source_all( self, index=None ):
-		""" Return a DEEPCOPY of the complete lSource
+		""" Return a COPY of the complete lSource
 		"""
 		#return copy.copy(self.lSource)
 		# Integrated get_all_simple:
-		if index is None:
-			mycopy = copy.deepcopy(self.lSource)
-			for source in mycopy:
-				if 'sourceClass' in source:
-					del source['sourceClass']
-				if 'sourceModule' in source:
-					del source['sourceModule']
+		if index == None:
+			mycopy = copy.copy(self.lSource)
+#			for source in mycopy:
+#				if 'sourceClass' in source:
+#					del source['sourceClass']
+#				if 'sourceModule' in source:
+#					del source['sourceModule']
 				#TODO: delete based on type(), figure out why this doesn't work:
-	#			for key,value in source.iteritems():
-	#				if type(value) == 'instance':
-	#					del source[key]
-		#	return mycopy
-			return None
+#				for key,value in source.iteritems():
+#					if type(value) == 'instance':
+#						del source[key]
+			return mycopy
 		else:
 			mycopy = copy.copy(self.lSource[index])
 			for source in mycopy:
@@ -628,8 +663,8 @@ class SourceController(object):
 			# add current sub-source: Note that this entry is called subsource, not subsources!
 			composite_current_source['subsource'] = self.lSource[self.iCurrentSource[0]]['subsources'][self.iCurrentSource[1]]
 			# remove not-usefull stuff:
-			del composite_current_source['sourceModule']	# what did we use this for again??? #TODO
-			del composite_current_source['sourceClass']		# what did we use this for again??? #TODO
+			#del composite_current_source['sourceModule']	# what did we use this for again??? #TODO
+			#del composite_current_source['sourceClass']		# what did we use this for again??? #TODO
 			return composite_current_source
 	
 	def subsource_all( self, index=None ):
@@ -755,6 +790,13 @@ class SourceController(object):
 		#self.__printer('INIT: {0}'.format(index)) #LL_DEBUG
 		checkResult = self.lSource[index]['sourceClass'].init(self)
 
+	def source_init_YAPSY(self,index):
+		source_name = self.lSource[index]['name']
+		the_source = self.source_manager.getPluginByName(source_name)
+		the_source.plugin_object.init(self)
+		# OR:
+		#self.source_manager.getPluginByName(source_name).plugin_object.init(self)
+	
 	def source_check( self, index=None, index_subsource=None ):
 		""" Execute a check() for given source or subsource and sets availability accordingly
 			

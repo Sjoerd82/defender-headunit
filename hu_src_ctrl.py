@@ -1137,15 +1137,16 @@ def setup():
 	#
 	# Initialize Source Controller
 	#
+	printer('Loading Source Plugins...')
 	global sc_sources
 	sc_sources = SourceController(logger)
 	
 	#
 	# Load Source Plugins
 	#
-	printer('Loading Source Plugins...')
-	import sources
-	load_sources( os.path.join(os.path.dirname(os.path.abspath(__file__)),'sources') )
+	#printer('Loading Source Plugins...')
+	#import sources
+	#load_sources( os.path.join(os.path.dirname(os.path.abspath(__file__)),'sources') )
 
 	#
 	# Load Operational Settings
