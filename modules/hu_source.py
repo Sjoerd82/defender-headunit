@@ -162,7 +162,7 @@ class SourceController(object):
 		if not os.path.exists(plugindir):
 			self.__printer('Source path not found: {0}'.format(plugindir), level=LL_CRITICAL)
 			#exit()
-			Return False
+			return False
 		
 		# Load the plugins from the plugin directory.
 		self.source_manager.setPluginPlaces([plugindir])
