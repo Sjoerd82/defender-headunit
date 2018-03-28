@@ -24,7 +24,7 @@ class SourcePlugin(object):
 			tag = self.name
 		self.logger.log(level, message, extra={'tag': tag})
 	
-	def configuration():
+	def configuration(self):
 		minimal_config = {}
 		minimal_config['name'] = self.name
 		minimal_config['displayname'] = self.displayname
