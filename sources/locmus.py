@@ -49,7 +49,7 @@ class LocalMusic(IPlugin,MpdSourcePlugin,SourcePlugin):
 		sourceCtrl.add_sub( ix, subsource )
 
 	def init( self, sourceCtrl ):
-		super(SourcePlugin, self).init(sourceCtrl)
+		super(LocalMusic, self).init(sourceCtrl)
 
 		# get source configuration from main configuration
 		locmusConfig = getSourceConfig('locmus')
@@ -67,7 +67,7 @@ class LocalMusic(IPlugin,MpdSourcePlugin,SourcePlugin):
 	# Optionally, provide list of mountpoint(s) to check
 	#def locmus_check( sourceCtrl, mountpoint=None ):
 	def check( self, sourceCtrl, subSourceIx=None ):
-		super(SourcePlugin, self).check(sourceCtrl, subSourceIx)
+		super(LocalMusic, self).check(sourceCtrl, subSourceIx)
 		"""	Check source
 		
 			Checks all configured mountpoints
