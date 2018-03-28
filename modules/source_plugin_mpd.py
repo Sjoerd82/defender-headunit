@@ -6,6 +6,7 @@
 # This BASE CLASS contains shared code for MPD based source plugins.
 #
 
+import os
 from modules.hu_mpd import MpdController
 
 class MpdSourcePlugin(object):
