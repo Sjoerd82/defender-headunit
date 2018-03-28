@@ -794,13 +794,13 @@ class SourceController(object):
 	 move into subclass or something?
 	"""
 
-	def source_init( self, index ):
+	def source_init_OLD( self, index ):
 		""" Execute a init() for given source
 		"""
 		#self.__printer('INIT: {0}'.format(index)) #LL_DEBUG
 		checkResult = self.lSource[index]['sourceClass'].init(self)
 
-	def source_init_YAPSY(self,index):
+	def source_init(self,index):
 		source_name = self.lSource[index]['name']
 		the_source = self.source_manager.getPluginByName(source_name)
 		the_source.plugin_object.init(self)
