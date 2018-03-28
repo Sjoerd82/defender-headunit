@@ -7,6 +7,7 @@
 #
 
 import os
+from modules.hu_utils import *
 from modules.hu_mpd import MpdController
 
 class MpdSourcePlugin(object):
