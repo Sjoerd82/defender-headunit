@@ -803,8 +803,11 @@ class SourceController(object):
 	def source_init(self,index):
 		source_name = self.lSource[index]['name']
 		print "DEBUG: source_name: {0}".format(source_name)
-		
-		the_source = self.source_manager.getPluginByName(source_name)
+
+		the_source = self.source_manager.getPluginByName("FM")
+		print the_source
+
+		the_source = self.source_manager.getPluginByName("Default.FM")
 		print the_source
 		
 		the_source.plugin_object.init(self)
