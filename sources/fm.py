@@ -50,7 +50,7 @@ class sourceClass(IPlugin, SourcePlugin):
 			
 			TODO: Will now simply return TRUE.
 		"""
-		self.__printer('CHECK availability...')
+		self.printer('CHECK availability...')
 
 		subsource_availability_changes = []
 		new_availability = True
@@ -66,35 +66,35 @@ class sourceClass(IPlugin, SourcePlugin):
 		return subsource_availability_changes
 		
 	def play( self, sourceCtrl, subSourceIx=None ):
-		self.__printer('Start playing FM radio...')
+		self.printer('Start playing FM radio...')
 		return True	
 
 	def stop( self ):
-		self.__printer('Stop CLASS!')
+		self.printer('Stop CLASS!')
 		return True
 		
 	def pause( self, mode ):
-		self.__printer('Pause. Mode: {0}'.format(mode))
+		self.printer('Pause. Mode: {0}'.format(mode))
 		#TODO IMPLEMENT
 		return True
 
 	def random( self, mode ):
-		self.__printer('Random. Mode: {0}'.format(mode))
+		self.printer('Random. Mode: {0}'.format(mode))
 		#TODO IMPLEMENT
 		return True
 
 	def seekfwd( self ):
-		self.__printer('Seek FFWD')
+		self.printer('Seek FFWD')
 		#TODO IMPLEMENT
 		return True
 
 	def seekrev( self ):
-		self.__printer('Seek FBWD')
+		self.printer('Seek FBWD')
 		#TODO IMPLEMENT
 		return True
 
 	def update( self ):
-		self.__printer('Update not supported')
+		self.printer('Update not supported')
 		return True
 
 	def get_details():
