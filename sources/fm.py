@@ -29,8 +29,8 @@ class sourceClass(IPlugin, SourcePlugin):
 		self.printer('A Source Class Init', level=LL_DEBUG)
 		#SourcePlugin.__init__(self, logger, 'fm', 'FM')
 		
-    def print_name(self):
-        print "This is plugin 1"
+	def print_name(self):
+		print "This is plugin 1"
 	
 	def init( self, sourceCtrl ):
 		self.__printer('Initializing...', level=15)

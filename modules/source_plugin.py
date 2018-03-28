@@ -77,7 +77,7 @@ class SourcePlugin(object):
 		self.printer('Not implemented',level=LL_DEBUG)
 
 	def update(self, location):
-		self.printer('Not implemented'',level=LL_DEBUG)
+		self.printer('Not implemented',level=LL_DEBUG)
 		
 	def get_details():
 		return False
