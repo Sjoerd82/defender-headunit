@@ -28,7 +28,8 @@ class sourceClass(IPlugin, SourcePlugin):
 	def __init__(self):
 		self.name = 'fm'
 		self.displayname = 'FM'
-		self.logger=None
+		self.logger=logging.getLogger('srcctrl')
+		
 		#super(LocalMusic, self).__init__(self.logger, self.name, self.displayname)
 		print('__INIT__ SOURCECLASS')
 		#self.printer('A Source Class Init', level=LL_DEBUG)
