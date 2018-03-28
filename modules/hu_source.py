@@ -878,7 +878,7 @@ class SourceController(object):
 				self.__printer('Checking index: {0}'.format(index)) #LL_DEBUG
 				
 				## todo  !! !!  ##
-				check_result = self.lSource[index]['sourceClass'].check(self,index_subsource)	#returns a list of dicts with changes
+				#check_result = self.lSource[index]['sourceClass'].check(self,index_subsource)	#returns a list of dicts with changes
 
 				source_name = self.lSource[index]['name']
 				the_source = self.source_manager.getPluginByName(source_name)	
