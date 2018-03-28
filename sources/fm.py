@@ -23,6 +23,7 @@ lFmStations = [ 96.40, 99.10, 101.20, 102.54 ]
 
 class sourceClass(IPlugin, SourcePlugin):
 
+	# __init__ is called by YAPSY, no room for additional parameters (?)
 	#def __init__(self, logger, name, displayname):
 	def __init__(self):
 		self.name = 'fm'
@@ -37,7 +38,7 @@ class sourceClass(IPlugin, SourcePlugin):
 		print "This is plugin 1"
 	
 	def init( self, sourceCtrl ):
-		self.__printer('Initializing...', level=15)
+		self.printer('Initializing...')
 		return True
 
 	def check( self, sourceCtrl, subSourceIx=None  ):
