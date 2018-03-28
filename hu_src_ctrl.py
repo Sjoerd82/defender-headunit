@@ -1140,6 +1140,7 @@ def setup():
 	printer('Loading Source Plugins...')
 	global sc_sources
 	sc_sources = SourceController(logger)
+	sc_sources.load_source_plugins( os.path.join(os.path.dirname(os.path.abspath(__file__)),'sources') )
 	
 	#
 	# Load Source Plugins
