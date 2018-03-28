@@ -100,10 +100,14 @@ class SourceController(object):
 		self.iRecentSS = None
 
 		self.source_manager = PluginManager()
+		
 		logyapsy = logging.getLogger('yapsy')
 		logyapsy.setLevel(logging.DEBUG)
-		logyapsy = log_create_console_loghandler(logyapsy, logging.DEBUG, 'YAPSY')
-		
+
+		ch = logging.StreamHandler()						# create console handler
+		ch.setLevel(logging.DEBUG)								# set log level
+		logyapsy.addHandler(ch)
+		#logyapsy = log_create_console_loghandler(logyapsy, logging.DEBUG, 'YAPSY')
 		
 		#self.__load_plugins('sources')	# let's call it from the caller's side
 
