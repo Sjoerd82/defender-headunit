@@ -100,6 +100,7 @@ class SourceController(object):
 		self.iRecentSS = None
 
 		self.source_manager = PluginManager()
+		logging.getLogger('yapsy').setLevel(logging.DEBUG)
 		#self.__load_plugins('sources')	# let's call it from the caller's side
 
 	def __check_index(self, test_index, index_name, function_name=None):
@@ -165,7 +166,8 @@ class SourceController(object):
 			return False
 		
 		# Load the plugins from the plugin directory.
-		self.source_manager.setPluginPlaces([plugindir])
+		#self.source_manager.setPluginPlaces([plugindir])
+		self.source_manager.setPluginPlaces(['/mnt/PIHU_APP/defender-headunit/sources'])
 		self.source_manager.collectPlugins()
 
 		# Activate all loaded plugins
