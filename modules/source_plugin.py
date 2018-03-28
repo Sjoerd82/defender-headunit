@@ -1,124 +1,83 @@
+#
+# Source Plugin base class
+# Venema, S.R.G.
+# 2018-03-28
+#
+# This BASE CLASS contains shared code and minimal implementation
+# of a source plugin.
+#
+
 from modules.hu_utils import *
 
-sourceName = 'locmus'
-LOG_TAG = 'LOCMUS'
-LOGGER_NAME = 'locmus'
+class SourcePlugin(object):
 
-
-class BaseSourceClass(object):
-
-	def __init__(self):
+	def __init__(self, logger, name, displayname):
+		super(SourcePlugin, self).__init__(logger, name, displayname)
 		print('__INIT__ BASESOURCECLASS')
+		self.logger = logger
+		self.name = name
+		self.displayname = displayname
 		self.printer('C Base Source Class Init', level=LL_DEBUG)
-		#pass
 
-	# output wrapper
-	def printer(self, message, level=LL_INFO, tag=LOG_TAG):
+	def printer(self, message, level=LL_INFO, tag=None):
+		if tag is None:
+			tag = self.name
 		self.logger.log(level, message, extra={'tag': tag})
+	
+	def configuration():
+		minimal_config = {}
+		minimal_config['name'] = self.name
+		minimal_config['displayname'] = self.displayname
+		minimal_config['order'] = 0
+		# return configuration (from json config file)
+		plugindir = "sources"
+		configFileName = os.path.join(plugindir,self.name+'.json')
+		if not os.path.exists( configFileName):
+			printer('Configuration not found: {0}'.format(configFileName))
+			return minimal_config
 		
-	def init( self, sourceCtrl ):
-		self.printer('Initializing...')
-
-	def check( self, sourceCtrl, subSourceIx=None ):
-		self.printer('Checking availability...')
-		ix = sourceCtrl.index('name','locmus')	# source index
-		locations = []							# list of tuples; index: 0 = mountpoint, 1 = mpd dir, 2 = availability.
-		subsource_availability_changes = []		# list of changes
-						
-		if subSourceIx is None:
-			subsources = sourceCtrl.subsource_all( ix )
-			for subsource in subsources:
-				locations.append( (subsource['mountpoint'], subsource['mpd_dir'], subsource['available']) )
-			ssIx = 0
-		else:
-			subsource = sourceCtrl.subsource( ix, subSourceIx )
-			locations.append( (subsource['mountpoint'], subsource['mpd_dir'], subsource['available']) )
-			ssIx = subSourceIx
-
-		# check mountpoint(s)
-		for location in locations:
+		# load source configuration file
+		jsConfigFile = open( configFileName )
+		config=json.load(jsConfigFile)
 		
-			mountpoint = location[0]
-			mpd_dir = location[1]
-			original_availability = location[2]
-			new_availability = None
+		# test if name is unique?
+		# #TODO
 
-			self.printer('Checking local folder: {0}, current availability: {1}'.format(mountpoint,original_availability))
-			
-			# check if the dir exists:
-			if not os.path.exists(mountpoint):
-				self.printer(" > Local music directory does not exist.. creating {0}".format(mountpoint),LL_WARNING)
-				os.makedirs(mountpoint)
-				if not os.path.exists(mountpoint):
-					self.printer(" > [FAIL] Could not create directory",LL_WARNING)
-					
-				# obviously there will no be any music in that new directory, so marking it unavailable..
-				new_availability = False
-				
-			else:
-				
-				if not os.listdir(mountpoint):
-					self.printer(" > Local music directory is empty.",LL_WARNING)
-					new_availability = False
-				else:
-					self.printer(" > Local music directory present and has files.",LL_INFO)
-					
-					if not self.mpdc.is_dbdir( mpd_dir ):
-						self.printer(" > Running MPD update for this directory.. (wait=True) ALERT! LONG BLOCKING OPERATION AHEAD...")
-						self.mpdc.update_db( mpd_dir, True )	#TODO: don't wait! set available on return of update..
-						if not self.mpdc.is_dbdir( mpd_dir ):
-							self.printer(" > Nothing to play marking unavailable...")
-							new_availability = False
-						else:
-							self.printer(" > Music found after updating")
-							new_availability = True
-					else:
-						new_availability = True
-			
-			if new_availability is not None and new_availability != original_availability:
-				sourceCtrl.set_available( ix, new_availability, ssIx )
-				subsource_availability_changes.append({"index":ix,"subindex":ssIx,"available":new_availability})
+		# TODO: merge minimal_config ?
+		return config
+	
+	def init(self, sourceCtrl):
+		self.printer('Initializing...',level=LL_DEBUG)
 
-			ssIx+=1
+	def check(self, sourceCtrl, subSourceIx=None):
+		self.printer('Checking availability...',level=LL_DEBUG)
 		
-		return subsource_availability_changes
+	def play(self, sourceCtrl, resume={}):
+		self.printer('Not implemented',level=LL_DEBUG)
 		
+	def stop(self):
+		self.printer('Not implemented',level=LL_DEBUG)
 		
-	def play( self, sourceCtrl, resume={} ):
-		self.printer('Playing Source')
-		return True
+	def next(self):
+		self.printer('Not implemented',level=LL_DEBUG)
 		
-	def stop( self ):
-		self.printer('Stopping source: locmus. Saving playlist position and clearing playlist.')
-		return True
-		
-	def next( self ):
-		self.printer('Next track')
-		return True
-		
-	def prev( self ):
-		self.printer('Prev track')
-		return True
+	def prev(self):
+		self.printer('Not implemented',level=LL_DEBUG)
 
-	def pause( self, mode ):
-		self.printer('Pause. Mode: {0}'.format(mode))
-		return True
+	def pause(self, mode):
+		self.printer('Not implemented',level=LL_DEBUG)
 
-	def random( self, mode ):
-		self.printer('Random. Mode: {0}'.format(mode))
-		return True
+	def random(self, mode):
+		self.printer('Not implemented',level=LL_DEBUG)
 
-	def seekfwd( self ):
-		self.printer('Seek FFWD')
-		return True
+	def seekfwd(self):
+		self.printer('Not implemented',level=LL_DEBUG)
 
-	def seekrev( self ):
-		self.printer('Seek FBWD')
-		return True
+	def seekrev(self):
+		self.printer('Not implemented',level=LL_DEBUG)
 
-	def update( self, location ):
-		self.printer('Update. Location: {0}'.format(location))
-		return True
+	def update(self, location):
+		self.printer('Not implemented'',level=LL_DEBUG)
 		
 	def get_details():
 		return False

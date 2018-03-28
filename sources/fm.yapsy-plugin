@@ -1,0 +1,8 @@
+[Core]
+Name = FM
+Module = fm
+
+[Documentation]
+Author = Sjoerd Venema
+Version = 0.1
+Description = FM radio

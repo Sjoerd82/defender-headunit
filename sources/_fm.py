@@ -1,37 +1,33 @@
+#********************************************************************************
 #
-# SOURCE PLUGIN: FM
-# Venema, S.R.G.
-# 2018-03-28
-#
-# Plays FM radio
-#
-# Extends SourcePlugin
+# Source: Example
 #
 
-from yapsy.IPlugin import IPlugin
 from modules.hu_utils import *
-from modules.source_plugin import SourcePlugin
+from modules.source_plugin import BaseSourceClass
+
+sourceName='fm'
+LOG_TAG = 'FM'
+LOGGER_NAME = 'fm'
 
 # Station list
 #  TODO: load/save. In configuration(?)
 lFmStations = [ 96.40, 99.10, 101.20, 102.54 ]
 
-#class PluginOne(IPlugin):
-#	def print_name(self):
-#		print "This is plugin 1"
-		
+class sourceClass(BaseSourceClass):
 
-class sourceClass(IPlugin, SourcePlugin):
+	# output wrapper
+	def __printer( self, message, level=LL_INFO, tag=LOG_TAG):
+		self.logger.log(level, message, extra={'tag': tag})
 
-	def __init__(self, logger, name, displayname):
-		super(LocalMusic, self).__init__(logger, name, displayname)
-		print('__INIT__ SOURCECLASS')
-		self.printer('A Source Class Init', level=LL_DEBUG)
-		#SourcePlugin.__init__(self, logger, 'fm', 'FM')
+	def __init__(self, logger):
+		self.logger = logger
 		
-    def print_name(self):
-        print "This is plugin 1"
-	
+	#def __del__( self ):
+		#self.__printer('FM CLASS DELETE!')		# 	ERROR! } Exception TypeError: TypeError("'NoneType' object is not iterable",)
+		#printer('FM CLASS DELETE!')			# 	ERROR! }
+		#print('FM CLASS DELETE!')
+		
 	def init( self, sourceCtrl ):
 		self.__printer('Initializing...', level=15)
 		return True

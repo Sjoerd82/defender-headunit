@@ -1,0 +1,8 @@
+[Core]
+Name = Internal Storage
+Module = locmus
+
+[Documentation]
+Author = Sjoerd Venema
+Version = 0.1
+Description = Plays locally available music
