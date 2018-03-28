@@ -23,7 +23,11 @@ lFmStations = [ 96.40, 99.10, 101.20, 102.54 ]
 
 class sourceClass(IPlugin, SourcePlugin):
 
-	def __init__(self, logger, name, displayname):
+	#def __init__(self, logger, name, displayname):
+	def __init__(self):
+		self.name = 'fm'
+		self.displayname = 'FM'
+		self.logger=None
 		super(LocalMusic, self).__init__(logger, name, displayname)
 		print('__INIT__ SOURCECLASS')
 		self.printer('A Source Class Init', level=LL_DEBUG)

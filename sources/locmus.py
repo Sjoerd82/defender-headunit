@@ -17,7 +17,11 @@ from modules.source_plugin_mpd import MpdSourcePlugin
 # functions are searched Left-to-Right
 class LocalMusic(IPlugin,MpdSourcePlugin,SourcePlugin):
 
-	def __init__(self, logger, name, displayname):
+	#def __init__(self, logger, name, displayname):
+	def __init__(self):
+		self.name = 'locmus'
+		self.displayname = 'LocalMusic'
+		self.logger=None
 		super(LocalMusic, self).__init__(logger, name, displayname)
 		print('__INIT__ SOURCECLASS')
 		self.printer('A Source Class Init', level=LL_DEBUG)
