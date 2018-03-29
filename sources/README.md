@@ -74,6 +74,13 @@ Added by system:
 available	bool
 subsources	list
 
+Example:
+```
+{
+	"displayname": "FM Radio",
+	"enabled": true
+}
+```
 
 ## Minimal Plugin class
 
