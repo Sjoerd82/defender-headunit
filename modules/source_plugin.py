@@ -21,11 +21,11 @@ class SourcePlugin(object):
 		
 		# recreate a logger #TODO, get it from upstream!
 		"""
-		logger=logging.getLogger('srctrl')
-		logger.setLevel(logging.DEBUG)
+		self.logger=logging.getLogger('srctrl')
+		self.logger.setLevel(logging.DEBUG)
 		ch = logging.StreamHandler()						# create console handler
 		ch.setLevel(logging.DEBUG)								# set log level
-		logger.addHandler(ch)
+		self.logger.addHandler(ch)
 		"""
 
 	#def add_logger(self, logger):
@@ -39,7 +39,7 @@ class SourcePlugin(object):
 		#print "PRINTER {0}: {1}".format(logger,message)
 		if tag is None:
 			tag = self.name
-		logger.log(level, message, extra={'tag': tag})
+		self.logger.log(level, message, extra={'tag': tag})
 	
 	def configuration(self, name):
 		print("LOADING SOURCE CONFIGURATION")
