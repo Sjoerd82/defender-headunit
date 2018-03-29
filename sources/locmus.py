@@ -66,7 +66,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 					   ,subsource['musicdir_mpd']
 					   ,sourceCtrl )
 		'''
-		# TODO: Append sub-sources with uuid
+		# TODO: Append sub-sources with uuid, label?
 
 		return True
 				
