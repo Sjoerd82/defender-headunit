@@ -20,7 +20,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 		super(MySource,self).__init__()
 
 	def init(self, plugin_name, logger=None):
-		super(MySource, self).init()
+		super(MySource, self).init(plugin_name,logger)
 		"""	At this point, the source has *not* been added yet, and thus no index is available!		
 		"""
 		print("LocalMusic (locmus) init()")
