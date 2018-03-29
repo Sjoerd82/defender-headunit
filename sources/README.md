@@ -101,7 +101,7 @@ Example (fm.json):
 {
 	"displayname": "FM Radio",
 	"enabled": true,
-	"subsources": [ "name":"fm" ]
+	"subsources": [ {"name":"fm"} ]
 }
 ```
 

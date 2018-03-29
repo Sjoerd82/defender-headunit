@@ -6,6 +6,7 @@
 # This BASE CLASS contains shared code and minimal implementation
 # of a source plugin.
 #
+DEFAULT_CONFIG_FILE = '/etc/hu/configuration.json'
 
 from modules.hu_utils import *
 
@@ -66,7 +67,7 @@ class SourcePlugin(object):
 		config['name'] = name		
 		
 		# load main configuration
-		main_configuration = load_configuration()
+		main_configuration = configuration_load(logger, DEFAULT_CONFIG_FILE)
 		if 'source_config' in main_configuration and name in main_configuration['source_config']:
 			config.update(main_configuration['source_config'][name])
 			
