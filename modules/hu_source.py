@@ -880,11 +880,10 @@ class SourceController(object):
 				## todo  !! !!  ##
 				#check_result = self.lSource[index]['sourceClass'].check(self,index_subsource)	#returns a list of dicts with changes
 
-				source_name = self.lSource[index]['name']
-				the_source = self.source_manager.getPluginByName(source_name)	
-				check_result = the_source.plugin_object.check(self,index_subsource)	#returns a list of dicts with changes
+				#the_source = self.source_manager.getPluginByName(self.lSource[index]['name'])
+				#check_result = the_source.plugin_object.check(self,index_subsource)	#returns a list of dicts with changes
 				# OR:
-				#self.source_manager.getPluginByName(source_name).plugin_object.init(self)
+				check_result = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.check(self,index_subsource)	#returns a list of dicts with changes
 
 				
 				return check_result
