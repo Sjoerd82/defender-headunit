@@ -17,29 +17,29 @@ class SourcePlugin(object):
 	def __init__(self):
 		
 		self.name = None
-		#self.logger = None
+		#logger = None
 		
 		# recreate a logger #TODO, get it from upstream!
 		"""
-		self.logger=logging.getLogger('srctrl')
-		self.logger.setLevel(logging.DEBUG)
+		logger=logging.getLogger('srctrl')
+		logger.setLevel(logging.DEBUG)
 		ch = logging.StreamHandler()						# create console handler
 		ch.setLevel(logging.DEBUG)								# set log level
-		self.logger.addHandler(ch)
+		logger.addHandler(ch)
 		"""
 
 	#def add_logger(self, logger):
-	#	self.logger = logger
+	#	logger = logger
 		
 	def new_init( self, name ):
 		self.name = name
 		return True
 
 	def printer(self, message, level=LL_INFO, tag=None):
-		#print "PRINTER {0}: {1}".format(self.logger,message)
+		#print "PRINTER {0}: {1}".format(logger,message)
 		if tag is None:
 			tag = self.name
-		self.logger.log(level, message, extra={'tag': tag})
+		logger.log(level, message, extra={'tag': tag})
 	
 	def configuration(self, name):
 		print("LOADING SOURCE CONFIGURATION")
