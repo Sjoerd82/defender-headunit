@@ -37,7 +37,7 @@ class SourcePlugin(object):
 		return True
 
 	def printer(self, message, level=LL_INFO, tag=None):
-		print "PRINTER {0}: {1}".format(logger,message)
+		print "PRINTER {0}: {1}".format(self.logger,message)
 		if tag is None:
 			tag = self.name
 		self.logger.log(level, message, extra={'tag': tag})
