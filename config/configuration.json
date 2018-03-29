@@ -31,21 +31,21 @@
 		{
 		  "name":"ZMQ Forwarder"
 		, "init.d":"S30zmqfwd"
-		}
-		, {
+		} ,
+		{
 		  "name":"Source Controller"
 		, "init.d":"S40source"
 		, "port": 5555
-		}
-		, {
+		},
+		{
 		  "name":"Flask HTTP server"
 		, "init.d":"S95flask"
-		}
-		, {
+		},
+		{
 		  "name":"Control: ADS1x15"
 		, "init.d":"S71ads1x15"
-		} ]
-	}
+		}
+	]
 	, "audio_output": {
 		"pulse-sink": "alsa_output.platform-soc_sound.analog-stereo"
 	   ,"mpd_output": "pulse audio"

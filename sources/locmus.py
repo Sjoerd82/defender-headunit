@@ -61,9 +61,9 @@ class MySource(MpdSourcePlugin,IPlugin):
 		#for location in locmusConfig:
 		
 		for subsource in sourceconfig['subsources']:
-			locmus_add( location['label']
-					   ,location['musicdir']
-					   ,location['musicdir_mpd']
+			locmus_add( subsource['label']
+					   ,subsource['musicdir']
+					   ,subsource['musicdir_mpd']
 					   ,sourceCtrl )
 
 				
