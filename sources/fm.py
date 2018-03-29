@@ -21,14 +21,14 @@ lFmStations = [ 96.40, 99.10, 101.20, 102.54 ]
 #		print "This is plugin 1"
 		
 
-class sourceClass(SourcePlugin):
+class sourceClass(IPlugin,SourcePlugin):
 
 	# __init__ is called by YAPSY, no room for additional parameters (?)
 	#def __init__(self, logger, name, displayname):
 	def __init__(self):
 	
 		#print "IM AM {0}".format()
-		self.name = 'fm'
+		self.name = None
 		self.displayname = 'FM'
 		self.logger=logging.getLogger('srcctrl')
 		
@@ -36,9 +36,6 @@ class sourceClass(SourcePlugin):
 		print('__INIT__ SOURCECLASS')
 		#self.printer('A Source Class Init', level=LL_DEBUG)
 		#SourcePlugin.__init__(self, logger, 'fm', 'FM')
-		
-	def print_name(self):
-		print "This is plugin 1"
 	
 	def init( self, sourceCtrl ):
 		self.printer('Initializing...')

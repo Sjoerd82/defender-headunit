@@ -15,7 +15,7 @@ from modules.source_plugin_mpd import MpdSourcePlugin
 
 # the name of the class doesn't matter (?)
 # functions are searched Left-to-Right
-class LocalMusic(MpdSourcePlugin,SourcePlugin):
+class LocalMusic(IPlugin,MpdSourcePlugin,SourcePlugin):
 
 	#def __init__(self, logger, name, displayname):
 	def __init__(self):

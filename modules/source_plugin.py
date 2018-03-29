@@ -9,7 +9,7 @@
 
 from modules.hu_utils import *
 
-class SourcePlugin(IPlugin):
+class SourcePlugin(object):
 
 	def __init__(self, logger, name, displayname):
 		super(SourcePlugin, self).__init__(logger, name, displayname)
@@ -18,6 +18,10 @@ class SourcePlugin(IPlugin):
 		self.name = name
 		self.displayname = displayname
 		self.printer('C Base Source Class Init', level=LL_DEBUG)
+
+	def new_init( self, name ):
+		self.name = name
+		return True
 
 	def printer(self, message, level=LL_INFO, tag=None):
 		if tag is None:

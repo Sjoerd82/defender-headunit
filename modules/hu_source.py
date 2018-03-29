@@ -180,6 +180,7 @@ class SourceController(object):
 
 		# Activate all loaded plugins
 		for plugin in self.source_manager.getAllPlugins():
+			print plugin
 			self.source_manager.activatePluginByName(plugin.name)
 			print plugin.name
 			
