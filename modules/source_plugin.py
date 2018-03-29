@@ -17,10 +17,10 @@ class SourcePlugin(object):
 #		super(SourcePlugin, self).__init__()
 		print('__INIT__ BASESOURCECLASS 1')
 		
-		print logging.Logger.manager.loggerDict.keys() 
+		#print logging.Logger.manager.loggerDict.keys() 
 		
 		#self.logger=logging.getLogger('srcctrl')
-		self.logger=logging.getLogger('srcctrl')
+		self.logger=logging.getLogger('srctrl')
 		printer('__INIT__ BASESOURCECLASS 2')
 
 #		self.logger = logger
