@@ -22,23 +22,14 @@ lFmStations = [ 96.40, 99.10, 101.20, 102.54 ]
 		
 
 class sourceClass(SourcePlugin,IPlugin):
-
-	# __init__ is called by YAPSY, no room for additional parameters (?)
-	#def __init__(self, logger, name, displayname):
-	def __init__(self):
-		print "AAA"
-		super(sourceClass,self).__init__()
-		print "BBB"
-		
-		self.name = None
+	"""
+	__init__ is called by YAPSY, no room for additional parameters: logger, name, displayname
+	Place SourcePlugin before IPlugin, so that super() call __init_ from SourcePlugin, not from IPlugin.
+	"""
 	
-		#self.displayname = 'FM'
-		#self.logger=logging.getLogger('srcctrl')
-		
-		#super(LocalMusic, self).__init__(self.logger, self.name, self.displayname)
-		#print('__INIT__ SOURCECLASS')
-		#self.printer('A Source Class Init', level=LL_DEBUG)
-		#SourcePlugin.__init__(self, logger, 'fm', 'FM')
+	def __init__(self):
+		super(sourceClass,self).__init__()	
+		self.name = None
 	
 	def init(self, plugin_name):
 		print("sourceClass (FM) init()")

@@ -13,12 +13,11 @@ class SourcePlugin(object):
 
 	#def __init__(self, logger, name, displayname):
 	def __init__(self):
-		print "CCC"	
 #		super(SourcePlugin, self).__init__(logger, name, displayname)
-		super(SourcePlugin, self).__init__()
-		print('__INIT__ BASESOURCECLASS')
+#		super(SourcePlugin, self).__init__()
+		print('__INIT__ BASESOURCECLASS 1')
 		self.logger=logging.getLogger('srcctrl')
-		printer('__INIT__ BASESOURCECLASS')
+		printer('__INIT__ BASESOURCECLASS 2')
 
 #		self.logger = logger
 #		self.name = name
