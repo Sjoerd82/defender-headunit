@@ -39,10 +39,13 @@ class SourcePlugin(object):
 		return True
 
 	def printer(self, message, level=LL_INFO, tag=None):
-		#print "PRINTER {0}: {1}".format(logger,message)
 		if tag is None:
 			tag = self.name
-		self.logger.log(level, message, extra={'tag': tag})
+		
+		if self.logger is None:
+			print("[{0}] {1}".format(tag,message))
+		else:
+			self.logger.log(level, message, extra={'tag': tag})
 	
 	def configuration(self, name):
 		print("LOADING SOURCE CONFIGURATION")
