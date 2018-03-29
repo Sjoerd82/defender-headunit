@@ -885,6 +885,8 @@ class SourceController(object):
 				# OR:
 				check_result = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.check(self,index_subsource)	#returns a list of dicts with changes
 
+				for chg in check_result:
+					self.set_available( chg['index'], chg['available', chg['subindex'] )
 				
 				return check_result
 				
