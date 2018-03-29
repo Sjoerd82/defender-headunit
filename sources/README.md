@@ -81,7 +81,6 @@ Fields:
 
 Field | Datatype | Description | Mandatory?
 --- | --- | --- | ---
-`displayname` | string | Name displayed in displays | no (defaults to module name)
 `enabled` | bool | Enable/Disable the source | no (default: True)
 `order` | int | Used for sorting the position when cycling the source | no (default: 0)
 `depNetwork` | bool | Depends on having a (wifi) network | no (default: False)
@@ -92,6 +91,12 @@ Field | Datatype | Description | Mandatory?
 
 Subsources:
 name
+
+Field | Datatype | Description | Mandatory?
+--- | --- | --- | ---
+`displayname` | string | Name displayed in displays | no (defaults to module name)
+`order` | int | Used for sorting the position when cycling the source | no (default: 0)
+
 
 Added by system:
 available	bool

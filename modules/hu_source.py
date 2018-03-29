@@ -242,11 +242,17 @@ class SourceController(object):
 			return False
 		
 		# check required fields:
-		if not all (k in subsource_config for k in ('displayname','order')):
-			self.__printer('ADD SUB: sub-source NOT added, missing one or more required field(s)...',LL_ERROR)
-			self.__printer('Required fields are: displayname and order',LL_ERROR)
-			return False
-		
+		#if not all (k in subsource_config for k in ('displayname','order')):
+		#	self.__printer('ADD SUB: sub-source NOT added, missing one or more required field(s)...',LL_ERROR)
+		#	self.__printer('Required fields are: displayname and order',LL_ERROR)
+		#	return False
+
+		if 'displayname' not in subsource_config:
+			subsource_config['displayname'] = subsource_config['name']
+
+		if 'order' not in subsource_config:
+			subsource_config['order'] = 0
+
 		# check key:
 		keys = []
 		keyvals = []
