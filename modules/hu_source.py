@@ -221,8 +221,18 @@ class SourceController(object):
 		if 'enabled' not in source_config:
 			source_config['enabled'] = True
 
-		#if 'subsources' not in source_config:
-		source_config['subsources'] = []
+		# check subsource(s)
+		if 'subsources' not in source_config:
+			source_config['subsources'] = []
+		else:
+			i=0
+			for subsource in source_config['subsources']:
+				if 'displayname' not in subsource:
+					source_config['subsources'][i]['displayname'] = source_config['name']
+				
+				if 'order' not in subsource:
+					source_config['subsources'][i]['order'] = 0
+
 						
 		# availability = False for all new sources, until cleared by the check() function
 		source_config['available'] = False
