@@ -14,6 +14,8 @@ class SourcePlugin(object):
 	#def __init__(self, logger, name, displayname):
 	def __init__(self):
 		
+		self.name = None
+		
 		# recreate a logger #TODO, get it from upstream!
 		self.logger=logging.getLogger('srctrl')
 		self.logger.setLevel(logging.DEBUG)
@@ -50,9 +52,7 @@ class SourcePlugin(object):
 		jsConfigFile = open( configFileName )
 		config=json.load(jsConfigFile)
 		
-		# test if name is unique?
-		# #TODO
-
+		config['name'] = name		
 		# TODO: merge minimal_config ?
 		return config
 	

@@ -206,6 +206,9 @@ class SourceController(object):
 			self.__printer('Required fields are: name,displayname,order,controls,template',LL_ERROR)
 			return False
 
+		# test if name is unique
+		# #TODO
+
 		# availability = False for all new sources, until cleared by the check() function
 		source_config['available'] = False
 		

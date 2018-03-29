@@ -29,7 +29,6 @@ class MySource(SourcePlugin,IPlugin):
 	
 	def __init__(self):
 		super(MySource,self).__init__()	
-		self.name = None
 	
 	def init(self, plugin_name):
 		print("sourceClass (FM) init()")

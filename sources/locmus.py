@@ -18,8 +18,7 @@ class MySource(MpdSourcePlugin,SourcePlugin,IPlugin):
 	# functions are searched Left-to-Right
 
 	def __init__(self):
-		super(MySource,self).__init__()	
-		self.name = None
+		super(MySource,self).__init__()
 		MpdSourcePlugin.__init__(self)
 		
 	def __locmus_add( self, label, dir, mpd_dir, sourceCtrl ):
