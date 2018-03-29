@@ -48,10 +48,14 @@ class LocalMusic(IPlugin,MpdSourcePlugin,SourcePlugin):
 
 		sourceCtrl.add_sub( ix, subsource )
 
-	def init( self, sourceCtrl, name ):
+	def init( self, name ):
+		"""	At this point, the source has *not* been added yet, and thus no index is available!		
+		"""
 		print("LocalMusic (locmus) init()")
 		super(LocalMusic, self).init()
-
+		self.name = name
+		
+	def uhm_subs(self, sourceCtrl):
 		# get source configuration from main configuration
 		locmusConfig = getSourceConfig('locmus')
 		

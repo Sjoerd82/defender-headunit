@@ -185,13 +185,22 @@ class SourceController(object):
 		for plugin in self.source_manager.getAllPlugins():
 			self.source_manager.activatePluginByName(plugin.name)
 			
-			plugin.plugin_object.init(self, plugin.name)
+			# Run init
+			plugin.plugin_object.init(plugin.name)
 			
+			# Get config
 			config = plugin.plugin_object.configuration(plugin.name)
+			
+			# Add
 			isAdded = self.add(config)
 			if isAdded:
+				print "ADDED W/ SUCCESS"
 				indexAdded = self.index('name',config['name'])
-				self.source_init(indexAdded)
+				#self.source_init(indexAdded)
+				# Add "hard" subsources
+				plugin.plugin_object.uhm_subs(self)
+				
+				
 	
 	def add( self, source_config ):
 		""" Add a Source
@@ -231,6 +240,9 @@ class SourceController(object):
 		""" Add a sub-source
 		"""
 		index = self.__check_index2(index)
+		
+		if index is None:
+			return False
 		
 		# check required fields:
 		if not all (k in subsource_config for k in ('displayname','order')):
@@ -797,12 +809,14 @@ class SourceController(object):
 		#self.__printer('INIT: {0}'.format(index)) #LL_DEBUG
 		checkResult = self.lSource[index]['sourceClass'].init(self)
 
+	"""
 	def source_init(self,index):
 		source_name = self.lSource[index]['name']
 		the_source = self.source_manager.getPluginByName(source_name)	
 		the_source.plugin_object.init(self)
 		# OR:
 		#self.source_manager.getPluginByName(source_name).plugin_object.init(self)
+	"""
 	
 	def source_check( self, index=None, index_subsource=None ):
 		""" Execute a check() for given source or subsource and sets availability accordingly

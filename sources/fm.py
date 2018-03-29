@@ -37,10 +37,13 @@ class sourceClass(IPlugin,SourcePlugin):
 		#self.printer('A Source Class Init', level=LL_DEBUG)
 		#SourcePlugin.__init__(self, logger, 'fm', 'FM')
 	
-	def init( self, sourceCtrl, name ):
+	def init( self, name ):
 		print("sourceClass (FM) init()")
 		self.printer('Initializing...')
 		self.name = name
+		return True
+
+	def uhm_subs(self, sourceCtrl):
 		return True
 
 	def check( self, sourceCtrl, subSourceIx=None  ):
