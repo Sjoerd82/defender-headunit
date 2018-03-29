@@ -1,7 +1,7 @@
 # Source Plugins
 
-Source plugins are plugins that represent a source.
-A source plugin is simply a Python class that fulfills a number of pre-defined source-related functions, such as next track.
+Source plugins are plugins that represent an audio (music) source.
+
 
 ## Concepts
 
@@ -9,15 +9,16 @@ An audio signal source a.k.a. "Source" is a provider of music. Examples of these
 Every source is defined by a Source Plugin. Source plugins are Python classes.
 
 Every source has 1 or more subsources. Subsources are cycled through using a source button or source selector.
-The decision to divide a source into subsources must therefore not taken too lightly.
 
 Subsources should be used to divide groups of music sources under a common source.
-For example, The stations of an FM radio source could be configured as subsources. This however, would require the user to cycle through a lot of sources to get to a different type of source and is very counter-intuitive. To select radio stations it's more intuitive to use "seek" and "next" buttons.
+
+*Example:* The stations of an FM radio source could be configured as subsources. This however, would require the user to cycle through a lot of sources to get to a different type of source and is very counter-intuitive. To select radio stations it's more intuitive to use "seek" and "next" buttons.
 A media source however, could create a subsource for every connected drive.
 
 In some cases you want to have multiple sources for a single music provider, as is the case with MPD.
 For these cases we create a base Plugin Class to base several plugin sources on.
-For example, "Local Music", "Media" and "Internet Radio" are all based on MPD, but have their own source plugin.
+
+*Example:* "Local Music", "Media" and "Internet Radio" are all based on MPD, but have their own source plugin.
 
 Source plugins are implemented using YAPSY, a lightweight plugin system.
 
@@ -42,7 +43,7 @@ A source plugin derives its class from Yapsy's IPlugin, which provides an entry 
 ```
 from yapsy.IPlugin import IPlugin
 
-class MySourceClass(IPlugin, ...
+class MySourceClass(...,IPlugin)
 ```
 
 The .yapsy file is required by Yapsy's plugin manager and looks like:
@@ -62,9 +63,9 @@ The name and module must match your Python filename.
 That's all.
 
 Links:
-{http://yapsy.sourceforge.net/}
-{http://yapsy.readthedocs.io/en/latest/index.html}
-{https://github.com/tibonihoo/yapsy}
+[](http://yapsy.sourceforge.net/)
+[](http://yapsy.readthedocs.io/en/latest/index.html)
+[](https://github.com/tibonihoo/yapsy)
 
 ## JSON configuration
 
@@ -98,12 +99,13 @@ Example:
 
 ## Minimal Plugin class
 
+A minimal working (but useless) source plugin would look like:
+
 ```
 from yapsy.IPlugin import IPlugin
-from modules.hu_utils import *
 from modules.source_plugin import SourcePlugin
 
-class sourceClass(IPlugin,SourcePlugin):
+class sourceClass(SourcePlugin,IPlugin):
 
 	def __init__(self):
 		self.name = None

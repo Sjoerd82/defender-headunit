@@ -13,19 +13,13 @@ from modules.hu_mpd import MpdController
 
 class MpdSourcePlugin(SourcePlugin):
 
-	#def __init__(self, logger, name, displayname):
 	def __init__(self):
 		super(MpdSourcePlugin, self).__init__()
-		#super(MpdSourcePlugin, self).__init__(logger, name, displayname)
-		print('__INIT__ MPDSOURCECLASS')
-		#self.printer('B Mpd Source Class Init', level=LL_DEBUG)
 		self.mpdc = None
 
 	def init(self, plugin_name, logger=None):
 		super(MpdSourcePlugin, self).init(plugin_name,logger)
-		print("MPD MPD init()")
-		print self.logger
-		#self.mpdc = MpdController(self.logger)
+		self.mpdc = MpdController(self.logger)
 	
 	def check_mpd(self, locations, ix, ssIx):
 	
