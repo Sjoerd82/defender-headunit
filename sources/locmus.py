@@ -47,11 +47,11 @@ class MySource(MpdSourcePlugin,IPlugin):
 				# construct the subsource
 				subsource = {}
 				subsource['name'] = 'locmus'
-				subsource['displayname'] = 'local: ' + subsource['musicdir'] #dir
+				subsource['displayname'] = 'local: ' + subsource['mountpoint'] #dir
 				subsource['order'] = 0			# no ordering
-				subsource['mountpoint'] = subsource['musicdir'] #dir
-				subsource['mpd_dir'] = subsource['musicdir_mpd'] #mpd_dir
-				subsource['label'] = subsource['musicdir_mpd'] #mpd_dir
+				subsource['mountpoint'] = subsource['mountpoint'] #dir
+				subsource['mpd_dir'] = subsource['mpd_dir'] #mpd_dir
+				subsource['label'] = subsource['mpd_dir'] #mpd_dir
 				#subsource['uuid'] = None		# not relevant for local sources
 				sourceCtrl.add_sub( ix, subsource )
 
