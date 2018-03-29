@@ -885,11 +885,12 @@ class SourceController(object):
 				# OR:
 				check_result = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.check(self,index_subsource)	#returns a list of dicts with changes
 
-				print check_result
 				for chg in check_result:
-					print chg
-					self.set_available( chg['index'], chg['available'], chg['subindex'] )
-				
+					if 'subindex' in chg and chg['subindex'] is not None:
+						self.set_available( chg['index'], chg['available'], chg['subindex'] )
+					else:
+						self.set_available( chg['index'], chg['available'] )
+						
 				return check_result
 				
 			#if checked_source_is_available != check_result:
