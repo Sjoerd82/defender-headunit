@@ -221,8 +221,8 @@ class SourceController(object):
 		if 'enabled' not in source_config:
 			source_config['enabled'] = True
 
-		if 'subsources' not in source_config:
-			source_config['subsources'] = []
+		#if 'subsources' not in source_config:
+		source_config['subsources'] = []
 						
 		# availability = False for all new sources, until cleared by the check() function
 		source_config['available'] = False
@@ -309,12 +309,15 @@ class SourceController(object):
 		# TODO -- not fully implemented yet
 		subsource_config['available'] = False
 
-		print self.lSource[index]['subsources']
+		print subsource_config
 		
 		# all good, add the source:
 		self.__printer('ADD SUB: {0}'.format(subsource_config['displayname']))
 		self.lSource[index]['subsources'].append(subsource_config)
 		self.lSource[index]['subsources'].sort( key=lambda k: k['order'] )
+		
+		print self.lSource[index]['subsources']
+		
 		return True
 	
 	def rem( self, index=None, force=False ):
