@@ -10,6 +10,8 @@
 #
 # CONVENTIONS:
 # 
+# - Naming: Index, Subindex
+#
 # - Leave (sub)index parameter None (default) to indicate current source
 # - Returns True or data, if succesful
 # - Return None if nothing to do / no change
@@ -169,21 +171,15 @@ class SourceController(object):
 		#
 		# YAPSY Plugin Manager
 		#
+		
 		# Load the plugins from the plugin directory.
-		#self.source_manager.setPluginPlaces([plugindir])
-		self.source_manager.setPluginPlaces(['/mnt/PIHU_APP/defender-headunit/sources'])
+		self.source_manager.setPluginPlaces(['/mnt/PIHU_APP/defender-headunit/sources'])	#TODO: plugindir
 		self.source_manager.collectPlugins()
 
 		# Activate and add all collected plugins
 		for plugin in self.source_manager.getAllPlugins():
-			#plugin.plugin_object.set_logger(self.logger)
-			self.source_manager.activatePluginByName(plugin.name)
 			plugin.plugin_object.init(plugin.name, self.logger)
-			
-			
-			# Run init
-			#plugin.plugin_object.init(plugin.name)
-			
+			self.source_manager.activatePluginByName(plugin.name)
 			
 			# Get config
 			config = plugin.plugin_object.configuration(plugin.name)
@@ -193,9 +189,12 @@ class SourceController(object):
 			if isAdded:
 				print "ADDED W/ SUCCESS"
 				indexAdded = self.index('name',config['name'])
+				plugin.plugin_object.post_add(self)
+
+				# TODO: post add functionality
 				#self.source_init(indexAdded)
 				# Add "hard" subsources
-				plugin.plugin_object.uhm_subs(self)
+				#plugin.plugin_object.get_subsources(self)
 			else:
 				print "NOT ADDED!"
 				
@@ -205,37 +204,33 @@ class SourceController(object):
 		""" Add a Source
 		"""
 		# check required fields:
-		if not all (k in source_config for k in ('name','displayname','order','controls','template')):
+		if not all (k in source_config for k in ('name','controls')):
 			self.__printer('ADD: source NOT added, missing one or more required field(s)...',LL_ERROR)
-			self.__printer('Required fields are: name,displayname,order,controls,template',LL_ERROR)
+			self.__printer('Required fields are: name,controls',LL_ERROR)
 			return False
 
 		# test if name is unique
 		# #TODO
+		
+		if 'displayname' not in source_config:
+			source_config['displayname'] = source_config['name']
 
+		if 'order' not in source_config:
+			source_config['order'] = 0
+
+		if 'enabled' not in source_config:
+			source_config['enabled'] = True
+
+		if 'subsources' not in source_config:
+			source_config['subsources'] = []
+				
 		# availability = False for all new sources, until cleared by the check() function
 		source_config['available'] = False
-		
-		# add an empty array for subsources, it it's a template:
-		if 'template' in source_config:
-			source_config['subsources'] = []
-		
+			
 		# all good, add the source:
 		self.__printer('ADD: {0}'.format(source_config['displayname']))
 		self.lSource.append(source_config)
-		self.lSource.sort( key=lambda k: k['order'] )
-		
-		# create a class object and store the reference to it
-		# REPLACED BY YAPSY...
-		'''
-		if 'sourceModule' in source_config:
-			obj = source_config['sourceModule']	#[0]
-			sc = getattr(obj,'sourceClass')(self.logger)
-			self.lSourceClasses.append(sc)
-			#self.lSourceClasses.append(getattr(obj,'sourceClass')())
-			# add a class field containing the class
-			source_config['sourceClass'] = sc
-		'''
+		self.lSource.sort( key=lambda k: k['order'] )	
 		return True
 
 	def add_sub( self, index, subsource_config ):

@@ -32,7 +32,7 @@ class MySource(SourcePlugin,IPlugin):
 	
 	def uhm_subs(self, sourceCtrl):
 		return True
-
+	
 	def check( self, sourceCtrl, subSourceIx=None  ):
 		"""	Check source
 		

@@ -4,7 +4,8 @@
   "depNetwork": false,
   "controls": {"ffwd": false, "rwnd": false, "prev": true, "next": true},
   "random": [],
-  "template": false,
+  "template": true,
+  "subsources": [ "name":"fm" ]
   "defaultconfig": { "frq_lo" : 80 },
   "menuitems" : [
 	{	"entry": "Tune to radio station",

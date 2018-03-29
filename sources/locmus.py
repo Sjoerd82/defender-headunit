@@ -29,42 +29,44 @@ class MySource(MpdSourcePlugin,IPlugin):
 		
 		#self.name = name
 		#MpdSourcePlugin.__init__(self,self.logger)
+
+	def post_add(self, sourceCtrl, sourceconfig):
+
+		def locmus_add( self, label, dir, mpd_dir, sourceCtrl ):
+
+			#TODO:
+			mpd_musicdir = '/media'		
+
+			# get index (name is unique)
+			ix = sourceCtrl.index('name','locmus')
+			if ix is None:
+				print "Plugin {0} does not exist".format('locmus')
+				return False
+			# construct the subsource
+			subsource = {}
+			subsource['name'] = 'locmus'
+			subsource['displayname'] = 'local: ' + dir
+			subsource['order'] = 0			# no ordering
+			subsource['mountpoint'] = dir
+			subsource['mpd_dir'] = mpd_dir
+			subsource['label'] = label
+			#subsource['uuid'] = None		# not relevant for local sources
+
+			sourceCtrl.add_sub( ix, subsource )
 		
-	def __locmus_add( self, label, dir, mpd_dir, sourceCtrl ):
-
-		#TODO:
-		mpd_musicdir = '/media'
-
-		# get index (name is unique)
-		ix = sourceCtrl.index('name','locmus')
-		if ix is None:
-			print "Plugin {0} does not exist".format('locmus')
-			return False
-		# construct the subsource
-		subsource = {}
-		subsource['name'] = 'locmus'
-		subsource['displayname'] = 'local: ' + dir
-		subsource['order'] = 0			# no ordering
-		subsource['mountpoint'] = dir
-		subsource['mpd_dir'] = mpd_dir
-		subsource['label'] = label
-		#subsource['uuid'] = None		# not relevant for local sources
-
-		sourceCtrl.add_sub( ix, subsource )
-		
-	def uhm_subs(self, sourceCtrl):
 		# get source configuration from main configuration
-		locmusConfig = getSourceConfig('locmus')
+		#locmusConfig = getSourceConfig('locmus')
 		
 		# add all locations as configured
-		for location in locmusConfig:
-			self.__locmus_add( location['label']
-					          ,location['musicdir']
-					          ,location['musicdir_mpd']
-					          ,sourceCtrl )
-
-		return True
+		#for location in locmusConfig:
 		
+		for subsource in sourceconfig['subsources']:
+			locmus_add( location['label']
+					   ,location['musicdir']
+					   ,location['musicdir_mpd']
+					   ,sourceCtrl )
+
+				
 	# Source Check: Return True/False (available/not available)
 	# Optionally, provide list of mountpoint(s) to check
 	#def locmus_check( sourceCtrl, mountpoint=None ):

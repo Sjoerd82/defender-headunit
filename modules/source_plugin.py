@@ -34,16 +34,8 @@ class SourcePlugin(object):
 		self.name = plugin_name
 		self.logger = logger
 
-		
-	def set_logger(self, new_logger):
-		self.logger = new_logger
-		print "TEST"
-		new_logger.log(LL_INFO,'tESt')
-		self.logger.log(LL_INFO,'TesT')
-		
-	def new_init(self, name):
-		self.name = name
-		return True
+	def post_add(self, sourceCtrl, sourceconfig):
+		pass
 
 	def printer(self, message, level=LL_INFO, tag=None):
 		if tag is None:
@@ -56,24 +48,28 @@ class SourcePlugin(object):
 	
 	def configuration(self, name):
 		print("LOADING SOURCE CONFIGURATION")
-		minimal_config = {}
-		minimal_config['name'] = name
-		minimal_config['displayname'] = name
-		minimal_config['order'] = 0
-		minimal_config['enabled'] = True
-		minimal_config['available'] = False
+		if name is None:
+			return None
+		
+		config = {}
+		
 		# return configuration (from json config file)
 		plugindir = "sources"	#TODO
 		configFileName = os.path.join(plugindir,self.name+'.json')
 		if not os.path.exists( configFileName):
 			printer('Configuration not found: {0}'.format(configFileName))
-			return minimal_config
-		
-		# load source configuration file
-		jsConfigFile = open( configFileName )
-		config=json.load(jsConfigFile)
+		else:
+			# load source configuration file
+			jsConfigFile = open( configFileName )
+			config=json.load(jsConfigFile)
 		
 		config['name'] = name		
+		
+		# load main configuration
+		main_configuration = load_configuration()
+		if 'source_config' in main_configuration and name in main_configuration['source_config']:
+			config.update(main_configuration['source_config'][name])
+			
 		# TODO: merge minimal_config ?
 		return config
 	
