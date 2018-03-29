@@ -176,8 +176,9 @@ class SourceController(object):
 
 		# Activate and add all collected plugins
 		for plugin in self.source_manager.getAllPlugins():
+			plugin.plugin_object.set_logger(logger)
 			self.source_manager.activatePluginByName(plugin.name)
-			plugin.plugin_object.logger = logger
+			
 			
 			# Run init
 			plugin.plugin_object.init(plugin.name)

@@ -28,8 +28,8 @@ class SourcePlugin(object):
 		self.logger.addHandler(ch)
 		"""
 
-	#def add_logger(self, logger):
-	#	logger = logger
+	def set_logger(self, new_logger):
+		logger = new_logger
 		
 	def new_init( self, name ):
 		self.name = name
