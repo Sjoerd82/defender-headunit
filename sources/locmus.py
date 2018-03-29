@@ -40,18 +40,18 @@ class MySource(MpdSourcePlugin,IPlugin):
 				return False
 
 			# add all locations as configured
-			for subsource in sourceconfig['local_media']:
+			for local_media in sourceconfig['local_media']:
 				#locmus_add( subsource['musicdir']
 				#		   ,subsource['musicdir_mpd']
 				#		   ,sourceCtrl )
 				# construct the subsource
 				subsource = {}
 				subsource['name'] = 'locmus'
-				subsource['displayname'] = 'local: ' + subsource['mountpoint'] #dir
+				subsource['displayname'] = 'local: ' + local_media['mountpoint'] #dir
 				subsource['order'] = 0			# no ordering
-				subsource['mountpoint'] = subsource['mountpoint'] #dir
-				subsource['mpd_dir'] = subsource['mpd_dir'] #mpd_dir
-				subsource['label'] = subsource['mpd_dir'] #mpd_dir
+				subsource['mountpoint'] = local_media['mountpoint'] #dir
+				subsource['mpd_dir'] = local_media['mpd_dir'] #mpd_dir
+				subsource['label'] = local_media['mpd_dir'] #mpd_dir
 				#subsource['uuid'] = None		# not relevant for local sources
 				sourceCtrl.add_sub( ix, subsource )
 
