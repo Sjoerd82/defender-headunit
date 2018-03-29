@@ -29,7 +29,7 @@ class SourcePlugin(object):
 		"""
 
 	def set_logger(self, new_logger):
-		logger = new_logger
+		self.logger = new_logger
 		
 	def new_init( self, name ):
 		self.name = name
