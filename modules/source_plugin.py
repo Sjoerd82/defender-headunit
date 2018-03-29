@@ -17,10 +17,14 @@ class SourcePlugin(object):
 #		super(SourcePlugin, self).__init__()
 		print('__INIT__ BASESOURCECLASS 1')
 		
-		#print logging.Logger.manager.loggerDict.keys() 
+		print logging.Logger.manager.loggerDict.keys() 
 		
-		#self.logger=logging.getLogger('srcctrl')
 		self.logger=logging.getLogger('srctrl')
+		self.logger.setLevel(logging.DEBUG)
+		ch = logging.StreamHandler()						# create console handler
+		ch.setLevel(logging.DEBUG)								# set log level
+		self.logger.addHandler(ch)
+
 		printer('__INIT__ BASESOURCECLASS 2')
 
 #		self.logger = logger
@@ -33,6 +37,7 @@ class SourcePlugin(object):
 		return True
 
 	def printer(self, message, level=LL_INFO, tag=None):
+		print "PRINTER {0}: {1}".format(logger,message)
 		if tag is None:
 			tag = self.name
 		self.logger.log(level, message, extra={'tag': tag})
