@@ -3,22 +3,36 @@
 Source plugins are plugins that represent a source.
 A source plugin is simply a Python class that fulfills a number of pre-defined source-related functions, such as next track.
 
+## Concepts
+
+An audio signal source a.k.a. "Source" is a provider of music. Examples of these are FM radio, MPD or SoundCloud.
+Every source is defined by a Source Plugin. Source plugins are Python classes.
+
+Every source has 1 or more subsources. Subsources are cycled through using a source button or source selector.
+The decision to divide a source into subsources must therefore not taken too lightly.
+
+Subsources should be used to divide groups of music sources under a common source.
+For example, The stations of an FM radio source could be configured as subsources. This however, would require the user to cycle through a lot of sources to get to a different type of source and is very counter-intuitive. To select radio stations it's more intuitive to use "seek" and "next" buttons.
+A media source however, could create a subsource for every connected drive.
+
+In some cases you want to have multiple sources for a single music provider, as is the case with MPD.
+For these cases we create a base Plugin Class to base several plugin sources on.
+For example, "Local Music", "Media" and "Internet Radio" are all based on MPD, but have their own source plugin.
+
+Source plugins are implemented using YAPSY, a lightweight plugin system.
+
+
 ## Architecture
 
 A "source" consists of three files:
 
- - Python script
+ - Python class module
  - Yapsy configuration
  - JSON configuration
 
-The 
+Sources are loaded and managed by the Source Controller module.
 
-## Concepts
 
-Sub-Source	Source switchable via the "SOURCE" button. Think multiple USB drives.
-		Not suitable for eg. FM stations, which should be swichable via the "NEXT" or "SEEK" button.
-
- 
 ## Yapsy
 
 Yapsy is a lightweight plugin system.

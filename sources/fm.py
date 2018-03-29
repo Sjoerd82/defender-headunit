@@ -30,12 +30,6 @@ class MySource(SourcePlugin,IPlugin):
 	def __init__(self):
 		super(MySource,self).__init__()	
 	
-	#def init(self, plugin_name):
-		#print("sourceClass (FM) init()")
-		#self.printer('Initializing...')
-		#self.name = plugin_name
-		#return True
-
 	def uhm_subs(self, sourceCtrl):
 		return True
 
