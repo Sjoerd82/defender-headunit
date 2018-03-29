@@ -25,7 +25,9 @@ class sourceClass(IPlugin,SourcePlugin):
 
 	# __init__ is called by YAPSY, no room for additional parameters (?)
 	#def __init__(self, logger, name, displayname):
-	#def __init__(self):
+	def __init__(self):
+	
+		self.name = None
 	
 		#self.displayname = 'FM'
 		#self.logger=logging.getLogger('srcctrl')
@@ -35,7 +37,7 @@ class sourceClass(IPlugin,SourcePlugin):
 		#self.printer('A Source Class Init', level=LL_DEBUG)
 		#SourcePlugin.__init__(self, logger, 'fm', 'FM')
 	
-	def init( self, plugin_name ):
+	def init(self, plugin_name):
 		print("sourceClass (FM) init()")
 		self.printer('Initializing...')
 		self.name = plugin_name
