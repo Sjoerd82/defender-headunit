@@ -51,8 +51,8 @@ class SourcePlugin(object):
 		# TODO: merge minimal_config ?
 		return config
 	
-	#def init(self, sourceCtrl):
-	#	self.printer('Initializing...',level=LL_DEBUG)
+	def init(self, **kwargs):
+		self.printer('Initializing...!')
 
 	def check(self, sourceCtrl, subSourceIx=None):
 		#self.printer('Checking availability...',level=LL_DEBUG)

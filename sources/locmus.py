@@ -50,7 +50,7 @@ class LocalMusic(IPlugin,MpdSourcePlugin,SourcePlugin):
 
 	def init( self, sourceCtrl, name ):
 		print("LocalMusic (locmus) init()")
-		super(LocalMusic, self).init(sourceCtrl)
+		super(LocalMusic, self).init()
 
 		# get source configuration from main configuration
 		locmusConfig = getSourceConfig('locmus')
