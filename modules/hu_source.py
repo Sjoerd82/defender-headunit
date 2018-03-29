@@ -111,14 +111,7 @@ class SourceController(object):
 		
 		#self.__load_plugins('sources')	# let's call it from the caller's side
 
-	def __check_index(self, test_index, index_name, function_name=None):
-		index = int(test_index)
-		if index_name == 'index' and index >= len(self.lSource):
-			self.__printer('ERROR {0}: {1} ({2}) out of bounds'.format(function_name, index_name, index),LL_ERROR)
-			return None
-		return index
-
-	def __check_index2(self, test_index):
+	def __check_index(self, test_index):
 		"""	Check if a given index is valid
 			Returns False if not valid
 			If provided None, will return None
@@ -241,7 +234,7 @@ class SourceController(object):
 	def add_sub( self, index, subsource_config ):
 		""" Add a sub-source
 		"""
-		index = self.__check_index2(index)
+		index = self.__check_index(index)
 		
 		if index is None:
 			return False
@@ -318,7 +311,7 @@ class SourceController(object):
 		"""Remove source by index. TODO: remove force variable
 		"""
 		if index:
-			index = self.__check_index2(index)
+			index = self.__check_index(index)
 			if not index:
 				self.__printer('ERROR rem: Not a valid index. Doing nothing.',LL_ERROR)
 				return None
@@ -352,7 +345,7 @@ class SourceController(object):
 			Remove current subsource, if no indexes given
 		"""
 		if index and index_subsource:
-			index = self.__check_index2(index)
+			index = self.__check_index(index)
 			index_subsource = self.__check_subindex(index,index_subsource)
 			if index is None or index_subsource is None:
 				self.__printer('ERROR: No current source or sub-source. Doing nothing.',LL_ERROR)
@@ -647,7 +640,7 @@ class SourceController(object):
 	def source( self, index=None ):
 		""" Return source for given index, returns current source, if no index provided
 		"""	
-		index = self.__check_index2(index)
+		index = self.__check_index(index)
 		if index is False:
 			return False
 
@@ -693,7 +686,7 @@ class SourceController(object):
 			TODO: check if index is valid
 		"""
 		if index:
-			index = self.__check_index2(index)
+			index = self.__check_index(index)
 		else:
 			index = self.iCurrentSource[0]
 		
@@ -831,7 +824,7 @@ class SourceController(object):
 			
 			(Some soureces may themselves also set the available flag, but we do it here too....)
 		"""
-		index = self.__check_index2(index)
+		index = self.__check_index(index)
 		if index is False:
 			return False
 		
