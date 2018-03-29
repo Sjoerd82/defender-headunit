@@ -32,16 +32,17 @@ class MySource(MpdSourcePlugin,IPlugin):
 
 	def post_add(self, sourceCtrl, sourceconfig):
 
-		def locmus_add( label, dir, mpd_dir, sourceCtrl ):
+		# get index (name is unique)
+		ix = sourceCtrl.index('name','locmus')
+		if ix is None:
+			print "Plugin {0} does not exist".format('locmus')
+			return False
 
-			#TODO:
-			mpd_musicdir = '/media'		
-
-			# get index (name is unique)
-			ix = sourceCtrl.index('name','locmus')
-			if ix is None:
-				print "Plugin {0} does not exist".format('locmus')
-				return False
+		# add all locations as configured
+		for subsource in sourceconfig['local_media']:
+			#locmus_add( subsource['musicdir']
+			#		   ,subsource['musicdir_mpd']
+			#		   ,sourceCtrl )
 			# construct the subsource
 			subsource = {}
 			subsource['name'] = 'locmus'
@@ -49,24 +50,9 @@ class MySource(MpdSourcePlugin,IPlugin):
 			subsource['order'] = 0			# no ordering
 			subsource['mountpoint'] = dir
 			subsource['mpd_dir'] = mpd_dir
-			subsource['label'] = label
+			subsource['label'] = mpd_dir
 			#subsource['uuid'] = None		# not relevant for local sources
-
 			sourceCtrl.add_sub( ix, subsource )
-		
-		
-		# get source configuration from main configuration
-		#locmusConfig = getSourceConfig('locmus')
-		
-		# add all locations as configured
-		''' already done via config.
-		for subsource in sourceconfig['subsources']:
-			locmus_add( subsource['label']
-					   ,subsource['musicdir']
-					   ,subsource['musicdir_mpd']
-					   ,sourceCtrl )
-		'''
-		# TODO: Append sub-sources with uuid, label?
 
 		return True
 				
