@@ -27,7 +27,13 @@ class SourcePlugin(object):
 		ch.setLevel(logging.DEBUG)								# set log level
 		self.logger.addHandler(ch)
 		"""
+		
+	def init(self, plugin_name, logger):
+		#self.printer('Initializing...!')
+		self.name = plugin_name
+		self.logger = logger
 
+		
 	def set_logger(self, new_logger):
 		self.logger = new_logger
 		print "TEST"
@@ -70,9 +76,6 @@ class SourcePlugin(object):
 		# TODO: merge minimal_config ?
 		return config
 	
-	def init(self, **kwargs):
-		self.printer('Initializing...!')
-
 	def check(self, sourceCtrl, subSourceIx=None):
 		#self.printer('Checking availability...',level=LL_DEBUG)
 		print "INIT @ SourcePlugin"

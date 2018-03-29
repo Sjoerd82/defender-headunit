@@ -18,9 +18,14 @@ class MpdSourcePlugin(SourcePlugin):
 		super(MpdSourcePlugin, self).__init__()
 		#super(MpdSourcePlugin, self).__init__(logger, name, displayname)
 		print('__INIT__ MPDSOURCECLASS')
-		self.printer('B Mpd Source Class Init', level=LL_DEBUG)
-		self.mpdc = MpdController(self.logger)
+		#self.printer('B Mpd Source Class Init', level=LL_DEBUG)
+		self.mpdc = None
 
+	def init(self,logger=None):
+		super(MpdSourcePlugin, self).init()
+		print("MPD MPD init()")
+		self.mpdc = MpdController(self.logger)
+	
 	def check_mpd(self, locations, ix, ssIx):
 	
 		#locations = []							# list of tuples; index: 0 = mountpoint, 1 = mpd dir, 2 = availability.

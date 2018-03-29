@@ -18,7 +18,17 @@ class MySource(MpdSourcePlugin,IPlugin):
 
 	def __init__(self):
 		super(MySource,self).__init__()
-		MpdSourcePlugin.__init__(self)
+
+	def init( self, name, logger=None ):
+		super(MySource, self).init()
+		"""	At this point, the source has *not* been added yet, and thus no index is available!		
+		"""
+		print("LocalMusic (locmus) init()")
+		print self.name
+		print self.logger
+		
+		#self.name = name
+		#MpdSourcePlugin.__init__(self,self.logger)
 		
 	def __locmus_add( self, label, dir, mpd_dir, sourceCtrl ):
 
@@ -41,14 +51,6 @@ class MySource(MpdSourcePlugin,IPlugin):
 		#subsource['uuid'] = None		# not relevant for local sources
 
 		sourceCtrl.add_sub( ix, subsource )
-
-	def init( self, name ):
-		"""	At this point, the source has *not* been added yet, and thus no index is available!		
-		"""
-		print("LocalMusic (locmus) init()")
-		print name
-		super(MySource, self).init()
-		self.name = name
 		
 	def uhm_subs(self, sourceCtrl):
 		# get source configuration from main configuration
