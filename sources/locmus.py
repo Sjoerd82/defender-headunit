@@ -10,7 +10,6 @@
 from yapsy.IPlugin import IPlugin
 from modules.hu_utils import *
 from modules.hu_settings import getSourceConfig
-from modules.source_plugin import SourcePlugin
 from modules.source_plugin_mpd import MpdSourcePlugin
 
 class MySource(MpdSourcePlugin,IPlugin):
