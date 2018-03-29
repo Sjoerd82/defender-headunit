@@ -203,8 +203,6 @@ class SourceController(object):
 	def add( self, source_config ):
 		""" Add a Source
 		"""
-		print "DEBUG ADD(): {0}".format(source_config)
-		
 		# check required fields:
 		if not all (k in source_config for k in ('name','controls')):
 			self.__printer('ADD: source NOT added, missing one or more required field(s)...',LL_ERROR)
@@ -229,12 +227,14 @@ class SourceController(object):
 		else:
 			i=0
 			for subsource in source_config['subsources']:
-				print subsource
 				if 'displayname' not in subsource:
 					source_config['subsources'][i]['displayname'] = source_config['name']
 				
 				if 'order' not in subsource:
 					source_config['subsources'][i]['order'] = 0
+
+				if 'available' not in subsource:
+					source_config['subsources'][i]['available'] = False
 
 						
 		# availability = False for all new sources, until cleared by the check() function
