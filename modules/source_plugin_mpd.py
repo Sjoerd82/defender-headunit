@@ -22,7 +22,7 @@ class MpdSourcePlugin(SourcePlugin):
 		self.mpdc = None
 
 	def init(self, plugin_name, logger=None):
-		super(MpdSourcePlugin, self).init()
+		super(MpdSourcePlugin, self).init(plugin_name,logger)
 		print("MPD MPD init()")
 		print self.logger
 		#self.mpdc = MpdController(self.logger)
