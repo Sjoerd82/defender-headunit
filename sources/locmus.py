@@ -54,18 +54,21 @@ class MySource(MpdSourcePlugin,IPlugin):
 
 			sourceCtrl.add_sub( ix, subsource )
 		
+		
 		# get source configuration from main configuration
 		#locmusConfig = getSourceConfig('locmus')
 		
 		# add all locations as configured
-		#for location in locmusConfig:
-		
+		''' already done via config.
 		for subsource in sourceconfig['subsources']:
 			locmus_add( subsource['label']
 					   ,subsource['musicdir']
 					   ,subsource['musicdir_mpd']
 					   ,sourceCtrl )
+		'''
+		# TODO: Append sub-sources with uuid
 
+		return True
 				
 	# Source Check: Return True/False (available/not available)
 	# Optionally, provide list of mountpoint(s) to check
