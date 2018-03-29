@@ -13,12 +13,12 @@ from modules.hu_settings import getSourceConfig
 from modules.source_plugin import SourcePlugin
 from modules.source_plugin_mpd import MpdSourcePlugin
 
-class LocalMusic(MpdSourcePlugin,SourcePlugin,IPlugin):
+class MySource(MpdSourcePlugin,SourcePlugin,IPlugin):
 	# the name of the class doesn't matter (?)
 	# functions are searched Left-to-Right
 
 	def __init__(self):
-		super(sourceClass,self).__init__()	
+		super(MySource,self).__init__()	
 		self.name = None
 		MpdSourcePlugin.__init__(self)
 		
@@ -49,7 +49,7 @@ class LocalMusic(MpdSourcePlugin,SourcePlugin,IPlugin):
 		"""
 		print("LocalMusic (locmus) init()")
 		print name
-		super(LocalMusic, self).init()
+		super(MySource, self).init()
 		self.name = name
 		
 	def uhm_subs(self, sourceCtrl):
@@ -69,7 +69,7 @@ class LocalMusic(MpdSourcePlugin,SourcePlugin,IPlugin):
 	# Optionally, provide list of mountpoint(s) to check
 	#def locmus_check( sourceCtrl, mountpoint=None ):
 	def check( self, sourceCtrl, subSourceIx=None ):
-		super(LocalMusic, self).check(sourceCtrl, subSourceIx)
+		super(MySource, self).check(sourceCtrl, subSourceIx)
 		"""	Check source
 		
 			Checks all configured mountpoints

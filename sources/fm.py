@@ -21,14 +21,14 @@ lFmStations = [ 96.40, 99.10, 101.20, 102.54 ]
 #		print "This is plugin 1"
 		
 
-class sourceClass(SourcePlugin,IPlugin):
+class MySource(SourcePlugin,IPlugin):
 	"""
 	__init__ is called by YAPSY, no room for additional parameters: logger, name, displayname
 	Place SourcePlugin before IPlugin, so that super() call __init_ from SourcePlugin, not from IPlugin.
 	"""
 	
 	def __init__(self):
-		super(sourceClass,self).__init__()	
+		super(MySource,self).__init__()	
 		self.name = None
 	
 	def init(self, plugin_name):
