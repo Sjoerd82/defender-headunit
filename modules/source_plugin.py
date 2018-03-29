@@ -30,6 +30,9 @@ class SourcePlugin(object):
 
 	def set_logger(self, new_logger):
 		self.logger = new_logger
+		print "TEST"
+		new_logger.log(LL_INFO,'tESt')
+		self.logger.log(LL_INFO,'TesT')
 		
 	def new_init( self, name ):
 		self.name = name
