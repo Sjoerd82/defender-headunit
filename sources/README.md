@@ -78,6 +78,7 @@ The JSON configuration contains all kinds of static *read-only* details.
 The source can be further configured and customized in the read-write file configuration.json in the `source_config` section.
 
 Fields:
+
 Field | Datatype | Description | Mandatory?
 --- | --- | ---
 `displayname` | string | Name displayed in displays | no (defaults to module name)
