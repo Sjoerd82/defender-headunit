@@ -230,7 +230,7 @@ class SourceController(object):
 	def add_sub( self, index, subsource_config ):
 		""" Add a sub-source
 		"""
-		index = self.__check_index(index, 'index', 'add_sub')
+		index = self.__check_index2(index)
 		
 		# check required fields:
 		if not all (k in subsource_config for k in ('displayname','order')):
@@ -304,7 +304,7 @@ class SourceController(object):
 		"""Remove source by index. TODO: remove force variable
 		"""
 		if index:
-			index = self.__check_index(index,'index','source')
+			index = self.__check_index2(index)
 			if not index:
 				self.__printer('ERROR rem: Not a valid index. Doing nothing.',LL_ERROR)
 				return None
@@ -338,8 +338,8 @@ class SourceController(object):
 			Remove current subsource, if no indexes given
 		"""
 		if index and index_subsource:
-			index = self.__check_index(index,'index','rem_sub')
-			index_subsource = self.__check_index(index_subsource,'index_subsource','rem_sub')
+			index = self.__check_index2(index)
+			index_subsource = self.__check_subindex(index,index_subsource)
 			if index is None or index_subsource is None:
 				self.__printer('ERROR: No current source or sub-source. Doing nothing.',LL_ERROR)
 				return None
@@ -679,7 +679,7 @@ class SourceController(object):
 			TODO: check if index is valid
 		"""
 		if index:
-			index = self.__check_index(index,'index','set_available')
+			index = self.__check_index2(index)
 		else:
 			index = self.iCurrentSource[0]
 		
@@ -730,7 +730,7 @@ class SourceController(object):
 		""" Set (sub)source availability
 		"""
 		
-		index = self.__check_index(index,'index','set_available')
+		index = self.__check_index(index)
 		if index_subsource:
 			index_subsource = int(index_subsource)	#TODO: pass through a ix check function
 			
