@@ -6,7 +6,7 @@
 # This BASE CLASS contains shared code and minimal implementation
 # of a source plugin.
 #
-DEFAULT_CONFIG_FILE = '/etc/hu/configuration.json'
+DEFAULT_CONFIG_FILE = '/etc/configuration.json'
 
 from modules.hu_utils import *
 
