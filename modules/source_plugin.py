@@ -29,6 +29,7 @@ class SourcePlugin(object):
 		self.logger.log(level, message, extra={'tag': tag})
 	
 	def configuration(self):
+		print("sourceClass (FM) init()")
 		minimal_config = {}
 		minimal_config['name'] = self.name
 		minimal_config['displayname'] = self.displayname
@@ -50,8 +51,8 @@ class SourcePlugin(object):
 		# TODO: merge minimal_config ?
 		return config
 	
-	def init(self, sourceCtrl):
-		self.printer('Initializing...',level=LL_DEBUG)
+	#def init(self, sourceCtrl):
+	#	self.printer('Initializing...',level=LL_DEBUG)
 
 	def check(self, sourceCtrl, subSourceIx=None):
 		#self.printer('Checking availability...',level=LL_DEBUG)
