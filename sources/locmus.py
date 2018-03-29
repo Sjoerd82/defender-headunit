@@ -13,19 +13,13 @@ from modules.hu_settings import getSourceConfig
 from modules.source_plugin import SourcePlugin
 from modules.source_plugin_mpd import MpdSourcePlugin
 
-class LocalMusic(IPlugin,MpdSourcePlugin,SourcePlugin):
+class LocalMusic(MpdSourcePlugin,SourcePlugin,IPlugin):
 	# the name of the class doesn't matter (?)
 	# functions are searched Left-to-Right
 
-	#def __init__(self, logger, name, displayname):
 	def __init__(self):
-		self.name = 'locmus'
-		self.displayname = 'LocalMusic'
-		self.logger=logging.getLogger('srcctrl')
-		#super(LocalMusic, self).__init__(self.logger, self.name, self.displayname)
-		print('__INIT__ SOURCECLASS')
-		#self.printer('A Source Class Init', level=LL_DEBUG)
-		#SourcePlugin.__init__(self, logger, 'locmus', 'Local Music')
+		super(sourceClass,self).__init__()	
+		self.name = None
 		MpdSourcePlugin.__init__(self)
 		
 	def __locmus_add( self, label, dir, mpd_dir, sourceCtrl ):
