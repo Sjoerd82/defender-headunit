@@ -19,7 +19,7 @@ class MpdSourcePlugin(object):
 		self.printer('B Mpd Source Class Init', level=LL_DEBUG)
 		self.mpdc = MpdController(self.logger)
 
-	def check_mpd(self, locations):
+	def check_mpd(self, locations, ix, ssIx):
 	
 		#locations = []							# list of tuples; index: 0 = mountpoint, 1 = mpd dir, 2 = availability.
 		subsource_availability_changes = []		# list of changes

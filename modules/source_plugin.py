@@ -50,7 +50,8 @@ class SourcePlugin(object):
 		self.printer('Initializing...',level=LL_DEBUG)
 
 	def check(self, sourceCtrl, subSourceIx=None):
-		self.printer('Checking availability...',level=LL_DEBUG)
+		#self.printer('Checking availability...',level=LL_DEBUG)
+		print "INIT @ SourcePlugin"
 		
 	def play(self, sourceCtrl, resume={}):
 		self.printer('Not implemented',level=LL_DEBUG)

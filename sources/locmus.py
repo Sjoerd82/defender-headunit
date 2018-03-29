@@ -76,6 +76,7 @@ class LocalMusic(IPlugin,MpdSourcePlugin,SourcePlugin):
 		
 			TODO: check if new mountpoints were added in the configuration.
 		"""
+		print "CHECK @ LocalMusic"
 		ix = sourceCtrl.index('name','locmus')	# source index
 		locations = []							# list of tuples; index: 0 = mountpoint, 1 = mpd dir, 2 = availability.
 		subsource_availability_changes = []		# list of changes
@@ -91,7 +92,7 @@ class LocalMusic(IPlugin,MpdSourcePlugin,SourcePlugin):
 			ssIx = subSourceIx
 
 		# check mountpoints
-		subsource_availability_changes = self.check_mpd(locations)
+		subsource_availability_changes = self.check_mpd(locations, ix, subSourceIx)
 		
 		return subsource_availability_changes
 
