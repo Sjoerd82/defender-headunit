@@ -17,7 +17,7 @@ class SourcePlugin(object):
 	def __init__(self):
 		
 		self.name = None
-		self.logger = None
+		#self.logger = None
 		
 		# recreate a logger #TODO, get it from upstream!
 		"""
