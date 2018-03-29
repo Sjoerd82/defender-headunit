@@ -10,10 +10,11 @@ import os
 from modules.hu_utils import *
 from modules.hu_mpd import MpdController
 
-class MpdSourcePlugin(object):
+class MpdSourcePlugin(SourcePlugin):
 
 	#def __init__(self, logger, name, displayname):
 	def __init__(self):
+		super(MpdSourcePlugin, self).__init__()
 		#super(MpdSourcePlugin, self).__init__(logger, name, displayname)
 		print('__INIT__ MPDSOURCECLASS')
 		self.printer('B Mpd Source Class Init', level=LL_DEBUG)
