@@ -1,5 +1,4 @@
-{ "name": "fm",
-  "displayname": "FM",
+{ "displayname": "FM",
   "order": 0,
   "type": "fmtools",
   "depNetwork": false,

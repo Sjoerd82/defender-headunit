@@ -1,15 +1,57 @@
+# Source Plugins
+
+Source plugins are plugins that represent a source.
+A source plugin is simply a Python class that fulfills a number of pre-defined source-related functions, such as next track
+
 A "source" consists of two files:
 
+ - Yapsy file
  - Python script
  - JSON configuration
 
-Both must have the same name.
-
-Concepts
-------------------
+## Concepts
 
 Sub-Source	Source switchable via the "SOURCE" button. Think multiple USB drives.
 		Not suitable for eg. FM stations, which should be swichable via the "NEXT" or "SEEK" button.
+
+ 
+## Yapsy
+
+Yapsy is a lightweight plugin system.
+
+A source plugin derives its class from Yapsy's IPlugin, which provides an entry point.
+
+```
+from yapsy.IPlugin import IPlugin
+
+class MySourceClass(IPlugin, ...
+```
+
+The .yapsy file is required by Yapsy's plugin manager and looks like:
+
+```
+[Core]
+Name = fm
+Module = fm
+
+[Documentation]
+Author = Sjoerd Venema
+Version = 0.1
+Description = FM radio
+```
+
+The name and module must match your Python filename.
+That's all.
+
+Links:
+http://yapsy.sourceforge.net/
+http://yapsy.readthedocs.io/en/latest/index.html
+https://github.com/tibonihoo/yapsy
+
+
+## Minimal Plugin class
+
+
 
 
 

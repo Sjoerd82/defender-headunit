@@ -1,5 +1,4 @@
-{ "name": "locmus",
-  "displayname": "Internal Storage",
+{ "displayname": "Internal Storage",
   "order": 2,
   "type": "mpd",
   "depNetwork": false,
