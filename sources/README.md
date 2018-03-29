@@ -86,9 +86,9 @@ Field | Datatype | Description | Mandatory?
 `order` | int | Used for sorting the position when cycling the source | no (default: 0)
 `depNetwork` | bool | Depends on having a (wifi) network | no (default: False)
 `controls` | dict | List of supported controls | no
-`subsources` | list | List of subsources | yes*
+`subsources` | list | List of subsources | no*
 
-*if not provided, will call XXX()
+*if omitted must be added by post_add() or check() functions.
 
 Subsources:
 name

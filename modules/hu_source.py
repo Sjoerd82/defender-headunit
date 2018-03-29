@@ -223,7 +223,7 @@ class SourceController(object):
 
 		if 'subsources' not in source_config:
 			source_config['subsources'] = []
-				
+						
 		# availability = False for all new sources, until cleared by the check() function
 		source_config['available'] = False
 			
