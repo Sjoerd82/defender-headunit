@@ -26,7 +26,6 @@ class sourceClass(IPlugin,SourcePlugin):
 	# __init__ is called by YAPSY, no room for additional parameters (?)
 	#def __init__(self, logger, name, displayname):
 	def __init__(self):
-	
 		self.name = None
 	
 		#self.displayname = 'FM'

@@ -11,13 +11,17 @@ from modules.hu_utils import *
 
 class SourcePlugin(object):
 
-	def __init__(self, logger, name, displayname):
-		super(SourcePlugin, self).__init__(logger, name, displayname)
+	#def __init__(self, logger, name, displayname):
+	def __init__(self):
+#		super(SourcePlugin, self).__init__(logger, name, displayname)
 		print('__INIT__ BASESOURCECLASS')
-		self.logger = logger
-		self.name = name
-		self.displayname = displayname
-		self.printer('C Base Source Class Init', level=LL_DEBUG)
+		self.logger=logging.getLogger('srcctrl')
+		printer('__INIT__ BASESOURCECLASS')
+
+#		self.logger = logger
+#		self.name = name
+#		self.displayname = displayname
+#		self.printer('C Base Source Class Init', level=LL_DEBUG)
 
 	def new_init( self, name ):
 		self.name = name

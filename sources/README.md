@@ -84,6 +84,9 @@ from modules.source_plugin import SourcePlugin
 
 class sourceClass(IPlugin,SourcePlugin):
 
+	def __init__(self):
+		self.name = None
+		
 	def init(self, plugin_name):
 		self.name = plugin_name	
 		
