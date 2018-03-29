@@ -28,10 +28,10 @@ class SourcePlugin(object):
 			tag = self.name
 		self.logger.log(level, message, extra={'tag': tag})
 	
-	def configuration(self):
+	def configuration(self, name):
 		print("sourceClass (FM) init()")
 		minimal_config = {}
-		minimal_config['name'] = self.name
+		minimal_config['name'] = name
 		minimal_config['displayname'] = self.displayname
 		minimal_config['order'] = 0
 		# return configuration (from json config file)
