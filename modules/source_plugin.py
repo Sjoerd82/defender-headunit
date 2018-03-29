@@ -29,6 +29,7 @@ class SourcePlugin(object):
 		"""
 		
 	def init(self, plugin_name, logger):
+		print "SOURCEPLUGIN INIT"
 		#self.printer('Initializing...!')
 		self.name = plugin_name
 		self.logger = logger

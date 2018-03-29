@@ -21,10 +21,11 @@ class MpdSourcePlugin(SourcePlugin):
 		#self.printer('B Mpd Source Class Init', level=LL_DEBUG)
 		self.mpdc = None
 
-	def init(self,logger=None):
+	def init(self, plugin_name, logger=None):
 		super(MpdSourcePlugin, self).init()
 		print("MPD MPD init()")
-		self.mpdc = MpdController(self.logger)
+		print self.logger
+		#self.mpdc = MpdController(self.logger)
 	
 	def check_mpd(self, locations, ix, ssIx):
 	
