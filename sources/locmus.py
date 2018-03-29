@@ -32,7 +32,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 
 	def post_add(self, sourceCtrl, sourceconfig):
 
-		def locmus_add( self, label, dir, mpd_dir, sourceCtrl ):
+		def locmus_add( label, dir, mpd_dir, sourceCtrl ):
 
 			#TODO:
 			mpd_musicdir = '/media'		
