@@ -11,13 +11,13 @@ from modules.hu_utils import *
 
 class SourcePlugin(object):
 
-	logger = None
+	#logger = None
 
 	#def __init__(self, logger, name, displayname):
 	def __init__(self):
 		
 		self.name = None
-		#logger = None
+		self.logger = None
 		
 		# recreate a logger #TODO, get it from upstream!
 		"""
@@ -34,7 +34,7 @@ class SourcePlugin(object):
 		new_logger.log(LL_INFO,'tESt')
 		self.logger.log(LL_INFO,'TesT')
 		
-	def new_init( self, name ):
+	def new_init(self, name):
 		self.name = name
 		return True
 
