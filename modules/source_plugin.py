@@ -9,7 +9,7 @@
 
 from modules.hu_utils import *
 
-class SourcePlugin(object):
+class SourcePlugin(IPlugin):
 
 	def __init__(self, logger, name, displayname):
 		super(SourcePlugin, self).__init__(logger, name, displayname)
