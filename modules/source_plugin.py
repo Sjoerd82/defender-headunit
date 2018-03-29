@@ -11,18 +11,26 @@ from modules.hu_utils import *
 
 class SourcePlugin(object):
 
+	logger = None
+
 	#def __init__(self, logger, name, displayname):
 	def __init__(self):
 		
 		self.name = None
+		self.logger = None
 		
 		# recreate a logger #TODO, get it from upstream!
+		"""
 		self.logger=logging.getLogger('srctrl')
 		self.logger.setLevel(logging.DEBUG)
 		ch = logging.StreamHandler()						# create console handler
 		ch.setLevel(logging.DEBUG)								# set log level
 		self.logger.addHandler(ch)
+		"""
 
+	#def add_logger(self, logger):
+	#	self.logger = logger
+		
 	def new_init( self, name ):
 		self.name = name
 		return True

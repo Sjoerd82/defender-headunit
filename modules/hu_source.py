@@ -180,6 +180,7 @@ class SourceController(object):
 			
 			# Run init
 			plugin.plugin_object.init(plugin.name)
+			plugin.plugin_object.logger = logger
 			
 			# Get config
 			config = plugin.plugin_object.configuration(plugin.name)

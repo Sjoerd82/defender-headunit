@@ -12,7 +12,7 @@ from modules.hu_utils import *
 from modules.hu_settings import getSourceConfig
 from modules.source_plugin_mpd import MpdSourcePlugin
 
-class MySource(MpdSourcePlugin) #,IPlugin):
+class MySource(MpdSourcePlugin,IPlugin):
 	# the name of the class doesn't matter (?)
 	# functions are searched Left-to-Right
 
