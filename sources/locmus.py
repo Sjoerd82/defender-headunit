@@ -49,6 +49,7 @@ class LocalMusic(IPlugin,MpdSourcePlugin,SourcePlugin):
 		sourceCtrl.add_sub( ix, subsource )
 
 	def init( self, sourceCtrl ):
+		print("LocalMusic (locmus) init()")
 		super(LocalMusic, self).init(sourceCtrl)
 
 		# get source configuration from main configuration

@@ -173,25 +173,22 @@ class SourceController(object):
 			#exit()
 			return False
 		
+		#
+		# YAPSY Plugin Manager
+		#
 		# Load the plugins from the plugin directory.
 		#self.source_manager.setPluginPlaces([plugindir])
 		self.source_manager.setPluginPlaces(['/mnt/PIHU_APP/defender-headunit/sources'])
 		self.source_manager.collectPlugins()
 
-		# Activate all loaded plugins
+		# Activate and add all collected plugins
 		for plugin in self.source_manager.getAllPlugins():
-			print plugin
 			self.source_manager.activatePluginByName(plugin.name)
-			print plugin.name
+			print "Plugin Name: {0}".format(plugin.name)
 			
-		# Loop round the plugins and print their names.
-		#for plugin in source_manager.getAllPlugins():
-		#	plugin.plugin_object.print_name()
-		
-		# Loop through the source plugins, adding the sources
-		for plugin in self.source_manager.getAllPlugins():
-			#add_a_source(plugindir, sourcePluginName)
-			config = plugin.plugin_object.configuration()
+			plugin.plugin_object.init(self, plugin.name)
+			
+			config = plugin.plugin_object.configuration(plugin.name)
 			isAdded = self.add(config)
 			if isAdded:
 				indexAdded = self.index('name',config['name'])
