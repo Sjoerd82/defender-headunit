@@ -189,7 +189,7 @@ class SourceController(object):
 			if isAdded:
 				print "ADDED W/ SUCCESS"
 				indexAdded = self.index('name',config['name'])
-				plugin.plugin_object.post_add(self)
+				plugin.plugin_object.post_add(self, config)
 
 				# TODO: post add functionality
 				#self.source_init(indexAdded)

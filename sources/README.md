@@ -80,7 +80,7 @@ The source can be further configured and customized in the read-write file confi
 Fields:
 
 Field | Datatype | Description | Mandatory?
---- | --- | ---
+--- | --- | --- | ---
 `displayname` | string | Name displayed in displays | no (defaults to module name)
 `enabled` | bool | Enable/Disable the source | no (default: True)
 `order` | int | Used for sorting the position when cycling the source | no (default: 0)
