@@ -908,12 +908,12 @@ def printSummary(Sources):
 				if 'mountpoint' in subsource:
 					mountpoint = subsource['mountpoint']
 					printer(' {0:2d} {1:17} {2} {3}'.format(i,source['displayname'],available,mountpoint), tag='')
-		else:
-			if source['available']:
-				available = colorize('available    ','light_green')
-			else:
-				available = colorize('not available','light_red')
-			printer(' {0:2d} {1:17} {2}'.format(i,source['displayname'],available), tag='')
+	#	else:
+	#		if source['available']:
+	#			available = colorize('available    ','light_green')
+	#		else:
+	#			available = colorize('not available','light_red')
+	#		printer(' {0:2d} {1:17} {2}'.format(i,source['displayname'],available), tag='')
 		
 		i += 1
 	printer('----------------------------------------------------------------------', tag='')
