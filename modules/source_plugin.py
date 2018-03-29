@@ -13,43 +13,34 @@ class SourcePlugin(object):
 
 	#def __init__(self, logger, name, displayname):
 	def __init__(self):
-#		super(SourcePlugin, self).__init__(logger, name, displayname)
-#		super(SourcePlugin, self).__init__()
-		print('__INIT__ BASESOURCECLASS 1')
 		
-		print logging.Logger.manager.loggerDict.keys() 
-		
+		# recreate a logger #TODO, get it from upstream!
 		self.logger=logging.getLogger('srctrl')
 		self.logger.setLevel(logging.DEBUG)
 		ch = logging.StreamHandler()						# create console handler
 		ch.setLevel(logging.DEBUG)								# set log level
 		self.logger.addHandler(ch)
 
-		printer('__INIT__ BASESOURCECLASS 2')
-
-#		self.logger = logger
-#		self.name = name
-#		self.displayname = displayname
-#		self.printer('C Base Source Class Init', level=LL_DEBUG)
-
 	def new_init( self, name ):
 		self.name = name
 		return True
 
 	def printer(self, message, level=LL_INFO, tag=None):
-		print "PRINTER {0}: {1}".format(self.logger,message)
+		#print "PRINTER {0}: {1}".format(self.logger,message)
 		if tag is None:
 			tag = self.name
 		self.logger.log(level, message, extra={'tag': tag})
 	
 	def configuration(self, name):
-		print("sourceClass (FM) init()")
+		print("LOADING SOURCE CONFIGURATION")
 		minimal_config = {}
 		minimal_config['name'] = name
-		minimal_config['displayname'] = self.displayname
+		minimal_config['displayname'] = name
 		minimal_config['order'] = 0
+		minimal_config['enabled'] = True
+		minimal_config['available'] = False
 		# return configuration (from json config file)
-		plugindir = "sources"
+		plugindir = "sources"	#TODO
 		configFileName = os.path.join(plugindir,self.name+'.json')
 		if not os.path.exists( configFileName):
 			printer('Configuration not found: {0}'.format(configFileName))
