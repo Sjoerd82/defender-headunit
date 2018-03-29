@@ -92,7 +92,7 @@ class LocalMusic(IPlugin,MpdSourcePlugin,SourcePlugin):
 			ssIx = subSourceIx
 
 		# check mountpoints
-		subsource_availability_changes = self.check_mpd(locations, ix, subSourceIx)
+		subsource_availability_changes = self.check_mpd(locations, ix, ssIx)
 		
 		return subsource_availability_changes
 
