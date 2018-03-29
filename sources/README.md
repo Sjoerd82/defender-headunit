@@ -1,13 +1,17 @@
 # Source Plugins
 
 Source plugins are plugins that represent a source.
-A source plugin is simply a Python class that fulfills a number of pre-defined source-related functions, such as next track
+A source plugin is simply a Python class that fulfills a number of pre-defined source-related functions, such as next track.
 
-A "source" consists of two files:
+## Architecture
 
- - Yapsy file
+A "source" consists of three files:
+
  - Python script
+ - Yapsy configuration
  - JSON configuration
+
+The 
 
 ## Concepts
 
@@ -44,19 +48,11 @@ The name and module must match your Python filename.
 That's all.
 
 Links:
-http://yapsy.sourceforge.net/
-http://yapsy.readthedocs.io/en/latest/index.html
-https://github.com/tibonihoo/yapsy
+{http://yapsy.sourceforge.net/}
+{http://yapsy.readthedocs.io/en/latest/index.html}
+{https://github.com/tibonihoo/yapsy}
 
-
-## Minimal Plugin class
-
-
-
-
-
-JSON configuration
-------------------
+## JSON configuration
 
 The JSON configuration contains all kinds of *read-only* details.
 The source can be further configured in the read-write file configuration.json.
@@ -77,6 +73,28 @@ template	bool
 Added by system:
 available	bool
 subsources	list
+
+
+## Minimal Plugin class
+
+```
+from yapsy.IPlugin import IPlugin
+from modules.hu_utils import *
+from modules.source_plugin import SourcePlugin
+
+class sourceClass(IPlugin,SourcePlugin):
+
+	def init(self, plugin_name):
+		self.name = plugin_name	
+		
+	def check(self):
+		return True
+
+```
+
+## Implementable methods
+
+
 
 Python script
 ----------------

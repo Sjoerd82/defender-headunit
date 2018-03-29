@@ -25,22 +25,20 @@ class sourceClass(IPlugin,SourcePlugin):
 
 	# __init__ is called by YAPSY, no room for additional parameters (?)
 	#def __init__(self, logger, name, displayname):
-	def __init__(self):
+	#def __init__(self):
 	
-		#print "IM AM {0}".format()
-		self.name = None
-		self.displayname = 'FM'
-		self.logger=logging.getLogger('srcctrl')
+		#self.displayname = 'FM'
+		#self.logger=logging.getLogger('srcctrl')
 		
 		#super(LocalMusic, self).__init__(self.logger, self.name, self.displayname)
-		print('__INIT__ SOURCECLASS')
+		#print('__INIT__ SOURCECLASS')
 		#self.printer('A Source Class Init', level=LL_DEBUG)
 		#SourcePlugin.__init__(self, logger, 'fm', 'FM')
 	
-	def init( self, name ):
+	def init( self, plugin_name ):
 		print("sourceClass (FM) init()")
 		self.printer('Initializing...')
-		self.name = name
+		self.name = plugin_name
 		return True
 
 	def uhm_subs(self, sourceCtrl):

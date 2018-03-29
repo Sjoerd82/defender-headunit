@@ -13,9 +13,9 @@ from modules.hu_settings import getSourceConfig
 from modules.source_plugin import SourcePlugin
 from modules.source_plugin_mpd import MpdSourcePlugin
 
-# the name of the class doesn't matter (?)
-# functions are searched Left-to-Right
 class LocalMusic(IPlugin,MpdSourcePlugin,SourcePlugin):
+	# the name of the class doesn't matter (?)
+	# functions are searched Left-to-Right
 
 	#def __init__(self, logger, name, displayname):
 	def __init__(self):
