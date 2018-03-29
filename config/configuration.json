@@ -101,7 +101,7 @@
 		            [ { "name":"Data1", "mountpoint": "/media/PIHU_DATA", "mpd_dir": "PIHU_DATA"}
 		            , { "name":"Data2", "mountpoint": "/media/PIHU_DATA2", "mpd_dir": "PIHU_DATA2" } ]
 		  }
-		  "example": { "subsources" : 
+		, "example": { "subsources" : 
 		            [ { "name":"Data1", "label": "PD1", "mountpoint": "/media/PIHU_DATA", "mpd_dir": "PIHU_DATA"}
 		            , { "name":"Data2", "label": "PD2", "mountpoint": "/media/PIHU_DATA2", "mpd_dir": "PIHU_DATA2" } ]
 		  }
