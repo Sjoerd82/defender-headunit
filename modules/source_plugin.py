@@ -67,7 +67,7 @@ class SourcePlugin(object):
 		config['name'] = name		
 		
 		# load main configuration
-		main_configuration = configuration_load(logger, DEFAULT_CONFIG_FILE)
+		main_configuration = configuration_load(self.logger, DEFAULT_CONFIG_FILE)
 		if 'source_config' in main_configuration and name in main_configuration['source_config']:
 			config.update(main_configuration['source_config'][name])
 			
