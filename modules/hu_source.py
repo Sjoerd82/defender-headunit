@@ -199,6 +199,8 @@ class SourceController(object):
 				#self.source_init(indexAdded)
 				# Add "hard" subsources
 				plugin.plugin_object.uhm_subs(self)
+			else:
+				print "NOT ADDED!"
 				
 				
 	

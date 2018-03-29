@@ -35,7 +35,9 @@ class LocalMusic(IPlugin,MpdSourcePlugin,SourcePlugin):
 
 		# get index (name is unique)
 		ix = sourceCtrl.index('name','locmus')
-
+		if ix is None:
+			print "Plugin {0} does not exist".format('locmus')
+			return False
 		# construct the subsource
 		subsource = {}
 		subsource['name'] = 'locmus'
@@ -52,6 +54,7 @@ class LocalMusic(IPlugin,MpdSourcePlugin,SourcePlugin):
 		"""	At this point, the source has *not* been added yet, and thus no index is available!		
 		"""
 		print("LocalMusic (locmus) init()")
+		print name
 		super(LocalMusic, self).init()
 		self.name = name
 		
