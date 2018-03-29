@@ -14,6 +14,7 @@ class SourcePlugin(object):
 	#def __init__(self, logger, name, displayname):
 	def __init__(self):
 #		super(SourcePlugin, self).__init__(logger, name, displayname)
+		super(SourcePlugin, self).__init__()
 		print('__INIT__ BASESOURCECLASS')
 		self.logger=logging.getLogger('srcctrl')
 		printer('__INIT__ BASESOURCECLASS')
