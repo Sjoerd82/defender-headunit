@@ -303,6 +303,8 @@ class SourceController(object):
 		# TODO -- not fully implemented yet
 		subsource_config['available'] = False
 
+		print self.lSource[index]['subsources']
+		
 		# all good, add the source:
 		self.__printer('ADD SUB: {0}'.format(subsource_config['displayname']))
 		self.lSource[index]['subsources'].append(subsource_config)
