@@ -30,9 +30,6 @@ class MySource(SourcePlugin,IPlugin):
 	def __init__(self):
 		super(MySource,self).__init__()	
 	
-	def uhm_subs(self, sourceCtrl):
-		return True
-	
 	def check( self, sourceCtrl, subSourceIx=None  ):
 		"""	Check source
 		

@@ -5,7 +5,7 @@
   "controls": {"ffwd": false, "rwnd": false, "prev": true, "next": true},
   "random": [],
   "template": true,
-  "subsources": [ "name":"fm" ]
+  "subsources": [ "name":"fm" ],
   "defaultconfig": { "frq_lo" : 80 },
   "menuitems" : [
 	{	"entry": "Tune to radio station",
