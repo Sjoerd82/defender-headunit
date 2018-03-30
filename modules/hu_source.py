@@ -801,7 +801,7 @@ class SourceController(object):
 		""" Return all subsources for given index
 			TODO: check if index is valid
 		"""
-		if index:
+		if index is not None:
 			index = self.__check_index(index)
 		else:
 			index = self.iCurrentSource[0]
