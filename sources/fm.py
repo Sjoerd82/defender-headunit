@@ -30,6 +30,7 @@ class MySource(SourcePlugin,IPlugin):
 	def __init__(self):
 		super(MySource,self).__init__()	
 	
+	'''
 	def check( self, sourceCtrl, subSourceIx=None  ):
 		"""	Check source
 		
@@ -52,7 +53,9 @@ class MySource(SourcePlugin,IPlugin):
 			subsource_availability_changes.append({"index":ix,"available":new_availability})
 		
 		return subsource_availability_changes
-		
+	'''
+
+	
 	def play( self, sourceCtrl, subSourceIx=None ):
 		self.printer('Start playing FM radio...')
 		return True	

@@ -56,6 +56,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 	# Source Check: Return True/False (available/not available)
 	# Optionally, provide list of mountpoint(s) to check
 	#def locmus_check( sourceCtrl, mountpoint=None ):
+	'''
 	def check( self, sourceCtrl, subSourceIx=None ):
 		super(MySource, self).check(sourceCtrl, subSourceIx)
 		"""	Check source
@@ -86,6 +87,6 @@ class MySource(MpdSourcePlugin,IPlugin):
 		
 		return subsource_availability_changes
 
-
+	'''
 		
 	

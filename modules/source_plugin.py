@@ -12,41 +12,37 @@ from modules.hu_utils import *
 
 class SourcePlugin(object):
 
-	#logger = None
-
-	#def __init__(self, logger, name, displayname):
 	def __init__(self):
-		
 		self.name = None
 		self.logger = None
 		
-		# recreate a logger #TODO, get it from upstream!
-		"""
-		self.logger=logging.getLogger('srctrl')
-		self.logger.setLevel(logging.DEBUG)
-		ch = logging.StreamHandler()						# create console handler
-		ch.setLevel(logging.DEBUG)								# set log level
-		self.logger.addHandler(ch)
-		"""
-		
 	def init(self, plugin_name, logger):
-		print "SOURCEPLUGIN INIT"
-		#self.printer('Initializing...!')
 		self.name = plugin_name
 		self.logger = logger
 
 	def post_add(self, sourceCtrl, sourceconfig):
 		pass
 
-	def printer(self, message, level=LL_INFO, tag=None):
-		if tag is None:
-			tag = self.name
+	def check(self, sourceCtrl, subSourceIx=None):
+		"""	Check source
 		
-		if self.logger is None:
-			print("[{0}] {1}".format(tag,message))
-		else:
-			self.logger.log(level, message, extra={'tag': tag})
-	
+			Returns all subsources as available
+			
+		"""
+		ix = sourceCtrl.index('name',self.name)
+		subsources = sourceCtrl.subsource_all(ix)
+		
+		avchg = []
+		for i in range(len(subsources)):
+			print i
+			avchg_subsource = {}
+			avchg_subsource['index'] = ix
+			avchg_subsource['subindex'] = i
+			avchg_subsource['availability'] = True
+			avchg.append(subsource)
+		
+		return avchg
+
 	def configuration(self, name):
 		print("LOADING SOURCE CONFIGURATION")
 		if name is None:
@@ -74,11 +70,7 @@ class SourcePlugin(object):
 			
 		# TODO: merge minimal_config ?
 		return config
-	
-	def check(self, sourceCtrl, subSourceIx=None):
-		#self.printer('Checking availability...',level=LL_DEBUG)
-		print "INIT @ SourcePlugin"
-		
+			
 	def play(self, sourceCtrl, resume={}):
 		self.printer('Not implemented',level=LL_DEBUG)
 		
@@ -120,3 +112,12 @@ class SourcePlugin(object):
 
 	def source_get_media_details():
 		return False
+		
+	def printer(self, message, level=LL_INFO, tag=None):
+		if tag is None:
+			tag = self.name
+		
+		if self.logger is None:
+			print("[{0}] {1}".format(tag,message))
+		else:
+			self.logger.log(level, message, extra={'tag': tag})

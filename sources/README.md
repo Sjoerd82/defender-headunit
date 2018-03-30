@@ -150,17 +150,44 @@ class sourceClass(SourcePlugin,IPlugin):
 
 ## Implementable methods
 
-### init()
+### Starting up
+
+Three functions are called when launching the Source Controller.
+ 1. init()
+ 2. post_add()
+ 3. check()
+
+None of these methods are required be implemented.
+Check will periodically be called by 
+
+#### init()
 
 Called when Source Controller activates the plugin.
 
-### post_add(sourceconfig)
+#### post_add(sourceconfig)
 
 Called after adding the plugin.
 This is a good place to populate any subsources dynamically.
 sourceconfig contains the complete configuration, including the parts from the main configuration (configuration.json).
 
-### check()
+#### check()
+
+Called for every source, at the end of the setup phase. This function checks if the source is ready.
+This function must return a list with dicts for all or only the changed sources.
+
+```
+avchg = []
+avchg_subsource = {}
+avchg_subsource['index'] = 1
+avchg_subsource['subindex'] = 1
+avchg_subsource['availability'] = True
+
+avchg.append(subsource)
+return avchg
+
+```
+
+If check() is not implemented this will make the source available.
 
 
 Python script
