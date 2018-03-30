@@ -14,6 +14,9 @@
 # Button presses are NOT asynchronous!! i.e. wait until a button press is handled before the next button can be handled.
 # TODO: Consider making them asynchronous, or at least the update lib (long) / volume (short) buttons
 
+# printer -> syslog adds considerable latency! 
+#
+
 import sys						# path
 import os						# 
 from time import sleep
@@ -268,25 +271,16 @@ def main():
 	 , "zmq_path"   : "/system/halt"
 	 , "zmq_cmd"    : "PUT" } )
 	 
-	def button_press(button):
-		printer("Button was pressed: {0}".format(button))
-	
-	def button_down_wait():
-
-		global adc
-		#adc = Adafruit_ADS1x15.ADS1015()
-		
-		printer("Waiting for button to be released...")
+	def button_down_wait():		
+		#printer("Waiting for button to be released...")
 		value_0 = adc.read_adc(0)
 		while value_0 > BUTTON_LO:
 			value_0 = adc.read_adc(0)
 			sleep(0.1)
-		printer("...released")
+		#printer("...released")
 		
 	def button_down_delay():
 
-		#adc = Adafruit_ADS1x15.ADS1015()
-		global adc
 		press_count = 0
 		
 		printer("Waiting for button to be released/or max. press count reached")
@@ -296,13 +290,11 @@ def main():
 			printer(press_count)
 			value_0 = adc.read_adc(0)
 			sleep(0.1)
-		printer("...released/max. delay reached")
+		#printer("...released/max. delay reached")
 	
 	def handle_button_press( button_spec ):
 		if 'zmq_path' and 'zmq_cmd' in button_spec:
-			printer("Sending message: {0} {1}".format(button_spec['zmq_path'],button_spec['zmq_cmd']))
-			#messaging.send_command(button_spec['zmq_path'],button_spec['zmq_cmd'])
-			#messaging.publish_request((button_spec['zmq_path'],button_spec['zmq_cmd'])
+			#printer("Sending message: {0} {1}".format(button_spec['zmq_path'],button_spec['zmq_cmd']))
 			messaging.publish_command(button_spec['zmq_path'],button_spec['zmq_cmd'])
 			if button_spec['delay']:
 				button_down_delay()
