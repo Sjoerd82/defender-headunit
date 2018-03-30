@@ -24,7 +24,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 		"""	At this point, the source has *not* been added yet, and thus no index is available!		
 		"""
 		#MpdSourcePlugin.__init__(self,self.logger)
-		pass
+		return True
 
 	def post_add(self, sourceCtrl, sourceconfig):
 

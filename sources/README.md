@@ -158,22 +158,35 @@ Three functions are called when launching the Source Controller.
  3. check()
 
 None of these methods are required be implemented.
-Check will periodically be called by 
+`check()` may also periodically be called after launch by the SourceController.
 
 #### init()
 
 Called when Source Controller activates the plugin.
 
+Arguments: Plugin Name, Logger
+Return: True, if all is OK, False if not (source will not be activated).
+
 #### post_add(sourceconfig)
 
 Called after adding the plugin.
+
+Arguments: sourceconfig
+Return: Currently not being checked
+
 This is a good place to populate any subsources dynamically.
 sourceconfig contains the complete configuration, including the parts from the main configuration (configuration.json).
+
 
 #### check()
 
 Called for every source, at the end of the setup phase. This function checks if the source is ready.
+
+Arguments: sourceCtrl, subindex
+Return: None (if no subsources), List of dicts
+
 This function must return a list with dicts for all or only the changed sources.
+If a subindex is given only the subsource with that index need to be checked.
 
 ```
 avchg = []

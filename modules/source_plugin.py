@@ -19,6 +19,7 @@ class SourcePlugin(object):
 	def init(self, plugin_name, logger):
 		self.name = plugin_name
 		self.logger = logger
+		return True
 
 	def post_add(self, sourceCtrl, sourceconfig):
 		pass
@@ -31,6 +32,9 @@ class SourcePlugin(object):
 		"""
 		ix = sourceCtrl.index('name',self.name)
 		subsources = sourceCtrl.subsource_all(ix)
+		
+		if subsources is None:
+			return []
 		
 		avchg = []
 		for i in range(len(subsources)):
