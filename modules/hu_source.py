@@ -148,7 +148,6 @@ class SourceController(object):
 		else:
 			index = int(test_index)
 
-		print self.lSource[index]
 		# test if the soures has subsources
 		if not 'subsources' in self.lSource[index]:
 			self.__printer('ERROR: index {0} has no subsources'.format(index),LL_ERROR)	

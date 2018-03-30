@@ -20,10 +20,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 		super(MySource,self).__init__()
 
 	def init(self, plugin_name, logger=None):
-		super(MySource, self).init(plugin_name,logger)
-		"""	At this point, the source has *not* been added yet, and thus no index is available!		
-		"""
-		#MpdSourcePlugin.__init__(self,self.logger)
+		super(MySource, self).init(plugin_name,logger)	# Executes init() at MpdSourcePlugin
 		return True
 
 	def post_add(self, sourceCtrl, sourceconfig):

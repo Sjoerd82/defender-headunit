@@ -30,15 +30,9 @@ class SourcePlugin(object):
 			Returns all subsources as available
 			
 		"""
-		print "DEBUG"
-		print self.name
-
 		ix = sourceCtrl.index('name',self.name)
 		subsources = sourceCtrl.subsource_all(ix)
-		
-		print ix
-		print subsources
-		
+				
 		if subsources is None:
 			return []
 		
