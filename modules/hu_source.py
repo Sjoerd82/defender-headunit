@@ -810,6 +810,7 @@ class SourceController(object):
 			self.__printer('Could not determine index')
 			return None
 
+		print "DEBUG !! test ABC"
 		if 'subsources' in self.lSource[index]:
 			return self.lSource[index]['subsources']
 			

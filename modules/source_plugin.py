@@ -33,6 +33,11 @@ class SourcePlugin(object):
 		ix = sourceCtrl.index('name',self.name)
 		subsources = sourceCtrl.subsource_all(ix)
 		
+		print "DEBUG"
+		print ix
+		print subsources
+		
+		
 		if subsources is None:
 			return []
 		
@@ -48,7 +53,6 @@ class SourcePlugin(object):
 		return avchg
 
 	def configuration(self, name):
-		print("LOADING SOURCE CONFIGURATION")
 		if name is None:
 			return None
 		
@@ -71,8 +75,6 @@ class SourcePlugin(object):
 		if 'source_config' in main_configuration and name in main_configuration['source_config']:
 			config.update(main_configuration['source_config'][name])
 			
-		# TODO: merge minimal_config ?
-		print config
 		return config
 			
 	def play(self, sourceCtrl, resume={}):
