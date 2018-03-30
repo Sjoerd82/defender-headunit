@@ -865,7 +865,7 @@ def check_all_sources_send_event():
 	
 	i=0
 	for source in all_sources:
-		check_result = sc_sources.source_check(i)
+		check_result = sc_sources.check(i)
 		#check_result = source['sourceClass'].check(self)	#returns a list of dicts with changes
 		if check_result:
 			for result in check_result:
