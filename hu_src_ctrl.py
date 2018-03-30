@@ -896,11 +896,9 @@ def printSummary():
 	
 	i = 0
 	for source in sc_sources.source_all():
-		print i
 		# get subsources
 		subsources = sc_sources.subsource_all(i)
 		for subsource in subsources:
-			print subsource
 			if subsource['available']:
 				available = colorize('available    ','light_green')
 			else:
@@ -909,6 +907,8 @@ def printSummary():
 			if 'mountpoint' in subsource:
 				mountpoint = subsource['mountpoint']
 				printer(' {0:2d} {1:17} {2} {3}'.format(i,source['displayname'],available,mountpoint), tag='')
+			else:
+				printer(' {0:2d} {1:17} {2}'.format(i,source['displayname'],available), tag='')
 
 				
 		i += 1
