@@ -42,7 +42,7 @@ class SourcePlugin(object):
 			avchg_subsource = {}
 			avchg_subsource['index'] = ix
 			avchg_subsource['subindex'] = i
-			avchg_subsource['availability'] = True
+			avchg_subsource['available'] = True
 			avchg.append(avchg_subsource)
 		
 		return avchg

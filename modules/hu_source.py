@@ -480,6 +480,7 @@ class SourceController(object):
 				check_result = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.check(self,index_subsource)	#returns a list of dicts with changes
 
 				for chg in check_result:
+					
 					if 'subindex' in chg and chg['subindex'] is not None:
 						self.set_available( chg['index'], chg['available'], chg['subindex'] )
 					else:
