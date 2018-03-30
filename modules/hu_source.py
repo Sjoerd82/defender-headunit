@@ -802,9 +802,13 @@ class SourceController(object):
 			TODO: check if index is valid
 		"""
 		if index is not None:
+			print "debug AAA"
 			index = self.__check_index(index)
+			print index
 		else:
+			print "debug BBB"
 			index = self.iCurrentSource[0]
+			print index
 		
 		if not index:
 			self.__printer('Could not determine index')
