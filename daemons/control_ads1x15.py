@@ -14,8 +14,8 @@
 # Button presses are NOT asynchronous!! i.e. wait until a button press is handled before the next button can be handled.
 # TODO: Consider making them asynchronous, or at least the update lib (long) / volume (short) buttons
 
-# printer -> syslog adds considerable latency! 
-#
+# printer -> syslog adds considerable latency!  ?
+# (and?) Or.. is it the MQ send() ?
 
 import sys						# path
 import os						# 

@@ -102,7 +102,7 @@ class MqPubSubFwdController(object):
 
 	def __send(self, message):
 		self.publisher.send(message)
-		time.sleep(1)	# required??? don't think so.. TODO: Remove, once we seen everything works..
+		#time.sleep(1)	# required??? don't think so.. TODO: Remove, once we seen everything works..
 		return True
 
 	def __recv(self):
