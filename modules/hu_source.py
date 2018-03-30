@@ -479,6 +479,8 @@ class SourceController(object):
 				# OR:
 				check_result = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.check(self,index_subsource)	#returns a list of dicts with changes
 
+				print check_result
+				
 				for chg in check_result:
 					if 'subindex' in chg and chg['subindex'] is not None:
 						self.set_available( chg['index'], chg['available'], chg['subindex'] )
@@ -802,19 +804,14 @@ class SourceController(object):
 			If no index is given, will return for active source (if any)
 		"""
 		if index is not None:
-			print "debug AAA"
 			index = self.__check_index(index)
-			print index
 		else:
-			print "debug BBB"
 			index = self.iCurrentSource[0]
-			print index
 		
 		if index is None:
 			self.__printer('Could not determine index')
 			return None
 
-		print "DEBUG !! test ABC"
 		if 'subsources' in self.lSource[index]:
 			return self.lSource[index]['subsources']
 			

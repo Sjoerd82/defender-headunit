@@ -39,13 +39,11 @@ class SourcePlugin(object):
 		print ix
 		print subsources
 		
-		
 		if subsources is None:
 			return []
 		
 		avchg = []
 		for i in range(len(subsources)):
-			print i
 			avchg_subsource = {}
 			avchg_subsource['index'] = ix
 			avchg_subsource['subindex'] = i
