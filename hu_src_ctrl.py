@@ -875,11 +875,11 @@ def check_all_sources_send_event():
 
 
 # print a source summary
-def printSummary(Sources):
-	#global Sources
+def printSummary():
+	
 	printer('-- Summary -----------------------------------------------------------', tag='')
-	arCurrIx = Sources.index_current()
-	sCurrent = Sources.source(None)
+	arCurrIx = sc_sources.index_current()
+	sCurrent = sc_sources.source(None)
 	
 	if not arCurrIx[0] == None and arCurrIx[1] == None:
 		sCurrDisplay = sCurrent['displayname']
@@ -895,26 +895,22 @@ def printSummary(Sources):
 		printer('Current source: {0} {1}'.format(arCurrIx[0],sCurrDisplay), tag='')
 	
 	i = 0
-	for source in Sources.source_all():
+	for source in sc_sources.source_all():
+		
+		# get subsources
+		subsources = sc_sources.subsource_all(i)
+		for subsource in subsources:
+		
+			if subsource['available']:
+				available = colorize('available    ','light_green')
+			else:
+				available = colorize('not available','light_red')
+	
+			if 'mountpoint' in subsource:
+				mountpoint = subsource['mountpoint']
+				printer(' {0:2d} {1:17} {2} {3}'.format(i,source['displayname'],available,mountpoint), tag='')
 
-		if 'subsources' in source and len(source['subsources']) > 0:
-			for subsource in source['subsources']:
-			
-				if subsource['available']:
-					available = colorize('available    ','light_green')
-				else:
-					available = colorize('not available','light_red')
-		
-				if 'mountpoint' in subsource:
-					mountpoint = subsource['mountpoint']
-					printer(' {0:2d} {1:17} {2} {3}'.format(i,source['displayname'],available,mountpoint), tag='')
-	#	else:
-	#		if source['available']:
-	#			available = colorize('available    ','light_green')
-	#		else:
-	#			available = colorize('not available','light_red')
-	#		printer(' {0:2d} {1:17} {2}'.format(i,source['displayname'],available), tag='')
-		
+				
 		i += 1
 	printer('----------------------------------------------------------------------', tag='')
 

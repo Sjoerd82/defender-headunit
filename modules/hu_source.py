@@ -478,8 +478,6 @@ class SourceController(object):
 				#check_result = the_source.plugin_object.check(self,index_subsource)	#returns a list of dicts with changes
 				# OR:
 				check_result = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.check(self,index_subsource)	#returns a list of dicts with changes
-
-				print check_result
 				
 				for chg in check_result:
 					if 'subindex' in chg and chg['subindex'] is not None:
@@ -735,7 +733,7 @@ class SourceController(object):
 		#return copy.copy(self.lSource)
 		# Integrated get_all_simple:
 		if index == None:
-			mycopy = copy.copy(self.lSource)
+#			mycopy = copy.copy(self.lSource)
 #			for source in mycopy:
 #				if 'sourceClass' in source:
 #					del source['sourceClass']
@@ -745,7 +743,8 @@ class SourceController(object):
 #				for key,value in source.iteritems():
 #					if type(value) == 'instance':
 #						del source[key]
-			return mycopy
+#			return mycopy
+			return self.lSource
 		else:
 			mycopy = copy.copy(self.lSource[index])
 			for source in mycopy:
