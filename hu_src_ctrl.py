@@ -56,8 +56,8 @@ DEFAULT_CONFIG_FILE = '/etc/hu/configuration.json'
 #SETTINGS = '/etc/hu/source.json'
 SETTINGS = '/mnt/PIHU_CONFIG/source.json'
 DEFAULT_LOG_LEVEL = LL_INFO
-DEFAULT_PORT_SUB = 5560
 DEFAULT_PORT_PUB = 5559
+DEFAULT_PORT_SUB = 5560
 SUBSCRIPTIONS = ['/source/','/player/','/events/udisks/']
 
 logger = None			# logging
