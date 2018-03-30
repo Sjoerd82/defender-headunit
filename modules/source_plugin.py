@@ -77,32 +77,32 @@ class SourcePlugin(object):
 			
 		return config
 			
-	def play(self, sourceCtrl, resume={}):
-		self.printer('Not implemented',level=LL_DEBUG)
+	def play(self, **kwargs):
+		return False
 		
-	def stop(self):
-		self.printer('Not implemented',level=LL_DEBUG)
+	def stop(self, **kwargs):
+		return False
 		
-	def next(self):
-		self.printer('Not implemented',level=LL_DEBUG)
+	def next(self, **kwargs):
+		return False
 		
-	def prev(self):
-		self.printer('Not implemented',level=LL_DEBUG)
+	def prev(self, **kwargs):
+		return False
 
-	def pause(self, mode):
-		self.printer('Not implemented',level=LL_DEBUG)
+	def pause(self, **kwargs):
+		return False
 
-	def random(self, mode):
-		self.printer('Not implemented',level=LL_DEBUG)
+	def random(self, **kwargs):
+		return False
 
-	def seekfwd(self):
-		self.printer('Not implemented',level=LL_DEBUG)
+	def seekfwd(self, **kwargs):
+		return False
 
-	def seekrev(self):
-		self.printer('Not implemented',level=LL_DEBUG)
+	def seekrev(self, **kwargs):
+		return False
 
-	def update(self, location):
-		self.printer('Not implemented',level=LL_DEBUG)
+	def update(self, **kwargs):
+		return False
 		
 	def get_details():
 		return False

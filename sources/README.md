@@ -202,6 +202,17 @@ return avchg
 
 If check() is not implemented this will make the source available.
 
+### Source control
+
+	def play(self, **kwargs):	
+	def stop(self, **kwargs):
+	def next(self, **kwargs):
+	def prev(self, **kwargs):
+	def pause(self, **kwargs):
+	def random(self, **kwargs):
+	def seekfwd(self, **kwargs):
+	def seekrev(self, **kwargs):
+	def update(self, **kwargs):
 
 Python script
 ----------------

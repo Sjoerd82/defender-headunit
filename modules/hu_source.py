@@ -318,16 +318,12 @@ class SourceController(object):
 		# availability = False for all new subsources, until cleared by the check() function
 		# TODO -- not fully implemented yet
 		subsource_config['available'] = False
-
-		print subsource_config
-		
+	
 		# all good, add the source:
 		self.__printer('ADD SUB: {0}'.format(subsource_config['displayname']))
 		self.lSource[index]['subsources'].append(subsource_config)
 		self.lSource[index]['subsources'].sort( key=lambda k: k['order'] )
-		
-		print self.lSource[index]['subsources']
-		
+				
 		return True
 	
 	def rem( self, index=None, force=False ):

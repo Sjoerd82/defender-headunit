@@ -20,6 +20,7 @@ class MpdSourcePlugin(SourcePlugin):
 	def init(self, plugin_name, logger=None):
 		super(MpdSourcePlugin, self).init(plugin_name,logger)
 		self.mpdc = MpdController(self.logger)
+		print "Hello!"
 	
 	def check_mpd(self, locations, ix, ssIx):
 	
