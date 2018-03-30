@@ -982,9 +982,10 @@ class SourceController(object):
 		if self.iCurrentSource[0] == None:
 			self.__printer('NEXT: No current source',LL_WARNING)
 			return False
-
-		ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].next()
-		return ret
+		else:
+			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.next()
+			#ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].next()
+			return ret
 
 	# Proxy for previous (track/station/...)
 	def source_prev( self ):
