@@ -187,17 +187,8 @@ class SourceController(object):
 			# Add
 			isAdded = self.add(config)
 			if isAdded:
-				print "ADDED W/ SUCCESS"
 				indexAdded = self.index('name',config['name'])
-				plugin.plugin_object.post_add(self, config)
-
-				# TODO: post add functionality
-				#self.source_init(indexAdded)
-				# Add "hard" subsources
-				#plugin.plugin_object.get_subsources(self)
-			else:
-				print "NOT ADDED!"
-				
+				plugin.plugin_object.post_add(self, config)			
 				
 	
 	def add( self, source_config ):
@@ -265,6 +256,9 @@ class SourceController(object):
 
 		if 'order' not in subsource_config:
 			subsource_config['order'] = 0
+
+		if 'available' not in subsource_config:
+			subsource_config['available'] = False
 
 		# check key:
 		keys = []
@@ -403,7 +397,100 @@ class SourceController(object):
 			self.set_available(index, False)
 		
 		return True
+	
+	def check( self, index=None, index_subsource=None ):
+		""" Execute a check() for given source or subsource and sets availability accordingly
+			
+			if NO INDEXES are given, all sources and sub-sources will be checked.
+			if ONLY a SOURCE INDEX is given, it will check the source and if it's a template will also check all subsources
+			if BOTH INDEXES are given will check the specified sub-source
+			
+		X	Returns a list of dicts
+			
+			(Some soureces may themselves also set the available flag, but we do it here too....)
+		"""
+		index = self.__check_index(index)
+		if index is False:
+			return False
+		
+		index_subsource = self.__check_subindex(index,index_subsource)
+		if index_subsource is False:
+			return False
+		
+		changed_sources = []
+		
+		# Check all indexes
+		if index is None and index_subsource is None:
+			self.__printer('Checking all sources') #LL_DEBUG
+			i=0
+			for source in self.lSource:
+				self.__printer('Checking: {0}'.format(i)) #LL_DEBUG
+				if 'sourceClass' not in self.lSource[i]:
+					self.__printer('has no sourceClass: {0}'.format(self.lSource[i]['name']))
+				else:
+					#checked_source_is_available = self.lSource[i]['available']
+					check_result = self.lSource[i]['sourceClass'].check(self)	#returns a list of dicts with changes
+					if check_result:
+						for result in check_result:
+							changed_sources.append(result)
+										
+					#if checked_source_is_available != check_result:
+					#	self.lSource[i]['available'] = check_result
+					#	changed_sources.append(i)
+						
+				i+=1
+				
+			if changed_sources:
+				return changed_sources
+			else:
+				return None
+				
+		else:
+			# Check specified subindex
+			if index_subsource is not None:	
+				self.__printer('Checking index/subindex: {0}/{1}'.format(index,index_subsource)) #LL_DEBUG
+				
+				#checked_source_is_available = self.lSource[index]['subsources'][index_subsource]['available']
+				check_result = self.lSource[index]['sourceClass'].check(self,index_subsource)	#returns a list of dicts with changes
+				
+				return check_result
+				
+				#if len(check_result) > 0:
+				
+					#if checked_source_is_available != check_result:
+					#	self.lSource[index]['available'] = check_result
+					#	changed_sources.append( [index,index_subsource] )
+					#	return changed_sources
+				#else:
+				#	return None
+						
+			# Check specified index
+			elif index is not None:
+				self.__printer('Checking index: {0}'.format(index)) #LL_DEBUG
+				
+				## todo  !! !!  ##
+				#check_result = self.lSource[index]['sourceClass'].check(self,index_subsource)	#returns a list of dicts with changes
 
+				#the_source = self.source_manager.getPluginByName(self.lSource[index]['name'])
+				#check_result = the_source.plugin_object.check(self,index_subsource)	#returns a list of dicts with changes
+				# OR:
+				check_result = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.check(self,index_subsource)	#returns a list of dicts with changes
+
+				for chg in check_result:
+					if 'subindex' in chg and chg['subindex'] is not None:
+						self.set_available( chg['index'], chg['available'], chg['subindex'] )
+					else:
+						self.set_available( chg['index'], chg['available'] )
+						
+				return check_result
+				
+			#if checked_source_is_available != check_result:
+			#	self.lSource[index]['available'] = check_result
+			#	changed_sources.append( [index] )
+			#	return changed_sources
+			#else:
+			#	return None
+	
 	def index( self, key, value ):
 		"""Return index based on key-value pair
 		Tip: the "name" key is unique
@@ -839,98 +926,7 @@ class SourceController(object):
 		#self.source_manager.getPluginByName(source_name).plugin_object.init(self)
 	"""
 	
-	def source_check( self, index=None, index_subsource=None ):
-		""" Execute a check() for given source or subsource and sets availability accordingly
-			
-			if NO INDEXES are given, all sources and sub-sources will be checked.
-			if ONLY a SOURCE INDEX is given, it will check the source and if it's a template will also check all subsources
-			if BOTH INDEXES are given will check the specified sub-source
-			
-		X	Returns a list of dicts
-			
-			(Some soureces may themselves also set the available flag, but we do it here too....)
-		"""
-		index = self.__check_index(index)
-		if index is False:
-			return False
-		
-		index_subsource = self.__check_subindex(index,index_subsource)
-		if index_subsource is False:
-			return False
-		
-		changed_sources = []
-		
-		# Check all indexes
-		if index is None and index_subsource is None:
-			self.__printer('Checking all sources') #LL_DEBUG
-			i=0
-			for source in self.lSource:
-				self.__printer('Checking: {0}'.format(i)) #LL_DEBUG
-				if 'sourceClass' not in self.lSource[i]:
-					self.__printer('has no sourceClass: {0}'.format(self.lSource[i]['name']))
-				else:
-					#checked_source_is_available = self.lSource[i]['available']
-					check_result = self.lSource[i]['sourceClass'].check(self)	#returns a list of dicts with changes
-					if check_result:
-						for result in check_result:
-							changed_sources.append(result)
-										
-					#if checked_source_is_available != check_result:
-					#	self.lSource[i]['available'] = check_result
-					#	changed_sources.append(i)
-						
-				i+=1
-				
-			if changed_sources:
-				return changed_sources
-			else:
-				return None
-				
-		else:
-			# Check specified subindex
-			if index_subsource is not None:	
-				self.__printer('Checking index/subindex: {0}/{1}'.format(index,index_subsource)) #LL_DEBUG
-				
-				#checked_source_is_available = self.lSource[index]['subsources'][index_subsource]['available']
-				check_result = self.lSource[index]['sourceClass'].check(self,index_subsource)	#returns a list of dicts with changes
-				
-				return check_result
-				
-				#if len(check_result) > 0:
-				
-					#if checked_source_is_available != check_result:
-					#	self.lSource[index]['available'] = check_result
-					#	changed_sources.append( [index,index_subsource] )
-					#	return changed_sources
-				#else:
-				#	return None
-						
-			# Check specified index
-			elif index is not None:
-				self.__printer('Checking index: {0}'.format(index)) #LL_DEBUG
-				
-				## todo  !! !!  ##
-				#check_result = self.lSource[index]['sourceClass'].check(self,index_subsource)	#returns a list of dicts with changes
 
-				#the_source = self.source_manager.getPluginByName(self.lSource[index]['name'])
-				#check_result = the_source.plugin_object.check(self,index_subsource)	#returns a list of dicts with changes
-				# OR:
-				check_result = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.check(self,index_subsource)	#returns a list of dicts with changes
-
-				for chg in check_result:
-					if 'subindex' in chg and chg['subindex'] is not None:
-						self.set_available( chg['index'], chg['available'], chg['subindex'] )
-					else:
-						self.set_available( chg['index'], chg['available'] )
-						
-				return check_result
-				
-			#if checked_source_is_available != check_result:
-			#	self.lSource[index]['available'] = check_result
-			#	changed_sources.append( [index] )
-			#	return changed_sources
-			#else:
-			#	return None
 
 				
 
