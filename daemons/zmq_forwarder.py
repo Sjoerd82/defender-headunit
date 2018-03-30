@@ -78,13 +78,13 @@ def load_zeromq_configuration():
 	else:
 		# Get portnumbers from either the config, or default value
 		if 'port_publisher' in configuration['zeromq']:
-			config_pub = configuration['zeromq']['publisher']
+			config_pub = configuration['zeromq']['port_publisher']
 		else:
 			printer('port_publisher not in configuration, using default')
 			config_pub = DEFAULT_PORT_PUB
 			
 		if 'port_subscriber' in configuration['zeromq']:
-			config_sub = configuration['zeromq']['subscriber']
+			config_sub = configuration['zeromq']['port_subscriber']
 		else:
 			printer('port_subscriber not in configuration, using default')
 			config_sub = DEFAULT_PORT_SUB
