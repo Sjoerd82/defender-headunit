@@ -69,10 +69,10 @@ class SourcePlugin(object):
 		# load main configuration
 		main_configuration = configuration_load('srctrl', DEFAULT_CONFIG_FILE)
 		if 'source_config' in main_configuration and name in main_configuration['source_config']:
-			print main_configuration['source_config'][name]
 			config.update(main_configuration['source_config'][name])
 			
 		# TODO: merge minimal_config ?
+		print config
 		return config
 			
 	def play(self, sourceCtrl, resume={}):
