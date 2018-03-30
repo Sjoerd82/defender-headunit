@@ -195,7 +195,7 @@ avchg_subsource['index'] = 1
 avchg_subsource['subindex'] = 1
 avchg_subsource['availability'] = True
 
-avchg.append(subsource)
+avchg.append(avchg_subsource)
 return avchg
 
 ```
