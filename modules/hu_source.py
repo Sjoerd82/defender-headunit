@@ -799,7 +799,7 @@ class SourceController(object):
 	
 	def subsource_all( self, index=None ):
 		""" Return all subsources for given index
-			TODO: check if index is valid
+			If no index is given, will return for active source (if any)
 		"""
 		if index is not None:
 			print "debug AAA"
@@ -810,7 +810,7 @@ class SourceController(object):
 			index = self.iCurrentSource[0]
 			print index
 		
-		if not index:
+		if index is None:
 			self.__printer('Could not determine index')
 			return None
 
