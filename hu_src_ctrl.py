@@ -258,7 +258,7 @@ def handle_path_source(path,cmd,args):
 			ret = sc_sources.rem(args[0])
 		
 		# LL_DEBUG:
-		printSummary(sc_sources)
+		printSummary()
 
 		data = get_data(ret)
 		return data
@@ -346,7 +346,7 @@ def handle_path_source(path,cmd,args):
 			ret = sc_sources.rem_sub(args[0],args[1])
 		
 		# LL_DEBUG:
-		printSummary(sc_sources)
+		printSummary()
 			
 		data = get_data(ret)
 		return data
@@ -372,7 +372,7 @@ def handle_path_source(path,cmd,args):
 			ret = sc_sources.set_available(args[1],str2bool(args[0]),args[2])
 		
 		# LL_DEBUG
-		printSummary(sc_sources)
+		printSummary()
 
 		data = get_data(ret,False,'/events/source/available')
 		return data
@@ -394,7 +394,7 @@ def handle_path_source(path,cmd,args):
 		ret = sc_sources.select_next()
 
 		# LL_DEBUG
-		printSummary(sc_sources)
+		printSummary()
 
 		data = get_data(ret,False,'/events/source/active')
 		return data
@@ -416,7 +416,7 @@ def handle_path_source(path,cmd,args):
 		ret = sc_sources.select_prev()
 
 		# LL_DEBUG
-		printSummary(sc_sources)
+		printSummary()
 
 		data = get_data(ret,False,'/events/source/active')
 		return data
@@ -446,7 +446,7 @@ def handle_path_source(path,cmd,args):
 
 		if ret != False:
 			
-			printSummary(sc_sources)		# LL_DEBUG
+			printSummary()		# LL_DEBUG
 			
 			# TODO: MOVE "check_all" LOOP HERE SO WE CAN SEND OUT EVENTS EARLIER !
 			# TODO-INSTEAD: local def function check_all()
@@ -1167,7 +1167,7 @@ def main():
 
 	#sc_sources.source_check()
 	check_all_sources_send_event()
-	printSummary(sc_sources)
+	printSummary()
 	
 	#
 	# Initialize the mainloop
