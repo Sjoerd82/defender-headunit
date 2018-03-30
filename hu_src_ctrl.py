@@ -896,11 +896,11 @@ def printSummary():
 	
 	i = 0
 	for source in sc_sources.source_all():
-		
+		print i
 		# get subsources
 		subsources = sc_sources.subsource_all(i)
 		for subsource in subsources:
-		
+			print subsource
 			if subsource['available']:
 				available = colorize('available    ','light_green')
 			else:
