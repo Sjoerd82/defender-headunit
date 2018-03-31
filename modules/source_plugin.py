@@ -74,28 +74,28 @@ class SourcePlugin(object):
 	def play(self, **kwargs):
 		return False
 		
-	def stop(self, *args):
+	def stop(self, **kwargs):
 		return False
 		
 	def next(self, **kwargs):		
 		return False
 		
-	def prev(self, *args):
+	def prev(self, **kwargs):
 		return False
 
-	def pause(self, *args):
+	def pause(self, **kwargs):
 		return False
 
-	def random(self, *args):
+	def random(self, **kwargs):
 		return False
 
-	def seekfwd(self, *args):
+	def seekfwd(self, **kwargs):
 		return False
 
-	def seekrev(self, *wargs):
+	def seekrev(self, **kwargs):
 		return False
 
-	def update(self, *args):
+	def update(self, **kwargs):
 		return False
 		
 	def get_details():

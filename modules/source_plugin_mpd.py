@@ -160,7 +160,7 @@ class MpdSourcePlugin(SourcePlugin):
 		
 	#def next( self ):
 	def next( self, **kwargs):
-		self.printer('Next track')
+		self.printer('Next track {0}'.format(kwargs))
 		self.mpdc.next()
 		return True
 		
