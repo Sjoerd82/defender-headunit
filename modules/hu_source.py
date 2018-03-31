@@ -976,7 +976,7 @@ class SourceController(object):
 			return False
 
 		if index is not None and subindex is not None:
-			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.play(self,index=index,subindex=subindex,kwargs)
+			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.play(self,kwargs,index=index,subindex=subindex)
 			return ret
 		
 		if not ret:
@@ -993,21 +993,21 @@ class SourceController(object):
 	def source_stop( self, **kwargs ):
 		index, subindex = __is_current('STOP')
 		if index is not None and subindex is not None:
-			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.stop(self,index=index,subindex=subindex,kwargs)
+			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.stop(self,kwargs,index=index,subindex=subindex)
 			return ret
 
 	# Proxy for pausing. Modes: on | off | toggle | 1 | 0
 	def source_pause( self, mode, **kwargs ):
 		index, subindex = __is_current('PAUSE')
 		if index is not None and subindex is not None:
-			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.pause(self,index=index,subindex=subindex,mode=mode,kwargs)
+			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.pause(self,kwargs,index=index,subindex=subindex,mode=mode)
 			return ret
 
 	# Proxy for next (track/station/...)
 	def source_next( self, **kwargs ):
 		index, subindex = __is_current('NEXT')
 		if index is not None and subindex is not None:
-			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.next(self,index=index,subindex=subindex,kwargs)
+			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.next(self,kwargs,index=index,subindex=subindex)
 			return ret
 
 	# Proxy for previous (track/station/...)
