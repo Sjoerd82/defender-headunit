@@ -881,7 +881,7 @@ def printSummary():
 	arCurrIx = sc_sources.index_current()
 	sCurrent = sc_sources.source(None)
 	
-	if not arCurrIx[0] == None and arCurrIx[1] == None:
+	if not arCurrIx[1] is None:
 		sCurrDisplay = sCurrent['displayname']
 	elif not arCurrIx[1] == None:
 		sCurrDisplay = "" #TODO
@@ -892,7 +892,7 @@ def printSummary():
 	if len(arCurrIx) == 0:
 		printer('Current source: None', tag='')
 	else:
-		printer('Current source: {0} {1}'.format(arCurrIx[0],sCurrDisplay), tag='')
+		printer('Current source: {0}.{1} {2}'.format(arCurrIx[0],arCurrIx[1],sCurrDisplay), tag='')
 	
 	i = 0
 	for source in sc_sources.source_all():
