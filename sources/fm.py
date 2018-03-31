@@ -57,35 +57,35 @@ class MySource(SourcePlugin,IPlugin):
 	
 	#def play( self, sourceCtrl, index, subindex, **kwargs ):
 		#def play( self, **kwargs ):	# why not??
-	def play (self, *args):
+	def play (self, **kwargs):
 		self.printer('Start playing FM radio...')
 		return True	
 
-	def stop( self, *args ):
+	def stop( self, **kwargs ):
 		self.printer('Stop CLASS!')
 		return True
 		
-	def pause( self, mode, *args ):
+	def pause( self, mode, **kwargs ):
 		self.printer('Pause. Mode: {0}'.format(mode))
 		#TODO IMPLEMENT
 		return True
 
-	def random( self, mode, *args ):
+	def random( self, mode, **kwargs ):
 		self.printer('Random. Mode: {0}'.format(mode))
 		#TODO IMPLEMENT
 		return True
 
-	def seekfwd( self, *args ):
+	def seekfwd( self, **kwargs ):
 		self.printer('Seek FFWD')
 		#TODO IMPLEMENT
 		return True
 
-	def seekrev( self, *args ):
+	def seekrev( self, **kwargs ):
 		self.printer('Seek FBWD')
 		#TODO IMPLEMENT
 		return True
 
-	def update( self, *args ):
+	def update( self, **kwargs ):
 		self.printer('Update not supported')
 		return True
 
