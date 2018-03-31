@@ -144,9 +144,19 @@ class MpdController(object):
 		self.mpdc.stop()
 		
 	def next(self, count=1):
+		try:
+			self.mpdc.noidle()
+		except MPDConnectionError:
+			self.mpdc.connect("localhost", 6600)
+		except:
+			self.__printer('WEIRD... no idle was set..')
+
 		for i in range(count):
 			self.mpdc.next()
-		
+
+		self.mpdc.send_idle()
+		return True
+			
 	def prev(self, count=1):
 		for i in range(count):
 			self.mpdc.prev()

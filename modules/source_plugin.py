@@ -80,22 +80,22 @@ class SourcePlugin(object):
 	def next(self, *args):
 		return False
 		
-	def prev(self, **kwargs):
+	def prev(self, *args):
 		return False
 
-	def pause(self, **kwargs):
+	def pause(self, *args):
 		return False
 
-	def random(self, **kwargs):
+	def random(self, *args):
 		return False
 
-	def seekfwd(self, **kwargs):
+	def seekfwd(self, *args):
 		return False
 
-	def seekrev(self, **kwargs):
+	def seekrev(self, *wargs):
 		return False
 
-	def update(self, **kwargs):
+	def update(self, *args):
 		return False
 		
 	def get_details():
