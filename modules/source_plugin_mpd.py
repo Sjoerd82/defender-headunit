@@ -73,8 +73,12 @@ class MpdSourcePlugin(SourcePlugin):
 			
 		return subsource_availability_changes
 	
-	def play( self, sourceCtrl, index, subindex, resume={}): # , **kwargs ):
+	def play(self, **kwargs): #sourceCtrl, index, subindex, resume={}): # , **kwargs ):
 		self.printer('Start playing')
+		
+		index = kwargs['index']
+		subindex = kwargs['subindex']
+		sourceCtrl = kwargs['srcCtrl']
 		
 		#
 		# variables
@@ -151,16 +155,15 @@ class MpdSourcePlugin(SourcePlugin):
 		return True
 		"""
 		
-	def stop( self ):
+	def stop(self, **kwargs):
 		self.printer('Stopping source: locmus. Saving playlist position and clearing playlist.')
 		# save playlist position (file name + position)
 		# self.mpdc.mpc_save_pos_for_label( 'locmus' )
 		self.mpdc.stop()
 		return True
 		
-	#def next( self ):
-	def next( self, **kwargs):
-		self.printer('Next track {0}'.format(kwargs))
+	def next(self, **kwargs):
+		self.printer('Next track. Available parameters: {0}'.format(kwargs))
 		self.mpdc.next()
 		return True
 		
