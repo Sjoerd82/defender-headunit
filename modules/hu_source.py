@@ -538,6 +538,11 @@ class SourceController(object):
 		def source_iterator(ix_start, ix_stop, j_start, reverse):
 			""" Returns next available source.
 				Return None, if none found
+				
+				ix_start: start at this source index
+				ix_stop: stop at this source index (inclusive)
+						None: until end
+				
 			"""
 			# if no current source, we'll loop through the sources until we find one
 			#
@@ -557,6 +562,8 @@ class SourceController(object):
 				logtext = "to next"
 			
 			print "Z0 {0} {1} {2}".format(ix_start, ix_stop, j_start)
+			print self.lSource[0:0:1]
+			print self.lSource[0:1:1]
 			
 			# loop sources
 			for source in self.lSource[ix_start:ix_stop:step]:
