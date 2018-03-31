@@ -54,9 +54,9 @@ class MySource(SourcePlugin,IPlugin):
 		
 		return subsource_availability_changes
 	'''
-
 	
-	def play( self ):
+	#def play( self, sourceCtrl, index, subindex ):
+	def play( self, **kwargs ):
 		self.printer('Start playing FM radio...')
 		return True	
 
