@@ -969,7 +969,7 @@ class SourceController(object):
 		""" Current source: Play
 		"""
 		
-		index, subindex = __get_current('PLAY')
+		index, subindex = self.__get_current('PLAY')
 
 		if not self.lSource[index]['subsources'][subindex]['available']:
 			self.__printer('PLAY: Source not available: {0}.{1}'.format(index,subindex),LL_WARNING)
@@ -991,21 +991,21 @@ class SourceController(object):
 
 	# Proxy for stopping playback
 	def source_stop( self, **kwargs ):
-		index, subindex = __get_current('STOP')
+		index, subindex = self.__get_current('STOP')
 		if index is not None and subindex is not None:
 			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.stop(self,kwargs,index=index,subindex=subindex)
 			return ret
 
 	# Proxy for pausing. Modes: on | off | toggle | 1 | 0
 	def source_pause( self, mode, **kwargs ):
-		index, subindex = __get_current('PAUSE')
+		index, subindex = self.__get_current('PAUSE')
 		if index is not None and subindex is not None:
 			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.pause(self,kwargs,index=index,subindex=subindex,mode=mode)
 			return ret
 
 	# Proxy for next (track/station/...)
 	def source_next( self, **kwargs ):
-		index, subindex = __get_current('NEXT')
+		index, subindex = self.__get_current('NEXT')
 		if index is not None and subindex is not None:
 			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.next(self,kwargs,index=index,subindex=subindex)
 			return ret
