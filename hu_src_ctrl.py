@@ -901,12 +901,15 @@ def printSummary():
 			else:
 				available = colorize('not available','light_red')
 	
+			active = colored(">",'light_green')
+			state = colored("playing",'light_green')
+	
 			if 'mountpoint' in subsource:
 				mountpoint = subsource['mountpoint']
-				printer(' {0:2d} {1:17} {2} {3}'.format(i,source['displayname'],available,mountpoint), tag='')
 			else:
-				printer(' {0:2d} {1:17} {2}'.format(i,source['displayname'],available), tag='')
+				mountpoint = ""
 
+			printer('{0} {1:2d} {2:17} {3} {4:20} {5}'.format(active,i,source['displayname'],available,mountpoint,state), tag='')
 				
 		i += 1
 	printer('----------------------------------------------------------------------', tag='')

@@ -268,8 +268,7 @@ class MpdController(object):
 		"""	Populate playlist for given MPD directory
 			Returns: count
 		"""
-		#def playlistPop( self, type, sMpdDir ):
-		self.__printer('Populating playlist, folder: {0}'.format(sMpdDir))
+		self.__printer('Populating playlist, folder: {0}'.format(location))
 
 		try:
 			self.mpdc.noidle()
@@ -279,7 +278,7 @@ class MpdController(object):
 			self.__printer('WEIRD... no idle was set..')
 	
 		try:
-			self.mpdc.findadd('base',sMpdDir)
+			self.mpdc.findadd('base',location)
 			
 			# get count
 			self.mpdc.command_list_ok_begin()

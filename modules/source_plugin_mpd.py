@@ -82,8 +82,9 @@ class MpdSourcePlugin(SourcePlugin):
 
 		# get directory to play, directory is relative to MPD music dir.
 		#ix = sourceCtrl.getIndex('name','locmus')
-		arIx = sourceCtrl.index_current()
-		subsource = sourceCtrl.subsource( arIx[0], arIx[1] )# subSourceIx )
+		#arIx = sourceCtrl.index_current()
+		#subsource = sourceCtrl.subsource( arIx[0], arIx[1] )# subSourceIx )
+		subsource = sourceCtrl.subsource( index, subindex )# subSourceIx )
 		sLocalMusicMPD = subsource['mpd_dir']
 		sLabel = subsource['label']
 		
@@ -109,7 +110,8 @@ class MpdSourcePlugin(SourcePlugin):
 			if playlistCount == "0":
 				# Failed. Returning false will cause caller to try next source
 				self.printer(' > Nothing in the playlist, giving up. Marking source unavailable.')
-				sourceCtrl.set_available( arIx[0], False, arIx[1] )
+				#sourceCtrl.set_available( arIx[0], False, arIx[1] )
+				sourceCtrl.set_available( index, False, subindex )
 				pa_sfx(LL_ERROR)
 				return False
 			else:
