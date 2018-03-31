@@ -77,7 +77,7 @@ class SourcePlugin(object):
 	def stop(self, *args):
 		return False
 		
-	def next(self, **kwargs):
+	def next(self, **kwargs):		
 		return False
 		
 	def prev(self, *args):
