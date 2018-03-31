@@ -150,9 +150,7 @@ class MqPubSubFwdController(object):
 		 ? Raw return message
 		 ? Tuple/Dict (#tbd)
 		
-		"""
-		print colorize("{0}: {1}".format(__name__,func.__name__),'dark_gray')
-		
+		"""		
 		if command not in self.VALID_COMMANDS:
 			print "invalid command"
 			return False

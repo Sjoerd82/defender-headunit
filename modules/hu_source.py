@@ -102,16 +102,15 @@ class SourceController(object):
 		self.iRecentSS = None
 
 		self.source_manager = PluginManager()
-		
+
+		'''
+		# YAPSY LOG OUTPUT TO CONSOLE
 		logyapsy = logging.getLogger('yapsy')
 		logyapsy.setLevel(logging.DEBUG)
-
-		ch = logging.StreamHandler()						# create console handler
-		ch.setLevel(logging.DEBUG)								# set log level
+		ch = logging.StreamHandler()
+		ch.setLevel(logging.DEBUG)
 		logyapsy.addHandler(ch)
-		#logyapsy = log_create_console_loghandler(logyapsy, logging.DEBUG, 'YAPSY')
-		
-		#self.__load_plugins('sources')	# let's call it from the caller's side
+		'''
 
 	def __check_index(self, test_index):
 		"""	Check if a given index is valid
