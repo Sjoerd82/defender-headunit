@@ -158,7 +158,8 @@ class MpdSourcePlugin(SourcePlugin):
 		self.mpdc.stop()
 		return True
 		
-	def next( self ):
+	#def next( self ):
+	def next( self, *args):
 		self.printer('Next track')
 		self.mpdc.next()
 		return True

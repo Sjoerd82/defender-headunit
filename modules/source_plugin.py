@@ -71,13 +71,13 @@ class SourcePlugin(object):
 			
 		return config
 			
-	def play(self, **kwargs):
+	def play(self, *args):
 		return False
 		
-	def stop(self, **kwargs):
+	def stop(self, *args):
 		return False
 		
-	def next(self, **kwargs):
+	def next(self, *args):
 		return False
 		
 	def prev(self, **kwargs):
