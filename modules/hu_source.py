@@ -959,7 +959,7 @@ class SourceController(object):
 		index = self.iCurrentSource[0]
 		subindex = self.iCurrentSource[1]
 	
-		if index is None:
+		if index is None or subindex is None:
 			self.__printer('PLAY: No current source',LL_WARNING)
 			return False
 		
@@ -1000,15 +1000,17 @@ class SourceController(object):
 		return ret
 
 	# Proxy for next (track/station/...)
-	def source_next( self ):
-		if self.iCurrentSource[0] == None:
+	def source_next( self, **kwargs ):
+	
+		index = self.iCurrentSource[0]
+		subindex = self.iCurrentSource[1]
+
+		if index is None or subindex is None:
 			self.__printer('NEXT: No current source',LL_WARNING)
 			return False
 		else:
-			#name = self.lSource[index]['name']
-			name = self.lSource
-			ret = self.source_manager.getPluginByName(name).plugin_object.next()
-			#ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].next()
+			#ret = self.source_manager.getPluginByName(name).plugin_object.next()
+			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.play(self,index,subindex,kwargs)
 			return ret
 
 	# Proxy for previous (track/station/...)
