@@ -905,7 +905,7 @@ def printSummary():
 				available = colorize('not available','light_red')
 	
 			# Active indicator
-			if i == arCurrIx[0] and j == arCurrIx[1]
+			if i == arCurrIx[0] and j == arCurrIx[1]:
 				active = colorize(">",'light_green')
 			else:
 				active = ""
