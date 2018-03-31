@@ -859,6 +859,7 @@ class SourceController(object):
 	def set_available( self, index, available, index_subsource=None ):
 		""" Set (sub)source availability
 		"""
+		#TODO: reverse param order: ix, sub-ix, availability
 		
 		index = self.__check_index(index)
 		if index_subsource:
@@ -952,24 +953,33 @@ class SourceController(object):
 	# execute play() for the current source
 	# suggested keywords: position in playlist; a dictionary may be given containing resume data
 	def source_play( self, **kwargs ):
-		if self.iCurrentSource[0] == None:
+		""" Current source: Play
+		"""
+	
+		index = self.iCurrentSource[0]
+		subindex = self.iCurrentSource[1]
+	
+		if index is None:
 			self.__printer('PLAY: No current source',LL_WARNING)
 			return False
 		
-		if not self.lSource[self.iCurrentSource[0]]['available']:
-			self.__printer('PLAY: Source not available: {0}'.format(self.iCurrent),LL_WARNING)
+		if not self.lSource[index]['subsources'][subindex]['available']:
+			self.__printer('PLAY: Source not available: {0}.{1}'.format(index,subindex),LL_WARNING)
 			return False
 		
 		# pass arguments as-is to play function
-		ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].play( self, kwargs )
+		#ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].play( self, kwargs )
+		ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.play(self,index,kwargs)
 		
 		if not ret:
 			self.__printer('PLAY: failed, marking source unavailable, playing next source...',LL_ERROR)
-			self.setAvailableIx(self.iCurrentSource[0],False,self.iCurrentSource[1])
-			self.next()
-			ret = self.sourcePlay()
-			
-		return ret
+			self.set_available(index,False,subindex)
+			ret_next = self.select_next()
+			if ret_next:
+				ret = self.source_play()
+				return ret
+			else:
+				return False
 
 	# Proxy for stopping playback
 	def source_stop( self ):
