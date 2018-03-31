@@ -61,31 +61,31 @@ class MySource(SourcePlugin,IPlugin):
 		self.printer('Start playing FM radio...')
 		return True	
 
-	def stop( self ):
+	def stop( self, *args ):
 		self.printer('Stop CLASS!')
 		return True
 		
-	def pause( self, mode ):
+	def pause( self, mode, *args ):
 		self.printer('Pause. Mode: {0}'.format(mode))
 		#TODO IMPLEMENT
 		return True
 
-	def random( self, mode ):
+	def random( self, mode, *args ):
 		self.printer('Random. Mode: {0}'.format(mode))
 		#TODO IMPLEMENT
 		return True
 
-	def seekfwd( self ):
+	def seekfwd( self, *args ):
 		self.printer('Seek FFWD')
 		#TODO IMPLEMENT
 		return True
 
-	def seekrev( self ):
+	def seekrev( self, *args ):
 		self.printer('Seek FBWD')
 		#TODO IMPLEMENT
 		return True
 
-	def update( self ):
+	def update( self, *args ):
 		self.printer('Update not supported')
 		return True
 

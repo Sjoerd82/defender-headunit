@@ -923,6 +923,19 @@ class SourceController(object):
 	 move into subclass or something?
 	"""
 
+	def __get_current(self,function):
+	
+		index = self.iCurrentSource[0]
+		subindex = self.iCurrentSource[1]
+
+		if index is None or subindex is None:
+			self.__printer('{0}: No current source'.format(function),LL_WARNING)
+			return False
+			
+		else:
+			return index, subindex
+
+	
 	def source_init_OLD( self, index ):
 		""" Execute a init() for given source
 		"""
@@ -955,21 +968,16 @@ class SourceController(object):
 	def source_play( self, **kwargs ):
 		""" Current source: Play
 		"""
-	
-		index = self.iCurrentSource[0]
-		subindex = self.iCurrentSource[1]
-	
-		if index is None or subindex is None:
-			self.__printer('PLAY: No current source',LL_WARNING)
-			return False
 		
+		index, subindex = __is_current('PLAY')
+
 		if not self.lSource[index]['subsources'][subindex]['available']:
 			self.__printer('PLAY: Source not available: {0}.{1}'.format(index,subindex),LL_WARNING)
 			return False
-		
-		# pass arguments as-is to play function
-		#ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].play( self, kwargs )
-		ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.play(self,index,subindex,kwargs)
+
+		if index is not None and subindex is not None:
+			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.play(self,index=index,subindex=subindex,kwargs)
+			return ret
 		
 		if not ret:
 			self.__printer('PLAY: failed, marking source unavailable, playing next source...',LL_ERROR)
@@ -982,35 +990,24 @@ class SourceController(object):
 				return False
 
 	# Proxy for stopping playback
-	def source_stop( self ):
-		if self.iCurrentSource[0] == None:
-			self.__printer('STOP: No current source',LL_WARNING)
-			return False
-			
-		ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].stop()
-		return ret
+	def source_stop( self, **kwargs ):
+		index, subindex = __is_current('STOP')
+		if index is not None and subindex is not None:
+			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.stop(self,index=index,subindex=subindex,kwargs)
+			return ret
 
 	# Proxy for pausing. Modes: on | off | toggle | 1 | 0
-	def source_pause( self, mode ):
-		if self.iCurrentSource[0] == None:
-			self.__printer('PAUSE: No current source',LL_WARNING)
-			return False
-
-		ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].pause( mode )
-		return ret
+	def source_pause( self, mode, **kwargs ):
+		index, subindex = __is_current('PAUSE')
+		if index is not None and subindex is not None:
+			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.pause(self,index=index,subindex=subindex,mode=mode,kwargs)
+			return ret
 
 	# Proxy for next (track/station/...)
 	def source_next( self, **kwargs ):
-	
-		index = self.iCurrentSource[0]
-		subindex = self.iCurrentSource[1]
-
-		if index is None or subindex is None:
-			self.__printer('NEXT: No current source',LL_WARNING)
-			return False
-		else:
-			#ret = self.source_manager.getPluginByName(name).plugin_object.next()
-			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.next(self,index,subindex,kwargs)
+		index, subindex = __is_current('NEXT')
+		if index is not None and subindex is not None:
+			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.next(self,index=index,subindex=subindex,kwargs)
 			return ret
 
 	# Proxy for previous (track/station/...)
