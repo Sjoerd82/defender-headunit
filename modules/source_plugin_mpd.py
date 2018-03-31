@@ -73,7 +73,7 @@ class MpdSourcePlugin(SourcePlugin):
 			
 		return subsource_availability_changes
 	
-	def play( self, sourceCtrl, index, subindex): # , **kwargs ): #, resume={} ): #, subSourceIx=None ):
+	def play( self, sourceCtrl, index, subindex, resume={}): # , **kwargs ):
 		self.printer('Start playing')
 		
 		#

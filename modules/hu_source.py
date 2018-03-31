@@ -952,7 +952,7 @@ class SourceController(object):
 	
 	# execute play() for the current source
 	# suggested keywords: position in playlist; a dictionary may be given containing resume data
-	def source_play( self): #, **kwargs ):
+	def source_play( self, **kwargs ):
 		""" Current source: Play
 		"""
 	
@@ -969,7 +969,7 @@ class SourceController(object):
 		
 		# pass arguments as-is to play function
 		#ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].play( self, kwargs )
-		ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.play(self,index,subindex) #,kwargs)
+		ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.play(self,index,subindex,kwargs)
 		
 		if not ret:
 			self.__printer('PLAY: failed, marking source unavailable, playing next source...',LL_ERROR)
