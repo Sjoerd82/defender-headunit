@@ -25,7 +25,7 @@ def parse_message(message):
 	Format: <path> <command>[:arg1,argn] [response_path]
 	Returns a tuple/dict (#tbd) + data?
 	"""
-	print colorize("{0}: {1}".format(__name__,func.__name__),'dark_gray')
+	printer(colorize("{0}: {1}".format(__name__,'parse_message(message):'),'dark_gray'),level=LL_DEBUG)
 	
 	path = []
 	params = []
@@ -103,6 +103,8 @@ class MqPubSubFwdController(object):
 		self.VALID_COMMANDS = ['GET','PUT','POST','DEL','DATA']
 
 	def __send(self, message):
+		#printer(colorize("Sending MQ message: {0}".format(message),'dark_gray'),level=LL_DEBUG)
+		printer("Sending MQ message: {0}".format(message),'dark_gray'),level=LL_DEBUG, tag='MQ')
 		self.publisher.send(message)
 		#time.sleep(1)	# required??? don't think so.. TODO: Remove, once we seen everything works..
 		return True
@@ -189,7 +191,6 @@ class MqPubSubFwdController(object):
 			self.reply_subscriber.setsockopt (zmq.SUBSCRIBE, response_path)
 	#		reply_subscriber.setsockopt(zmq.SUBSCRIBE,response_path)
 
-		print "DEBUG: SENDING MESSAGE: {0}".format(message)
 		retval = self.__send(message)
 		if not retval:
 			return False

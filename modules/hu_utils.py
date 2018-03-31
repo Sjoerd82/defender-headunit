@@ -56,6 +56,7 @@ tagcolors = {
   'source'	: 'yellow'
  ,'plugin'	: 'blue'
  ,'button'	: 'light_magenta'
+ ,'mq'		: 'yellow_2'
  #SOURCES:
  ,'mpd'		: 'cyan'
  ,'fm'		: 'turquoise_4'
