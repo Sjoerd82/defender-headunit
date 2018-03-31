@@ -119,7 +119,7 @@ class MpdSourcePlugin(SourcePlugin):
 		else:
 			self.printer(' > Found {0:s} tracks'.format(playlistCount))
 
-		self.mpdc.play()
+		#self.mpdc.play()
 		return True
 		#
 		# continue where left

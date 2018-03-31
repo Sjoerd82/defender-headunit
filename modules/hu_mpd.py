@@ -118,12 +118,24 @@ class MpdController(object):
 				- position in playlist OR song id
 				- time in track
 		"""
+		
+		try:
+			self.mpdc.noidle()
+		except MPDConnectionError:
+			self.mpdc.connect("localhost", 6600)
+		except:
+			self.__printer('WEIRD... no idle was set..')
+			
+			
 		if pos is not None: # and time is not None:
 			self.seek(pos,time)
 			self.mpdc.play(pos)	#TODO: pos param needed?
-			return True #?
+			#return True #?
 		else:
 			self.mpdc.play()
+			
+		self.mpdc.send_idle()
+		return True
 
 	def pause (self):
 		self.mpdc.pause()
@@ -285,8 +297,9 @@ class MpdController(object):
 		except:
 			self.__printer('ERROR: folder not in MPD database?')
 		
+		#self.mpdc.play()
 		self.mpdc.send_idle()
-		
+				
 		if 'playlistlength' in results:
 			return results['playlistlength']
 		#if results is None:
