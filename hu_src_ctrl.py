@@ -908,7 +908,7 @@ def printSummary():
 			if i == arCurrIx[0] and j == arCurrIx[1]:
 				active = colorize(">",'light_green')
 			else:
-				active = ""
+				active = " "
 				
 			# State
 			state = colorize("playing",'light_green')
