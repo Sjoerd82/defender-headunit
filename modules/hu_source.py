@@ -562,8 +562,10 @@ class SourceController(object):
 				logtext = "to next"
 			
 			print "Z0 {0} {1} {2}".format(ix_start, ix_stop, j_start)
-			print self.lSource[0:0:1]
-			print self.lSource[0:1:1]
+
+			# set loop end point:
+			if ix_stop is not None:
+				ix_stop += 1
 			
 			# loop sources
 			for source in self.lSource[ix_start:ix_stop:step]:
