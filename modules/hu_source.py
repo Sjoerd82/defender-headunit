@@ -536,7 +536,9 @@ class SourceController(object):
 		"""
 		print "DEBUG START: SELECT_NEXT"
 		def source_iterator(ix_start, ix_stop, j_start, reverse):
-			#
+			""" Returns next available source.
+				Return None, if none found
+			"""
 			# if no current source, we'll loop through the sources until we find one
 			#
 			# TODO CHECK IF i_start isn't at the end of the list!
@@ -553,6 +555,8 @@ class SourceController(object):
 			else:
 				step = 1
 				logtext = "to next"
+			
+			print "Z0 {0} {1} {2}".format(ix_start, ix_stop, j_start)
 			
 			# loop sources
 			for source in self.lSource[ix_start:ix_stop:step]:
@@ -598,23 +602,17 @@ class SourceController(object):
 		# (if not, set the next available)
 		#
 		if self.iCurrentSource[0] is None:
-			print "X1"
 			i = 0
 			for source in self.lSource:
-				print "X2"
 				if source['available'] and not source['template']:
-					print "X3"
 					self.iCurrentSource[0] = i
 					self.iCurrentSource[1] = None
 					return self.iCurrentSource
 				elif source['available'] and source['template']:
-					print "X4"
 					self.iCurrentSource[0] = i
 					j = 0
 					for subsource in source['subsources']:
-						print "X5"
 						if subsource['available']:
-							print "X6"
 							self.iCurrentSource[1] = j
 							return self.iCurrentSource
 						j += 1
@@ -649,7 +647,7 @@ class SourceController(object):
 		# Current source is a Sub-Source
 		# Why?
 		print "Y1"
-		if not self.iCurrentSource[1] is None: # and
+		if self.iCurrentSource[1] is not None: # and
 
 			print "Y2"
 		
@@ -662,7 +660,7 @@ class SourceController(object):
 				
 				# set sub-source start point
 				if self.iCurrentSource[1] is None:
-					print "Y4"
+					print "Y4 DEPRECATED"
 					ssi_start = 0
 				else:
 					print "Y5"
