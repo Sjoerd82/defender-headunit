@@ -56,7 +56,7 @@ class MySource(SourcePlugin,IPlugin):
 	'''
 
 	
-	def play( self, sourceCtrl, subSourceIx=None ):
+	def play( self ):
 		self.printer('Start playing FM radio...')
 		return True	
 
