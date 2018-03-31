@@ -1010,7 +1010,7 @@ class SourceController(object):
 			return False
 		else:
 			#ret = self.source_manager.getPluginByName(name).plugin_object.next()
-			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.play(self,index,subindex,kwargs)
+			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.next(self,index,subindex,kwargs)
 			return ret
 
 	# Proxy for previous (track/station/...)
