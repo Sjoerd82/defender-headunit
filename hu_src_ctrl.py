@@ -612,11 +612,11 @@ def handle_path_player(path,cmd,args):
 					
 		if 'state' in state:
 			if state['state'] in ('play','playing'):
-				ret = sc_sources.play()
+				ret = sc_sources.source_play()
 			elif state['state'] in ('stop'):
-				ret = sc_sources.stop()
+				ret = sc_sources.source_stop()
 			elif state['state'] in ('pause','paused'):
-				ret = sc_sources.pause()
+				ret = sc_sources.source_pause()
 			else:
 				print "UNKNOWN state: {0}".format(state['state'])
 				return None #?
