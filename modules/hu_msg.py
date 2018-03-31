@@ -25,7 +25,8 @@ def parse_message(message):
 	Format: <path> <command>[:arg1,argn] [response_path]
 	Returns a tuple/dict (#tbd) + data?
 	"""
-	printer(colorize("{0}: {1}".format(__name__,"parse_message"),'grey_0'))
+	print colorize("test",'light_green')
+	print colorize("{0}: {1}".format(__name__,"parse_message"),'grey_0')
 	
 	path = []
 	params = []
@@ -187,6 +188,9 @@ class MqPubSubFwdController(object):
 			self.reply_subscriber.setsockopt (zmq.SUBSCRIBE, response_path)
 	#		reply_subscriber.setsockopt(zmq.SUBSCRIBE,response_path)
 		
+		print colorize("test",'light_green')
+		print colorize("{0}: {1}".format(__name__,"publish_command"),'grey_0')
+
 		print "DEBUG: SENDING MESSAGE: {0}".format(message)
 		retval = self.__send(message)
 		if not retval:
