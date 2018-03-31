@@ -895,21 +895,33 @@ def printSummary():
 	for source in sc_sources.source_all():
 		# get subsources
 		subsources = sc_sources.subsource_all(i)
+		j = 0
 		for subsource in subsources:
+		
+			# Availability
 			if subsource['available']:
 				available = colorize('available    ','light_green')
 			else:
 				available = colorize('not available','light_red')
 	
-			active = colorize(">",'light_green')
+			# Active indicator
+			if i == arCurrIx[0] and j == arCurrIx[1]
+				active = colorize(">",'light_green')
+			else:
+				active = ""
+				
+			# State
 			state = colorize("playing",'light_green')
 	
+			# SubSource data
 			if 'mountpoint' in subsource:
 				mountpoint = subsource['mountpoint']
 			else:
 				mountpoint = ""
 
-			printer('{0} {1:2d} {2:17} {3} {4:20} {5}'.format(active,i,source['displayname'],available,mountpoint,state), tag='')
+			printer(' {0} {1:2d} {2:17} {3} {4:20} {5}'.format(active,i,source['displayname'],available,mountpoint,state), tag='')
+			
+			j += 1
 				
 		i += 1
 	printer('----------------------------------------------------------------------', tag='')

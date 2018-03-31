@@ -277,13 +277,12 @@ class MpdController(object):
 		except:
 			self.__printer('WEIRD... no idle was set..')
 	
-		try:
-			self.mpdc.findadd('base',location)
+		try:		
 			
-			# get count
-			self.mpdc.command_list_ok_begin()
-			self.mpdc.status()
-			results = self.mpdc.command_list_end()
+			#self.mpdc.command_list_ok_begin()
+			self.mpdc.findadd('base',location)
+			self.mpdc.status()	# get count			
+			#results = self.mpdc.command_list_end()
 
 		except:
 			self.__printer('ERROR: folder not in MPD database?')
