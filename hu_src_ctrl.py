@@ -438,11 +438,11 @@ def handle_path_source(path,cmd,args):
 			return None
 
 		if not args:
-			ret = sc_sources.source_check()
+			ret = sc_sources.check()
 		elif len(args) == 1:
-			ret = sc_sources.source_check(args[0])
+			ret = sc_sources.check(args[0])
 		elif len(args) == 2:
-			ret = sc_sources.source_check(args[0],args[1])
+			ret = sc_sources.check(args[0],args[1])
 
 		if ret != False:
 			
@@ -883,9 +883,6 @@ def printSummary():
 	
 	if not arCurrIx[1] is None:
 		sCurrDisplay = sCurrent['displayname']
-	elif not arCurrIx[1] == None:
-		sCurrDisplay = "" #TODO
-		#sCurrDisplay = sCurrent['subsources'][arCurrIx[1]]['displayname']
 	else:
 		sCurrDisplay = ""
 	

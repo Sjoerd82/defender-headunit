@@ -45,7 +45,6 @@
 #	Executes functions in the source class
 #
 #	source_init			Code to be executed once, during initialization of the source
-#	source_check		Check source availability, including subsources. If no index provided will check all sources
 #	source_play
 #	source_stop
 #	source_pause
@@ -60,26 +59,6 @@
 #	source_get_playlist
 #	source_get_media_details
 #
-
-# renamed:
-#	addSub		=>	add_sub
-#	remSub		=>	rem_sub
-#	getIndex	=>	index
-#	getIndexCurrent		=>	index_current
-#	get			=>	source
-#	getAll		=>	source_all
-#	setCurrent	=>	select
-#	getComposite	=>	composite
-#	getSubSource	=>	subsource
-#	getSubSources	=>	subsource_all
-#	setAvailable	=>	set_available_kw
-#	setAvailableIx	=>	set_available
-#
-#	sourceInit		=>	source_init
-#	sourceCheck		=>	source_check
-#	sourceCheckAll	=>	source_check
-#	
-# TODO: can we omit class fields from getAll return? => if so, we won't need the get_all_simple
 
 from yapsy.PluginManager import PluginManager
 from hu_utils import *
@@ -100,6 +79,10 @@ class SourceController(object):
 		self.iCurrentSource = [ None, None ]	#Source, Sub-Source
 		self.lSourceClasses = []
 		self.iRecentSS = None
+		
+		# TODO
+		self.cnt_sources_total = 0
+		self.cnt_sources_avail = 0
 
 		self.source_manager = PluginManager()
 
@@ -551,6 +534,7 @@ class SourceController(object):
 			Useful in case an active source becomes unavailable, it's more natural for the user to jump back
 			to a previously playing source, instead of the next in line
 		"""
+		print "DEBUG START: SELECT_NEXT"
 		def source_iterator(ix_start, ix_stop, j_start, reverse):
 			#
 			# if no current source, we'll loop through the sources until we find one
@@ -608,20 +592,26 @@ class SourceController(object):
 			
 		#
 		# check if iCurrentSource is set
-		# (in that case, set the next available)
+		# (if not, set the next available)
 		#
 		if self.iCurrentSource[0] is None:
+			print "X1"
 			i = 0
 			for source in self.lSource:
+				print "X2"
 				if source['available'] and not source['template']:
+					print "X3"
 					self.iCurrentSource[0] = i
 					self.iCurrentSource[1] = None
 					return self.iCurrentSource
 				elif source['available'] and source['template']:
+					print "X4"
 					self.iCurrentSource[0] = i
 					j = 0
 					for subsource in source['subsources']:
+						print "X5"
 						if subsource['available']:
+							print "X6"
 							self.iCurrentSource[1] = j
 							return self.iCurrentSource
 						j += 1
@@ -637,6 +627,8 @@ class SourceController(object):
 		#
 		# check if we have at least two sources
 		#
+		
+		#TODO, use self.cnt_sources_avail
 		iSourceCnt = self.getAvailableCnt()
 
 		if iSourceCnt == 0:
@@ -652,23 +644,30 @@ class SourceController(object):
 		#
 		#
 		# Current source is a Sub-Source
-		#
+		# Why?
+		print "Y1"
 		if not self.iCurrentSource[1] is None: # and
-			
+
+			print "Y2"
+		
 			if not reverse:
-				
+
+				print "Y3"
+			
 				# set source start point
 				start = self.iCurrentSource[0]
 				
 				# set sub-source start point
 				if self.iCurrentSource[1] is None:
+					print "Y4"
 					ssi_start = 0
 				else:
+					print "Y5"
 					ssi_start = self.iCurrentSource[1]+1	#next sub-source (+1) isn't neccesarily available, but this will be checked later
 					#print "Starting Sub-Source loop at {0}".format(ssi_start)
 
 			elif reverse:
-				
+				print "Y6"
 				#if the current sub-source is the first, the don't loop sub-sources, but start looping at the previous source
 				ss_cnt = self.getAvailableSubCnt(self.iCurrentSource[0])
 				if self.iCurrentSource[1] == 0 or ss_cnt-1 == 0:
@@ -680,10 +679,10 @@ class SourceController(object):
 					ssi_start = ss_cnt-2		# previous sub-source
 				
 		#
-		# Current source is *not* a Sub-Source:
+		# Current source is *not* a Sub-Source: (DEPRECATED!!)
 		#
 		elif self.iCurrentSource[1] is None:
-
+			print "Y7"
 			if not reverse:
 			
 				start = self.iCurrentSource[0]+1
@@ -702,23 +701,26 @@ class SourceController(object):
 		# loop through sources
 		# source_iterator returns next source index, or None, in case no next available was found
 		res = source_iterator(start, None, ssi_start, reverse)
-		
+		print "Y8"
 		# if nothing was found, "wrap-around" to beginning/ending of list
-		if res == None:
-				
+		if res is None:
+			print "Y9"
 			if not reverse:
+				print "Y10"
 				stop = start-1	# stop before current source
 				start = 0		# start at the beginning
 				ssi_start = 0
 				return source_iterator(start, stop, ssi_start, reverse)
 				
 			elif reverse:
+				print "Y11"
 				stop = start					# stop at the current source
 				start = len(self.lSource)-1 	# start at the last item in the list
 				ssi_start = None
 				return source_iterator(start, stop, ssi_start, reverse)
 			
 		else:
+			print "Y12"
 			return res
 			
 	def source_all( self, index=None ):
@@ -878,6 +880,7 @@ class SourceController(object):
 			return None
 				
 	# return number of available sources, including sub-sources
+	# TODO: remove in favour of keeping counts
 	def getAvailableCnt( self ):
 		c = 0
 		for source in self.lSource:
@@ -1293,3 +1296,21 @@ class SourceController(object):
 	
 		"""
 '''
+
+# renamed:
+#	addSub		=>	add_sub
+#	remSub		=>	rem_sub
+#	getIndex	=>	index
+#	getIndexCurrent		=>	index_current
+#	get			=>	source
+#	getAll		=>	source_all
+#	setCurrent	=>	select
+#	getComposite	=>	composite
+#	getSubSource	=>	subsource
+#	getSubSources	=>	subsource_all
+#	setAvailable	=>	set_available_kw
+#	setAvailableIx	=>	set_available
+#
+#	sourceInit		=>	source_init
+#	sourceCheck		=>	source_check	=> check
+#	sourceCheckAll	=>	source_check
