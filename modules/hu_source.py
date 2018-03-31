@@ -1007,6 +1007,7 @@ class SourceController(object):
 	def source_next( self, **kwargs ):
 		index, subindex = self.__get_current('NEXT')
 		if index is not None and subindex is not None:
+			#ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.next(self,kwargs,index=index,subindex=subindex)
 			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.next(self,kwargs,index=index,subindex=subindex)
 			return ret
 
