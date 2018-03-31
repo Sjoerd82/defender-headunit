@@ -993,7 +993,7 @@ class SourceController(object):
 	def source_stop( self, **kwargs ):
 		index, subindex = self.__get_current('STOP')
 		if index is not None and subindex is not None:
-			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.stop(srcCtrl=self,kwargs,index=index,subindex=subindex,**kwargs)
+			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.stop(srcCtrl=self,index=index,subindex=subindex,**kwargs)
 			return ret
 
 	# Proxy for pausing. Modes: on | off | toggle | 1 | 0
