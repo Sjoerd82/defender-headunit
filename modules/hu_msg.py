@@ -25,6 +25,8 @@ def parse_message(message):
 	Format: <path> <command>[:arg1,argn] [response_path]
 	Returns a tuple/dict (#tbd) + data?
 	"""
+	printer(colorize("{0}: {1}".format(__name__,"parse_message"),'gray'))
+	
 	path = []
 	params = []
 	resp_path = []
@@ -50,7 +52,7 @@ def parse_message(message):
 			if parpart:
 				params.append(parpart)
 	else:
-		print("Malformed message!")
+		printer("Malformed message!",level=LL_ERROR)
 		return False
 	
 	# extract response path

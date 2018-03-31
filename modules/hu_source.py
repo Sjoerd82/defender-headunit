@@ -983,7 +983,9 @@ class SourceController(object):
 			self.__printer('NEXT: No current source',LL_WARNING)
 			return False
 		else:
-			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.next()
+			#name = self.lSource[index]['name']
+			name = self.lSource
+			ret = self.source_manager.getPluginByName(name).plugin_object.next()
 			#ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].next()
 			return ret
 
