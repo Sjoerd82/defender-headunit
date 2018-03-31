@@ -25,7 +25,7 @@ def parse_message(message):
 	Format: <path> <command>[:arg1,argn] [response_path]
 	Returns a tuple/dict (#tbd) + data?
 	"""
-	printer(colorize("{0}: {1}".format(__name__,"parse_message"),'gray'))
+	printer(colorize("{0}: {1}".format(__name__,"parse_message"),'grey_0'))
 	
 	path = []
 	params = []
