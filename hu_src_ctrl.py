@@ -679,7 +679,7 @@ def handle_path_player(path,cmd,args):
 			ret = sc_sources.source_next()
 		elif len(args) == 1:
 			print "PUT NEXT 1 ARG"
-			ret = sc_sources.source_next(args[0])
+			ret = sc_sources.source_next(adv=args[0])
 
 		data = get_data(ret,True)
 		return data
