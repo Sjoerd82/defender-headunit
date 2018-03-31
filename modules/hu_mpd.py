@@ -282,16 +282,20 @@ class MpdController(object):
 			self.mpdc.findadd('base',location)
 			results = self.mpdc.status()	# get count
 			#results = self.mpdc.command_list_end()
-			print results
 		except:
 			self.__printer('ERROR: folder not in MPD database?')
 		
 		self.mpdc.send_idle()
 		
-		if 'playlistlength' in results[0]:
-			return results[0]['playlistlength']
+		if 'playlistlength' in results:
+			return results['playlistlength']
+		#if results is None:
+		#	return None
+		# ?
+		#elif 'playlistlength' in results[0]:
+		#	return results[0]['playlistlength']
 		else:
-			return 0
+			return None
 
 	def pls_is_populated(self):
 		"""	Check if the playlist is populated (deprecate?)
