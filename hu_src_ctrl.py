@@ -901,8 +901,8 @@ def printSummary():
 			else:
 				available = colorize('not available','light_red')
 	
-			active = colored(">",'light_green')
-			state = colored("playing",'light_green')
+			active = colorize(">",'light_green')
+			state = colorize("playing",'light_green')
 	
 			if 'mountpoint' in subsource:
 				mountpoint = subsource['mountpoint']
