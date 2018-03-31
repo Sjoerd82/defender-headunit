@@ -111,22 +111,25 @@ class MpdController(object):
 		except:
 			self.__printer('Failed to connect to MPD server: {0}'.format(sys.exc_info()[0]), level=LL_ERROR)
 	
-	def play ( self, pos=None, time=0 ):
-		#TODO: add id=None
-		"""	Start playback
-			Optionally provde:
-				- position in playlist OR song id
-				- time in track
-		"""
-		
+	def __test_conn(self):
 		try:
 			self.mpdc.noidle()
 		except MPDConnectionError:
 			self.mpdc.connect("localhost", 6600)
 		except:
 			self.__printer('WEIRD... no idle was set..')
+
+	def __return_to_idle(self):
+		self.mpdc.send_idle()
 			
-			
+	def play ( self, pos=None, time=0 ):
+		#TODO: add id=None
+		"""	Start playback
+			Optionally provde:
+				- position in playlist OR song id
+				- time in track
+		"""		
+		self.__test_conn()
 		if pos is not None: # and time is not None:
 			self.seek(pos,time)
 			self.mpdc.play(pos)	#TODO: pos param needed?
@@ -134,35 +137,36 @@ class MpdController(object):
 		else:
 			self.mpdc.play()
 			
-		self.mpdc.send_idle()
+		self.__return_to_idle()
 		return True
 
 	def pause (self):
+		self.__test_conn()
 		self.mpdc.pause()
+		self.__return_to_idle()
 		
 	def stop (self):
+		self.__test_conn()
 		self.mpdc.stop()
+		self.__return_to_idle()
 		
 	def next(self, count=1):
-		try:
-			self.mpdc.noidle()
-		except MPDConnectionError:
-			self.mpdc.connect("localhost", 6600)
-		except:
-			self.__printer('WEIRD... no idle was set..')
-
+		self.__test_conn()
 		for i in range(count):
 			self.mpdc.next()
-
-		self.mpdc.send_idle()
+		self.__return_to_idle()
 		return True
 			
 	def prev(self, count=1):
+		self.__test_conn()
 		for i in range(count):
 			self.mpdc.prev()
+		self.__return_to_idle()
 
 	def seek(self, seeksec='+1'):
+		self.__test_conn()
 		self.mpdc.seekcur(seeksec)
+		self.__return_to_idle()
 
 	def random(self, mode='toggle'):
 		"""	Set random mode. Modes:
@@ -173,6 +177,7 @@ class MpdController(object):
 			- Folder
 			- Genre
 		"""
+		self.__test_conn()
 		if mode in ('on','1'):
 			#subprocess.call(["mpc", "-q", "random", "on"])
 			#subprocess.call(["mpc", "-q", "next"])
@@ -185,8 +190,10 @@ class MpdController(object):
 			#TODO: current_mode = self.mpdc.status()
 			print('[MPC] Toggling random')
 			subprocess.call(["mpc", "-q", "random"])
+		self.__return_to_idle()
 		
 	def repeat(self, mode='toggle'):
+		self.__test_conn()
 		"""	Set random mode. Modes:
 			- On (1)
 			- Off (0)
@@ -200,8 +207,10 @@ class MpdController(object):
 		else:
 			#todo
 			pass
+		self.__return_to_idle()
 	
 	def is_dbdir(self, directory):
+		self.__test_conn()
 		self.__printer("Checking existance of folder in MPD db..")
 		taskcmd = "mpc listall "+directory+" | wc -l"
 		# if directory is not in mpd db, "mpd error: No such directory" will be returned
@@ -211,23 +220,20 @@ class MpdController(object):
 		
 		if mpcOut.rstrip('\n') == '0':
 			self.__printer(' > {0}: nothing in the database for this source.'.format(directory))
+			self.__return_to_idle()
 			return False
 		else:
 			self.__printer(' > {0}: found {1:s} tracks'.format(directory,mpcOut.rstrip('\n')))
+			self.__return_to_idle()
 			return True
 	
 	def update_db (self, directory, wait=True):
+		
+		self.__printer('Updating database for location: {0}'.format(directory))
+		self.__test_conn()
+
 		#Sound effect
 		pa_sfx('mpd_update_db')
-		#Debug info
-		self.__printer('Updating database for location: {0}'.format(directory))
-
-		try:
-			self.mpdc.noidle()
-		except MPDConnectionError:
-			self.mpdc.connect("localhost", 6600)
-		except:
-			self.__printer('WEIRD... no idle was set..')
 
 		#Update
 		if wait:
@@ -240,14 +246,15 @@ class MpdController(object):
 		self.mpdc.command_list_ok_begin()
 		self.mpdc.status()
 		results = self.mpdc.command_list_end()
-		print results
 		
-		#self.mpdc.idle()
-		self.mpdc.send_idle()
-	
+		self.__return_to_idle()
+		print results
+			
 	def state(self):
+		self.__test_conn()
 		#mpd_state = self.mpdc.status()
 		state = {}
+		self.__return_to_idle()
 		return state
 		
 	def track(self):
@@ -255,17 +262,12 @@ class MpdController(object):
 		track = {}
 		return track
 		# ORIG:
-		try:
-			self.mpdc.noidle()
-		except MPDConnectionError:
-			self.mpdc.connect("localhost", 6600)
-		except:
-			self.__printer('WEIRD... no idle was set..')
+		self.__test_conn()
 			
 		self.mpdc.command_list_ok_begin()
 		self.mpdc.currentsong()
 		results = self.mpdc.command_list_end()
-		self.mpdc.send_idle()
+		self.__return_to_idle()
 		
 		# print results[0]
 		#{'album': 'Exodus', 'composer': 'Andy Hunter/Tedd T.', 'title': 'Go', 'track': '1', 'duration': '411.480', 'artist': 'Andy Hunter', 'pos': '0', 'last-modified': '2013-10-12T15:53:13Z', 'albumartist': 'Andy Hunter', 'file': 'PIHU_SMB/music/electric/Andy Hunter/Andy Hunter - 2002 - Exodus/01 - Andy Hunter - Go.mp3', 'time': '411', 'date': '2002', 'genre': 'Electronic/Dance', 'id': '44365'}
@@ -291,13 +293,7 @@ class MpdController(object):
 			Returns: count
 		"""
 		self.__printer('Populating playlist, folder: {0}'.format(location))
-
-		try:
-			self.mpdc.noidle()
-		except MPDConnectionError:
-			self.mpdc.connect("localhost", 6600)
-		except:
-			self.__printer('WEIRD... no idle was set..')
+		self.__test_conn()
 	
 		try:		
 			#self.mpdc.command_list_ok_begin()
@@ -308,7 +304,7 @@ class MpdController(object):
 			self.__printer('ERROR: folder not in MPD database?')
 		
 		#self.mpdc.play()
-		self.mpdc.send_idle()
+		self.__return_to_idle()
 				
 		if 'playlistlength' in results:
 			return results['playlistlength']
@@ -324,18 +320,12 @@ class MpdController(object):
 		"""	Check if the playlist is populated (deprecate?)
 		"""
 		self.__printer('Checking if playlist is populated')
-
-		try:
-			self.mpdc.noidle()
-		except MPDConnectionError:
-			self.mpdc.connect("localhost", 6600)
-		except:
-			self.__printer('WEIRD... no idle was set..')
+		self.__test_conn()
 		
 		self.mpdc.command_list_ok_begin()
 		self.mpdc.status()
 		results = self.mpdc.command_list_end()
-		self.mpdc.send_idle()
+		self.__return_to_idle()
 
 		return results[0]['playlistlength']
 		
@@ -424,19 +414,13 @@ class MpdController(object):
 
 
 	def mpc_get_status( self ):
-
-		try:
-			self.mpdc.noidle()
-		except MPDConnectionError:
-			self.mpdc.connect("localhost", 6600)
-		except:
-			self.__printer('WEIRD... no idle was set..')
+		self.__test_conn()
 
 		self.mpdc.command_list_ok_begin()
 		self.mpdc.status()
 
 		results = self.mpdc.command_list_end()
-		self.mpdc.send_idle()
+		self.__return_to_idle()
 		
 		#print results
 
