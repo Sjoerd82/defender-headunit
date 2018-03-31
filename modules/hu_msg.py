@@ -25,7 +25,7 @@ def parse_message(message):
 	Format: <path> <command>[:arg1,argn] [response_path]
 	Returns a tuple/dict (#tbd) + data?
 	"""
-	print colorize("{0}: {1}".format(__name__,"parse_message"),'dark_gray')
+	print colorize("{0}: {1}".format(__name__,func.__name__),'dark_gray')
 	
 	path = []
 	params = []
@@ -149,7 +149,7 @@ class MqPubSubFwdController(object):
 		 ? Tuple/Dict (#tbd)
 		
 		"""
-		print colorize("{0}: {1}".format(__name__,"publish_command"),'dark_gray')
+		print colorize("{0}: {1}".format(__name__,func.__name__),'dark_gray')
 		
 		if command not in self.VALID_COMMANDS:
 			print "invalid command"
