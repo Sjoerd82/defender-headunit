@@ -21,14 +21,16 @@ class MySource(SourcePlugin,IPlugin):
 	"""
 	
 	def __init__(self):
-		super(MySource,self).__init__()	
+		super(MySource,self).__init__()
 	
 	def play (self, **kwargs):
 		self.printer('Start playing FM radio...')
+		self.state['state'] = 'playing'
 		return True	
 
 	def stop( self, **kwargs ):
 		self.printer('Stop CLASS!')
+		self.state['state'] = 'stopped'
 		return True
 		
 	def pause( self, mode, **kwargs ):
@@ -51,10 +53,9 @@ class MySource(SourcePlugin,IPlugin):
 		#TODO IMPLEMENT
 		return True
 
-	def update( self, **kwargs ):
-		self.printer('Update not supported')
-		return True
-
+	def get_state(self, **kwargs ):
+		self.printer('State ?')
+		return self.state
 	
 def fm_popMenu():
 	newMenu = []

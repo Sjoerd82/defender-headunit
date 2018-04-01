@@ -124,6 +124,7 @@ class MpdSourcePlugin(SourcePlugin):
 			self.printer(' > Found {0:s} tracks'.format(playlistCount))
 
 		self.mpdc.play()
+		self.state['state'] = 'playing'
 		return True
 		#
 		# continue where left

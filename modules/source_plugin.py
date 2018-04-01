@@ -16,6 +16,11 @@ class SourcePlugin(object):
 		self.name = None
 		self.logger = None
 		
+		self.state = {}
+		self.state['state'] = None
+		self.state['random'] = None
+		self.state['repeat'] = None
+		
 	def init(self, plugin_name, logger):
 		self.name = plugin_name
 		self.logger = logger
@@ -97,14 +102,15 @@ class SourcePlugin(object):
 
 	def update(self, **kwargs):
 		return False
+
+	def get_state(self, **kwargs):
+		return False
 		
 	# ------------------------
 	
 	def get_details():
 		return False
 
-	def get_state():
-		return False
 
 	def get_playlist():
 		return False
