@@ -201,6 +201,12 @@ class MpdSourcePlugin(SourcePlugin):
 	def get_details(self, **kwargs ):
 		self.printer('Details ?')
 		details = {}
+		track = {}
+		track['display'] = '01 Cool - Yeah.mp3'
+		track['artist'] = 'Cool'
+		track['album'] = 'The Best'
+		track['title'] = 'Yeah'
+		track['track'] = '1'
 		details['funfact'] = "bla"
-		details['track'] = "Rock in the Morning"
+		details['track'] = track
 		return details

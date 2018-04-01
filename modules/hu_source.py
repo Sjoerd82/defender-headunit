@@ -1041,7 +1041,7 @@ class SourceController(object):
 		# - available random modes
 		if index is not None and subindex is not None:
 			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.get_details(srcCtrl=self,index=index,subindex=subindex,**kwargs)
-			return data
+			return ret
 		
 	# -------------------------------------------------------------------------			
 
