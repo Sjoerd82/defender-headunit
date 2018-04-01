@@ -936,7 +936,7 @@ class SourceController(object):
 
 		if index is None or subindex is None:
 			self.__printer('{0}: No current source'.format(function),LL_WARNING)
-			return False, False
+			return None, None
 			
 		else:
 			return index, subindex		
@@ -950,24 +950,25 @@ class SourceController(object):
 		"""
 		
 		index, subindex = self.__get_current('PLAY')
-
-		if not self.lSource[index]['subsources'][subindex]['available']:
-			self.__printer('PLAY: Source not available: {0}.{1}'.format(index,subindex),LL_WARNING)
-			return False
-
 		if index is not None and subindex is not None:
-			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.play(srcCtrl=self,index=index,subindex=subindex,**kwargs)
-			return ret
-		
-		if not ret:
-			self.__printer('PLAY: failed, marking source unavailable, playing next source...',LL_ERROR)
-			self.set_available(index,False,subindex)
-			ret_next = self.select_next()
-			if ret_next:
-				ret = self.source_play()
-				return ret
-			else:
+
+			if not self.lSource[index]['subsources'][subindex]['available']:
+				self.__printer('PLAY: Source not available: {0}.{1}'.format(index,subindex),LL_WARNING)
 				return False
+
+			if index is not None and subindex is not None:
+				ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.play(srcCtrl=self,index=index,subindex=subindex,**kwargs)
+				return ret
+			
+			if not ret:
+				self.__printer('PLAY: failed, marking source unavailable, playing next source...',LL_ERROR)
+				self.set_available(index,False,subindex)
+				ret_next = self.select_next()
+				if ret_next:
+					ret = self.source_play()
+					return ret
+				else:
+					return False
 
 	# Proxy for stopping playback
 	def source_stop( self, **kwargs ):

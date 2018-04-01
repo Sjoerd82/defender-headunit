@@ -603,8 +603,6 @@ def handle_path_player(path,cmd,args):
 			return None
 
 		state = json.loads(args[0])
-		print state
-		print type(state)
 			
 		# PARSE STATE -- IS THIS THE RIGHT PLACE TO DO THIS?
 		if not isinstance(state,dict):
