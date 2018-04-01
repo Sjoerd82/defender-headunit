@@ -202,9 +202,13 @@ class MpdSourcePlugin(SourcePlugin):
 		self.printer('Details ?')
 		details = {}
 		track = {}
+		
+		mpdtrack = self.mpdc.track()
+		# TODO: convert MPD track{} to HU track{} format
+		
 		track['display'] = '01 Cool - Yeah.mp3'
-		track['artist'] = 'Cool'
-		track['album'] = 'The Best'
+		track['artist'] = mpdtrack['artist']
+		track['album'] = mpdtrack['album']
 		track['title'] = 'Yeah'
 		track['track'] = '1'
 		details['funfact'] = "bla"
