@@ -936,7 +936,7 @@ class SourceController(object):
 
 		if index is None or subindex is None:
 			self.__printer('{0}: No current source'.format(function),LL_WARNING)
-			return False
+			return False, False
 			
 		else:
 			return index, subindex		
