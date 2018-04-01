@@ -56,8 +56,10 @@ class MySource(SourcePlugin,IPlugin):
 	def get_details(self, **kwargs ):
 		self.printer('Details ?')
 		details = {}
-		details['funfact'] = "bla"
-		details['track'] = "Rock in the Morning"
+		track = {'display':None,'rds':None,'artist':None,'composer':None,'performer':None,'album':None,'albumartist':None,'title':None,'length':None,'elapsed':None,'track':None,'disc':None,'genre':None,'date':None}
+		track['display'] = "Playing FM"
+		details['track'] = track
+		details['state'] = self.state
 		return details
 	
 def fm_popMenu():

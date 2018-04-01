@@ -201,21 +201,12 @@ class MpdSourcePlugin(SourcePlugin):
 	def get_details(self, **kwargs ):
 		self.printer('Details ?')
 		details = {}
-		track = {}
+		track = {'display':None,'rds':None,'artist':None,'composer':None,'performer':None,'album':None,'albumartist':None,'title':None,'length':None,'elapsed':None,'track':None,'disc':None,'genre':None,'date':None}
 		
 		mpdtrack = self.mpdc.track()
-		# TODO: convert MPD track{} to HU track{} format
-		print mpdtrack
+		track.update(mpdtrack) 			#convert MPD track{} to HU track{} format
 
-		if 'album' in mpdtrack:
-			track['album'] = mpdtrack['album']
-		
-		if 'artist' in mpdtrack:
-			track['artist'] = mpdtrack['artist']	
-		
-		track['display'] = '01 Cool - Yeah.mp3'
-		track['title'] = 'Yeah'
-		track['track'] = '1'
 		details['funfact'] = "bla"
 		details['track'] = track
+		details['state'] = self.state
 		return details

@@ -116,7 +116,11 @@ class SourcePlugin(object):
 		return self.state
 
 	def get_details(self, **kwargs):
-		return False
+		details = {}
+		track = {'display':None,'rds':None,'artist':None,'composer':None,'performer':None,'album':None,'albumartist':None,'title':None,'length':None,'elapsed':None,'track':None,'disc':None,'genre':None,'date':None}
+		details['track'] = track
+		details['state'] = self.state
+		return details
 		
 	# ------------------------
 	# todo:
