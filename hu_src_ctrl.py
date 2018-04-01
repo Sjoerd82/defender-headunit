@@ -900,6 +900,10 @@ def printSummary():
 	for source in sc_sources.source_all():
 		# get subsources
 		subsources = sc_sources.subsource_all(i)
+		
+		if not subsources:
+			printer(' {0} {1:2d}.  {2:17} {3} {4:20}'.format(" ",i,source['displayname'],"not available","no subsources"), tag='')
+		
 		j = 0
 		for subsource in subsources:
 		
@@ -924,7 +928,7 @@ def printSummary():
 			else:
 				mountpoint = ""
 
-			printer(' {0} {1:2d} {2:17} {3} {4:20} {5}'.format(active,i,source['displayname'],available,mountpoint,state), tag='')
+			printer(' {0} {1:2d}.{2} {3:17} {4} {5:20} {6}'.format(active,i,j,source['displayname'],available,mountpoint,state), tag='')
 			
 			j += 1
 				
