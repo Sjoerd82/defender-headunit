@@ -205,10 +205,15 @@ class MpdSourcePlugin(SourcePlugin):
 		
 		mpdtrack = self.mpdc.track()
 		# TODO: convert MPD track{} to HU track{} format
+		print mpdtrack
+
+		if 'album' in mpdtrack:
+			track['album'] = mpdtrack['album']
+		
+		if 'artist' in mpdtrack:
+			track['artist'] = mpdtrack['artist']	
 		
 		track['display'] = '01 Cool - Yeah.mp3'
-		track['artist'] = mpdtrack['artist']
-		track['album'] = mpdtrack['album']
 		track['title'] = 'Yeah'
 		track['track'] = '1'
 		details['funfact'] = "bla"
