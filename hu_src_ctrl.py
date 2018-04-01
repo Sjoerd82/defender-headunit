@@ -902,7 +902,7 @@ def printSummary():
 		subsources = sc_sources.subsource_all(i)
 		
 		if not subsources:
-			printer(' {0} {1:2d}.  {2:17} {3} {4:20}'.format(" ",i,source['displayname'],colorize("not available",'light_gray'),colorize("no subsources",'light_gray')), tag='')
+			printer(' {0} {1:2d}.  {2:17} {3} {4:20}'.format(" ",i,source['displayname'],colorize("not available",'dark_gray'),colorize("no subsources",'dark_gray')), tag='')
 		
 		j = 0
 		for subsource in subsources:
