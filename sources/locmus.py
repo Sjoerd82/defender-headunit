@@ -55,7 +55,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 		return True
 
 	#def check:
-	# inherited from MpdSourcePlugin
+	# inherited from MpdSourcePlugin (see: source_plugin_mpd.py)
 	
 	
 	# Source Check: Return True/False (available/not available)

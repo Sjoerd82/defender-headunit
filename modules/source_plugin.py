@@ -33,10 +33,11 @@ class SourcePlugin(object):
 		"""	Check source
 		Returns LIST marking all subsources as available
 		"""
-		
+		print "DEBUG ABC"
 		if 'SrcCtrl' in kwargs:
 			SrcCtrl = kwargs['SrcCtrl']
 		else:
+			print "FAIL 1"
 			return []
 		
 		
@@ -45,18 +46,24 @@ class SourcePlugin(object):
 		else:
 			index = SrcCtrl.index('name',self.name)
 			
+		print index
+		print SrcCtrl
 		subsources = SrcCtrl.subsource_all(index)
+		print subsources
 		if subsources is None:
+			print "FAIL 2"
 			return []	
 		
 		avchg = []
 		for i in range(len(subsources)):
+			print i
 			avchg_subsource = {}
 			avchg_subsource['index'] = index
 			avchg_subsource['subindex'] = i
 			avchg_subsource['available'] = True
 			avchg.append(avchg_subsource)
 		
+		print avchg
 		return avchg
 
 	def configuration(self, name):
