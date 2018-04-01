@@ -585,8 +585,7 @@ def handle_path_player(path,cmd,args):
 			return None
 
 		if not args:
-			ret = sc_sources.get_state()
-
+			ret = sc_sources.source_get_state()
 			
 		# Get state: play|pause|stop, toggle random
 		data = get_data(ret,True)
