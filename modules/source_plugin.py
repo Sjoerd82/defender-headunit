@@ -29,22 +29,23 @@ class SourcePlugin(object):
 	def post_add(self, sourceCtrl, sourceconfig):
 		pass
 
-	def check(self, sourceCtrl):
+	def check(self, **kwargs):
 		"""	Check source
-		
-			Returns all subsources as available
-			
+		Returns LIST marking all subsources as available
 		"""
-		ix = sourceCtrl.index('name',self.name)
-		subsources = sourceCtrl.subsource_all(ix)
-				
+		if 'index' not in kwargs:
+			index = sourceCtrl.index('name',self.name)
+		else:
+			index = kwargs['index']
+		
+		subsources = sourceCtrl.subsource_all(index)
 		if subsources is None:
-			return []
+			return []	
 		
 		avchg = []
 		for i in range(len(subsources)):
 			avchg_subsource = {}
-			avchg_subsource['index'] = ix
+			avchg_subsource['index'] = index
 			avchg_subsource['subindex'] = i
 			avchg_subsource['available'] = True
 			avchg.append(avchg_subsource)

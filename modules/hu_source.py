@@ -378,7 +378,7 @@ class SourceController(object):
 		
 		return True
 	
-	def check( self, index=None, index_subsource=None ):
+	def check( self, index=None, subindex=None ):
 		""" Execute a check() for given source or subsource and sets availability accordingly
 			
 			if NO INDEXES are given, all sources and sub-sources will be checked.
@@ -393,14 +393,14 @@ class SourceController(object):
 		if index is False:
 			return False
 		
-		index_subsource = self.__check_subindex(index,index_subsource)
-		if index_subsource is False:
+		subindex = self.__check_subindex(index,subindex)
+		if subindex is False:
 			return False
 		
 		changed_sources = []
 		
 		# Check all indexes
-		if index is None and index_subsource is None:
+		if index is None and subindex is None:
 			self.__printer('Checking all sources') #LL_DEBUG
 			i=0
 			for source in self.lSource:
@@ -427,11 +427,11 @@ class SourceController(object):
 				
 		else:
 			# Check specified subindex
-			if index_subsource is not None:	
-				self.__printer('Checking index/subindex: {0}/{1}'.format(index,index_subsource)) #LL_DEBUG
+			if subindex is not None:	
+				self.__printer('Checking index/subindex: {0}/{1}'.format(index,subindex)) #LL_DEBUG
 				
-				#checked_source_is_available = self.lSource[index]['subsources'][index_subsource]['available']
-				check_result = self.lSource[index]['sourceClass'].check(self,index_subsource)	#returns a list of dicts with changes
+				#checked_source_is_available = self.lSource[index]['subsources'][subindex]['available']
+				check_result = self.lSource[index]['sourceClass'].check(self,subindex)	#returns a list of dicts with changes
 				
 				return check_result
 				
@@ -439,7 +439,7 @@ class SourceController(object):
 				
 					#if checked_source_is_available != check_result:
 					#	self.lSource[index]['available'] = check_result
-					#	changed_sources.append( [index,index_subsource] )
+					#	changed_sources.append( [index,subindex] )
 					#	return changed_sources
 				#else:
 				#	return None
@@ -449,12 +449,12 @@ class SourceController(object):
 				self.__printer('Checking index: {0}'.format(index)) #LL_DEBUG
 				
 				## todo  !! !!  ##
-				#check_result = self.lSource[index]['sourceClass'].check(self,index_subsource)	#returns a list of dicts with changes
+				#check_result = self.lSource[index]['sourceClass'].check(self,subindex)	#returns a list of dicts with changes
 
 				#the_source = self.source_manager.getPluginByName(self.lSource[index]['name'])
-				#check_result = the_source.plugin_object.check(self,index_subsource)	#returns a list of dicts with changes
+				#check_result = the_source.plugin_object.check(self,subindex)	#returns a list of dicts with changes
 				# OR:
-				check_result = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.check(self,index_subsource)	#returns a list of dicts with changes
+				check_result = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.check(SrcCtrl=self,index=index,subindex=subindex)	#returns a list of dicts with changes
 				
 				for chg in check_result:
 					if 'subindex' in chg and chg['subindex'] is not None:
@@ -957,7 +957,7 @@ class SourceController(object):
 				return False
 
 			if index is not None and subindex is not None:
-				ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.play(srcCtrl=self,index=index,subindex=subindex,**kwargs)
+				ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.play(SrcCtrl=self,index=index,subindex=subindex,**kwargs)
 				return ret
 			
 			if not ret:

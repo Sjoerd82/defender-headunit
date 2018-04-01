@@ -28,6 +28,8 @@ class MySource(MpdSourcePlugin,IPlugin):
 		"""Executed after a source is added by plugin manager.
 		Executed by: hu_source.load_source_plugins().
 		Return value is not used.
+		
+		This Post-Add add all mountpoints under /media, but does not check anything.
 		"""
 		
 		lst_mountpoints = get_mounts( mp_exclude=['/','/mnt/PIHU_APP','/mnt/PIHU_CONFIG','/media/PIHU_DATA','/media/PIHU_DATA_'], fs_exclude=['cifs'] )

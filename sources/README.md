@@ -184,7 +184,8 @@ sourceconfig contains the complete configuration, including the parts from the m
 Called for every source, at the end of the setup phase. This function checks if the source is ready.
 
 ```
-def check(self, sourceCtrl):
+Called by hu_source.check():
+check(SrcCtrl=self,index=index,subindex=subindex)
 ```
 
 Arguments: sourceCtrl, subindex
