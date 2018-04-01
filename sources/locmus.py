@@ -53,7 +53,11 @@ class MySource(MpdSourcePlugin,IPlugin):
 				sourceCtrl.add_sub( ix, subsource )
 
 		return True
-				
+
+	#def check:
+	# inherited from MpdSourcePlugin
+	
+	
 	# Source Check: Return True/False (available/not available)
 	# Optionally, provide list of mountpoint(s) to check
 	#def locmus_check( sourceCtrl, mountpoint=None ):

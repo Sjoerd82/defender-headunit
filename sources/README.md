@@ -164,8 +164,9 @@ None of these methods are required be implemented.
 
 Called when Source Controller activates the plugin.
 
-Arguments: Plugin Name, Logger
-Return: True, if all is OK, False if not (source will not be activated).
+Arguments: `Plugin Name, Logger`
+Return: `True`, if all is OK
+`False` if not (source will not be activated)
 
 #### post_add(sourceconfig)
 
@@ -181,6 +182,10 @@ sourceconfig contains the complete configuration, including the parts from the m
 #### check()
 
 Called for every source, at the end of the setup phase. This function checks if the source is ready.
+
+```
+def check(self, sourceCtrl):
+```
 
 Arguments: sourceCtrl, subindex
 Return: None (if no subsources), List of dicts

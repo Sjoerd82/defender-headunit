@@ -57,7 +57,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 									   ,mount['mountpoint']
 							           ,sourceCtrl)
 
-		self.__printer('Initializing... DONE')		
+		self.printer('Initializing... DONE')		
 		return True
 
 
@@ -275,7 +275,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 		return True
 
 	#  media_check with a "label" parameter checks specific label on /media
-	def check( self, sourceCtrl, subSourceIx=None  ):
+	def Xcheck( self, sourceCtrl, subSourceIx=None  ):
 		"""	Check source
 		
 			Checks all mountpoints of /media
@@ -284,7 +284,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 		
 			Q: Look for new mountpoints?	Should be handled by udisks...
 		"""
-
+		
 		self.printer('Checking availability...')
 		# QUESTION.... SHOULD THIS MEDIA_CHECK GO LOOKING FOR POSSIBLE NEW MOUNTS?????
 		"""

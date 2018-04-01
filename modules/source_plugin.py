@@ -29,7 +29,7 @@ class SourcePlugin(object):
 	def post_add(self, sourceCtrl, sourceconfig):
 		pass
 
-	def check(self, sourceCtrl, subSourceIx=None):
+	def check(self, sourceCtrl):
 		"""	Check source
 		
 			Returns all subsources as available

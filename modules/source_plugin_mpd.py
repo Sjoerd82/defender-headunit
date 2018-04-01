@@ -21,6 +21,9 @@ class MpdSourcePlugin(SourcePlugin):
 		super(MpdSourcePlugin, self).init(plugin_name,logger)
 		self.mpdc = MpdController(self.logger)
 	
+	def check(self, sourceCtrl):
+		super(MpdSourcePlugin, self).check(sourceCtrl)
+		
 	def check_mpd(self, locations, ix, ssIx):
 	
 		#locations = []							# list of tuples; index: 0 = mountpoint, 1 = mpd dir, 2 = availability.
