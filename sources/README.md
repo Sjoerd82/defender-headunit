@@ -204,15 +204,20 @@ If check() is not implemented this will make the source available.
 
 ### Source control
 
-	def play(self, **kwargs):	
-	def stop(self, **kwargs):
-	def next(self, **kwargs):
-	def prev(self, **kwargs):
-	def pause(self, **kwargs):
-	def random(self, **kwargs):
-	def seekfwd(self, **kwargs):
-	def seekrev(self, **kwargs):
-	def update(self, **kwargs):
+All methods are called by the SourceController with the arguments SrcCtrl (reference to SourceController), index and subindex.
+Additional arguments may be passed by hu_src_ctrl.py
+
+Method | Description | Extra parameters
+--- | --- | --- | ---
+`play` | Start playback | ?
+`stop` | Stop playback | 
+`next` | Next track | `cnt` (number of tracks to advance)
+`prev` | Prev track | `cnt` (number of tracks to go back)
+`pause` | Pause | mode
+`random` | Set random mode |  mode
+`seekfwd` | Seek | 
+`seekrev` | Seek | 
+`update` | Update (MPD) | location
 
 Python script
 ----------------

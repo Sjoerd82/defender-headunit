@@ -98,6 +98,8 @@ class SourcePlugin(object):
 	def update(self, **kwargs):
 		return False
 		
+	# ------------------------
+	
 	def get_details():
 		return False
 
