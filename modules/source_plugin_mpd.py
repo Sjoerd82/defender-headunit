@@ -21,8 +21,9 @@ class MpdSourcePlugin(SourcePlugin):
 		super(MpdSourcePlugin, self).init(plugin_name,logger)
 		self.mpdc = MpdController(self.logger)
 	
-	def check(self, **kwargs):
-		super(MpdSourcePlugin, self).check(**kwargs)
+	#def check(self, **kwargs):
+	#	super(MpdSourcePlugin, self).check(**kwargs)
+	# inherited from SourcePlugin (source_plugin.py)
 		
 	def check_mpd(self, locations, ix, ssIx):
 	
