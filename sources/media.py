@@ -33,9 +33,9 @@ class MySource(MpdSourcePlugin,IPlugin):
 		lst_mountpoints = get_mounts( mp_exclude=['/','/mnt/PIHU_APP','/mnt/PIHU_CONFIG','/media/PIHU_DATA','/media/PIHU_DATA_'], fs_exclude=['cifs'] )
 		
 		if not lst_mountpoints:
-			self.__printer(' > No removable media found')
+			self.printer(' > No removable media found')
 		else:
-			self.__printer(' > Found {0} removable media'.format(len(lst_mountpoints)))
+			self.printer(' > Found {0} removable media'.format(len(lst_mountpoints)))
 		
 		for mount in lst_mountpoints:
 			
@@ -47,7 +47,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 			try:
 				uuid = subprocess.check_output("blkid "+mount['spec']+" -s PARTUUID -o value", shell=True).rstrip('\n')
 			except:
-				self.__printer('Could not get a partition UUID for {0}'.format(mount['spec']),level=LL_ERROR)
+				self.printer('Could not get a partition UUID for {0}'.format(mount['spec']),level=LL_ERROR)
 				uuid = ''
 				
 			# add subsource
