@@ -33,12 +33,19 @@ class SourcePlugin(object):
 		"""	Check source
 		Returns LIST marking all subsources as available
 		"""
-		if 'index' not in kwargs:
-			index = sourceCtrl.index('name',self.name)
-		else:
-			index = kwargs['index']
 		
-		subsources = sourceCtrl.subsource_all(index)
+		if 'SrcCtrl' in kwargs:
+			SrcCtrl = kwargs['SrcCtrl']
+		else:
+			return []
+		
+		
+		if 'index' in kwargs:
+			index = kwargs['index']
+		else:
+			index = SrcCtrl.index('name',self.name)
+			
+		subsources = SrcCtrl.subsource_all(index)
 		if subsources is None:
 			return []	
 		
