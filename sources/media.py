@@ -285,7 +285,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 			Q: Look for new mountpoints?	Should be handled by udisks...
 		"""
 
-		self.__printer('Checking availability...')
+		self.printer('Checking availability...')
 		# QUESTION.... SHOULD THIS MEDIA_CHECK GO LOOKING FOR POSSIBLE NEW MOUNTS?????
 		"""
 		try:
@@ -325,17 +325,17 @@ class MySource(MpdSourcePlugin,IPlugin):
 			original_availability = location[2]
 			new_availability = None
 
-			self.__printer('Media folder: {0}'.format(mountpoint))
+			self.printer('Media folder: {0}'.format(mountpoint))
 			if not os.listdir(mountpoint):
-				self.__printer(" > Removable music directory is empty.",LL_WARNING)
+				self.printer(" > Removable music directory is empty.",LL_WARNING)
 				new_availability = False
 			else:
-				self.__printer(" > Removable music directory present and has files.",LL_INFO)
+				self.printer(" > Removable music directory present and has files.",LL_INFO)
 				if not self.mpdc.is_dbdir( mpd_dir ):
-					self.__printer(" > Running MPD update for this directory.. ALERT! LONG BLOCKING OPERATION AHEAD...")
+					self.printer(" > Running MPD update for this directory.. ALERT! LONG BLOCKING OPERATION AHEAD...")
 					self.mpdc.update_db( mpd_dir, True )	#TODO: don't wait! set available on return of update..
 					if not self.mpdc.is_dbdir( mpd_dir ):
-						self.__printer(" > Nothing to play marking unavailable...")
+						self.printer(" > Nothing to play marking unavailable...")
 						new_availability = False
 					else:
 						self.__printer(" > Music found after updating")
