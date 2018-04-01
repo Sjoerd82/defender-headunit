@@ -53,9 +53,12 @@ class MySource(SourcePlugin,IPlugin):
 		#TODO IMPLEMENT
 		return True
 
-	def get_state(self, **kwargs ):
-		self.printer('State ?')
-		return self.state
+	def get_details(self, **kwargs ):
+		self.printer('Details ?')
+		details = {}
+		details['funfact'] = "bla"
+		details['track'] = "Rock in the Morning"
+		return details
 	
 def fm_popMenu():
 	newMenu = []

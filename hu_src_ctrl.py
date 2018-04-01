@@ -520,7 +520,7 @@ def handle_path_player(path,cmd,args):
 			return None
 
 		if not args:
-			ret = sc_sources.source_get_media_details()
+			ret = sc_sources.source_get_details()
 
 		data = get_data(ret,True)
 		return data

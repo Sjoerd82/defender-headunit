@@ -218,6 +218,8 @@ Method | Description | Extra parameters
 `seekfwd` | Seek | 
 `seekrev` | Seek | 
 `update` | Update (MPD) | location
+`get_state` | Get states (playing,random,repeat) | -
+`get_details` | Get all details | -
 
 Python script
 ----------------

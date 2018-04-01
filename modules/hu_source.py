@@ -1027,26 +1027,24 @@ class SourceController(object):
 			return ret
 
 	def source_get_state(self, **kwargs ):
-		index, subindex = self.__get_current('GET_STATE')	
+		index, subindex = self.__get_current('GET_STATE')
 		# - playing/paused/stopped
 		# - random, shuffle, repeat, 
 		if index is not None and subindex is not None:
 			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.get_state(srcCtrl=self,index=index,subindex=subindex,**kwargs)
 			return ret
 
+	# Return a dictionary containing source capabilities, etc.
+	def source_get_details(self, **kwargs ):
+		index, subindex = self.__get_current('GET_DETAILS')
+		# - available controls/functions
+		# - available random modes
+		if index is not None and subindex is not None:
+			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.get_details(srcCtrl=self,index=index,subindex=subindex,**kwargs)
+			return data
 		
 	# -------------------------------------------------------------------------			
 
-	# Return a dictionary containing source capabilities, etc.
-	def source_get_source_details(self):
-		# - available controls/functions
-		# - available random modes
-		if self.iCurrentSource[0] == None:
-			self.__printer('GET DETAILS: No current source',LL_WARNING)
-			return False
-
-		data = self.lSource[self.iCurrentSource[0]]['sourceClass'].get_details( self )
-		return data
 
 	# Return current playlist. NO: Optionally: getfolders=True
 	def source_get_playlist(self, **kwargs):

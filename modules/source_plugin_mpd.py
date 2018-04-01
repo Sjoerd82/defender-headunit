@@ -197,18 +197,10 @@ class MpdSourcePlugin(SourcePlugin):
 		self.printer('Update. Location: {0}'.format(location))
 		self.mpdc.update(location)
 		return True
-		
-	def get_details():
-		return False
-
-	def get_state():
-		return False
-
-	def get_playlist():
-		return False
-
-	def get_folders():
-		return False
-
-	def source_get_media_details():
-		return False
+	
+	def get_details(self, **kwargs ):
+		self.printer('Details ?')
+		details = {}
+		details['funfact'] = "bla"
+		details['track'] = "Rock in the Morning"
+		return details

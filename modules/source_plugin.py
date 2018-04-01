@@ -77,39 +77,49 @@ class SourcePlugin(object):
 		return config
 			
 	def play(self, **kwargs):
+		# not implemented
 		return False
 		
 	def stop(self, **kwargs):
+		# not implemented
 		return False
 		
 	def next(self, **kwargs):		
+		# not implemented
 		return False
 		
 	def prev(self, **kwargs):
+		# not implemented
 		return False
 
 	def pause(self, **kwargs):
+		# not implemented
 		return False
 
 	def random(self, **kwargs):
+		# not implemented
 		return False
 
 	def seekfwd(self, **kwargs):
+		# not implemented
 		return False
 
 	def seekrev(self, **kwargs):
+		# not implemented
 		return False
 
 	def update(self, **kwargs):
+		# not implemented
 		return False
 
-	def get_state(self, **kwargs):
+	def get_state(self, **kwargs ):
+		return self.state
+
+	def get_details(self, **kwargs):
 		return False
 		
 	# ------------------------
-	
-	def get_details():
-		return False
+	# todo:
 
 
 	def get_playlist():
