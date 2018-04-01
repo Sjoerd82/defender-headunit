@@ -209,7 +209,7 @@ Additional arguments may be passed by hu_src_ctrl.py
 
 Method | Description | Extra parameters
 --- | --- | ---
-`play` | Start playback | ?
+`play` | Start playback | `position`
 `stop` | Stop playback | 
 `next` | Next track | `cnt` (number of tracks to advance)
 `prev` | Prev track | `cnt` (number of tracks to go back)

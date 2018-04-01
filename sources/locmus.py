@@ -4,7 +4,7 @@
 # 2018-03-27
 #
 # Plays local music folder(s), as defined in the main configuration.
-# Extends SOURCEPLUGIN and MPDSOURCEPLUGIN
+# Extends MPDSOURCEPLUGIN
 #
 
 from yapsy.IPlugin import IPlugin
@@ -24,10 +24,14 @@ class MySource(MpdSourcePlugin,IPlugin):
 		return True
 
 	def post_add(self, sourceCtrl, sourceconfig):
-
+		"""Executed after a source is added by plugin manager.
+		Executed by: hu_source.load_source_plugins().
+		Return value is not used.
+		"""
+		
+		# 'local_media' contains subsources
 		if 'local_media' in sourceconfig:
-			# get index (name is unique)
-			ix = sourceCtrl.index('name','locmus')
+			ix = sourceCtrl.index('name',self.name)	#name is unique
 			if ix is None:
 				print "Plugin {0} does not exist".format('locmus')
 				return False

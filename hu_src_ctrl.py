@@ -539,7 +539,7 @@ def handle_path_player(path,cmd,args):
 			return None
 
 		if len(args) == 1:
-			ret = sc_sources.source_play(args[0])
+			ret = sc_sources.source_play(position=args[0])
 
 		data = get_data(ret,True)
 		return data

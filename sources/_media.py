@@ -10,137 +10,32 @@
 import os
 import subprocess
 
-from yapsy.IPlugin import IPlugin
 from modules.hu_utils import *
-from modules.hu_settings import getSourceConfig
-from modules.source_plugin_mpd import MpdSourcePlugin
+from modules.hu_mpd import MpdController
 
-class MySource(MpdSourcePlugin,IPlugin):
+# Logging
+sourceName='media'
+LOG_TAG = 'MEDIA'
+LOGGER_NAME = 'media'
 
-	def __init__(self):
-		super(MySource,self).__init__()
+class sourceClass(object):
 
-	def init(self, plugin_name, logger=None):
-		super(MySource, self).init(plugin_name,logger)	# Executes init() at MpdSourcePlugin		
-		return True
+	# output wrapper
+	def __printer( self, message, level=LL_INFO, tag=LOG_TAG):
+		self.logger.log(level, message, extra={'tag': tag})
 
-	def post_add(self, sourceCtrl, sourceconfig):
-		"""Executed after a source is added by plugin manager.
-		Executed by: hu_source.load_source_plugins().
-		Return value is not used.
-		"""
+	def __init__( self, logger ):
+		self.logger = logger
+		self.__printer('Source Class Init', level=LL_DEBUG)
+		self.mpdc = MpdController(self.logger)
 		
-		lst_mountpoints = get_mounts( mp_exclude=['/','/mnt/PIHU_APP','/mnt/PIHU_CONFIG','/media/PIHU_DATA','/media/PIHU_DATA_'], fs_exclude=['cifs'] )
-		
-		if not lst_mountpoints:
-			self.__printer(' > No removable media found')
-		else:
-			self.__printer(' > Found {0} removable media'.format(len(lst_mountpoints)))
-		
-		for mount in lst_mountpoints:
-			
-			# get mountpoint and label
-			mountpoint = mount['mountpoint']
-			sUsbLabel = os.path.basename(mount['mountpoint']).rstrip('\n')
-			
-			# get uuid
-			try:
-				uuid = subprocess.check_output("blkid "+mount['spec']+" -s PARTUUID -o value", shell=True).rstrip('\n')
-			except:
-				self.__printer('Could not get a partition UUID for {0}'.format(mount['spec']),level=LL_ERROR)
-				uuid = ''
-				
-			# add subsource
-			self.__media_add_subsource( mountpoint
-							           ,sUsbLabel
-							           ,uuid
-									   ,mount['mountpoint']
-							           ,sourceCtrl)
+	def __del__( self ):
+		print('Source Class Deleted {0}'.format(sourceName))
 
-		self.__printer('Initializing... DONE')		
-		return True
-
-
-	# def check()
+	def remove_subsource( self ):
+		print('REMOVE SUBSOURCE: TODO')
 	
-	# -------------------------------------------------------------------------
-	
-	def __media_add_subsource( self, dir, label, uuid, device, sourceCtrl ):
-		# get index (name is unique)
-		ix = sourceCtrl.index('name','media')
-		
-		# construct the subsource
-		subsource = {}
-		subsource['name'] = 'media'
-		subsource['displayname'] = 'media: ' + dir
-		subsource['order'] = 0		# no ordering
-		subsource['mountpoint'] = dir
-		subsource['mpd_dir'] = dir[7:]		# TODO -- ASSUMING /media
-		subsource['label'] = label
-		subsource['uuid'] = uuid
-		subsource['device'] = device
-
-		sourceCtrl.add_sub(ix, subsource)
-	
-	
-	def zz__media_get_media_mountpoints():
-		"""Returns a list of everything mounted on /media, but does not check if it has music.
-		Returned is a 2-dimension list
-		"""
-
-		"""
-		try:
-			self.__printer('Check if anything is mounted on /media...')
-			# do a -f1 for devices, -f3 for mountpoints
-			grepOut = subprocess.check_output(
-				"mount | grep /media | cut -d' ' -f1,3",
-				shell=True,
-				stderr=subprocess.STDOUT,
-			)
-		except subprocess.CalledProcessError as err:
-			print('ERROR:', err)
-			pa_sfx('error')
-			return None
-		
-		grepOut = grepOut.rstrip('\n')
-		lst_mountpoints = [[x for x in ss.split(' ')] for ss in grepOut.split('\n')]
-
-		# remove local data (locmus) and smb mounts:
-		# TODO: this shouldn't be hardcoded:
-		lst_mountpoints[:] = [tup for tup in lst_mountpoints if (not tup[1] == '/media/PIHU_DATA' and not tup[0].startswith('//'))]
-		"""
-		# TODO: remove hardcoded paths
-		lst_mountpoints = get_mounts( mp_exclude=['/','/mnt/PIHU_APP','/mnt/PIHU_CONFIG','/media/PIHU_DATA','/media/PIHU_DATA_'], fs_exclude=['cifs'] )
-		
-		if not lst_mountpoints:
-			self.__printer(' > No removable media found')
-		else:
-			#lst_mountpoints[:] = (x for x in somelist if determine(x))
-			#yourList[:] = itertools.ifilter(do_the_magic, yourList)
-			# filter out everything that's not mounted on /media or is smb:
-			"""
-			i=0
-			#for i, mp in enumerate(lst_mountpoints):
-			for mp in lst_mountpoints:
-				print mp['mountpoint']
-				print mp['fs']
-				if not mp['mountpoint'].startswith('/media/') or mp['fs'] == 'cifs':
-					print "DELETE: {0}".format(mp['mountpoint'])
-					#del lst_mountpoints[i]
-					#lst_mountpoints.remove( mp )
-					
-				i+=1
-			"""
-			# check if anything left
-			if not lst_mountpoints:
-				self.__printer(' > No removable media found')
-			else:
-				self.__printer(' > Found {0} removable media'.format(len(lst_mountpoints)))
-		
-		print lst_mountpoints
-		return lst_mountpoints
-		
-	def zz_add_subsource( self, sourceCtrl, parameters ):
+	def add_subsource( self, sourceCtrl, parameters ):
 		
 		has_mountpoint = False
 		has_device = False
@@ -242,9 +137,83 @@ class MySource(MpdSourcePlugin,IPlugin):
 
 		ret = sourceCtrl.add_sub(index, subsource)
 		return ret
+		
 	
-	def zz_init( self, sourceCtrl ):
+	def __media_add_subsource( self, dir, label, uuid, device, sourceCtrl ):
+		# get index (name is unique)
+		ix = sourceCtrl.index('name','media')
+		
+		# construct the subsource
+		subsource = {}
+		subsource['name'] = 'media'
+		subsource['displayname'] = 'media: ' + dir
+		subsource['order'] = 0		# no ordering
+		subsource['mountpoint'] = dir
+		subsource['mpd_dir'] = dir[7:]		# TODO -- ASSUMING /media
+		subsource['label'] = label
+		subsource['uuid'] = uuid
+		subsource['device'] = device
+
+		sourceCtrl.add_sub(ix, subsource)
+	
+	def init( self, sourceCtrl ):
 		self.__printer('Initializing...')
+
+		# Returns a list of everything mounted on /media, but does not check if it has music.
+		# Returned is 2-dimension list
+		def media_getAll():
+
+			"""
+			try:
+				self.__printer('Check if anything is mounted on /media...')
+				# do a -f1 for devices, -f3 for mountpoints
+				grepOut = subprocess.check_output(
+					"mount | grep /media | cut -d' ' -f1,3",
+					shell=True,
+					stderr=subprocess.STDOUT,
+				)
+			except subprocess.CalledProcessError as err:
+				print('ERROR:', err)
+				pa_sfx('error')
+				return None
+			
+			grepOut = grepOut.rstrip('\n')
+			lst_mountpoints = [[x for x in ss.split(' ')] for ss in grepOut.split('\n')]
+
+			# remove local data (locmus) and smb mounts:
+			# TODO: this shouldn't be hardcoded:
+			lst_mountpoints[:] = [tup for tup in lst_mountpoints if (not tup[1] == '/media/PIHU_DATA' and not tup[0].startswith('//'))]
+			"""
+			# TODO: remove hardcoded paths
+			lst_mountpoints = get_mounts( mp_exclude=['/','/mnt/PIHU_APP','/mnt/PIHU_CONFIG','/media/PIHU_DATA','/media/PIHU_DATA_'], fs_exclude=['cifs'] )
+			
+			if not lst_mountpoints:
+				self.__printer(' > No removable media found')
+			else:
+				#lst_mountpoints[:] = (x for x in somelist if determine(x))
+				#yourList[:] = itertools.ifilter(do_the_magic, yourList)
+				# filter out everything that's not mounted on /media or is smb:
+				"""
+				i=0
+				#for i, mp in enumerate(lst_mountpoints):
+				for mp in lst_mountpoints:
+					print mp['mountpoint']
+					print mp['fs']
+					if not mp['mountpoint'].startswith('/media/') or mp['fs'] == 'cifs':
+						print "DELETE: {0}".format(mp['mountpoint'])
+						#del lst_mountpoints[i]
+						#lst_mountpoints.remove( mp )
+						
+					i+=1
+				"""
+				# check if anything left
+				if not lst_mountpoints:
+					self.__printer(' > No removable media found')
+				else:
+					self.__printer(' > Found {0} removable media'.format(len(lst_mountpoints)))
+			
+			print lst_mountpoints
+			return lst_mountpoints
 		
 		# do a general media_check to find any mounted drives
 		#media_check( label=None )
@@ -522,3 +491,56 @@ class MySource(MpdSourcePlugin,IPlugin):
 	#		mpc_get_PlaylistDirs_thread.start()
 
 		return True
+
+	def stop( self ):
+		self.__printer('Stop')
+		return True
+		
+	def next( self ):
+		self.__printer('Next track')
+		self.mpdc.next()
+		return True
+		
+	def prev( self ):
+		self.__printer('Prev track')
+		self.mpdc.prev()
+		return True
+
+	def pause( self, mode ):
+		self.__printer('Pause. Mode: {0}'.format(mode))
+		#TODO IMPLEMENT
+		return True
+
+	def random( self, mode ):
+		self.__printer('Random. Mode: {0}'.format(mode))
+		#TODO IMPLEMENT
+		return True
+
+	def seekfwd( self ):
+		self.__printer('Seek FFWD')
+		#TODO IMPLEMENT
+		return True
+
+	def seekrev( self ):
+		self.__printer('Seek FBWD')
+		#TODO IMPLEMENT
+		return True
+
+	def update( self, location ):
+		self.__printer('Update. Location: {0}'.format(location))
+		#TODO IMPLEMENT
+		return True
+
+	def get_details():
+		return False
+
+	def get_state():
+		return False
+
+	def get_playlist():
+		return False
+
+	#def get_folders():
+
+	def source_get_media_details():
+		return False
