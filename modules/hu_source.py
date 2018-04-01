@@ -945,7 +945,7 @@ class SourceController(object):
 	
 	# execute play() for the current source
 	# suggested keywords: position in playlist; a dictionary may be given containing resume data
-	def source_play( self, **kwargs ):
+	def source_play(self, **kwargs ):
 		""" Current source: Play
 		"""
 		
@@ -971,61 +971,70 @@ class SourceController(object):
 					return False
 
 	# Proxy for stopping playback
-	def source_stop( self, **kwargs ):
+	def source_stop(self, **kwargs ):
 		index, subindex = self.__get_current('STOP')
 		if index is not None and subindex is not None:
 			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.stop(srcCtrl=self,index=index,subindex=subindex,**kwargs)
 			return ret
 
 	# Proxy for pausing. Modes: on | off | toggle | 1 | 0
-	def source_pause( self, mode, **kwargs ):
+	def source_pause(self, mode, **kwargs ):
 		index, subindex = self.__get_current('PAUSE')
 		if index is not None and subindex is not None:
 			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.pause(srcCtrl=self,index=index,subindex=subindex,mode=mode,**kwargs)
 			return ret
 
 	# Proxy for next (track/station/...)
-	def source_next( self, **kwargs ):
+	def source_next(self, **kwargs ):
 		index, subindex = self.__get_current('NEXT')
 		if index is not None and subindex is not None:
 			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.next(srcCtrl=self,index=index,subindex=subindex,**kwargs)
 			return ret
 
 	# Proxy for previous (track/station/...)
-	def source_prev( self, **kwargs ):
+	def source_prev(self, **kwargs ):
 		index, subindex = self.__get_current('PREV')
 		if index is not None and subindex is not None:
 			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.prev(srcCtrl=self,index=index,subindex=subindex,**kwargs)
 			return ret
 
 	# Proxy for random. Modes: on | off | toggle | 1 | 0 | "special modes.."
-	def source_random( self, mode, **kwargs ):
+	def source_random(self, mode, **kwargs ):
 		index, subindex = self.__get_current('MODE')
 		if index is not None and subindex is not None:
 			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.random(srcCtrl=self,index=index,subindex=subindex,mode=mode,**kwargs)
 			return ret
 
 	# Proxy for seeking forward. Optionally provide arguments on how to seek (ie. number of seconds)
-	def source_seekfwd( self, **kwargs ):
+	def source_seekfwd(self, **kwargs ):
 		index, subindex = self.__get_current('SEEKFWD')
 		if index is not None and subindex is not None:
 			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.seekfwd(srcCtrl=self,index=index,subindex=subindex,**kwargs)
 			return ret
 
 	# Proxy for seeking backwards. Optionally provide arguments on how to seek (ie. number of seconds)
-	def source_seekrev( self, **kwargs ):
+	def source_seekrev(self, **kwargs ):
 		index, subindex = self.__get_current('SEEKREV')
 		if index is not None and subindex is not None:
 			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.seekrev(srcCtrl=self,index=index,subindex=subindex,**kwargs)
 			return ret
 
 	# Proxy for database update. Optionally provide arguments. Suggestions: location
-	def source_update( self, **kwargs ):
+	def source_update(self, **kwargs ):
 		index, subindex = self.__get_current('SEEKFWD')
 		if index is not None and subindex is not None:
 			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.update(srcCtrl=self,index=index,subindex=subindex,**kwargs)
 			return ret
 
+	def source_get_state(self, **kwargs ):
+		index, subindex = self.__get_current('GET_STATE')	
+		# - playing/paused/stopped
+		# - random, shuffle, repeat, 
+		if index is not None and subindex is not None:
+			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.get_state(srcCtrl=self,index=index,subindex=subindex,**kwargs)
+			return ret
+
+		
 	# -------------------------------------------------------------------------			
 
 	# Return a dictionary containing source capabilities, etc.
@@ -1038,16 +1047,6 @@ class SourceController(object):
 
 		data = self.lSource[self.iCurrentSource[0]]['sourceClass'].get_details( self )
 		return data
-
-	def source_get_state(self):
-		# - playing/paused/stopped
-		# - random, shuffle, repeat, 
-		if self.iCurrentSource[0] == None:
-			self.__printer('GET STATE: No current source',LL_WARNING)
-			return False
-
-		ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].get_state( self )
-		return ret
 
 	# Return current playlist. NO: Optionally: getfolders=True
 	def source_get_playlist(self, **kwargs):
