@@ -522,6 +522,10 @@ def handle_path_player(path,cmd,args):
 		if not args:
 			ret = sc_sources.source_get_details()
 
+		# only keep the track section
+		if 'track' in ret:
+			ret = ret['track']
+			
 		data = get_data(ret,True)
 		return data
 		
