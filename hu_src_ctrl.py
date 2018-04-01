@@ -113,6 +113,8 @@ def validate_args(args, min_args, max_args):
 
 def get_data(ret,returndata=False,eventpath=None):
 
+	print "DEBUG: ret = {0}".format(ret)
+
 	data = {}
 	
 	if ret is None:
@@ -1031,9 +1033,8 @@ def idle_message_receiver():
 	if rawmsg:
 		printer("Received message: {0}".format(rawmsg))	#TODO: debug
 		parsed_msg = parse_message(rawmsg)
-		print parsed_msg
-		# send message to dispatcher for handling
-		
+
+		# send message to dispatcher for handling	
 		retval = dispatcher(parsed_msg['path'],parsed_msg['cmd'],parsed_msg['args'])
 		
 		if parsed_msg['resp_path']:

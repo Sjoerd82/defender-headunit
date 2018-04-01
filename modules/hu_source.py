@@ -1013,7 +1013,7 @@ class SourceController(object):
 
 	# Proxy for seeking backwards. Optionally provide arguments on how to seek (ie. number of seconds)
 	def source_seekrev( self, **kwargs ):
-		index, subindex = self.__get_current('SEEKFWD')
+		index, subindex = self.__get_current('SEEKREV')
 		if index is not None and subindex is not None:
 			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.seekrev(srcCtrl=self,index=index,subindex=subindex,**kwargs)
 			return ret

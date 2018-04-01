@@ -66,7 +66,7 @@ def parse_message(message):
 		resp_path = path_cmd_resp[2]
 	
 	# debugging
-	print("[MQ] Received Path: {0}; Command: {1}; Parameters: {2}; Response path: {3}".format(path,command,params,resp_path))
+	#print("[MQ] Received Path: {0}; Command: {1}; Parameters: {2}; Response path: {3}".format(path,command,params,resp_path))
 	
 	# return as a tuple:
 	#return path, command, params, resp_path
