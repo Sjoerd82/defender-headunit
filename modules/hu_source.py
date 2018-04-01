@@ -917,11 +917,17 @@ class SourceController(object):
 				c += 1
 		return c
 
-	"""
-	PROXY functions:
-	================
-	 move into subclass or something?
-	"""
+	# -------------------------------------------------------------------------
+	# PROXY FUNCTIONS
+	#
+	# Call with arguments:
+	# index, subindex, SrcCtrl + index passed from caller
+	#
+	# (always?) called with parameters:
+	# index, subindex, SourceControl
+	#
+	# move into subclass or something?
+	#
 
 	def __get_current(self,function):
 	
@@ -933,33 +939,7 @@ class SourceController(object):
 			return False
 			
 		else:
-			return index, subindex
-
-	
-	def source_init_OLD( self, index ):
-		""" Execute a init() for given source
-		"""
-		#self.__printer('INIT: {0}'.format(index)) #LL_DEBUG
-		checkResult = self.lSource[index]['sourceClass'].init(self)
-
-	"""
-	def source_init(self,index):
-		source_name = self.lSource[index]['name']
-		the_source = self.source_manager.getPluginByName(source_name)	
-		the_source.plugin_object.init(self)
-		# OR:
-		#self.source_manager.getPluginByName(source_name).plugin_object.init(self)
-	"""
-	
-
-
-				
-
-	#TODO - INVESTIGATE
-	def sourceAddSub( self, index, parameters ):
-		# TODO: check if index is valid
-		checkResult = self.lSource[index]['sourceClass'].add_subsource(self,parameters)
-		return checkResult
+			return index, subindex		
 
 	#def source_set_state( self, state ):
 	
@@ -1011,50 +991,41 @@ class SourceController(object):
 			return ret
 
 	# Proxy for previous (track/station/...)
-	def source_prev( self ):
-		if self.iCurrentSource[0] == None:
-			self.__printer('PREV: No current source',LL_WARNING)
-			return False
-
-		ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].prev()
-		return ret
+	def source_prev( self, **kwargs ):
+		index, subindex = self.__get_current('PREV')
+		if index is not None and subindex is not None:
+			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.prev(srcCtrl=self,index=index,subindex=subindex,**kwargs)
+			return ret
 
 	# Proxy for random. Modes: on | off | toggle | 1 | 0 | "special modes.."
-	def source_random( self, mode ):
-		if self.iCurrentSource[0] == None:
-			self.__printer('RANDOM: No current source',LL_WARNING)
-			return False
-
-		ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].random(mode )
-		return ret
+	def source_random( self, mode, **kwargs ):
+		index, subindex = self.__get_current('MODE')
+		if index is not None and subindex is not None:
+			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.random(srcCtrl=self,index=index,subindex=subindex,mode=mode,**kwargs)
+			return ret
 
 	# Proxy for seeking forward. Optionally provide arguments on how to seek (ie. number of seconds)
 	def source_seekfwd( self, **kwargs ):
-		if self.iCurrentSource[0] == None:
-			self.__printer('SEEKFWD: No current source',LL_WARNING)
-			return False
-
-		ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].seekfwd(kwargs )
-		return ret
+		index, subindex = self.__get_current('SEEKFWD')
+		if index is not None and subindex is not None:
+			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.seekfwd(srcCtrl=self,index=index,subindex=subindex,**kwargs)
+			return ret
 
 	# Proxy for seeking backwards. Optionally provide arguments on how to seek (ie. number of seconds)
 	def source_seekrev( self, **kwargs ):
-		if self.iCurrentSource[0] == None:
-			self.__printer('SEEKREV: No current source',LL_WARNING)
-			return False
-
-		ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].seekrev(kwargs )
-		return ret
+		index, subindex = self.__get_current('SEEKFWD')
+		if index is not None and subindex is not None:
+			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.seekrev(srcCtrl=self,index=index,subindex=subindex,**kwargs)
+			return ret
 
 	# Proxy for database update. Optionally provide arguments. Suggestions: location
 	def source_update( self, **kwargs ):
-		if self.iCurrentSource[0] == None:
-			self.__printer('UPDATE: No current source',LL_WARNING)
-			return False
+		index, subindex = self.__get_current('SEEKFWD')
+		if index is not None and subindex is not None:
+			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.update(srcCtrl=self,index=index,subindex=subindex,**kwargs)
+			return ret
 
-		ret = self.lSource[self.iCurrentSource[0]]['sourceClass'].update( kwargs )
-		return ret
-
+	# -------------------------------------------------------------------------			
 
 	# Return a dictionary containing source capabilities, etc.
 	def source_get_source_details(self):
@@ -1104,6 +1075,13 @@ class SourceController(object):
 
 		data = self.lSource[self.iCurrentSource[0]]['sourceClass'].get_media_details( self, kwargs )
 		return data
+
+	#TODO - INVESTIGATE
+	def sourceAddSub( self, index, parameters ):
+		# TODO: check if index is valid
+		checkResult = self.lSource[index]['sourceClass'].add_subsource(self,parameters)
+		return checkResult
+
 
 
 ''' NOT USED:

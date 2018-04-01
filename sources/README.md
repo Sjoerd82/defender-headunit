@@ -208,7 +208,7 @@ All methods are called by the SourceController with the arguments SrcCtrl (refer
 Additional arguments may be passed by hu_src_ctrl.py
 
 Method | Description | Extra parameters
---- | --- | --- | ---
+--- | --- | ---
 `play` | Start playback | ?
 `stop` | Stop playback | 
 `next` | Next track | `cnt` (number of tracks to advance)
