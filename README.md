@@ -14,9 +14,11 @@ Intended for Raspberry Pi embedded Linux.
 
 ## Short description
 
-This application is a set of micro services, communicating using ZeroMQ, and build on a customized Buildroot image for the Raspberry Pi Zero. The core micro services are "source control", "volume control" and "remote control". Additional micro services are a "quick-play/plugin controller", "flask web server", "udisks controller" and "display controller". Additional input, output or general purpose plugins are easily added.
+This application is essentially a set of Python micro services, communicating with eachother using ZeroMQ, build on top of a customized Buildroot image for the Raspberry Pi Zero.
 
 ## Features
+
+"Out of the Box" features:
 
  + Supports (simple) display output (but this is completely optional)
  + Supports a wide range of music sources
@@ -25,12 +27,11 @@ This application is a set of micro services, communicating using ZeroMQ, and bui
  + Supports a wide range of music "sources" out of the box
  + Supports third-party plugins to support additional sources or input controls
  + Supports character displays
-
+ + Active crossover filters
 PLANNED:
- - Active crossover filters
  - CAN-bus input and output
 
-###  List of supported sources:
+####  List of supported sources:
  + FM radio (based on ... chipset)
  + Internet radio
  + Internal SD card
@@ -43,7 +44,7 @@ PLANNED:
  - NFS (low prio)
  ? AirPlay (does this still exist?)
 
-### List of supported input methods:
+#### List of supported input methods:
  + Resistor network style remote controls, Sony RM-X2S pre-configured.
  + Android/iPhone: MPD client
  
@@ -58,6 +59,53 @@ PLANNED:
  - Incremental Encoder for Volume, Bass, Treble and/or balance (via GPIO)
  - Incremental Encoder w/button(s) (BMW iDrive style) (via GPIO)
  - Android/iPhone (full control, beyond only MPD)
+
+## Modular
+
+Core micro services:
+ - Source Controller
+ - ZeroMQ "forwarder" (simple service that binds the ZMQ pub and sub ports)
+ 
+Other important micro services are:
+ - Volume Control (pulse or jack)
+ - Remote Control(s)
+ - RESTful Web Server
+ - QuickPlay (script only?) /Plugin Controller (?)
+ - UDisks
+ - Display output
+
+Additional input, output or general purpose plugins are easily added.
+
+### Source Controller
+
+Selects audio source and controls playback.
+Sources are YAPSY plugins (Python).
+
+### Volume Controller
+
+PulseAudio Volume Controller has been abandoned in favor of Jack.
+
+### Remote Controllers
+
+Connects any type of input.
+Remote Controls are (Python) daemons.
+
+### RESTful Web Server
+
+A Python Flask+Bootstrap http daemon. This webserver provides an easy way to configure the system (if it has WiFi or ethernet), it also provides an API for third party apps. TODO: Android Retrofit app.
+
+### Quick Play
+
+Python script to resume a previous audio source as quickly as possible.
+
+### UDisks
+
+Daemon that listens to the UDisks D-Bus daemon and forwards drive (dis)connect events over MQ.
+
+### Display
+
+Output (using plugins?????) Daemon.
+
 
 ### PLUGINS
 
@@ -95,6 +143,8 @@ Location: /mnt/PIHU_CONFIG
 Read at boot. Write at shutdown. Optionally write every n seconds. ~to be refined...
 
 #### <source>/settings.json
+
+
 Operational settings per source
 
 #### <source>/<key>.p
