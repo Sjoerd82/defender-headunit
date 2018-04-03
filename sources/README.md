@@ -168,6 +168,11 @@ Arguments: `Plugin Name, Logger`
 Return: `True`, if all is OK
 `False` if not (source will not be activated)
 
+#### add_subsource()
+
+Implementing this function makes it possible to add subsources on the fly.
+Useful when the subsources are dynamic (for example: removable media).
+
 #### post_add(sourceconfig)
 
 Called after adding the plugin.
@@ -177,7 +182,6 @@ Return: Currently not being checked
 
 This is a good place to populate any subsources dynamically.
 sourceconfig contains the complete configuration, including the parts from the main configuration (configuration.json).
-
 
 #### check()
 
