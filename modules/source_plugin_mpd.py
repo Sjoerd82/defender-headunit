@@ -17,67 +17,114 @@ class MpdSourcePlugin(SourcePlugin):
 		super(MpdSourcePlugin, self).__init__()
 		self.mpdc = None
 
-	def init(self, plugin_name, logger=None):
-		super(MpdSourcePlugin, self).init(plugin_name,logger)
+	def on_init(self, plugin_name, sourceCtrl, logger=None):
+		super(MpdSourcePlugin, self).on_init(plugin_name,sourceCtrl,logger)
 		self.mpdc = MpdController(self.logger)
 	
-	#def check(self, **kwargs):
-	#	super(MpdSourcePlugin, self).check(**kwargs)
-	# inherited from SourcePlugin (source_plugin.py)
+	def on_activate(self, subindex):
 		
-	def check_mpd(self, locations, ix, ssIx):
+		index = self.sourceCtrl.index('name',self.name)
+		subsource = self.sourceCtrl.subsource( self.index, subindex )
+		
+		mpd_dir = None
+		mpd_type = None
+		
+		if 'mpd_dir' in subsource:
+			mpd_dir = subsource['mpd_dir']
+		
+		if 'mpd_streams' in subsource:
+			streams = subsource['mpd_streams']
+		
+		playlistCount = 0
+		
+		if mpd_dir is not None:
+			# load playlist
+			# NOT ANYMORE - OR TODO: MPD playlist for local music *should* be updated by inotifywait.. but, it's a bit tricky, so test for it..
+			# populate playlist
+			self.mpdc.pls_clear()
+			playlistCount = self.mpdc.pls_pop_dir(mpd_dir)
+
+		if mpd_streams is not None:
+			self.mpdc.pls_clear()
+			playlistCount = self.mpdc.pls_pop_streams(streams)
+			
+		
+	def check_availability(self, **kwargs):
 	
-		#locations = []							# list of tuples; index: 0 = mountpoint, 1 = mpd dir, 2 = availability.
+		subindex = kwargs['subindex']
+	
+		locations = []							# list of tuples; index: 0 = mountpoint, 1 = mpd dir, 2 = availability.
 		subsource_availability_changes = []		# list of changes
-
-		# check mountpoint(s)
-		for location in locations:
 		
-			mountpoint = location[0]
-			mpd_dir = location[1]
-			original_availability = location[2]
-			new_availability = None
-
-			self.printer('Checking local folder: {0}, current availability: {1}'.format(mountpoint,original_availability))
+		if subindex is None:
+			subsources = sourceCtrl.subsource_all( self.index )
+			i = 0
+		else:
+			subsources = list(sourceCtrl.subsource( self.index, subindex ))
+			i = subindex
+		
+		for subsource in subsources:
+			mountpoint = subsource['mountpoint']			
+			cur_availability = subsource['available']
+			self.printer('Checking local folder: {0}, current availability: {1}'.format(mountpoint,cur_availability))
+			new_availability = check_mpddb_mountpoint(mountpoint, createdir=True, waitformpdupdate=True)
+			self.printer('Checked local folder: {0}, new availability: {1}'.format(mountpoint,new_availability))
 			
-			# check if the dir exists:
-			if not os.path.exists(mountpoint):
-				self.printer(" > Local music directory does not exist.. creating {0}".format(mountpoint),LL_WARNING)
+			if new_availability is not None and new_availability != cur_availability:
+				subsource_availability_changes.append({"index":self.index,"subindex":i,"available":new_availability})			
+			
+			i += 1
+		
+		return subsource_availability_changes	
+	
+	def get_mpd_dir(self, mountpoint):
+		"""Return the directory, as seen from MPD (cut off the mpd root)"""
+		mpd_root = '/media'	# TODO -- ASSUMING /media
+		mpd_dir = mountpoint[len(mpd_root)+1:]
+		return mpd_dir
+	
+	def check_mpddb_mountpoint(self, mountpoint, createdir=False, waitformpdupdate=False):
+		mpd_dir = self.get_mpd_dir(mountpoint)
+		new_availability = None
+		
+		# check if the dir exists:
+		if not os.path.exists(mountpoint):
+			self.printer(" > Directory does not exist, marking unavailable",LL_WARNING)
+			if createdir:
+				self.printer(" > Creating directory {0}".format(mountpoint))
 				os.makedirs(mountpoint)
-				if not os.path.exists(mountpoint):
-					self.printer(" > [FAIL] Could not create directory",LL_WARNING)
-					
-				# obviously there will no be any music in that new directory, so marking it unavailable..
+			if not os.path.exists(mountpoint) and createdir:
+				self.printer(" > [FAIL] Could not create directory!",LL_WARNING)
+				
+			# obviously there will no be any music in that new directory, so marking it unavailable..
+			new_availability = False
+			
+		else:			
+			if not os.listdir(mountpoint):
+				self.printer(" > Directory is empty, marking unavailable.",LL_WARNING)
 				new_availability = False
-				
 			else:
+				self.printer(" > Directory present and has files.",LL_INFO)
 				
-				if not os.listdir(mountpoint):
-					self.printer(" > Local music directory is empty.",LL_WARNING)
-					new_availability = False
-				else:
-					self.printer(" > Local music directory present and has files.",LL_INFO)
+				# check if this folder exists in the MPD database, update db if not.
+				if not self.mpdc.is_dbdir( mpd_dir ):
+					self.printer(" > Running MPD update for this directory.. (wait=True) ALERT! LONG BLOCKING OPERATION AHEAD...")
+					self.mpdc.update_db( mpd_dir, waitformpdupdate )
 					
+					# re-check
 					if not self.mpdc.is_dbdir( mpd_dir ):
-						self.printer(" > Running MPD update for this directory.. (wait=True) ALERT! LONG BLOCKING OPERATION AHEAD...")
-						self.mpdc.update_db( mpd_dir, True )	#TODO: don't wait! set available on return of update..
-						if not self.mpdc.is_dbdir( mpd_dir ):
-							self.printer(" > Nothing to play marking unavailable...")
-							new_availability = False
-						else:
-							self.printer(" > Music found after updating")
-							new_availability = True
+						self.printer(" > Nothing to play, marking unavailable...")
+						new_availability = False
 					else:
+						self.printer(" > Music found after updating")
 						new_availability = True
-			
-				if new_availability is not None and new_availability != original_availability:
-					subsource_availability_changes.append({"index":ix,"subindex":ssIx,"available":new_availability})
-
-			ssIx+=1
-			
-		return subsource_availability_changes
+				else:
+					new_availability = True
+		return new_availability
 	
 	def play(self, **kwargs): #sourceCtrl, index, subindex, resume={}): # , **kwargs ):
+		""" Play MPD
+		"""
 		self.printer('Start playing')
 		
 		index = kwargs['index']
@@ -92,19 +139,27 @@ class MpdSourcePlugin(SourcePlugin):
 		#ix = sourceCtrl.getIndex('name','locmus')
 		#arIx = sourceCtrl.index_current()
 		#subsource = sourceCtrl.subsource( arIx[0], arIx[1] )# subSourceIx )
-		subsource = sourceCtrl.subsource( index, subindex )# subSourceIx )
+		subsource = sourceCtrl.subsource( index, subindex )
 		sLocalMusicMPD = subsource['mpd_dir']
 		sLabel = subsource['label']
 		
-		#
-		# load playlist
-		#
+		playlistCount =0
 		
-		# NOT ANYMORE - OR TODO: MPD playlist for local music *should* be updated by inotifywait.. but, it's a bit tricky, so test for it..
+		# IF we have an mpd_dir:
+		if sLocalMusicMPD not is None:
+			#
+			# load playlist
+			#
+			
+			# NOT ANYMORE - OR TODO: MPD playlist for local music *should* be updated by inotifywait.. but, it's a bit tricky, so test for it..
 
-		# populate playlist
-		self.mpdc.pls_clear()
-		playlistCount = self.mpdc.pls_pop(sLocalMusicMPD)
+			# populate playlist
+			self.mpdc.pls_clear()
+			playlistCount = self.mpdc.pls_pop(sLocalMusicMPD)
+		elif streamsssssss:
+			self.mpdc.pls_clear()
+			#playlistCount = self.mpdc.pls_pop(xxx)
+			
 
 		# check if succesful...
 		if playlistCount == "0":

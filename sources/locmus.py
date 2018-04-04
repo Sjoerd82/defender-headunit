@@ -4,6 +4,9 @@
 # 2018-03-27
 #
 # Plays local music folder(s), as defined in the main configuration.
+#
+
+#
 # Extends MPDSOURCEPLUGIN
 #
 
@@ -18,80 +21,73 @@ class MySource(MpdSourcePlugin,IPlugin):
 
 	def __init__(self):
 		super(MySource,self).__init__()
+		self.index = None
 
-	def init(self, plugin_name, logger=None):
-		super(MySource, self).init(plugin_name,logger)	# Executes init() at MpdSourcePlugin		
+	# TODO: CAN WE LEAVE THIS OUT? WILL THEN EXECUTE THE on_init on the derived class, right?
+	def on_init(self, plugin_name, sourceCtrl, logger=None):
+		super(MySource, self).init(plugin_name,logger)	# Executes init() at MpdSourcePlugin
 		return True
 
-	def post_add(self, sourceCtrl, sourceconfig):
+	def on_add(self, sourceCtrl, sourceconfig):
 		"""Executed after a source is added by plugin manager.
 		Executed by: hu_source.load_source_plugins().
 		Return value is not used.
-		"""
 		
-		# 'local_media' contains subsources
+		LOCMUS: Add predefined subsources
+		Subsources for this source are pre-defined in the main configuration ('local_media').
+		"""
+		self.index = sourceCtrl.index('name',self.name)	#name is unique
+		if self.index is None:
+			self.printer("Plugin {0} does not exist".format(self.name),level=LL_ERROR)
+			return False
+		
 		if 'local_media' in sourceconfig:
-			ix = sourceCtrl.index('name',self.name)	#name is unique
-			if ix is None:
-				print "Plugin {0} does not exist".format('locmus')
-				return False
 
-			# add all locations as configured
 			for local_media in sourceconfig['local_media']:
-				#locmus_add( subsource['musicdir']
-				#		   ,subsource['musicdir_mpd']
-				#		   ,sourceCtrl )
-				# construct the subsource
-				subsource = {}
-				subsource['name'] = 'locmus'
-				subsource['displayname'] = 'local: ' + local_media['mountpoint'] #dir
-				subsource['order'] = 0			# no ordering
-				subsource['mountpoint'] = local_media['mountpoint'] #dir
-				subsource['mpd_dir'] = local_media['mpd_dir'] #mpd_dir
-				subsource['label'] = local_media['mpd_dir'] #mpd_dir
-				#subsource['uuid'] = None		# not relevant for local sources
-				sourceCtrl.add_sub( ix, subsource )
+				mountpoint = local_media['mountpoint']
+				mpd_dir = local_media['mpd_dir']
+				self.add_subsource(mountpoint, mpd_dir, sourceCtrl)
 
 		return True
 
-	#def check:
-	# inherited from MpdSourcePlugin (see: source_plugin_mpd.py)
-	
-	
-	# Source Check: Return True/False (available/not available)
-	# Optionally, provide list of mountpoint(s) to check
-	#def locmus_check( sourceCtrl, mountpoint=None ):
-	'''
-	def check( self, sourceCtrl, subSourceIx=None ):
-		super(MySource, self).check(sourceCtrl, subSourceIx)
-		"""	Check source
+	def add_subsource(self, mountpoint, mpd_dir, sourceCtrl):
+		subsource = {}
+		subsource['displayname'] = 'local: ' + mountpoint
+		subsource['mountpoint'] = mountpoint
+		subsource['mpd_dir'] = mpd_dir
+		subsource['label'] = mpd_dir
+		sourceCtrl.add_sub( self.index, subsource )
+
+	def check_availability( self, subindex=None ):
+		"""Executed after post_add, and may occasionally be called.
+		If a subindex is given then only check that subsource.
 		
-			Checks all configured mountpoints
-			if SUBSOURCE INDEX given, will only check mountpoint of that subsource index.
-			Returns a list with dict containing changed subsources
+		This method updates the availability.
 		
-			TODO: check if new mountpoints were added in the configuration.
+		Returns: List of changes in availability.
+		
+		LOCMUS: Check if local directory exists and has music in the MPD database
 		"""
-		print "CHECK @ LocalMusic"
-		ix = sourceCtrl.index('name','locmus')	# source index
 		locations = []							# list of tuples; index: 0 = mountpoint, 1 = mpd dir, 2 = availability.
 		subsource_availability_changes = []		# list of changes
 		
-		if subSourceIx is None:
-			subsources = sourceCtrl.subsource_all( ix )
-			for subsource in subsources:
-				locations.append( (subsource['mountpoint'], subsource['mpd_dir'], subsource['available']) )
-			ssIx = 0
+		if subindex is None:
+			subsources = sourceCtrl.subsource_all( self.index )
+			i = 0
 		else:
-			subsource = sourceCtrl.subsource( ix, subSourceIx )
-			locations.append( (subsource['mountpoint'], subsource['mpd_dir'], subsource['available']) )
-			ssIx = subSourceIx
-
-		# check mountpoints
-		subsource_availability_changes = self.check_mpd(locations, ix, ssIx)
+			subsources = list(sourceCtrl.subsource( self.index, subindex ))
+			i = subindex
+		
+		for subsource in subsources:
+			mountpoint = subsource['mountpoint']			
+			cur_availability = subsource['available']
+			self.printer('Checking local folder: {0}, current availability: {1}'.format(mountpoint,cur_availability))
+			new_availability = check_mpddb_mountpoint(mountpoint, createdir=True, waitformpdupdate=True)
+			self.printer('Checked local folder: {0}, new availability: {1}'.format(mountpoint,new_availability))
+			
+			if new_availability is not None and new_availability != cur_availability:
+				subsource_availability_changes.append({"index":self.index,"subindex":i,"available":new_availability})			
+			
+			i += 1
 		
 		return subsource_availability_changes
-
-	'''
-		
-	

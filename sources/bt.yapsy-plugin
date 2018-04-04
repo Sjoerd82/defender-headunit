@@ -1,0 +1,8 @@
+[Core]
+Name = bt
+Module = bt
+
+[Documentation]
+Author = Sjoerd Venema
+Version = 1.0
+Description = Bluetooth

@@ -1,105 +1,47 @@
-#********************************************************************************
 #
-# Source: AUX / Line-In
+# SOURCE PLUGIN: Line-In
+# Venema, S.R.G.
+# 2018-04-03
+#
+# AUX / Line-In
 #
 
+#
+# Extends SourcePlugin
+#
+
+from yapsy.IPlugin import IPlugin
 from modules.hu_utils import *
+from modules.source_plugin import SourcePlugin
 
-# Logging
-sourceName='line'
-LOG_TAG = 'LINE'
-LOGGER_NAME = 'line'
+class MySource(SourcePlugin,IPlugin):
 
-class sourceClass():
+	def __init__(self):
+		super(MySource,self).__init__()
 
-	# output wrapper
-	def __printer( self, message, level=LL_INFO, tag=LOG_TAG):
-		self.logger.log(level, message, extra={'tag': tag})
-
-	def __init__( self, logger ):
-		self.logger = logger
+	def on_add(self, sourceCtrl, sourceconfig):
+		"""Executed after a source is added by plugin manager.
+		Executed by: hu_source.load_source_plugins().
+		Return value is not used.
 		
-	def __del__( self ):
-		print('Source Class Deleted {0}'.format(sourceName))
-		
-	def init( self, sourceCtrl ):
-		self.__printer('Initializing...', level=15)
-		return True
-
-	def check( self, sourceCtrl, subSourceIx=None  ):
-		"""	Check source
-		
-			Checks to see if AUX is available (SUBSOURCE INDEX will be ignored)
-			Returns a list with dict containing changes in availability
-			
-			TODO: Will now simply return TRUE.
+		LINE: Currently only ONE LINE-IN supported.
 		"""
-		self.__printer('CHECK availability...')
-
-		subsource_availability_changes = []
-		new_availability = True
+		index = sourceCtrl.index('name',self.name)	#name is unique
+		if index is None:
+			print "Plugin {0} does not exist".format(self.name)
+			return False
 		
-		ix = sourceCtrl.index('name','alsa')	# source index
-		line_source = sourceCtrl.source(ix)		
-		original_availability = line_source['available']
-		
-		if new_availability is not None and new_availability != original_availability:
-			sourceCtrl.set_available( ix, new_availability )
-			subsource_availability_changes.append({"index":ix,"available":new_availability})
-		
-		return subsource_availability_changes
-		
-		
-	def play( self, sourceCtrl, subSourceIx=None ):
-		self.__printer('Start playing')
-		return True	
-
-	def stop( self ):
-		self.__printer('Stop')
+		self.add_subsource(index,self,index)
 		return True
 		
-	def next( self ):
-		self.__printer('Not available')
-		return False
-		
-	def prev( self ):
-		self.__printer('Not available')
-		return False
+	def add_subsource(self, sourceCtrl, index):
+		subsource = {}
+		subsource['displayname'] = 'AUX'
+		sourceCtrl.add_sub( index, subsource )
 
-	def pause( self, mode ):
-		self.__printer('Pause. Mode: {0}'.format(mode))
-		#TODO IMPLEMENT
-		return True
-
-	def random( self, mode ):
-		self.__printer('Random. Mode: {0}'.format(mode))
-		#TODO IMPLEMENT
-		return True
-
-	def seekfwd( self ):
-		self.__printer('Seek FFWD')
-		#TODO IMPLEMENT
-		return True
-
-	def seekrev( self ):
-		self.__printer('Seek FBWD')
-		#TODO IMPLEMENT
-		return True
-
-	def update( self ):
-		self.__printer('Update not supported')
-		return False
-
-	def get_details():
-		return False
-
-	def get_state():
-		return False
-
-	def get_playlist():
-		return False
-
-	#def get_folders():
-
-	def source_get_media_details():
-		return False
+	def get_details(self, **kwargs ):
+		details = {}
+		track = copy.deep_copy(self.empty_track)
+		track['display'] = "AUX"
+		details['state'] = self.state
+		return details

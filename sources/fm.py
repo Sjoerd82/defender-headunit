@@ -23,14 +23,37 @@ class MySource(SourcePlugin,IPlugin):
 	def __init__(self):
 		super(MySource,self).__init__()
 	
+	#def on_init
+	#	super(MySource, self).init(plugin_name,sourceCtrl,logger)
+	#	return True
+	
+	def on_add(self, sourceCtrl, sourceconfig):
+		"""Executed after a source is added by plugin manager.
+		Executed by: hu_source.load_source_plugins().
+		Return value is not used.
+		
+		FM: No subsources.
+		"""
+		index = sourceCtrl.index('name',self.name)	#name is unique
+		if index is None:
+			print "Plugin {0} does not exist".format(self.name)
+			return False
+		
+		self.add_subsource(index,self,index)
+		return True
+
+	def add_subsource(self, sourceCtrl, index):
+		subsource = {}
+		subsource['displayname'] = 'FM'
+		sourceCtrl.add_sub( index, subsource )
+		
 	def play (self, **kwargs):
+		super(MySource,self).play()
 		self.printer('Start playing FM radio...')
-		self.state['state'] = 'playing'
 		return True	
 
 	def stop( self, **kwargs ):
-		self.printer('Stop CLASS!')
-		self.state['state'] = 'stopped'
+		super(MySource,self).stop()
 		return True
 		
 	def pause( self, mode, **kwargs ):
@@ -56,7 +79,7 @@ class MySource(SourcePlugin,IPlugin):
 	def get_details(self, **kwargs ):
 		self.printer('Details ?')
 		details = {}
-		track = {'display':None,'rds':None,'artist':None,'composer':None,'performer':None,'album':None,'albumartist':None,'title':None,'length':None,'elapsed':None,'track':None,'disc':None,'genre':None,'date':None}
+		track = copy.deep_copy(self.empty_track)
 		track['display'] = "Playing FM"
 		details['track'] = track
 		details['state'] = self.state

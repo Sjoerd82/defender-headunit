@@ -1,0 +1,8 @@
+[Core]
+Name = smb
+Module = smb
+
+[Documentation]
+Author = Sjoerd Venema
+Version = 1.0
+Description = SMB Network Shares

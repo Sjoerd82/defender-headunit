@@ -6,6 +6,7 @@
 # This BASE CLASS contains shared code and minimal implementation
 # of a source plugin.
 #
+
 DEFAULT_CONFIG_FILE = '/etc/configuration.json'
 
 from modules.hu_utils import *
@@ -14,6 +15,7 @@ class SourcePlugin(object):
 
 	def __init__(self):
 		self.name = None
+		self.sourceCtrl = None
 		self.logger = None
 		
 		self.state = {}
@@ -21,15 +23,26 @@ class SourcePlugin(object):
 		self.state['random'] = None
 		self.state['repeat'] = None
 		
-	def init(self, plugin_name, logger):
+		self.empty_track = {'display':None,'rds':None,'artist':None,'composer':None,'performer':None,'album':None,'albumartist':None,'title':None,'length':None,'elapsed':None,'track':None,'disc':None,'genre':None,'date':None}
+		
+	def on_init(self, plugin_name, sourceCtrl, logger):
 		self.name = plugin_name
+		self.sourceCtrl = sourceCtrl
 		self.logger = logger
 		return True
 
-	def post_add(self, sourceCtrl, sourceconfig):
-		pass
+	def on_add(self, sourceconfig):
+		return False
 
-	def check(self, **kwargs):
+	def on_activate(self, subindex):
+		return False
+
+	def add_subsource(self, **kwargs):
+		# not implemented
+		# We could implement a default behaviour in which a subsource dict is passed to be added
+		return False
+	
+	def check_availability(self, **kwargs):
 		"""	Check source
 		Returns LIST containing *all* subsources as available
 		"""
@@ -84,11 +97,11 @@ class SourcePlugin(object):
 		return config
 			
 	def play(self, **kwargs):
-		# not implemented
+		self.state['state'] = 'playing'
 		return False
 		
 	def stop(self, **kwargs):
-		# not implemented
+		self.state['state'] = 'stopped'
 		return False
 		
 	def next(self, **kwargs):		
@@ -100,7 +113,7 @@ class SourcePlugin(object):
 		return False
 
 	def pause(self, **kwargs):
-		# not implemented
+		#not implemented
 		return False
 
 	def random(self, **kwargs):

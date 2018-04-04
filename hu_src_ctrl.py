@@ -901,7 +901,9 @@ def printSummary():
 		# get subsources
 		subsources = sc_sources.subsource_all(i)
 		
-		if not subsources:
+		if source['enabled'] = False:
+			printer(' {0} {1:2d}.  {2:17} {3} {4:20}'.format(" ",i,source['displayname'],colorize("not available",'dark_gray'),colorize("disabled",'dark_gray')), tag='')		
+		elif not subsources:
 			printer(' {0} {1:2d}.  {2:17} {3} {4:20}'.format(" ",i,source['displayname'],colorize("not available",'dark_gray'),colorize("no subsources",'dark_gray')), tag='')
 		
 		j = 0

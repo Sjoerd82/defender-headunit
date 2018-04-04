@@ -4,6 +4,11 @@
 # 2018-03-27
 #
 # Plays everything mounted on /media, except in PIHU_*-folders
+# Will create a subsource when a USB drive is inserted using the UDisks service.
+# Will not remove subsources of drives that are removed, will simply mark them unavailable.
+#
+
+#
 # Extends MPDSOURCEPLUGIN
 #
 
@@ -20,76 +25,120 @@ class MySource(MpdSourcePlugin,IPlugin):
 	def __init__(self):
 		super(MySource,self).__init__()
 
-	def init(self, plugin_name, logger=None):
-		super(MySource, self).init(plugin_name,logger)	# Executes init() at MpdSourcePlugin		
+	def on_init(self, plugin_name, sourceCtrl, logger=None):
+		super(MySource, self).init(plugin_name,sourceCtrl,logger)	# Executes init() at MpdSourcePlugin
 		return True
 
-	def post_add(self, sourceCtrl, sourceconfig):
+	def on_add(self, sourceCtrl, sourceconfig):
 		"""Executed after a source is added by plugin manager.
 		Executed by: hu_source.load_source_plugins().
 		Return value is not used.
 		
-		This Post-Add add all mountpoints under /media, but does not check anything.
+		MEDIA: This adds all mountpoints under /media, but does not check anything.
 		"""
-		
-		lst_mountpoints = get_mounts( mp_exclude=['/','/mnt/PIHU_APP','/mnt/PIHU_CONFIG','/media/PIHU_DATA','/media/PIHU_DATA_'], fs_exclude=['cifs'] )
-		
-		if not lst_mountpoints:
-			self.printer(' > No removable media found')
-		else:
-			self.printer(' > Found {0} removable media'.format(len(lst_mountpoints)))
-		
-		for mount in lst_mountpoints:
-			
-			# get mountpoint and label
-			mountpoint = mount['mountpoint']
-			sUsbLabel = os.path.basename(mount['mountpoint']).rstrip('\n')
-			
-			# get uuid
-			try:
-				uuid = subprocess.check_output("blkid "+mount['spec']+" -s PARTUUID -o value", shell=True).rstrip('\n')
-			except:
-				self.printer('Could not get a partition UUID for {0}'.format(mount['spec']),level=LL_ERROR)
-				uuid = ''
-				
-			# add subsource
-			self.__media_add_subsource( mountpoint
-							           ,sUsbLabel
-							           ,uuid
-									   ,mount['mountpoint']
-							           ,sourceCtrl)
 
-		self.printer('Initializing... DONE')		
+		index = sourceCtrl.index('name',self.name)	#name is unique
+		if index is None:
+			print "Plugin {0} does not exist".format(self.name)
+			return False
+		
+		# Discover + Add
+		mountpoints = self.discover(sourceCtrl,add_subsource=True)
+		
 		return True
 
+	def on_activate(self, subindex):
+		return False
 
-	# def check()
-	
-	# -------------------------------------------------------------------------
-	
-	def __media_add_subsource( self, dir, label, uuid, device, sourceCtrl ):
-		# get index (name is unique)
-		ix = sourceCtrl.index('name','media')
-		
-		# construct the subsource
+	def add_subsource(self, mountpoint, label, uuid, device, sourceCtrl, index):
 		subsource = {}
-		subsource['name'] = 'media'
-		subsource['displayname'] = 'media: ' + dir
+		subsource['displayname'] = 'media: ' + mountpoint
 		subsource['order'] = 0		# no ordering
-		subsource['mountpoint'] = dir
-		subsource['mpd_dir'] = dir[7:]		# TODO -- ASSUMING /media
+		subsource['mountpoint'] = mountpoint
+		subsource['mpd_dir'] = mountpoint[7:]		# TODO -- ASSUMING /media
 		subsource['label'] = label
 		subsource['uuid'] = uuid
 		subsource['device'] = device
+		sourceCtrl.add_sub(index, subsource)
 
-		sourceCtrl.add_sub(ix, subsource)
+	def check_availability( self, subindex=None ):
+		"""Executed after post_add, and may occasionally be called.
+		If a subindex is given then only check that subsource.
+		
+		This method updates the availability.
+		
+		Returns: List of changes in availability.
+		
+		MEDIA: Check if subsource exists and has music in the MPD database
+		"""
+		sourceCtrl = self.sourceCtrl
+		locations = []							# list of tuples; index: 0 = mountpoint, 1 = mpd dir, 2 = availability.
+		subsource_availability_changes = []		# list of changes
+		
+		if subindex is None:
+			subsources = sourceCtrl.subsource_all( self.index )
+			i = 0
+		else:
+			subsources = list(sourceCtrl.subsource( self.index, subindex ))
+			i = subindex
+		
+		for subsource in subsources:
+			mountpoint = subsource['mountpoint']			
+			cur_availability = subsource['available']
+			self.printer('Checking local folder: {0}, current availability: {1}'.format(mountpoint,cur_availability))
+			new_availability = check_mpddb_mountpoint(mountpoint, createdir=True, waitformpdupdate=True)
+			self.printer('Checked local folder: {0}, new availability: {1}'.format(mountpoint,new_availability))
+			
+			if new_availability is not None and new_availability != cur_availability:
+				subsource_availability_changes.append({"index":self.index,"subindex":i,"available":new_availability})			
+			
+			i += 1
+		
+		return subsource_availability_changes
 	
-	
-	def zz__media_get_media_mountpoints():
+	# -------------------------------------------------------------------------
+
+	def discover(self, sourceCtrl, add_subsource=True):
 		"""Returns a list of everything mounted on /media, but does not check if it has music.
 		Returned is a 2-dimension list
+		Mountpoints already present will be omitted.
 		"""
 
+		mountpoints = get_mounts( mp_exclude=['/','/mnt/PIHU_APP','/mnt/PIHU_CONFIG','/media/PIHU_DATA','/media/PIHU_DATA_'], fs_exclude=['cifs'] )
+		if not mountpoints:
+			self.printer(' > No removable media found')
+		else:
+			self.printer(' > Found {0} removable media'.format(len(mountpoints)))
+
+		i=0
+		for mount in mountpoints:
+			mountpoint = mount['mountpoint']
+			device = mount['mountpoint']
+			label = os.path.basename(mount['mountpoint']).rstrip('\n')
+			
+			# only add if not already present
+			subindex = sourceCtrl.subindex('mountpoint',mountpoint)
+			if subindex is None:
+				# get uuid
+				try:
+					uuid = subprocess.check_output("blkid "+mount['spec']+" -s PARTUUID -o value", shell=True).rstrip('\n')
+				except:
+					self.printer('Could not get a partition UUID for {0}'.format(mount['spec']),level=LL_ERROR)
+					uuid = ''
+								
+				self.add_subsource( mountpoint
+								   ,label
+								   ,uuid
+								   ,device
+								   ,sourceCtrl
+								   ,index)
+			else:
+				del mountpoints[i]
+			
+			i+=1
+			
+		return mountpoints
+		
 		"""
 		try:
 			self.__printer('Check if anything is mounted on /media...')
@@ -111,37 +160,8 @@ class MySource(MpdSourcePlugin,IPlugin):
 		# TODO: this shouldn't be hardcoded:
 		lst_mountpoints[:] = [tup for tup in lst_mountpoints if (not tup[1] == '/media/PIHU_DATA' and not tup[0].startswith('//'))]
 		"""
-		# TODO: remove hardcoded paths
-		lst_mountpoints = get_mounts( mp_exclude=['/','/mnt/PIHU_APP','/mnt/PIHU_CONFIG','/media/PIHU_DATA','/media/PIHU_DATA_'], fs_exclude=['cifs'] )
-		
-		if not lst_mountpoints:
-			self.__printer(' > No removable media found')
-		else:
-			#lst_mountpoints[:] = (x for x in somelist if determine(x))
-			#yourList[:] = itertools.ifilter(do_the_magic, yourList)
-			# filter out everything that's not mounted on /media or is smb:
-			"""
-			i=0
-			#for i, mp in enumerate(lst_mountpoints):
-			for mp in lst_mountpoints:
-				print mp['mountpoint']
-				print mp['fs']
-				if not mp['mountpoint'].startswith('/media/') or mp['fs'] == 'cifs':
-					print "DELETE: {0}".format(mp['mountpoint'])
-					#del lst_mountpoints[i]
-					#lst_mountpoints.remove( mp )
-					
-				i+=1
-			"""
-			# check if anything left
-			if not lst_mountpoints:
-				self.__printer(' > No removable media found')
-			else:
-				self.__printer(' > Found {0} removable media'.format(len(lst_mountpoints)))
-		
-		print lst_mountpoints
-		return lst_mountpoints
-		
+		return True	
+
 	def zz_add_subsource( self, sourceCtrl, parameters ):
 		
 		has_mountpoint = False
@@ -245,263 +265,14 @@ class MySource(MpdSourcePlugin,IPlugin):
 		ret = sourceCtrl.add_sub(index, subsource)
 		return ret
 	
-	def zz_init( self, sourceCtrl ):
-		self.__printer('Initializing...')
-		
-		# do a general media_check to find any mounted drives
-		#media_check( label=None )
-		
-		# add all locations as configured
-		arMedia = media_getAll()
-		for mount in arMedia:
-			
-			# get mountpoint and label
-			mountpoint = mount['mountpoint']
-			sUsbLabel = os.path.basename(mount['mountpoint']).rstrip('\n')
-			
-			# get uuid
-			try:
-				uuid = subprocess.check_output("blkid "+mount['spec']+" -s PARTUUID -o value", shell=True).rstrip('\n')
-			except:
-				self.__printer('Could not get a partition UUID for {0}'.format(mount['spec']),level=LL_ERROR)
-				uuid = ''
-				
-			# add subsource
-			self.__media_add_subsource( mountpoint
-							           ,sUsbLabel
-							           ,uuid
-									   ,mount['mountpoint']
-							           ,sourceCtrl)
-
-		self.__printer('Initializing... DONE')
-		return True
-
-	#  media_check with a "label" parameter checks specific label on /media
-	def Xcheck( self, sourceCtrl, subSourceIx=None  ):
-		"""	Check source
-		
-			Checks all mountpoints of /media
-			if SUBSOURCE INDEX given, will only check mountpoint of that subsource index
-			Returns a list with dict containing changed subsources
-		
-			Q: Look for new mountpoints?	Should be handled by udisks...
-		"""
-		
-		self.printer('Checking availability...')
-		# QUESTION.... SHOULD THIS MEDIA_CHECK GO LOOKING FOR POSSIBLE NEW MOUNTS?????
-		"""
-		try:
-			print(' .....  Check if anything is mounted on /media...')
-			# do a -f1 for devices, -f3 for mountpoints
-			grepOut = subprocess.check_output(
-				"mount | grep /media | cut -d' ' -f3",
-				shell=True,
-				stderr=subprocess.STDOUT,
-			)
-		except subprocess.CalledProcessError as err:
-			print('ERROR:', err)
-			pa_sfx('error')
-			return False
-		
-		arMedia = grepOut.split()
-		"""
-
-		ix = sourceCtrl.index('name','media')	# index
-		locations = []							# list of tuples; index: 0 = mountpoint, 1 = mpd dir, 2 = availability.
-		subsource_availability_changes = []		# list of changes
-						
-		if subSourceIx == None:
-			subsources = sourceCtrl.subsource_all( ix )
-			for subsource in subsources:
-				locations.append( (subsource['mountpoint'], subsource['mpd_dir'], subsource['available']) )
-			ssIx = 0
-		else:
-			subsource = sourceCtrl.subsource( ix, subSourceIx )
-			locations.append( (subsource['mountpoint'], subsource['mpd_dir'], subsource['available']) )
-			ssIx = subSourceIx
-			
-		# check mountpoint(s)
-		for location in locations:
-			mountpoint = location[0]
-			mpd_dir = location[1]
-			original_availability = location[2]
-			new_availability = None
-
-			self.printer('Media folder: {0}'.format(mountpoint))
-			if not os.listdir(mountpoint):
-				self.printer(" > Removable music directory is empty.",LL_WARNING)
-				new_availability = False
-			else:
-				self.printer(" > Removable music directory present and has files.",LL_INFO)
-				if not self.mpdc.is_dbdir( mpd_dir ):
-					self.printer(" > Running MPD update for this directory.. ALERT! LONG BLOCKING OPERATION AHEAD...")
-					self.mpdc.update_db( mpd_dir, True )	#TODO: don't wait! set available on return of update..
-					if not self.mpdc.is_dbdir( mpd_dir ):
-						self.printer(" > Nothing to play marking unavailable...")
-						new_availability = False
-					else:
-						self.__printer(" > Music found after updating")
-						new_availability = True
-				else:
-					new_availability = True
-
-			if new_availability is not None and new_availability != original_availability:
-				sourceCtrl.set_available( ix, new_availability, ssIx )
-				subsource_availability_changes.append({"index":ix,"subindex":ssIx,"available":new_availability})
-
-			ssIx+=1
-
-		return subsource_availability_changes
-			
-		"""
-		
-		# Return True/False for general check (when label is None)
-		if label == None:
-			if len(arMedia) > 0:
-				print(' .....  /media has mounted filesystems.')
-				return True
-			else:
-				print(' ..... nothing mounted on /media.')
-				return False
-
-		# Check if requested label is mounted
-		label_found = False
-		for mountpoint in arMedia:
-			sUsbLabel = os.path.basename(mountpoint).rstrip('\n')
-			if sUsbLabel == label:
-				label_found = True
-				break
-
-		# Requested label is not mounted
-		if not label_found:
-			print(' .....  label {0} is not mounted.'.format(label))
-			return False
-		
-		print(' .....  Continuing to crosscheck with mpd database for music...')
-		
-		taskcmd = "mpc listall "+sUsbLabel+" | wc -l"
-		task = subprocess.Popen(taskcmd, shell=True, stdout=subprocess.PIPE)
-		mpcOut = task.stdout.read()
-		assert task.wait() == 0
-		
-		if mpcOut.rstrip('\n') == '0':
-			print(' ..... . {0}: nothing in the database for this source.'.format(sUsbLabel))
-			return False
-		else:
-			print(' ..... . {0}: found {1:s} tracks'.format(sUsbLabel,mpcOut.rstrip('\n')))
-			return True
-
-		"""
-			
-		"""
-		# playlist loading is handled by scripts that trigger on mount/removing of media
-		# mpd database is updated on mount by same script.
-		# So, let's check if there's anything in the database for this source:
-		
-		if len(arMedia) > 0:
-			print(' .....  /media has mounted filesystems: ')
-			for mountpoint in arMedia:
-				print(' ... . {0}'.format(mountpoint))
-			
-			print(' .....  Continuing to crosscheck with mpd database for music...')
-			for mountpoint in arMedia:
-				sUsbLabel = os.path.basename(mountpoint).rstrip('\n')
-				
-				if sUsbLabel == sLocalMusicMPD:
-					print(' ..... . {0}: ignoring local music directory'.format(sLocalMusicMPD))
-				if sUsbLabel == sSambaMusic:
-					print(' ..... . {0}: ignoring samba music directory'.format(sSambaMusicMPD))
-				else:		
-					taskcmd = "mpc listall "+sUsbLabel+" | wc -l"
-					task = subprocess.Popen(taskcmd, shell=True, stdout=subprocess.PIPE)
-					mpcOut = task.stdout.read()
-					assert task.wait() == 0
-					
-					if mpcOut.rstrip('\n') == '0':
-						print(' ..... . {0}: nothing in the database for this source.'.format(sUsbLabel))
-					else:
-						print(' ..... . {0}: found {1:s} tracks'.format(sUsbLabel,mpcOut.rstrip('\n')))
-						
-						# Adding source
-						Sources.addSource({'name': 'media',
-										   'displayname': 'Removable Media',
-										   'order': 1,
-										   'available': True,
-										   'type': 'mpd',
-										   'depNetwork': False,
-										   'controls': ctrlsMedia,
-										   'mountpoint': mountpoint,
-										   'label': sUsbLabel,
-										   'uuid': None }
-						)
-						#REMOVE:
-						arMediaWithMusic.append(mountpoint)
-						#default to found media, if not set yet
-						
-						# Determine the active mediasource
-						if prefered_label == sUsbLabel:
-							#pleister
-							dSettings['mediasource'] = len(arMediaWithMusic)-1
-						elif dSettings['mediasource'] == -1:
-							dSettings['mediasource'] = 0
-
-
-
-			# if nothing useful found, then mark source as unavailable
-			#if len(arMediaWithMusic) == 0:
-			#	arSourceAvailable[1]=0
-
-		else:
-			print(' ..... nothing mounted on /media.')
-
-		return False
-		"""
-		
 	def play( self, sourceCtrl, position=None, resume={} ):
-		self.__printer('Start playing (MPD)')
-		
-		#
-		# variables
-		#
-		arIx = sourceCtrl.index_current()
-		subsource = sourceCtrl.subsource( arIx[0], arIx[1] )
-		sLocalMusicMPD = subsource['mpd_dir']
-		sUsbLabel = subsource['label']
-
-		#
-		# load playlist
-		#
-
-		# populate playlist
-		self.mpdc.pls_clear()
-		#todo: how about cropping, populating, and removing the first? item .. for faster continuity???
-	#	sUsbLabel = os.path.basename(arMediaWithMusic[dSettings['mediasource']])
-		playlistCount = self.mpdc.pls_pop(sLocalMusicMPD)
-
-		# check if succesful...
-		if playlistCount == "0":
-			self.__printer(' > Nothing in the playlist, trying to update database...')
-			
-			# update and try again...
-			self.mpdc.update_db( sLocalMusicMPD, True )
-			playlistCount = self.mpdc.pls_pop(sLocalMusicMPD)
-			
-			# check if succesful...
-			if playlistCount == "0":
-				# Failed. Returning false will cause caller to try next source
-				self.__printer(' > Nothing in the playlist, giving up. Marking source unavailable.')
-				sourceCtrl.set_available( arIx[0], False, arIx[1] )
-				pa_sfx(LL_ERROR)
-				return False
-			else:
-				self.__printer(' > Found {0:s} tracks'.format(playlistCount))
-		else:
-			self.__printer(' > Found {0:s} tracks'.format(playlistCount))
+		super(MySource,self).play()
 
 		#
 		# continue where left
 		#
 		
+		'''
 		# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
 		if resume:
 			playslist_pos = self.mpdc.lastKnownPos2( resume['file'], resume['time'] )
@@ -523,4 +294,5 @@ class MySource(MpdSourcePlugin,IPlugin):
 	#		mpc_get_PlaylistDirs_thread = threading.Thread(target=mpc_get_PlaylistDirs)
 	#		mpc_get_PlaylistDirs_thread.start()
 
+		'''
 		return True

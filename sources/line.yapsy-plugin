@@ -1,0 +1,8 @@
+[Core]
+Name = line
+Module = line
+
+[Documentation]
+Author = Sjoerd Venema
+Version = 1.0
+Description = Line-In

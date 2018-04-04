@@ -159,7 +159,7 @@ class SourceController(object):
 
 		# Activate and add all collected plugins
 		for plugin in self.source_manager.getAllPlugins():
-			ret_init = plugin.plugin_object.init(plugin.name, self.logger)
+			ret_init = plugin.plugin_object.on_init(plugin.name, self.logger)
 			if not ret_init:
 				break
 				
@@ -172,7 +172,7 @@ class SourceController(object):
 			isAdded = self.add(config)
 			if isAdded:
 				indexAdded = self.index('name',config['name'])
-				plugin.plugin_object.post_add(self, config)			
+				plugin.plugin_object.on_add(self, config)			
 				
 	
 	def add( self, source_config ):
@@ -409,7 +409,8 @@ class SourceController(object):
 					self.__printer('has no sourceClass: {0}'.format(self.lSource[i]['name']))
 				else:
 					#checked_source_is_available = self.lSource[i]['available']
-					check_result = self.lSource[i]['sourceClass'].check(self)	#returns a list of dicts with changes
+					#check_result = self.lSource[i]['sourceClass'].check(self)	#returns a list of dicts with changes
+					check_result = self.source_manager.getPluginByName(self.lSource[i]['name']).plugin_object.check_availability()	#returns a list of dicts with changes
 					if check_result:
 						for result in check_result:
 							changed_sources.append(result)
@@ -431,7 +432,8 @@ class SourceController(object):
 				self.__printer('Checking index/subindex: {0}/{1}'.format(index,subindex)) #LL_DEBUG
 				
 				#checked_source_is_available = self.lSource[index]['subsources'][subindex]['available']
-				check_result = self.lSource[index]['sourceClass'].check(self,subindex)	#returns a list of dicts with changes
+				#check_result = self.lSource[index]['sourceClass'].check(self,subindex)	#returns a list of dicts with changes
+				check_result = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.check_availability(subindex=subindex)	#returns a list of dicts with changes
 				
 				return check_result
 				
@@ -454,7 +456,7 @@ class SourceController(object):
 				#the_source = self.source_manager.getPluginByName(self.lSource[index]['name'])
 				#check_result = the_source.plugin_object.check(self,subindex)	#returns a list of dicts with changes
 				# OR:
-				check_result = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.check(SrcCtrl=self,index=index,subindex=subindex)	#returns a list of dicts with changes
+				check_result = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.check_availability(SrcCtrl=self,index=index,subindex=subindex)	#returns a list of dicts with changes
 				
 				if check_result is None:
 					self.__printer('Checking source {0} ({1}) did not return any results (no available sources?)'.format(self.lSource[index]['name'],index),level=LL_WARNING)

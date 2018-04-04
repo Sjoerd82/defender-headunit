@@ -1,16 +1,19 @@
-#********************************************************************************
 #
-# Source: Bluetooth
+# SOURCE PLUGIN: Bluetooth
+# Venema, S.R.G.
+# 2018-04-03
+#
+# Plays Bluetooth
+# Depends on the Bluetooth Daemon (?)
 #
 
+#
+# Extends SourcePlugin
+#
+
+from yapsy.IPlugin import IPlugin
 from modules.hu_utils import *
-
-# Logging
-sourceName='bt'
-mytag='bt'
-LOG_TAG = 'BT'
-LOGGER_NAME = 'bt'
-
+from modules.source_plugin import SourcePlugin
 
 #BLUETOOTH
 sBtPinCode = "0000"
@@ -20,21 +23,10 @@ sBtAdapter = "org.bluez.Adapter1"	#TODO
 sBtPlayer = "/org/bluez/hci0/dev_78_6A_89_FA_1C_95/player0"		# Huawei G700-U10
 sBtPlayer = "/org/bluez/hci0/dev_08_D4_0C_62_08_DF/player0"		# DESKTOP-HUEL5LB
 
-class sourceClass():
+class MySource(SourcePlugin,IPlugin):
 
-	# output wrapper
-	def __printer( self, message, level=LL_INFO, tag=LOG_TAG):
-		self.logger.log(level, message, extra={'tag': tag})
-
-	def __init__( self, logger ):
-		self.logger = logger
-				
-	def __del__( self ):
-		print('Source Class Deleted {0}'.format(sourceName))
-		
-	def init( self, sourceCtrl ):
-		self.__printer('Initializing...', level=15)
-		return True
+	def __init__(self):
+		super(MySource,self).__init__()
 
 	def check( self, sourceCtrl, subSourceIx=None  ):
 		"""	Check source
@@ -123,17 +115,10 @@ class sourceClass():
 		self.__printer('Update')
 		#TODO IMPLEMENT
 		return True
-
-	def get_details():
-		return False
-
-	def get_state():
-		return False
-
-	def get_playlist():
-		return False
-
-	#def get_folders():
-
-	def source_get_media_details():
-		return False
+		
+	def get_details(self, **kwargs ):
+		details = {}
+		track = copy.deep_copy(self.empty_track)
+		track['display'] = "AUX"
+		details['state'] = self.state
+		return details

@@ -1,47 +1,77 @@
 #
 # SOURCE PLUGIN: Streaming URL's
 # Venema, S.R.G.
-# 2018-03-27
+# 2018-04-03
 #
 # Plays Streaming URL's
 #
 
-import os
+#
+# Extends MPDSOURCEPLUGIN
+#
 
+from yapsy.IPlugin import IPlugin
 from modules.hu_utils import *
-from modules.hu_mpd import MpdController
+from modules.hu_settings import getSourceConfig
+from modules.source_plugin_mpd import MpdSourcePlugin
 
-sourceName = 'stream'
-LOG_TAG = 'STREAM'
-LOGGER_NAME = 'stream'
+class MySource(MpdSourcePlugin,IPlugin):
 
+	def __init__(self):
+		super(MySource,self).__init__()
 
-class sourceClass():
-
-	mpc1 = None
-
-	# output wrapper
-	def __printer( self, message, level=LL_INFO, tag=LOG_TAG):
-		self.logger.log(level, message, extra={'tag': tag})
-
-	def __init__( self, logger ):
-		self.logger = logger
-		self.__printer('Source Class Init', level=LL_DEBUG)
-		self.mpc = MpdController(self.logger)
-		
-	def __del__( self ):
-		print('Source Class Deleted {0}'.format(sourceName))
-		
-	def init( self, sourceCtrl ):
-		self.__printer('Initializing...')
+	def on_init(self, plugin_name, logger=None):
+		super(MySource, self).init(plugin_name,logger)	# Executes init() at MpdSourcePlugin		
 		return True
 
-	def check( self, sourceCtrl, subSourceIx=None  ):
-		self.__printer('Checking availability...')
-		subsource_availability_changes = []		# list of changes
+	def on_add(self, sourceconfig):
+		"""Executed after a source is added by plugin manager.
+		Executed by: hu_source.load_source_plugins().
+		Return value is not used.
+		
+		STREAM: Subsources for this source can be retrieved from the main configuration ('stream_groups')
+		  *OR* (FUTURE), from a separate file (in case there many streams that would
+		  otherwise make the configuration file too bloated.
+		"""
+		# subsource strategy: "subsources": "stream_groups" # NOT USED AT THE MOMENT #TODO
+		if 'stream_groups' in sourceconfig:
+			index = self.sourceCtrl.index('name',self.name)	#name is unique
+			if index is None:
+				print "Plugin {0} does not exist".format(self.name)
+				return False
+				
+			order = 0
+			for stream_group in sourceconfig['stream_groups']:
+				streams = []
+				for stream in stream_group['streams']
+					streams.append(stream['uri'])
+				self.add_subsource( stream_group['group_name']
+								   ,streams
+								   ,order
+								   ,sourceCtrl
+								   ,index)
+				order += 1
+		return True
 
-		ix = sourceCtrl.index('name','stream')	# source index
-		stream_source = sourceCtrl.source(ix)		
+	def add_subsource(self, group_name, streams, order, index):
+		subsource = {}
+		subsource['displayname'] = stream_group['group_name']
+		subsource['order'] = order
+		subsource['mpd_streams'] = streams
+		self.sourceCtrl.add_sub(index, subsource)
+
+	def check_availability( self, subindex=None ):
+		"""Executed after post_add, and may occasionally be called.
+		If a subindex is given then only check that subsource.
+		
+		This method updates the availability.
+		
+		Returns: List of changes in availability.
+		
+		SMB: Check if subsource exists and has music in the MPD database
+		"""
+		subsource_availability_changes = []
+		stream_source = sourceCtrl.source(self.index)		
 		original_availability = stream_source['available']
 
 		#TODO!!
@@ -88,14 +118,9 @@ class sourceClass():
 
 		return subsource_availability_changes
 	
-	def play( self, sourceCtrl, subSourceIx=None ):
-		self.__printer('Start playing')
-		
-		#
-		# variables
-		#
-		
-		
+	def play( self, sourceCtrl, subindex=None ):
+		super(MySource,self).play()
+				
 		#
 		# load playlist
 		#
@@ -132,61 +157,8 @@ class sourceClass():
 		return True
 
 	def stop( self ):
-		self.__printer('Stopping source: stream. Saving playlist position and clearing playlist.')
+		super(MySource,self).stop()
 		# save position and current file name for this drive
 		self.mpc.mpc_save_pos_for_label( 'stream' )
-		
-		# stop playback
-		self.mpc.mpc_stop()
-		#mpc $params_mpc -q stop
-		#mpc $params_mpc -q clear	
 		return True
 		
-	def next( self ):
-		self.__printer('Next track')
-		self.mpc.nextTrack()
-		return True
-		
-	def prev( self ):
-		self.__printer('Prev track')
-		self.mpc.prevTrack()
-		return True
-
-	def pause( self, mode ):
-		self.__printer('Pause. Mode: {0}'.format(mode))
-		#TODO IMPLEMENT
-		return True
-
-	def random( self, mode ):
-		self.__printer('Random. Mode: {0}'.format(mode))
-		#TODO IMPLEMENT
-		return True
-
-	def seekfwd( self ):
-		self.__printer('Seek FFWD')
-		#TODO IMPLEMENT
-		return True
-
-	def seekrev( self ):
-		self.__printer('Seek FBWD')
-		#TODO IMPLEMENT
-		return True
-
-	def update( self, location ):
-		self.__printer('Update. Location: {0}'.format(location))
-		#TODO IMPLEMENT
-		return True
-
-	def get_details():
-		return False
-
-	def get_state():
-		return False
-
-	def get_playlist():
-		return False
-
-	#def get_folders():
-
-	def source_get_media_details():
-		return False

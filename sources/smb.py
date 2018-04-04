@@ -1,38 +1,88 @@
 #
-# SOURCE PLUGIN: Samba Network Shares
+# SOURCE PLUGIN: SMB Network Shares
 # Venema, S.R.G.
-# 2018-03-27
+# 2018-04-03
 #
 # Plays everything mounted on /media/PIHU_SMB
 #
 
-import os
-import subprocess
+#
+# Extends MPDSOURCEPLUGIN
+#
 
+from yapsy.IPlugin import IPlugin
 from modules.hu_utils import *
-from modules.hu_mpd import MpdController
+from modules.hu_settings import getSourceConfig
+from modules.source_plugin_mpd import MpdSourcePlugin
 
-# Logging
-sourceName='smb'
-LOG_TAG = 'SMB'
-LOGGER_NAME = 'smb'
+class MySource(MpdSourcePlugin,IPlugin):
 
-class sourceClass():
+	def __init__(self):
+		super(MySource,self).__init__()
 
-	# output wrapper
-	def __printer( self, message, level=LL_INFO, tag=LOG_TAG):
-		self.logger.log(level, message, extra={'tag': tag})
+	def on_init(self, plugin_name, logger=None):
+		super(MySource, self).init(plugin_name,logger)	# Executes init() at MpdSourcePlugin		
+		return True
 
-	def __init__( self, logger ):
-		self.logger = logger
-		self.__printer('Source Class Init', level=LL_DEBUG)
-		self.mpdc = MpdController(self.logger)
+	def on_add(self, sourceCtrl, sourceconfig):
+		"""Executed after a source is added by plugin manager.
+		Executed by: hu_source.load_source_plugins().
+		Return value is not used.
 		
-	def __del__( self ):
-		print('Source Class Deleted {0}'.format(sourceName))
+		SMB: This function adds all SMB shares, but does not check if they have music.
+		"""
+		
+		# Subsources for this source can be gathered from the directory on
+		# which the SMB shares are mounted. default:/media/PIHU_SMB.
+		
+		index = sourceCtrl.index('name',self.name)	#name is unique
+		if index is None:
+			print "Plugin {0} does not exist".format(self.name)
+			return False
 
+		mountpoints = get_mounts( fs='cifs' )
+		if not mountpoints:
+			self.printer(' > No SMB network shares found')
+		else:
+			self.printer(' > Found {0} network shares'.format(len(mountpoints)))
+		
+		for mount in mountpoints:
+			mountpoint = mount['mountpoint']
+			label = os.path.basename(mount['mountpoint']).rstrip('\n')
+			path = '' #?
+			self.add_subsource( mountpoint
+					           ,label
+							   ,path
+					           ,sourceCtrl
+							   ,index)
+		return True
+
+	def add_subsource(self, mountpoint, label, path, sourceCtrl, index):
+		subsource = {}
+		subsource['displayname'] = 'smb: ' + mountpoint
+		subsource['mountpoint'] = mountpoint
+		subsource['mpd_dir'] = mountpoint[7:]		# TODO -- ASSUMING /media
+		subsource['label'] = label
+		subsource['path'] = path
+		sourceCtrl.add_sub(index, subsource)
+
+	def check_availability( self, subindex=None ):
+		"""Executed after post_add, and may occasionally be called.
+		If a subindex is given then only check that subsource.
+		
+		This method updates the availability.
+		
+		Returns: List of changes in availability.
+		
+		SMB: Check if subsource exists and has music in the MPD database
+		"""
+		subsource_availability_changes = super(MySource,self).check(subindex=subindex)
+		return subsource_availability_changes
+
+		
 	# Returns a list of everything mounted on /media, but does not check if it has music.
 	# Returned is 2-dimension list
+	'''
 	def __smb_getAll( self ):
 
 		lst_mountpoints = get_mounts( fs='cifs' )
@@ -53,26 +103,9 @@ class sourceClass():
 				self.__printer(' > Found {0} share(s)'.format(len(lst_mountpoints)))
 		
 		return lst_mountpoints
-
+	'''
 	
-	# add a smb source
-	def __smb_add( self, dir, path, sourceCtrl ):
-
-		# get index (name is unique)
-		ix = sourceCtrl.index('name','smb')
-		
-		# construct the subsource
-		subsource = {}
-		subsource['name'] = 'smb'
-		subsource['displayname'] = 'smb: ' + dir
-		subsource['order'] = 0		# no ordering
-		subsource['mountpoint'] = dir
-		subsource['mpd_dir'] = dir[7:]		# TODO -- ASSUMING /media/PIHU_SMB
-		subsource['path'] = path
-
-		sourceCtrl.add_sub(ix, subsource)
-
-	def init( self, sourceCtrl ):
+	def Xinit( self, sourceCtrl ):
 		self.__printer('Initializing...', level=15)
 		# do a general media_check to find any mounted drives
 		#media_check( label=None )
@@ -89,7 +122,7 @@ class sourceClass():
 
 		return True
 
-	def check( self, sourceCtrl, subSourceIx=None  ):
+	def Xcheck( self, sourceCtrl, subSourceIx=None  ):
 		self.__printer('Checking availability...')
 		
 		ix = sourceCtrl.index('name','smb')
@@ -177,7 +210,7 @@ class sourceClass():
 		return subsource_availability_changes
 
 		
-	def play( self, sourceCtrl, position=None, resume={} ):
+	def Xplay( self, sourceCtrl, position=None, resume={} ):
 		self.__printer('Start playing (MPD)')
 		
 		#
@@ -244,55 +277,3 @@ class sourceClass():
 	#	mpc_get_PlaylistDirs_thread.start()
 
 		return True
-
-	def stop( self ):
-		self.__printer('Stop')
-		return True
-		
-	def next( self ):
-		self.__printer('Next track')
-		self.mpdc.next()
-		return True
-		
-	def prev( self ):
-		self.__printer('Prev track')
-		self.mpdc.prev()
-		return True
-	def pause( self, mode ):
-		self.__printer('Pause. Mode: {0}'.format(mode))
-		#TODO IMPLEMENT
-		return True
-
-	def random( self, mode ):
-		self.__printer('Random. Mode: {0}'.format(mode))
-		#TODO IMPLEMENT
-		return True
-
-	def seekfwd( self ):
-		self.__printer('Seek FFWD')
-		#TODO IMPLEMENT
-		return True
-
-	def seekrev( self ):
-		self.__printer('Seek FBWD')
-		#TODO IMPLEMENT
-		return True
-
-	def update( self, location ):
-		self.__printer('Update. Location: {0}'.format(location))
-		#TODO IMPLEMENT
-		return True
-
-	def get_details():
-		return False
-
-	def get_state():
-		return False
-
-	def get_playlist():
-		return False
-
-	#def get_folders():
-
-	def source_get_media_details():
-		return False

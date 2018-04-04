@@ -31,7 +31,8 @@
 #
 # PLAYLIST
 # pls_load				Load playlist
-# pls_pop				Populate playlist for given MPD directory, return count
+# pls_pop_dir			Populate playlist for given MPD directory, return count
+# pls_pop_streams		Populate playlist with streaming URLs
 # pls_is_populated		Check if the playlist is populated (deprecate?)
 # pls_dirs				Generate a directory-playlist position mapping
 # pls_clear				Clear playlist
@@ -277,7 +278,7 @@ class MpdController(object):
 		"""
 	`'''
 	
-	def pls_pop(self, location):
+	def pls_pop_dir(self, location):
 		"""	Populate playlist for given MPD directory
 			Returns: count
 		"""
@@ -305,6 +306,14 @@ class MpdController(object):
 		else:
 			return None
 
+	def pls_pop_streams(self, streams):
+		"""Populate playlist with given list of streams """
+		self.__printer('Populating playlist')
+		self.__test_conn()
+		for stream in streams:
+			self.mpdc.add(stream)
+		self.__return_to_idle()
+		
 	def pls_is_populated(self):
 		"""	Check if the playlist is populated (deprecate?)
 		"""
