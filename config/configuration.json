@@ -105,7 +105,9 @@
 		            [ { "name":"Data1", "label": "PD1", "mountpoint": "/media/PIHU_DATA", "mpd_dir": "PIHU_DATA"}
 		            , { "name":"Data2", "label": "PD2", "mountpoint": "/media/PIHU_DATA2", "mpd_dir": "PIHU_DATA2" } ]
 		  }
-		, "smb"    :    [ { "label": "Music1", "mountpoint": "/media/PIHU_SMB/music", "musicdir_mpd": "PIHU_SMB/music" } ]
+		, "smb": {
+				"smb_sources": [ { "label": "Music1", "mountpoint": "/media/PIHU_SMB/music", "musicdir_mpd": "PIHU_SMB/music" } ]
+		}
 		, "fm": {
 			  "frq_lo"   : 80
 			, "stations" : ["96.40","99.10","101.20","102.54"]

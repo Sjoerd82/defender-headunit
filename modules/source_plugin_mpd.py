@@ -57,10 +57,10 @@ class MpdSourcePlugin(SourcePlugin):
 		subsource_availability_changes = []		# list of changes
 		
 		if subindex is None:
-			subsources = sourceCtrl.subsource_all( self.index )
+			subsources = self.sourceCtrl.subsource_all( self.index )
 			i = 0
 		else:
-			subsources = list(sourceCtrl.subsource( self.index, subindex ))
+			subsources = list(self.sourceCtrl.subsource( self.index, subindex ))
 			i = subindex
 		
 		for subsource in subsources:

@@ -87,7 +87,7 @@ class SourcePlugin(object):
 			jsConfigFile = open( configFileName )
 			config=json.load(jsConfigFile)
 		
-		config['name'] = name		
+		config['name'] = name
 		
 		# load main configuration
 		main_configuration = configuration_load('srctrl', DEFAULT_CONFIG_FILE)
