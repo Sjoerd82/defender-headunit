@@ -71,9 +71,9 @@ class SourcePlugin(object):
 		
 		return avchg
 
-	def configuration(self, name):
-		if name is None:
-			return None
+	def configuration(self):
+		#if name is None:
+		#	return None
 		
 		config = {}
 		
@@ -87,12 +87,12 @@ class SourcePlugin(object):
 			jsConfigFile = open( configFileName )
 			config=json.load(jsConfigFile)
 		
-		config['name'] = name
+		config['name'] = self.name
 		
 		# load main configuration
 		main_configuration = configuration_load('srctrl', DEFAULT_CONFIG_FILE)
-		if 'source_config' in main_configuration and name in main_configuration['source_config']:
-			config.update(main_configuration['source_config'][name])
+		if 'source_config' in main_configuration and self.name in main_configuration['source_config']:
+			config.update(main_configuration['source_config'][self.name])
 			
 		return config
 			

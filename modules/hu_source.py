@@ -166,7 +166,7 @@ class SourceController(object):
 			if not ret_init:
 				self.__printer('Plugin {0} failed (on_init); cannot load plugin'.format(plugin.name))
 			else:			
-				self.source_manager.activatePluginByName(plugin.name)		
+				self.source_manager.activatePluginByName(plugin.name)
 				config = plugin.plugin_object.configuration(plugin.name)	# Get config
 				isAdded = self.add(config)									# Add
 				if isAdded:
