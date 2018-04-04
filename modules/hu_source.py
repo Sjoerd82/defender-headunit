@@ -159,7 +159,7 @@ class SourceController(object):
 
 		# Activate and add all collected plugins
 		for plugin in self.source_manager.getAllPlugins():
-			ret_init = plugin.plugin_object.on_init(plugin.name, self.logger)
+			ret_init = plugin.plugin_object.on_init(plugin.name, self, self.logger)
 			if not ret_init:
 				break
 				

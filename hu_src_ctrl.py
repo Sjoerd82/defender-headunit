@@ -1128,7 +1128,6 @@ def setup():
 	#
 	global configuration
 	configuration = load_configuration()
-	print configuration
 	
 	#
 	# ZMQ

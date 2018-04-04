@@ -115,12 +115,13 @@
 		}
 		, "streams": {
 			  "subsources": "stream_groups"
-			, "stream_groups: [
+			, "stream_groups": [
 				  {	  "group_name": "NPO"
 					, "streams" : [
 						{ "name": "NPO 3FM",
 						  "uri" : "http://icecast.omroep.nl/3fm-bb-mp3" }
 					]
+				}
 				, {	  "group_name": "NL Commercial"
 					, "streams": [
 						{ "name": "BNR",
@@ -136,22 +137,24 @@
 						{ "name": "Sky Radio",
 						  "uri" : "http://20103.live.streamtheworld.com:80/SKYRADIO_SC" }
 					]
+				}
 				, {	  "group_name": "International 1"
 					, "streams": [
 						{ "name": "BBC World Service",
 						  "uri" : "http://bbcwssc.ic.llnwd.net/stream/bbcwssc_mp1_ws-eieuk" },
 						{ "name": "BBC Radio 2",
-						  "uri" : "http://as-hls-ww-live.bbcfmt.hs.llnwd.net/pool_7/live/bbc_radio_two/bbc_radio_two.isml/bbc_radio_two-audio%3d96000.norewind.m3u8" 
+						"uri" : "http://as-hls-ww-live.bbcfmt.hs.llnwd.net/pool_7/live/bbc_radio_two/bbc_radio_two.isml/bbc_radio_two-audio%3d96000.norewind.m3u8" }
 					  ]
+				}
 				, {	  "group_name": "International 2"
-					, "streams":
+					, "streams": [
 						{ "name": "KEXP",
 						  "uri" : "http://live-aacplus-64.kexp.org/kexp64.aac" },
 						{ "name": "KCRW",
 						  "uri" : "http://kcrw.streamguys1.com/kcrw_192k_mp3_on_air_internet_radio" },
 						{ "name": "Irish Pub Radio",
 						  "uri" : "http://178.32.219.72:8326" }
-					]
+					]				
 				}
 			]
 		}
