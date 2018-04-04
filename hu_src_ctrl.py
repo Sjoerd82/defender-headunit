@@ -1128,6 +1128,7 @@ def setup():
 	#
 	global configuration
 	configuration = load_configuration()
+	print configuration
 	
 	#
 	# ZMQ
@@ -1145,7 +1146,7 @@ def setup():
 	#
 	# Load PulseAudio SFX
 	#
-	pa_sfx_load( configuration['directories']['sfx'] )
+	#pa_sfx_load( configuration['directories']['sfx'] )
 
 	#
 	# "Splash Screen": Display version
