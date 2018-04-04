@@ -28,6 +28,7 @@ This application is essentially a set of Python micro services, communicating wi
  + Supports third-party plugins to support additional sources or input controls
  + Supports character displays
  + Active crossover filters
+
 PLANNED:
  - CAN-bus input and output
 
