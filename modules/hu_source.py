@@ -160,28 +160,22 @@ class SourceController(object):
 		for plugin in self.source_manager.getAllPlugins():
 			try:
 				ret_init = plugin.plugin_object.on_init(plugin.name, self, self.logger)
-				if not ret_init:
-					self.__printer('Plugin {0} failed (on_init); cannot load plugin'.format(plugin.name))
-					break
 			except:
+				pass
+				
+			if not ret_init:
 				self.__printer('Plugin {0} failed (on_init); cannot load plugin'.format(plugin.name))
-				break
-				
-				
-			self.source_manager.activatePluginByName(plugin.name)
-			
-			# Get config
-			config = plugin.plugin_object.configuration(plugin.name)
-			
-			# Add
-			isAdded = self.add(config)
-			if isAdded:
-				indexAdded = self.index('name',config['name'])
-				try:
-					plugin.plugin_object.on_add(self, config)
-				except:
-					self.__printer('Plugin {0} failed (on_add); disabling plugin'.format(plugin.name))
-					self.lSource[indexAdded]['enabled'] = False
+			else:			
+				self.source_manager.activatePluginByName(plugin.name)		
+				config = plugin.plugin_object.configuration(plugin.name)	# Get config
+				isAdded = self.add(config)									# Add
+				if isAdded:
+					indexAdded = self.index('name',config['name'])
+					try:
+						plugin.plugin_object.on_add(self, config)
+					except:
+						self.__printer('Plugin {0} failed (on_add); disabling plugin'.format(plugin.name))
+						self.lSource[indexAdded]['enabled'] = False
 				
 	
 	def add( self, source_config ):
