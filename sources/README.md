@@ -153,17 +153,14 @@ class sourceClass(SourcePlugin,IPlugin):
 Method | Called | Short description | Arguments
 --- | --- | --- | ---
 `__init__` | Creating of the plugin | Class initialization | YES
-`init` | At loading the plugin | Source Initialization | ?
-`post_add` | After registering with SourceController | Called after adding the source | ?
-`check` | After post-add | Determine availability of subsource(s) | No, defaults to available if not implemented
+`on_init` | At loading the plugin | Source Initialization | ?
+`on_add` | After registering with SourceController | Called after adding the source | ?
+`on_activate` |  | When subsource becomes active | subindex
+`check_availability` | After post-add, and accidentally during runtime | Determine availability of subsource(s) | No, defaults to available if not implemented
 `add_subsource` | Creating sub-sources on the fly | On certain events | No
 `discover` | | | 
-`activate` |  | When subsource becomes active | subindex
 
 Only __init__() is required.
-
-
-### Starting up
 
 Three functions are called when launching the Source Controller.
  1. init()
@@ -172,42 +169,47 @@ Three functions are called when launching the Source Controller.
 
 `check()` may also periodically be called after launch by the SourceController.
 
-#### init()
+#### on_init()
 
-Called when Source Controller activates the plugin.
+Called when Source Controller activates the plugin. Use the super() function to call this method from the derived class where it sets up a number of variables. After the super() you may add code that must run once to initialize the source. Simply don't implement this method if there is no need for any initializion.
 
-Arguments: `Plugin Name, Logger`
+```
+def on_init(self, plugin_name, sourceCtrl, logger):
+```
+
+Arguments: `Plugin Name, sourceCtrl, Logger`
 Return: `True`, if all is OK
 `False` if not (source will not be activated)
 
-#### add_subsource()
+#### on_add()
 
-Implementing this function makes it possible to add subsources on the fly.
-Useful when the subsources are dynamic (for example: removable media).
+Called after the source plugin is added and has received an index. This happens soon after on_init(), but now it has an index, so methods from the SourceController class can be called.
 
-#### post_add(sourceconfig)
+This is a good moment to add subsources. The method is called with its configuration as a dictionary as a parameter.
 
-Called after adding the plugin.
+```
+def on_add(self, sourceconfig):
+```
 
-Arguments: sourceconfig
-Return: Currently not being checked
+Arguments: `sourceconfig`
+Return: Nothing (Currently not being checked)
 
 This is a good place to populate any subsources dynamically.
 sourceconfig contains the complete configuration, including the parts from the main configuration (configuration.json).
 
-#### check()
+#### check_availability()
 
-Called for every source, at the end of the setup phase. This function checks if the source is ready.
+Called for every source, at the end of the setup phase. This function checks the subsource(s) and returns availability.
 
 ```
-Called by hu_source.check():
-check(SrcCtrl=self,index=index,subindex=subindex)
+def check_availability( self, subindex=None, onlychanges=True ):
 ```
+Called by hu_source.check()
 
-Arguments: sourceCtrl, subindex
+Arguments: `subindex` (optional), onlychanges (optional)
 Return: None (if no subsources), List of dicts
 
-This function must return a list with dicts for all or only the changed sources.
+This function must return a list with dicts for all or only the changed sources (depending on onlychanges parameter).
 If a subindex is given only the subsource with that index need to be checked.
 
 ```
@@ -224,35 +226,7 @@ return avchg
 
 If check() is not implemented this will make the source available.
 
-### Source control
+#### add_subsource()
 
-All methods are called by the SourceController with the arguments SrcCtrl (reference to SourceController), index and subindex.
-Additional arguments may be passed by hu_src_ctrl.py
-
-Method | Description | Extra parameters
---- | --- | ---
-`play` | Start playback | `position`
-`stop` | Stop playback | 
-`next` | Next track | `cnt` (number of tracks to advance)
-`prev` | Prev track | `cnt` (number of tracks to go back)
-`pause` | Pause | mode
-`random` | Set random mode |  mode
-`seekfwd` | Seek | 
-`seekrev` | Seek | 
-`update` | Update (MPD) | location
-`get_state` | Get states (playing,random,repeat) | -
-`get_details` | Get all details | -
-
-Python script
-----------------
-
-Functions:
- __init__()	Stuff that needs to run once, at first loading of the class
- init()		Stuff that needs to run once, at functional loading of the source
-		Executed when the source is added ( via: loadSourcePlugins->add_a_source->Source.sourceInit(indexAdded) )
- check()		Determine availability
-		Parameters:
-			sourceCtrl	Required; Object; Reference to Sources
-			subSourceIx	Optional; int	; If present, check Sub-Source instead
-
- __del__()	Stuff that needs to run when the source gets discarded (close connections, etc.)
+Implementing this function makes it possible to add subsources on the fly.
+Useful when the subsources are dynamic (for example: removable media).
