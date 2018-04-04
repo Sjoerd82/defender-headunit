@@ -150,6 +150,19 @@ class sourceClass(SourcePlugin,IPlugin):
 
 ## Implementable methods
 
+Method | Called | Short description | Arguments
+--- | --- | --- | ---
+`__init__` | Creating of the plugin | Class initialization | YES
+`init` | At loading the plugin | Source Initialization | ?
+`post_add` | After registering with SourceController | Called after adding the source | ?
+`check` | After post-add | Determine availability of subsource(s) | No, defaults to available if not implemented
+`add_subsource` | Creating sub-sources on the fly | On certain events | No
+`discover` | | | 
+`activate` |  | When subsource becomes active | subindex
+
+Only __init__() is required.
+
+
 ### Starting up
 
 Three functions are called when launching the Source Controller.
@@ -157,7 +170,6 @@ Three functions are called when launching the Source Controller.
  2. post_add()
  3. check()
 
-None of these methods are required be implemented.
 `check()` may also periodically be called after launch by the SourceController.
 
 #### init()
