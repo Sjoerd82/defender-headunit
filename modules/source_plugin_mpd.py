@@ -51,16 +51,17 @@ class MpdSourcePlugin(SourcePlugin):
 		
 	def check_availability(self, **kwargs):
 	
+		index = self.sourceCtrl.index('name',self.name)	#name is unique
 		subindex = kwargs['subindex']
 	
 		locations = []							# list of tuples; index: 0 = mountpoint, 1 = mpd dir, 2 = availability.
 		subsource_availability_changes = []		# list of changes
 		
 		if subindex is None:
-			subsources = self.sourceCtrl.subsource_all( self.index )
+			subsources = self.sourceCtrl.subsource_all( index )
 			i = 0
 		else:
-			subsources = list(self.sourceCtrl.subsource( self.index, subindex ))
+			subsources = list(self.sourceCtrl.subsource( index, subindex ))
 			i = subindex
 		
 		for subsource in subsources:
@@ -71,7 +72,7 @@ class MpdSourcePlugin(SourcePlugin):
 			self.printer('Checked local folder: {0}, new availability: {1}'.format(mountpoint,new_availability))
 			
 			if new_availability is not None and new_availability != cur_availability:
-				subsource_availability_changes.append({"index":self.index,"subindex":i,"available":new_availability})			
+				subsource_availability_changes.append({"index":index,"subindex":i,"available":new_availability})			
 			
 			i += 1
 		
