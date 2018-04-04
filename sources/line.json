@@ -5,5 +5,5 @@
   "type": "alsa",
   "depNetwork": false,
   "controls": {"ffwd": false, "rwnd": false, "prev": false, "next": false},
-  "template": false
+  "subsource_key": ["displayname"]
 }

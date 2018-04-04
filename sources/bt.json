@@ -5,6 +5,5 @@
   "type": "bt",
   "depNetwork": false,
   "controls": {"ffwd": false, "rwnd": false, "prev": true, "next": true},
-  "sourceClass": "",
-  "template": false
+  "subsource_key": ["displayname"]
 }
