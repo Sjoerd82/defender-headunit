@@ -459,7 +459,7 @@ class SourceController(object):
 				#the_source = self.source_manager.getPluginByName(self.lSource[index]['name'])
 				#check_result = the_source.plugin_object.check(self,subindex)	#returns a list of dicts with changes
 				# OR:
-				check_result = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.check_availability(index=index,subindex=subindex)	#returns a list of dicts with changes
+				check_result = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.check_availability(subindex=subindex)	#returns a list of dicts with changes
 				
 				if check_result is None:
 					self.__printer('Checking source {0} ({1}) did not return any results (no available sources?)'.format(self.lSource[index]['name'],index),level=LL_WARNING)
