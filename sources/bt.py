@@ -28,7 +28,7 @@ class MySource(SourcePlugin,IPlugin):
 	def __init__(self):
 		super(MySource,self).__init__()
 
-	def check( self, sourceCtrl, subSourceIx=None  ):
+	def check( self, subSourceIx=None  ):
 		"""	Check source
 		
 			Checks to see if FM is available (SUBSOURCE INDEX will be ignored)
@@ -41,17 +41,17 @@ class MySource(SourcePlugin,IPlugin):
 		subsource_availability_changes = []
 		new_availability = True
 		
-		ix = sourceCtrl.index('name','bt')	# source index
-		bt_source = sourceCtrl.source(ix)		
+		ix = self.sourceCtrl.index('name','bt')	# source index
+		bt_source = self.sourceCtrl.source(ix)		
 		original_availability = bt_source['available']
 		
 		if new_availability is not None and new_availability != original_availability:
-			sourceCtrl.set_available( ix, new_availability )
+			self.sourceCtrl.set_available( ix, new_availability )
 			subsource_availability_changes.append({"index":ix,"available":new_availability})
 		
 		return subsource_availability_changes
 		
-	def play( self, sourceCtrl, subSourceIx=None ):
+	def play( self, subSourceIx=None ):
 		self.__printer('Start playing')
 		global sBtPlayer
 		print('[BT] Start playing Bluetooth...')

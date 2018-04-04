@@ -19,14 +19,14 @@ class MySource(SourcePlugin,IPlugin):
 	def __init__(self):
 		super(MySource,self).__init__()
 
-	def on_add(self, sourceCtrl, sourceconfig):
+	def on_add(self, sourceconfig):
 		"""Executed after a source is added by plugin manager.
 		Executed by: hu_source.load_source_plugins().
 		Return value is not used.
 		
 		LINE: Currently only ONE LINE-IN supported.
 		"""
-		index = sourceCtrl.index('name',self.name)	#name is unique
+		index = self.sourceCtrl.index('name',self.name)	#name is unique
 		if index is None:
 			print "Plugin {0} does not exist".format(self.name)
 			return False
@@ -34,10 +34,10 @@ class MySource(SourcePlugin,IPlugin):
 		self.add_subsource(index,self,index)
 		return True
 		
-	def add_subsource(self, sourceCtrl, index):
+	def add_subsource(self, index):
 		subsource = {}
 		subsource['displayname'] = 'AUX'
-		sourceCtrl.add_sub( index, subsource )
+		self.sourceCtrl.add_sub( index, subsource )
 
 	def get_details(self, **kwargs ):
 		details = {}
