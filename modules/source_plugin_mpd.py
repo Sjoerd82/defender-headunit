@@ -129,8 +129,11 @@ class MpdSourcePlugin(SourcePlugin):
 		
 		index = kwargs['index']
 		subindex = kwargs['subindex']
+		
+		"""
 		sourceCtrl = kwargs['srcCtrl']
 		
+			
 		#
 		# variables
 		#
@@ -146,7 +149,7 @@ class MpdSourcePlugin(SourcePlugin):
 		playlistCount =0
 		
 		# IF we have an mpd_dir:
-		if sLocalMusicMPD not is None:
+		if sLocalMusicMPD is not None:
 			#
 			# load playlist
 			#
@@ -160,6 +163,7 @@ class MpdSourcePlugin(SourcePlugin):
 			self.mpdc.pls_clear()
 			#playlistCount = self.mpdc.pls_pop(xxx)
 			
+		"""
 
 		# check if succesful...
 		if playlistCount == "0":
