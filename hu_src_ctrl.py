@@ -1079,9 +1079,9 @@ def load_configuration():
 	
 	if not configuration or not 'zeromq' in configuration:
 		printer('Error: Configuration not loaded or missing ZeroMQ, using defaults:')
-		printer('Default Client port: {0}'.format(DEFAULT_PORT_CLIENT))
-		printer('Default Server port: {0}'.format(DEFAULT_PORT_SERVER))
-		configuration = { "zeromq": { "port_client": DEFAULT_PORT_CLIENT, "port_server":DEFAULT_PORT_SERVER } }
+		printer('Default Pub port: {0}'.format(DEFAULT_PORT_PUB))
+		printer('Default Sub port: {0}'.format(DEFAULT_PORT_SUB))
+		configuration = { "zeromq": { "port_subscriber": DEFAULT_PORT_SUB, "port_publisher":DEFAULT_PORT_PUB } }
 	
 	return configuration
 
