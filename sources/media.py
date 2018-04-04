@@ -61,7 +61,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 		subsource['device'] = device
 		sourceCtrl.add_sub(index, subsource)
 
-	def check_availability( self, subindex=None ):
+	def check_availability(self, subindex=None):
 		"""Executed after post_add, and may occasionally be called.
 		If a subindex is given then only check that subsource.
 		
@@ -74,12 +74,13 @@ class MySource(MpdSourcePlugin,IPlugin):
 		sourceCtrl = self.sourceCtrl
 		locations = []							# list of tuples; index: 0 = mountpoint, 1 = mpd dir, 2 = availability.
 		subsource_availability_changes = []		# list of changes
-		
+		index = sourceCtrl.index('name',self.name)	#name is unique
+
 		if subindex is None:
-			subsources = sourceCtrl.subsource_all( self.index )
+			subsources = sourceCtrl.subsource_all( index )
 			i = 0
 		else:
-			subsources = list(sourceCtrl.subsource( self.index, subindex ))
+			subsources = list(sourceCtrl.subsource( index, subindex ))
 			i = subindex
 		
 		for subsource in subsources:
@@ -90,7 +91,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 			self.printer('Checked local folder: {0}, new availability: {1}'.format(mountpoint,new_availability))
 			
 			if new_availability is not None and new_availability != cur_availability:
-				subsource_availability_changes.append({"index":self.index,"subindex":i,"available":new_availability})			
+				subsource_availability_changes.append({"index":index,"subindex":i,"available":new_availability})			
 			
 			i += 1
 		

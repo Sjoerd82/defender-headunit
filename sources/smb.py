@@ -66,7 +66,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 		subsource['path'] = path
 		sourceCtrl.add_sub(index, subsource)
 
-	def check_availability( self, subindex=None ):
+	def check_availability(self, subindex=None):
 		"""Executed after post_add, and may occasionally be called.
 		If a subindex is given then only check that subsource.
 		
@@ -76,7 +76,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 		
 		SMB: Check if subsource exists and has music in the MPD database
 		"""
-		subsource_availability_changes = super(MySource,self).check(subindex=subindex)
+		subsource_availability_changes = super(MySource,self).check_availability(subindex=subindex)
 		return subsource_availability_changes
 
 		

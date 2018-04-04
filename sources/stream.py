@@ -60,7 +60,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 		subsource['mpd_streams'] = streams
 		self.sourceCtrl.add_sub(index, subsource)
 
-	def check_availability( self, subindex=None ):
+	def check_availability(self, subindex=None):
 		"""Executed after post_add, and may occasionally be called.
 		If a subindex is given then only check that subsource.
 		
@@ -73,7 +73,8 @@ class MySource(MpdSourcePlugin,IPlugin):
 		subsource_availability_changes = []
 		stream_source = sourceCtrl.source(self.index)		
 		original_availability = stream_source['available']
-
+		index = sourceCtrl.index('name',self.name)	#name is unique
+		
 		#TODO!!
 		sDirSave = "/mnt/PIHU_CONFIG"
 		
@@ -113,8 +114,8 @@ class MySource(MpdSourcePlugin,IPlugin):
 						new_availability = False
 
 		if new_availability is not None and new_availability != original_availability:
-			sourceCtrl.set_available( ix, new_availability )
-			subsource_availability_changes.append({"index":ix,"available":new_availability})
+			sourceCtrl.set_available( index, new_availability )
+			subsource_availability_changes.append({"index":index,"available":new_availability})
 
 		return subsource_availability_changes
 	
