@@ -136,7 +136,7 @@ Example:
 ## Implementable methods
 
 Method | Called | Short description | Arguments | super()?
---- | --- | --- | ---
+--- | --- | --- | --- | ---
 `__init__` | Creating of the plugin | Class initialization | None | Always
 `on_init` | At loading the plugin | Source Initialization | ? | Always
 `on_add` | After registering with SourceController | Called after adding the source | ? | No
