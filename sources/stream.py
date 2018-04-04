@@ -48,7 +48,6 @@ class MySource(MpdSourcePlugin,IPlugin):
 				self.add_subsource( stream_group['group_name']
 								   ,streams
 								   ,order
-								   ,sourceCtrl
 								   ,index)
 				order += 1
 		return True
@@ -71,9 +70,9 @@ class MySource(MpdSourcePlugin,IPlugin):
 		SMB: Check if subsource exists and has music in the MPD database
 		"""
 		subsource_availability_changes = []
-		stream_source = sourceCtrl.source(self.index)		
+		stream_source = self.sourceCtrl.source(self.index)		
 		original_availability = stream_source['available']
-		index = sourceCtrl.index('name',self.name)	#name is unique
+		index = self.sourceCtrl.index('name',self.name)	#name is unique
 		
 		#TODO!!
 		sDirSave = "/mnt/PIHU_CONFIG"
@@ -114,12 +113,12 @@ class MySource(MpdSourcePlugin,IPlugin):
 						new_availability = False
 
 		if new_availability is not None and new_availability != original_availability:
-			sourceCtrl.set_available( index, new_availability )
+			self.sourceCtrl.set_available( index, new_availability )
 			subsource_availability_changes.append({"index":index,"available":new_availability})
 
 		return subsource_availability_changes
 	
-	def play( self, sourceCtrl, subindex=None ):
+	def play( self, subindex=None ):
 		super(MySource,self).play()
 				
 		#

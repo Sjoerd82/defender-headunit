@@ -27,14 +27,14 @@ class MySource(SourcePlugin,IPlugin):
 	#	super(MySource, self).init(plugin_name,sourceCtrl,logger)
 	#	return True
 	
-	def on_add(self, sourceCtrl, sourceconfig):
+	def on_add(self, sourceconfig):
 		"""Executed after a source is added by plugin manager.
 		Executed by: hu_source.load_source_plugins().
 		Return value is not used.
 		
 		FM: No subsources.
 		"""
-		index = sourceCtrl.index('name',self.name)	#name is unique
+		index = self.sourceCtrl.index('name',self.name)	#name is unique
 		if index is None:
 			print "Plugin {0} does not exist".format(self.name)
 			return False
@@ -42,10 +42,10 @@ class MySource(SourcePlugin,IPlugin):
 		self.add_subsource(index,self,index)
 		return True
 
-	def add_subsource(self, sourceCtrl, index):
+	def add_subsource(self, index):
 		subsource = {}
 		subsource['displayname'] = 'FM'
-		sourceCtrl.add_sub( index, subsource )
+		self.sourceCtrl.add_sub( index, subsource )
 		
 	def play (self, **kwargs):
 		super(MySource,self).play()

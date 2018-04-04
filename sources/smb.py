@@ -24,7 +24,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 		super(MySource, self).on_init(plugin_name,sourceCtrl,logger)	# Executes init() at MpdSourcePlugin
 		return True
 
-	def on_add(self, sourceCtrl, sourceconfig):
+	def on_add(self, sourceconfig):
 		"""Executed after a source is added by plugin manager.
 		Executed by: hu_source.load_source_plugins().
 		Return value is not used.
@@ -35,7 +35,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 		# Subsources for this source can be gathered from the directory on
 		# which the SMB shares are mounted. default:/media/PIHU_SMB.
 		
-		index = sourceCtrl.index('name',self.name)	#name is unique
+		index = self.sourceCtrl.index('name',self.name)	#name is unique
 		if index is None:
 			print "Plugin {0} does not exist".format(self.name)
 			return False
@@ -53,18 +53,17 @@ class MySource(MpdSourcePlugin,IPlugin):
 			self.add_subsource( mountpoint
 					           ,label
 							   ,path
-					           ,sourceCtrl
 							   ,index)
 		return True
 
-	def add_subsource(self, mountpoint, label, path, sourceCtrl, index):
+	def add_subsource(self, mountpoint, label, path, index):
 		subsource = {}
 		subsource['displayname'] = 'smb: ' + mountpoint
 		subsource['mountpoint'] = mountpoint
 		subsource['mpd_dir'] = mountpoint[7:]		# TODO -- ASSUMING /media
 		subsource['label'] = label
 		subsource['path'] = path
-		sourceCtrl.add_sub(index, subsource)
+		self.sourceCtrl.add_sub(index, subsource)
 
 	def check_availability(self, subindex=None):
 		"""Executed after post_add, and may occasionally be called.

@@ -29,7 +29,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 		super(MySource, self).on_init(plugin_name,sourceCtrl,logger)	# Executes init() at MpdSourcePlugin
 		return True
 
-	def on_add(self, sourceCtrl, sourceconfig):
+	def on_add(self, sourceconfig):
 		"""Executed after a source is added by plugin manager.
 		Executed by: hu_source.load_source_plugins().
 		Return value is not used.
@@ -37,20 +37,20 @@ class MySource(MpdSourcePlugin,IPlugin):
 		MEDIA: This adds all mountpoints under /media, but does not check anything.
 		"""
 
-		index = sourceCtrl.index('name',self.name)	#name is unique
+		index = self.sourceCtrl.index('name',self.name)	#name is unique
 		if index is None:
 			print "Plugin {0} does not exist".format(self.name)
 			return False
 		
 		# Discover + Add
-		mountpoints = self.discover(sourceCtrl,add_subsource=True)
+		mountpoints = self.discover(add_subsource=True)
 		
 		return True
 
 	def on_activate(self, subindex):
 		return False
 
-	def add_subsource(self, mountpoint, label, uuid, device, sourceCtrl, index):
+	def add_subsource(self, mountpoint, label, uuid, device, index):
 		subsource = {}
 		subsource['displayname'] = 'media: ' + mountpoint
 		subsource['order'] = 0		# no ordering
@@ -59,7 +59,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 		subsource['label'] = label
 		subsource['uuid'] = uuid
 		subsource['device'] = device
-		sourceCtrl.add_sub(index, subsource)
+		self.sourceCtrl.add_sub(index, subsource)
 
 	def check_availability(self, subindex=None):
 		"""Executed after post_add, and may occasionally be called.
@@ -71,23 +71,22 @@ class MySource(MpdSourcePlugin,IPlugin):
 		
 		MEDIA: Check if subsource exists and has music in the MPD database
 		"""
-		sourceCtrl = self.sourceCtrl
 		locations = []							# list of tuples; index: 0 = mountpoint, 1 = mpd dir, 2 = availability.
 		subsource_availability_changes = []		# list of changes
-		index = sourceCtrl.index('name',self.name)	#name is unique
+		index = self.sourceCtrl.index('name',self.name)	#name is unique
 
 		if subindex is None:
-			subsources = sourceCtrl.subsource_all( index )
+			subsources = self.sourceCtrl.subsource_all( index )
 			i = 0
 		else:
-			subsources = list(sourceCtrl.subsource( index, subindex ))
+			subsources = list(self.sourceCtrl.subsource( index, subindex ))
 			i = subindex
 		
 		for subsource in subsources:
 			mountpoint = subsource['mountpoint']			
 			cur_availability = subsource['available']
 			self.printer('Checking local folder: {0}, current availability: {1}'.format(mountpoint,cur_availability))
-			new_availability = check_mpddb_mountpoint(mountpoint, createdir=True, waitformpdupdate=True)
+			new_availability = self.check_mpddb_mountpoint(mountpoint, createdir=True, waitformpdupdate=True)
 			self.printer('Checked local folder: {0}, new availability: {1}'.format(mountpoint,new_availability))
 			
 			if new_availability is not None and new_availability != cur_availability:
@@ -99,7 +98,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 	
 	# -------------------------------------------------------------------------
 
-	def discover(self, sourceCtrl, add_subsource=True):
+	def discover(self, add_subsource=True):
 		"""Returns a list of everything mounted on /media, but does not check if it has music.
 		Returned is a 2-dimension list
 		Mountpoints already present will be omitted.
@@ -118,7 +117,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 			label = os.path.basename(mount['mountpoint']).rstrip('\n')
 			
 			# only add if not already present
-			subindex = sourceCtrl.subindex('mountpoint',mountpoint)
+			subindex = self.sourceCtrl.subindex('mountpoint',mountpoint)
 			if subindex is None:
 				# get uuid
 				try:
@@ -131,7 +130,6 @@ class MySource(MpdSourcePlugin,IPlugin):
 								   ,label
 								   ,uuid
 								   ,device
-								   ,sourceCtrl
 								   ,index)
 			else:
 				del mountpoints[i]

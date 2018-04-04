@@ -28,7 +28,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 		super(MySource, self).on_init(plugin_name,sourceCtrl,logger)	# Executes init() at MpdSourcePlugin
 		return True
 
-	def on_add(self, sourceCtrl, sourceconfig):
+	def on_add(self, sourceconfig):
 		"""Executed after a source is added by plugin manager.
 		Executed by: hu_source.load_source_plugins().
 		Return value is not used.
@@ -36,7 +36,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 		LOCMUS: Add predefined subsources
 		Subsources for this source are pre-defined in the main configuration ('local_media').
 		"""
-		self.index = sourceCtrl.index('name',self.name)	#name is unique
+		self.index = self.ourceCtrl.index('name',self.name)	#name is unique
 		if self.index is None:
 			self.printer("Plugin {0} does not exist".format(self.name),level=LL_ERROR)
 			return False
@@ -46,17 +46,17 @@ class MySource(MpdSourcePlugin,IPlugin):
 			for local_media in sourceconfig['local_media']:
 				mountpoint = local_media['mountpoint']
 				mpd_dir = local_media['mpd_dir']
-				self.add_subsource(mountpoint, mpd_dir, sourceCtrl)
+				self.add_subsource(mountpoint, mpd_dir)
 
 		return True
 
-	def add_subsource(self, mountpoint, mpd_dir, sourceCtrl):
+	def add_subsource(self, mountpoint, mpd_dir):
 		subsource = {}
 		subsource['displayname'] = 'local: ' + mountpoint
 		subsource['mountpoint'] = mountpoint
 		subsource['mpd_dir'] = mpd_dir
 		subsource['label'] = mpd_dir
-		sourceCtrl.add_sub( self.index, subsource )
+		self.sourceCtrl.add_sub( self.index, subsource )
 
 	def check_availability(self, subindex=None):
 		"""Executed after post_add, and may occasionally be called.
@@ -83,7 +83,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 			mountpoint = subsource['mountpoint']			
 			cur_availability = subsource['available']
 			self.printer('Checking local folder: {0}, current availability: {1}'.format(mountpoint,cur_availability))
-			new_availability = check_mpddb_mountpoint(mountpoint, createdir=True, waitformpdupdate=True)
+			new_availability = self.check_mpddb_mountpoint(mountpoint, createdir=True, waitformpdupdate=True)
 			self.printer('Checked local folder: {0}, new availability: {1}'.format(mountpoint,new_availability))
 			
 			if new_availability is not None and new_availability != cur_availability:
