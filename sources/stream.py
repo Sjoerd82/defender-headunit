@@ -80,36 +80,33 @@ class MySource(MpdSourcePlugin,IPlugin):
 		# Test internet connection
 		connected = internet()
 		if not connected:
-			self.__printer(' > Internet: [FAIL]')
-			self.__printer(' > Marking source not available')
+			self.printer(' > Internet: [FAIL]')
+			self.printer(' > Marking source not available')
 			new_availability = False
 		else:
-			self.__printer(' > Internet: [OK]')
+			self.printer(' > Internet: [OK]')
 
 		# See if we have streaming URL's
 		streams_file = sDirSave + "/streams.txt"
 		if os.path.isfile(streams_file):
-			self.__printer(' > Stream URL\'s: File found [OK]')
+			self.printer(' > Stream URL\'s: File found [OK]')
 		else:
-			self.__printer(' > Stream URL\'s: File not found [FAIL]')
-			self.__printer(' > Marking source not available')
+			self.printer(' > Stream URL\'s: File not found [FAIL]')
+			self.printer(' > Marking source not available')
 			new_availability = False
 
 		# Check if at least one stream is good
-		self.__printer('Checking to see we have at least one valid stream')
+		self.printer('Checking to see we have at least one valid stream')
 		with open(streams_file,'r') as streams:
 			for l in streams:
 				uri = l.rstrip()
 				if not uri[:1] == '#' and not uri == '':
 					uri_OK = url_check(uri)					
 					if uri_OK:
-						self.__printer(' > Stream [OK]: {0}'.format(uri))
-						#arSourceAvailable[5]=1
-						#Sources.setAvailable('name','stream',True)
-						#break
+						self.printer(' > Stream [OK]: {0}'.format(uri))
 						new_availability = True
 					else:
-						self.__printer(' > Stream [FAIL]: {0}'.format(uri))
+						self.printer(' > Stream [FAIL]: {0}'.format(uri))
 						new_availability = False
 
 		if new_availability is not None and new_availability != original_availability:
@@ -134,11 +131,11 @@ class MySource(MpdSourcePlugin,IPlugin):
 		# check if succesful...
 		playlistCount = self.mpc.playlistIsPop()
 		if playlistCount == "0":
-			self.__printer(' > Nothing in the playlist, aborting...')
+			self.printer(' > Nothing in the playlist, aborting...')
 			pa_sfx(LL_ERROR)
 			return False	
 		else:
-			self.__printer(' .... . Found {0:s} items'.format(playlistCount))
+			self.printer(' .... . Found {0:s} items'.format(playlistCount))
 			
 		#
 		# continue where left
@@ -147,7 +144,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 		#TODO!
 		#playslist_pos = mpc.lastKnownPos( sLabel )
 		
-		self.__printer(' > Starting playback')
+		self.printer(' > Starting playback')
 		#call(["mpc", "-q" , "play", str(playslist_pos['pos'])])
 		call(["mpc", "-q" , "play"])
 
