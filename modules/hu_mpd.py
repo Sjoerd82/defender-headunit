@@ -89,6 +89,41 @@ from hu_utils import *
 
 LOG_TAG = 'MPD'
 
+class MPDClientWrapper(object):
+    def __init__(self, *args, **kwargs):
+        self.__dict__['_mpd'] = MPDClient(*args, **kwargs)
+
+    def __getattr__(self, name):
+        a = self._mpd.__getattribute__(name)
+        if not callable(a): return a
+
+        def b(*args, **kwargs):
+            try:
+                return a(*args, **kwargs)
+            except (MPDConnectionError, ConnectionError) as e:
+                cargs, ckwargs = self.__dict__['_connect_args']
+                self.connect(*cargs, **ckwargs)
+                return a(*args, **kwargs)
+
+        return b
+
+    def __setattr__(self, name, value):
+        self._mpd.__setattr__(name, value)
+
+    def connect(self, *args, **kwargs):
+        self.__dict__['_connect_args'] = args, kwargs
+        self.disconnect()
+        self._mpd.connect(*args, **kwargs)
+
+    def disconnect(self):
+        try:
+            self._mpd.close()
+            self._mpd.disconnect()
+        except (MPDConnectionError, ConnectionError) as e:
+            pass
+        finally:
+            self._mpd._reset()
+
 class MpdController(object):
 
 	#self.mpdc = MPDClient()		# class attribute -- shared by all instances... gives irrelevant connect errors... not sure if this is good or bad
@@ -101,9 +136,9 @@ class MpdController(object):
 		# Connect to MPD
 		try:
 			self.__printer('Initializing MPD client', level=LL_DEBUG)
-			self.mpdc = MPDClient()				# per instance !
-			self.mpdc.timeout = None                # network timeout in seconds (floats allowed), default: None
-			self.mpdc.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
+			self.mpdc = MPDClientWrapper()		# per instance !
+			self.mpdc.timeout = None			# network timeout in seconds (floats allowed), default: None
+			self.mpdc.idletimeout = None		# timeout for fetching the result of the idle command is handled seperately, default: None
 			self.mpdc.connect("localhost", 6600)
 			self.__printer(' > Version: {0}'.format(self.mpdc.mpd_version), level=LL_DEBUG)          # print the MPD version
 			self.mpdc.random(random)
@@ -114,12 +149,22 @@ class MpdController(object):
 			self.__printer('Failed to connect to MPD server: {0}'.format(sys.exc_info()[0]), level=LL_ERROR)
 	
 	def __test_conn(self):
+		
+		test = self.mpdc.connect("localhost", 6600)
+		print test
+		
+		"""
+		result = True
 		try:
 			self.mpdc.noidle()
 		except MPDConnectionError as e:
 			self.mpdc.connect("localhost", 6600)
+			result = False
 		except:
 			self.__printer('WEIRD... no idle was set..')
+			
+		return result
+		"""
 
 	def __return_to_idle(self):
 		self.mpdc.send_idle()
@@ -212,7 +257,9 @@ class MpdController(object):
 		self.__return_to_idle()
 	
 	def is_dbdir(self, directory):
-		self.__test_conn()
+		if self.__test_conn() == False:
+			return False
+		
 		self.__printer("Checking existance of folder in MPD db..")
 		taskcmd = "mpc listall "+directory+" | wc -l"
 		# if directory is not in mpd db, "mpd error: No such directory" will be returned
