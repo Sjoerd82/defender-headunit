@@ -20,8 +20,8 @@ class MySource(MpdSourcePlugin,IPlugin):
 	def __init__(self):
 		super(MySource,self).__init__()
 
-	def on_init(self, plugin_name, logger=None):
-		super(MySource, self).on_init(plugin_name,logger)	# Executes init() at MpdSourcePlugin		
+	def on_init(self, plugin_name, sourceCtrl, logger=None):
+		super(MySource, self).on_init(plugin_name,sourceCtrl,logger)	# Executes init() at MpdSourcePlugin
 		return True
 
 	def on_add(self, sourceconfig):

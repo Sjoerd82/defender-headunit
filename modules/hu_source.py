@@ -161,10 +161,10 @@ class SourceController(object):
 			try:
 				ret_init = plugin.plugin_object.on_init(plugin.name, self, self.logger)
 				if not ret_init:
-					self.__printer('Plugin failed: on_init, cannot load plugin')
+					self.__printer('Plugin {0} failed (on_init); cannot load plugin'.format(plugin.name))
 					break
 			except:
-				self.__printer('Plugin failed: on_init, cannot load plugin')
+				self.__printer('Plugin {0} failed (on_init); cannot load plugin'.format(plugin.name))
 				break
 				
 				
@@ -180,7 +180,7 @@ class SourceController(object):
 				try:
 					plugin.plugin_object.on_add(self, config)
 				except:
-					self.__printer('Plugin failed: on_add, disabling plugin')
+					self.__printer('Plugin {0} failed (on_add); disabling plugin'.format(plugin.name))
 					self.lSource[indexAdded]['enabled'] = False
 				
 	
