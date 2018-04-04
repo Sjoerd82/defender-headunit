@@ -116,7 +116,7 @@ class MpdController(object):
 	def __test_conn(self):
 		try:
 			self.mpdc.noidle()
-		except (MPDConnectionError, ConnectionError) as e:
+		except MPDConnectionError as e:
 			self.mpdc.connect("localhost", 6600)
 		except:
 			self.__printer('WEIRD... no idle was set..')
