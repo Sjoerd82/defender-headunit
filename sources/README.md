@@ -2,6 +2,12 @@
 
 Source plugins are plugins that represent an audio (music) source.
 
+[#Concepts](#Concepts)
+Architecture
+Yapsy, a plugin manager
+Configuration
+Implementable methods
+Minimal implementation example
 
 ## Concepts
 
@@ -23,7 +29,7 @@ For these cases we create a base Plugin Class to base several plugin sources on.
 *Example:* "Local Music", "Media" and "Internet Radio" are all based on MPD, but have their own source plugin.
 
 
-### Plugin System
+### Plugin manager
 
 Source plugins are implemented using [Yapsy](#Yapsy), a lightweight plugin system.
 
@@ -39,7 +45,7 @@ A "source" consists of three files:
 Sources are loaded and managed by the Source Controller module.
 
 
-## Yapsy
+## Yapsy, a plugin manager
 
 Yapsy is a lightweight plugin system.
 
@@ -127,27 +133,6 @@ Example:
 ```
 
 
-## Minimal Plugin class
-
-A minimal working (but useless) source plugin would look like:
-
-```
-from yapsy.IPlugin import IPlugin
-from modules.source_plugin import SourcePlugin
-
-class sourceClass(SourcePlugin,IPlugin):
-
-	def __init__(self):
-		self.name = None
-		
-	def init(self, plugin_name):
-		self.name = plugin_name	
-		
-	def check(self):
-		return True
-
-```
-
 ## Implementable methods
 
 Method | Called | Short description | Arguments
@@ -230,3 +215,24 @@ If check() is not implemented this will make the source available.
 
 Implementing this function makes it possible to add subsources on the fly.
 Useful when the subsources are dynamic (for example: removable media).
+
+## Minimal Plugin class
+
+A minimal working (but useless) source plugin would look like:
+
+```
+from yapsy.IPlugin import IPlugin
+from modules.source_plugin import SourcePlugin
+
+class sourceClass(SourcePlugin,IPlugin):
+
+	def __init__(self):
+		self.name = None
+		
+	def init(self, plugin_name):
+		self.name = plugin_name	
+		
+	def check(self):
+		return True
+
+```
