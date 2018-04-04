@@ -158,9 +158,15 @@ class SourceController(object):
 
 		# Activate and add all collected plugins
 		for plugin in self.source_manager.getAllPlugins():
-			ret_init = plugin.plugin_object.on_init(plugin.name, self, self.logger)
-			if not ret_init:
+			try:
+				ret_init = plugin.plugin_object.on_init(plugin.name, self, self.logger)
+				if not ret_init:
+					self.__printer('Plugin failed: on_init, cannot load plugin')
+					break
+			except:
+				self.__printer('Plugin failed: on_init, cannot load plugin')
 				break
+				
 				
 			self.source_manager.activatePluginByName(plugin.name)
 			
