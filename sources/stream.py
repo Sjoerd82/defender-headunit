@@ -69,10 +69,10 @@ class MySource(MpdSourcePlugin,IPlugin):
 		
 		SMB: Check if subsource exists and has music in the MPD database
 		"""
-		subsource_availability_changes = []
-		stream_source = self.sourceCtrl.source(self.index)		
-		original_availability = stream_source['available']
 		index = self.sourceCtrl.index('name',self.name)	#name is unique
+		subsource_availability_changes = []
+		stream_source = self.sourceCtrl.source(index)		
+		original_availability = stream_source['available']
 		
 		#TODO!!
 		sDirSave = "/mnt/PIHU_CONFIG"
