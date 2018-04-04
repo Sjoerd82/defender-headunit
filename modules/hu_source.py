@@ -86,14 +86,13 @@ class SourceController(object):
 
 		self.source_manager = PluginManager()
 
-		'''
+
 		# YAPSY LOG OUTPUT TO CONSOLE
 		logyapsy = logging.getLogger('yapsy')
 		logyapsy.setLevel(logging.DEBUG)
 		ch = logging.StreamHandler()
 		ch.setLevel(logging.DEBUG)
 		logyapsy.addHandler(ch)
-		'''
 
 	def __check_index(self, test_index):
 		"""	Check if a given index is valid

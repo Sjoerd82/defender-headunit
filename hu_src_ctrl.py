@@ -902,37 +902,37 @@ def printSummary():
 		subsources = sc_sources.subsource_all(i)
 		
 		if source['enabled'] == False:
-			printer(' {0} {1:2d}.  {2:17} {3} {4:20}'.format(" ",i,source['displayname'],colorize("not available",'dark_gray'),colorize("disabled",'dark_gray')), tag='')		
+			printer(' {0} {1:2d}.x {2:17} {3} {4:20}'.format(" ",i,source['displayname'],colorize("not available",'dark_gray'),colorize("disabled",'dark_gray')), tag='')		
 		elif not subsources:
-			printer(' {0} {1:2d}.  {2:17} {3} {4:20}'.format(" ",i,source['displayname'],colorize("not available",'dark_gray'),colorize("no subsources",'dark_gray')), tag='')
-		
-		j = 0
-		for subsource in subsources:
-		
-			# Availability
-			if subsource['available']:
-				available = colorize('available    ','light_green')
-			else:
-				available = colorize('not available','light_red')
-	
-			# Active indicator
-			if i == arCurrIx[0] and j == arCurrIx[1]:
-				active = colorize(">",'light_green')
-			else:
-				active = " "
-				
-			# State
-			state = colorize("playing",'light_green')
-	
-			# SubSource data
-			if 'mountpoint' in subsource:
-				mountpoint = subsource['mountpoint']
-			else:
-				mountpoint = ""
-
-			printer(' {0} {1:2d}.{2} {3:17} {4} {5:20} {6}'.format(active,i,j,source['displayname'],available,mountpoint,state), tag='')
+			printer(' {0} {1:2d}.x {2:17} {3} {4:20}'.format(" ",i,source['displayname'],colorize("not available",'dark_gray'),colorize("no subsources",'dark_gray')), tag='')
+		else:
+			j = 0
+			for subsource in subsources:
 			
-			j += 1
+				# Availability
+				if subsource['available']:
+					available = colorize('available    ','light_green')
+				else:
+					available = colorize('not available','light_red')
+		
+				# Active indicator
+				if i == arCurrIx[0] and j == arCurrIx[1]:
+					active = colorize(">",'light_green')
+				else:
+					active = " "
+					
+				# State
+				state = colorize("playing",'light_green')
+		
+				# SubSource data
+				if 'mountpoint' in subsource:
+					mountpoint = subsource['mountpoint']
+				else:
+					mountpoint = ""
+
+				printer(' {0} {1:2d}.{2} {3:17} {4} {5:20} {6}'.format(active,i,j,source['displayname'],available,mountpoint,state), tag='')
+				
+				j += 1
 				
 		i += 1
 	printer('----------------------------------------------------------------------', tag='')
