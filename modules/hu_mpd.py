@@ -84,6 +84,7 @@ import os
 import sys
 from subprocess import call
 from mpd import MPDClient
+from mpd import ConnectionError as MPDConnectionError
 from hu_utils import *
 
 LOG_TAG = 'MPD'
@@ -115,7 +116,7 @@ class MpdController(object):
 	def __test_conn(self):
 		try:
 			self.mpdc.noidle()
-		except mpd.MPDConnectionError:
+		except (MPDConnectionError, ConnectionError) as e:
 			self.mpdc.connect("localhost", 6600)
 		except:
 			self.__printer('WEIRD... no idle was set..')
