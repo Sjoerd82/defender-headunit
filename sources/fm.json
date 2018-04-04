@@ -14,5 +14,6 @@
 		"order": 0,
 		"dependencies": { "current_source":"fm" }
 	}
-	]
+	],
+  "subsource_key": ["displayname"]
 }
