@@ -52,7 +52,7 @@ DESCRIPTION = "Source Controller"
 LOG_TAG = 'SRCTRL'
 LOGGER_NAME = 'srctrl'
 
-DEFAULT_CONFIG_FILE = '/etc/hu/configuration.json'
+DEFAULT_CONFIG_FILE = '/etc/configuration.json'
 #SETTINGS = '/etc/hu/source.json'
 SETTINGS = '/mnt/PIHU_CONFIG/source.json'
 DEFAULT_LOG_LEVEL = LL_INFO
