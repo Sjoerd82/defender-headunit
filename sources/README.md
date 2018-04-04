@@ -2,12 +2,12 @@
 
 Source plugins are plugins that represent an audio (music) source.
 
-[#Concepts](#Concepts)
-Architecture
-Yapsy, a plugin manager
-Configuration
-Implementable methods
-Minimal implementation example
+- [Concepts](#Concepts)
+- [#Architecture](Architecture)
+- Yapsy, a plugin manager
+- Configuration
+- Implementable methods
+- Minimal implementation example
 
 ## Concepts
 
