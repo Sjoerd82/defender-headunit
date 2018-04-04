@@ -21,7 +21,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 		super(MySource,self).__init__()
 
 	def on_init(self, plugin_name, logger=None):
-		super(MySource, self).init(plugin_name,logger)	# Executes init() at MpdSourcePlugin		
+		super(MySource, self).on_init(plugin_name,logger)	# Executes init() at MpdSourcePlugin		
 		return True
 
 	def on_add(self, sourceconfig):
@@ -43,7 +43,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 			order = 0
 			for stream_group in sourceconfig['stream_groups']:
 				streams = []
-				for stream in stream_group['streams']
+				for stream in stream_group['streams']:
 					streams.append(stream['uri'])
 				self.add_subsource( stream_group['group_name']
 								   ,streams
