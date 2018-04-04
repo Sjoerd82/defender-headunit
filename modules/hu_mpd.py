@@ -89,6 +89,10 @@ from hu_utils import *
 
 LOG_TAG = 'MPD'
 
+# 
+# Check: https://github.com/Mic92/python-mpd2/pull/92
+# This Wrapper might not be needed anymore when upgrading to the latest library version
+#
 class MPDClientWrapper(object):
     def __init__(self, *args, **kwargs):
         self.__dict__['_mpd'] = MPDClient(*args, **kwargs)
@@ -100,7 +104,7 @@ class MPDClientWrapper(object):
         def b(*args, **kwargs):
             try:
                 return a(*args, **kwargs)
-            except (MPDConnectionError, ConnectionError) as e:
+            except (MPDConnectionError, mpd.ConnectionError) as e:
                 cargs, ckwargs = self.__dict__['_connect_args']
                 self.connect(*cargs, **ckwargs)
                 return a(*args, **kwargs)
@@ -119,14 +123,12 @@ class MPDClientWrapper(object):
         try:
             self._mpd.close()
             self._mpd.disconnect()
-        except (MPDConnectionError, ConnectionError) as e:
+        except (MPDConnectionError, mpd.ConnectionError) as e:
             pass
         finally:
             self._mpd._reset()
 
 class MpdController(object):
-
-	#self.mpdc = MPDClient()		# class attribute -- shared by all instances... gives irrelevant connect errors... not sure if this is good or bad
 
 	def __printer( self, message, level=LL_INFO, tag=LOG_TAG):
 		self.logger.log(level, message, extra={'tag': tag})
@@ -152,6 +154,8 @@ class MpdController(object):
 		
 		test = self.mpdc.connect("localhost", 6600)
 		print test
+		
+		self.mpdc.noidle()
 		
 		"""
 		result = True
