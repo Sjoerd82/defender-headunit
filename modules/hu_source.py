@@ -173,8 +173,8 @@ class SourceController(object):
 					indexAdded = self.index('name',config['name'])
 					try:
 						plugin.plugin_object.on_add(self, config)
-					except:
-						self.__printer('Plugin {0} failed (on_add); disabling plugin'.format(plugin.name))
+					except Exception, e:
+						self.__printer('Plugin {0} failed (on_add); disabling plugin. Error: {1}'.format(plugin.name,str(e)))
 						self.lSource[indexAdded]['enabled'] = False
 				
 	
