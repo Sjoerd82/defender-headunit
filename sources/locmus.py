@@ -25,7 +25,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 
 	# TODO: CAN WE LEAVE THIS OUT? WILL THEN EXECUTE THE on_init on the derived class, right?
 	def on_init(self, plugin_name, sourceCtrl, logger=None):
-		super(MySource, self).init(plugin_name,sourceCtrl,logger)	# Executes init() at MpdSourcePlugin
+		super(MySource, self).on_init(plugin_name,sourceCtrl,logger)	# Executes init() at MpdSourcePlugin
 		return True
 
 	def on_add(self, sourceCtrl, sourceconfig):
