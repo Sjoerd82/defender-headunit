@@ -4,10 +4,10 @@ Source plugins are plugins that represent an audio (music) source.
 
 - [Concepts](#Concepts)
 - [Architecture](#Architecture)
-- [Yapsy, a plugin manager](#Yapsy, a plugin manager)
+- [Yapsy, a plugin manager](#Yapsy-a-plugin-manager)
 - [Configuration](#Configuration)
-- [Implementable methods](#Implementable methods)
-- [Minimal implementation example](#Minimal implementation example)
+- [Implementable methods](#Implementable-methods)
+- [Minimal implementation example](#Minimal-implementation-example)
 
 ## Concepts
 
@@ -74,11 +74,11 @@ The name and module must match your Python filename.
 That's all.
 
 Links:
-[http://yapsy.sourceforge.net/](http://yapsy.sourceforge.net/)
-[http://yapsy.readthedocs.io/en/latest/index.html](http://yapsy.readthedocs.io/en/latest/index.html)
-[https://github.com/tibonihoo/yapsy](https://github.com/tibonihoo/yapsy)
+- [http://yapsy.sourceforge.net/](http://yapsy.sourceforge.net/)
+- [http://yapsy.readthedocs.io/en/latest/index.html](http://yapsy.readthedocs.io/en/latest/index.html)
+- [https://github.com/tibonihoo/yapsy](https://github.com/tibonihoo/yapsy)
 
-## JSON configuration
+## Configuration
 
 The JSON configuration contains all kinds of static *read-only* details.
 The source can be further configured and customized in the read-write file configuration.json in the `source_config` section.
