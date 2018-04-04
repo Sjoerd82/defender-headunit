@@ -39,7 +39,7 @@ class MySource(SourcePlugin,IPlugin):
 			print "Plugin {0} does not exist".format(self.name)
 			return False
 		
-		self.add_subsource(index,self,index)
+		self.add_subsource(index)
 		return True
 
 	def add_subsource(self, index):

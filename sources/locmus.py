@@ -36,7 +36,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 		LOCMUS: Add predefined subsources
 		Subsources for this source are pre-defined in the main configuration ('local_media').
 		"""
-		self.index = self.ourceCtrl.index('name',self.name)	#name is unique
+		self.index = self.sourceCtrl.index('name',self.name)	#name is unique
 		if self.index is None:
 			self.printer("Plugin {0} does not exist".format(self.name),level=LL_ERROR)
 			return False
