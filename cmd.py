@@ -59,6 +59,11 @@ def main():
 		params = None
 		ret = messaging.publish_command(path,cmd,params)
 	elif args.command == 'player-play':
+		path = '/player/state'
+		cmd = 'PUT'
+		params = {"state":"playing"}
+		ret = messaging.publish_command(path,cmd,params)
+	elif args.command == 'player-next':
 		path = '/player/next'
 		cmd = 'PUT'
 		params = None
