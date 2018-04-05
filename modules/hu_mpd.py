@@ -104,7 +104,8 @@ class MPDClientWrapper(object):
         def b(*args, **kwargs):
             try:
                 return a(*args, **kwargs)
-            except (MPDConnectionError, mpd.ConnectionError) as e:
+            #except (MPDConnectionError, mpd.ConnectionError) as e:
+			except:
                 cargs, ckwargs = self.__dict__['_connect_args']
                 self.connect(*cargs, **ckwargs)
                 return a(*args, **kwargs)
@@ -123,8 +124,8 @@ class MPDClientWrapper(object):
         try:
             self._mpd.close()
             self._mpd.disconnect()
-        except (MPDConnectionError, mpd.ConnectionError) as e:
-            pass
+        #except (MPDConnectionError, mpd.ConnectionError) as e:
+        #    pass
         finally:
             self._mpd._reset()
 
