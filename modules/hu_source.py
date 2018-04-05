@@ -797,8 +797,8 @@ class SourceController(object):
 		
 		if index is None and subindex is None:
 			# use current subsource
-			index = iCurrentSource[0]
-			subindex = iCurrentSource[1]
+			index = self.iCurrentSource[0]
+			subindex = self.iCurrentSource[1]
 			
 		if index is None or subindex is None:
 			# we need both
