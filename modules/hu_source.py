@@ -624,16 +624,14 @@ class SourceController(object):
 		#
 		if self.iCurrentSource[0] is None:
 			i = 0
+			
 			for source in self.lSource:
-				if source['available'] and not source['template']:
-					self.iCurrentSource[0] = i
-					self.iCurrentSource[1] = None
-					return self.iCurrentSource
-				elif source['available'] and source['template']:
-					self.iCurrentSource[0] = i
+			
+				if source['enabled'] is True:
 					j = 0
 					for subsource in source['subsources']:
 						if subsource['available']:
+							self.iCurrentSource[0] = i
 							self.iCurrentSource[1] = j
 							return self.iCurrentSource
 						j += 1
