@@ -6,6 +6,7 @@ Source plugins are plugins that represent an audio (music) source.
 - [Architecture](#Architecture)
 - [Yapsy, a plugin manager](#Yapsy-a-plugin-manager)
 - [Configuration](#Configuration)
+- [Resume playback](#Resume-playback)
 - [Implementable methods](#Implementable-methods)
 - [Minimal implementation example](#Minimal-implementation-example)
 
@@ -131,6 +132,43 @@ Example:
 		, "fm": {"frq_lo": 80}
 	}
 ```
+
+## Resume playback
+
+Resuming playback of the audio source at the position where the user left off is facilitated through saving key details to file.
+The save location of these files is configured in the main configuration, under `directories.resume`.
+
+The resume files are saved whenever an event is received by the SourceController that (may) change required resume data. These are events such as `/events/player/state`, `/events/player/track`, `/events/player/elapsed`, `/events/source/active`, `/events/system/shutdown`, `/events/system/reboot`.
+
+### Resume files
+There is one resume file written containing the source and there are resume files written for every subsource.
+
+#### `resume`
+The resume file containing the source to be resumed is called `resume`. It contains the names of the source and subsource to be resumed. The format is `<source name>:<subsource key>`
+There is one source per line, the first line is the first source to be attempted to be resumed. Optionally, fallback sources may be listed on the successive lines.
+To play any available subsource, the key may be substituted with a '*', or with a number indicating the subsource index. The latter may not reliably identify the exact same subsource, depending on its configuration.
+
+For example:
+```
+media:f925ee5a
+media:*
+fm:0
+*.*
+```
+Will attempt to resume playback of the media source identified by f925ee5a, if it's not available, will continue to play any available subsource of the media source. In case this fails, will attempt to play the first subsource (subsource 0) of the FM source. If this fails too, will continue to play any source that's available*.
+(Sub)Sources may be exempt from automatic playback, by setting the `no_fallback` to true (not implemented). This may be useful to prevent for example audiobooks to be accidentally resumed.
+
+PLEASE NOTE: Current implementation only writes the current source and no fallback sources...yet
+
+#### Subsource resume files
+
+### Position updates
+If the hardware permits, the postition within a track may be saved every second. This may, however, put a strain on the system and/or SD card. The update frequency can be configured through `preferences.resume_position_update`. By default this value will be set to '0', meaning no updates.
+When set to 0, position updates will be saved when user switches source or when shutting down. Depending on the hardware setup, the latter event might not always be caught.
+
+### Implementation
+The QuickPlay init script takes the first line from `resume` to load services in an optimized order for the specified source.
+It will call the SourceController with the `--resume` switch
 
 
 ## Implementable methods

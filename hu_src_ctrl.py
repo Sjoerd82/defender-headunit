@@ -12,6 +12,13 @@
 #
 # Loads source plugins from /sources folder
 #
+# Switches:
+# -r, --resume		Resume source
+# -r, --resume 0	Resume source 0			<- no
+# -r, --resume 1.0	Resume source 1.0		<- no
+# -r, --resume fm	Resume source fm		<- no
+# -p, --play		Start playback
+# 
 
 
 ## IGNORING QUEUING FOR NOW ! ##
@@ -67,28 +74,13 @@ configuration = None	# configuration
 settings = None			# operational settings
 sc_sources = None		# source controller
 
-# still used?
-queue_actions = None
-#hu_details = { 'track':None, 'random':'off', 'repeat':True, 'att':False }
-
-
 # ********************************************************************************
 # Output wrapper
 #
 def printer( message, level=LL_INFO, continuation=False, tag=LOG_TAG ):
 	logger.log(level, message, extra={'tag': tag})
 
-
-# ********************************************************************************
-# Source Plugin Wrapper
-#
-
-
-# ********************************************************************************
-# Headunit functions
-#
-
-
+# NOT USED AT THE MOMENT...
 def process_queue():
 	if not queue_actions.empty(): 
  		item = queue_actions.get()
@@ -97,7 +89,6 @@ def process_queue():
 		globals()[item[0]](item[1], item[2], item[3])
 		queue_actions.task_done()
 	return True
-
 
 def validate_args(args, min_args, max_args):
 
@@ -807,63 +798,132 @@ def handle_path_player(path,cmd,args):
 
 	return ret
 
+def handle_path_events(path,cmd,args):
+
+	base_path = 'events'
+	# remove base path
+	del path[0]
+	
+	def data_source_active():
+		pass
+	def data_source_available():
+		pass
+	def data_player_state():
+		pass
+	def data_player_track():
+		pass
+	def data_player_elapsed():
+		pass
+	def data_player_updating():
+		pass
+	def data_player_updated():
+		pass
+	def data_volume_changed():
+		pass
+	def data_volume_att():
+		pass
+	def data_volume_mute():
+		pass
+	def data_system_shutdown():
+		pass
+	def data_system_reboot():
+		pass
+	def data_udisks_added():
+		pass
+	def data_udisks_removed():
+		pass
+
+	if path:
+		function_to_call = cmd + '_' + '_'.join(path)
+	else:
+		# called without sub-paths
+		function_to_call = cmd + '_' + base_path
+
+	if function_to_call in locals():
+		ret = locals()[function_to_call](args)
+		printer('Executed {0} function {1} with result status: {2}'.format(base_path,function_to_call,ret))
+	else:
+		printer('Function {0} does not exist'.format(function_to_call))
+
+	return ret
 
 # ********************************************************************************
-# Initialization functions
+# On Idle
 #
-#  - Load source plugins
-#  - Summary printer
-#
-
-"""
-# Initiate logging to log file.
-# Use logger.info instead of print.
-def init_logging_f( logdir, logfile, runcount ):
-
-	global logger
-
-	# create the log dir, if it doesn't exist yet
-	if not os.path.exists(logdir):
-		os.makedirs(logdir)
+def idle_message_receiver():
+	#print "DEBUG: idle_msg_receiver()"
 	
-	iCounterLen = 6
-	currlogfile = os.path.join(logdir, logfile+'.'+str(runcount).rjust(iCounterLen,'0')+'.log')
-	
-	# create file handler
-	fh = logging.FileHandler(currlogfile)
-	fh.setLevel(logging.DEBUG)
-
-	# create formatters
-	fmtr_fh = RemAnsiFormatter("%(asctime)-9s [%(levelname)-8s] %(tag)s %(message)s")
+	def dispatcher(path, command, arguments):
+		handler_function = 'handle_path_' + path[0]
+		if handler_function in globals():
+			ret = globals()[handler_function](path, command, arguments)
+			return ret
+		else:
+			print("No handler for: {0}".format(handler_function))
+			return None
 		
-	# add formatter to handlers
-	fh.setFormatter(fmtr_fh)
+	rawmsg = messaging.poll(timeout=None)				#None=Blocking
+	if rawmsg:
+		printer("Received message: {0}".format(rawmsg))	#TODO: debug
+		parsed_msg = parse_message(rawmsg)
 
-	# add fh to logger
-	logger.addHandler(fh)
-	
-	logger.info('Logging started: File ({0})'.format(currlogfile),extra={'tag':'log'})
-	
-	#
-	# housekeeping
-	#
-	
-	# remove all but the last 10 runs
-	iStart = len(logfile)+1
-	iRemTo = runcount-10
-	
-	# loop through the logdir
-	for filename in os.listdir(logdir):
-		if filename.startswith(logfile) and filename.endswith('.log'):
-			#print filename #(os.path.join(directory, filename))
-			logCounter = filename[iStart:iStart+iCounterLen]
-			if int(logCounter) <= iRemTo:
-				#print os.path.join(logdir, filename)
-				os.remove(os.path.join(logdir, filename))
-				logger.debug('Removing old log file: {0}'.format(filename),extra={'tag':'log'})
+		# send message to dispatcher for handling	
+		retval = dispatcher(parsed_msg['path'],parsed_msg['cmd'],parsed_msg['args'])
+		
+		if parsed_msg['resp_path']:
+			#print "DEBUG: Resp Path present.. returing message.."
+			messaging.publish_command(parsed_msg['resp_path'],'DATA',retval)
+		
+	return True # Important! Returning true re-enables idle routine.
 
-"""
+# ********************************************************************************
+# Save resume file
+#
+# todo: consider splitting this method in two
+# todo: consider writing to the end of the file and reading backwards instead
+#
+def save_resume():
+	cur_comp_subsource = sc_sources.composite()
+
+	# Save System resume source indicator
+	resume_file = os.path.join(configuration['directories']['resume'],configuration['files']['resume'])
+	with open(resume_file, 'wb') as f_resume_file:
+		f_resume_file.write('{0}\n'.format( cur_comp_subsource['name'] ))
+
+	# sub-source
+	ss_resume_file = os.path.join(configuration['directories']['resume'], '.'.join(cur_comp_subsource['name'],cur_comp_subsource['keyvalue'],'json'))
+	printer('Saving resume file to: {0}'.format(ss_resume_file))
+	state = sc_sources.source_get_state()
+	resume_data = {}
+	resume_data['id'] = state['id']
+	resume_data['filename'] = state['filename']
+	resume_data['time'] = state['time']
+	print resume_data
+	try:
+		json.dump( resume_data, open( ss_resume_file, "wb" ) )
+	except:
+		printer(' > ERROR saving resume file',level=LL_ERROR)
+		pa_sfx(LL_ERROR)
+		
+# ********************************************************************************
+# Load configuration
+#
+def load_configuration():
+
+	# utils # todo, present with logger
+	configuration = configuration_load(LOGGER_NAME,args.config)
 	
+	if not configuration or not 'zeromq' in configuration:
+		printer('Error: Configuration not loaded or missing ZeroMQ, using defaults:')
+		printer('Default Pub port: {0}'.format(DEFAULT_PORT_PUB))
+		printer('Default Sub port: {0}'.format(DEFAULT_PORT_SUB))
+		configuration = { "zeromq": { "port_subscriber": DEFAULT_PORT_SUB, "port_publisher":DEFAULT_PORT_PUB } }
+	
+	return configuration
+
+# ********************************************************************************
+# Execute a check_availability() on all sources
+#
 def check_all_sources_send_event():
 
 	all_sources = sc_sources.source_all()
@@ -877,9 +937,9 @@ def check_all_sources_send_event():
 				messaging.publish_command('/events/source/available','DATA',result)
 		i+=1
 
-
-
-# print a source summary
+# ********************************************************************************
+# Print a source summary
+#
 def printSummary():
 	
 	printer('-- Summary -----------------------------------------------------------', tag='')
@@ -918,6 +978,7 @@ def printSummary():
 				# Active indicator
 				if i == arCurrIx[0] and j == arCurrIx[1]:
 					active = colorize(">",'light_green')
+					sc_sources.
 				else:
 					active = " "
 					
@@ -937,122 +998,117 @@ def printSummary():
 		i += 1
 	printer('----------------------------------------------------------------------', tag='')
 
-# Load Source configurations and add to source list
-def load_sources( plugindir ):
-	global sc_sources
-	global configuration
 
-	#
-	# adds the source:
-	# - Load source json configuration
-	# - 
-	#
-	def add_a_source( plugindir, sourcePluginName ):
-		configFileName = os.path.join(plugindir,sourcePluginName+'.json')
-		if not os.path.exists( configFileName ):
-			printer('Configuration not found: {0}'.format(configFileName))
-			return False
-		
-		# load source configuration file
-		jsConfigFile = open( configFileName )
-		config=json.load(jsConfigFile)
-		
-		# test if name is unique
-		# #TODO
+def QuickPlay( prevSource, prevSourceSub ):
+	"""Resume playing
+	"""
 
-		# fetch module from sys.modules
-		# sourceModule = sys.modules['sources.'+sourcePluginName] # MENU..
-		
-		# 
-		#for execFunction in ('sourceInit','sourceCheck','sourcePlay','sourceStop','sourceNext','sourcePrev'):
-		#	if execFunction in config:
-		#		#overwrite string with reference to module
-		#		config[execFunction][0] = sys.modules['sources.'+sourcePluginName]
-
-		# add a sourceModule item with a ref. to the module
-		config['sourceModule'] = sys.modules['sources.'+sourcePluginName]
-		
-		# register the source
-		isAdded = sc_sources.add(config)
-		
-		# check if the source has a configuration
-		if 'defaultconfig' in config:
-			# check if configuration is present in the main configuration file
-			if not sourcePluginName in configuration['source_config']:
-				# insert defaultconfig
-				configuration['source_config'][sourcePluginName] = config['defaultconfig']
-				configuration_save( args.config, configuration )
-
-		# check if the source has menu items
-		"""
-		if 'menuitems' in config:
-			for menuitem in config['menuitems']:
-				# do we have a sub menu that needs to be populated?
-				if 'sub' in menuitem:
-					if menuitem['sub'].startswith('!'):
-						func = menuitem['sub'].lstrip('!')
-						menuitem['sub'] = getattr(sourceModule,func)()
-						#menuitem['uuid']
-				#TODO: re-enable
-				#huMenu.add( menuitem )
-		"""
-		# init source, if successfully added
-		if isAdded:
-			indexAdded = sc_sources.index('name',config['name'])
-			sc_sources.source_init(indexAdded)
+	if prevSource == "" or prevSource is None:
+		printer ('No previous source.', tag='QPLAY')
+		return None
 	
-	# check if plugin dir exists
-	if not os.path.exists(plugindir):
-		printer('Source path not found: {0}'.format(plugindir), level=LL_CRITICAL)
-		exit()
-	
-	#
-	# loop through all imported modules, picking out the sources
-	# execute add_a_source() for every found source
-	# #TODO: remove hardcoded reference to "sources.", derive it...
-	#
-	list_of_sources = []
-	for k, v in sys.modules.iteritems():
-		if k[0:8] == 'sources.':
-			sourcePluginName = k[8:]
-			if not str(v).find(plugindir) == -1:
-				list_of_sources.append(sourcePluginName)
+	if prevSourceSub == "" or prevSourceSub is None:
+		printer ('No previous subsource.', tag='QPLAY')
+		return None
 
-	# dictionary of modules may change during the adding of the sources, raising a runtime error..
-	# therefore we save them in a list and iterate over them in a second loop:
-	for sourcePluginName in list_of_sources:
-		add_a_source(plugindir, sourcePluginName)
-	
+	printer("Previous source: {0} {1}".format(prevSource, prevSourceSub), tag='QPLAY' )
 
-def idle_message_receiver():
-	#print "DEBUG: idle_msg_receiver()"
-	
-	def dispatcher(path, command, arguments):
-		handler_function = 'handle_path_' + path[0]
-		if handler_function in globals():
-			ret = globals()[handler_function](path, command, arguments)
-			return ret
-		else:
-			print("No handler for: {0}".format(handler_function))
-			return None
+	def get_prev_index( prevSourceName, prevSourceSub, doCheck ):
+		""" loop through sources, find source by name, find subsource by key """
+
+		retSource = []
 		
-	rawmsg = messaging.poll(timeout=None)				#None=Blocking
-	if rawmsg:
-		printer("Received message: {0}".format(rawmsg))	#TODO: debug
-		parsed_msg = parse_message(rawmsg)
+		ix = 0
+		for source in sc_sources.source_all():
+			#print "{0} Source {1}".format(ix,source["name"])
+			#print source
+			if source['name'] == prevSourceName:
+				if not 'subsources' in source:
+					#print "......... Previous Source: {0}; is template, but has no subsources.".format(source['name'])
+					#print "---END--- no suitable source to continue playing... Play first available source."
+					return []
+					#return False
+				else:
+					#print "......... Previous Source: {0}; is template, and has subsources, testing match...>".format(source['name'])
+					ix_ss = 0
+					for subsource in source['subsources']:
+						#print j
+						#print subsource
+						if test_match( prevSourceSub, subsource ):
+							#print "> ..MATCH! (todo: stop)"
+							if doCheck:
+								# Check if REALLY available...
+								# !!! TODO: MAKE THIS MORE UNIVERSAL..... !!!
+								if source['name'] in ['media','locmus']:
+									#print "OPTION 1 media/locmus"
+									#if not Sources.sourceCheckParams( ix, ['/media/PIHU_DATA'] ):
+									if not sc_sources.sourceCheck( ix, ix_ss ): #subsource['mountpoint'] ):
+										#print "directory not present or empty [todo: or no music in mpd]"
+										#print "---END--- Play first available source."
+										return []
+										#return False
+									else:
+										#print "---END--- CONTINUING playback of this subsource!"
+										retSource.append(ix)
+										retSource.append(ix_ss)
+										return retSource
+										#return True
+								#TEMPORARY:
+								else:
+									if not sc_sources.sourceCheck( ix ):
+										#print "---END--- Play first available source."
+										return []
+										#return False
+									else:
+										#print "---END--- CONTINUING playback of this subsource!"
+										retSource.append(ix)
+										retSource.append(ix_ss)
+										return retSource
+										#return True
+									
+							else:
+								# No check, clear for available..
+								#print "---END--- CONTINUING playback of this subsource!"
+								retSource.append(ix)
+								retSource.append(ix_ss)
+								return retSource
+								#return True
+						else:
+							pass
+							#print "> ..no match on this one"
+							#print "---END--- no suitable source or subsource to continue playing... Play first available source."
+						ix_ss+=1
+				# Nothing matched for this source name
+				return []
+				#return False
+			ix+=1
 
-		# send message to dispatcher for handling	
-		retval = dispatcher(parsed_msg['path'],parsed_msg['cmd'],parsed_msg['args'])
-		
-		if parsed_msg['resp_path']:
-			#print "DEBUG: Resp Path present.. returing message.."
-			messaging.publish_command(parsed_msg['resp_path'],'DATA',retval)
-		
-	
-	return True #important, returning true re-enables idle routine.
-	
-				
+		# Source name was not found.. (strange situation...)
+		return []
+		#return False
 
+	prevIx = get_prev_index( prevSource, prevSourceSub, True ) #PlayPrevSource()
+	if len(prevIx) == 1:
+		printer ('Continuing playback', tag='QPLAY')
+		hu_play(prevIx[0])
+		#Sources.setCurrent(prevIx[0])
+		#dLoaded = load_current_resume()
+		#Sources.sourcePlay(dLoaded)
+		return True
+					
+	elif len(prevIx) == 2:
+		printer ('Continuing playback (subsource)', tag='QPLAY')
+		hu_play(prevIx[0],prevIx[1])
+		#Sources.setCurrent(prevIx[0],prevIx[1])
+		#dLoaded = load_current_resume()
+		#Sources.sourcePlay(dLoaded)
+		return True
+
+	else:
+		printer ('Continuing playback not available.', tag='QPLAY')
+		return False
+			
+			
 #********************************************************************************
 # Parse command line arguments
 #
@@ -1067,43 +1123,9 @@ def parse_args():
 	parser.add_argument('-b', action='store_true', default=False)
 	parser.add_argument('--port_publisher', action='store')
 	parser.add_argument('--port_subscriber', action='store')
+	parser.add_argument('--resume','-r', action='store_true')
+	parser.add_argument('--play','-p', action='store_true')	
 	args = parser.parse_args()
-
-# ********************************************************************************
-# Load configuration
-#
-def load_configuration():
-
-	# utils # todo, present with logger
-	configuration = configuration_load(LOGGER_NAME,args.config)
-	
-	if not configuration or not 'zeromq' in configuration:
-		printer('Error: Configuration not loaded or missing ZeroMQ, using defaults:')
-		printer('Default Pub port: {0}'.format(DEFAULT_PORT_PUB))
-		printer('Default Sub port: {0}'.format(DEFAULT_PORT_SUB))
-		configuration = { "zeromq": { "port_subscriber": DEFAULT_PORT_SUB, "port_publisher":DEFAULT_PORT_PUB } }
-	
-	return configuration
-
-def load_settings():
-
-	settings = configuration_load(LOGGER_NAME,SETTINGS)
-	if not settings:
-		settings = {}
-		settings['source'] = None
-		settings['subsource_key'] = None
-		
-	return settings
-
-def save_settings():
-
-	printer('Saving Settings')
-	try:
-		json.dump( settings, open( SETTINGS, "wb" ) )
-	except:
-		printer(' > ERROR saving configuration',LL_CRITICAL,True)
-		pa_sfx(LL_ERROR)
-
 
 #********************************************************************************
 # Setup
@@ -1159,21 +1181,7 @@ def setup():
 	global sc_sources
 	sc_sources = SourceController(logger)
 	sc_sources.load_source_plugins( os.path.join(os.path.dirname(os.path.abspath(__file__)),'sources') )
-	
-	#
-	# Load Source Plugins
-	#
-	#printer('Loading Source Plugins...')
-	#import sources
-	#load_sources( os.path.join(os.path.dirname(os.path.abspath(__file__)),'sources') )
-
-	#
-	# Load Operational Settings
-	#
-	global settings
-	settings = load_settings()
-	
-	
+		
 	#
 	# end of initialization
 	#
@@ -1192,9 +1200,20 @@ def main():
 	printSummary()
 	
 	#
+	# Resume playback
+	#
+	if args.r is True:
+		QuickPlay()
+		
+	#
+	# Start playback
+	#
+	if args.p is True:
+		pass
+	
+	#
 	# Initialize the mainloop
 	DBusGMainLoop(set_as_default=True)
-
 
 	#
 	# main loop

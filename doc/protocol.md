@@ -146,6 +146,9 @@ Field | Value
 `state` | "play", "stop" or "paused"
 `random` | "on", "off", "..."
 `repeat` | "on", "off"
+`time` | elapsed time of current track (optional)
+`id` | ID of track being played, for MPD sources this is the songid (optional)
+`filename` | name of file being played (optional)
 
 ### {track}
 Details about what's playing. Only display is mandatory.

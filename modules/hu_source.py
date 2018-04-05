@@ -17,22 +17,24 @@
 # - Return None if nothing to do / no change
 # - Return False if failure
 #
+# Sources can be enabled/disabled
+# Subsources can be available/unavailable
+#
 #
 #	add					Add a source
 #	add_sub				Add a sub-source
 #	check				Check if (sub)source is available
 #	check_all			Check all sources (and sub-sources)
+#   set_enabled			Set enabled indicator by source index
 #	set_available		Set available indicator by (sub)source index
-#	set_available_kw	Set available indicator by keyword
-#	count_available_source		<= (internal) variable?
-#	count_available_subsource	<= (internal) variable?
+#	cnt_subsources		Returns number of available subsources (all, or for given index)
 #	rem					Remove a source
 #	rem_sub				Remove a sub-source
 #	index				Returns index of source by keyword
 #	index_current		Returns list of indexes of current source and current sub-source
 #	source				Returns source by index (current if no index given)
 #	source_all			Returns list of all sources (class refs omitted)
-#	subsource			Returns subsource for given source index (current source if no index given)
+#	subsource			Returns COPY of subsource for given source index (current subsource if no indexes given)
 #	subsource_all		Returns list of all sources (class refs omitted)
 #	composite			Returns composite source (source+subsource)
 #	select				Set source
@@ -176,8 +178,7 @@ class SourceController(object):
 					except Exception, e:
 						self.__printer('Plugin {0} failed; disabling plugin. Error in on_add(): {1}'.format(plugin.name,str(e)))
 						self.lSource[indexAdded]['enabled'] = False
-				
-	
+			
 	def add( self, source_config ):
 		""" Add a Source
 		"""
@@ -258,6 +259,9 @@ class SourceController(object):
 				keys.append(key)
 				keyvals.append(subsource_config[key])
 				self.__printer("[OK] Found key value: {0}: {1}".format(key, subsource_config[key])) # LL_DEBUG
+		
+		# handy unique identifier for this subsource
+		subsource_config['keyvalue'] = '.'.join(keyvals)
 
 		# check for duplicate sub-source
 		if len(self.lSource[index]["subsources"]) > 0:
@@ -375,7 +379,7 @@ class SourceController(object):
 			return None
 			
 		#Check if there are any available subsources left, if not mark source unavailable..
-		if self.getAvailableSubCnt(index) == 0:
+		if self.cnt_subsources(index) == 0:
 			self.__printer('No subsources left, marking source ({0}) as unavailable'.format(index))
 			self.set_available(index, False)
 		
@@ -645,9 +649,7 @@ class SourceController(object):
 		#
 		# check if we have at least two sources
 		#
-		
-		#TODO, use self.cnt_sources_avail
-		iSourceCnt = self.getAvailableCnt()
+		iSourceCnt = self.cnt_subsources()
 
 		if iSourceCnt == 0:
 			self.__printer('NEXT: No available sources.',LL_WARNING)
@@ -687,7 +689,7 @@ class SourceController(object):
 			elif reverse:
 				print "Y6"
 				#if the current sub-source is the first, the don't loop sub-sources, but start looping at the previous source
-				ss_cnt = self.getAvailableSubCnt(self.iCurrentSource[0])
+				ss_cnt = self.cnt_subsources(self.iCurrentSource[0])
 				if self.iCurrentSource[1] == 0 or ss_cnt-1 == 0:
 				#if self.iCurrentSource[1] == 0 or ssi_start == 0:
 					start = self.iCurrentSource[0]-1	# previous source
@@ -786,31 +788,36 @@ class SourceController(object):
 
 	#def get_all_simple( self, index=None ):
 	
-	def composite( self ):
-		""" Return the current source + subsource
+	def composite(self, index=None, subindex=None):
+		""" Return COPY of the current source + subsource
 			subsource is a dictionary in ['subsource'], containing the curren sub-source
-			the returned source is stripped of python objects (for no real reason)
 		"""
-		# check index
-		if self.iCurrentSource[0] is None:
-			return None
-
-		# make a copy
-		composite_current_source = dict( self.lSource[self.iCurrentSource[0]] )
-		# remove sub-sources:
-		del composite_current_source['subsources']
+		index = self.__check_index(index)
+		subindex = self.__check_subindex(index,subindex)
+		
+		if index is None and subindex is None:
+			# use current subsource
+			index = iCurrentSource[0]
+			subindex = iCurrentSource[1]
 			
-		# check if current source is a sub-source
-		if self.iCurrentSource[1] is None:
-			# return without a subsource
-			return composite_current_source
-		else:		
-			# add current sub-source: Note that this entry is called subsource, not subsources!
-			composite_current_source['subsource'] = self.lSource[self.iCurrentSource[0]]['subsources'][self.iCurrentSource[1]]
-			# remove not-usefull stuff:
-			#del composite_current_source['sourceModule']	# what did we use this for again??? #TODO
-			#del composite_current_source['sourceClass']		# what did we use this for again??? #TODO
-			return composite_current_source
+		if index is None or subindex is None:
+			# we need both
+			return False
+			
+		# make a copy of the source
+		source_copy = copy.deepcopy(self.lSource[index])
+		del source_copy['subsources']
+		
+		#subsource_copy = copy.deepcopy(self.lSource[index]['subsources'][subindex])
+		#subsource_copy.update(source_copy)
+		
+		composite = {}
+		composite.update(source_copy)
+		composite.update(self.lSource[index]['subsources'][subindex])
+		# some useful bonus fields (careful, these indexes are volatile!
+		composite['index'] = index
+		composite['subindex'] = subindex
+		return composite
 	
 	def subsource_all( self, index=None ):
 		""" Return all subsources for given index
@@ -829,100 +836,90 @@ class SourceController(object):
 			return self.lSource[index]['subsources']
 			
 
-	def subsource( self, index, index_subsource ):
-		""" Return subsource by given index
-			TODO: check if indexes are valid
-		"""
-		index = int(index)
-		index_subsource = int(index_subsource)
-		# TODO
+	def subsource(self, index=None, subindex=None):
+		""" Return COPY of subsource by given index """
+		index = self.__check_index(index)
+		subindex = self.__check_subindex(index,subindex)
+		
+		if index is None and subindex is None:
+			# use current subsource
+			index = iCurrentSource[0]
+			subindex = iCurrentSource[1]
+			
+		if index is None or subindex is None:
+			# we need both
+			return False
 		
 		if 'subsources' in self.lSource[index]:
-			#print len(self.lSource[index]['subsources'])
 			if len(self.lSource[index]['subsources']) > 0:
-				#print self.lSource[index]['subsources']
-				return self.lSource[index]['subsources'][index_subsource]
+				subsource_copy = copy.deepcopy(self.lSource[index]['subsources'][subindex]
+				#subsource_copy['index'] = index	# Use composite() if you need source details..
+				return subsource_copy
 
-	def set_available_kw( self, key, value, available ):
-		"""
-			# subsources:
-			#	available -> False: will all be set to False
-			#   available -> True: will not change (will need to set to available "manually")
-		"""
-		for source in self.lSource:
-			if key in source and source[key] == value:
-				source['available'] = available
-				if available:
-					availableText = colorize('[available    ]','light_green')
-				else:
-					availableText = colorize('[not available]','light_red')
-					# loop through subsources, marking them unavailable:
-					if 'subsources' in source and len(source['subsources']) > 0:
-						for subsource in source['subsources']:
-							subsource['available'] = False #TODO: do we need self. ??
-							self.__printer('Subsource availability set to: {0} - {1}'.format(availableText,subsource['displayname']))
-						
-				self.__printer('Source availability set to: {0} - {1}'.format(availableText,source['displayname']))
-
-	def set_available( self, index, available, index_subsource=None ):
-		""" Set (sub)source availability
-		"""
-		#TODO: reverse param order: ix, sub-ix, availability
-		
+	def set_enabled(self, index, enabled):
+		"""Set source en/disabled"""
 		index = self.__check_index(index)
-		if index_subsource:
-			index_subsource = int(index_subsource)	#TODO: pass through a ix check function
-			
-		if not index is None and index_subsource is None:
 		
-			self.lSource[index]['available'] = available		
+		if index is not None
+			if enabled:
+				enabledText = colorize('[enabled ]','light_green')
+			else:
+				enabledText = colorize('[disabled]','light_red')
+				
+			self.lSource[index]['enabled'] = enabled
+			self.__printer('Source {0} set to {1} - {2}'.format(index,enabledText,self.lSource[index]['displayname']))
+			return True
+			
+		else:
+			return None
+			
+	def set_available( self, index, available, subindex=None ):
+		"""Set subsource availability"""
+		index = self.__check_index(index)
+		subindex = self.__check_subindex(subindex)
+		
+		if index is not None and subindex is None:
+			# Mark all subsources of this index
 			if available:
 				availableText = colorize('[available    ]','light_green')
 			else:
 				availableText = colorize('[not available]','light_red')
-			self.__printer('Source {0} availability set to {1} - {2}'.format(index,availableText,self.lSource[index]['displayname']))
+				
+			for subindex in range(len(self.lSource[index]['subsources']))
+				self.lSource[index]['subsources'][subindex]['available'] = available
+				self.__printer('Source {0} availability set to {1} - {2}'.format(index,availableText,self.lSource[index]['displayname']))
 			return True
 						
-		elif not index is None and not index_subsource is None:
-		
-			# also make parent source available
-			self.lSource[index]['available'] = available
-			self.lSource[index]['subsources'][index_subsource]['available'] = available
+		elif index is not None and subindex is not None:
+			# Mark specified subsource
+			self.lSource[index]['subsources'][subindex]['available'] = available
 			if available:
 				availableText = colorize('[available    ]','light_green')
 			else:
 				availableText = colorize('[not available]','light_red')
-			self.__printer('Sub-Source {0} availability set to {1} - {2}'.format(index_subsource,availableText,self.lSource[index]['subsources'][index_subsource]['displayname']))
+			self.__printer('Sub-Source {0} availability set to {1} - {2}'.format(subindex,availableText,self.lSource[index]['subsources'][subindex]['displayname']))
 			return True
 
 		else:
 			return None
-				
-	# return number of available sources, including sub-sources
-	# TODO: remove in favour of keeping counts
-	def getAvailableCnt( self ):
-		c = 0
-		for source in self.lSource:
-			if not source['template']:
-				if source['available']:
-					c += 1
+			
+	def cnt_subsources(self, index=None):
+		"""Return number of available subsources"""		
+		if index is None:
+			i = self.lSource
+		else:
+			index = self.__check_index(index)
+			if index is None:
+				return False
 			else:
-				for subsource in source['subsources']:
-					if subsource['available']:
-						c += 1
-		return c
-
-	# return number of available subsource for given index
-	def getAvailableSubCnt( self, index ):
-
-		# check if index is a subsource
-		if not 'subsources' in self.lSource[index]:
-			return None
+				i = self.lSource[index]
 		
 		c = 0
-		for subsource in self.lSource[index]['subsources']:
-			if subsource['available']:
-				c += 1
+		for source in i:
+			if source['enabled'] is True:
+				for subsource in source['subsources']:
+					if subsource['available']:
+						c += 1			
 		return c
 
 	# -------------------------------------------------------------------------
@@ -965,7 +962,7 @@ class SourceController(object):
 				return False
 
 			if index is not None and subindex is not None:
-				ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.play(SrcCtrl=self,index=index,subindex=subindex,**kwargs)
+				ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.play(index=index,subindex=subindex,**kwargs)
 				return ret
 			
 			if not ret:
@@ -982,56 +979,56 @@ class SourceController(object):
 	def source_stop(self, **kwargs ):
 		index, subindex = self.__get_current('STOP')
 		if index is not None and subindex is not None:
-			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.stop(srcCtrl=self,index=index,subindex=subindex,**kwargs)
+			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.stop(index=index,subindex=subindex,**kwargs)
 			return ret
 
 	# Proxy for pausing. Modes: on | off | toggle | 1 | 0
 	def source_pause(self, mode, **kwargs ):
 		index, subindex = self.__get_current('PAUSE')
 		if index is not None and subindex is not None:
-			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.pause(srcCtrl=self,index=index,subindex=subindex,mode=mode,**kwargs)
+			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.pause(index=index,subindex=subindex,mode=mode,**kwargs)
 			return ret
 
 	# Proxy for next (track/station/...)
 	def source_next(self, **kwargs ):
 		index, subindex = self.__get_current('NEXT')
 		if index is not None and subindex is not None:
-			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.next(srcCtrl=self,index=index,subindex=subindex,**kwargs)
+			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.next(index=index,subindex=subindex,**kwargs)
 			return ret
 
 	# Proxy for previous (track/station/...)
 	def source_prev(self, **kwargs ):
 		index, subindex = self.__get_current('PREV')
 		if index is not None and subindex is not None:
-			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.prev(srcCtrl=self,index=index,subindex=subindex,**kwargs)
+			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.prev(index=index,subindex=subindex,**kwargs)
 			return ret
 
 	# Proxy for random. Modes: on | off | toggle | 1 | 0 | "special modes.."
 	def source_random(self, mode, **kwargs ):
 		index, subindex = self.__get_current('MODE')
 		if index is not None and subindex is not None:
-			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.random(srcCtrl=self,index=index,subindex=subindex,mode=mode,**kwargs)
+			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.random(index=index,subindex=subindex,mode=mode,**kwargs)
 			return ret
 
 	# Proxy for seeking forward. Optionally provide arguments on how to seek (ie. number of seconds)
 	def source_seekfwd(self, **kwargs ):
 		index, subindex = self.__get_current('SEEKFWD')
 		if index is not None and subindex is not None:
-			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.seekfwd(srcCtrl=self,index=index,subindex=subindex,**kwargs)
+			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.seekfwd(index=index,subindex=subindex,**kwargs)
 			return ret
 
 	# Proxy for seeking backwards. Optionally provide arguments on how to seek (ie. number of seconds)
 	def source_seekrev(self, **kwargs ):
 		index, subindex = self.__get_current('SEEKREV')
 		if index is not None and subindex is not None:
-			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.seekrev(srcCtrl=self,index=index,subindex=subindex,**kwargs)
+			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.seekrev(index=index,subindex=subindex,**kwargs)
 			return ret
 
 	# Proxy for database update. Optionally provide arguments. Suggestions: location
 	def source_update(self, **kwargs ):
 		index, subindex = self.__get_current('SEEKFWD')
 		if index is not None and subindex is not None:
-			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.update(srcCtrl=self,index=index,subindex=subindex,**kwargs)
+			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.update(index=index,subindex=subindex,**kwargs)
 			return ret
 
 	def source_get_state(self, **kwargs ):
@@ -1039,7 +1036,7 @@ class SourceController(object):
 		# - playing/paused/stopped
 		# - random, shuffle, repeat, 
 		if index is not None and subindex is not None:
-			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.get_state(srcCtrl=self,index=index,subindex=subindex,**kwargs)
+			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.get_state(**kwargs)
 			return ret
 
 	# Return a dictionary containing source capabilities, etc.
@@ -1048,9 +1045,10 @@ class SourceController(object):
 		# - available controls/functions
 		# - available random modes
 		if index is not None and subindex is not None:
-			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.get_details(srcCtrl=self,index=index,subindex=subindex,**kwargs)
+			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.get_details(**kwargs)
 			return ret
 		
+
 	# -------------------------------------------------------------------------			
 
 
@@ -1166,7 +1164,7 @@ class SourceController(object):
 		#
 		# check if we have at least two sources
 		#
-		iSourceCnt = self.getAvailableCnt()
+		iSourceCnt = self.cnt_subsources()
 
 		if iSourceCnt == 0:
 			self.__printer('NEXT: No available sources.',LL_WARNING)
@@ -1215,7 +1213,7 @@ class SourceController(object):
 
 		# Current source is a sub-source:
 		if ( not self.iCurrentSource[1] == None and
-			 self.getAvailableSubCnt(self.iCurrentSource[0]) > self.iCurrentSource[1]+1 ):
+			 self.cnt_subsources(self.iCurrentSource[0]) > self.iCurrentSource[1]+1 ):
 			# then first check if there are more sub-sources after the current..
 			# there are more available sub-sources..
 			si_cur = self.iCurrentSource[0]
