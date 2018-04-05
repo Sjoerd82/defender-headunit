@@ -133,8 +133,9 @@ def get_data(ret,returndata=False,eventpath=None):
 			data['payload'] = curr_source
 			messaging.publish_command(eventpath,'DATA',data)
 			
-			settings['source'] = curr_source['name']
-			save_settings()
+		#	settings['source'] = curr_source['name']
+		#	save_settings()
+			save_resume()
 			
 		#if eventpath == '/events/source/available':
 		#	now_available, now_unavailable = sc_sources.che
