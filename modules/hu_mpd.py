@@ -139,7 +139,8 @@ class MpdController(object):
 		# Connect to MPD
 		try:
 			self.__printer('Initializing MPD client', level=LL_DEBUG)
-			self.mpdc = MPDClientWrapper()		# per instance !
+			#self.mpdc = MPDClientWrapper()		# per instance !
+			self.mpdc = MPDClient()		# per instance !
 			self.mpdc.timeout = None			# network timeout in seconds (floats allowed), default: None
 			self.mpdc.idletimeout = None		# timeout for fetching the result of the idle command is handled seperately, default: None
 			self.mpdc.connect("localhost", 6600)
@@ -152,7 +153,8 @@ class MpdController(object):
 			self.__printer('Failed to connect to MPD server: {0}'.format(sys.exc_info()[0]), level=LL_ERROR)
 	
 	def __test_conn(self):
-		
+
+		"""
 		test = self.mpdc.connect("localhost", 6600)
 		print test
 		
@@ -169,7 +171,6 @@ class MpdController(object):
 			self.__printer('WEIRD... no idle was set..')
 			
 		return result
-		"""
 
 	def __return_to_idle(self):
 		self.mpdc.send_idle()
