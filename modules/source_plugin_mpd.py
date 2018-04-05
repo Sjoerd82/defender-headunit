@@ -27,16 +27,13 @@ class MpdSourcePlugin(SourcePlugin):
 		subsource = self.sourceCtrl.subsource( index, subindex )
 		
 		mpd_dir = None
-		mpd_type = None
+		streams = None
 		
 		if 'mpd_dir' in subsource:
 			mpd_dir = subsource['mpd_dir']
 		
 		if 'mpd_streams' in subsource:
 			streams = subsource['mpd_streams']
-		
-		print mpd_dir
-		print streams
 		
 		playlistCount = 0
 		
