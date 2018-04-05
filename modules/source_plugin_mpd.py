@@ -23,10 +23,8 @@ class MpdSourcePlugin(SourcePlugin):
 	
 	def on_activate(self, subindex):
 		
-		print "!!ACTIVATE!!"
-		
 		index = self.sourceCtrl.index('name',self.name)
-		subsource = self.sourceCtrl.subsource( self.index, subindex )
+		subsource = self.sourceCtrl.subsource( index, subindex )
 		
 		mpd_dir = None
 		mpd_type = None
@@ -36,6 +34,9 @@ class MpdSourcePlugin(SourcePlugin):
 		
 		if 'mpd_streams' in subsource:
 			streams = subsource['mpd_streams']
+		
+		print mpd_dir
+		print streams
 		
 		playlistCount = 0
 		
