@@ -61,7 +61,8 @@ def main():
 	elif args.command == 'player-play':
 		path = '/player/state'
 		cmd = 'PUT'
-		params = {"state":"playing"}
+		#params = str({"state":"playing"})	# try this
+		params = '{"state":"playing"}'
 		ret = messaging.publish_command(path,cmd,params)
 	elif args.command == 'player-next':
 		path = '/player/next'
