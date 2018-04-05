@@ -899,7 +899,7 @@ def save_resume():
 
 	# sub-source
 	
-	ss_resume_file = os.path.join(configuration['directories']['resume'], cur_comp_subsource['name']+"."+cur_comp_subsource['keyvalue'],'json'))
+	ss_resume_file = os.path.join(configuration['directories']['resume'], cur_comp_subsource['name']+"."+cur_comp_subsource['keyvalue'],'json')
 	printer('Saving resume file to: {0}'.format(ss_resume_file))
 	state = sc_sources.source_get_state()
 	resume_data = {}
