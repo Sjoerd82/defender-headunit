@@ -1201,13 +1201,14 @@ def main():
 	#
 	# Resume playback
 	#
-	if args.r is True:
-		QuickPlay()
+	if args.resume is True:
+		pass
+		#QuickPlay()
 		
 	#
 	# Start playback
 	#
-	if args.p is True:
+	if args.play is True:
 		pass
 	
 	#
