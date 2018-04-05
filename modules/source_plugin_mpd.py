@@ -23,6 +23,8 @@ class MpdSourcePlugin(SourcePlugin):
 	
 	def on_activate(self, subindex):
 		
+		print "!!ACTIVATE!!"
+		
 		index = self.sourceCtrl.index('name',self.name)
 		subsource = self.sourceCtrl.subsource( self.index, subindex )
 		
@@ -128,8 +130,8 @@ class MpdSourcePlugin(SourcePlugin):
 		"""
 		self.printer('Start playing')
 		
-		index = kwargs['index']
-		subindex = kwargs['subindex']
+		#index = kwargs['index']
+		#subindex = kwargs['subindex']
 		
 		"""
 		sourceCtrl = kwargs['srcCtrl']
@@ -165,7 +167,7 @@ class MpdSourcePlugin(SourcePlugin):
 			#playlistCount = self.mpdc.pls_pop(xxx)
 			
 		"""
-
+		'''
 		# check if succesful...
 		if playlistCount == "0":
 			self.printer(' > Nothing in the playlist, trying to update database...')
@@ -186,7 +188,7 @@ class MpdSourcePlugin(SourcePlugin):
 				self.printer(' > Found {0:s} tracks'.format(playlistCount))
 		else:
 			self.printer(' > Found {0:s} tracks'.format(playlistCount))
-
+		'''
 		self.mpdc.play()
 		self.state['state'] = 'playing'
 		return True

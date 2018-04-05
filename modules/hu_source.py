@@ -574,15 +574,12 @@ class SourceController(object):
 				step = 1
 				logtext = "to next"
 			
-			print "Z0 {0} {1} {2}".format(ix_start, ix_stop, j_start)
-
 			# set loop end point:
 			if ix_stop is not None:
 				ix_stop += 1
 			
 			# loop sources
 			for source in self.lSource[ix_start:ix_stop:step]:
-				print "Z1"
 			
 				# source available and has *no* sub-sources:
 				if not source['template'] and source['available']:
@@ -594,7 +591,6 @@ class SourceController(object):
 				
 				# sub-source and available:
 				elif source['template'] and source['available']:
-					print "Z2"
 					# reverse initialize sub-sources loop
 					if reverse and j_start is None:
 						j_start = len(source['subsources'])-1
@@ -605,12 +601,11 @@ class SourceController(object):
 				
 					# loop sub-sources:
 					for subsource in source['subsources'][j_start::step]:
-						print "Z3"
 						if subsource['available']:
-							print "Z4"
 							self.__printer('NEXT: Switching {0}: {1}/{2}: {3:s}'.format(logtext,ix_start,j_start,subsource['displayname']))
 							self.iCurrentSource[0] = ix_start
 							self.iCurrentSource[1] = j_start
+							self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.on_activate(j_start)
 							return self.iCurrentSource
 							
 						j_start += step
@@ -634,6 +629,7 @@ class SourceController(object):
 						if subsource['available']:
 							self.iCurrentSource[0] = i
 							self.iCurrentSource[1] = j
+							self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.on_activate(j)
 							return self.iCurrentSource
 						j += 1
 				i += 1
