@@ -986,8 +986,10 @@ def printSummary():
 				if i == arCurrIx[0] and j == arCurrIx[1]:
 					active = colorize(">",'light_green')
 					cur_state = sc_sources.source_get_state()
-					if cur_state is not None:
-						state = colorize(cur_state['state'],'light_green')
+					print cur_state
+					#if cur_state is not None:
+					#	state = colorize(cur_state['state'],'light_green')
+					state = "X"
 				else:
 					state = ""
 					active = " "
