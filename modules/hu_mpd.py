@@ -94,40 +94,40 @@ LOG_TAG = 'MPD'
 # This Wrapper might not be needed anymore when upgrading to the latest library version
 #
 class MPDClientWrapper(object):
-    def __init__(self, *args, **kwargs):
-        self.__dict__['_mpd'] = MPDClient(*args, **kwargs)
+	def __init__(self, *args, **kwargs):
+		self.__dict__['_mpd'] = MPDClient(*args, **kwargs)
 
-    def __getattr__(self, name):
-        a = self._mpd.__getattribute__(name)
-        if not callable(a): return a
+	def __getattr__(self, name):
+		a = self._mpd.__getattribute__(name)
+		if not callable(a): return a
 
-        def b(*args, **kwargs):
-            try:
-                return a(*args, **kwargs)
-            #except (MPDConnectionError, mpd.ConnectionError) as e:
+		def b(*args, **kwargs):
+			try:
+				return a(*args, **kwargs)
+			#except (MPDConnectionError, mpd.ConnectionError) as e:
 			except:
-                cargs, ckwargs = self.__dict__['_connect_args']
-                self.connect(*cargs, **ckwargs)
-                return a(*args, **kwargs)
+				cargs, ckwargs = self.__dict__['_connect_args']
+				self.connect(*cargs, **ckwargs)
+				return a(*args, **kwargs)
 
-        return b
+		return b
 
-    def __setattr__(self, name, value):
-        self._mpd.__setattr__(name, value)
+	def __setattr__(self, name, value):
+		self._mpd.__setattr__(name, value)
 
-    def connect(self, *args, **kwargs):
-        self.__dict__['_connect_args'] = args, kwargs
-        self.disconnect()
-        self._mpd.connect(*args, **kwargs)
+	def connect(self, *args, **kwargs):
+		self.__dict__['_connect_args'] = args, kwargs
+		self.disconnect()
+		self._mpd.connect(*args, **kwargs)
 
-    def disconnect(self):
-        try:
-            self._mpd.close()
-            self._mpd.disconnect()
-        #except (MPDConnectionError, mpd.ConnectionError) as e:
-        #    pass
-        finally:
-            self._mpd._reset()
+	def disconnect(self):
+		try:
+			self._mpd.close()
+			self._mpd.disconnect()
+		#except (MPDConnectionError, mpd.ConnectionError) as e:
+		#    pass
+		finally:
+			self._mpd._reset()
 
 class MpdController(object):
 
