@@ -876,7 +876,7 @@ class SourceController(object):
 	def set_available( self, index, available, subindex=None ):
 		"""Set subsource availability"""
 		index = self.__check_index(index)
-		subindex = self.__check_subindex(subindex)
+		subindex = self.__check_subindex(index,subindex)
 		
 		if index is not None and subindex is None:
 			# Mark all subsources of this index
