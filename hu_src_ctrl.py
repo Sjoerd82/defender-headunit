@@ -383,14 +383,17 @@ def handle_path_source(path,cmd,args):
 		"""
 		valid = validate_args(args,0,0)
 		if not valid:
+			print "INVALID ARGS"
 			return None
 
 		ret = sc_sources.select_next()
-
+		print ret
+		
 		# LL_DEBUG
 		printSummary()
 
 		data = get_data(ret,False,'/events/source/active')
+		print data
 		return data
 	
 	def put_prev(args):
@@ -886,7 +889,6 @@ def idle_message_receiver():
 def save_resume():
 	cur_comp_subsource = sc_sources.composite()
 	if cur_comp_subsource is False or cur_comp_subsource is None:
-		print "ERRRRRROR"
 		return cur_comp_subsource
 
 	# Save System resume source indicator
