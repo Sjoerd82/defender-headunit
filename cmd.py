@@ -28,6 +28,10 @@ def parse_args():
 	#parser.add_argument('-j','--json', action='store_true')
 	parser.add_argument('--port_publisher', action='store')
 	parser.add_argument('--port_subscriber', action='store')
+	parser.add_argument('command', action='store')
+	
+	
+	
 	args = parser.parse_args()
 
 #********************************************************************************
@@ -47,6 +51,16 @@ def setup():
 
 	
 def main():
+
+
+	if command == 'next-source':
+		path = '/source/next'
+		cmd = 'PUT'
+		params = None
+		ret = messaging.publish_command(path,cmd,params)
+		
+
+	exit(0)
 
 	#ret = messaging.publish_command('/source/primary','GET', None, True, 5000, RETURN_PATH)
 	#print ret

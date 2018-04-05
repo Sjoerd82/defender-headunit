@@ -43,7 +43,6 @@ class MySource(SourcePlugin,IPlugin):
 		return True
 
 	def add_subsource(self, index):
-		print "adding"
 		subsource = {}
 		subsource['displayname'] = 'FM'
 		self.sourceCtrl.add_sub( index, subsource )
