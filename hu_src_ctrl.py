@@ -898,7 +898,8 @@ def save_resume():
 		f_resume_file.write('{0}\n'.format( cur_comp_subsource['name'] ))
 
 	# sub-source
-	ss_resume_file = os.path.join(configuration['directories']['resume'], '.'.join(cur_comp_subsource['name'],cur_comp_subsource['keyvalue'],'json'))
+	
+	ss_resume_file = os.path.join(configuration['directories']['resume'], cur_comp_subsource['name']+"."+cur_comp_subsource['keyvalue'],'json'))
 	printer('Saving resume file to: {0}'.format(ss_resume_file))
 	state = sc_sources.source_get_state()
 	resume_data = {}
@@ -986,10 +987,10 @@ def printSummary():
 				if i == arCurrIx[0] and j == arCurrIx[1]:
 					active = colorize(">",'light_green')
 					cur_state = sc_sources.source_get_state()
-					print cur_state
-					#if cur_state is not None:
-					#	state = colorize(cur_state['state'],'light_green')
-					state = "X"
+					if cur_state['state'] is None:
+						state = colorize("None",'dark_gray')
+					else:
+						state = colorize(cur_state['state'],'light_green')
 				else:
 					state = ""
 					active = " "
