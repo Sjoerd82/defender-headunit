@@ -44,7 +44,7 @@ class MpdSourcePlugin(SourcePlugin):
 			self.mpdc.pls_clear()
 			playlistCount = self.mpdc.pls_pop_dir(mpd_dir)
 
-		if mpd_streams is not None:
+		if streams is not None:
 			self.mpdc.pls_clear()
 			playlistCount = self.mpdc.pls_pop_streams(streams)
 			
