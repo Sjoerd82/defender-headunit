@@ -852,7 +852,7 @@ class SourceController(object):
 		
 		if 'subsources' in self.lSource[index]:
 			if len(self.lSource[index]['subsources']) > 0:
-				subsource_copy = copy.deepcopy(self.lSource[index]['subsources'][subindex]
+				subsource_copy = copy.deepcopy(self.lSource[index]['subsources'][subindex])
 				#subsource_copy['index'] = index	# Use composite() if you need source details..
 				return subsource_copy
 
