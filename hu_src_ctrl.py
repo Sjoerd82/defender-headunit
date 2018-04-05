@@ -891,6 +891,8 @@ def save_resume():
 	if cur_comp_subsource is False or cur_comp_subsource is None:
 		return cur_comp_subsource
 
+	# TODO: check if dir. present, create if not
+	
 	# Save System resume source indicator
 	resume_file = os.path.join(configuration['directories']['resume'],configuration['files']['resume'])
 	printer('Saving resume file to: {0}'.format(resume_file))
@@ -899,7 +901,7 @@ def save_resume():
 
 	# sub-source
 	
-	ss_resume_file = os.path.join(configuration['directories']['resume'], cur_comp_subsource['name']+"."+cur_comp_subsource['keyvalue'],'json')
+	ss_resume_file = os.path.join(configuration['directories']['resume'], cur_comp_subsource['name']+"."+cur_comp_subsource['keyvalue']+".json")
 	printer('Saving resume file to: {0}'.format(ss_resume_file))
 	state = sc_sources.source_get_state()
 	state = {}

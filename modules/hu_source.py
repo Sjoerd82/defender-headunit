@@ -62,9 +62,11 @@
 #	source_get_media_details
 #
 
+import copy
+
 from yapsy.PluginManager import PluginManager
 from hu_utils import *
-import copy
+from slugify import slugify
 
 LOG_TAG = 'SOURCE'
 
@@ -261,7 +263,7 @@ class SourceController(object):
 				self.__printer("[OK] Found key value: {0}: {1}".format(key, subsource_config[key])) # LL_DEBUG
 		
 		# handy unique identifier for this subsource
-		subsource_config['keyvalue'] = '.'.join(keyvals)
+		subsource_config['keyvalue'] = slugify('.'.join(keyvals))
 
 		# check for duplicate sub-source
 		if len(self.lSource[index]["subsources"]) > 0:
