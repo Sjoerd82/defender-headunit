@@ -885,9 +885,13 @@ def idle_message_receiver():
 #
 def save_resume():
 	cur_comp_subsource = sc_sources.composite()
+	if cur_comp_subsource is False or cur_comp_subsource is None:
+		print "ERRRRRROR"
+		return cur_comp_subsource
 
 	# Save System resume source indicator
 	resume_file = os.path.join(configuration['directories']['resume'],configuration['files']['resume'])
+	printer('Saving resume file to: {0}'.format(resume_file))
 	with open(resume_file, 'wb') as f_resume_file:
 		f_resume_file.write('{0}\n'.format( cur_comp_subsource['name'] ))
 

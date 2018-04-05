@@ -800,6 +800,8 @@ class SourceController(object):
 			index = self.iCurrentSource[0]
 			subindex = self.iCurrentSource[1]
 			
+		print index
+		print subindex
 		if index is None or subindex is None:
 			# we need both
 			return False
