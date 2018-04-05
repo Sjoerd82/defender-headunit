@@ -605,7 +605,7 @@ class SourceController(object):
 							self.__printer('NEXT: Switching {0}: {1}/{2}: {3:s}'.format(logtext,ix_start,j_start,subsource['displayname']))
 							self.iCurrentSource[0] = ix_start
 							self.iCurrentSource[1] = j_start
-							self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.on_activate(j_start)
+							self.source_manager.getPluginByName(self.lSource[ix_start]['name']).plugin_object.on_activate(j_start)
 							return self.iCurrentSource
 							
 						j_start += step
@@ -629,7 +629,7 @@ class SourceController(object):
 						if subsource['available']:
 							self.iCurrentSource[0] = i
 							self.iCurrentSource[1] = j
-							self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.on_activate(j)
+							self.source_manager.getPluginByName(self.lSource[i]['name']).plugin_object.on_activate(j)
 							return self.iCurrentSource
 						j += 1
 				i += 1
