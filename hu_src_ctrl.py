@@ -978,13 +978,12 @@ def printSummary():
 				# Active indicator
 				if i == arCurrIx[0] and j == arCurrIx[1]:
 					active = colorize(">",'light_green')
-					sc_sources.
+					cur_state = sc_sources.source_get_state()
+					state = colorize(cur_state['state'],'light_green')
 				else:
+					state = ""
 					active = " "
-					
-				# State
-				state = colorize("playing",'light_green')
-		
+						
 				# SubSource data
 				if 'mountpoint' in subsource:
 					mountpoint = subsource['mountpoint']
