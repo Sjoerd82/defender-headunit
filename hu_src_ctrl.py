@@ -387,8 +387,8 @@ def handle_path_source(path,cmd,args):
 			return None
 
 		ret = sc_sources.select_next()
-		print ret
 		
+		# returns None if cannot change source
 		if ret is not None:
 	
 			# LL_DEBUG

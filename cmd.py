@@ -53,8 +53,13 @@ def setup():
 def main():
 
 
-	if args.command == 'next-source':
+	if args.command == 'source-next':
 		path = '/source/next'
+		cmd = 'PUT'
+		params = None
+		ret = messaging.publish_command(path,cmd,params)
+	elif args.command == 'player-play':
+		path = '/player/next'
 		cmd = 'PUT'
 		params = None
 		ret = messaging.publish_command(path,cmd,params)

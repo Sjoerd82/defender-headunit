@@ -68,7 +68,7 @@ class MpdSourcePlugin(SourcePlugin):
 			mountpoint = subsource['mountpoint']			
 			cur_availability = subsource['available']
 			self.printer('Checking local folder: {0}, current availability: {1}'.format(mountpoint,cur_availability))
-			new_availability = check_mpddb_mountpoint(mountpoint, createdir=True, waitformpdupdate=True)
+			new_availability = self.check_mpddb_mountpoint(mountpoint, createdir=True, waitformpdupdate=True)
 			self.printer('Checked local folder: {0}, new availability: {1}'.format(mountpoint,new_availability))
 			
 			if new_availability is not None and new_availability != cur_availability:
