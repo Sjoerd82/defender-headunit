@@ -581,16 +581,7 @@ class SourceController(object):
 			# loop sources
 			for source in self.lSource[ix_start:ix_stop:step]:
 			
-				# source available and has *no* sub-sources:
-				if not source['template'] and source['available']:
-					print "DEPRECATED"
-				#	self.__printer('NEXT: Switching {0} {1}: {2:s}'.format(logtext,ix_start,source['displayname']))
-				#	self.iCurrentSource[0] = ix_start
-				#	self.iCurrentSource[1] = None
-				#	return iCurrentSource
-				
-				# sub-source and available:
-				elif source['template'] and source['available']:
+				if source['enabled'] is True:
 					# reverse initialize sub-sources loop
 					if reverse and j_start is None:
 						j_start = len(source['subsources'])-1
@@ -611,7 +602,6 @@ class SourceController(object):
 						j_start += step
 
 				ix_start += step
-			print "Z5"
 			return None
 			
 		#
