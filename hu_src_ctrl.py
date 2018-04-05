@@ -389,12 +389,16 @@ def handle_path_source(path,cmd,args):
 		ret = sc_sources.select_next()
 		print ret
 		
-		# LL_DEBUG
-		printSummary()
+		if ret is not None:
+	
+			# LL_DEBUG
+			printSummary()
 
-		data = get_data(ret,False,'/events/source/active')
-		print data
-		return data
+			data = get_data(ret,False,'/events/source/active')
+			print data
+		
+		# TODO, Should we return a 4xx or 5xx maybe?
+		#return data
 	
 	def put_prev(args):
 		"""	Change to prev available (sub)source and start playing

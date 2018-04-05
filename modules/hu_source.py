@@ -548,7 +548,6 @@ class SourceController(object):
 			Useful in case an active source becomes unavailable, it's more natural for the user to jump back
 			to a previously playing source, instead of the next in line
 		"""
-		print "DEBUG START: SELECT_NEXT"
 		def source_iterator(ix_start, ix_stop, j_start, reverse):
 			""" Returns next available source.
 				Return None, if none found
@@ -643,8 +642,7 @@ class SourceController(object):
 				self.__printer('NEXT: No available sources.',LL_WARNING)
 				return None
 			
-			#return self.iCurrentSource
-			return True
+			return None
 			
 		#
 		# check if we have at least two sources
@@ -657,7 +655,7 @@ class SourceController(object):
 			
 		elif iSourceCnt == 1:
 			self.__printer('NEXT: Only one source, cannot switch.',LL_WARNING)
-			return True
+			return None
 
 		#
 		# determine starting positions
@@ -665,15 +663,10 @@ class SourceController(object):
 		#
 		# Current source is a Sub-Source
 		# Why?
-		print "Y1"
 		if self.iCurrentSource[1] is not None: # and
 
-			print "Y2"
-		
 			if not reverse:
 
-				print "Y3"
-			
 				# set source start point
 				start = self.iCurrentSource[0]
 				
@@ -682,12 +675,10 @@ class SourceController(object):
 					print "Y4 DEPRECATED"
 					ssi_start = 0
 				else:
-					print "Y5"
 					ssi_start = self.iCurrentSource[1]+1	#next sub-source (+1) isn't neccesarily available, but this will be checked later
 					#print "Starting Sub-Source loop at {0}".format(ssi_start)
 
 			elif reverse:
-				print "Y6"
 				#if the current sub-source is the first, the don't loop sub-sources, but start looping at the previous source
 				ss_cnt = self.cnt_subsources(self.iCurrentSource[0])
 				if self.iCurrentSource[1] == 0 or ss_cnt-1 == 0:
@@ -702,7 +693,6 @@ class SourceController(object):
 		# Current source is *not* a Sub-Source: (DEPRECATED!!)
 		#
 		elif self.iCurrentSource[1] is None:
-			print "Y7"
 			if not reverse:
 			
 				start = self.iCurrentSource[0]+1
@@ -721,26 +711,21 @@ class SourceController(object):
 		# loop through sources
 		# source_iterator returns next source index, or None, in case no next available was found
 		res = source_iterator(start, None, ssi_start, reverse)
-		print "Y8"
 		# if nothing was found, "wrap-around" to beginning/ending of list
 		if res is None:
-			print "Y9"
 			if not reverse:
-				print "Y10"
 				stop = start-1	# stop before current source
 				start = 0		# start at the beginning
 				ssi_start = 0
 				return source_iterator(start, stop, ssi_start, reverse)
 				
 			elif reverse:
-				print "Y11"
 				stop = start					# stop at the current source
 				start = len(self.lSource)-1 	# start at the last item in the list
 				ssi_start = None
 				return source_iterator(start, stop, ssi_start, reverse)
 			
 		else:
-			print "Y12"
 			return res
 			
 	def source_all( self, index=None ):
