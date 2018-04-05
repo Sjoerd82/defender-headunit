@@ -885,7 +885,7 @@ class SourceController(object):
 			else:
 				availableText = colorize('[not available]','light_red')
 				
-			for subindex in range(len(self.lSource[index]['subsources']))
+			for subindex in range(len(self.lSource[index]['subsources'])):
 				self.lSource[index]['subsources'][subindex]['available'] = available
 				self.__printer('Source {0} availability set to {1} - {2}'.format(index,availableText,self.lSource[index]['displayname']))
 			return True
