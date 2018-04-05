@@ -21,10 +21,10 @@ def parse_args():
 	global args
 
 	parser = argparse.ArgumentParser(description=DESCRIPTION)
-	parser.add_argument('-p', action='store', required=True)
-	parser.add_argument('-c', action='store', required=True)
-	parser.add_argument('-a', action='store')
-	parser.add_argument('-r', action='store_true')
+	#parser.add_argument('-p', action='store', required=True)
+	#parser.add_argument('-c', action='store', required=True)
+	#parser.add_argument('-a', action='store')
+	#parser.add_argument('-r', action='store_true')
 	#parser.add_argument('-j','--json', action='store_true')
 	parser.add_argument('--port_publisher', action='store')
 	parser.add_argument('--port_subscriber', action='store')
@@ -53,7 +53,7 @@ def setup():
 def main():
 
 
-	if command == 'next-source':
+	if args.command == 'next-source':
 		path = '/source/next'
 		cmd = 'PUT'
 		params = None
