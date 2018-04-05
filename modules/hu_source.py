@@ -860,7 +860,7 @@ class SourceController(object):
 		"""Set source en/disabled"""
 		index = self.__check_index(index)
 		
-		if index is not None
+		if index is not None:
 			if enabled:
 				enabledText = colorize('[enabled ]','light_green')
 			else:
