@@ -183,7 +183,7 @@ class SourceController(object):
 			else:			
 				self.source_manager.activatePluginByName(plugin.name)
 				config = plugin.plugin_object.configuration()			# Get config
-				category = config['plugin_category']
+				category = config['category']
 				self.source_manager.appendPluginToCategory(plugin,)			# Set plugin category
 				isAdded = self.add(config)								# Add
 				if isAdded:

@@ -88,6 +88,8 @@ class SourcePlugin(object):
 			config=json.load(jsConfigFile)
 		
 		config['name'] = self.name
+		if 'category' not in config:
+			config['category'] = default
 		
 		# load main configuration
 		main_configuration = configuration_load('srctrl', DEFAULT_CONFIG_FILE)
