@@ -89,7 +89,7 @@ def process_queue():
 		globals()[item[0]](item[1], item[2], item[3])
 		queue_actions.task_done()
 	return True
-
+	
 def validate_args(args, min_args, max_args):
 
 	if len(args) < min_args:
@@ -837,7 +837,10 @@ def handle_path_events(path,cmd,args):
 	def data_system_reboot():
 		pass
 	def data_udisks_added():
-		pass
+		payload = {"cool":"stuff"}
+		sc_sources.do_category('udisks',payload)
+		return None
+		
 	def data_udisks_removed():
 		pass
 

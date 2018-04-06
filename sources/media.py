@@ -50,6 +50,12 @@ class MySource(MpdSourcePlugin,IPlugin):
 	def on_activate(self, subindex):
 		return False
 
+	def on_category(self, category, payload=None):
+		print "DEBUG media.on_category(): {0}".format(category)
+		if category == 'udisks':
+			#add_subsource()
+			print "adding subsource {0}".format(payload)
+	
 	def add_subsource(self, mountpoint, label, uuid, device, index):
 		subsource = {}
 		subsource['displayname'] = 'media: ' + mountpoint

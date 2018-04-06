@@ -1,6 +1,5 @@
 { "displayname": "Internal Storage",
   "order": 2,
-  "type": "mpd",
   "depNetwork": false,
   "controls": {"ffwd": false, "rwnd": false, "prev": true, "next": true, "dirnext": true},
   "random": ["on","off"],

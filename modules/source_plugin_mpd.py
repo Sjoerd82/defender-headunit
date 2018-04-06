@@ -261,7 +261,14 @@ class MpdSourcePlugin(SourcePlugin):
 		self.printer('Update. Location: {0}'.format(location))
 		self.mpdc.update(location)
 		return True
-	
+		
+	def get_state(self, **kwargs):
+		cur_state = {}
+		mpd_state = self.mpdc.state()
+		cur_state.update(self.state)
+		cur_state.update(mpd_state)
+		return cur_state		
+
 	def get_details(self, **kwargs ):
 		self.printer('Details ?')
 		details = {}
@@ -272,5 +279,11 @@ class MpdSourcePlugin(SourcePlugin):
 
 		details['funfact'] = "bla"
 		details['track'] = track
-		details['state'] = self.state
+		
+		# state
+		cur_state = {}
+		mpd_state = self.mpdc.state()
+		cur_state.update(self.state)
+		cur_state.update(mpd_state)
+		details['state'] = cur_state
 		return details

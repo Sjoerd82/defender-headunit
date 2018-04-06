@@ -83,42 +83,44 @@ Links:
 
 The JSON configuration contains all kinds of static *read-only* details.
 The source can be further configured and customized in the read-write file configuration.json in the `source_config` section.
+This configuration file will be merged into the Yapsy config file, in due time...
 
 Fields:
 
-Field | Datatype | Description | Mandatory?
---- | --- | --- | ---
-`enabled` | bool | Enable/Disable the source | no (default: True)
-`order` | int | Used for sorting the position when cycling the source | no (default: 0)
-`depNetwork` | bool | Depends on having a (wifi) network | no (default: False)
-`controls` | dict | List of supported controls | no
-`subsources` | list | List of subsources | no*
+Field | Datatype | Description | Mandatory? | Default value, if not provided
+--- | --- | --- | --- | ---
+`displayname` | string | Name of source, for displaying purposes | No | plugin name
+`enabled` | bool | Enable/Disable the source | no | True
+`order` | int | Used for sorting the position when cycling the source | no | 99
+`category` | string | ... | No | default
+`depNetwork` | bool | Depends on having a (wifi) network | no | False
+`controls` | dict | List of supported controls | no? | ???
 
-*if omitted must be added by post_add() or check() functions.
-
-Subsources:
-name
-
-Field | Datatype | Description | Mandatory?
---- | --- | --- | ---
-`displayname` | string | Name displayed in displays | no (defaults to module name)
-`order` | int | Used for sorting the position when cycling the source | no (default: 0)
-
-
-Added by system:
-available	bool
-subsources	list
+Plugin Categories: udisks, lan, internet, output, ...
 
 Example (fm.json): 
 ```
 {
 	"displayname": "FM Radio",
 	"enabled": true,
-	"subsources": [ {"name":"fm"} ]
 }
 ```
 
+Added by system:
+available	bool
+subsources	list
+
+
 ### configuration.json
+
+The plugin's configurable items can be added in the main configuration.json under section `source_config`.
+Configurable items must be grouped under the plugin name, like so:
+```
+	, "source_config": {
+		  "fm": { ... }
+	}
+```
+Replace the dots with your configuration items. Please avoid the use of the following keys: "name", "subsources". Other predefined field may be used to override values created by the system, such as "displayname", "order"
 
 Existing or new fields can be configured under the source_config section. Use the plugin's module name to match.
 

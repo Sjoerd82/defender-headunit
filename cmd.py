@@ -12,6 +12,26 @@ RETURN_PATH = '/bladiebla/'
 args = None
 messaging = None
 
+commands = [
+	'source-check',
+	'source-select',
+	'source-next',
+	'source-prev',
+	'player-play',
+	'player-pause',
+	'player-stop',
+	'player-next',
+	'player-prev',
+	'player-nextfolder',
+	'player-prevfolder',
+	'player-update',
+	'player-random',
+	'volume',
+	'volume-att',
+	'volume-mute',
+	'system-reboot',
+	'system-shutdown' ]
+
 #********************************************************************************
 # Parse command line arguments
 #
@@ -19,7 +39,7 @@ def parse_args():
 
 	import argparse
 	global args
-
+	
 	parser = argparse.ArgumentParser(description=DESCRIPTION)
 	#parser.add_argument('-p', action='store', required=True)
 	#parser.add_argument('-c', action='store', required=True)
@@ -28,9 +48,8 @@ def parse_args():
 	#parser.add_argument('-j','--json', action='store_true')
 	parser.add_argument('--port_publisher', action='store')
 	parser.add_argument('--port_subscriber', action='store')
-	parser.add_argument('command', action='store')
-	
-	
+	parser.add_argument('command', action='store', choices=commands)
+	parser.add_argument('command_arg', action='store')
 	
 	args = parser.parse_args()
 
@@ -52,24 +71,53 @@ def setup():
 	
 def main():
 
-
-	if args.command == 'source-next':
-		path = '/source/next'
-		cmd = 'PUT'
-		params = None
-		ret = messaging.publish_command(path,cmd,params)
+	cmd = 'PUT'
+	params = None
+	if args.command == 'source-check':
+		path = '/source/check'
+	elif args.command == 'source-select':
+		path = '/source/subsource'
+		params = args.command_arg
+	elif args.command == 'source-next':
+		path = '/source/next`'
+	elif args.command == 'source-prev':
+		path = '/source/prev'
 	elif args.command == 'player-play':
 		path = '/player/state'
-		cmd = 'PUT'
-		#params = str({"state":"playing"})	# try this
-		params = '{"state":"playing"}'
-		ret = messaging.publish_command(path,cmd,params)
+		params = '{"state":"play"}'
+	elif args.command == 'player-pause':
+		path = '/player/state'
+		params = '{"state":"pause"}'
+	elif args.command == 'player-stop':
+		path = '/player/state'
+		params = '{"state":"stop"}'
 	elif args.command == 'player-next':
 		path = '/player/next'
-		cmd = 'PUT'
-		params = None
-		ret = messaging.publish_command(path,cmd,params)
-		
+	elif args.command == 'player-prev':
+		path = '/player/prev'
+	elif args.command == 'player-nextfolder':
+		path = '/player/nextfolder'
+	elif args.command == 'player-prevfolder':
+		path = '/player/prevfolder'
+	elif args.command == 'player-update':
+		path = '/player/update'
+	elif args.command == 'player-random':
+		path = '/player/random'
+		params = '{"mode":"toggle"}'
+	elif args.command == 'volume':
+		path = '/volume'
+		params = None	#todo
+	elif args.command == 'volume-att':
+		path = '/volume/att'
+	elif args.command == 'volume-mute':
+		path = '/volume/mute'
+	elif args.command == 'system-reboot':
+		path = '/system/reboot'
+	elif args.command == 'system-shutdown':
+		path = '/system/shutdown'
+	
+	ret = messaging.publish_command(path,cmd,params)
+	print ret
 
 	exit(0)
 

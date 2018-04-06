@@ -43,6 +43,10 @@
 #	select_prev			Prev source
 #>>>select_prev_pri		Prev primary source (skipping over sub-sources)
 #
+#	CATEGORY
+#
+#	do_category			Do something for a category
+#
 #   SOURCE PROXY FUNCTIONS:
 #	Executes functions in the source class
 #
@@ -71,6 +75,13 @@ from slugify import slugify
 LOG_TAG = 'SOURCE'
 
 class SourceController(object):
+
+	def do_category(self,category,payload=None):
+		print "DEBUG do_category()"
+		
+		for pluginInfo in self.source_manager.getPluginsOfCategory(category):
+			print "DEBUG: executing plugins on_category()"
+			pluginInfo.plugin_object.on_category(category,payload)
 
 	def __printer( self, message, level=LL_INFO, tag=LOG_TAG):
 		self.logger.log(level, message, extra={'tag': tag})
@@ -172,6 +183,8 @@ class SourceController(object):
 			else:			
 				self.source_manager.activatePluginByName(plugin.name)
 				config = plugin.plugin_object.configuration()			# Get config
+				category = config['plugin_category']
+				self.source_manager.appendPluginToCategory(plugin,)			# Set plugin category
 				isAdded = self.add(config)								# Add
 				if isAdded:
 					indexAdded = self.index('name',config['name'])

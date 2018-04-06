@@ -1,11 +1,7 @@
-{ "name": "smb",
-  "displayname": "Network Share",
+{ "displayname": "Network Share",
   "order": 6,
-  "type": "mpd",
   "depNetwork": true,
   "controls": {"ffwd": false, "rwnd": false, "prev": true, "next": true, "dirnext": true},
   "random": ["on","off"],
-  "template": true,
-  "subsource_key": ["mountpoint"],
-  "filename_save": ["mountpoint"]
+  "subsource_key": ["mountpoint"]
 }
