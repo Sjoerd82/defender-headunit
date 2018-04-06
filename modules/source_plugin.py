@@ -89,7 +89,7 @@ class SourcePlugin(object):
 		
 		config['name'] = self.name
 		if 'category' not in config:
-			config['category'] = default
+			config['category'] = 'default'
 		
 		# load main configuration
 		main_configuration = configuration_load('srctrl', DEFAULT_CONFIG_FILE)
