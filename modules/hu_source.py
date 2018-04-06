@@ -183,7 +183,7 @@ class SourceController(object):
 			else:			
 				self.source_manager.activatePluginByName(plugin.name)
 				config = plugin.plugin_object.configuration()							# Get config
-				print config
+				self.source_manager.setCategoriesFilter(['default','udisks'])
 				#self.source_manager.appendPluginToCategory(plugin,config['category'])	# Set plugin category
 				self.source_manager.appendPluginToCategory(plugin,'udisks')
 				isAdded = self.add(config)												# Add
