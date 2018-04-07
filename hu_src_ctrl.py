@@ -494,6 +494,7 @@ def handle_path_source(path,cmd,args):
 		# called without sub-paths
 		function_to_call = cmd + '_' + base_path
 
+	ret = None
 	if function_to_call in locals():
 		ret = locals()[function_to_call](args)
 		printer('Executed {0} function {1} with result status: {2}'.format(base_path,function_to_call,ret)) # TODO: LL_DEBUG
@@ -798,6 +799,7 @@ def handle_path_player(path,cmd,args):
 		# called without sub-paths
 		function_to_call = cmd + '_' + base_path
 
+	ret = None
 	if function_to_call in locals():
 		ret = locals()[function_to_call](args)
 		printer('Executed {0} function {1} with result status: {2}'.format(base_path,function_to_call,ret))
@@ -850,6 +852,7 @@ def handle_path_events(path,cmd,args):
 		# called without sub-paths
 		function_to_call = cmd + '_' + base_path
 
+	ret = None
 	if function_to_call in locals():
 		ret = locals()[function_to_call](args)
 		printer('Executed {0} function {1} with result status: {2}'.format(base_path,function_to_call,ret))
