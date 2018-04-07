@@ -23,7 +23,7 @@ def printer( message, level=LL_INFO, tag="", logger_name=__name__):
 def parse_message(message):
 	"""
 	Format: <path>[+response_path] <command>[:arg1, argn]
-	                                               ^space, double quotes
+	                                               ^ags may contain spaces, double quotes, all kinds of messed up shit
 	Returns a tuple/dict (#tbd) + data?
 	"""
 	printer(colorize("{0}: {1}".format(__name__,'parse_message(message):'),'dark_gray'),level=LL_DEBUG)
@@ -33,7 +33,8 @@ def parse_message(message):
 	resp_path = []
 	
 	raw_path_resp_cmd = message.split(" ",1) #maxsplit=1, seperating at the first space [0]=paths, [1]=cmd+params
-	raw_path_resp = raw_path_resp_cmd.split("+",1) # [0] = path, [1] = respones path
+	raw_path_resp = raw_path_resp_cmd[0].split("+",1) # [0] = path, [1] = respones path
+	raw_cmd_par   = raw_path_resp_cmd[1].split(":",1)	#maxsplit=1,seperating at the first semicolon. [0]=cmd, [1]=param(s)
 	
 	# extract path
 	print "EXTRACT PATH"
@@ -50,20 +51,19 @@ def parse_message(message):
 
 	
 	# extract command and arguments
-	cmd_par = raw_path_resp_cmd[1].split(":",1)	#maxsplit=1,seperating at the first semicolon. [0]=cmd, [1]=param(s)
-	if len(cmd_par) == 1:
-		command = cmd_par[0].lower()
-	elif len(cmd_par) == 2:
-		command = cmd_par[0].lower()
-		#param = cmd_par[1]
-		print "LOADING: {0} ({1})".format(cmd_par[1],type(cmd_par[1]))
+	if len(raw_cmd_par) == 1:
+		command = raw_cmd_par[0].lower()
+	elif len(raw_cmd_par) == 2:
+		command = raw_cmd_par[0].lower()
+		#param = raw_cmd_par[1]
+		print "LOADING: {0} ({1})".format(raw_cmd_par[1],type(raw_cmd_par[1]))
 		
-		param = json.loads(cmd_par[1])
+		param = json.loads(raw_cmd_par[1])
 
 		if command == 'data':
 			print "PARSE: {0}".format(param)
 			#expect a json/dict
-			#params.append(cmd_par[1])
+			#params.append(raw_cmd_par[1])
 			params.append(param)
 		else:
 			#,-delimited parameters
