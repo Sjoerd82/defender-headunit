@@ -839,8 +839,8 @@ def handle_path_events(path,cmd,args):
 	def data_system_reboot(args):
 		pass
 	def data_udisks_added(args):
-		print "ARGS: {0}".format(args)
-		payload = json.loads(args[0])
+		print "ARGS: {0}".format(args[0])
+		payload = json.loads(args)
 		sc_sources.do_event('udisks',path,payload)
 		printSummary()
 		return None
