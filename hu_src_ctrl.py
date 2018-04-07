@@ -840,7 +840,8 @@ def handle_path_events(path,cmd,args):
 		pass
 	def data_udisks_added(args):
 		payload = {"cool":"stuff"}
-		sc_sources.do_category('udisks',payload)
+		print "ARGS: {0}".format(args)
+		sc_sources.do_category('udisks',path,payload)
 		return None
 		
 	def data_udisks_removed():
