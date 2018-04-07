@@ -174,7 +174,10 @@ def udisk_add( device ):
 	media_info['uuid'] = get_part_uuid(str(DeviceFile))
 	media_info['mountpoint'] = ""
 	
-	messaging.publish_command(PATH_EVENT_ADD,'DATA',media_info)
+	# if we can't send a dict, then for the time being do this:
+	param = '{"device":"{0}", "mountpoint":"{1}","uuid":"{2}","label":"{3}"}'.format(media_info['device'],media_info['mountpoint'],media_info['uuid'],media_info['label'])
+	
+	messaging.publish_command(PATH_EVENT_ADD,'DATA',param)
 	
 	#IdLabel: SJOERD
 	#DriveSerial: 0014857749DCFD20C7F95F31
@@ -208,14 +211,14 @@ def udisk_rem( device ):
 	partition = "/dev/"+os.path.basename(str(device))
 	
 	print partition
-	#media_info['partition'] = partition
+	media_info['partition'] = partition
 	media_info['device'] = str(DeviceFile)
 	media_info['label'] = "x"
 	media_info['uuid'] = "x"
 	media_info['mountpoint'] = "x"
 
 	# json.dumps is done in the messaging.publish_command ... we should safely be able to give it a dict
-	media_info_string = "'{0}'".format(media_info)
+	media_info_string = "{0}".format(media_info)
 	print type(media_info_string)
 	
 	messaging.publish_command(PATH_EVENT_REM,'DATA',media_info_string)
