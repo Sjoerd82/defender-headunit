@@ -80,7 +80,7 @@ def main():
 		path = '/source/subsource'
 		params = args.command_arg
 	elif args.command == 'source-next':
-		path = '/source/next`'
+		path = '/source/next'
 	elif args.command == 'source-prev':
 		path = '/source/prev'
 	elif args.command == 'player-play':
