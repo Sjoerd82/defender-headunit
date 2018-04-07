@@ -182,7 +182,7 @@ class MqPubSubFwdController(object):
 			else:
 				print "DEBUG MSG: OTHER"
 				jsonified_args = json.dumps(arguments)
-				message = "{0}:'{1}'".format(message, jsonified_args)
+				message = "{0}:{1}".format(message, jsonified_args)
 			
 		# append response path
 		if response_path:

@@ -215,9 +215,10 @@ def udisk_rem( device ):
 	media_info['mountpoint'] = "x"
 
 	# json.dumps is done in the messaging.publish_command ... we should safely be able to give it a dict
-	#media_info_json = 
+	media_info_string = "'{0}'".format(media_info)
+	print type(media_info_string)
 	
-	messaging.publish_command(PATH_EVENT_REM,'DATA',media_info)
+	messaging.publish_command(PATH_EVENT_REM,'DATA',media_info_string)
 	
 	"""
 	ix = Sources.getIndex('name','media')
