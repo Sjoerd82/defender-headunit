@@ -840,7 +840,7 @@ def handle_path_events(path,cmd,args):
 		pass
 	def data_udisks_added(args):
 		print "ARGS: {0}".format(args)
-		sc_sources.do_category('udisks',path,args)
+		sc_sources.do_event('udisks',path,args)
 		printSummary()
 		return None
 		
