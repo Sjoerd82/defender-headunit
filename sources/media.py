@@ -47,8 +47,9 @@ class MySource(MpdSourcePlugin,IPlugin):
 		
 		return True
 
-	def on_activate(self, subindex):
-		return False
+	# inherited from MPD class
+	#def on_activate(self, subindex):
+	#	return False
 
 	def on_event(self, event, event_path=[], payload=None):
 		if event == 'udisks':

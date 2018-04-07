@@ -533,7 +533,7 @@ class SourceController(object):
 		return False
 		
 	def select( self, index, subIndex=None ):
-		"""Set current source, by index
+		"""Select source, by index
 		"""
 		index = int(index)		# not sure why, by since passing through MQ this is needed
 			
