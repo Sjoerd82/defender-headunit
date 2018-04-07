@@ -55,13 +55,12 @@ class MySource(MpdSourcePlugin,IPlugin):
 			if event_path[1] == 'added':
 				print "adding subsource {0}".format(payload)
 				print payload
-				print payload[0]
-				print payload[0]['mountpoint']
-				print payload[0]['label']
-				print payload[0]['uuid']
-				print payload[0]['device']
+				print payload['mountpoint']
+				print payload['label']
+				print payload['uuid']
+				print payload['device']
 				index = self.sourceCtrl.index('name',self.name)
-				add_subsource(payload[0]['mountpoint'],payload[0]['label'],payload[0]['uuid'],payload[0]['device'],index)
+				add_subsource(payload['mountpoint'],payload['label'],payload['uuid'],payload['device'],index)
 			else:
 				print "DEBUG: event implemented, but not this path"
 		else:
