@@ -22,7 +22,8 @@ def printer( message, level=LL_INFO, tag="", logger_name=__name__):
 
 def parse_message(message):
 	"""
-	Format: <path> <command>[:arg1,argn] [response_path]
+	Format: <path>[+response_path] <command>[:arg1, argn]
+	                                               ^space, double quotes
 	Returns a tuple/dict (#tbd) + data?
 	"""
 	printer(colorize("{0}: {1}".format(__name__,'parse_message(message):'),'dark_gray'),level=LL_DEBUG)
@@ -30,15 +31,24 @@ def parse_message(message):
 	path = []
 	params = []
 	resp_path = []
-	path_cmd_resp = message.split(" ")
+	#path_cmd_resp = message.split(" ")
+	raw_path_resp_cmd = message.split(" ",1) #maxsplit=1, seperating at the first space [0]=paths, [1]=cmd+params
+	
+	raw_path_resp = message.split("+",1) # [0] = path, [1] = respones path
 	
 	# extract path
-	for pathpart in path_cmd_resp[0].split("/"):
+	print raw_path_resp[0]
+	for pathpart in raw_path_resp[0].split("/"):
 		if pathpart:
 			path.append(pathpart.lower())
-		
+	
+	# extract response path, as a whole..
+	if len(raw_path_resp) >= 0:
+		resp_path = raw_path_resp[1]
+
+	
 	# extract command and arguments
-	cmd_par = path_cmd_resp[1].split(":",1)	#maxsplit=1
+	cmd_par = raw_path_resp_cmd[1].split(":",1)	#maxsplit=1,seperating at the first semicolon. [0]=cmd, [1]=param(s)
 	if len(cmd_par) == 1:
 		command = cmd_par[0].lower()
 	elif len(cmd_par) == 2:
@@ -63,15 +73,6 @@ def parse_message(message):
 		printer("Malformed message!",level=LL_ERROR)
 		return False
 	
-	# extract response path
-	#if len(path_cmd_resp) >= 3:
-	#	for pathpart in path_cmd_resp[2].split("/"):
-	#		if pathpart:
-	#			resp_path.append(pathpart.lower())
-				
-	# extract response path, as a whole..
-	if len(path_cmd_resp) >= 3:
-		resp_path = path_cmd_resp[2]
 	
 	# debugging
 	#print("[MQ] Received Path: {0}; Command: {1}; Parameters: {2}; Response path: {3}".format(path,command,params,resp_path))
@@ -85,6 +86,7 @@ def parse_message(message):
 	parsed_message['cmd'] = command
 	parsed_message['args'] = params
 	parsed_message['resp_path'] = resp_path
+	print parsed_message
 	return parsed_message
 
 #********************************************************************************
