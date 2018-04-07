@@ -91,6 +91,9 @@ class SourcePlugin(object):
 		if 'category' not in config:
 			config['category'] = 'default'
 		
+		if 'trigger_events' not in config:
+			config['trigger_events'] = None
+		
 		# load main configuration
 		main_configuration = configuration_load('srctrl', DEFAULT_CONFIG_FILE)
 		if 'source_config' in main_configuration and self.name in main_configuration['source_config']:

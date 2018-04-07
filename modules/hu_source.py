@@ -79,9 +79,14 @@ class SourceController(object):
 	def do_category(self,category,payload=None):
 		print "DEBUG do_category()"
 		
-		for pluginInfo in self.source_manager.getPluginsOfCategory(category):
-			print "DEBUG: executing plugins on_category()"
-			pluginInfo.plugin_object.on_category(category,payload)
+		#for pluginInfo in self.source_manager.getPluginsOfCategory(category):
+		#	print "DEBUG: executing plugins on_category()"
+		#	pluginInfo.plugin_object.on_category(category,payload)
+		for source in self.lSource:
+			if source['trigger_events'] == category:
+				ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.on_category(category,payload)
+				print ret
+		
 
 	def __printer( self, message, level=LL_INFO, tag=LOG_TAG):
 		self.logger.log(level, message, extra={'tag': tag})
@@ -183,12 +188,7 @@ class SourceController(object):
 			else:			
 				self.source_manager.activatePluginByName(plugin.name)
 				config = plugin.plugin_object.configuration()							# Get config
-				cats = []
-				cats.append('default')
-				cats.append('udisks')
-				self.source_manager.setCategoriesFilter(cats)
-				#self.source_manager.appendPluginToCategory(plugin,config['category'])	# Set plugin category
-				self.source_manager.appendPluginToCategory(plugin,'udisks')
+				#self.source_manager.appendPluginToCategory(plugin,config['category'])	# Set plugin category	-- NOT SUPPORTED IN PY2.7!
 				isAdded = self.add(config)												# Add
 				if isAdded:
 					indexAdded = self.index('name',config['name'])
