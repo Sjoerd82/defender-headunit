@@ -94,8 +94,8 @@ class SourcePlugin(object):
 		if 'category' not in config:
 			config['category'] = 'default'
 		
-		if 'trigger_events' not in config:
-			config['trigger_events'] = []
+		if 'events' not in config:
+			config['events'] = []
 		
 		# load main configuration
 		main_configuration = configuration_load('srctrl', DEFAULT_CONFIG_FILE)

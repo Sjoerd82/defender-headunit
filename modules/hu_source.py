@@ -32,7 +32,7 @@
 #	rem_sub				Remove a sub-source
 #	index				Returns index of source by keyword
 #	index_current		Returns list of indexes of current source and current sub-source
-#   subindex			
+#   subindex			Returns subindex by index and keyword
 #	source				Returns source by index (current if no index given)
 #	source_all			Returns list of all sources (class refs omitted)
 #	subsource			Returns COPY of subsource for given source index (current subsource if no indexes given)
@@ -52,7 +52,7 @@
 #	Executes functions in the source class
 #
 #	source_init			Code to be executed once, during initialization of the source
-#	source_play
+#	source_play			Start playback (selects next source, if no current)
 #	source_stop
 #	source_pause
 #	source_next
@@ -77,14 +77,14 @@ LOG_TAG = 'SOURCE'
 
 class SourceController(object):
 
-	def do_event(self,category,path,payload=None):	
+	def do_event(self,event,path,payload=None):	
 		#for pluginInfo in self.source_manager.getPluginsOfCategory(category):
 		#	print "DEBUG: executing plugins on_category()"
 		#	pluginInfo.plugin_object.on_category(category,payload)
 		i = 0
 		for source in self.lSource:
-			if category in source['trigger_events']:
-				self.source_manager.getPluginByName(self.lSource[i]['name']).plugin_object.on_event(category,path,payload)
+			if event in source['events']:
+				self.source_manager.getPluginByName(self.lSource[i]['name']).plugin_object.on_event(event,path,payload)
 			i += 1
 		
 
@@ -955,8 +955,14 @@ class SourceController(object):
 		"""
 		
 		index, subindex = self.__get_current('PLAY')
+		
+		if index is None or subindex is None:
+			ret = self.select_next()
+			if ret is None:
+				return False
+		
 		if index is not None and subindex is not None:
-
+		
 			if not self.lSource[index]['subsources'][subindex]['available']:
 				self.__printer('PLAY: Source not available: {0}.{1}'.format(index,subindex),LL_WARNING)
 				return False

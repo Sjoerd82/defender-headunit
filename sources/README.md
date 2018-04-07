@@ -180,7 +180,8 @@ Method | Called | Short description | Arguments | super()?
 `__init__` | Creating of the plugin | Class initialization | None | Always
 `on_init` | At loading the plugin | Source Initialization | ? | Always
 `on_add` | After registering with SourceController | Called after adding the source | ? | No
-`on_activate` |  | When subsource becomes active | subindex | Optional
+`on_activate` | When subsource becomes active | | subindex | Optional
+`on_event` | When an event occurs | | subindex | Optional
 `check_availability` | After post-add, and accidentally during runtime | Determine availability of subsource(s) | No, defaults to available if not implemented | No
 `add_subsource` | Creating sub-sources on the fly | On certain events | No | No
 `discover` | | | |

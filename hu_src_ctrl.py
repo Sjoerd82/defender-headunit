@@ -14,10 +14,7 @@
 #
 # Switches:
 # -r, --resume		Resume source
-# -r, --resume 0	Resume source 0			<- no
-# -r, --resume 1.0	Resume source 1.0		<- no
-# -r, --resume fm	Resume source fm		<- no
-# -p, --play		Start playback
+# -p, --play		Start playback (ignore resume)
 # 
 
 
@@ -1237,7 +1234,7 @@ def main():
 	# Start playback
 	#
 	if args.play is True:
-		pass
+		sc_sources.source_play()
 	
 	#
 	# Initialize the mainloop

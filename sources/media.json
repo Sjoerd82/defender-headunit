@@ -1,7 +1,7 @@
 { "displayname": "Removeable Media",
   "order": 1,
   "category": "udisks",
-  "trigger_events": ["udisks"],
+  "events": ["udisks"],
   "depNetwork": false,
   "controls": {"ffwd": true, "rwnd": true, "prev": true, "next": true, "dirnext": true},
   "random": ["on","off"],
