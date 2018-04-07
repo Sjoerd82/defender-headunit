@@ -218,7 +218,7 @@ def udisk_rem( device ):
 	# find our missing drive
 	i=0
 	for devpart in attached_drives:
-		if devpart['device'] == partition
+		if devpart['device'] == partition:
 	
 			#media_info['partition'] = partition
 			media_info['device'] = devpart['device']
