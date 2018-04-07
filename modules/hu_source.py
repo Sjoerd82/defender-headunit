@@ -32,6 +32,7 @@
 #	rem_sub				Remove a sub-source
 #	index				Returns index of source by keyword
 #	index_current		Returns list of indexes of current source and current sub-source
+#   subindex			
 #	source				Returns source by index (current if no index given)
 #	source_all			Returns list of all sources (class refs omitted)
 #	subsource			Returns COPY of subsource for given source index (current subsource if no indexes given)
@@ -518,6 +519,19 @@ class SourceController(object):
 		#copy.copy?
 		return self.iCurrentSource
 
+	def subindex(self,index,key,value):
+		index = self.__check_index(index)
+		if index is False:
+			return False
+
+		j=0
+		for subsource in self.lSource[index]['subsources']:
+			if subsource[key] == value:
+				return j
+			j+=1
+		
+		return False
+		
 	def select( self, index, subIndex=None ):
 		"""Set current source, by index
 		"""

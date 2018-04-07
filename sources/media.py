@@ -53,14 +53,14 @@ class MySource(MpdSourcePlugin,IPlugin):
 	def on_event(self, event, event_path=[], payload=None):
 		if event == 'udisks':
 			if event_path[1] == 'added':
-				print "adding subsource {0}".format(payload)
-				print payload
-				print payload['mountpoint']
-				print payload['label']
-				print payload['uuid']
-				print payload['device']
 				index = self.sourceCtrl.index('name',self.name)
 				self.add_subsource(payload['mountpoint'],payload['label'],payload['uuid'],payload['device'],index)
+				subindex = self.sourceCtrl.subindex(index,'mountpoint',payload['mountpoint'])
+				if subindex is not None:
+					self.check_availability(subindex)
+				else:
+					print "DEBUG: Something went wrong"
+					self.check_availability()
 			else:
 				print "DEBUG: event implemented, but not this path"
 		else:
