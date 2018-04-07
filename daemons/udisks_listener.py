@@ -213,7 +213,7 @@ def udisk_rem( device ):
 	media_info['uuid'] = ""
 	media_info['mountpoint'] = ""
 	
-	messaging.publish_command(PATH_EVENT_REM,'DATA',media_info)
+	messaging.publish_command(PATH_EVENT_REM,'DATA',str(media_info))
 	
 	"""
 	ix = Sources.getIndex('name','media')
