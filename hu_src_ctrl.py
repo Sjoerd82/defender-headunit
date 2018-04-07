@@ -1221,21 +1221,21 @@ def main():
 
 	#sc_sources.source_check()
 	check_all_sources_send_event()
-	printSummary()
 	
 	#
 	# Resume playback
 	#
 	if args.resume is True:
-		pass
 		#QuickPlay()
+		printSummary()
 		
 	#
 	# Start playback
 	#
 	if args.play is True:
 		sc_sources.source_play()
-	
+		printSummary()
+		
 	#
 	# Initialize the mainloop
 	DBusGMainLoop(set_as_default=True)

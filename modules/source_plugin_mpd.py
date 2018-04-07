@@ -23,6 +23,8 @@ class MpdSourcePlugin(SourcePlugin):
 	
 	def on_activate(self, subindex):
 		
+		print "DEBUG: MPD: on_activate"
+		
 		index = self.sourceCtrl.index('name',self.name)
 		subsource = self.sourceCtrl.subsource( index, subindex )
 		
@@ -43,10 +45,12 @@ class MpdSourcePlugin(SourcePlugin):
 			# populate playlist
 			self.mpdc.pls_clear()
 			playlistCount = self.mpdc.pls_pop_dir(mpd_dir)
+			self.play()
 
 		if streams is not None:
 			self.mpdc.pls_clear()
 			playlistCount = self.mpdc.pls_pop_streams(streams)
+			self.play()
 			
 		
 	def check_availability(self, **kwargs):
@@ -126,6 +130,7 @@ class MpdSourcePlugin(SourcePlugin):
 	def play(self, index=None, subindex=None, **kwargs): #sourceCtrl, index, subindex, resume={}): # , **kwargs ):
 		""" Play MPD
 		"""
+		print "DEBUG: MPD: play"
 		self.printer('Start playing')
 		
 		#index = kwargs['index']

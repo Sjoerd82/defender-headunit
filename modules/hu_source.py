@@ -958,7 +958,7 @@ class SourceController(object):
 		
 		if index is None or subindex is None:
 			ret = self.select_next()
-			if ret is None:
+			if not ret:
 				return False
 		
 		if index is not None and subindex is not None:
