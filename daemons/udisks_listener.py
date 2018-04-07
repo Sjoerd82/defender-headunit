@@ -176,7 +176,7 @@ def udisk_add( device ):
 	
 	# if we can't send a dict, then for the time being do this:
 	#param = '{"device":"{0}", "mountpoint":"{1}","uuid":"{2}","label":"{3}"}'.format(media_info['device'],media_info['mountpoint'],media_info['uuid'],media_info['label'])
-	param = '{"device":"{0}", "mountpoint":"{1}","uuid":"{2}","label":"{3}"}'.format(str(DeviceFile),media_info['mountpoint'],media_info['uuid'],media_info['label'])
+	param = '{{"device":"{0}", "mountpoint":"{1}","uuid":"{2}","label":"{3}"}}'.format(str(DeviceFile),media_info['mountpoint'],media_info['uuid'],media_info['label'])
 	
 	messaging.publish_command(PATH_EVENT_ADD,'DATA',param)
 	
