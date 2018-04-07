@@ -121,7 +121,7 @@ def main():
 	elif args.command == 'events-udisks-add':
 		cmd = 'DATA'
 		path = '/events/udisks/added'
-		params = '{"device":"/dev/sda1","mountpoint":"","uuid":"f9dc11d6-01","label":""}'
+		params = '{"device":"/dev/sda1", "mountpoint":"","uuid":"f9dc11d6-01","label":""}'
 		
 	ret = messaging.publish_command(path,cmd,params)
 	print ret

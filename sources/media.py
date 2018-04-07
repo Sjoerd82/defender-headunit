@@ -60,7 +60,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 				print payload['uuid']
 				print payload['device']
 				index = self.sourceCtrl.index('name',self.name)
-				add_subsource(payload['mountpoint'],payload['label'],payload['uuid'],payload['device'],index)
+				self.add_subsource(payload['mountpoint'],payload['label'],payload['uuid'],payload['device'],index)
 			else:
 				print "DEBUG: event implemented, but not this path"
 		else:
