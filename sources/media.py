@@ -98,8 +98,11 @@ class MySource(MpdSourcePlugin,IPlugin):
 			subsources = list(self.sourceCtrl.subsource( index, subindex ))
 			i = subindex
 		
+		print subsources
+		
 		for subsource in subsources:
-			mountpoint = subsource['mountpoint']			
+			print subsource
+			mountpoint = subsource['mountpoint']
 			cur_availability = subsource['available']
 			self.printer('Checking local folder: {0}, current availability: {1}'.format(mountpoint,cur_availability))
 			new_availability = self.check_mpddb_mountpoint(mountpoint, createdir=True, waitformpdupdate=True)
