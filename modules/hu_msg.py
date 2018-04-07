@@ -48,9 +48,15 @@ def parse_message(message):
 		
 		param = json.loads(cmd_par[1])
 
-		for parpart in param.split(","):
-			if parpart:
-				params.append(parpart)
+		if command == 'DATA':
+			#expect a json/dict
+			params.append(param)
+		else:
+			#,-delimited parameters
+			for parpart in param.split(","):
+				if parpart:
+					params.append(parpart)
+		
 	else:
 		printer("Malformed message!",level=LL_ERROR)
 		return False
