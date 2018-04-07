@@ -56,9 +56,7 @@ def parse_message(message):
 		param = json.loads(raw_cmd_par[1])
 
 		if command == 'data':
-			print "PARSE: {0}".format(param)
 			#expect a json/dict
-			#params.append(raw_cmd_par[1])
 			params.append(param)
 		else:
 			#,-delimited parameters
@@ -83,7 +81,6 @@ def parse_message(message):
 	parsed_message['cmd'] = command
 	parsed_message['args'] = params
 	parsed_message['resp_path'] = resp_path
-	print parsed_message
 	return parsed_message
 
 #********************************************************************************
@@ -185,7 +182,7 @@ class MqPubSubFwdController(object):
 			else:
 				print "DEBUG MSG: OTHER"
 				jsonified_args = json.dumps(arguments)
-				message = "{0}:{1}".format(message, jsonified_args)
+				message = "{0}:'{1}'".format(message, jsonified_args)
 			
 		# append response path
 		if response_path:

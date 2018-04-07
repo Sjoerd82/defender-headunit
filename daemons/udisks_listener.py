@@ -207,12 +207,16 @@ def udisk_rem( device ):
 	media_info = {}	
 	partition = "/dev/"+os.path.basename(str(device))
 	
-	media_info['partition'] = partition
+	print partition
+	#media_info['partition'] = partition
 	media_info['device'] = str(DeviceFile)
-	media_info['label'] = ""
-	media_info['uuid'] = ""
-	media_info['mountpoint'] = ""
+	media_info['label'] = "x"
+	media_info['uuid'] = "x"
+	media_info['mountpoint'] = "x"
 
+	# json.dumps is done in the messaging.publish_command ... we should safely be able to give it a dict
+	#media_info_json = 
+	
 	messaging.publish_command(PATH_EVENT_REM,'DATA',media_info)
 	
 	"""
