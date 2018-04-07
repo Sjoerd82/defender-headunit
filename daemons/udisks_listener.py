@@ -45,7 +45,8 @@ args = None
 messaging = None
 bus = None
 
-attached_drives = [] #. ... there may be a problem when a drive was already attached before udisks started... it won't be in this list...  perhaps use the sources, or check on startup.. # TODO #todo!
+# keep track of anything attached
+attached_drives = []
 
 # ********************************************************************************
 # Output wrapper
@@ -324,7 +325,7 @@ def setup():
 	#
 	# See if anything already attached
 	#
-	mountpoints = get_mounts(mp_exclude=['/','/dev','/media/PIHU_DATA','/media/PIHU_DATA2'], fs_exclude=['cifs','tmpfs'])
+	mountpoints = get_mounts(mp_exclude=['/','/dev','/media/PIHU_DATA','/media/PIHU_DATA2','/mnt/PIHU_CONFIG','/mnt/PIHU_APP'], fs_exclude=['cifs','tmpfs'])
 	for mountpoint in mountpoints:
 		media_info = {}
 		media_info['device'] = mountpoint['spec']
