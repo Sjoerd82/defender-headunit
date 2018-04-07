@@ -45,6 +45,9 @@ args = None
 messaging = None
 bus = None
 
+# keep track of anything attached
+attached_drives = []
+
 # ********************************************************************************
 # Output wrapper
 #
@@ -168,13 +171,19 @@ def udisk_add( device ):
 	# Please Note:
 	# DeviceFile = dbus.String(u'/dev/sda1', variant_level=1)
 
+	
 	media_info = {}	
 	media_info['device'] = str(DeviceFile)
-	media_info['label'] = ""
 	media_info['uuid'] = get_part_uuid(str(DeviceFile))
-	media_info['mountpoint'] = ""
+	media_info['mountpoint'] = get_mountpoint(media_info['device'])
+	media_info['label'] = os.path.basename(media_info['mountpoint']).rstrip('\n')
 	
-	messaging.publish_command(PATH_EVENT_ADD,'DATA',media_info)
+	attached_drives.append(media_info)
+
+	# if we can't send a dict, then for the time being do this:
+	param = '{{"device":"{0}", "mountpoint":"{1}","uuid":"{2}","label":"{3}"}}'.format(str(DeviceFile),media_info['mountpoint'],media_info['uuid'],media_info['label'])
+	
+	messaging.publish_command(PATH_EVENT_ADD,'DATA',param)
 	
 	#IdLabel: SJOERD
 	#DriveSerial: 0014857749DCFD20C7F95F31
@@ -193,27 +202,37 @@ def udisk_rem( device ):
 	#  beware.... anything after this may or may not be defined depending on the event and state of the drive. 
 	#  Attempts to get a prop that is no longer set will generate a dbus.connection:Exception
 	#
+	
+	# Variables
+	DeviceFile = ""
+	mountpoint = ""
+	media_info = {}
 
 	# HANDY DEBUGGING TIP, DISPLAY ALL AVAILABLE PROPERTIES:
 	# WILL *NOT* WORK FOR DEVICE REMOVAL
 	#data = device_props.GetAll('')
 	#for i in data: print i+': '+str(data[i])
 	
-	# Variables
-	DeviceFile = ""
-	mountpoint = ""
-	
-	# TODO : REFINE
-	media_info = {}	
 	partition = "/dev/"+os.path.basename(str(device))
+	print partition
 	
-	media_info['partition'] = partition
-	media_info['device'] = str(DeviceFile)
-	media_info['label'] = ""
-	media_info['uuid'] = ""
-	media_info['mountpoint'] = ""
+	# find our missing drive
+	i=0
+	for devpart in attached_drives:
+		if devpart['device'] == partition:
 	
-	messaging.publish_command(PATH_EVENT_REM,'DATA',media_info)
+			#media_info['partition'] = partition
+			media_info['device'] = devpart['device']
+			media_info['uuid'] = devpart['uuid']
+			media_info['mountpoint'] = devpart['mountpoint']
+			media_info['label'] = devpart['label']
+
+			param = '{{"device":"{0}", "mountpoint":"{1}","uuid":"{2}","label":"{3}"}}'.format(media_info['device'],media_info['mountpoint'],media_info['uuid'],media_info['label'])
+			messaging.publish_command(PATH_EVENT_REM,'DATA',param)
+			break
+		i+=1
+	
+	del attached_drives[i-1]	#break doens't stop the i+1
 	
 	"""
 	ix = Sources.getIndex('name','media')
@@ -303,6 +322,20 @@ def setup():
 	printer("ZeroMQ: Creating Publisher: {0}".format(DEFAULT_PORT_PUB))
 	messaging.create_publisher()
 
+	#
+	# See if anything already attached
+	#
+	mountpoints = get_mounts(mp_exclude=['/','/dev','/media/PIHU_DATA','/media/PIHU_DATA2','/mnt/PIHU_CONFIG','/mnt/PIHU_APP'], fs_exclude=['cifs','tmpfs'])
+	for mountpoint in mountpoints:
+		media_info = {}
+		media_info['device'] = mountpoint['spec']
+		media_info['mountpoint'] = mountpoint['mountpoint']
+		media_info['uuid'] = get_part_uuid(media_info['device'])
+		media_info['label'] = os.path.basename(media_info['mountpoint']).rstrip('\n')
+		attached_drives.append(media_info)
+	
+	printer('Found drives: {0}'.format(attached_drives))
+	
 	printer('Initialized [OK]')
 
 def main():

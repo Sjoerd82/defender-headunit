@@ -23,11 +23,13 @@ class MpdSourcePlugin(SourcePlugin):
 	
 	def on_activate(self, subindex):
 		
+		print "DEBUG: MPD: on_activate"
+		
 		index = self.sourceCtrl.index('name',self.name)
-		subsource = self.sourceCtrl.subsource( self.index, subindex )
+		subsource = self.sourceCtrl.subsource( index, subindex )
 		
 		mpd_dir = None
-		mpd_type = None
+		streams = None
 		
 		if 'mpd_dir' in subsource:
 			mpd_dir = subsource['mpd_dir']
@@ -43,10 +45,12 @@ class MpdSourcePlugin(SourcePlugin):
 			# populate playlist
 			self.mpdc.pls_clear()
 			playlistCount = self.mpdc.pls_pop_dir(mpd_dir)
+			self.play()
 
-		if mpd_streams is not None:
+		if streams is not None:
 			self.mpdc.pls_clear()
 			playlistCount = self.mpdc.pls_pop_streams(streams)
+			self.play()
 			
 		
 	def check_availability(self, **kwargs):
@@ -68,7 +72,7 @@ class MpdSourcePlugin(SourcePlugin):
 			mountpoint = subsource['mountpoint']			
 			cur_availability = subsource['available']
 			self.printer('Checking local folder: {0}, current availability: {1}'.format(mountpoint,cur_availability))
-			new_availability = check_mpddb_mountpoint(mountpoint, createdir=True, waitformpdupdate=True)
+			new_availability = self.check_mpddb_mountpoint(mountpoint, createdir=True, waitformpdupdate=True)
 			self.printer('Checked local folder: {0}, new availability: {1}'.format(mountpoint,new_availability))
 			
 			if new_availability is not None and new_availability != cur_availability:
@@ -123,13 +127,14 @@ class MpdSourcePlugin(SourcePlugin):
 					new_availability = True
 		return new_availability
 	
-	def play(self, **kwargs): #sourceCtrl, index, subindex, resume={}): # , **kwargs ):
+	def play(self, index=None, subindex=None, **kwargs): #sourceCtrl, index, subindex, resume={}): # , **kwargs ):
 		""" Play MPD
 		"""
+		print "DEBUG: MPD: play"
 		self.printer('Start playing')
 		
-		index = kwargs['index']
-		subindex = kwargs['subindex']
+		#index = kwargs['index']
+		#subindex = kwargs['subindex']
 		
 		"""
 		sourceCtrl = kwargs['srcCtrl']
@@ -165,7 +170,7 @@ class MpdSourcePlugin(SourcePlugin):
 			#playlistCount = self.mpdc.pls_pop(xxx)
 			
 		"""
-
+		'''
 		# check if succesful...
 		if playlistCount == "0":
 			self.printer(' > Nothing in the playlist, trying to update database...')
@@ -186,7 +191,7 @@ class MpdSourcePlugin(SourcePlugin):
 				self.printer(' > Found {0:s} tracks'.format(playlistCount))
 		else:
 			self.printer(' > Found {0:s} tracks'.format(playlistCount))
-
+		'''
 		self.mpdc.play()
 		self.state['state'] = 'playing'
 		return True
@@ -261,7 +266,14 @@ class MpdSourcePlugin(SourcePlugin):
 		self.printer('Update. Location: {0}'.format(location))
 		self.mpdc.update(location)
 		return True
-	
+		
+	def get_state(self, **kwargs):
+		cur_state = {}
+		mpd_state = self.mpdc.state()
+		cur_state.update(self.state)
+		cur_state.update(mpd_state)
+		return cur_state		
+
 	def get_details(self, **kwargs ):
 		self.printer('Details ?')
 		details = {}
@@ -272,5 +284,11 @@ class MpdSourcePlugin(SourcePlugin):
 
 		details['funfact'] = "bla"
 		details['track'] = track
-		details['state'] = self.state
+		
+		# state
+		cur_state = {}
+		mpd_state = self.mpdc.state()
+		cur_state.update(self.state)
+		cur_state.update(mpd_state)
+		details['state'] = cur_state
 		return details

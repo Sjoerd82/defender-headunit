@@ -22,7 +22,8 @@ def printer( message, level=LL_INFO, tag="", logger_name=__name__):
 
 def parse_message(message):
 	"""
-	Format: <path> <command>[:arg1,argn] [response_path]
+	Format: <path>[+response_path] <command>[:arg1, argn]
+	                                               ^ags may contain spaces, double quotes, all kinds of messed up shit
 	Returns a tuple/dict (#tbd) + data?
 	"""
 	printer(colorize("{0}: {1}".format(__name__,'parse_message(message):'),'dark_gray'),level=LL_DEBUG)
@@ -30,38 +31,43 @@ def parse_message(message):
 	path = []
 	params = []
 	resp_path = []
-	path_cmd_resp = message.split(" ")
+	
+	raw_path_resp_cmd = message.split(" ",1) #maxsplit=1, seperating at the first space [0]=paths, [1]=cmd+params
+	raw_path_resp = raw_path_resp_cmd[0].split("+",1) # [0] = path, [1] = respones path
+	raw_cmd_par   = raw_path_resp_cmd[1].split(":",1)	#maxsplit=1,seperating at the first semicolon. [0]=cmd, [1]=param(s)
 	
 	# extract path
-	for pathpart in path_cmd_resp[0].split("/"):
+	for pathpart in raw_path_resp[0].split("/"):
 		if pathpart:
 			path.append(pathpart.lower())
-		
+	
+	# extract response path (if any), as a whole..
+	if len(raw_path_resp) > 1:
+		resp_path = raw_path_resp[1]
+	
 	# extract command and arguments
-	cmd_par = path_cmd_resp[1].split(":",1)	#maxsplit=1
-	if len(cmd_par) == 1:
-		command = cmd_par[0].lower()
-	elif len(cmd_par) == 2:
-		command = cmd_par[0].lower()
-		#param = cmd_par[1]
-		param = json.loads(cmd_par[1])
+	if len(raw_cmd_par) == 1:
+		command = raw_cmd_par[0].lower()
+	elif len(raw_cmd_par) == 2:
+		command = raw_cmd_par[0].lower()
+		#param = raw_cmd_par[1]
+		print "LOADING: {0} ({1})".format(raw_cmd_par[1],type(raw_cmd_par[1]))
+		
+		param = json.loads(raw_cmd_par[1])
 
-		for parpart in param.split(","):
-			if parpart:
-				params.append(parpart)
+		if command == 'data':
+			#expect a json/dict
+			params.append(param)
+		else:
+			#,-delimited parameters
+			for parpart in param.split(","):
+				if parpart:
+					params.append(parpart)
+		
 	else:
 		printer("Malformed message!",level=LL_ERROR)
 		return False
 	
-	# extract response path
-	#if len(path_cmd_resp) >= 3:
-	#	for pathpart in path_cmd_resp[2].split("/"):
-	#		if pathpart:
-	#			resp_path.append(pathpart.lower())
-				
-	# extract response path, as a whole..
-	if len(path_cmd_resp) >= 3:
-		resp_path = path_cmd_resp[2]
 	
 	# debugging
 	#print("[MQ] Received Path: {0}; Command: {1}; Parameters: {2}; Response path: {3}".format(path,command,params,resp_path))
@@ -167,8 +173,14 @@ class MqPubSubFwdController(object):
 		# append arguments
 		if arguments:
 			if type(arguments) == 'list':
+				print "DEBUG MSG: LIST"
 				message = "{0}:{1}".format(message, ",".join(arguments))
+			elif type(arguments) == 'dict':
+				print "DEBUG MSG: DICT"
+				jsonified_args = json.dumps(arguments)
+				message = "{0}:{1}".format(message, jsonified_args)				
 			else:
+				print "DEBUG MSG: OTHER"
 				jsonified_args = json.dumps(arguments)
 				message = "{0}:{1}".format(message, jsonified_args)
 			

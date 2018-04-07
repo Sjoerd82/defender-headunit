@@ -1,11 +1,9 @@
 { "displayname": "FM",
   "order": 0,
-  "type": "fmtools",
   "depNetwork": false,
   "controls": {"ffwd": false, "rwnd": false, "prev": true, "next": true},
   "random": [],
-  "template": true,
-  "subsources": [ {"name":"fm"} ],
+  "subsource_key": ["displayname"],
   "defaultconfig": { "frq_lo" : 80 },
   "menuitems" : [
 	{	"entry": "Tune to radio station",
@@ -14,6 +12,5 @@
 		"order": 0,
 		"dependencies": { "current_source":"fm" }
 	}
-	],
-  "subsource_key": ["displayname"]
+	]
 }

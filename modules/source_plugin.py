@@ -36,6 +36,9 @@ class SourcePlugin(object):
 
 	def on_activate(self, subindex):
 		return False
+	
+	def on_event(self, event, event_path=[], payload=None):
+		return False
 
 	def add_subsource(self, **kwargs):
 		# not implemented
@@ -88,6 +91,11 @@ class SourcePlugin(object):
 			config=json.load(jsConfigFile)
 		
 		config['name'] = self.name
+		if 'category' not in config:
+			config['category'] = 'default'
+		
+		if 'events' not in config:
+			config['events'] = []
 		
 		# load main configuration
 		main_configuration = configuration_load('srctrl', DEFAULT_CONFIG_FILE)
@@ -96,7 +104,7 @@ class SourcePlugin(object):
 			
 		return config
 			
-	def play(self, **kwargs):
+	def play(self, index=None, subindex=None, **kwargs):
 		self.state['state'] = 'playing'
 		return False
 		

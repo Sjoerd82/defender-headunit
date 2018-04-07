@@ -1,11 +1,9 @@
-{ "name": "media",
-  "displayname": "Removeable Media",
+{ "displayname": "Removeable Media",
   "order": 1,
-  "type": "mpd",
+  "category": "udisks",
+  "events": ["udisks"],
   "depNetwork": false,
   "controls": {"ffwd": true, "rwnd": true, "prev": true, "next": true, "dirnext": true},
   "random": ["on","off"],
-  "template": true,
-  "subsource_key": ["uuid","label"],
-  "filename_save": ["uuid","label"]
+  "subsource_key": ["uuid","label"]
 }

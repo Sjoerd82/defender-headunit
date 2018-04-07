@@ -419,4 +419,17 @@ def get_part_uuid( device ):
 	partuuid = subprocess.check_output("blkid "+device+" -s PARTUUID -o value", shell=True).rstrip('\n')
 	return partuuid
 
-#def get_label_from_
+def get_mountpoint(device):
+	with open('/proc/mounts','r') as f:
+		for line in f.readlines():
+			spec = line.split()[0]
+			if spec == device:
+				return line.split()[1]
+	return None
+
+		
+#def get_label(mountpoint):
+#	label = os.path.basename(mount['mountpoint']).rstrip('\n')
+	
+
+

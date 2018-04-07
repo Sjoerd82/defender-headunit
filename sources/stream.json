@@ -1,9 +1,5 @@
-{ "name": "stream",
-  "displayname": "Internet Radio",
+{ "displayname": "Internet Radio",
   "order": 5,
-  "available": false,
-  "type": "mpd",
   "depNetwork": false,
-  "controls": {"ffwd": false, "rwnd": false, "prev": true, "next": true},
-  "template": false
+  "controls": {"ffwd": false, "rwnd": false, "prev": true, "next": true}
 }

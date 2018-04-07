@@ -47,9 +47,26 @@ class MySource(MpdSourcePlugin,IPlugin):
 		
 		return True
 
-	def on_activate(self, subindex):
-		return False
+	# inherited from MPD class
+	#def on_activate(self, subindex):
+	#	return False
 
+	def on_event(self, event, event_path=[], payload=None):
+		if event == 'udisks':
+			if event_path[1] == 'added':
+				index = self.sourceCtrl.index('name',self.name)
+				self.add_subsource(payload['mountpoint'],payload['label'],payload['uuid'],payload['device'],index)
+				subindex = self.sourceCtrl.subindex(index,'mountpoint',payload['mountpoint'])
+				if subindex is not None:
+					self.check_availability(subindex)
+				else:
+					print "DEBUG: Something went wrong"
+					self.check_availability()
+			else:
+				print "DEBUG: event implemented, but not this path"
+		else:
+			print "DEBUG: event not implemented"
+	
 	def add_subsource(self, mountpoint, label, uuid, device, index):
 		subsource = {}
 		subsource['displayname'] = 'media: ' + mountpoint
@@ -76,21 +93,24 @@ class MySource(MpdSourcePlugin,IPlugin):
 		index = self.sourceCtrl.index('name',self.name)	#name is unique
 
 		if subindex is None:
-			subsources = self.sourceCtrl.subsource_all( index )
+			subsources = self.sourceCtrl.subsource_all(index)
 			i = 0
 		else:
-			subsources = list(self.sourceCtrl.subsource( index, subindex ))
+			subsource = self.sourceCtrl.subsource(index,subindex)
+			subsources = []
+			subsources.append(subsource)
 			i = subindex
-		
+			
 		for subsource in subsources:
-			mountpoint = subsource['mountpoint']			
+			mountpoint = subsource['mountpoint']
 			cur_availability = subsource['available']
 			self.printer('Checking local folder: {0}, current availability: {1}'.format(mountpoint,cur_availability))
 			new_availability = self.check_mpddb_mountpoint(mountpoint, createdir=True, waitformpdupdate=True)
 			self.printer('Checked local folder: {0}, new availability: {1}'.format(mountpoint,new_availability))
 			
 			if new_availability is not None and new_availability != cur_availability:
-				subsource_availability_changes.append({"index":index,"subindex":i,"available":new_availability})			
+				subsource_availability_changes.append({"index":index,"subindex":i,"available":new_availability})
+				self.sourceCtrl.set_available(index,new_availability,i)
 			
 			i += 1
 		
@@ -110,6 +130,8 @@ class MySource(MpdSourcePlugin,IPlugin):
 		else:
 			self.printer(' > Found {0} removable media'.format(len(mountpoints)))
 
+		index = self.sourceCtrl.index('name',self.name)
+
 		i=0
 		for mount in mountpoints:
 			mountpoint = mount['mountpoint']
@@ -117,8 +139,9 @@ class MySource(MpdSourcePlugin,IPlugin):
 			label = os.path.basename(mount['mountpoint']).rstrip('\n')
 			
 			# only add if not already present
-			subindex = self.sourceCtrl.subindex('mountpoint',mountpoint)
-			if subindex is None:
+			subindex = self.sourceCtrl.subindex(index,'mountpoint',mountpoint)
+			print subindex
+			if subindex is None or subindex is False:
 				# get uuid
 				try:
 					uuid = subprocess.check_output("blkid "+mount['spec']+" -s PARTUUID -o value", shell=True).rstrip('\n')
@@ -264,7 +287,8 @@ class MySource(MpdSourcePlugin,IPlugin):
 		ret = sourceCtrl.add_sub(index, subsource)
 		return ret
 	
-	def play( self, sourceCtrl, position=None, resume={} ):
+	#def play( self, sourceCtrl, position=None, resume={} ):
+	def Xplay(self, index=None, subindex=None, **kwargs):
 		super(MySource,self).play()
 
 		#

@@ -1,8 +1,5 @@
-{ "name": "bt",
-  "displayname": "Bluetooth",
+{ "displayname": "Bluetooth",
   "order": 3,
-  "available": false,
-  "type": "bt",
   "depNetwork": false,
   "controls": {"ffwd": false, "rwnd": false, "prev": true, "next": true},
   "subsource_key": ["displayname"]
