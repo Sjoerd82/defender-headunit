@@ -55,7 +55,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 			if event_path[1] == 'added':
 				index = self.sourceCtrl.index('name',self.name)
 				self.add_subsource(payload['mountpoint'],payload['label'],payload['uuid'],payload['device'],index)
-				subindex = self.sourceCtrl.getsubindex(index,'mountpoint',payload['mountpoint'])
+				subindex = self.sourceCtrl.subindex(index,'mountpoint',payload['mountpoint'])
 				if subindex is not None:
 					self.check_availability(subindex)
 				else:
@@ -129,6 +129,8 @@ class MySource(MpdSourcePlugin,IPlugin):
 		else:
 			self.printer(' > Found {0} removable media'.format(len(mountpoints)))
 
+		index = self.sourceCtrl.index('name',self.name)
+
 		i=0
 		for mount in mountpoints:
 			mountpoint = mount['mountpoint']
@@ -136,7 +138,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 			label = os.path.basename(mount['mountpoint']).rstrip('\n')
 			
 			# only add if not already present
-			subindex = self.sourceCtrl.subindex('mountpoint',mountpoint)
+			subindex = self.sourceCtrl.subindex(index,'mountpoint',mountpoint)
 			if subindex is None:
 				# get uuid
 				try:
