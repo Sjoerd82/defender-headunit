@@ -99,11 +99,8 @@ class MySource(MpdSourcePlugin,IPlugin):
 			subsources = []
 			subsources.append(subsource)
 			i = subindex
-		
-		print subsources
-		
+			
 		for subsource in subsources:
-			print subsource
 			mountpoint = subsource['mountpoint']
 			cur_availability = subsource['available']
 			self.printer('Checking local folder: {0}, current availability: {1}'.format(mountpoint,cur_availability))
@@ -111,7 +108,8 @@ class MySource(MpdSourcePlugin,IPlugin):
 			self.printer('Checked local folder: {0}, new availability: {1}'.format(mountpoint,new_availability))
 			
 			if new_availability is not None and new_availability != cur_availability:
-				subsource_availability_changes.append({"index":index,"subindex":i,"available":new_availability})			
+				subsource_availability_changes.append({"index":index,"subindex":i,"available":new_availability})
+				self.sourceCtrl.set_available(index,new_availability,i)
 			
 			i += 1
 		
