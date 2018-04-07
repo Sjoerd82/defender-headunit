@@ -31,10 +31,9 @@ def parse_message(message):
 	path = []
 	params = []
 	resp_path = []
-	#path_cmd_resp = message.split(" ")
-	raw_path_resp_cmd = message.split(" ",1) #maxsplit=1, seperating at the first space [0]=paths, [1]=cmd+params
 	
-	raw_path_resp = message.split("+",1) # [0] = path, [1] = respones path
+	raw_path_resp_cmd = message.split(" ",1) #maxsplit=1, seperating at the first space [0]=paths, [1]=cmd+params
+	raw_path_resp = raw_path_resp_cmd.split("+",1) # [0] = path, [1] = respones path
 	
 	# extract path
 	print "EXTRACT PATH"
@@ -46,7 +45,7 @@ def parse_message(message):
 			path.append(pathpart.lower())
 	
 	# extract response path, as a whole..
-	if len(raw_path_resp) > 0:
+	if len(raw_path_resp) >= 1:
 		resp_path = raw_path_resp[1]
 
 	
