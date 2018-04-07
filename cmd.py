@@ -30,7 +30,8 @@ commands = [
 	'volume-att',
 	'volume-mute',
 	'system-reboot',
-	'system-shutdown' ]
+	'system-shutdown',
+	'events-udisks-add'	]
 
 #********************************************************************************
 # Parse command line arguments
@@ -119,7 +120,7 @@ def main():
 	# FOR DEBUGGING PURPOSES
 	elif args.command == 'events-udisks-add':
 		path = '/events/udisks/added'
-		params = '{"device": "/dev/sda1", "mountpoint": "", "uuid": "f9dc11d6-01", "label": ""}'
+		params = '{"device":"/dev/sda1","mountpoint":"","uuid":"f9dc11d6-01","label":""}'
 		
 	ret = messaging.publish_command(path,cmd,params)
 	print ret
