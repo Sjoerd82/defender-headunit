@@ -104,7 +104,7 @@ class SourcePlugin(object):
 			
 		return config
 			
-	def play(self, **kwargs):
+	def play(self, index=None, subindex=None, **kwargs):
 		self.state['state'] = 'playing'
 		return False
 		

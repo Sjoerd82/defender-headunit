@@ -123,7 +123,7 @@ class MpdSourcePlugin(SourcePlugin):
 					new_availability = True
 		return new_availability
 	
-	def play(self, **kwargs): #sourceCtrl, index, subindex, resume={}): # , **kwargs ):
+	def play(self, index=None, subindex=None, **kwargs): #sourceCtrl, index, subindex, resume={}): # , **kwargs ):
 		""" Play MPD
 		"""
 		self.printer('Start playing')

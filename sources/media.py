@@ -285,7 +285,8 @@ class MySource(MpdSourcePlugin,IPlugin):
 		ret = sourceCtrl.add_sub(index, subsource)
 		return ret
 	
-	def play( self, sourceCtrl, position=None, resume={} ):
+	#def play( self, sourceCtrl, position=None, resume={} ):
+	def Xplay(self, index=None, subindex=None, **kwargs):
 		super(MySource,self).play()
 
 		#
