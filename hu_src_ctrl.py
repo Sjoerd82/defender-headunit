@@ -839,9 +839,8 @@ def handle_path_events(path,cmd,args):
 	def data_system_reboot(args):
 		pass
 	def data_udisks_added(args):
-		payload = {"cool":"stuff"}
 		print "ARGS: {0}".format(args)
-		sc_sources.do_category('udisks',path,payload)
+		sc_sources.do_category('udisks',path,args)
 		return None
 		
 	def data_udisks_removed():
