@@ -45,6 +45,8 @@ args = None
 messaging = None
 bus = None
 
+attached_drives = [] #?
+
 # ********************************************************************************
 # Output wrapper
 #
@@ -168,12 +170,15 @@ def udisk_add( device ):
 	# Please Note:
 	# DeviceFile = dbus.String(u'/dev/sda1', variant_level=1)
 
+	
 	media_info = {}	
 	media_info['device'] = str(DeviceFile)
 	media_info['uuid'] = get_part_uuid(str(DeviceFile))
 	media_info['mountpoint'] = get_mountpoint(media_info['device'])
 	media_info['label'] = os.path.basename(media_info['mountpoint']).rstrip('\n')
 	
+	attached_drives.append(media_info)
+
 	# if we can't send a dict, then for the time being do this:
 	param = '{{"device":"{0}", "mountpoint":"{1}","uuid":"{2}","label":"{3}"}}'.format(str(DeviceFile),media_info['mountpoint'],media_info['uuid'],media_info['label'])
 	
@@ -196,30 +201,37 @@ def udisk_rem( device ):
 	#  beware.... anything after this may or may not be defined depending on the event and state of the drive. 
 	#  Attempts to get a prop that is no longer set will generate a dbus.connection:Exception
 	#
+	
+	# Variables
+	DeviceFile = ""
+	mountpoint = ""
+	media_info = {}	
 
 	# HANDY DEBUGGING TIP, DISPLAY ALL AVAILABLE PROPERTIES:
 	# WILL *NOT* WORK FOR DEVICE REMOVAL
 	#data = device_props.GetAll('')
 	#for i in data: print i+': '+str(data[i])
 	
-	# Variables
-	DeviceFile = ""
-	mountpoint = ""
-	
-	# TODO : REFINE
-	media_info = {}	
 	partition = "/dev/"+os.path.basename(str(device))
-	
 	print partition
-	media_info['partition'] = partition
-	media_info['device'] = str(DeviceFile)
-	media_info['uuid'] = "x"
-	media_info['mountpoint'] = "x"
-	media_info['label'] = "x"
-
-	param = '{{"device":"{0}", "mountpoint":"{1}","uuid":"{2}","label":"{3}"}}'.format(str(DeviceFile),media_info['mountpoint'],media_info['uuid'],media_info['label'])
 	
-	messaging.publish_command(PATH_EVENT_REM,'DATA',param)
+	# find our missing drive
+	i=0
+	for devpart in attached_drives:
+		if devpart['device'] == partition
+	
+			#media_info['partition'] = partition
+			media_info['device'] = devpart['device']
+			media_info['uuid'] = devpart['uuid']
+			media_info['mountpoint'] = devpart['mountpoint']
+			media_info['label'] = devpart['label']
+
+			param = '{{"device":"{0}", "mountpoint":"{1}","uuid":"{2}","label":"{3}"}}'.format(media_info['device'],media_info['mountpoint'],media_info['uuid'],media_info['label'])
+			messaging.publish_command(PATH_EVENT_REM,'DATA',param)
+			break
+		i+=1
+	
+	del attached_drives[i]
 	
 	"""
 	ix = Sources.getIndex('name','media')
