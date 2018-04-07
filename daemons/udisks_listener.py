@@ -324,7 +324,7 @@ def setup():
 	#
 	# See if anything already attached
 	#
-	mountpoints = get_mounts(mp_exclude=['/media/PIHU_DATA','/media/PIHU_DATA2'], fs_exclude=['cifs'])
+	mountpoints = get_mounts(mp_exclude=['/','/dev','/media/PIHU_DATA','/media/PIHU_DATA2'], fs_exclude=['cifs','tmpfs'])
 	for mountpoint in mountpoints:
 		media_info = {}
 		media_info['device'] = mountpoint['spec']
