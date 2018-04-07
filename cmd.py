@@ -50,7 +50,7 @@ def parse_args():
 	parser.add_argument('--port_publisher', action='store')
 	parser.add_argument('--port_subscriber', action='store')
 	parser.add_argument('command', action='store', choices=commands)
-	parser.add_argument('command_arg', action='store', required=False)
+	parser.add_argument('command_arg', action='store') # how to make this positional optional??
 	
 	args = parser.parse_args()
 
