@@ -37,18 +37,13 @@ def parse_message(message):
 	raw_cmd_par   = raw_path_resp_cmd[1].split(":",1)	#maxsplit=1,seperating at the first semicolon. [0]=cmd, [1]=param(s)
 	
 	# extract path
-	print "EXTRACT PATH"
-	print len(raw_path_resp)
-	print raw_path_resp
-	print raw_path_resp[0]
 	for pathpart in raw_path_resp[0].split("/"):
 		if pathpart:
 			path.append(pathpart.lower())
 	
-	# extract response path, as a whole..
-	if len(raw_path_resp) >= 1:
+	# extract response path (if any), as a whole..
+	if len(raw_path_resp) > 1:
 		resp_path = raw_path_resp[1]
-
 	
 	# extract command and arguments
 	if len(raw_cmd_par) == 1:
