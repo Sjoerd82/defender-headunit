@@ -844,7 +844,7 @@ def handle_path_events(path,cmd,args):
 		printSummary()
 		return None
 		
-	def data_udisks_removed():
+	def data_udisks_removed(args):
 		pass
 
 	if path:

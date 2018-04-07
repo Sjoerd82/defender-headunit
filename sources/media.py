@@ -92,10 +92,12 @@ class MySource(MpdSourcePlugin,IPlugin):
 		index = self.sourceCtrl.index('name',self.name)	#name is unique
 
 		if subindex is None:
-			subsources = self.sourceCtrl.subsource_all( index )
+			subsources = self.sourceCtrl.subsource_all(index)
 			i = 0
 		else:
-			subsources = list(self.sourceCtrl.subsource( index, subindex ))
+			subsource = self.sourceCtrl.subsource(index,subindex)
+			subsources = []
+			subsources.append(subsource)
 			i = subindex
 		
 		print subsources
