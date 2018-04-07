@@ -48,10 +48,11 @@ def parse_message(message):
 		
 		param = json.loads(cmd_par[1])
 
-		if command == 'DATA':
+		if command == 'data':
 			print "PARSE: {0}".format(param)
 			#expect a json/dict
-			params.append(cmd_par[1])
+			#params.append(cmd_par[1])
+			params.append(param)
 		else:
 			#,-delimited parameters
 			for parpart in param.split(","):
