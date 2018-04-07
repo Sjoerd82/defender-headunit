@@ -142,7 +142,8 @@ class MySource(MpdSourcePlugin,IPlugin):
 			
 			# only add if not already present
 			subindex = self.sourceCtrl.subindex(index,'mountpoint',mountpoint)
-			if subindex is None:
+			print subindex
+			if subindex is None or subindex is False:
 				print "DEBUG B"
 				# get uuid
 				try:
