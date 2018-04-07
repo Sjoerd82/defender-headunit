@@ -36,6 +36,9 @@ class SourcePlugin(object):
 
 	def on_activate(self, subindex):
 		return False
+	
+	def on_event(self, event, event_path=[], payload=None):
+		return False
 
 	def add_subsource(self, **kwargs):
 		# not implemented

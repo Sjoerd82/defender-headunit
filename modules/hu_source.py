@@ -76,22 +76,14 @@ LOG_TAG = 'SOURCE'
 
 class SourceController(object):
 
-	def do_event(self,category,path,payload=None):
-		print "DEBUG do_category()"
-		
+	def do_event(self,category,path,payload=None):	
 		#for pluginInfo in self.source_manager.getPluginsOfCategory(category):
 		#	print "DEBUG: executing plugins on_category()"
 		#	pluginInfo.plugin_object.on_category(category,payload)
-		print "SEARCHING FOR {0} in trigger_events".format(category)
 		i = 0
 		for source in self.lSource:
 			if category in source['trigger_events']:
-			#for trigger in source['trigger_events']: 
-			#	if source['trigger_events'] == category:
-				ret = self.source_manager.getPluginByName(self.lSource[i]['name']).plugin_object.on_event(category,path,payload)
-				print ret
-			else:
-				print "NOT FOUND"
+				self.source_manager.getPluginByName(self.lSource[i]['name']).plugin_object.on_event(category,path,payload)
 			i += 1
 		
 

@@ -51,11 +51,21 @@ class MySource(MpdSourcePlugin,IPlugin):
 		return False
 
 	def on_event(self, event, event_path=[], payload=None):
-		print "DEBUG media.on_category(): {0}".format(event)
 		if event == 'udisks':
-			if event_path[0] == 'added':
-				#add_subsource()
+			if event_path[1] == 'added':
 				print "adding subsource {0}".format(payload)
+				print payload
+				print payload[0]
+				print payload[0]['mountpoint']
+				print payload[0]['label']
+				print payload[0]['uuid']
+				print payload[0]['device']
+				index = self.sourceCtrl.index('name',self.name)
+				add_subsource(payload[0]['mountpoint'],payload[0]['label'],payload[0]['uuid'],payload[0]['device'],index)
+			else:
+				print "DEBUG: event implemented, but not this path"
+		else:
+			print "DEBUG: event not implemented"
 	
 	def add_subsource(self, mountpoint, label, uuid, device, index):
 		subsource = {}
