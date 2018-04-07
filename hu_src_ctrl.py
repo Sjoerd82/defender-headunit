@@ -814,31 +814,31 @@ def handle_path_events(path,cmd,args):
 	# remove base path
 	del path[0]
 	
-	def data_source_active():
+	def data_source_active(args):
 		pass
-	def data_source_available():
+	def data_source_available(args):
 		pass
-	def data_player_state():
+	def data_player_state(args):
 		pass
-	def data_player_track():
+	def data_player_track(args):
 		pass
-	def data_player_elapsed():
+	def data_player_elapsed(args):
 		pass
-	def data_player_updating():
+	def data_player_updating(args):
 		pass
-	def data_player_updated():
+	def data_player_updated(args):
 		pass
-	def data_volume_changed():
+	def data_volume_changed(args):
 		pass
-	def data_volume_att():
+	def data_volume_att(args):
 		pass
-	def data_volume_mute():
+	def data_volume_mute(args):
 		pass
-	def data_system_shutdown():
+	def data_system_shutdown(args):
 		pass
-	def data_system_reboot():
+	def data_system_reboot(args):
 		pass
-	def data_udisks_added():
+	def data_udisks_added(args):
 		payload = {"cool":"stuff"}
 		sc_sources.do_category('udisks',payload)
 		return None
