@@ -37,13 +37,16 @@ def parse_message(message):
 	raw_path_resp = message.split("+",1) # [0] = path, [1] = respones path
 	
 	# extract path
+	print "EXTRACT PATH"
+	print len(raw_path_resp)
+	print raw_path_resp
 	print raw_path_resp[0]
 	for pathpart in raw_path_resp[0].split("/"):
 		if pathpart:
 			path.append(pathpart.lower())
 	
 	# extract response path, as a whole..
-	if len(raw_path_resp) >= 0:
+	if len(raw_path_resp) > 0:
 		resp_path = raw_path_resp[1]
 
 	
