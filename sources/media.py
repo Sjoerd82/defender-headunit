@@ -55,7 +55,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 			if event_path[1] == 'added':
 				index = self.sourceCtrl.index('name',self.name)
 				self.add_subsource(payload['mountpoint'],payload['label'],payload['uuid'],payload['device'],index)
-				subindex = self.sourceCtrl.subindex(index,'mountpoint',payload['mountpoint'])
+				subindex = self.sourceCtrl.getsubindex(index,'mountpoint',payload['mountpoint'])
 				if subindex is not None:
 					self.check_availability(subindex)
 				else:

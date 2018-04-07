@@ -519,7 +519,7 @@ class SourceController(object):
 		#copy.copy?
 		return self.iCurrentSource
 
-	def subindex(self,index,key,value):
+	def getsubindex(self,index,key,value):
 		index = self.__check_index(index)
 		if index is False:
 			return False
