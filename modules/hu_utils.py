@@ -423,7 +423,7 @@ def get_mountpoint(device):
 	with open('/proc/mounts','r') as f:
 		for line in f.readlines():
 			spec = line.split()[0]
-			if spec == device
+			if spec == device:
 				return line.split()[1]
 	return None
 
