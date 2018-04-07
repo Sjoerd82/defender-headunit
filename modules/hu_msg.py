@@ -44,6 +44,8 @@ def parse_message(message):
 	elif len(cmd_par) == 2:
 		command = cmd_par[0].lower()
 		#param = cmd_par[1]
+		print "LOADING: {0} ({1})".format(cmd_par[1],type(cmd_par[1]))
+		
 		param = json.loads(cmd_par[1])
 
 		for parpart in param.split(","):
@@ -167,8 +169,14 @@ class MqPubSubFwdController(object):
 		# append arguments
 		if arguments:
 			if type(arguments) == 'list':
+				print "DEBUG MSG: LIST"
 				message = "{0}:{1}".format(message, ",".join(arguments))
+			elif type(arguments) == 'dict':
+				print "DEBUG MSG: DICT"
+				jsonified_args = json.dumps(arguments)
+				message = "{0}:{1}".format(message, jsonified_args)				
 			else:
+				print "DEBUG MSG: OTHER"
 				jsonified_args = json.dumps(arguments)
 				message = "{0}:{1}".format(message, jsonified_args)
 			

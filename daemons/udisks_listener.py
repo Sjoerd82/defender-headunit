@@ -213,8 +213,6 @@ def udisk_rem( device ):
 	media_info['uuid'] = ""
 	media_info['mountpoint'] = ""
 
-	media_info = '{"device": "/dev/sda1", "mountpoint": "", "uuid": "f9dc11d6-01", "label": ""}'
-	
 	messaging.publish_command(PATH_EVENT_REM,'DATA',media_info)
 	
 	"""

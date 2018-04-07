@@ -115,7 +115,12 @@ def main():
 		path = '/system/reboot'
 	elif args.command == 'system-shutdown':
 		path = '/system/shutdown'
-	
+
+	# FOR DEBUGGING PURPOSES
+	elif args.command == 'events-udisks-add':
+		path = '/events/udisks/added'
+		params = '{"device": "/dev/sda1", "mountpoint": "", "uuid": "f9dc11d6-01", "label": ""}'
+		
 	ret = messaging.publish_command(path,cmd,params)
 	print ret
 
