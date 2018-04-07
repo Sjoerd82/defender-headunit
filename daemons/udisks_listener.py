@@ -45,7 +45,7 @@ args = None
 messaging = None
 bus = None
 
-attached_drives = [] #?
+attached_drives = [] #. ... there may be a problem when a drive was already attached before udisks started... it won't be in this list...  perhaps use the sources, or check on startup.. # TODO #todo!
 
 # ********************************************************************************
 # Output wrapper
@@ -205,7 +205,7 @@ def udisk_rem( device ):
 	# Variables
 	DeviceFile = ""
 	mountpoint = ""
-	media_info = {}	
+	media_info = {}
 
 	# HANDY DEBUGGING TIP, DISPLAY ALL AVAILABLE PROPERTIES:
 	# WILL *NOT* WORK FOR DEVICE REMOVAL
@@ -231,7 +231,7 @@ def udisk_rem( device ):
 			break
 		i+=1
 	
-	del attached_drives[i]
+	del attached_drives[i-1]	#break doens't stop the i+1
 	
 	"""
 	ix = Sources.getIndex('name','media')
@@ -321,6 +321,20 @@ def setup():
 	printer("ZeroMQ: Creating Publisher: {0}".format(DEFAULT_PORT_PUB))
 	messaging.create_publisher()
 
+	#
+	# See if anything already attached
+	#
+	mountpoints = get_mounts(mp_exclude=['/media/PIHU_DATA','/media/PIHU_DATA2'], fs_exclude=['cifs'])
+	for mountpoint in mountpoints:
+		media_info = {}
+		media_info['device'] = mountpoint['spec']
+		media_info['mountpoint'] = mountpoint['mountpoint']
+		media_info['uuid'] = get_part_uuid(media_info['device'])
+		media_info['label'] = os.path.basename(media_info['mountpoint']).rstrip('\n')
+		attached_drives.append(media_info)
+	
+	printer('Found drives: {0}'.format(attached_drives))
+	
 	printer('Initialized [OK]')
 
 def main():
