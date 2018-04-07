@@ -83,14 +83,16 @@ class SourceController(object):
 		#	print "DEBUG: executing plugins on_category()"
 		#	pluginInfo.plugin_object.on_category(category,payload)
 		print "SEARCHING FOR {0} in trigger_events".format(category)
+		i = 0
 		for source in self.lSource:
 			if category in source['trigger_events']:
 			#for trigger in source['trigger_events']: 
 			#	if source['trigger_events'] == category:
-				ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.on_category(category,path,payload)
+				ret = self.source_manager.getPluginByName(self.lSource[i]['name']).plugin_object.on_category(category,path,payload)
 				print ret
 			else:
 				print "NOT FOUND"
+			i += 1
 		
 
 	def __printer( self, message, level=LL_INFO, tag=LOG_TAG):
