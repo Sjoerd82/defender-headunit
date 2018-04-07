@@ -330,7 +330,6 @@ class SourceController(object):
 		self.__printer('ADD SUB: {0}'.format(subsource_config['displayname']))
 		self.lSource[index]['subsources'].append(subsource_config)
 		self.lSource[index]['subsources'].sort( key=lambda k: k['order'] )
-				
 		return True
 	
 	def rem( self, index=None, force=False ):

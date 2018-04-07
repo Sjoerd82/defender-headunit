@@ -76,6 +76,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 		subsource['label'] = label
 		subsource['uuid'] = uuid
 		subsource['device'] = device
+		print "DEBUG: ADDING SUBSOURCE: {0}".format(subsource)
 		self.sourceCtrl.add_sub(index, subsource)
 
 	def check_availability(self, subindex=None):
@@ -134,6 +135,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 
 		i=0
 		for mount in mountpoints:
+			print "DEBUG A"
 			mountpoint = mount['mountpoint']
 			device = mount['mountpoint']
 			label = os.path.basename(mount['mountpoint']).rstrip('\n')
@@ -141,22 +143,27 @@ class MySource(MpdSourcePlugin,IPlugin):
 			# only add if not already present
 			subindex = self.sourceCtrl.subindex(index,'mountpoint',mountpoint)
 			if subindex is None:
+				print "DEBUG B"
 				# get uuid
 				try:
 					uuid = subprocess.check_output("blkid "+mount['spec']+" -s PARTUUID -o value", shell=True).rstrip('\n')
 				except:
+					print "DEBUG C"
 					self.printer('Could not get a partition UUID for {0}'.format(mount['spec']),level=LL_ERROR)
 					uuid = ''
 								
+				print "DEBUG D"
 				self.add_subsource( mountpoint
 								   ,label
 								   ,uuid
 								   ,device
 								   ,index)
 			else:
+				print "DEBUG E"
 				del mountpoints[i]
 			
 			i+=1
+			print "DEBUG F"
 			
 		return mountpoints
 		
