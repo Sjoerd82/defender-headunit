@@ -10,6 +10,7 @@ echo $(date "+%H:%M.%s") $0 $1 >> /root/boot.log
 export HU_SOURCE=smb
 
 EXEC_PATH=/etc/init.d/qp_smb
+EXEC_PATH=/etc/init.d/quickplay
 
 retval=0
 

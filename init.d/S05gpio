@@ -1,0 +1,25 @@
+#!/bin/sh
+
+echo $(date "+%H:%M.%s") $0 $1 >> /root/boot.log
+
+# Enabling GPIO output on pin 6 (beeper)
+
+PIN="6"
+
+start() {
+        gpio write 6 0
+        gpio mode 6 out
+        gpio write 6 1
+        gpio write 6 0
+        }
+
+case "$1" in
+  start)
+        start
+        ;;
+  *)
+        echo "Usage: $0 {start}"
+        exit 1
+esac
+
+exit $?
