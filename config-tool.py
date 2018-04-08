@@ -73,24 +73,24 @@ def write_config_dbus( config ):
 
 	if args.v:
 		printer("--Current configuration:----------------")
-		with open( config['location'], 'r' ) as cfg_file:
+		with open( config['location'], 'rb' ) as cfg_file:
 			for line in cfg_file:
 				print(line)
 
 	printer("Creating: {0}".format(config['location']))
 	with open( config['location'], 'w' ) as outfile:
-		outfile.write('<!DOCTYPE busconfig PUBLIC "-//freedesktop//DTD D-Bus Bus Configuration 1.0//EN"\n')
-		outfile.write(' "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">\n')
-		outfile.write('<busconfig>\n')
-  		outfile.write('  <policy context="default">\n')
+		outfile.write('<!DOCTYPE busconfig PUBLIC "-//freedesktop//DTD D-Bus Bus Configuration 1.0//EN"')
+		outfile.write(' "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">')
+		outfile.write('<busconfig>')
+  		outfile.write('  <policy context="default">')
 		for service in config['services']:
-			outfile.write('    <allow own="{0}"/>\n'.format(service))
-		outfile.write('  </policy>\n')
+			outfile.write('    <allow own="{0}"/>'.format(service))
+		outfile.write('  </policy>')
 		outfile.write('</busconfig>')
 
 	if args.v:
 		printer("--New configuration:--------------------")
-		with open( config['location'], 'r' ) as cfg_file:
+		with open( config['location'], 'rb' ) as cfg_file:
 			for line in cfg_file:
 				print(line)
 
