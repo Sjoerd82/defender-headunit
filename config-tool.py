@@ -67,18 +67,28 @@ def configuration_load( configfile, defaultconfig=None ):
 
 	return config
 
+
+def verbose_before(filename):
+	printer("Creating: {0}".format(filename)
+	if args.v:
+		printer("--Current configuration:----------------")
+		with open(filename, 'rb' ) as cfg_file:
+			for line in cfg_file:
+				sys.stdout.write(line)	# because print() adds a line ending
+
+def verbose_after(filename):
+	if args.v:
+		printer("--New configuration:--------------------")
+		with open(filename, 'rb' ) as cfg_file:
+			for line in cfg_file:
+				sys.stdout.write(line)	# because print() adds a line ending
+	
 # ********************************************************************************
 # Config writers
 #
 def write_config_dbus( config ):
 
-	if args.v:
-		printer("--Current configuration:----------------")
-		with open( config['location'], 'rb' ) as cfg_file:
-			for line in cfg_file:
-				sys.stdout.write(line)	# because print() adds a line ending
-
-	printer("Creating: {0}".format(config['location']))
+	verbose_before(config['location']))
 	with open( config['location'], 'w' ) as outfile:
 		outfile.write('<!DOCTYPE busconfig PUBLIC "-//freedesktop//DTD D-Bus Bus Configuration 1.0//EN"\n')
 		outfile.write(' "http://www.freedesktop.org/standards/dbus/1.0/busconfig.dtd">\n')
@@ -88,22 +98,15 @@ def write_config_dbus( config ):
 			outfile.write('    <allow own="{0}"/>\n'.format(service))
 		outfile.write('  </policy>\n')
 		outfile.write('</busconfig>\n')
-
-	if args.v:
-		printer("--New configuration:--------------------")
-		with open( config['location'], 'rb' ) as cfg_file:
-			for line in cfg_file:
-				sys.stdout.write(line)	# because print() adds a line ending
-
+	verbose_after(config['location']))
 
 # the wpa_supplicant config is a tricky one as it requires quotes for text fields only.
 def write_config_wpa( config ):
-	printer("Creating: {0}".format(config['location']))
-	
 	group = "={"
 	delim = "="
 	quoted_fields=("ssid")
 	
+	verbose_before(config['location']))
 	with open( config['location'], 'w' ) as outfile:
 		for key,value in config.items():
 			if isinstance(value, list):				
@@ -125,9 +128,10 @@ def write_config_wpa( config ):
 					outfile.write('{1}{0}{3}{2}{3}\n'.format(delim,key,value,quotes))
 				else:
 					outfile.write('{0}\n'.format(key))
-
+	verbose_after(config['location']))
+	
 def write_config_smb( config ):
-	printer("Creating: {0}".format(config['location']))
+	verbose_before(config['location']))
 	with open( config['location'], 'w' ) as outfile:
 
 		outfile.write('[global]\n')
@@ -138,14 +142,17 @@ def write_config_smb( config ):
 			outfile.write('\n[{0}]\n'.format(key))
 			for listkey,listval in config['shares'][key].items():
 				outfile.write('  {0} = {1}\n'.format(listkey,listval))
+	verbose_after(config['location']))
 
 def write_config_resolv( config ):
+	verbose_before(config['location']))
 	with open( config['location'], 'w' ) as outfile:
 		for nameserver in config['nameservers']:
 			outfile.write('nameserver {0}'.format(nameserver))
+	verbose_after(config['location']))
 
 def write_config_generic( config, delim="=", group="={", quotes="" ):
-	printer("Creating: {0}".format(config['location']))
+	verbose_before(config['location']))
 	with open( config['location'], 'w' ) as outfile:
 		for key,value in config.items():
 			if isinstance(value, list):				
@@ -161,6 +168,7 @@ def write_config_generic( config, delim="=", group="={", quotes="" ):
 					outfile.write('{1}{0}{3}{2}{3}\n'.format(delim,key,value,quotes))
 				else:
 					outfile.write('{0}\n'.format(key))
+	verbose_after(config['location']))
 
 
 #********************************************************************************
