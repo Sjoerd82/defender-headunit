@@ -85,6 +85,12 @@ def configuration_load( configfile, defaultconfig=None ):
 # Config writers
 #
 def write_config_dbus( config ):
+
+	if args.v:
+		printer("--Current configuration:----------------")
+		with open( config['location'], 'r' ) as cfg_file:
+			print(cfg_file.readline()
+
 	printer("Creating: {0}".format(config['location']))
 	with open( config['location'], 'w' ) as outfile:
 		outfile.write('<!DOCTYPE busconfig PUBLIC "-//freedesktop//DTD D-Bus Bus Configuration 1.0//EN"\n')
@@ -95,6 +101,12 @@ def write_config_dbus( config ):
 			outfile.write('    <allow own="{0}"/>\n'.format(service))
 		outfile.write('  </policy>\n')
 		outfile.write('</busconfig>')
+
+	if args.v:
+		printer("--New configuration:--------------------")
+		with open( config['location'], 'r' ) as cfg_file:
+			print(cfg_file.readline()
+
 
 # the wpa_supplicant config is a tricky one as it requires quotes for text fields only.
 def write_config_wpa( config ):
@@ -174,6 +186,7 @@ def parse_args():
 	parser = argparse.ArgumentParser(description=DESCRIPTION)
 	parser.add_argument('--loglevel', action='store', default=DEFAULT_LOG_LEVEL, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)
 	parser.add_argument('--config','-c', action='store', help='Configuration file', default=DEFAULT_CONFIG_FILE)
+	parser.add_argument('-v',  required=False, action='store_true', help='Verbose')
 	parser.add_argument('--all',  required=False, action='store_true', help='Generate all files')
 	parser.add_argument('--dbus', required=False, action='store_true', help='Generate dbus configuration')
 	parser.add_argument('--wpa',  required=False, action='store_true', help='Generate wpa_supplicant.conf file')
@@ -219,7 +232,7 @@ def main():
 		return True
 	
 	if args.all or args.dbus:
-		if validate_config( 'dbus', ['location','services'] ):
+		if validate_config( 'dbus', ['location','services'] ):				
 			write_config_dbus( configuration['system_configuration']['dbus'] )
 		else:
 			printer('DBus: Invalid Config')
