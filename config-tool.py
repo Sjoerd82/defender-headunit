@@ -9,6 +9,7 @@
 # configure system configuration files.
 #
 
+import sys
 
 #********************************************************************************
 # Version
@@ -75,7 +76,7 @@ def write_config_dbus( config ):
 		printer("--Current configuration:----------------")
 		with open( config['location'], 'rb' ) as cfg_file:
 			for line in cfg_file:
-				sys.stdout.write(line)
+				sys.stdout.write(line)	# because print() adds a line ending
 
 	printer("Creating: {0}".format(config['location']))
 	with open( config['location'], 'w' ) as outfile:
@@ -92,7 +93,7 @@ def write_config_dbus( config ):
 		printer("--New configuration:--------------------")
 		with open( config['location'], 'rb' ) as cfg_file:
 			for line in cfg_file:
-				sys.stdout.write(line)
+				sys.stdout.write(line)	# because print() adds a line ending
 
 
 # the wpa_supplicant config is a tricky one as it requires quotes for text fields only.
