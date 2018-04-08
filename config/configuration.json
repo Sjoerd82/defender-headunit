@@ -55,9 +55,6 @@
 	, "wifi": {
 		  "ip": "dhcp"
 		, "mode": "ap"
-		, "ap": {
-			  "ssid":"headunit"
-			, "psk": "f22da64fa334468e8b0ace4d544c63c5b340877327d31ad028296c875c0d8adb" }
 	}
 	, "volume": {
 		  "default":   "30"

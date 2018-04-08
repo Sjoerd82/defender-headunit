@@ -21,9 +21,11 @@ fi
 COMMIT_LOCAL=$(git --git-dir=$GIT_DIR rev-parse HEAD)
 COMMIT_REMOTE=$(git --git-dir=$GIT_DIR ls-remote --heads | cut -f1)
 
-echo $COMMIT_LOCAL
-echo $COMMIT_REMOTE
-	
+if [ -z "$COMMIT_REMOTE" ]; then
+	echo "No network?"
+	exit 0
+fi
+
 start() {
 
     ######################################################################
