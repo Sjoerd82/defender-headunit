@@ -21,9 +21,11 @@ class MpdSourcePlugin(SourcePlugin):
 		super(MpdSourcePlugin, self).on_init(plugin_name,sourceCtrl,logger)
 		self.mpdc = MpdController(self.logger)
 		
+		# NO, CONFIGURE THIS VIA CONFIGURATION.JSON "ENABLED FIELD"
+		"""
 		print "DEBUG: AVAILABLE OUTPUTS:"
 		all_outputs = self.mpdc.outputs()
-		print "CONFIGURATION (TODO) set to: jack"
+		print "CONFIGURATION (TODO) set to: Jack"
 		for output in all_outputs:
 			print output
 			print output['outputid']
@@ -32,7 +34,8 @@ class MpdSourcePlugin(SourcePlugin):
 			#self.mpdc.disableoutput()
 			
 		#self.mpdc.enableoutput()
-	
+		"""
+		
 	def on_activate(self, subindex):
 		
 		print "DEBUG: MPD: on_activate"

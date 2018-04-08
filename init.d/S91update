@@ -87,6 +87,7 @@ start() {
 
 		# TEMPORARY!! OVERWRITE configuration -- USEFUL FOR DEVELOPMENT, BUT DISCONTINUE IN PRODUCTION TO PROTECT USER CHANGES
 		cp -rf $APP_DIR/config/* /mnt/PIHU_CONFIG
+		$APP_DIR/config-tool.py --all
 		# CALL config tool
 		
         # execute scripts in update folder
