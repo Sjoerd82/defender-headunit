@@ -32,11 +32,11 @@ from collections import OrderedDict		# load json in ordered dict to save to file
 DESCRIPTION = "Configure Linux environment"
 LOG_TAG = 'CFIGTL'
 DEFAULT_CONFIG_FILE = '/etc/configuration.json'
+DEFAULT_LOG_LEVEL = LL_INFO
 
 logger = None			# logging
 args = None				# command line arguments
 configuration = None	# configuration
-
 
 # ********************************************************************************
 # Output wrapper
