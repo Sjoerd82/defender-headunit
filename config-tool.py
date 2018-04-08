@@ -170,6 +170,11 @@ def write_config_generic( config, delim="=", group="={", quotes="" ):
 					outfile.write('{0}\n'.format(key))
 	verbose_after(config['location'])
 
+def touch_file(filename):
+	printer("Creating: {0}".format(filename))
+	with open( filename, 'w' ) as outfile:
+		outfile.write('')
+
 
 #********************************************************************************
 # Parse command line arguments
@@ -190,6 +195,7 @@ def parse_args():
 	parser.add_argument('--dnsm', required=False, action='store_true', help='Generate dnsmasq.conf file')
 	parser.add_argument('--mpd',  required=False, action='store_true', help='Generate mpd.conf file')
 	parser.add_argument('--smb',  required=False, action='store_true', help='Generate samba.conf file')
+	parser.add_argument('--wifi',  required=False, action='store_true', help='Set WiFi mode')
 
 	args = parser.parse_args()
 
@@ -204,10 +210,7 @@ def setup():
 
 	if 'system_configuration' not in configuration:
 		printer('Configuration file does not contain a SYSTEM_CONFIGURATION section')
-		exit()
-	#else:
-	#	printer('SYSTEM_CONFIGURATION section found...')
-	
+		exit()	
 
 # ********************************************************************************
 # Main Program
@@ -263,6 +266,17 @@ def main():
 		else:
 			printer('smb: Invalid Config')
 
+	if  args.all or args.wifi:
+		if 'wifi' not in configuration:
+			printer('Cannot set WiFi mode, not configured (section: wifi, attribute: mode)')
+		else:
+			mode = configuration['wifi']['mode']
+			if mode == 'network':
+				touch_file('/root/WLAN-WPA')
+			elif mode == 'ap':
+				touch_file('/root/WLAN-AP')
+			else:
+				printer('Unkown mode: {0}'.format(mode))
 		
 if __name__ == '__main__':
 	parse_args()
