@@ -24,9 +24,14 @@ class MpdSourcePlugin(SourcePlugin):
 		print "DEBUG: AVAILABLE OUTPUTS:"
 		all_outputs = self.mpdc.outputs()
 		print "CONFIGURATION (TODO) set to: jack"
-		#for output in all_outputs:
-		#	self.mpdc.disableoutput()
-		#	self.mpdc.enableoutput()
+		for output in all_outputs:
+			print output
+			print output['outputid']
+			print output['outputenabled']
+			print output['outputname']
+			#self.mpdc.disableoutput()
+			
+		#self.mpdc.enableoutput()
 	
 	def on_activate(self, subindex):
 		

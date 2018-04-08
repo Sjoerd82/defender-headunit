@@ -492,12 +492,23 @@ class MpdController(object):
 		self.mpdc.subscribe(channel)
 		self.mpdc.send_idle()
 		
+	# --- OUTPUTS
 	def outputs(self):
 		self.mpdc.noidle()
-		print self.mpdc.outputs()
+		outputs = self.mpdc.outputs()
+		print type(outputs)
 		self.mpdc.send_idle()
-		return []	#TODO
+		return outputs
 
+	def output_enable(self, id):
+		self.mpdc.noidle()
+		self.mpdc.enableoutput(id)
+		self.mpdc.send_idle()
+		
+	def output_disable(self, id):
+		self.mpdc.noidle()
+		self.mpdc.disableoutput(id)
+		self.mpdc.send_idle()
 			
 
 def mpc_random_get():
