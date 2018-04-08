@@ -64,7 +64,7 @@
 		, "start_max": "70"
 	}
 	, "flask": {
-		  "port_www": 8289
+		  "port_www": 80
 		, "password": "(hash)" 
 	}
 	, "zeromq": {
