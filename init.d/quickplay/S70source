@@ -8,7 +8,7 @@ NAME="Headunit Source Controller"
 PID="source"
 PID_FILE=/var/run/$PID.pid
 DAEMON="hu_src_ctrl.py"
-DAEMON_OPTS="-b"
+DAEMON_OPTS="-b -p"
 DAEMON_PATH="/mnt/PIHU_APP/defender-headunit"
 DAEMON_FILE=$DAEMON_PATH/$DAEMON
 

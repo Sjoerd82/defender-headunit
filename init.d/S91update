@@ -107,6 +107,7 @@ start() {
             /etc/init.d/S40quickplay start
             /etc/init.d/S71ads1x15 start
 			/etc/init.d/quickplay/S75udisks stop
+			/etc/init.d/quickplay/S70source start
 		    /etc/init.d/S95flask start
 		else
             /etc/init.d/S30zmqfwd start
@@ -114,6 +115,7 @@ start() {
             #/etc/init.d/S40quickplay start
 			/etc/init.d/quickplay/S53mpdevent start
 			/etc/init.d/S60udisks-glue start
+			/etc/init.d/quickplay/S70source start
 			/etc/init.d/quickplay/S75udisks start
             /etc/init.d/S71ads1x15 start
 		    #/etc/init.d/S95flask start
