@@ -689,9 +689,14 @@ def main():
 	#
 	configuration = load_configuration()
 	
-	# The default port it will run on here is 5000
-	app.run(host='0.0.0.0', debug=False, use_reloader=False)
-
+	# set port
+	if 'flask' in configuration and 'port' in configuration['flask']:
+		flask_port = configuration['flask']['port_www']
+	else:
+		flask_port = DEFAULT_PORT_WWW
+	
+	# start server
+	app.run(host='0.0.0.0', port=flask_port, debug=False, use_reloader=False)
 	
 if __name__ == '__main__':
 	
