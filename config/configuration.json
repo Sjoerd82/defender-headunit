@@ -78,7 +78,7 @@
 		  "mode": "all"
 		, "url": "https://github.com/Sjoerd82/defender-headunit"
 	}
-	,"logging": {
+	, "logging": {
 		"console": {
 			  "enabled":true
 			, "loglevel":20
@@ -173,8 +173,7 @@
 	]
 	, "x_plugins_other":   [
 	]
-	, "system_configuration":
-	{
+	, "system_configuration": {
 		  "SYSLOGD_ARGS":"-n -O /var/log/messages"
 		, "KLOGD_ARGS":"-n"
 		, "dbus": {

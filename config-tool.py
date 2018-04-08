@@ -1,31 +1,31 @@
 #!/usr/bin/python
 
-# Headunit system config tool for busybox
 #
-# Author: Sjoerd Venema
-# License: tbd
+# Headunit system config tool for busybox
+# Venema, S.R.G.
+# 2018-03-23
+#
+# Uses the "SYSTEM_CONFIGURATION" section from configuration.json to 
+# configure system configuration files.
 #
 
+
 #********************************************************************************
-#
 # Version
 #
-#from version import __version__
-#
+from version import __version__
+
 
 #********************************************************************************
-#
 # Logging
 #
 import logging
 import logging.config
 import datetime
 import os
-logger = None
 from hu_logger import *
 
 #********************************************************************************
-#
 # Parse command line arguments
 #
 #
@@ -44,6 +44,25 @@ import json
 from collections import OrderedDict
 #import hu_settings
 
+
+DESCRIPTION = "Configure Linux environment"
+DEFAULT_CONFIG_FILE = '/etc/configuration.json'
+
+logger = None			# logging
+args = None				# command line arguments
+configuration = None	# configuration
+
+
+# ********************************************************************************
+# Output wrapper
+#
+def printer(message, level=20, tag='CONFIG'):
+	print(message)
+
+
+# ********************************************************************************
+# Configuration loader
+#
 def configuration_load( configfile, defaultconfig=None ):
 
 	# keep track if we restored the config file
@@ -62,24 +81,9 @@ def configuration_load( configfile, defaultconfig=None ):
 
 	return config
 
-
-# ********************************************************************************
-# Output wrapper
-#
-def printer( message, level=20, continuation=False, tag='SYSTEM' ):
-
-	print(message)
-
-	#TODO: test if headunit logger exist...
-	#if continuation:
-	#	myprint( message, level, '.'+tag )
-	#else:
-	#	myprint( message, level, tag )
-
 # ********************************************************************************
 # Config writers
 #
-
 def write_config_dbus( config ):
 	printer("Creating: {0}".format(config['location']))
 	with open( config['location'], 'w' ) as outfile:
@@ -159,21 +163,17 @@ def write_config_generic( config, delim="=", group="={", quotes="" ):
 					outfile.write('{0}\n'.format(key))
 
 
-# ********************************************************************************
-# Main Program
+#********************************************************************************
+# Parse command line arguments
 #
+def parse_args():
 
-def main():
+	import argparse
+	global args
 
-	#if environ.get('HU_CONFIG_FILE') is not None:
-	env_config_file = os.getenv('HU_CONFIG_FILE')
-
-	parser = argparse.ArgumentParser(description='Configure Linux environment')
-	parser.add_argument('--system','-s', required=False, action='store', help='BusyBox,...', choices=['BusyBox'], metavar='BusyBox')
-	if env_config_file:
-		parser.add_argument('--config','-c', required=False, action='store', help='Configuration file', default=env_config_file)
-	else:
-		parser.add_argument('--config','-c', required=True, action='store', help='Configuration file')
+	parser = argparse.ArgumentParser(description=DESCRIPTION)
+	parser.add_argument('--loglevel', action='store', default=DEFAULT_LOG_LEVEL, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)
+	parser.add_argument('--config','-c', action='store', help='Configuration file', default=DEFAULT_CONFIG_FILE)
 	parser.add_argument('--all',  required=False, action='store_true', help='Generate all files')
 	parser.add_argument('--dbus', required=False, action='store_true', help='Generate dbus configuration')
 	parser.add_argument('--wpa',  required=False, action='store_true', help='Generate wpa_supplicant.conf file')
@@ -182,20 +182,32 @@ def main():
 	parser.add_argument('--mpd',  required=False, action='store_true', help='Generate mpd.conf file')
 	parser.add_argument('--smb',  required=False, action='store_true', help='Generate samba.conf file')
 
-
 	args = parser.parse_args()
 
-	arg_system = args.system
-	arg_config = args.config
-	arg_all  = args.all
-	arg_dbus = args.dbus
-	arg_wpa  = args.wpa
-	arg_hapd = args.hapd
-	arg_dnsm = args.dnsm
-	arg_mpd  = args.mpd
-	arg_smb  = args.smb
+#********************************************************************************
+# Setup
+#
+def setup():
+	global configuration
+	
+	printer('Loading: {0}'.format( args.config ))
+	configuration = configuration_load( args.config )
+
+	if 'system_configuration' not in configuration:
+		printer('Configuration file does not contain a SYSTEM_CONFIGURATION section')
+		exit()
+	#else:
+	#	printer('SYSTEM_CONFIGURATION section found...')
+	
+
+# ********************************************************************************
+# Main Program
+#
+def main():
+
 
 	def validate_config( ci, required_fields ):
+		""" """
 		if ci in configuration['system_configuration']:
 			if not all (k in configuration['system_configuration'][ci] for k in required_fields):
 				return False
@@ -206,55 +218,37 @@ def main():
 			
 		return True
 	
-	printer('Loading: {0}'.format( arg_config ))
-	configuration = configuration_load( arg_config )
-	
-	if 'system_configuration' not in configuration:
-		printer('Configuration file does not contain a system configuration.')
-		exit()
-	else:
-		printer('System configuration found...')
-	
-	if arg_all:
-		arg_dbus = True
-		arg_wpa  = True
-		arg_hapd = True
-		arg_dnsm = True
-		arg_resv = True
-		arg_mpd  = True
-		arg_smb  = True
-
-	if arg_dbus:
+	if args.all or args.dbus:
 		if validate_config( 'dbus', ['location','services'] ):
 			write_config_dbus( configuration['system_configuration']['dbus'] )
 		else:
 			printer('DBus: Invalid Config')
 							
-	if arg_wpa:
+	if  args.all or args.wpa:
 		if validate_config( 'wpa_supplicant', ['location','network'] ):
 			write_config_wpa( configuration['system_configuration']['wpa_supplicant'])
 		else:
 			printer('WPA: Invalid Config')
 
-	if arg_hapd:
+	if  args.all or args.hapd:
 		if validate_config( 'hostapd', ['location','interface','driver','ssid','channel'] ):
 			write_config_generic( configuration['system_configuration']['hostapd'], '=', '={' )
 		else:
 			printer('hostapd: Invalid Config')
 
-	if arg_dnsm:
+	if  args.all or args.dnsm:
 		if validate_config( 'dnsmasq', ['location','interface'] ):
 			write_config_generic( configuration['system_configuration']['dnsmasq'], '=', '={' )
 		else:
 			printer('dnsmasq: Invalid Config')
 
-	if arg_mpd:
+	if  args.all or args.mpd:
 		if validate_config( 'mpd', ['location','music_directory','audio_output'] ):
 			write_config_generic( configuration['system_configuration']['mpd'], '\t', ' {', '"' )
 		else:
 			printer('mpd: Invalid Config')
 
-	if arg_smb:
+	if  args.all or args.smb:
 		if validate_config( 'smb', ['location','global','shares'] ):
 			write_config_smb( configuration['system_configuration']['smb'] )
 		else:
@@ -262,4 +256,6 @@ def main():
 
 		
 if __name__ == '__main__':
+	parse_args()
+	setup()
 	main()

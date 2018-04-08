@@ -85,6 +85,10 @@ start() {
         # init.d
         cp -rf $APP_DIR/init.d/* /etc/init.d
 
+		# TEMPORARY!! OVERWRITE configuration -- USEFUL FOR DEVELOPMENT, BUT DISCONTINUE IN PRODUCTION TO PROTECT USER CHANGES
+		cp -rf $APP_DIR/config/* /mnt/PIHU_CONFIG
+		# CALL config tool
+		
         # execute scripts in update folder
         # todo
 
