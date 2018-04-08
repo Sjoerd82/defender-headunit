@@ -15,37 +15,22 @@
 #
 from version import __version__
 
-
 #********************************************************************************
 # Logging
-#
-import logging
-import logging.config
-import datetime
-import os
-from hu_logger import *
+from logging import getLogger
 
 #********************************************************************************
-# Parse command line arguments
-#
-#
-
-import os
-import argparse
-
-
+# Headunit modules
+from modules.hu_utils import *
 
 # ********************************************************************************
-#
 # load json source configuration
 import os
 import json
-# load json in ordered dict to save to file in same order
-from collections import OrderedDict
-#import hu_settings
-
+from collections import OrderedDict		# load json in ordered dict to save to file in same order
 
 DESCRIPTION = "Configure Linux environment"
+LOG_TAG = 'CFIGTL'
 DEFAULT_CONFIG_FILE = '/etc/configuration.json'
 
 logger = None			# logging
