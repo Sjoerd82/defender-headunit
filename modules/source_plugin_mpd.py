@@ -20,6 +20,13 @@ class MpdSourcePlugin(SourcePlugin):
 	def on_init(self, plugin_name, sourceCtrl, logger=None):
 		super(MpdSourcePlugin, self).on_init(plugin_name,sourceCtrl,logger)
 		self.mpdc = MpdController(self.logger)
+		
+		print "DEBUG: AVAILABLE OUTPUTS:"
+		all_outputs = self.mpdc.outputs()
+		print "CONFIGURATION (TODO) set to: jack"
+		#for output in all_outputs:
+		#	self.mpdc.disableoutput()
+		#	self.mpdc.enableoutput()
 	
 	def on_activate(self, subindex):
 		

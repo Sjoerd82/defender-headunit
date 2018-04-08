@@ -492,6 +492,11 @@ class MpdController(object):
 		self.mpdc.subscribe(channel)
 		self.mpdc.send_idle()
 		
+	def outputs(self):
+		self.mpdc.noidle()
+		print self.mpdc.outputs()
+		self.mpdc.send_idle()
+		return []	#TODO
 
 			
 

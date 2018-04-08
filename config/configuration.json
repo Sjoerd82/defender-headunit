@@ -21,6 +21,7 @@
 		, "threshold_elapsed_sec": 20
 		, "threshold_total_sec": 30
 		, "resume_position_update": 0
+		, "mpd_output": "jack"
 	}
 	, "default_settings": {
 		  "volume": 20
@@ -263,10 +264,7 @@
 				    , "name":"Jack"
 					, "enabled":"yes"
 				   }
-				, {  "type":"pulse"
-				    , "name":"PulseAudio"
-					, "enabled":"no"
-				   } ]
+			   ]
 		}
 		, "smb": {
 			  "location":           "/etc/samba/smb.conf"
