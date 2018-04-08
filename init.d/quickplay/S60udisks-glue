@@ -1,4 +1,5 @@
 #!/bin/sh
+echo $(date "+%H:%M.%s") $0 $1 >> /root/boot.log
 
 NAME=udisks-glue
 PIDFILE=/var/run/udisks.pid
