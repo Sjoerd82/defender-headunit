@@ -69,7 +69,7 @@ def configuration_load( configfile, defaultconfig=None ):
 
 
 def verbose_before(filename):
-	printer("Creating: {0}".format(filename)
+	printer("Creating: {0}".format(filename))
 	if args.v:
 		printer("--Current configuration:----------------")
 		with open(filename, 'rb' ) as cfg_file:
