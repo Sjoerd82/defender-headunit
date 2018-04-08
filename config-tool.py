@@ -272,8 +272,10 @@ def main():
 		else:
 			mode = configuration['wifi']['mode']
 			if mode == 'network':
+				os.remove('/root/WLAN-AP')
 				touch_file('/root/WLAN-WPA')
 			elif mode == 'ap':
+				os.remove('/root/WLAN-WPA')
 				touch_file('/root/WLAN-AP')
 			else:
 				printer('Unkown mode: {0}'.format(mode))
