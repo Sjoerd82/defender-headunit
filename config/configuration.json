@@ -114,7 +114,7 @@
 		, "media": {
 			"exclude" : ["/PIHU_DATA","/PIHU_DATA2","/PIHU_SMB"]
 		}
-		, "streams": {
+		, "stream": {
 			  "subsources": "stream_groups"
 			, "stream_groups": [
 				  {	  "group_name": "NPO"

@@ -4,7 +4,10 @@
 # 2018-03-27
 #
 # Plays local music folder(s), as defined in the main configuration.
+# on_activate is implemented by MpdSourcePlugin and will start playback after activation.
 #
+
+# TODO: CAN WE LEAVE ON_INIT() OUT? WILL THEN EXECUTE THE on_init on the derived class, right?
 
 #
 # Extends MPDSOURCEPLUGIN
@@ -16,14 +19,10 @@ from modules.hu_settings import getSourceConfig
 from modules.source_plugin_mpd import MpdSourcePlugin
 
 class MySource(MpdSourcePlugin,IPlugin):
-	# the name of the class doesn't matter (?)
-	# functions are searched Left-to-Right
 
 	def __init__(self):
 		super(MySource,self).__init__()
-		self.index = None
 
-	# TODO: CAN WE LEAVE THIS OUT? WILL THEN EXECUTE THE on_init on the derived class, right?
 	def on_init(self, plugin_name, sourceCtrl, logger=None):
 		super(MySource, self).on_init(plugin_name,sourceCtrl,logger)	# Executes init() at MpdSourcePlugin
 		return True

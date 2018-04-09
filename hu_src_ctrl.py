@@ -831,6 +831,13 @@ def handle_path_events(path,cmd,args):
 		pass
 	def data_volume_mute(args):
 		pass
+	def data_network_up(args):
+		pass
+	def data_network_down(args):
+		payload = json.loads(args[0])
+		sc_sources.do_event('network',path,payload)
+		printSummary()
+		return None
 	def data_system_shutdown(args):
 		pass
 	def data_system_reboot(args):

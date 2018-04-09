@@ -33,6 +33,41 @@ commands = [
 	'system-shutdown',
 	'events-udisks-add'	]
 
+commands2 = [
+	 ('source-check',  '[index, subindex]',   'Check source availability','PUT','/source/check',)
+	,('source-select', 'index, [subindex]',   'Select a source','PUT','/source/subsource',)
+	,('source-next-primary', None,            'Select next primary source','PUT','/source/next_primary',)
+	,('source-prev-primary', None,            'Select previous primary source','PUT','/source/prev_primary',)
+	,('source-next', None,                    'Select next source','PUT','/source/next',)
+	,('source-prev', None,                    'Select previous source','PUT','/source/prev',)
+	,('source-available', 'true|false, index, subindex',  'Set source availability','PUT','/source/available',)
+	,('source-details', '[index, subindex]',  'Get source details','GET','/source/subsource',)
+	,('player-play', None,                    'Start playback','PUT','/player/state',)
+	,('player-pause', None,                   'Pause playback','PUT','/player/state',)
+	,('player-stop', None,                    'Stop playback','PUT','/player/state',)
+	,('player-state', None,                   'Get state','GET','/player/state',)
+	,('player-next', None,                    'Play next song','PUT','/player/next',)
+	,('player-prev', None,                    'Play previous song','PUT','/player/prev',)
+	,('player-seek', '[+/-]seconds',          'Seek','PUT','/player/seek',)
+	,('player-folders', None,                 'List folders','GET','/player/folders',)
+	,('player-nextfolder', None,              'Next folder','PUT','/player/nextfolder',)
+	,('player-prevfolder',None,               'Prev folder','PUT','/player/prevfolder',)
+	,('player-update', '[location]',          'Update MPD database','PUT','/player/update',)
+	,('player-random-modes', None,            'Get available random modes','GET','/player/randommode',)
+	,('player-random', '[on | off | mode]',   'Set random','PUT','/player/random',)
+	,('player-details', None,                 'Get player details','GET','/player/track',)
+	,('volume', 'volume',                     'Set volume','PUT','/volume',)
+	,('volume-att', '[on | off]',             'Set volume to ATT level','PUT','/volume/att',)
+	,('volume-mute', '[on | off]',            'Mute volume','PUT','/volume/mute',)
+	,('system-reboot', '[timer]',             'Reboot system','PUT','/system/reboot',)
+	,('system-shutdown', '[timer]',           'Shutdown system' ,'PUT','/system/shutdown',)
+	,('events-udisks-add', 'payload',         'Emulate a udisks-add event','DATA','/events/udisks/added',)
+	,('events-udisks-rem', 'payload',         'Emulate a udisks-rem event','DATA','/events/udisks/removed',)
+	,('events-network-up', 'payload',         'Emulate a network-up event','DATA','/events/network/up',)
+	,('events-network-down', 'payload',       'Emulate a network-down event','DATA','/events/network/down',)
+	]
+
+
 #********************************************************************************
 # Parse command line arguments
 #
@@ -41,7 +76,16 @@ def parse_args():
 	import argparse
 	global args
 	
-	parser = argparse.ArgumentParser(description=DESCRIPTION)
+	# cmd.py							Show available commands and switches
+	# cmd.py [options] <command> [args]			Execute command, with optional parmeter
+	# cmd.py [options] <-p> <-c> [-a] [-r]		Execute specified path and command, with optional parameters and return path
+	
+	description_with_commands = DESCRIPTION
+	for command in commands2:
+		description = description +'\n {0} {1} {2}'.format(command[0],command[1],command[2])
+	
+	parser = argparse.ArgumentParser(description=description_with_commands)
+	parser.add_argument('-v', action='store', help='Verbose')
 	#parser.add_argument('-p', action='store', required=True)
 	#parser.add_argument('-c', action='store', required=True)
 	#parser.add_argument('-a', action='store')
@@ -74,6 +118,32 @@ def main():
 
 	cmd = 'PUT'
 	params = None
+	
+	if args.command is not None:
+		for command in commands2:
+			if args.command == command[0]:
+				cmd = command[3]
+				path = command[4]
+				
+				#if cmd == 'source-details':
+				#	if args.command_arg is not None:
+				#		
+				if cmd == 'player-play':
+					params = '{"state":"play"}'
+				elif cmd == 'player-pause':
+					params = '{"state":"pause"}'
+				elif cmd == 'player-stop':
+					params = '{"state":"stop"}'
+				elif cmd == 'player-update':
+					if args.command_arg is None:
+						path = '/player/update_source'
+					else:
+						path = '/player/update_location'
+				
+				if args.command_arg is not None:
+					params = args.command_arg
+					
+	"""
 	if args.command == 'source-check':
 		path = '/source/check'
 	elif args.command == 'source-select':
@@ -122,7 +192,12 @@ def main():
 		cmd = 'DATA'
 		path = '/events/udisks/added'
 		params = '{"device":"/dev/sda1", "mountpoint":"","uuid":"f9dc11d6-01","label":""}'
-		
+	"""
+	
+	print path
+	print cmd
+	print params
+	
 	ret = messaging.publish_command(path,cmd,params)
 	print ret
 

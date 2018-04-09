@@ -4,7 +4,10 @@
 # 2018-04-03
 #
 # Plays everything mounted on /media/PIHU_SMB
+# on_activate is implemented by MpdSourcePlugin and will start playback after activation.
 #
+
+# TODO: CAN WE LEAVE ON_INIT() OUT? WILL THEN EXECUTE THE on_init on the derived class, right?
 
 #
 # Extends MPDSOURCEPLUGIN
@@ -55,6 +58,16 @@ class MySource(MpdSourcePlugin,IPlugin):
 							   ,path
 							   ,index)
 		return True
+
+	def on_event(self, event, event_path=[], payload=None):
+		if event == 'network':
+			if event_path[1] == 'down':
+				index = self.sourceCtrl.index('name',self.name)
+				self.sourceCtrl.set_available(index, False)
+			else:
+				print "DEBUG: event implemented, but not this path"
+		else:
+			print "DEBUG: event not implemented"
 
 	def add_subsource(self, mountpoint, label, path, index):
 		subsource = {}

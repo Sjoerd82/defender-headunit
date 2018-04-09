@@ -6,7 +6,10 @@
 # Plays everything mounted on /media, except in PIHU_*-folders
 # Will create a subsource when a USB drive is inserted using the UDisks service.
 # Will not remove subsources of drives that are removed, will simply mark them unavailable.
+# on_activate is implemented by MpdSourcePlugin and will start playback after activation.
 #
+
+# TODO: CAN WE LEAVE ON_INIT() OUT? WILL THEN EXECUTE THE on_init on the derived class, right?
 
 #
 # Extends MPDSOURCEPLUGIN
@@ -36,7 +39,6 @@ class MySource(MpdSourcePlugin,IPlugin):
 		
 		MEDIA: This adds all mountpoints under /media, but does not check anything.
 		"""
-
 		index = self.sourceCtrl.index('name',self.name)	#name is unique
 		if index is None:
 			print "Plugin {0} does not exist".format(self.name)
@@ -46,10 +48,6 @@ class MySource(MpdSourcePlugin,IPlugin):
 		mountpoints = self.discover(add_subsource=True)
 		
 		return True
-
-	# inherited from MPD class
-	#def on_activate(self, subindex):
-	#	return False
 
 	def on_event(self, event, event_path=[], payload=None):
 		if event == 'udisks':

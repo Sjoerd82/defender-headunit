@@ -4,7 +4,10 @@
 # 2018-04-03
 #
 # Plays Streaming URL's
+# on_activate is implemented by MpdSourcePlugin and will start playback after activation.
 #
+
+# TODO: CAN WE LEAVE ON_INIT() OUT? WILL THEN EXECUTE THE on_init on the derived class, right?
 
 #
 # Extends MPDSOURCEPLUGIN
@@ -50,6 +53,9 @@ class MySource(MpdSourcePlugin,IPlugin):
 								   ,order
 								   ,index)
 				order += 1
+		else:
+			printer('No streams available in configuration')
+			
 		return True
 
 	def add_subsource(self, group_name, streams, order, index):

@@ -57,6 +57,7 @@ Structure | Value
 {equalizer} | [equalizer](#equalizer)
 {level} | [level](#level)
 {device} | [device](#device)
+{network} | [network](#network)
 {mode} | [mode](#mode)
 {timer} | [timer](#timer)
 {available} | [available](#available)
@@ -223,6 +224,33 @@ Example:
     "mountpoint": "/media/Summer_Music"
 }
 ```
+
+### {network}
+
+Network interface. There is not neccessarily a direct correlation between internet and interface.
+The helper script checks internet availability, not persé for the newly up/downed interface.
+
+Perhaps leave out the interface????
+
+Example:
+```
+{
+	"state": "up",
+    "interface": "wlan0",
+	"internet": "true"
+}
+```
+
+Example:
+```
+{
+	"state": "down",
+    "interface": "eth0",
+	"internet": "true"
+}
+```
+
+
 
 ### {mode}
 
