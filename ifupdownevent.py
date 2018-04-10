@@ -79,7 +79,7 @@ def main():
 	if internet_available is not None:
 		params.append('"internet":"{0}"'.format(internet_available))
 		
-	param = "\{{0}\}".format(','.join(params))
+	param = "{{{0}}}".format(','.join(params))
 
 	print param
 	
