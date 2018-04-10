@@ -121,7 +121,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 
 		return subsource_availability_changes
 	
-	def play( self, subindex=None ):
+	def Xplay( self, subindex=None ):
 		super(MySource,self).play()
 				
 		#
@@ -159,7 +159,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 		
 		return True
 
-	def stop( self ):
+	def Xstop( self ):
 		super(MySource,self).stop()
 		# save position and current file name for this drive
 		self.mpc.mpc_save_pos_for_label( 'stream' )
