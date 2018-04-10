@@ -17,6 +17,9 @@ if [ ! -d $GIT_DIR ]; then
     exit 0
 fi
 
+# workaround for https pulls
+git config --global http.sslVerify false
+
 COMMIT_LOCAL=$(git --git-dir=$GIT_DIR rev-parse HEAD)
 COMMIT_REMOTE=$(git --git-dir=$GIT_DIR ls-remote --heads | cut -f1)
 
