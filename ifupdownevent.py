@@ -5,8 +5,10 @@
 # Call with check argument to generete an event for each interface
 #
 
-from time import sleep
-
+# Utils
+#sys.path.append('../modules')
+sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
+from hu_utils import *
 from modules.hu_msg import MqPubSubFwdController
 
 DESCRIPTION = "Send a MQ event"
