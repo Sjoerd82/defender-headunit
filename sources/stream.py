@@ -60,7 +60,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 
 	def add_subsource(self, group_name, streams, order, index):
 		subsource = {}
-		subsource['displayname'] = stream_group['group_name']
+		subsource['displayname'] = stream_group
 		subsource['order'] = order
 		subsource['mpd_streams'] = streams
 		self.sourceCtrl.add_sub(index, subsource)
