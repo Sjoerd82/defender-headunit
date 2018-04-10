@@ -210,6 +210,9 @@ class SourceController(object):
 		# test if name is unique
 		# #TODO
 		
+		print source_config
+		print type(source_config)
+		
 		if 'displayname' not in source_config:
 			source_config['displayname'] = source_config['name']
 
