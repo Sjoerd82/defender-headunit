@@ -6,6 +6,7 @@
 #
 
 # Utils
+from time import sleep
 import sys
 #sys.path.append('../modules')
 sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
@@ -49,7 +50,7 @@ def setup():
 	messaging = MqPubSubFwdController('localhost',DEFAULT_PORT_PUB,DEFAULT_PORT_SUB)
 	messaging.create_publisher()
 	messaging.create_subscriber()
-	sleep(1)
+	sleep(1)	#required?
 	
 def main():
 
