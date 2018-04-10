@@ -25,8 +25,8 @@ def parse_args():
 	global args
 	
 	parser = argparse.ArgumentParser(description=DESCRIPTION)
-	parser.add_argument('-v', action='store', help='Verbose')
-	parser.add_argument('-i', action='store', help='Check if internet available')
+	parser.add_argument('-v', action='store_true', help='Verbose')
+	parser.add_argument('-i', action='store_true', help='Check if internet available')
 	parser.add_argument('--port_publisher', action='store')
 	parser.add_argument('--port_subscriber', action='store')
 	parser.add_argument('ifupdown', action='store', choices=['ifup','ifdown','check']) #, required=True ?
