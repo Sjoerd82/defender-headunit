@@ -29,7 +29,7 @@ def parse_args():
 	parser.add_argument('-i', action='store', help='Check if internet available')
 	parser.add_argument('--port_publisher', action='store')
 	parser.add_argument('--port_subscriber', action='store')
-	parser.add_argument('ifupdown', action='store', choices=['ifup','ifdown','check'], required=True)
+	parser.add_argument('ifupdown', action='store', choices=['ifup','ifdown','check']) #, required=True ?
 	#parser.add_argument('interface', action='store')
 	
 	args = parser.parse_args()
