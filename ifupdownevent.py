@@ -59,7 +59,7 @@ def main():
 	elif args.ifupdown == 'ifdown':
 		path = '/events/network/down'
 		state = "down"
-	elif args.ifupdown == 'check'
+	elif args.ifupdown == 'check':
 		print "check not supported"
 		exit(0)
 	
