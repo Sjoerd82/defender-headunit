@@ -69,8 +69,8 @@ def main():
 	
 	internet_available = internet()
 	
-	if args.interface is not None:
-		params.append('"interface":"{0}"'.format(args.interface))
+	#if args.interface is not None:
+	#	params.append('"interface":"{0}"'.format(args.interface))
 		
 	if state is not None:
 		params.append('"state":"{0}"'.format(state))
