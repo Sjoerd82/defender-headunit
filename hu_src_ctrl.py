@@ -1018,11 +1018,14 @@ def printSummary():
 						
 				# SubSource data
 				if 'mountpoint' in subsource:
-					mountpoint = subsource['mountpoint']
+					subsource_name = subsource['mountpoint']
+				elif 'displayname' in subsource:
+					subsource_name = subsource['displayname']
 				else:
-					mountpoint = ""
+					subsource_name = ""
+					
 
-				printer(' {0} {1:2d}.{2} {3:17} {4} {5:20} {6}'.format(active,i,j,source['displayname'],available,mountpoint,state), tag='')
+				printer(' {0} {1:2d}.{2} {3:17} {4} {5:20} {6}'.format(active,i,j,source['displayname'],available,subsource_name,state), tag='')
 				
 				j += 1
 				
