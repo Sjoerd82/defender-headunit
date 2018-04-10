@@ -63,7 +63,7 @@ def main():
 		print "check not supported"
 		exit(0)
 	
-	internet = internet()
+	internet_available = internet()
 	
 	if args.interface is not None:
 		params.append('"interface":"{0}"'.format(args.interface))
@@ -71,8 +71,8 @@ def main():
 	if state is not None:
 		params.append('"state":"{0}"'.format(state))
 	
-	if internet is not None:
-		params.append('"internet":"{0}"'.format(internet))
+	if internet_available is not None:
+		params.append('"internet":"{0}"'.format(internet_available))
 		
 	param = "\{{0}\}".format(','.join(params))
 
