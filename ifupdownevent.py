@@ -56,6 +56,7 @@ def main():
 
 	cmd = 'DATA'
 	state = None
+	params = []
 	
 	if args.ifupdown == 'ifup':
 		path = '/events/network/up'
