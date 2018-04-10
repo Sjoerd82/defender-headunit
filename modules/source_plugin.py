@@ -99,6 +99,11 @@ class SourcePlugin(object):
 		
 		# load main configuration
 		main_configuration = configuration_load('srctrl', DEFAULT_CONFIG_FILE)
+		
+		#if 'subsources' in main_configuration:
+			#ABORT!
+			#TODO
+		
 		if 'source_config' in main_configuration and self.name in main_configuration['source_config']:
 			config.update(main_configuration['source_config'][self.name])
 			

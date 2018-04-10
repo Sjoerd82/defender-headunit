@@ -115,7 +115,7 @@
 			"exclude" : ["/PIHU_DATA","/PIHU_DATA2","/PIHU_SMB"]
 		}
 		, "stream": {
-			  "subsources": "stream_groups"
+			  "subsource_type": "stream_groups"
 			, "stream_groups": [
 				  {	  "group_name": "NPO"
 					, "streams" : [

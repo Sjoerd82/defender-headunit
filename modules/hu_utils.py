@@ -275,7 +275,6 @@ def configuration_load( logger_name, configfile, defaultconfig=None ):
 	else:
 		printer('Loading configuration [OK]'.format(configfile), tag='CONFIG', logger_name=logger_name)
 		
-	print type(config)
 	return config
 
 # Add ANSI markup to a string
