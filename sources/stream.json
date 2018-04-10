@@ -1,5 +1,6 @@
 { "displayname": "Internet Radio",
   "order": 5,
   "depNetwork": false,
-  "controls": {"ffwd": false, "rwnd": false, "prev": true, "next": true}
+  "controls": {"ffwd": false, "rwnd": false, "prev": true, "next": true},
+  "subsource_key": ["displayname"]
 }
