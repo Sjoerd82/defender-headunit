@@ -54,7 +54,7 @@
 	}
 	, "wifi": {
 		  "ip": "dhcp"
-		, "mode": "ap"
+		, "mode": "network"
 	}
 	, "volume": {
 		  "default":   "30"

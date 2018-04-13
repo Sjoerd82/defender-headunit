@@ -271,7 +271,7 @@ def main():
 			printer('Cannot set WiFi mode, not configured (section: wifi, attribute: mode)')
 		else:
 			mode = configuration['wifi']['mode']
-			if mode == 'network':
+			if mode in ['network','wpa']:
 				if os.path.exists('/root/WLAN-AP'):
 					os.remove('/root/WLAN-AP')
 				touch_file('/root/WLAN-WPA')
