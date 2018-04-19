@@ -8,7 +8,7 @@ NAME="JACK"
 PID="jack"
 PID_FILE=/var/run/$PID.pid
 DAEMON="jackd"
-DAEMON_OPTS="--realtime -d alsa"
+DAEMON_OPTS="--realtime -d dummy"
 DAEMON_PATH="/usr/bin"
 DAEMON_FILE=$DAEMON_PATH/$DAEMON
 
