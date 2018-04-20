@@ -145,12 +145,12 @@ def handle_path_volume(path,cmd,args):
 		level = 20
 		eca_set_effect_amplification(level)
 
-	def put_volume_increase(args):
+	def put_increase(args):
 		test_volume += 5
 		eca.command('copp-set {0}'.format(test_volume))
 		print "increased"
 		
-	def put_volume_decrease(args):
+	def put_decrease(args):
 		test_volume -= 5
 		eca.command('copp-set {0}'.format(test_volume))
 		print "decreased"
