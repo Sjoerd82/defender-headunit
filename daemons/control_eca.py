@@ -337,15 +337,12 @@ def setup():
 	
 	print "DEBUG"
 	print "All chains:"
-	out = eca.command('c-list')
-	print out
-	print type(out)
+	chains = eca.command('c-list')	#list
+	print chains
 	
 	print "Chain: Pre, all operators:"
-	eca.command('c-select pre')
-	out = eca.command('cop-list')
-	print out
-	print type(out)
+	print eca.command("c-select '{0}'".format(chains[0]))
+	print eca.command("cop-list")
 
 	print "Chain: Pre, Operator: 1 (-ea; amplifier), all parmeters:"
 	print eca.command('cop-select 1')
