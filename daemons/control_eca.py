@@ -340,7 +340,7 @@ def setup():
 	chains = eca.command('c-list')	#list
 	print chains
 	print "Selecting '{0}'".format(chains[0])
-	print eca.command("c-select '{0}'".format(chains[0])
+	print eca.command("c-select '{0}'".format(chains[0]))
 	print "Selected:"
 	print eca.command("c-selected")
 
