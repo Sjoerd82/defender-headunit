@@ -55,6 +55,7 @@ ECA_CHAIN_EQ = None				# chain object that contains the equalizer
 
 eca_chain_op_master_amp = None
 att_level = 20		# TODO, get from configuration
+test_volume = 50
 
 logger = None
 args = None
@@ -141,6 +142,16 @@ def handle_path_volume(path,cmd,args):
 		level = 20
 		eca_set_effect_amplification(level)
 
+	def put_volume_increase
+		test_volume += 5
+		eca.command('copp-set {0}'.format(test_volume))
+		print "increased"
+		
+	def put_volume_decrease
+		test_volume -= 5
+		eca.command('copp-set {0}'.format(test_volume))
+		print "decreased"
+		
 	def put_att(args):
 		# arg can be: <str:on|off|toggle>,[int:Volume, in %]
 
@@ -330,7 +341,7 @@ def setup():
 	# ECA
 	#
 	global eca
-	os.environ['ECASOUND'] = '/usr/bin/ecasound'
+	os.environ['ECASOUND'] = '/usr/bin/ecasound --server'
 	eca = ECA_CONTROL_INTERFACE(2)	# # debug level (0, 1, 2, ...)
 	
 	eca.command("cs-load /mnt/PIHU_APP/defender-headunit/ecp/jack_alsa_xover_2ch_m.ecs")
@@ -353,22 +364,17 @@ def setup():
 	print "Chain: Pre, Operator: 1 (-ea; amplifier), all parmeters:"
 	print eca.command('cop-select Amplify')
 	print eca.command('copp-list')
-	#print eca.command('copp-select amp-%')
-	print eca.command('copp-select 1')
+	print eca.command('copp-select 1') # amp-%
 	print eca.command('copp-selected')
 	print eca.command('copp-get')
 	print eca.command('copp-set 10')
 	print eca.command('copp-get')
 	time.sleep(5)
-	print eca.command('copp-set 50')
+	eca.command('copp-set {0}'.format(test_volume))
 	print eca.command('copp-get')
 	
-	time.sleep(30)
 	
-	eca.command("stop")
-	eca.command("cs-disconnect")
-	exit(0)
-	
+
 
 def main():
 
@@ -385,6 +391,9 @@ def main():
 		mainloop.run()
 	finally:
 		mainloop.quit()
+		print "Stopping Ecasound"
+		eca.command("stop")
+		eca.command("cs-disconnect")
 
 if __name__ == "__main__":
 	parse_args()
