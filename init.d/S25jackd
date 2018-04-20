@@ -19,8 +19,10 @@ ECA_PID = "ecasound"
 ECA_DAEMON="ecasound"
 ECA_DAEMON_OPTS="--server -z:nodb -z:mixmode,sum -s:/mnt/PIHU_APP/defender-headunit/ecp/jack_alsa_xover_2ch_m.ecs"
 ECA_DAEMON_PATH="/usr/bin"
-ECA_DAEMON_FILE=$ECA_DAEMON_PATH/$ECA_DAEMON
+#ECA_DAEMON_FILE=$ECA_DAEMON_PATH/$ECA_DAEMON
 ECA_PID_FILE=/var/run/$ECA_PID.pid
+
+ECA_DAEMON_FILE="DONT-RUN-DAEMON"
 
 RETVAL=0
 

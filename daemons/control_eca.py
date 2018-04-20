@@ -332,6 +332,11 @@ def setup():
 	global eca
 	os.environ['ECASOUND'] = '/usr/bin/ecasound'
 	eca = ECA_CONTROL_INTERFACE(2)	# # debug level (0, 1, 2, ...)
+	
+	eca.command("cs-load /mnt/PIHU_APP/defender-headunit/ecp/jack_alsa_xover_2ch_m.ecs")
+	eca.command("cs-connect")
+	eca.command("start")
+	
 	#eca_get_indexes()
 	printer('Initialized [OK]')
 	
@@ -350,6 +355,11 @@ def setup():
 
 	print "Chain: Pre, Operator: 1 (-ea; amplifier), all parmeters:"
 	print eca.command('cop-select 1')
+	
+	time.sleep(10)
+	
+	eca.command("stop")
+	eca.command("cs-disconnect")
 	exit(0)
 	
 
