@@ -9,8 +9,16 @@ PID="jack"
 PID_FILE=/var/run/$PID.pid
 DAEMON="jackd"
 DAEMON_OPTS="--realtime -d dummy"
+#if line-in is required: (this won't lock the output (?))
+#DAEMON_OPTS="--realtime -d alsa -C hw0,1"
 DAEMON_PATH="/usr/bin"
 DAEMON_FILE=$DAEMON_PATH/$DAEMON
+
+ECA_NAME="ECASOUND"
+ECA_DAEMON="ecasound"
+ECA_DAEMON_OPTS="--server -z:nodb -z:mixmode,sum -s:/mnt/PIHU_APP/defender-headunit/ecp/jack_alsa_xover_2ch_m.ecs"
+ECA_DAEMON_PATH="/usr/bin"
+ECA_DAEMON_FILE=$ECA_DAEMON_PATH/$ECA_DAEMON
 
 RETVAL=0
 
@@ -22,6 +30,15 @@ start() {
     else
 	    RETVAL=-1
         echo "$DAEMON not found!"
+    fi
+	
+    if [ -f $ECA_DAEMON_FILE ]; then
+        echo "Starting $ECA_NAME..."
+		start-stop-daemon -b -x $ECA_DAEMON_FILE -m -p $ECA_PID_FILE -S -- $ECA_DAEMON_OPTS
+        RETVAL=$?
+    else
+	    RETVAL=-1
+        echo "$ECA_DAEMON not found!"
     fi
 }
 

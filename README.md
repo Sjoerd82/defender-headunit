@@ -76,6 +76,8 @@ Other important micro services are:
  - Display output
 
 Additional input, output or general purpose plugins are easily added.
+All modules are loosely integrated, so you can easily customize to match your own particular installation.
+Or, go with our reference installation based around MPD, Jack and Ecasound. This setup opens up a wealth of audiophile plugins and customizations.
 
 ### Source Controller
 
@@ -84,7 +86,7 @@ Sources are YAPSY plugins (Python).
 
 ### Volume Controller
 
-PulseAudio Volume Controller has been abandoned in favor of Jack.
+PulseAudio and Jack Volume Controllers have been abandoned in favor of Ecasound.
 
 ### Remote Controllers
 
@@ -155,6 +157,91 @@ Resume playback information (pickled)
 Operational state. May be kept on a ramdrive (no need for persistance).
 May be used to read from to quickly get state information. Will see a lot of R/W.
 
-### ENV
-HU_CONFIG_FILE
-HU_RUN_COUNT
+## Hardware
+
+Tailored for the Raspberry Pi Zero
+
+Hardware | Input* | Output | Tested
+--- | --- | ---
+Native GPIO (PWM) | None | 2x | No
+Pimoroni PhatDAC | None | 2x | Yes
+Behringer UCA202/UCA222 | 2x | 2x | No
+CMedia CM106 | 2x | 8x | No
+
+
+* Needed for external audio sources such as FM or AUX.
+Without inputs you can still control these sources, but you won't be able to control the volume or do DSP.
+To control AUX, you will need an stereo plugin jack with insert detection hooked up to the GPIO (or use a switch).
+
+
+Reference Setup
+
+01 					3v3 Power
+03 BCM 2 (SDA)		i2c:
+05 BCM 3 (SCL)		i2c: WS282x LED string, ADC
+07 BCM 4 (GPCLK0)	.
+09 Ground			-
+11 BCM 17			.
+13 BCM 27			.
+15 BCM 22			.
+17 3v3 Power		-
+19 BCM 10 (MOSI)	SPI MOSI
+21 BCM 9 (MISO)		SPI MISO
+23 BCM 11 (SCLK)	SPI CLCK
+25 Ground			SPI GND
+27 BCM 0 (ID_SD)	.
+29 BCM 5			.
+31 BCM 6			.
+33 BCM 13 (PWM1)	.
+35 BCM 19 (MISO)	DAC (i2s)
+37 BCM 26			.
+39 Ground			-
+
+02 5v Power			
+04 5v Power			
+06 Ground			-
+08 BCM 14 (TXD)		.
+10 BCM 15 (RXD)		.
+12 BCM 18 (PWM0)	.
+14 Ground			-
+16 BCM 23			.
+18 BCM 24			DAC (i2s)
+20 Ground			-
+22 BCM 25			.
+24 BCM 8 (CE0)		SPI chip-select 0
+26 BCM 7 (CE1)		SPI chip-select 1
+28 BCM 1 (ID_SC)	.
+30 Ground			-
+32 BCM 12 (PWM0)	.
+34 Ground			-
+36 BCM 16			.
+38 BCM 20 (MOSI)	.
+40 BCM 21 (SCLK)	DAC (i2s)
+
+SPI: display, CAN
+FM+RDS (i2c or spi?)
+
+Free: 17
+
+Remote Control Pwr
+Remote Control Button 1 (on ADC)
+Remote Control Button 2 (on ADC)
+Buzzer
+Led 1 (power button)
+Power Button
+Aux detection
+
+Free: 13
+
+IR receiver (1-3?)
+Encoder for Control (evt. ook vol, bas, trb)
+
+RGB led 1, R
+RGB led 1, G
+RGB led 1, B
+RGB led 2, R
+RGB led 2, G
+RGB led 2, B
+Battery LEDs
+
+3x Encoder for Vol., Bass and Treble (=9 pins)
