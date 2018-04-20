@@ -20,4 +20,4 @@
 
 -a:woofer,tweeter
 -f:16,4,44100
--o:alsahw0,0
+-o:alsa
