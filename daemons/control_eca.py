@@ -342,10 +342,7 @@ def setup():
 	
 	print "DEBUG"
 	print "All chains:"
-	chains = eca.command('c-list')	#list
-	print chains
-	print "Selecting {0}".format(chains[0])
-	print eca.command("c-select {0}".format(chains[0]))
+	print eca.command("c-select pre")
 	print "Selected:"
 	print eca.command("c-selected")
 
@@ -354,9 +351,14 @@ def setup():
 	print eca.command("cop-list")
 
 	print "Chain: Pre, Operator: 1 (-ea; amplifier), all parmeters:"
-	print eca.command('cop-select 1')
+	print eca.command('cop-select Amplify')
+	print eca.command('copp-list')
 	
-	time.sleep(10)
+	print eca.command('copp-get')
+	print eca.command('copp-set 10')
+	print eca.command('copp-get')
+	
+	time.sleep(30)
 	
 	eca.command("stop")
 	eca.command("cs-disconnect")
