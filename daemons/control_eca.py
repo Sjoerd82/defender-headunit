@@ -359,6 +359,9 @@ def setup():
 	print eca.command('copp-get')
 	print eca.command('copp-set 10')
 	print eca.command('copp-get')
+	time.sleep(5)
+	print eca.command('copp-set 50')
+	print eca.command('copp-get')
 	
 	time.sleep(30)
 	
