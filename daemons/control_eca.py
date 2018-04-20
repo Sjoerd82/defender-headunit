@@ -330,7 +330,7 @@ def setup():
 	# ECA
 	#
 	global eca
-	os.environ['ECASOUND'] = '/usr/bin/ecasound'
+	os.environ['ECASOUND'] = '/usr/bin/ecasound --server'
 	eca = ECA_CONTROL_INTERFACE(2)	# # debug level (0, 1, 2, ...)
 	
 	eca.command("cs-load /mnt/PIHU_APP/defender-headunit/ecp/jack_alsa_xover_2ch_m.ecs")
@@ -353,6 +353,7 @@ def setup():
 	print "Chain: Pre, Operator: 1 (-ea; amplifier), all parmeters:"
 	print eca.command('cop-select Amplify')
 	print eca.command('copp-list')
+	print eca.command('copp-select amp-%')
 	
 	print eca.command('copp-get')
 	print eca.command('copp-set 10')
