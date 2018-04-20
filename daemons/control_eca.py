@@ -353,7 +353,8 @@ def setup():
 	print "Chain: Pre, Operator: 1 (-ea; amplifier), all parmeters:"
 	print eca.command('cop-select Amplify')
 	print eca.command('copp-list')
-	print eca.command('copp-select amp-%')
+	#print eca.command('copp-select amp-%')
+	print eca.command('copp-select 1')
 	print eca.command('copp-selected')
 	print eca.command('copp-get')
 	print eca.command('copp-set 10')
