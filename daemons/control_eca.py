@@ -42,8 +42,9 @@ LOGGER_NAME = 'ecasnd'
 
 DEFAULT_CONFIG_FILE = '/etc/configuration.json'
 DEFAULT_LOG_LEVEL = LL_INFO
-DEFAULT_PORT_SUB = 5560
 DEFAULT_PORT_PUB = 5559
+DEFAULT_PORT_SUB = 5560
+SUBSCRIPTIONS = ['/volume/','/equalizer/']
 
 PATH_VOLUME = '/volume'
 PATH_VOLUME_EVENT = '/events/volume'
