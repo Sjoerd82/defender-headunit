@@ -330,8 +330,8 @@ def setup():
 	# ECA
 	#
 	global eca
-	# os.environ['ECASOUND'] = '../ecasound/ecasound' ???
-	eca = ECA_CONTROL_INTERFACE(0)	# # debug level (0, 1, 2, ...)
+	os.environ['ECASOUND'] = '/usr/bin/ecasound'
+	eca = ECA_CONTROL_INTERFACE(2)	# # debug level (0, 1, 2, ...)
 	#eca_get_indexes()
 	printer('Initialized [OK]')
 	
@@ -339,9 +339,13 @@ def setup():
 	print "All chains:"
 	chains = eca.command('c-list')	#list
 	print chains
-	
-	print "Chain: Pre, all operators:"
+	print "Selecting '{0}'".format(chains[0]))
 	print eca.command("c-select '{0}'".format(chains[0]))
+	print "Selected:"
+	print eca.command("c-selected")
+
+	print "DEBUG"
+	print "Chain: 'default', all operators:"
 	print eca.command("cop-list")
 
 	print "Chain: Pre, Operator: 1 (-ea; amplifier), all parmeters:"
