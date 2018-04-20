@@ -31,8 +31,8 @@ from pyeca import *				# default implementation
 #sys.path.append('../modules')
 sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
-from modules.hu_msg import MqPubSubFwdController
-from modules.hu_msg import parse_message
+from hu_msg import MqPubSubFwdController
+from hu_msg import parse_message
 
 
 # *******************************************************************************
