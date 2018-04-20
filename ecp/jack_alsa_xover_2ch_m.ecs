@@ -2,7 +2,7 @@
 
 -a:pre
 -f:s32_le,2,44100
--i:jack
+-i:jack,"Music Player Daemon"
 -pf:/etc/pre.ecp
 -ea:100
 -o:loop,1
