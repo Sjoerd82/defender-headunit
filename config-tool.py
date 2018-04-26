@@ -170,7 +170,7 @@ def write_config_ecp( config ):
 		ecp_file = path.join(config['location'],preset['name']+'.ecp')
 		verbose_before(ecp_file)
 		with open(ecp_file, 'w' ) as outfile:
-			outfile.write('{0}={1}'.format(preset['name'],preset['preset'])
+			outfile.write('{0}={1}'.format(preset['name'],preset['preset']))
 		verbose_after(ecp_file)
 			
 def write_config_generic( config, delim="=", group="={", quotes="" ):
