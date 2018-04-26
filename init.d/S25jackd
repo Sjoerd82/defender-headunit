@@ -42,7 +42,7 @@ start() {
         RETVAL=$?
     else
 	    RETVAL=-1
-        echo "$ECA_DAEMON not found!"
+        echo "$ECA_DAEMON_FILE not found!"
     fi
 }
 
