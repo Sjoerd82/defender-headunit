@@ -152,7 +152,7 @@ def write_config_resolv( config ):
 	verbose_after(config['location'])
 
 def write_config_ecs( config ):
-	for chainsetup in config['chainsetups']
+	for chainsetup in config['chainsetups']:
 		ecs_file = path.join(config['location'],chainsetup['n'])
 		verbose_before(ecs_file)
 		with open(ecs_file), 'w' ) as outfile:
