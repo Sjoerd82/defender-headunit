@@ -292,6 +292,15 @@ def main():
 	if  args.all or args.ecs:
 		if validate_config( 'ecasound_ecs', ['location','chainsetups'] ):
 			write_config_ecs( configuration['system_configuration']['ecasound_ecs'] )
+			
+			if 'ecasound' in configuration and 'chainsetup' in configuration['ecasound']:
+				ecs_symlink = os.path.join(configuration['ecasound_ecs']['location'],configuration['ecasound']['chainsetup'])
+				ecs_symlink_target = os.path.join(configuration['ecasound_ecs']['location'],'active.ecs')
+				printer("Creating symlink: {0} to {1}".format(ecs_symlink),ecs_symlink_target)
+				os.symlink(ecs_symlink, ecs_symlink_target)
+			else:
+				printer("No chainsetup configured in ecasound section")
+			
 		else:
 			printer('ecs: Invalid Config')
 
