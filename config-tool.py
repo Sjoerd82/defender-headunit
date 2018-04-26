@@ -297,7 +297,13 @@ def main():
 				ecs_symlink = os.path.join(configuration['system_configuration']['ecasound_ecs']['location'],configuration['ecasound']['chainsetup']+'.ecs')
 				ecs_symlink_target = os.path.join(configuration['system_configuration']['ecasound_ecs']['location'],'active.ecs')
 				printer("Creating symlink: {0} to {1}".format(ecs_symlink,ecs_symlink_target))
-				os.symlink(ecs_symlink, ecs_symlink_target)
+				try:
+					os.symlink(ecs_symlink, ecs_symlink_target)
+				except OSError, e:
+					if e.errno == errno.EEXIST:
+						os.remove(ecs_symlink_target)
+						os.symlink(ecs_symlink, ecs_symlink_target)
+						
 			else:
 				printer("No chainsetup configured in ecasound section")
 			
