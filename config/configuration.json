@@ -235,7 +235,7 @@
 							, "i":		"jack,\"Music Player Daemon"
 							, "o":		"loop,1"
 							, "f":		"s32_le,2,44100"
-							, "pf":		"/usr/local/share/ecasound/pre.ecp"
+							, "pf":		"/usr/share/ecasound/pre.ecp"
 							, "ea":		"100"
 						}
 					,   {
@@ -243,7 +243,7 @@
 							, "i":		"loop,1"
 							, "o":		"alsa"
 							, "f":		"16,4,44100"
-							, "pn":		"/usr/local/share/ecasound/tweeter.ecp"
+							, "pn":		"/usr/share/ecasound/tweeter.ecp"
 							, "chorder":"0,2"
 						}
 					,   {
@@ -251,7 +251,7 @@
 							, "i":		"loop,1"
 							, "o":		"alsa"
 							, "f":		"16,4,44100"
-							, "pn":		"/usr/local/share/ecasound/woofer.ecp"
+							, "pn":		"/usr/share/ecasound/woofer.ecp"
 							, "chorder":"2,0"
 						}
 					]
@@ -264,7 +264,7 @@
 							, "i":		"jack,\"Music Player Daemon"
 							, "o":		"loop,1"
 							, "f":		"s32_le,2,44100"
-							, "pf":		"/usr/local/share/ecasound/pre.ecp"
+							, "pf":		"/usr/share/ecasound/pre.ecp"
 							, "ea":		"100"
 						}
 					,   {
@@ -272,7 +272,7 @@
 							, "i":		"loop,1"
 							, "o":		"alsa"
 							, "f":		"16,4,44100"
-							, "pn":		"/usr/local/share/ecasound/tweeter.ecp"
+							, "pn":		"/usr/share/ecasound/tweeter.ecp"
 							, "chorder":"0,0,1,2"
 						}
 					,   {
@@ -280,7 +280,7 @@
 							, "i":		"loop,1"
 							, "o":		"alsa"
 							, "f":		"16,4,44100"
-							, "pn":		"/usr/local/share/ecasound/woofer.ecp"
+							, "pn":		"/usr/share/ecasound/woofer.ecp"
 							, "chorder":"1,2,0,0"
 						}
 					]
@@ -288,7 +288,7 @@
 			]
 		}
 		, "ecasound_ecp": {
-			  "location":	"/usr/local/share/ecasound/"
+			  "location":	"/usr/share/ecasound/"
 			, "effect_presets": [
 				{
 					  "name":	"pre"

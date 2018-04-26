@@ -291,7 +291,7 @@ def main():
 			printer('smb: Invalid Config')
 		
 	if  args.all or args.ecs:
-		if validate_config( 'ecasound_ecs', ['location','chainsetup'] ):
+		if validate_config( 'ecasound_ecs', ['location','chainsetups'] ):
 			write_config_ecs( configuration['system_configuration']['ecasound_ecs'] )
 		else:
 			printer('ecs: Invalid Config')
