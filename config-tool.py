@@ -298,7 +298,7 @@ def main():
 
 	if  args.all or args.ecp:
 		if validate_config( 'ecasound_ecp', ['location'] ):
-			write_config_ecp( configuration['system_configuration']['ecasound_ecs'] )
+			write_config_ecp( configuration['system_configuration']['ecasound_ecp'] )
 		else:
 			printer('ecs: Invalid Config')
 
