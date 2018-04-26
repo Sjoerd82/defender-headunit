@@ -151,6 +151,28 @@ def write_config_resolv( config ):
 			outfile.write('nameserver {0}'.format(nameserver))
 	verbose_after(config['location'])
 
+def write_config_ecs( config ):
+	for chainsetup in config['chainsetups']
+		ecs_file = path.join(config['location'],chainsetup['n'])
+		verbose_before(ecs_file)
+		with open(ecs_file), 'w' ) as outfile:
+			outfile.write('-n:{0}'.format(chainsetup['n']))
+			for chain in chainsetup['chains']:
+				for key,value in chain:
+					#outfile.write('-a:{0}'.format(chain['a']))
+					#outfile.write('-i:{0}'.format(chain['o']))
+					outfile.write('-{0}:{1}'.format(key,value))
+
+		verbose_after(ecs_file)
+
+def write_config_ecp( config ):
+	for preset in config['effect_presets']
+		ecp_file = path.join(config['location'],preset['name']+'.ecp')
+		verbose_before(ecp_file)
+		with open(ecp_file), 'w' ) as outfile:
+			outfile.write('{0}={1}'.format(preset['name'],preset['preset'])
+		verbose_after(ecp_file)
+			
 def write_config_generic( config, delim="=", group="={", quotes="" ):
 	verbose_before(config['location'])
 	with open( config['location'], 'w' ) as outfile:
@@ -195,7 +217,9 @@ def parse_args():
 	parser.add_argument('--dnsm', required=False, action='store_true', help='Generate dnsmasq.conf file')
 	parser.add_argument('--mpd',  required=False, action='store_true', help='Generate mpd.conf file')
 	parser.add_argument('--smb',  required=False, action='store_true', help='Generate samba.conf file')
-	parser.add_argument('--wifi',  required=False, action='store_true', help='Set WiFi mode')
+	parser.add_argument('--ecs',  required=False, action='store_true', help='Generate ecasound chainsetup files')
+	parser.add_argument('--ecp',  required=False, action='store_true', help='Generate ecasound effects preset file')
+	parser.add_argument('--wifi', required=False, action='store_true', help='Set WiFi mode')
 
 	args = parser.parse_args()
 
@@ -265,6 +289,18 @@ def main():
 			write_config_smb( configuration['system_configuration']['smb'] )
 		else:
 			printer('smb: Invalid Config')
+		
+	if  args.all or args.ecs:
+		if validate_config( 'ecasound_ecs', ['location','chainsetup'] ):
+			write_config_ecs( configuration['system_configuration']['ecasound_ecs'] )
+		else:
+			printer('ecs: Invalid Config')
+
+	if  args.all or args.ecp:
+		if validate_config( 'ecasound_ecp', ['location'] ):
+			write_config_ecp( configuration['system_configuration']['ecasound_ecs'] )
+		else:
+			printer('ecs: Invalid Config')
 
 	if  args.all or args.wifi:
 		if 'wifi' not in configuration:

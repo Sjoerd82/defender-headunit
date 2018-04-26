@@ -72,6 +72,12 @@
 		, "port_publisher": 5559
 		, "port_subscriber": 5560
 	}
+	, "ecasound": {
+		  "chainsetup": "jack_alsa_xover_2ch_m"
+		, "chain_master_amp": "pre"
+		, "chain_mute": "pre"
+		, "chain_eq": "pre"
+	}
 	, "auto_update": {
 		  "mode": "all"
 		, "url": "https://github.com/Sjoerd82/defender-headunit"
@@ -217,6 +223,86 @@
 			, "bind-dynamic":  null
 			, "dhcp-range":    "172.24.1.50,172.24.1.150,255.255.255.0,24h"
 			
+		}
+		, "ecasound_ecs": {
+			  "location":	"/etc/ecasound/"
+			, "chainsetups": [
+				{
+					  "n":		"jack_alsa_xover_2ch_m"
+					, "chains": [
+						{
+							  "a":		"pre"
+							, "i":		"jack,"Music Player Daemon"
+							, "o":		"loop,1"
+							, "f":		"s32_le,2,44100"
+							, "pf":		"/usr/local/share/ecasound/pre.ecp"
+							, "ea":		"100"
+						}
+					,   {
+							  "a":		"tweeter"
+							, "i":		"loop,1"
+							, "o":		"alsa"
+							, "f":		"16,4,44100"
+							, "pn":		"/usr/local/share/ecasound/tweeter.ecp"
+							, "chorder":"0,2"
+						}
+					,   {
+							  "a":		"woofer"
+							, "i":		"loop,1"
+							, "o":		"alsa"
+							, "f":		"16,4,44100"
+							, "pn":		"/usr/local/share/ecasound/woofer.ecp"
+							, "chorder":"2,0"
+						}
+					]
+				}
+				, {
+					  "n":		"jack_alsa_xover_4ch_s"
+					, "chains": [
+						{
+							  "a":		"pre"
+							, "i":		"jack,"Music Player Daemon"
+							, "o":		"loop,1"
+							, "f":		"s32_le,2,44100"
+							, "pf":		"/usr/local/share/ecasound/pre.ecp"
+							, "ea":		"100"
+						}
+					,   {
+							  "a":		"tweeter"
+							, "i":		"loop,1"
+							, "o":		"alsa"
+							, "f":		"16,4,44100"
+							, "pn":		"/usr/local/share/ecasound/tweeter.ecp"
+							, "chorder":"0,0,1,2"
+						}
+					,   {
+							  "a":		"woofer"
+							, "i":		"loop,1"
+							, "o":		"alsa"
+							, "f":		"16,4,44100"
+							, "pn":		"/usr/local/share/ecasound/woofer.ecp"
+							, "chorder":"1,2,0,0"
+						}
+					]
+				}
+			]
+		}
+		, "ecasound_ecp": {
+			  "location":	"/usr/local/share/ecasound/"
+			, "effect_presets": [
+				{
+					  "name":	"pre"
+					, "preset":	"-el:RTparaeq,-8.5,82,2.6"
+				}
+				,{
+					  "name":	"tweeter"
+					, "preset":	"-el:RTlr4hipass,1500 -el:delay_0.01s,0.0019,1 -eadb:-4.5"
+				}
+				,{
+					  "name":	"woofer"
+					, "preset":	"-el:RTlr4lowpass,1500 -el:RTlowshelf,4.0,150,0.71"
+				}
+			]
 		}
 		, "mpd": {
 			  "location":           "/etc/mpd.conf"
