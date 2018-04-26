@@ -155,7 +155,7 @@ def write_config_ecs( config ):
 	for chainsetup in config['chainsetups']:
 		ecs_file = path.join(config['location'],chainsetup['n'])
 		verbose_before(ecs_file)
-		with open(ecs_file), 'w' ) as outfile:
+		with open(ecs_file, 'w' ) as outfile:
 			outfile.write('-n:{0}'.format(chainsetup['n']))
 			for chain in chainsetup['chains']:
 				for key,value in chain:
@@ -169,7 +169,7 @@ def write_config_ecp( config ):
 	for preset in config['effect_presets']
 		ecp_file = path.join(config['location'],preset['name']+'.ecp')
 		verbose_before(ecp_file)
-		with open(ecp_file), 'w' ) as outfile:
+		with open(ecp_file, 'w' ) as outfile:
 			outfile.write('{0}={1}'.format(preset['name'],preset['preset'])
 		verbose_after(ecp_file)
 			
