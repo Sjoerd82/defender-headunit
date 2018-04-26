@@ -232,7 +232,7 @@
 					, "chains": [
 						{
 							  "a":		"pre"
-							, "i":		"jack,"Music Player Daemon"
+							, "i":		"jack,\"Music Player Daemon"
 							, "o":		"loop,1"
 							, "f":		"s32_le,2,44100"
 							, "pf":		"/usr/local/share/ecasound/pre.ecp"
@@ -261,7 +261,7 @@
 					, "chains": [
 						{
 							  "a":		"pre"
-							, "i":		"jack,"Music Player Daemon"
+							, "i":		"jack,\"Music Player Daemon"
 							, "o":		"loop,1"
 							, "f":		"s32_le,2,44100"
 							, "pf":		"/usr/local/share/ecasound/pre.ecp"
