@@ -153,14 +153,12 @@ def write_config_resolv( config ):
 
 def write_config_ecs( config ):
 	for chainsetup in config['chainsetups']:
-		ecs_file = os.path.join(config['location'],chainsetup['n'])
+		ecs_file = os.path.join(config['location'],chainsetup['n']+'.ecs')
 		verbose_before(ecs_file)
 		with open(ecs_file, 'w' ) as outfile:
-			outfile.write('-n:{0}'.format(chainsetup['n']))
+			outfile.write('-n:{0}\n'.format(chainsetup['n']))
 			for chain in chainsetup['chains']:
 				for key,value in chain.iteritems():
-					#outfile.write('-a:{0}'.format(chain['a']))
-					#outfile.write('-i:{0}'.format(chain['o']))
 					outfile.write('-{0}:{1}'.format(key,value))
 
 		verbose_after(ecs_file)
@@ -170,7 +168,7 @@ def write_config_ecp( config ):
 		ecp_file = os.path.join(config['location'],preset['name']+'.ecp')
 		verbose_before(ecp_file)
 		with open(ecp_file, 'w' ) as outfile:
-			outfile.write('{0}={1}'.format(preset['name'],preset['preset']))
+			outfile.write('{0}={1}\n'.format(preset['name'],preset['preset']))
 		verbose_after(ecp_file)
 			
 def write_config_generic( config, delim="=", group="={", quotes="" ):
