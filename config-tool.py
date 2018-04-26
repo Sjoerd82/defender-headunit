@@ -166,7 +166,7 @@ def write_config_ecs( config ):
 		verbose_after(ecs_file)
 
 def write_config_ecp( config ):
-	for preset in config['effect_presets']
+	for preset in config['effect_presets']:
 		ecp_file = path.join(config['location'],preset['name']+'.ecp')
 		verbose_before(ecp_file)
 		with open(ecp_file, 'w' ) as outfile:
