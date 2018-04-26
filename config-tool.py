@@ -158,8 +158,9 @@ def write_config_ecs( config ):
 		with open(ecs_file, 'w' ) as outfile:
 			outfile.write('-n:{0}\n'.format(chainsetup['n']))
 			for chain in chainsetup['chains']:
+				outfile.write('\n')
 				for key,value in chain.iteritems():
-					outfile.write('-{0}:{1}'.format(key,value))
+					outfile.write('-{0}:{1}\n'.format(key,value))
 
 		verbose_after(ecs_file)
 
