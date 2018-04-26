@@ -243,7 +243,7 @@
 							, "i":		"loop,1"
 							, "o":		"alsa"
 							, "f":		"16,4,44100"
-							, "pn":		"/usr/share/ecasound/tweeter.ecp"
+							, "pf":		"/usr/share/ecasound/tweeter.ecp"
 							, "chorder":"0,2"
 						}
 					,   {
@@ -251,7 +251,7 @@
 							, "i":		"loop,1"
 							, "o":		"alsa"
 							, "f":		"16,4,44100"
-							, "pn":		"/usr/share/ecasound/woofer.ecp"
+							, "pf":		"/usr/share/ecasound/woofer.ecp"
 							, "chorder":"2,0"
 						}
 					]
@@ -272,7 +272,7 @@
 							, "i":		"loop,1"
 							, "o":		"alsa"
 							, "f":		"16,4,44100"
-							, "pn":		"/usr/share/ecasound/tweeter.ecp"
+							, "pf":		"/usr/share/ecasound/tweeter.ecp"
 							, "chorder":"0,0,1,2"
 						}
 					,   {
@@ -280,7 +280,7 @@
 							, "i":		"loop,1"
 							, "o":		"alsa"
 							, "f":		"16,4,44100"
-							, "pn":		"/usr/share/ecasound/woofer.ecp"
+							, "pf":		"/usr/share/ecasound/woofer.ecp"
 							, "chorder":"1,2,0,0"
 						}
 					]

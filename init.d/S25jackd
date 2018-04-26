@@ -19,7 +19,7 @@ ECA_PID = "ecasound"
 ECA_DAEMON="ecasound"
 ECA_DAEMON_OPTS="--server -z:nodb -z:mixmode,sum -s:/etc/ecasound/active.ecs"
 ECA_DAEMON_PATH="/usr/bin"
-#ECA_DAEMON_FILE=$ECA_DAEMON_PATH/$ECA_DAEMON
+ECA_DAEMON_FILE=$ECA_DAEMON_PATH/$ECA_DAEMON
 ECA_PID_FILE=/var/run/$ECA_PID.pid
 
 ECA_DAEMON_FILE="DONT-RUN-DAEMON"

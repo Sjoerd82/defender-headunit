@@ -297,7 +297,7 @@ def main():
 			if 'ecasound' in configuration and 'chainsetup' in configuration['ecasound']:
 				ecs_symlink = os.path.join(configuration['system_configuration']['ecasound_ecs']['location'],configuration['ecasound']['chainsetup']+'.ecs')
 				ecs_symlink_target = os.path.join(configuration['system_configuration']['ecasound_ecs']['location'],'active.ecs')
-				printer("Creating symlink: {0} to {1}".format(ecs_symlink,ecs_symlink_target))
+				printer("Creating symlink: {0} to {1}".format(ecs_symlink_target,ecs_symlink))
 				try:
 					os.symlink(ecs_symlink, ecs_symlink_target)
 				except OSError, e:
