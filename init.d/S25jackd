@@ -32,7 +32,8 @@ start() {
         start-stop-daemon -b -x $DAEMON_FILE -m -p $PID_FILE -S -- $DAEMON_OPTS
         RETVAL=$?
     else
-	    RETVAL=-1
+	    #RETVAL=-1
+		RETVAL=1
         echo "$DAEMON not found!"
     fi
 	
@@ -41,7 +42,8 @@ start() {
 		start-stop-daemon -b -x $ECA_DAEMON_FILE -m -p $ECA_PID_FILE -S -- $ECA_DAEMON_OPTS
         RETVAL=$?
     else
-	    RETVAL=-1
+	    #RETVAL=-1
+		RETVAL=1
         echo "$ECA_DAEMON_FILE not found!"
     fi
 }
