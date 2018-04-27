@@ -163,12 +163,12 @@ class MqPubSubFwdController(object):
 			
 		if wait_for_reply and not response_path:
 			response_path = '/myuniquereplypath/'
-		
-		# path and command
-		#if type(path) == 'list':
-		#	message = "/{0} {1}".format(message, "/".join(path),command)
-		#else:
-		message = "{0} {1}".format(path,command)
+
+		# path[+response_path] and command
+		if response_path:
+			message = "{0}+{1} {2}".format(path,response_path,command)
+		else:
+			message = "{0} {1}".format(path,command)
 		
 		# append arguments
 		if arguments:
@@ -183,10 +183,6 @@ class MqPubSubFwdController(object):
 				print "DEBUG MSG: OTHER"
 				jsonified_args = json.dumps(arguments)
 				message = "{0}:{1}".format(message, jsonified_args)
-			
-		# append response path
-		if response_path:
-			message = "{0} {1}".format(message,response_path)
 		
 		if wait_for_reply:
 			print "DEBUG: SETUP WAIT_FOR_REPLY; TOPIC={0}".format(response_path)

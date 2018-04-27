@@ -20,6 +20,8 @@ def parse_args():
 	import argparse
 	global args
 
+	print "Displays all MQ messages."
+	
 	parser = argparse.ArgumentParser(description=DESCRIPTION)
 	parser.add_argument('--port_publisher', action='store')
 	parser.add_argument('--port_subscriber', action='store')
