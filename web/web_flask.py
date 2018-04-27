@@ -1,5 +1,17 @@
 #!/usr/bin/python
 
+#
+# Flask Web Server
+# Venema, S.R.G.
+# 2018-04-26
+#
+# Flask is lightweight HTTP server.
+#
+# We implement a number of pages and an API.
+# Pages are implemented in nav_items[]
+# 
+# 
+
 from flask import Flask
 from flask import render_template
 from flask import request
@@ -42,7 +54,6 @@ args = None
 messaging = None
 configfile_found = None
 configuration = None
-
 
 # ********************************************************************************
 # Output wrapper
@@ -181,30 +192,8 @@ def receive_message(path):
 	message = json.loads(data)
 	return message
 		
-"""		
-def publish_message(message):
-	try:
-		url = "tcp://127.0.0.1:5556"
-		zmq_sck.bind(url)
-		time.sleep(1)	# IMPORTANT !!
-		msg = "{0} |{1}".format("test",message)
-		#msg = "test"
-		#print("Sending message : {0}".format(msg))
-		topic = "test"
-		message = "hello world"
-		zmq_sck.send("%s %s" % (topic, message))
-		#zmq_sck.send(msg)
-	except Exception as e:
-		print("error {0}".format(e))
-	finally:
-		# You wanna unbind the publisher to keep
-		# receiving the published messages
-		# Otherwise you would get a - Adress already in use - error
-		zmq_sck.unbind(url)
-"""
-
 #
-# Routes
+# Routes (pages)
 #
 @app.route('/')
 def home():
@@ -212,7 +201,10 @@ def home():
 	global nav_sources
 	page_title = "Landing page"
 	nav_ix_main = 1
-	return render_template('dash_base.html', title=page_title, nav_items=nav_items, nav_ix_main=nav_ix_main, nav_sources=nav_sources)
+	ret_track = messaging.publish_command('/player/track','GET', None, True, 1000, RETURN_PATH)
+	if ret_track is None:
+		ret_track = dict_track(display='No data available')
+	return render_template('dash_base.html', title=page_title, nav_items=nav_items, nav_ix_main=nav_ix_main, nav_sources=nav_sources, track=ret_track)
 
 @app.route('/config', methods=['GET'])
 @app.route('/config_locations', methods=['GET'])
@@ -328,6 +320,10 @@ def reboot():
 	messaging.publish_request('/system/reboot', 'SET', None)
 	messaging.publish_request('/player/next', 'SET', None)
 	return "SEND x2"
+
+#
+# Routes (api)
+#
 	
 #app.route('/api')
 """
@@ -443,17 +439,14 @@ def post_source_id_subsource_id(source_id,subsource_id):
 #Set active (sub)source to the next available
 @app.route('/hu/api/v1.0/source/next', methods=['GET'])
 def post_source_next():
-	messaging.send_command("/player/next","SET")
-	retmsg = messaging.send_to_server("Hoi Oliebol!")
-	return retmsg
-	#stub = [{'a':'a'},{'b':'b'}]
-	#return jsonify({'stub':stub})
+	retmsg = messaging.publish_command('/source/next','PUT', None, False)
+	return "OK"
 
 #Set active (sub)source to the prev available
 @app.route('/hu/api/v1.0/source/prev', methods=['POST'])
 def post_source_prev():
-	stub = [{'a':'a'},{'b':'b'}]
-	return jsonify({'stub':stub})
+	retmsg = messaging.publish_command('/source/prev','PUT', None, False)
+	return "OK"
 
 #Retrieve current player state (pause/play/stopped, random)
 @app.route('/hu/api/v1.0/player', methods=['GET'])
@@ -480,16 +473,16 @@ def post_player_pause_mode(mode):
 	return jsonify({'stub':stub})
 
 #Set state play|pause|stop
-@app.route('/hu/api/v1.0/player/state/<mode>', methods=['POST'])
+@app.route('/hu/api/v1.0/player/state/<mode>', methods=['POST','GET'])
 def post_player_state_mode(mode):
-	stub = [{'a':'a'},{'b':'b'}]
-	return jsonify({'stub':stub})
+	retmsg = messaging.publish_command('/player/state','PUT', mode, False)
+	return "OK"
 
 #Set random on|off|toggle|special modes
-@app.route('/hu/api/v1.0/player/random/<mode>', methods=['POST'])
+@app.route('/hu/api/v1.0/player/random/<mode>', methods=['POST','GET'])
 def post_player_random_mode(mode):
-	stub = [{'a':'a'},{'b':'b'}]
-	return jsonify({'stub':stub})
+	retmsg = messaging.publish_command('/player/random/mode','PUT', mode, False)
+	return "OK"
 
 #Set random mode: folder|artist|genre|all
 @app.route('/hu/api/v1.0/player/randommode/<mode>', methods=['POST'])
@@ -506,16 +499,14 @@ def post_player_track_track(track):
 #Next track
 @app.route('/hu/api/v1.0/player/next', methods=['GET'])
 def get_player_next():
-	publish_message("/player/next","SET")	
-	#stub = [{'a':'a'},{'b':'b'}]
-	#return jsonify({'stub':stub})
+	retmsg = messaging.publish_command('/player/next','PUT', None, False)
 	return "OK"
 
 #Prev track
-@app.route('/hu/api/v1.0/player/prev', methods=['POST'])
+@app.route('/hu/api/v1.0/player/prev', methods=['GET'])
 def post_player_prev():
-	stub = [{'a':'a'},{'b':'b'}]
-	return jsonify({'stub':stub})
+	retmsg = messaging.publish_command('/player/prev','PUT', None, False)
+	return "OK"
 
 #Seek fwd
 @app.route('/hu/api/v1.0/player/seekfwd', methods=['POST'])
@@ -535,6 +526,12 @@ def post_player_seek_incrsec(incr_sec):
 	stub = [{'a':'a'},{'b':'b'}]
 	return jsonify({'stub':stub})
 
+#Update Library (MPD)
+@app.route('/hu/api/v1.0/player/update', methods=['GET'])
+def get_player_next():
+	retmsg = messaging.publish_command('/player/update','PUT', None, False)
+	return "OK"
+	
 #Retrieve current playlist
 @app.route('/hu/api/v1.0/playlist', methods=['GET'])
 def get_playlist():
@@ -680,7 +677,6 @@ def setup():
 
 	printer("ZeroMQ: Creating Subscriber: {0}".format(DEFAULT_PORT_SUB))
 	messaging.create_subscriber(SUBSCRIPTIONS)
-
 
 def main():
 

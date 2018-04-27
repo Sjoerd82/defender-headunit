@@ -159,6 +159,7 @@ Sources are free to add their own tags. The ones mentioned below are the standar
 Field | Value
 --- | ---
 `display` | Formatted string
+`source` | Source name
 `rds` | RDS information (FM)
 `artist` | Artist name
 `composer` | The artist who composed the song
@@ -170,6 +171,7 @@ Field | Value
 `elapsed` | Elapsed time (ms) --?
 `track` | Decimal track number within the album
 `disc` | The decimal disc number in a multi-disc album.
+`folder` | The folder name on the media
 `genre` | Music genre, multiple genre's might be delimited by semicolon, though this is not really standardized
 `date` | The song's release date, may be only the year part (most often), but could be a full data (format?)
 

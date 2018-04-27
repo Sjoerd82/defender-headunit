@@ -48,7 +48,6 @@ SYSLOG_UDP_PORT=514
 
 
 #********************************************************************************
-#
 # Markup
 #
 
@@ -69,6 +68,67 @@ tagcolors = {
  }
 
 
+# ********************************************************************************
+# Data Structures
+#
+def dict_track(	display=None
+				,source=None
+				,rds=None
+				,artist=None
+				,composer=None
+				,performer=None
+				,album=None
+				,albumartist=None
+				,title=None
+				,length=None
+				,elapsed=None
+				,track=None
+				,disc=None
+				,folder=None
+				,genre=None
+				,date=None ):
+	""" Details about what's playing. Only display is mandatory.
+		Which fields are present strongly depends on the type of source and the availability of metadata.
+		Sources are free to add their own tags. The ones mentioned below are the standardized.
+
+	Field | Value
+	--- | ---
+	`display` | Formatted string
+	`source` | Source name
+	`rds` | RDS information (FM)
+	`artist` | Artist name
+	`composer` | The artist who composed the song
+	`performer` | The artist who performed the song
+	`album` | Album name
+	`albumartist` | On multi-artist albums, this is the artist name which shall be used for the whole album
+	`title` | Song title
+	`length` | Track length (ms)
+	`elapsed` | Elapsed time (ms) --?
+	`track` | Decimal track number within the album
+	`disc` | The decimal disc number in a multi-disc album.
+	`genre` | Music genre, multiple genre's might be delimited by semicolon, though this is not really standardized
+	`date` | The song's release date, may be only the year part (most often), but could be a full data (format?)
+	"""
+	track = {}
+	track['display'] = display
+	track['source'] = source
+	track['rds'] = rds
+	track['artist'] = artist
+	track['composer'] = composer
+	track['performer'] = performer
+	track['album'] = album
+	track['albumartist'] = albumartist
+	track['title'] = title
+	track['length'] = length
+	track['elapsed'] = elapsed
+	track['track'] = track
+	track['disc'] = disc
+	track['folder'] = folder
+	track['genre'] = genre
+	track['date'] = date
+	return track()
+
+ 
 def printer( message, level=LL_INFO, tag="",logger_name=""):
 	logger = logging.getLogger(logger_name)
 	logger.log(level, message, extra={'tag': tag})
@@ -84,7 +144,6 @@ def printer( message, level=LL_INFO, tag="",logger_name=""):
 #
 
 # *******************************************************************************
-#
 # Logging formatters
 #
 

@@ -1,0 +1,32 @@
+{% extends "dash_base.html" %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+
+		<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
+			<h1 class="h2">{{ title }}</h1>	
+		</div>
+
+		<!-- PLAYER -->
+		<div>
+			<div>Current source: {% player.source %}</div>
+			<button type="button" class="btn btn-primary" id="source-prev">Prev Source</button>
+			<button type="button" class="btn btn-primary" id="source-next">Next Source</button>
+			
+			<div>Current folder: {% player.folder %}</div>
+			<button type="button" class="btn btn-primary" id="player-nextfolder">Next Folder</button>
+			<button type="button" class="btn btn-primary" id="player-prevfolder">Prev Folder</button>
+					
+			<div>Artist: {% player.artist %}</div>
+			<div>Album: {% player.album %}</div>
+			<div>Track: {% player.track %}</div>
+			<button type="button" class="btn btn-primary" id="player-prev">Prev Track</button>
+			<button type="button" class="btn btn-primary" id="player-mode-play">Play</button>
+			<button type="button" class="btn btn-primary" id="player-mode-pause">Pause</button>
+			<button type="button" class="btn btn-primary" id="player-mode-stop">Stop</button>
+			<button type="button" class="btn btn-primary" id="player-random" data-toggle="button" aria-pressed="false" autocomplete="off">Random</button>
+			<button type="button" class="btn btn-primary" id="player-update">Update</button>
+			<button type="button" class="btn btn-primary" id="player-next">Next Track</button>
+		</div>
+
+
+{% endblock %}

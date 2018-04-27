@@ -292,7 +292,8 @@ class MpdSourcePlugin(SourcePlugin):
 	def get_details(self, **kwargs ):
 		self.printer('Details ?')
 		details = {}
-		track = {'display':None,'rds':None,'artist':None,'composer':None,'performer':None,'album':None,'albumartist':None,'title':None,'length':None,'elapsed':None,'track':None,'disc':None,'genre':None,'date':None}
+		track = dict_track()
+		track['source'] = self.name
 		
 		mpdtrack = self.mpdc.track()
 		track.update(mpdtrack) 			#convert MPD track{} to HU track{} format
