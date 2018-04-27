@@ -205,7 +205,7 @@ def home():
 	print "DEBUG XYZ"
 	if ret_track is None:
 		ret_track = dict_track(display='No data available')
-	return render_template('dash_base.html', title=page_title, nav_items=nav_items, nav_ix_main=nav_ix_main, nav_sources=nav_sources, track=ret_track)
+	return render_template('dash_home.html', title=page_title, nav_items=nav_items, nav_ix_main=nav_ix_main, nav_sources=nav_sources, track=ret_track)
 
 @app.route('/config', methods=['GET'])
 @app.route('/config_locations', methods=['GET'])
