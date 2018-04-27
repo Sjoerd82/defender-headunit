@@ -204,7 +204,7 @@ def home():
 	ret_track = messaging.publish_command('/player/track','GET', None, True, 1000, RETURN_PATH)
 	print ret_track
 	if ret_track is None:
-		ret_track = dict_track(display='No data available')
+		payload = dict_track(display='No data available')
 	else:
 		payload = ret_track['args'][0]['payload']	# NASTY
 		print payload
