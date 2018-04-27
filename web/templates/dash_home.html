@@ -27,6 +27,12 @@
 			<button type="button" class="btn btn-primary" id="player-update">Update</button>
 			<button type="button" class="btn btn-primary" id="player-next">Next Track</button>
 		</div>
+		
+		<table>
+		{%for value in player.values()%}
+          <tr><td class="col-md-2">{{ value }}</td></tr>
+        {% endfor %}
+		</table>
 
 
 {% endblock %}

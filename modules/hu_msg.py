@@ -223,12 +223,14 @@ class MqPubSubFwdController(object):
 				# todo: have a look at what's returned?
 				# read response from the server
 				response = self.reply_subscriber.recv()
+				"""
 				print "------------"
 				print "RAW:"
 				print response
 				print "PARSED:"
 				parsed_response = parse_message(response)
 				print parsed_response
+				"""
 				
 				#? this ok? clean-up?
 				# check response?
