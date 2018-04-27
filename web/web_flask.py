@@ -202,6 +202,7 @@ def home():
 	page_title = "Landing page"
 	nav_ix_main = 1
 	ret_track = messaging.publish_command('/player/track','GET', None, True, 1000, RETURN_PATH)
+	print ret_track
 	if ret_track is None:
 		ret_track = dict_track(display='No data available')
 	return render_template('dash_home.html', title=page_title, nav_items=nav_items, nav_ix_main=nav_ix_main, nav_sources=nav_sources, player=ret_track)
