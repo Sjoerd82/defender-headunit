@@ -206,7 +206,7 @@ def home():
 	if ret_track is None:
 		ret_track = dict_track(display='No data available')
 	else:
-		payload = ret_track['args']['payload']
+		payload = ret_track['args'][0]['payload']	# NASTY
 		print payload
 	return render_template('dash_home.html', title=page_title, nav_items=nav_items, nav_ix_main=nav_ix_main, nav_sources=nav_sources, player=payload)
 
