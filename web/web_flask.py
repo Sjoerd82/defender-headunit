@@ -205,7 +205,10 @@ def home():
 	print ret_track
 	if ret_track is None:
 		ret_track = dict_track(display='No data available')
-	return render_template('dash_home.html', title=page_title, nav_items=nav_items, nav_ix_main=nav_ix_main, nav_sources=nav_sources, player=ret_track)
+	else:
+		payload = ret_track['payload']
+		print payload
+	return render_template('dash_home.html', title=page_title, nav_items=nav_items, nav_ix_main=nav_ix_main, nav_sources=nav_sources, player=payload)
 
 @app.route('/config', methods=['GET'])
 @app.route('/config_locations', methods=['GET'])
