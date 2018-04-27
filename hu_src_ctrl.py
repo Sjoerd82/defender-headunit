@@ -890,7 +890,7 @@ def idle_message_receiver():
 		retval = dispatcher(parsed_msg['path'],parsed_msg['cmd'],parsed_msg['args'])
 		
 		if parsed_msg['resp_path']:
-			#print "DEBUG: Resp Path present.. returing message.."
+			print "DEBUG: Resp Path present.. returing message.. data={0}".format(retval)
 			messaging.publish_command(parsed_msg['resp_path'],'DATA',retval)
 		
 	return True # Important! Returning true re-enables idle routine.
