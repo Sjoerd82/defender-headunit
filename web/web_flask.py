@@ -528,7 +528,7 @@ def post_player_seek_incrsec(incr_sec):
 
 #Update Library (MPD)
 @app.route('/hu/api/v1.0/player/update', methods=['GET'])
-def get_player_next():
+def get_player_update():
 	retmsg = messaging.publish_command('/player/update','PUT', None, False)
 	return "OK"
 	
