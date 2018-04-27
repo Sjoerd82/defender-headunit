@@ -33,7 +33,7 @@ def parse_message(message):
 	resp_path = []
 	
 	raw_path_resp_cmd = message.split(" ",1) #maxsplit=1, seperating at the first space [0]=paths, [1]=cmd+params
-	raw_path_resp = raw_path_resp_cmd[0].split("+",1) # [0] = path, [1] = respones path
+	raw_path_resp = raw_path_resp_cmd[0].split("+",1) # [0] = path, [1] = response path
 	raw_cmd_par   = raw_path_resp_cmd[1].split(":",1)	#maxsplit=1,seperating at the first semicolon. [0]=cmd, [1]=param(s)
 	
 	# extract path
@@ -223,8 +223,17 @@ class MqPubSubFwdController(object):
 				# todo: have a look at what's returned?
 				# read response from the server
 				response = self.reply_subscriber.recv()
+				print "------------"
+				print "RAW:"
 				print response
-				#parsed_response = parse_message(response)
+				print "PARSED:"
+				parsed_response = parse_message(response)
+				print parsed_response
+				
+				#? this ok? clean-up?
+				# check response?
+				return parsed_response
+				
 			else:
 				print "DEBUG: NOPE"
 				
