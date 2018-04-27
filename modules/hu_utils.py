@@ -126,7 +126,7 @@ def dict_track(	display=None
 	track['folder'] = folder
 	track['genre'] = genre
 	track['date'] = date
-	return track()
+	return track
 
  
 def printer( message, level=LL_INFO, tag="",logger_name=""):
