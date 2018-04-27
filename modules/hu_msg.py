@@ -224,9 +224,11 @@ class MqPubSubFwdController(object):
 			
 			if events:
 				print "DEBUG: YES!"
+				print events
 				# todo: have a look at what's returned?
 				# read response from the server
 				response = self.reply_subscriber.recv()
+				print response
 				#parsed_response = parse_message(response)
 			else:
 				print "DEBUG: NOPE"
