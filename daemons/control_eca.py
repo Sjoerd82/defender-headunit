@@ -252,9 +252,9 @@ def parse_args():
 	import argparse
 	global args
 
-	print "****************************************"
-	print WELCOME
-	print "****************************************"
+	print "************************************************************"
+	print "* "+WELCOME
+	print "************************************************************"
 	
 	parser = argparse.ArgumentParser(description=DESCRIPTION)
 	parser.add_argument('--loglevel', action='store', default=DEFAULT_LOG_LEVEL, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)
@@ -340,7 +340,7 @@ def setup():
 		if args.port_subscriber:
 			configuration['zeromq']['port_subscriber'] = args.port_subscriber
 	
-	configuration_ecasound = configuration['ecasound']
+	cfg_ecasound = configuration['ecasound']
 	print "DEBUG, ecasound configuration:"
 	print cfg_ecasound	
 	print cfg_ecasound['chainsetup']
