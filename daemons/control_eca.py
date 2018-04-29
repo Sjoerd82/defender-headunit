@@ -344,14 +344,14 @@ def setup():
 
 	print configuration['system_configuration']['ecasound_ecs']
 	cs_location = configuration['system_configuration']['ecasound_ecs']['location']
-	print "DEBUG, ecasound location:"
-	print cs_location
 	
-	ecs_file = os.path.join(cs_location,cfg_ecasound['chainsetup'])
+	ecs_file = os.path.join(cs_location,cfg_ecasound['chainsetup']+'.ecs')
 	print "DEBUG, ecs file:"
 	print ecs_file
 
-	if not os.path.exists(defaultconfig):
+	if os.path.exists(ecs_file):
+		printer("Using chainsetup: {0}".format(ecs_file))
+	else:
 		printer("Not found: {0}".format(ecs_file))
 		exit(1)
 	
