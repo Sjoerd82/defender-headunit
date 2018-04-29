@@ -46,7 +46,7 @@
 		{
 		  "name":"Control: ADS1x15"
 		, "init.d":"S71ads1x15"
-		}
+		},
 		{
 			  "name": "Control: GPIO"
 			, "init.d":"S72ctrlgpio"
