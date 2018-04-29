@@ -370,7 +370,7 @@ def setup():
 		exit(1)
 	
 	chains = eca.command("c-list")
-	printer("Chainsetup contains chains:")
+	printer("Chainsetup contains chains and operators:")
 	for chain in chains:
 		printer("Chain: {0}".format(chain))
 		eca.command("c-select {0}".format(chain))
@@ -378,21 +378,20 @@ def setup():
 		for chain_op in chain_ops:
 			printer(" - {0}".format(chain_op))
 	
-	# TEST: Amp chain
+	# TEST: Amp chain (Volume Control)
 	if cfg_ecasound['chain_master_amp'] not in chains:
 		printer("Master amp chain ({0}) not found!".format(cfg_ecasound['chain_master_amp']))
 	else:
 		eca.command("c-select {0}".format(cfg_ecasound['chain_master_amp']))
 		eca_chain_selected = eca.command("c-selected")
 		if cfg_ecasound['chain_master_amp'] in eca_chain_selected:
-		
-			# Select Amplify operator
-			eca.command("cop-select Amplify")
-			chain_op_selected = eca.command("cop-selected")
-			print chain_op_selected
-			print eca.command('copp-list')
-		
-			printer("Master amp chain: {0} [OK]".format(cfg_ecasound['chain_master_amp']))
+
+			chain_ops = eca.command("cop-list")
+			if 'Amplify' not in chain_ops:		
+				printer("Master amp chain: {0} [OK]".format(cfg_ecasound['chain_master_amp']))
+			else:
+				printer("Operator 'Amplify' not found!")	
+
 		else:
 			printer("Could not select master amp chain!",level=LL_CRITICAL)
 			eca.command("stop")
@@ -411,6 +410,8 @@ def setup():
 	else:
 		printer("EQ chain: {0}".format(cfg_ecasound['chain_eq']))
 
+	printer("Current amp level: {0}%".format(eca_get_effect_amplification()))
+	
 	#
 	# ZMQ
 	#
@@ -434,9 +435,9 @@ def main():
 	mainloop = gobject.MainLoop()
 
 	
-	#eca_get_indexes()
-	
+	#eca_get_indexes()	
 
+	"""
 	print "DEBUG"
 	print "Chain: 'default', all operators:"
 	print eca.command("cop-list")
@@ -452,6 +453,7 @@ def main():
 	time.sleep(5)
 	eca.command('copp-set {0}'.format(test_volume))
 	print eca.command('copp-get')
+	"""
 	
 	# Initialize MQ message receiver
 	gobject.idle_add(handle_mq_message)
