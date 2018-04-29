@@ -379,11 +379,13 @@ def setup():
 	else:
 		eca.command("c-select {0}".format(cfg_ecasound['chain_master_amp']))
 		eca_chain_selected = eca.command("c-selected")
+		print eca_chain_selected
 		if cfg_ecasound['chain_master_amp'] == eca_chain_selected:
 			printer("Master amp chain: {0} [OK]".format(cfg_ecasound['chain_master_amp']))
-			
 		else:
 			printer("Could not select master amp chain!",level=LL_CRITICAL)
+			eca.command("stop")
+			eca.command("cs-disconnect")
 			exit(1)
 
 	if cfg_ecasound['chain_mute'] not in chains:
