@@ -341,32 +341,14 @@ def setup():
 			configuration['zeromq']['port_subscriber'] = args.port_subscriber
 	
 	cfg_ecasound = configuration['ecasound']
-
-	print configuration['system_configuration']['ecasound_ecs']
 	cs_location = configuration['system_configuration']['ecasound_ecs']['location']
-	
 	ecs_file = os.path.join(cs_location,cfg_ecasound['chainsetup']+'.ecs')
-	print "DEBUG, ecs file:"
-	print ecs_file
-
 	if os.path.exists(ecs_file):
-		printer("Using chainsetup: {0}".format(ecs_file))
+		printer("Using chainsetup: {0} [OK]".format(ecs_file))
 	else:
-		printer("Not found: {0}".format(ecs_file))
+		printer("Not found: {0}".format(ecs_file),level=LL_CRITICAL)
 		exit(1)
 	
-	#
-	# ZMQ
-	#
-	printer("ZeroMQ: Initializing")
-	messaging = MqPubSubFwdController('localhost',DEFAULT_PORT_PUB,DEFAULT_PORT_SUB)
-	
-	printer("ZeroMQ: Creating Subscriber: {0}".format(DEFAULT_PORT_SUB))
-	messaging.create_subscriber(SUBSCRIPTIONS)
-
-	printer("ZeroMQ: Creating Publisher: {0}".format(DEFAULT_PORT_PUB))
-	messaging.create_publisher()
-
 	#
 	# ECA
 	#	
@@ -378,8 +360,14 @@ def setup():
 	eca.command("cs-connect")
 	eca.command("start")
 	
-	printer("Loaded chainsetup:")
-	printer(eca.command("cs-selected"))
+	eca_chain_selected = eca.command("cs-selected")
+	if eca_chain_selected is not None:
+		printer("Loaded chainsetup: {0}".format(eca_chain_selected))
+	else:
+		printer("Could not select chainsetup!",level=LL_CRITICAL)
+		eca.command("stop")
+		eca.command("cs-disconnect")
+		exit(1)
 	
 	chains = eca.command("c-list")
 	printer("Chainsetup contains chains:")
@@ -407,7 +395,19 @@ def setup():
 		printer("EQ chain ({0}) not found!".format(cfg_ecasound['chain_eq']))
 	else:
 		printer("EQ chain: {0}".format(cfg_ecasound['chain_eq']))
+
+	#
+	# ZMQ
+	#
+	printer("ZeroMQ: Initializing")
+	messaging = MqPubSubFwdController('localhost',DEFAULT_PORT_PUB,DEFAULT_PORT_SUB)
 	
+	printer("ZeroMQ: Creating Subscriber: {0}".format(DEFAULT_PORT_SUB))
+	messaging.create_subscriber(SUBSCRIPTIONS)
+
+	printer("ZeroMQ: Creating Publisher: {0}".format(DEFAULT_PORT_PUB))
+	messaging.create_publisher()
+		
 	printer('Initialized [OK]')
 
 def main():
