@@ -58,7 +58,7 @@
 				, "mode":"volume"
 			}
 			, "switch_1" {
-				, "sw":5
+				  "sw":5
 				, "short":"source"
 				, "long":"volume"
 			}
