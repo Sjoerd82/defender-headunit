@@ -361,7 +361,7 @@ def setup():
 	eca.command("start")
 	
 	eca_chain_selected = eca.command("cs-selected")
-	if eca_chain_selected is not None:
+	if eca_chain_selected[:5] is not 'ERROR':
 		printer("Loaded chainsetup: {0}".format(eca_chain_selected))
 	else:
 		printer("Could not select chainsetup!",level=LL_CRITICAL)
