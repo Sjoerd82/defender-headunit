@@ -239,8 +239,11 @@
 							, "ea":		"100"
 						}
 					,   {
+							  "a":		"tweeter,woofer"
+							, "i":		"loop,1"							  
+						}
+					,   {
 							  "a":		"tweeter"
-							, "i":		"loop,1"
 							, "o":		"alsa"
 							, "f":		"16,4,44100"
 							, "pf":		"/usr/share/ecasound/tweeter.ecp"
@@ -248,7 +251,6 @@
 						}
 					,   {
 							  "a":		"woofer"
-							, "i":		"loop,1"
 							, "o":		"alsa"
 							, "f":		"16,4,44100"
 							, "pf":		"/usr/share/ecasound/woofer.ecp"

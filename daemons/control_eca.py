@@ -39,6 +39,7 @@ from hu_msg import parse_message
 # Global variables and constants
 #
 DESCRIPTION = "Ecasound Controller"
+WELCOME = "Ecasound Controller Daemon"
 LOG_TAG = 'ECASND'
 LOGGER_NAME = 'ecasnd'
 
@@ -59,6 +60,7 @@ ECA_CHAIN_EQ = None				# chain object that contains the equalizer
 eca_chain_op_master_amp = None
 att_level = 20		# TODO, get from configuration
 test_volume = 50
+eca_chain_selected = None
 
 logger = None
 args = None
@@ -118,6 +120,7 @@ def eca_get_effect_amplification():
 	return ea_value
 	
 def eca_set_effect_amplification(level):
+	#eca_chain_selected
 	eca.command("c-select '{0}'".format(ECA_CHAIN_MASTER_AMP))
 	eca.command("cop-select '{0}'".format(eca_chain_op_master_amp))
 	eca.command("copp-select '0'")
@@ -249,6 +252,10 @@ def parse_args():
 	import argparse
 	global args
 
+	print "****************************************"
+	print WELCOME
+	print "****************************************"
+	
 	parser = argparse.ArgumentParser(description=DESCRIPTION)
 	parser.add_argument('--loglevel', action='store', default=DEFAULT_LOG_LEVEL, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)
 	parser.add_argument('--config','-c', action='store', help='Configuration file', default=DEFAULT_CONFIG_FILE)
@@ -332,7 +339,27 @@ def setup():
 			configuration['zeromq']['port_publisher'] = args.port_publisher
 		if args.port_subscriber:
 			configuration['zeromq']['port_subscriber'] = args.port_subscriber
-			
+	
+	configuration_ecasound = configuration['ecasound']
+	print "DEBUG, ecasound configuration:"
+	print cfg_ecasound	
+	print cfg_ecasound['chainsetup']
+	print cfg_ecasound['chain_master_amp']
+	print cfg_ecasound['chain_mute']	
+	print cfg_ecasound['chain_eq']
+	
+	cs_location = configuration['ecasound_ecs']['location']
+	print "DEBUG, ecasound location:"
+	print cs_location
+	
+	ecs_file = os.path.join(cs_location,cfg_ecasound['chainsetup'])
+	print "DEBUG, ecs file:"
+	print ecs_file
+
+	if not os.path.exists(defaultconfig):
+		printer("Not found: {0}".format(ecs_file))
+		exit(1)
+	
 	#
 	# ZMQ
 	#
@@ -347,23 +374,58 @@ def setup():
 
 	#
 	# ECA
-	#
+	#	
 	global eca
 	os.environ['ECASOUND'] = '/usr/bin/ecasound --server'
 	eca = ECA_CONTROL_INTERFACE(2)	# # debug level (0, 1, 2, ...)
 	
-	eca.command("cs-load /mnt/PIHU_APP/defender-headunit/ecp/jack_alsa_xover_2ch_m.ecs")
+	eca.command("cs-load {0}".format(ecs_file))
 	eca.command("cs-connect")
 	eca.command("start")
 	
-	#eca_get_indexes()
-	printer('Initialized [OK]')
+	printer("Loaded chainsetup:")
+	printer(eca.command("cs-selected"))
 	
-	print "DEBUG"
-	print "All chains:"
-	print eca.command("c-select pre")
-	print "Selected:"
-	print eca.command("c-selected")
+	chains = eca.command("c-list")
+	printer("Chainsetup contains chains:")
+	for chain in chains:
+		printer("{0}".format(chain))
+	
+	if cfg_ecasound['chain_master_amp'] not in chains:
+		printer("Master amp chain ({0}) not found!".format(cfg_ecasound['chain_master_amp']))
+	else:
+		eca.command("c-select {0}".format(cfg_ecasound['chain_master_amp']))
+		eca_chain_selected = eca.command("c-selected")
+		if cfg_ecasound['chain_master_amp'] == eca_chain_selected:
+			printer("Master amp chain: {0} [OK]".format(cfg_ecasound['chain_master_amp']))
+			
+		else:
+			printer("Could not select master amp chain!",level=LL_CRITICAL)
+			exit(1)
+
+	if cfg_ecasound['chain_mute'] not in chains:
+		printer("Mute chain ({0}) not found!".format(cfg_ecasound['chain_mute']))
+	else:
+		printer("Mute chain: {0}".format(cfg_ecasound['chain_mute']))
+		
+	if cfg_ecasound['chain_eq'] not in chains:
+		printer("EQ chain ({0}) not found!".format(cfg_ecasound['chain_eq']))
+	else:
+		printer("EQ chain: {0}".format(cfg_ecasound['chain_eq']))
+	
+	printer('Initialized [OK]')
+
+def main():
+
+	global bus
+	
+	# Initialize the mainloop
+	DBusGMainLoop(set_as_default=True)
+	mainloop = gobject.MainLoop()
+
+	
+	#eca_get_indexes()
+	
 
 	print "DEBUG"
 	print "Chain: 'default', all operators:"
@@ -381,17 +443,6 @@ def setup():
 	eca.command('copp-set {0}'.format(test_volume))
 	print eca.command('copp-get')
 	
-	
-
-
-def main():
-
-	global bus
-	
-	# Initialize the mainloop
-	DBusGMainLoop(set_as_default=True)
-	mainloop = gobject.MainLoop()
-
 	# Initialize MQ message receiver
 	gobject.idle_add(handle_mq_message)
 
