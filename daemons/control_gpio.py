@@ -47,6 +47,10 @@ messaging = None
 
 encoder1_cnt = 0
 encoder1_last_clk_state = None
+#temp
+clk = None
+dt = None
+
 
 # ********************************************************************************
 # Output wrapper
@@ -144,9 +148,12 @@ def setup():
 	global encoder1_last_clk_state
 	GPIO.setmode(GPIO.BCM)
 
-	print configuration['daemons'][4]
 	cfg_ctrlgpio = configuration['daemons'][4]
-	
+
+	#temp:
+	global clk
+	global dt
+
 	clk = cfg_ctrlgpio['encoder_1']['clk']
 	dt = cfg_ctrlgpio['encoder_1']['dt']
 	#btn = cfg_ctrlgpio['encoder_1']['btn']
@@ -161,7 +168,11 @@ def main():
 
 	global encoder1_cnt
 	global encoder1_last_clk_state
-	 
+	
+	#temp:
+	global clk
+	global dt
+	
 	def button_down_wait():		
 		#printer("Waiting for button to be released...")
 		value_0 = adc.read_adc(0)
