@@ -47,6 +47,22 @@
 		  "name":"Control: ADS1x15"
 		, "init.d":"S71ads1x15"
 		}
+		{
+			  "name": "Control: GPIO"
+			, "init.d":"S72ctrlgpio"
+			, "gpio_mode":"BCM"
+			, "encoder_1": {
+				  "clk":13
+				, "dt":6
+				, "sw":5
+				, "mode":"volume"
+			}
+			, "switch_1" {
+				, "sw":5
+				, "short":"source"
+				, "long":"volume"
+			}
+		}
 	]
 	, "audio_output": {
 		"pulse-sink": "alsa_output.platform-soc_sound.analog-stereo"

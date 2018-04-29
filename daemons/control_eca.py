@@ -181,7 +181,7 @@ def handle_path_volume(path,cmd,params):
 	ret = None
 	if function_to_call in locals():
 		ret = locals()[function_to_call](params)
-		printer('Executed {0} function {1} with result status: {2}'.format(base_path,function_to_call,ret))
+		printer('Executed {0} function {1} with result status: {2}'.format(base_path,function_to_call,ret),level=LL_DEBUG)
 	else:
 		printer('Function {0} does not exist'.format(function_to_call))
 
@@ -211,7 +211,7 @@ def handle_path_equalizer(path,cmd,args):
 	ret = None
 	if function_to_call in locals():
 		ret = locals()[function_to_call](args)
-		printer('Executed {0} function {1} with result status: {2}'.format(base_path,function_to_call,ret))
+		printer('Executed {0} function {1} with result status: {2}'.format(base_path,function_to_call,ret),level=LL_DEBUG)
 	else:
 		printer('Function {0} does not exist'.format(function_to_call))
 
