@@ -125,7 +125,8 @@ def eca_set_effect_amplification(level):
 	eca.command("cop-select '{0}'".format(eca_chain_op_master_amp))
 	eca.command("copp-select '0'")
 	eca.command("cop-set '{0}'".format(level))
-
+	return level
+	
 def eca_mute(state):
 	""" state can be: 'on', 'off' or 'toggle' """
 	eca.command("c-select '{0}'".format(ECA_CHAIN_MUTE))
@@ -152,13 +153,16 @@ def handle_path_volume(path,cmd,args):
 		global test_volume
 		test_volume += 5
 		eca.command('copp-set {0}'.format(test_volume))
-		print "increased"
+		if not args.b:
+			printer("Amp level: {0}%".format(test_volume))
+
 		
 	def put_decrease(args):
 		global test_volume
 		test_volume -= 5
 		eca.command('copp-set {0}'.format(test_volume))
-		print "decreased"
+		if not args.b:
+			printer("Amp level: {0}%".format(test_volume))
 		
 	def put_att(args):
 		# arg can be: <str:on|off|toggle>,[int:Volume, in %]
@@ -231,7 +235,7 @@ def handle_mq_message():
 		
 	rawmsg = messaging.poll(timeout=None)				#None=Blocking
 	if rawmsg:
-		printer("Received message: {0}".format(rawmsg))	#TODO: debug
+		printer("Received message: {0}".format(rawmsg),level=LL_DEBUG)
 		parsed_msg = parse_message(rawmsg)
 
 		# send message to dispatcher for handling	
@@ -259,6 +263,7 @@ def parse_args():
 	parser = argparse.ArgumentParser(description=DESCRIPTION)
 	parser.add_argument('--loglevel', action='store', default=DEFAULT_LOG_LEVEL, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)
 	parser.add_argument('--config','-c', action='store', help='Configuration file', default=DEFAULT_CONFIG_FILE)
+	#parser.add_argument('-v', action='store_true', default=False)
 	parser.add_argument('-b', action='store_true', default=False)
 	parser.add_argument('--port_publisher', action='store')
 	parser.add_argument('--port_subscriber', action='store')
@@ -387,11 +392,14 @@ def setup():
 		if cfg_ecasound['chain_master_amp'] in eca_chain_selected:
 
 			chain_ops = eca.command("cop-list")
-			if 'Amplify' not in chain_ops:		
+			if 'amp-%' not in chain_ops:		
 				printer("Master amp chain: {0} [OK]".format(cfg_ecasound['chain_master_amp']))
 			else:
-				printer("Operator 'Amplify' not found!")	
-
+				printer("Operator 'Amplify' not found!",level=LL_CRITICAL)
+				eca.command("stop")
+				eca.command("cs-disconnect")
+				exit(1)
+				
 		else:
 			printer("Could not select master amp chain!",level=LL_CRITICAL)
 			eca.command("stop")
