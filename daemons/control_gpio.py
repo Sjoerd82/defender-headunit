@@ -217,10 +217,13 @@ def main():
 				encoder1_cnt += 1
 				zmq_path = "/volume/increase"
 				zmq_cmd = "PUT"
+				handle_button_press(zmq_path,zmq_cmd)
 			else:
 				encoder1_cnt -= 1
-				zmq_path = "/volume/increase"
-
+				zmq_path = "/volume/decrease"
+				zmq_cmd = "PUT"
+				handle_button_press(zmq_path,zmq_cmd)
+				
 			print encoder1_cnt
 		encoder1_last_clk_state = clkState
 		
