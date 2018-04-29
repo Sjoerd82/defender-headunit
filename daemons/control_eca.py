@@ -372,15 +372,26 @@ def setup():
 	chains = eca.command("c-list")
 	printer("Chainsetup contains chains:")
 	for chain in chains:
-		printer("{0}".format(chain))
+		printer("Chain: {0}".format(chain))
+		eca.command("c-select {0}".format(chain))
+		chain_ops = eca.command("cop-list")
+		for chain_op in chain_ops:
+			printer(" - {0}".format(chain_op))
 	
+	# TEST: Amp chain
 	if cfg_ecasound['chain_master_amp'] not in chains:
 		printer("Master amp chain ({0}) not found!".format(cfg_ecasound['chain_master_amp']))
 	else:
 		eca.command("c-select {0}".format(cfg_ecasound['chain_master_amp']))
 		eca_chain_selected = eca.command("c-selected")
-		print eca_chain_selected
-		if cfg_ecasound['chain_master_amp'] == eca_chain_selected:
+		if cfg_ecasound['chain_master_amp'] in eca_chain_selected:
+		
+			# Select Amplify operator
+			eca.command("cop-select Amplify")
+			chain_op_selected = eca.command("cop-selected")
+			print chain_op_selected
+			print eca.command('copp-list')
+		
 			printer("Master amp chain: {0} [OK]".format(cfg_ecasound['chain_master_amp']))
 		else:
 			printer("Could not select master amp chain!",level=LL_CRITICAL)
@@ -388,11 +399,13 @@ def setup():
 			eca.command("cs-disconnect")
 			exit(1)
 
+	# TEST: Mute chain (#TODO!)
 	if cfg_ecasound['chain_mute'] not in chains:
 		printer("Mute chain ({0}) not found!".format(cfg_ecasound['chain_mute']))
 	else:
 		printer("Mute chain: {0}".format(cfg_ecasound['chain_mute']))
 		
+	# TEST: EQ chain (#TODO!)
 	if cfg_ecasound['chain_eq'] not in chains:
 		printer("EQ chain ({0}) not found!".format(cfg_ecasound['chain_eq']))
 	else:
