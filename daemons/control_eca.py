@@ -132,17 +132,17 @@ def eca_mute(state):
 	eca.command("c-select '{0}'".format(ECA_CHAIN_MUTE))
 	eca.command("c-mute '{0}'".format(state))
 	
-def handle_path_volume(path,cmd,args):
+def handle_path_volume(path,cmd,params):
 
 	base_path = 'volume'
 	# remove base path
 	del path[0]
 
-	def get_master(args):
+	def get_master(params):
 		level = eca_get_effect_amplification()
 		print level
 
-	def put_master(args):
+	def put_master(params):
 	
 		# arg can be: <str:up|down|+n|-n|att>
 	
@@ -163,14 +163,14 @@ def handle_path_volume(path,cmd,args):
 		if not args.b:
 			printer("Amp level: {0}%".format(test_volume))
 		
-	def put_att(args):
+	def put_att(params):
 		# arg can be: <str:on|off|toggle>,[int:Volume, in %]
 
 		eca_set_effect_amplification(att_level)
 
-	def put_mute(args):
+	def put_mute(params):
 		#arg can be <str:on|off|toggle>
-		eca_mute(arg)
+		eca_mute(params)
 	
 	if path:
 		function_to_call = cmd + '_' + '_'.join(path)
@@ -180,7 +180,7 @@ def handle_path_volume(path,cmd,args):
 
 	ret = None
 	if function_to_call in locals():
-		ret = locals()[function_to_call](args)
+		ret = locals()[function_to_call](params)
 		printer('Executed {0} function {1} with result status: {2}'.format(base_path,function_to_call,ret))
 	else:
 		printer('Function {0} does not exist'.format(function_to_call))
