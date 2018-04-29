@@ -341,14 +341,9 @@ def setup():
 			configuration['zeromq']['port_subscriber'] = args.port_subscriber
 	
 	cfg_ecasound = configuration['ecasound']
-	print "DEBUG, ecasound configuration:"
-	print cfg_ecasound	
-	print cfg_ecasound['chainsetup']
-	print cfg_ecasound['chain_master_amp']
-	print cfg_ecasound['chain_mute']	
-	print cfg_ecasound['chain_eq']
-	
-	cs_location = configuration['ecasound_ecs']['location']
+
+	print configuration['system_configuration']['ecasound_ecs']
+	cs_location = configuration['system_configuration']['ecasound_ecs']['location']
 	print "DEBUG, ecasound location:"
 	print cs_location
 	
