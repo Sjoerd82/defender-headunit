@@ -149,7 +149,7 @@ def setup():
 	
 	clk = cfg_ctrlgpio['encoder_1']['clk']
 	dt = cfg_ctrlgpio['encoder_1']['dt']
-	btn = cfg_ctrlgpio['encoder_1']['btn']
+	#btn = cfg_ctrlgpio['encoder_1']['btn']
 	GPIO.setup(clk, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 	GPIO.setup(dt, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 	encoder1_cnt = 0
