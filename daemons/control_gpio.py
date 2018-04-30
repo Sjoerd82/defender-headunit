@@ -215,7 +215,6 @@ def setup():
 	# map pins to functions
 	for ix, function in enumerate(cfg_ctrlgpio['functions']):
 		if 'encoder' in function:		
-			#device = cfg_ctrlgpio['devices'][function['encoder']]
 			device = get_device_config(function['encoder'])
 			pin_clk = device['clk']
 			
@@ -227,10 +226,19 @@ def setup():
 				pins_function[ pin_clk ].append( ix )
 			
 		if 'short_press' in function:
-			pass
-		
+			for short_press_button in short_press:
+				device = get_device_config(short_press_button)
+				pin_sw = device['sw']
+				if pin_sw in pins_function:
+					pins_function[ pin_sw ].append( ix )
+				else:
+					pins_function[ pin_sw ] = []
+					pins_function[ pin_sw ].append( ix )
+				
 		if 'long_press' in function:
 			pass
+		
+	print pins_function
 		
 	# check for any duplicates, but don't exit on it. (#todo: consider making this configurable)
 	if len(pins_monitor) != len(set(pins_monitor)):
@@ -301,6 +309,10 @@ def main():
 		
 	def handle_pin_change(pin,value_old,value_new):
 		print "DEBUG: handle pin change for pin: {0}".format(pin)
+		
+		if pin not in pins_function:
+			print "WHat??"
+			return None
 		
 		for function_ix in pins_function[pin]:
 			

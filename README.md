@@ -189,8 +189,8 @@ Reference Setup
 21 BCM 9 (MISO)		SPI MISO
 23 BCM 11 (SCLK)	SPI CLCK
 25 Ground			SPI GND
-27 BCM 0 (ID_SD)	Encoder2 ?
-29 BCM 5			Encoder2 ?
+27 BCM 0 (ID_SD)	Encoder2 DT
+29 BCM 5			Encoder2 CLK
 31 BCM 6			Encoder1 DT
 33 BCM 13 (PWM1)	Encoder1 CLK
 35 BCM 19 (MISO)	DAC (i2s)
