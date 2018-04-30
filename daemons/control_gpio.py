@@ -64,6 +64,8 @@ logger = None
 args = None
 messaging = None
 
+cfg_ctrlgpio = None
+
 encoder1_cnt = 0
 encoder1_last_clk_state = None
 #temp
@@ -179,6 +181,7 @@ def setup():
 	global encoder1_cnt
 	global encoder1_last_clk_state
 	global pins_monitor
+	global cfg_ctrlgpio
 	cfg_ctrlgpio = configuration['daemons'][4]
 
 	GPIO.setmode(GPIO.BCM)
