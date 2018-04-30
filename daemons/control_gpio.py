@@ -224,12 +224,12 @@ def setup():
 
 			# pins_function is a dictionary of pins
 			if pin_clk in pins_function:
-				print "NEW"
-				pins_function[ pin_clk ].append( ix )	#functions['name']
-			else:
 				print "EXISTING"
+				pins_function[ pin_clk ].append( ix+1 )	#functions['name']
+			else:
+				print "NEW"
 				pins_function[ pin_clk ] = []
-				pins_function[ pin_clk ].append( ix )
+				pins_function[ pin_clk ].append( ix+1 )	# 1-based index
 			
 		if 'short_press' in function:
 			pass
