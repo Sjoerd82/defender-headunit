@@ -41,6 +41,24 @@ DEFAULT_PORT_SUB = 5560
 
 DELAY = 0.005
 
+FUNCTIONS = [
+	'VOLUME',
+	'BASS',
+	'TREBLE',
+	'SOURCE',
+	'POWEROFF',
+	'NEXT_TRACK',
+	'NEXT_FOLDER',
+	'PREV_TRACK',
+	'PREV_FOLDER',
+	'RANDOM',
+	'MENU_ENTER',
+	'MENU_SCROLL',
+	'MENU_SELECT' ]
+
+function_map['VOLUME'] = { "zmq_path":"volume", "zmq_command":"PUT" }
+
+
 logger = None
 args = None
 messaging = None
@@ -51,6 +69,11 @@ encoder1_last_clk_state = None
 clk = None
 dt = None
 
+pins_monitor = []		# list of pins to monitor
+pins_state = {}			# pin (previous) state
+pins_function = {}		# pin function(s)
+
+active_modes = []
 
 # ********************************************************************************
 # Output wrapper
@@ -146,10 +169,61 @@ def setup():
 	#
 	global encoder1_cnt
 	global encoder1_last_clk_state
-	GPIO.setmode(GPIO.BCM)
-
+	global pins_monitor
 	cfg_ctrlgpio = configuration['daemons'][4]
 
+	GPIO.setmode(GPIO.BCM)
+
+	# init all pins in configuration
+	for device in cfg_ctrlgpio['devices']:
+		if 'sw' in device:
+			pin = cfg_ctrlgpio['devices']['sw']
+			pins_monitor.append(pin)
+			GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)	
+			pins_state[pin] = GPIO.input(pin)
+		if 'clk' in device:
+			pin = cfg_ctrlgpio['devices']['clk']
+			pins_monitor.append(pin)
+			GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)	
+			pins_state[pin] = GPIO.input(pin)
+		#We don't need to monitor the DT-pin!
+		#if 'dt' in device:
+			pin = cfg_ctrlgpio['devices']['dt']
+			#pins_monitor.append(pin)
+			GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)	
+			pins_state[pin] = GPIO.input(pin)
+		
+		if 'type' == 'rotenc':
+			#encoder1_last_clk_state = GPIO.input(clk)
+			#encoder1_cnt = 0
+			pass
+
+	# map pins to functions
+	for iter, function in cfg_ctrlgpio['functions']:
+		if 'encoder' in function:		
+			device = cfg_ctrlgpio['devices'][functions['encoder']]
+			pin_clk = device['clk']
+			if pin_clk in pins_function:
+				pins_function[ pin_clk ].append( iter )	#functions['name']
+			else:
+				pins_function[ pin_clk ] = []
+				pins_function[ pin_clk ].append( iter )
+			
+		if 'short_press' in function:
+			pass
+		
+		if 'long_press' in function:
+			pass
+			
+	# check for any duplicates, but don't exit on it. (#todo: consider making this configurable)
+	if len(pins_monitor) != len(set(pins_monitor)):
+		printer("WARNING: Same pin used multiple times, this may lead to unpredictable results.",level=LL_WARNING)
+		pins_monitor = set(pins_monitor) # no use in keeping duplicates
+	
+	# initialize pins
+	#for pin in pins_monitor:
+	#	GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)	
+	
 	#temp:
 	global clk
 	global dt
@@ -157,8 +231,8 @@ def setup():
 	clk = cfg_ctrlgpio['encoder_1']['clk']
 	dt = cfg_ctrlgpio['encoder_1']['dt']
 	#btn = cfg_ctrlgpio['encoder_1']['btn']
-	GPIO.setup(clk, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-	GPIO.setup(dt, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+	#GPIO.setup(clk, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+	#GPIO.setup(dt, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 	encoder1_cnt = 0
 	encoder1_last_clk_state = GPIO.input(clk)
 
@@ -204,12 +278,74 @@ def main():
 		else:
 			printer('No function configured for this button')
 		"""
+		
+	def get_device_config(name):
+		for device in cfg_ctrlgpio['devices']:
+			if device['name'] = name:
+				return device
+		return None
 	
-	long_press_ix = None
-	long_press_start = None
-	
+	def handle_pin_change(pin):
+		print "DEBUG: handle pin change for pin: {0}".format(pin)
+		
+		print "function(s) on this pin are:"
+		print pins_function[pin]
+		
+		for function_ix in pins_function:
+			#examine if func meets all requirements
+			func_cfg = cfg_ctrlgpio['functions'][function_ix]
+			ok = True
+			
+			# check mode
+			if 'mode' in func_cfg and func_cfg['mode'] not in active_modes:
+				print "DEBUG: not in the required mode"
+			else:
+				# encoder: check dt pin
+				if 'encoder' in func_cfg:
+					device_cfg = get_device_config( cfg_ctrlgpio['encoder'] )
+					pin_clk = pin
+					pin_dt = device_cfg['dt']
+					#if dtState != clkState:
+					if pins_state[dt] != pins_state[clk]:
+						print function_map[func_cfg['function']]
+						#function_map[func_cfg['function']] = { "zmq_path":"volume", "zmq_command":"PUT" }
+						print "ENCODER: INCREASE"
+					else:
+						print function_map[func_cfg['function']]
+						print "ENCODER: DECREASE"
+
+				# switch (long or short): check if other switches need to be engaged
+				elif 'short_press' in func_cfg:
+					if len( func_cfg['short_press'] ) == 1:
+						print function_map[func_cfg['function']]
+						# assume(?) it's the same gpio number?
+					else:
+						#check if other buttons are pressed
+						for switch in func_cfg['short_press']:
+							switch_cfg = get_device_config( switch )
+							i = 0
+							if GPIO.input(switch_cfg['sw']) == switch_cfg['on']:
+								i += 1
+								
+						if i == len(func_cfg['short_press']):								
+							print function_map[func_cfg['function']]
+						
+				#elif 'long_press' in .. #todo
+				else:
+					printer("Unsupported device or incomplete configuration",level=LL_WARNING)
+							
+			
 	while True:
 
+		# get all states
+		for pin in pins_monitor:
+			if pins_state[pin] != GPIO.input(pin)
+				pins_state[pin] = GPIO.input(pin)
+				# handle this pin, pref. asynchronous..
+				handle_pin_change(pin)
+				
+	
+	"""
 		clkState = GPIO.input(clk)
 		dtState = GPIO.input(dt)
 		if clkState != encoder1_last_clk_state:
@@ -226,6 +362,7 @@ def main():
 				
 			print encoder1_cnt
 		encoder1_last_clk_state = clkState
+	"""
 		
 		"""
 		
