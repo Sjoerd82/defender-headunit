@@ -59,6 +59,7 @@ FUNCTIONS = [
 
 function_map = {}
 function_map['VOLUME'] = { "zmq_path":"volume", "zmq_command":"PUT" }
+function_map['SOURCE'] = { "zmq_path":"source", "zmq_command":"PUT" }
 
 
 logger = None
