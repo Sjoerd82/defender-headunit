@@ -319,7 +319,7 @@ def main():
 					#if clkState != encoder1_last_clk_state:
 					#  if dtState != clkState:
 					if value_new != value_old:
-						if GPIO.input([pin_dt]) != value_new:
+						if GPIO.input(pin_dt) != value_new:
 							print function_map[func_cfg['function']]
 							#function_map[func_cfg['function']] = { "zmq_path":"volume", "zmq_command":"PUT" }
 							print "ENCODER: INCREASE"
