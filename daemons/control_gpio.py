@@ -212,15 +212,21 @@ def setup():
 
 	# map pins to functions
 	for ix, function in enumerate(cfg_ctrlgpio['functions']):
+		print "DEBUG: [a] {0}:{1}".format(ix,function)
 		if 'encoder' in function:		
 			#device = cfg_ctrlgpio['devices'][function['encoder']]
 			device = get_device_config(function['encoder'])
 			pin_clk = device['clk']
+			
+			print "DEBUG: [b] device:{0}".format(device)
+
+			'''
 			if pin_clk in pins_function:
 				pins_function[ pin_clk ].append( ix )	#functions['name']
 			else:
 				pins_function[ pin_clk ] = []
 				pins_function[ pin_clk ].append( ix )
+			'''
 			
 		if 'short_press' in function:
 			pass
@@ -298,7 +304,7 @@ def main():
 	def handle_pin_change(pin):
 		print "DEBUG: handle pin change for pin: {0}".format(pin)
 		
-		print "function(s) on this pin are:"
+		print "function(s) on this pin are (indexes):"
 		print pins_function[pin]
 		
 		for function_ix in pins_function:

@@ -59,27 +59,27 @@
 				},
 				{ 	  "name": "bas_encoder"
 					, "type": "rotenc"
-					, "clk":13
-					, "dt":6
+					, "clk":5
+					, "dt":0
 				},
 				{ 	  "name": "tre_encoder"
 					, "type": "rotenc"
-					, "clk":13
-					, "dt":6
+					, "clk":23
+					, "dt":23
 				},
 				{ 	  "name": "vol_enc_sw"
 					, "type": "mom"
-					, "sw":5
+					, "sw":26
 					, "on":true
 				},
 				{ 	  "name": "bas_enc_sw"
 					, "type": "mom"
-					, "sw":5
+					, "sw":23
 					, "on":true
 				},
 				{ 	  "name": "tre_enc_sw"
 					, "type": "mom"
-					, "sw":5
+					, "sw":23
 					, "on":true
 				}
 			]

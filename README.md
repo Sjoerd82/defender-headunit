@@ -189,12 +189,12 @@ Reference Setup
 21 BCM 9 (MISO)		SPI MISO
 23 BCM 11 (SCLK)	SPI CLCK
 25 Ground			SPI GND
-27 BCM 0 (ID_SD)	.
-29 BCM 5			.
-31 BCM 6			.
-33 BCM 13 (PWM1)	.
+27 BCM 0 (ID_SD)	Encoder2 ?
+29 BCM 5			Encoder2 ?
+31 BCM 6			Encoder1 DT
+33 BCM 13 (PWM1)	Encoder1 CLK
 35 BCM 19 (MISO)	DAC (i2s)
-37 BCM 26			.
+37 BCM 26			Encoder1 SW
 39 Ground			-
 
 02 5v Power			
@@ -207,7 +207,7 @@ Reference Setup
 16 BCM 23			.
 18 BCM 24			DAC (i2s)
 20 Ground			-
-22 BCM 25			.
+22 BCM 25			Buzzer
 24 BCM 8 (CE0)		SPI chip-select 0
 26 BCM 7 (CE1)		SPI chip-select 1
 28 BCM 1 (ID_SC)	.
