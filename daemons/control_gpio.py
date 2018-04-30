@@ -220,20 +220,24 @@ def setup():
 			
 			print "DEBUG: [b] device:{0}".format(device)
 
-			'''
+			# pins_function is a dictionary of pins
 			if pin_clk in pins_function:
+				print "NEW"
 				pins_function[ pin_clk ].append( ix )	#functions['name']
 			else:
+				print "EXISTING"
 				pins_function[ pin_clk ] = []
 				pins_function[ pin_clk ].append( ix )
-			'''
 			
 		if 'short_press' in function:
 			pass
 		
 		if 'long_press' in function:
 			pass
-			
+
+	print "DEBUG: [c]"
+	print pins_function
+		
 	# check for any duplicates, but don't exit on it. (#todo: consider making this configurable)
 	if len(pins_monitor) != len(set(pins_monitor)):
 		printer("WARNING: Same pin used multiple times, this may lead to unpredictable results.",level=LL_WARNING)
