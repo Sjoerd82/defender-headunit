@@ -176,20 +176,20 @@ def setup():
 	GPIO.setmode(GPIO.BCM)
 
 	# init all pins in configuration
-	for device in cfg_ctrlgpio['devices']:
+	for ix, device in enumerate(cfg_ctrlgpio['devices']):
 		if 'sw' in device:
-			pin = cfg_ctrlgpio['devices']['sw']
+			pin = cfg_ctrlgpio['devices'][ix]['sw']
 			pins_monitor.append(pin)
 			GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)	
 			pins_state[pin] = GPIO.input(pin)
 		if 'clk' in device:
-			pin = cfg_ctrlgpio['devices']['clk']
+			pin = cfg_ctrlgpio['devices'][ix]['clk']
 			pins_monitor.append(pin)
 			GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)	
 			pins_state[pin] = GPIO.input(pin)
 		#We don't need to monitor the DT-pin!
 		#if 'dt' in device:
-			pin = cfg_ctrlgpio['devices']['dt']
+			pin = cfg_ctrlgpio['devices'][ix]['dt']
 			#pins_monitor.append(pin)
 			GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)	
 			pins_state[pin] = GPIO.input(pin)
@@ -200,15 +200,15 @@ def setup():
 			pass
 
 	# map pins to functions
-	for iter, function in cfg_ctrlgpio['functions']:
+	for ix, function in enumerate(cfg_ctrlgpio['functions']):
 		if 'encoder' in function:		
 			device = cfg_ctrlgpio['devices'][functions['encoder']]
 			pin_clk = device['clk']
 			if pin_clk in pins_function:
-				pins_function[ pin_clk ].append( iter )	#functions['name']
+				pins_function[ pin_clk ].append( ix )	#functions['name']
 			else:
 				pins_function[ pin_clk ] = []
-				pins_function[ pin_clk ].append( iter )
+				pins_function[ pin_clk ].append( ix )
 			
 		if 'short_press' in function:
 			pass
