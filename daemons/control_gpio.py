@@ -219,15 +219,10 @@ def setup():
 			device = get_device_config(function['encoder'])
 			pin_clk = device['clk']
 			
-			print "DEBUG: [b] device:{0}".format(device)
-			print "DEBUG: [X] pin_clk:{0}".format(pin_clk)
-
 			# pins_function is a dictionary of pins
 			if pin_clk in pins_function:
-				print "EXISTING"
 				pins_function[ pin_clk ].append( ix )	#functions['name']
 			else:
-				print "NEW"
 				pins_function[ pin_clk ] = []
 				pins_function[ pin_clk ].append( ix )
 			
@@ -310,9 +305,6 @@ def main():
 	def handle_pin_change(pin):
 		print "DEBUG: handle pin change for pin: {0}".format(pin)
 		
-		print "function(s) on this pin are (indexes):"
-		print pins_function[pin]
-		
 		for function_ix in pins_function[pin]:
 			
 			#examine if func meets all requirements
@@ -329,7 +321,7 @@ def main():
 					pin_clk = pin
 					pin_dt = device_cfg['dt']
 					#if dtState != clkState:
-					if pins_state[dt] != pins_state[clk]:
+					if pins_state[pin_dt] != pins_state[pin_clk]:
 						print function_map[func_cfg['function']]
 						#function_map[func_cfg['function']] = { "zmq_path":"volume", "zmq_command":"PUT" }
 						print "ENCODER: INCREASE"
