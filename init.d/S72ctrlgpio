@@ -5,11 +5,11 @@ echo $(date "+%H:%M.%s") $0 $1 >> /root/boot.log
 # APPLICATION
 #DAEMON="/mnt/PIHU_APP/defender-headunit/plugins/control/d_dbus_ads1x15.py"
 
-NAME="Remote Control: ADS1x15 Resistor Network"
+NAME="Remote Control: GPIO"
 # PID (created by start-stop-daemon -m)
-PID="ctrl_ads1x15"
+PID="ctrl_gpio"
 PID_FILE=/var/run/$PID.pid
-DAEMON="control_ads1x15.py"
+DAEMON="control_gpio.py"
 DAEMON_OPTS="-b"
 DAEMON_PATH="/mnt/PIHU_APP/defender-headunit/daemons"
 DAEMON_FILE=$DAEMON_PATH/$DAEMON

@@ -281,7 +281,7 @@ def main():
 		
 	def get_device_config(name):
 		for device in cfg_ctrlgpio['devices']:
-			if device['name'] = name:
+			if device['name'] == name:
 				return device
 		return None
 	
