@@ -56,6 +56,7 @@ FUNCTIONS = [
 	'MENU_SCROLL',
 	'MENU_SELECT' ]
 
+function_map = {}
 function_map['VOLUME'] = { "zmq_path":"volume", "zmq_command":"PUT" }
 
 
