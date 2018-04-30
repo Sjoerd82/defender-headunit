@@ -339,7 +339,7 @@ def main():
 
 		# get all states
 		for pin in pins_monitor:
-			if pins_state[pin] != GPIO.input(pin)
+			if pins_state[pin] != GPIO.input(pin):
 				pins_state[pin] = GPIO.input(pin)
 				# handle this pin, pref. asynchronous..
 				handle_pin_change(pin)
