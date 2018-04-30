@@ -345,7 +345,7 @@ def main():
 				handle_pin_change(pin)
 				
 	
-	"""
+		"""
 		clkState = GPIO.input(clk)
 		dtState = GPIO.input(dt)
 		if clkState != encoder1_last_clk_state:
@@ -362,7 +362,7 @@ def main():
 				
 			print encoder1_cnt
 		encoder1_last_clk_state = clkState
-	"""
+		"""
 		
 		"""
 		
