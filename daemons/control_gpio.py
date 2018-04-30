@@ -314,6 +314,14 @@ def main():
 		print pins_function[pin]
 		
 		for function_ix in pins_function:
+		
+			print "DEBUG: YYY"
+			print function_ix
+			print cfg_ctrlgpio
+			print cfg_ctrlgpio['functions']
+			print cfg_ctrlgpio['functions'][1]
+			print "DEBUG: XXX"
+		
 			#examine if func meets all requirements
 			func_cfg = cfg_ctrlgpio['functions'][function_ix]
 			ok = True
