@@ -238,6 +238,8 @@ def setup():
 	#	GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)	
 	
 	#temp:
+	
+	"""
 	global clk
 	global dt
 
@@ -248,6 +250,7 @@ def setup():
 	#GPIO.setup(dt, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 	encoder1_cnt = 0
 	encoder1_last_clk_state = GPIO.input(clk)
+	"""
 
 	printer('Initialized [OK]')
 		
