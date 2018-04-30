@@ -181,6 +181,7 @@ def setup():
 	global encoder1_cnt
 	global encoder1_last_clk_state
 	global pins_monitor
+	global pins_function
 	global cfg_ctrlgpio
 	cfg_ctrlgpio = configuration['daemons'][4]
 
@@ -219,6 +220,7 @@ def setup():
 			pin_clk = device['clk']
 			
 			print "DEBUG: [b] device:{0}".format(device)
+			print "DEBUG: [X] pin_clk:{0}".format(pin_clk)
 
 			# pins_function is a dictionary of pins
 			if pin_clk in pins_function:
