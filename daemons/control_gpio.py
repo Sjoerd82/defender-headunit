@@ -313,7 +313,7 @@ def main():
 		print "function(s) on this pin are (indexes):"
 		print pins_function[pin]
 		
-		for function_ix in pins_function:
+		for function_ix in pins_function[pin]:
 		
 			print "DEBUG: YYY"
 			print function_ix
