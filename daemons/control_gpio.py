@@ -226,7 +226,7 @@ def setup():
 				pins_function[ pin_clk ].append( ix )
 			
 		if 'short_press' in function:
-			for short_press_button in short_press:
+			for short_press_button in function['short_press']:
 				device = get_device_config(short_press_button)
 				pin_sw = device['sw']
 				if pin_sw in pins_function:
