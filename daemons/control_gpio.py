@@ -106,6 +106,14 @@ def load_zeromq_configuration():
 			
 	return configuration
 
+
+def get_device_config(name):
+	for device in cfg_ctrlgpio['devices']:
+		if device['name'] == name:
+			return device
+	return None
+
+	
 #********************************************************************************
 # Parse command line arguments
 #
@@ -202,7 +210,8 @@ def setup():
 	# map pins to functions
 	for ix, function in enumerate(cfg_ctrlgpio['functions']):
 		if 'encoder' in function:		
-			device = cfg_ctrlgpio['devices'][functions['encoder']]
+			#device = cfg_ctrlgpio['devices'][function['encoder']]
+			device = get_device_config(function['encoder'])
 			pin_clk = device['clk']
 			if pin_clk in pins_function:
 				pins_function[ pin_clk ].append( ix )	#functions['name']
@@ -280,12 +289,6 @@ def main():
 			printer('No function configured for this button')
 		"""
 		
-	def get_device_config(name):
-		for device in cfg_ctrlgpio['devices']:
-			if device['name'] == name:
-				return device
-		return None
-	
 	def handle_pin_change(pin):
 		print "DEBUG: handle pin change for pin: {0}".format(pin)
 		
