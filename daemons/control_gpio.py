@@ -225,11 +225,11 @@ def setup():
 			# pins_function is a dictionary of pins
 			if pin_clk in pins_function:
 				print "EXISTING"
-				pins_function[ pin_clk ].append( ix+1 )	#functions['name']
+				pins_function[ pin_clk ].append( ix )	#functions['name']
 			else:
 				print "NEW"
 				pins_function[ pin_clk ] = []
-				pins_function[ pin_clk ].append( ix+1 )	# 1-based index
+				pins_function[ pin_clk ].append( ix )
 			
 		if 'short_press' in function:
 			pass
@@ -314,14 +314,7 @@ def main():
 		print pins_function[pin]
 		
 		for function_ix in pins_function[pin]:
-		
-			print "DEBUG: YYY"
-			print function_ix
-			print cfg_ctrlgpio
-			print cfg_ctrlgpio['functions']
-			print cfg_ctrlgpio['functions'][1]
-			print "DEBUG: XXX"
-		
+			
 			#examine if func meets all requirements
 			func_cfg = cfg_ctrlgpio['functions'][function_ix]
 			ok = True
@@ -332,7 +325,7 @@ def main():
 			else:
 				# encoder: check dt pin
 				if 'encoder' in func_cfg:
-					device_cfg = get_device_config( cfg_ctrlgpio['encoder'] )
+					device_cfg = get_device_config( func_cfg['encoder'] )
 					pin_clk = pin
 					pin_dt = device_cfg['dt']
 					#if dtState != clkState:
