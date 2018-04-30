@@ -213,7 +213,6 @@ def setup():
 
 	# map pins to functions
 	for ix, function in enumerate(cfg_ctrlgpio['functions']):
-		print "DEBUG: [a] {0}:{1}".format(ix,function)
 		if 'encoder' in function:		
 			#device = cfg_ctrlgpio['devices'][function['encoder']]
 			device = get_device_config(function['encoder'])
@@ -231,9 +230,6 @@ def setup():
 		
 		if 'long_press' in function:
 			pass
-
-	print "DEBUG: [c]"
-	print pins_function
 		
 	# check for any duplicates, but don't exit on it. (#todo: consider making this configurable)
 	if len(pins_monitor) != len(set(pins_monitor)):
@@ -302,7 +298,7 @@ def main():
 			printer('No function configured for this button')
 		"""
 		
-	def handle_pin_change(pin):
+	def handle_pin_change(pin,value_old,value_new):
 		print "DEBUG: handle pin change for pin: {0}".format(pin)
 		
 		for function_ix in pins_function[pin]:
@@ -320,14 +316,16 @@ def main():
 					device_cfg = get_device_config( func_cfg['encoder'] )
 					pin_clk = pin
 					pin_dt = device_cfg['dt']
-					#if dtState != clkState:
-					if pins_state[pin_dt] != pins_state[pin_clk]:
-						print function_map[func_cfg['function']]
-						#function_map[func_cfg['function']] = { "zmq_path":"volume", "zmq_command":"PUT" }
-						print "ENCODER: INCREASE"
-					else:
-						print function_map[func_cfg['function']]
-						print "ENCODER: DECREASE"
+					#if clkState != encoder1_last_clk_state:
+					#  if dtState != clkState:
+					if value_new != value_old:
+						if GPIO.input([pin_dt]) != value_new:
+							print function_map[func_cfg['function']]
+							#function_map[func_cfg['function']] = { "zmq_path":"volume", "zmq_command":"PUT" }
+							print "ENCODER: INCREASE"
+						else:
+							print function_map[func_cfg['function']]
+							print "ENCODER: DECREASE"
 
 				# switch (long or short): check if other switches need to be engaged
 				elif 'short_press' in func_cfg:
@@ -355,9 +353,9 @@ def main():
 		# get all states
 		for pin in pins_monitor:
 			if pins_state[pin] != GPIO.input(pin):
-				pins_state[pin] = GPIO.input(pin)
 				# handle this pin, pref. asynchronous..
-				handle_pin_change(pin)
+				handle_pin_change(pin,pins_state[pin],GPIO.input(pin))
+				pins_state[pin] = GPIO.input(pin)
 				
 	
 		"""
