@@ -526,8 +526,8 @@ def setup():
 			pins_state[pin_dt] = GPIO.input(pin_dt)
 			
 			# consolidated config
-			pins_config[pin_clk] = { "dev_name":device['name'], "dev_type":"clk", "functions":None }
-			pins_config[pin_dt] = { "dev_name":device['name'], "dev_type":"dt", "functions":None }
+			pins_config[pin_clk] = { "dev_name":device['name'], "dev_type":"clk", "functions":[] }
+			pins_config[pin_dt] = { "dev_name":device['name'], "dev_type":"dt", "functions":[] }
 			
 
 	# map pins to functions
