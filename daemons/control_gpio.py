@@ -551,6 +551,12 @@ def setup():
 				pins_config[pin_clk]["functions"] = []
 				pins_config[pin_clk]["functions"].append(fnc)
 				
+			if 'functions' in pins_config[pin_dt]:
+				pins_config[pin_dt]["functions"].append(fnc)
+			else:
+				pins_config[pin_dt]["functions"] = []
+				pins_config[pin_dt]["functions"].append(fnc)
+				
 		if 'short_press' in function:
 		
 			if len(function['short_press']) > 1:
