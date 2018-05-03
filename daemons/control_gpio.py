@@ -345,6 +345,8 @@ def handle_switch_interrupt(pin):
 def handle_rotary_interrupt(pin):
 	global pins_state
 	
+	printer "DEBUG: HANDLE_ROTARY_INTERRUPT! for pin: {0}".format(pin)
+	
 	# nothing to do, if no attached function
 	if pin not in pins_function:
 		print "WHat??"
@@ -573,10 +575,7 @@ def setup():
 			# consolidated config
 			pin_sw=0#todo
 			pins_config[pin_sw]["has_long"] = True
-		
-	print pins_function
-	print pins_config
-		
+				
 	# check for any duplicates, but don't exit on it. (#todo: consider making this configurable)
 	if len(pins_monitor) != len(set(pins_monitor)):
 		printer("WARNING: Same pin used multiple times, this may lead to unpredictable results.",level=LL_WARNING)
@@ -584,6 +583,11 @@ def setup():
 	
 
 	printer('Initialized [OK]')
+	print "\nDEBUG; pins_function:"
+	print pins_function
+	
+	print "DEBUG; pins_config:"
+	print pins_config
 		
 def main():
 
