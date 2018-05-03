@@ -473,23 +473,23 @@ def setup():
 			
 			# get pull up/down setting
 			if device['gpio_pullupdown'] == 'up':
-				GPIO.setup(pin, pull_up_down=GPIO.PUD_UP)
+				GPIO.set_pullupdn(pin, pull_up_down=GPIO.PUD_UP)
 				printer("Pull-up resistor enabled")
 			elif device['gpio_pullupdown'] == 'down':
-				GPIO.setup(pin, pull_up_down=GPIO.PUD_DOWN)
+				GPIO.set_pullupdn(pin, pull_up_down=GPIO.PUD_DOWN)
 				printer("Pull-down resistor enabled")
 			else:
 				printer('ERROR: invalid pull_up_down value.',level=LL_ERROR)
 
 			# setup edge detection trigger type
 			if device['gpio_edgedetect'] == 'rising':
-				GPIO.add_event_detect(pin, GPIO.RISING, callback=handle_switch_interrupt)
+				GPIO.add_event_detect(pin, GPIO.RISING, callback=handle_switch_interrupt, bouncetime=200)
 				printer("Added Rising Edge interrupt")
 			elif device['gpio_edgedetect'] == 'falling':
-				GPIO.add_event_detect(pin, GPIO.FALLING, callback=handle_switch_interrupt)
+				GPIO.add_event_detect(pin, GPIO.FALLING, callback=handle_switch_interrupt, bouncetime=200)
 				printer("Added Falling Edge interrupt")
 			elif device['gpio_edgedetect'] == 'both':
-				GPIO.add_event_detect(pin, GPIO.BOTH, callback=handle_switch_interrupt)
+				GPIO.add_event_detect(pin, GPIO.BOTH, callback=handle_switch_interrupt, bouncetime=200)
 				printer("Added Both Rising and Falling Edge interrupt")
 				printer("Warning: detection both high and low level will cause an event to trigger on both press and release.",level=LL_WARNING)
 			else:
