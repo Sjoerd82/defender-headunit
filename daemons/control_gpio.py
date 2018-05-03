@@ -534,20 +534,22 @@ def setup():
 	for ix, function in enumerate(cfg_ctrlgpio['functions']):
 		if 'encoder' in function:		
 			device = get_device_config(function['encoder'])
+			pin_dt = device['dt']
 			pin_clk = device['clk']
 			
-			# pins_function is a dictionary of pins
-			if pin_clk in pins_function:
-				pins_function[ pin_clk ].append( ix )	#functions['name']
-			else:
-				pins_function[ pin_clk ] = []
-				pins_function[ pin_clk ].append( ix )
-
+#			print "WTFFFUuuuuu?"
 			# consolidated config
 			fnc = { "fnc_name":function['name'], "fnc_code":function['function'] }
 			fnc1 = { "fnc_name":function['name'], "fnc_code":function['function'] }
+#			print fnc
+#			print fnc1
+
+#			print pins_config[pin_dt]["functions"]
+#			print pins_config[pin_clk]["functions"]
 			pins_config[pin_dt]["functions"].append(fnc)
 			pins_config[pin_clk]["functions"].append(fnc1)
+#			print pins_config[pin_dt]["functions"]
+#			print pins_config[pin_clk]["functions"]
 				
 		if 'short_press' in function:
 		
