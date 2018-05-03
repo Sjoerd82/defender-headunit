@@ -345,7 +345,7 @@ def handle_switch_interrupt(pin):
 def handle_rotary_interrupt(pin):
 	global pins_state
 	
-	printer "DEBUG: HANDLE_ROTARY_INTERRUPT! for pin: {0}".format(pin)
+	print "DEBUG: HANDLE_ROTARY_INTERRUPT! for pin: {0}".format(pin)
 	
 	# nothing to do, if no attached function
 	if pin not in pins_function:
