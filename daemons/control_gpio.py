@@ -283,15 +283,10 @@ def handle_pin_change(pin,value_old,value_new):
 def handle_switch_interrupt(pin):
 	""" Callback function for switches
 	"""
+	press_start = clock()
 	
 	print "DEBUG: HANDLE_SWITCH_INTERRUPT! for pin: {0}".format(pin)
-	
-	press_start = clock()
-
-	# nothing to do, if no attached function
-	if pin not in pins_function:
-		print "WHat??"
-		return None	
+	print pins_config[pin]
 	
 	# check wheather we have short and/or long press functions and multi-press functions
 	if pins_config[pin]['has_short'] and not pins_config[pin]['has_long']:
@@ -490,14 +485,14 @@ def setup():
 
 			# setup edge detection trigger type
 			if device['gpio_edgedetect'] == 'rising':
-				GPIO.add_event_detect(pin, GPIO.RISING, callback=handle_switch_interrupt, bouncetime=400)
-				printer("Pin {0}: Added Rising Edge interrupt; bouncetime=200".format(pin))
+				GPIO.add_event_detect(pin, GPIO.RISING, callback=handle_switch_interrupt, bouncetime=600)
+				printer("Pin {0}: Added Rising Edge interrupt; bouncetime=600".format(pin))
 			elif device['gpio_edgedetect'] == 'falling':
-				GPIO.add_event_detect(pin, GPIO.FALLING, callback=handle_switch_interrupt, bouncetime=400)
-				printer("Pin {0}: Added Falling Edge interrupt; bouncetime=200".format(pin))
+				GPIO.add_event_detect(pin, GPIO.FALLING, callback=handle_switch_interrupt, bouncetime=600)
+				printer("Pin {0}: Added Falling Edge interrupt; bouncetime=600".format(pin))
 			elif device['gpio_edgedetect'] == 'both':
-				GPIO.add_event_detect(pin, GPIO.BOTH, callback=handle_switch_interrupt, bouncetime=400)
-				printer("Pin {0}: Added Both Rising and Falling Edge interrupt; bouncetime=200".format(pin))
+				GPIO.add_event_detect(pin, GPIO.BOTH, callback=handle_switch_interrupt, bouncetime=600)
+				printer("Pin {0}: Added Both Rising and Falling Edge interrupt; bouncetime=600".format(pin))
 				printer("Pin {0}: Warning: detection both high and low level will cause an event to trigger on both press and release.".format(pin),level=LL_WARNING)
 			else:
 				printer("Pin {0}: ERROR: invalid edge detection value.".format(pin),level=LL_ERROR)
@@ -565,9 +560,28 @@ def setup():
 				pins_config[pin_sw]["functions"].append(fnc)
 				
 		if 'long_press' in function:
+
+			if len(function['long_press']) > 1:
+				pins_config[pin_sw]["has_multi"] = True
+				
+			for long_press_button in function['long_press']:
+				device = get_device_config(long_press_button)
+				pin_sw = device['sw']
+				if pin_sw in pins_function:
+					pins_function[ pin_sw ].append( ix )
+				else:
+					pins_function[ pin_sw ] = []
+					pins_function[ pin_sw ].append( ix )
+					
 			# consolidated config
-			pin_sw=0#todo
+			fnc = { "fnc_name":function['name'], "fnc_code":function['function'] }
 			pins_config[pin_sw]["has_long"] = True
+			if 'functions' in pins_config[pin_sw]:
+				pins_config[pin_sw]["functions"].append(fnc)
+			else:
+				pins_config[pin_sw]["functions"] = []
+				pins_config[pin_sw]["functions"].append(fnc)
+
 				
 	# check for any duplicates, but don't exit on it. (#todo: consider making this configurable)
 	if len(pins_monitor) != len(set(pins_monitor)):
