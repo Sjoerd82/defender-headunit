@@ -322,16 +322,17 @@ def handle_switch_interrupt(pin):
 		# wait for release of button
 		# handle according to press length
 
-		printer("Waiting for button to be released")
+		printer("Waiting for button to be released....")
 		pressed = True
 		while pressed == True or press_time >= LONG_PRESS:
 			state = GPIO.input(pin)
 			if state != pins_config[pin]['gpio_on']:
+				print "RELEASED!"
 				pressed = False
 			press_time = clock()-press_start
 			sleep(0.01)
 				
-		print "DEBUG"
+		print "....done"
 		print "switch was pressed for {0} seconds".format(press_time)
 		
 		if pins_config[pin]['has_long'] and not pins_config[pin]['has_short']:
