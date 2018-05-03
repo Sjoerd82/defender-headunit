@@ -160,9 +160,9 @@ def get_encoder_function_by_pin(pin):
 	# loop through all possible functions for given pin
 	# examine if func meets all requirements (only one check needed for encoders: mode)
 
-	print "DEBUG: get_encoder_function_by_pin"
-	print pins_config[pin]
-	print pins_config[pin]['functions']
+#	print "DEBUG: get_encoder_function_by_pin"
+#	print pins_config[pin]
+#	print pins_config[pin]['functions']
 	
 	#for function_ix in pins_function[pin]:
 	for func_cfg in pins_config[pin]['functions']:
@@ -354,7 +354,7 @@ def handle_switch_interrupt(pin):
 def handle_rotary_interrupt(pin):
 	global pins_state
 	
-	print "DEBUG: HANDLE_ROTARY_INTERRUPT! for pin: {0}".format(pin)
+	#print "DEBUG: HANDLE_ROTARY_INTERRUPT! for pin: {0}".format(pin)
 	
 	device = get_device_config_by_pin(pin)
 	
@@ -537,19 +537,9 @@ def setup():
 			pin_dt = device['dt']
 			pin_clk = device['clk']
 			
-#			print "WTFFFUuuuuu?"
-			# consolidated config
 			fnc = { "fnc_name":function['name'], "fnc_code":function['function'] }
-			fnc1 = { "fnc_name":function['name'], "fnc_code":function['function'] }
-#			print fnc
-#			print fnc1
-
-#			print pins_config[pin_dt]["functions"]
-#			print pins_config[pin_clk]["functions"]
 			pins_config[pin_dt]["functions"].append(fnc)
-			pins_config[pin_clk]["functions"].append(fnc1)
-#			print pins_config[pin_dt]["functions"]
-#			print pins_config[pin_clk]["functions"]
+			pins_config[pin_clk]["functions"].append(fnc)
 				
 		if 'short_press' in function:
 		
