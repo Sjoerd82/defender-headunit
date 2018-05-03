@@ -510,6 +510,7 @@ def setup():
 			#pin = cfg_ctrlgpio['devices'][ix]['clk']
 			pin = device['clk']
 			pins_monitor.append(pin)
+			printer("Setting up encoder on pin: {0} (channel A)".format(pin))
 			GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 			GPIO.add_event_detect(pin, GPIO.RISING, callback=handle_rotary_interrupt) # NO bouncetime 
 			pins_state[pin] = GPIO.input(pin)
@@ -522,6 +523,7 @@ def setup():
 			#pin = cfg_ctrlgpio['devices'][ix]['dt']
 			pin = device['dt']
 			#pins_monitor.append(pin)
+			printer("Setting up encoder on pin: {0} (channel B)".format(pin))
 			GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)	
 			GPIO.add_event_detect(pin, GPIO.RISING, callback=handle_rotary_interrupt) # NO bouncetime 
 			pins_state[pin] = GPIO.input(pin)

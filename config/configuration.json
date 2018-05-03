@@ -64,7 +64,7 @@
 				},
 				{ 	  "name": "tre_encoder"
 					, "type": "rotenc"
-					, "clk":23
+					, "clk":22
 					, "dt":23
 				},
 				{ 	  "name": "vol_enc_sw"
