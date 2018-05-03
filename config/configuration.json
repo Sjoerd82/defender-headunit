@@ -71,8 +71,8 @@
 					, "type": "mom"
 					, "sw":26
 					, "gpio_on": "high"
-					, "gpio_pullupdown": "down"
-					, "gpio_edgedetect": "rising"
+					, "gpio_pullupdown": "up"
+					, "gpio_edgedetect": "falling"
 				},
 				{ 	  "name": "bas_enc_sw"
 					, "type": "mom"
