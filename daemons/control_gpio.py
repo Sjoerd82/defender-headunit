@@ -159,6 +159,10 @@ def get_encoder_function_by_pin(pin):
 	"""
 	# loop through all possible functions for given pin
 	# examine if func meets all requirements (only one check needed for encoders: mode)
+
+	print "DEBUG: get_encoder_function_by_pin"
+	print pins_config[pin]
+	print pins_config[pin]['functions']
 	
 	#for function_ix in pins_function[pin]:
 	for func_cfg in pins_config[pin]['functions']:
