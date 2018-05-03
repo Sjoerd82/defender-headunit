@@ -321,7 +321,7 @@ def handle_switch_interrupt(pin):
 		pressed = True
 		while pressed == True or press_time >= LONG_PRESS:
 			state = GPIO.input(pin)
-			if state != pins_config[pin]['gpio_on']
+			if state != pins_config[pin]['gpio_on']:
 				pressed = False
 			press_time = clock()-press_start
 			delay(0.01)
