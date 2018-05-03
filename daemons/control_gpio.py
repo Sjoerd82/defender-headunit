@@ -468,8 +468,8 @@ def setup():
 			pin = device['sw']
 			pins_monitor.append(pin)
 			
-			printer("Setting up pin: {0}, bouncetime=200".format(pin))
-			GPIO.setup(pin, GPIO.IN, bouncetime=200)
+			printer("Setting up pin: {0}".format(pin))
+			GPIO.setup(pin, GPIO.IN) # ?, bouncetime=200 ?
 			
 			# get pull up/down setting
 			if device['gpio_pullupdown'] == 'up':
@@ -507,29 +507,20 @@ def setup():
 			pins_config[pin] = { "dev_name":device['name'], "dev_type":"sw", "has_multi":False, "gpio_on": gpio_on }
 			
 		if 'clk' in device:
-			#pin = cfg_ctrlgpio['devices'][ix]['clk']
-			pin = device['clk']
-			pins_monitor.append(pin)
-			printer("Setting up encoder on pin: {0} (channel A)".format(pin))
-			GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-			GPIO.add_event_detect(pin, GPIO.RISING, callback=handle_rotary_interrupt) # NO bouncetime 
-			pins_state[pin] = GPIO.input(pin)
+			pin_clk = device['clk']
+			pin_dt = device['dt']
+			
+			printer("Setting up encoder on pins: {0} and {1}".format(pin_clk, pin_dt))
+			GPIO.setup((pin_clk,pin_dt), GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+			GPIO.add_event_detect(pin_clk, GPIO.RISING, callback=handle_rotary_interrupt) # NO bouncetime 
+			GPIO.add_event_detect(pin_dt, GPIO.RISING, callback=handle_rotary_interrupt) # NO bouncetime 
+			
+			pins_state[pin_clk] = GPIO.input(pin_clk)
+			pins_state[pin_dt] = GPIO.input(pin_dt)
 			
 			# consolidated config
-			pins_config[pin] = { "dev_name":device['name'], "dev_type":"clk" }
-			
-		#We don't need to monitor the DT-pin!
-		#if 'dt' in device:
-			#pin = cfg_ctrlgpio['devices'][ix]['dt']
-			pin = device['dt']
-			#pins_monitor.append(pin)
-			printer("Setting up encoder on pin: {0} (channel B)".format(pin))
-			GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)	
-			GPIO.add_event_detect(pin, GPIO.RISING, callback=handle_rotary_interrupt) # NO bouncetime 
-			pins_state[pin] = GPIO.input(pin)
-		
-			# consolidated config
-			pins_config[pin] = { "dev_name":device['name'], "dev_type":"dt" }
+			pins_config[pin_clk] = { "dev_name":device['name'], "dev_type":"clk" }		
+			pins_config[pin_dt] = { "dev_name":device['name'], "dev_type":"dt" }
 			
 
 	# map pins to functions
