@@ -159,18 +159,20 @@ def get_encoder_function_by_pin(pin):
 	"""
 	# loop through all possible functions for given pin
 	# examine if func meets all requirements (only one check needed for encoders: mode)
-	for function_ix in pins_function[pin]:
+	
+	#for function_ix in pins_function[pin]:
+	for func_cfg in pins_config[pin]['functions']:
 		
-		func_cfg = cfg_ctrlgpio['functions'][function_ix]
-		ok = True
+		#func_cfg = cfg_ctrlgpio['functions'][function_ix]
+		#ok = True
 		
-		# check mode
+		# check mode #TODO!! TODO!! add mode here!!
 		if 'mode' in func_cfg and func_cfg['mode'] not in active_modes:
 			print "DEBUG: not in the required mode"
 			return None
 		else:
-			if 'encoder' in func_cfg:
-				return func_cfg
+			#if 'encoder' in func_cfg:
+			return func_cfg
 
 def get_function_by_pin(pin,type):
 	""" Returns function dictionary
