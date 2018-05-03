@@ -350,12 +350,6 @@ def handle_rotary_interrupt(pin):
 	
 	print "DEBUG: HANDLE_ROTARY_INTERRUPT! for pin: {0}".format(pin)
 	
-	# nothing to do, if no attached function
-	if pin not in pins_function:
-		print "WHat??"
-		return None
-
-	
 	device = get_device_config_by_pin(pin)
 	
 	encoder_pinA = device['clk']
@@ -385,12 +379,12 @@ def handle_rotary_interrupt(pin):
 		if (Switch_A and Switch_B):						# Both one active? Yes -> end of sequence
 			if pin == encoder_pinB:							# Turning direction depends on 
 				#clockwise
-				print function_map[func_cfg['function']]
+				#print function_map[func_cfg['function']]
 				print "ENCODER: INCREASE"
 				#function_map[func_cfg['function']] = { "zmq_path":"volume", "zmq_command":"PUT" }
 			else:
 				#counter clockwise
-				print function_map[func_cfg['function']]
+				#print function_map[func_cfg['function']]
 				print "ENCODER: DECREASE"
 
 	
