@@ -352,7 +352,7 @@ def handle_rotary_interrupt(pin):
 	
 	device = get_device_config_by_pin(pin)
 	
-	encoder_pinA = device['clk'']
+	encoder_pinA = device['clk']
 	encoder_pinB = device['dt']
 	print "DEBUG! Found encoder pins:"
 	print encoder_pinA
