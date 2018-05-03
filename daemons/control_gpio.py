@@ -290,7 +290,7 @@ def handle_switch_interrupt(pin):
 	# check wheather we have short and/or long press functions and multi-press functions
 	if pins_config[pin]['has_short'] and not pins_config[pin]['has_long']:
 		# short only, handle it..		
-		if not pins_config['has_multi']:
+		if not pins_config[pin]['has_multi']:
 			print "EXECUTING THE SHORT FUNCTION (only option)"
 		else:
 			# todo try combinations with highest button count first (even though overlap is not recommended)
@@ -354,9 +354,9 @@ def handle_rotary_interrupt(pin):
 	
 	encoder_pinA = device['clk']
 	encoder_pinB = device['dt']
-	print "DEBUG! Found encoder pins:"
-	print encoder_pinA
-	print encoder_pinB
+	#print "DEBUG! Found encoder pins:"
+	#print encoder_pinA
+	#print encoder_pinB
 
 	Switch_A = GPIO.input(encoder_pinA)
 	Switch_B = GPIO.input(encoder_pinB)
@@ -373,7 +373,7 @@ def handle_rotary_interrupt(pin):
 	# -------------------------------
 	
 	function = get_encoder_function_by_pin(pin)
-	
+	print function
 	if function is not None:
 
 		if (Switch_A and Switch_B):						# Both one active? Yes -> end of sequence
@@ -484,13 +484,13 @@ def setup():
 
 			# setup edge detection trigger type
 			if device['gpio_edgedetect'] == 'rising':
-				GPIO.add_event_detect(pin, GPIO.RISING, callback=handle_switch_interrupt, bouncetime=200)
+				GPIO.add_event_detect(pin, GPIO.RISING, callback=handle_switch_interrupt, bouncetime=400)
 				printer("Pin {0}: Added Rising Edge interrupt; bouncetime=200".format(pin))
 			elif device['gpio_edgedetect'] == 'falling':
-				GPIO.add_event_detect(pin, GPIO.FALLING, callback=handle_switch_interrupt, bouncetime=200)
+				GPIO.add_event_detect(pin, GPIO.FALLING, callback=handle_switch_interrupt, bouncetime=400)
 				printer("Pin {0}: Added Falling Edge interrupt; bouncetime=200".format(pin))
 			elif device['gpio_edgedetect'] == 'both':
-				GPIO.add_event_detect(pin, GPIO.BOTH, callback=handle_switch_interrupt, bouncetime=200)
+				GPIO.add_event_detect(pin, GPIO.BOTH, callback=handle_switch_interrupt, bouncetime=400)
 				printer("Pin {0}: Added Both Rising and Falling Edge interrupt; bouncetime=200".format(pin))
 				printer("Pin {0}: Warning: detection both high and low level will cause an event to trigger on both press and release.".format(pin),level=LL_WARNING)
 			else:
