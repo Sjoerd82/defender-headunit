@@ -475,27 +475,27 @@ def setup():
 			if device['gpio_pullupdown'] == 'up':
 				#GPIO.set_pullupdn(pin, pull_up_down=GPIO.PUD_UP)	#v0.10
 				GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-				printer("Pull-up resistor enabled")
+				printer("Pin {0}: Pull-up resistor enabled".format(pin))
 			elif device['gpio_pullupdown'] == 'down':
 				#GPIO.set_pullupdn(pin, pull_up_down=GPIO.PUD_DOWN)	#v0.10
 				GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-				printer("Pull-down resistor enabled")
+				printer("Pin {0}: Pull-down resistor enabled".format(pin))
 			else:
 				printer('ERROR: invalid pull_up_down value.',level=LL_ERROR)
 
 			# setup edge detection trigger type
 			if device['gpio_edgedetect'] == 'rising':
 				GPIO.add_event_detect(pin, GPIO.RISING, callback=handle_switch_interrupt, bouncetime=200)
-				printer("Added Rising Edge interrupt; bouncetime=200")
+				printer("Pin {0}: Added Rising Edge interrupt; bouncetime=200".format(pin))
 			elif device['gpio_edgedetect'] == 'falling':
 				GPIO.add_event_detect(pin, GPIO.FALLING, callback=handle_switch_interrupt, bouncetime=200)
-				printer("Added Falling Edge interrupt; bouncetime=200")
+				printer("Pin {0}: Added Falling Edge interrupt; bouncetime=200".format(pin))
 			elif device['gpio_edgedetect'] == 'both':
 				GPIO.add_event_detect(pin, GPIO.BOTH, callback=handle_switch_interrupt, bouncetime=200)
-				printer("Added Both Rising and Falling Edge interrupt; bouncetime=200")
-				printer("Warning: detection both high and low level will cause an event to trigger on both press and release.",level=LL_WARNING)
+				printer("Pin {0}: Added Both Rising and Falling Edge interrupt; bouncetime=200".format(pin))
+				printer("Pin {0}: Warning: detection both high and low level will cause an event to trigger on both press and release.".format(pin),level=LL_WARNING)
 			else:
-				printer("ERROR: invalid edge detection value.",level=LL_ERROR)
+				printer("Pin {0}: ERROR: invalid edge detection value.".format(pin),level=LL_ERROR)
 			
 			# convert high/1, low/0 to bool
 			if device['gpio_on'] == "high" or device['gpio_on'] == 1:
@@ -540,11 +540,11 @@ def setup():
 
 			# consolidated config
 			fnc = { "fnc_name":function['name'], "fnc_code":function['function'] }
-			if 'functions' in pins_config[pin_sw]:
-				pins_config[pin_sw]["functions"].append(fnc)
+			if 'functions' in pins_config[pin_clk]:
+				pins_config[pin_clk]["functions"].append(fnc)
 			else:
-				pins_config[pin_sw]["functions"] = []
-				pins_config[pin_sw]["functions"].append(fnc)
+				pins_config[pin_clk]["functions"] = []
+				pins_config[pin_clk]["functions"].append(fnc)
 				
 		if 'short_press' in function:
 		
