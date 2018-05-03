@@ -277,6 +277,9 @@ def handle_pin_change(pin,value_old,value_new):
 def handle_switch_interrupt(pin):
 	""" Callback function for switches
 	"""
+	
+	print "DEBUG: HANDLE_SWITCH_INTERRUPT! for pin: {0}".format(pin)
+	
 	press_start = clock()
 
 	# nothing to do, if no attached function
@@ -508,7 +511,7 @@ def setup():
 			pins_state[pin] = GPIO.input(pin)
 				
 			# consolidated config
-			pins_config[pin] = { "dev_name":device['name'], "dev_type":"sw", "has_multi":False, "gpio_on": gpio_on }
+			pins_config[pin] = { "dev_name":device['name'], "dev_type":"sw", "gpio_on": gpio_on, "has_multi":False, "has_short":False, "has_long":False }
 			
 		if 'clk' in device:
 			pin_clk = device['clk']
