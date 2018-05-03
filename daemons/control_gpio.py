@@ -545,8 +545,9 @@ def setup():
 
 			# consolidated config
 			fnc = { "fnc_name":function['name'], "fnc_code":function['function'] }
+			fnc1 = { "fnc_name":function['name'], "fnc_code":function['function'] }
 			pins_config[pin_dt]["functions"].append(fnc)
-			pins_config[pin_clk]["functions"].append(fnc)
+			pins_config[pin_clk]["functions"].append(fnc1)
 				
 		if 'short_press' in function:
 		
