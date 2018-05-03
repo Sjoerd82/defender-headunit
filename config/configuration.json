@@ -72,21 +72,21 @@
 					, "sw":26
 					, "gpio_on": "high"
 					, "gpio_pullupdown": "down"
-					, "gpio_edgedetect": "both"
+					, "gpio_edgedetect": "rising"
 				},
 				{ 	  "name": "bas_enc_sw"
 					, "type": "mom"
 					, "sw":24
 					, "gpio_on": "high"
 					, "gpio_pullupdown": "down"
-					, "gpio_edgedetect": "both"
+					, "gpio_edgedetect": "rising"
 				},
 				{ 	  "name": "tre_enc_sw"
 					, "type": "mom"
-					, "sw":24
+					, "sw":25
 					, "gpio_on": "high"
 					, "gpio_pullupdown": "down"
-					, "gpio_edgedetect": "both"
+					, "gpio_edgedetect": "rising"
 				}
 			]
 			,"functions": [

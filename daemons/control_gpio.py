@@ -35,6 +35,7 @@ from hu_msg import MqPubSubFwdController
 # Global variables and constants
 #
 DESCRIPTION = "GPIO Remote Control"
+WELCOME = "GPIO Controller Daemon"
 LOG_TAG = 'GPIO'
 LOGGER_NAME = 'gpio'
 
@@ -466,24 +467,30 @@ def setup():
 			#pin = cfg_ctrlgpio['devices'][ix]['sw']
 			pin = device['sw']
 			pins_monitor.append(pin)
-
+			
+			printer("Setting up pin: {0}, bouncetime=200".format(pin))
 			GPIO.setup(pin, GPIO.IN, bouncetime=200)
 			
 			# get pull up/down setting
 			if device['gpio_pullupdown'] == 'up':
 				GPIO.setup(pin, pull_up_down=GPIO.PUD_UP)
+				printer("Pull-up resistor enabled")
 			elif device['gpio_pullupdown'] == 'down':
 				GPIO.setup(pin, pull_up_down=GPIO.PUD_DOWN)
+				printer("Pull-down resistor enabled")
 			else:
 				printer('ERROR: invalid pull_up_down value.',level=LL_ERROR)
 
 			# setup edge detection trigger type
 			if device['gpio_edgedetect'] == 'rising':
 				GPIO.add_event_detect(pin, GPIO.RISING, callback=handle_switch_interrupt)
+				printer("Added Rising Edge interrupt")
 			elif device['gpio_edgedetect'] == 'falling':
 				GPIO.add_event_detect(pin, GPIO.FALLING, callback=handle_switch_interrupt)
+				printer("Added Falling Edge interrupt")
 			elif device['gpio_edgedetect'] == 'both':
 				GPIO.add_event_detect(pin, GPIO.BOTH, callback=handle_switch_interrupt)
+				printer("Added Both Rising and Falling Edge interrupt")
 				printer("Warning: detection both high and low level will cause an event to trigger on both press and release.",level=LL_WARNING)
 			else:
 				printer("ERROR: invalid edge detection value.",level=LL_ERROR)
