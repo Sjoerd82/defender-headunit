@@ -329,7 +329,7 @@ def handle_switch_interrupt(pin):
 			if state != pins_config[pin]['gpio_on']:
 				pressed = False
 			press_time = clock()-press_start
-			delay(0.01)
+			sleep(0.01)
 				
 		print "DEBUG"
 		print "switch was pressed for {0} seconds".format(press_time)
