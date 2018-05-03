@@ -76,14 +76,14 @@
 				},
 				{ 	  "name": "bas_enc_sw"
 					, "type": "mom"
-					, "sw":23
+					, "sw":24
 					, "gpio_on": "high"
 					, "gpio_pullupdown": "down"
 					, "gpio_edgedetect": "both"
 				},
 				{ 	  "name": "tre_enc_sw"
 					, "type": "mom"
-					, "sw":23
+					, "sw":24
 					, "gpio_on": "high"
 					, "gpio_pullupdown": "down"
 					, "gpio_edgedetect": "both"
