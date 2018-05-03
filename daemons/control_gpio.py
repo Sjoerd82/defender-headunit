@@ -15,6 +15,10 @@
 # printer -> syslog adds considerable latency!  ?
 # (and?) Or.. is it the MQ send() ?
 
+# TODO:
+# 
+# 
+
 import sys						# path
 import os						# 
 from time import sleep
@@ -41,6 +45,7 @@ DEFAULT_PORT_SUB = 5560
 
 #DELAY = 0.005
 DELAY = 0.01
+LONG_PRESS = 5
 
 FUNCTIONS = [
 	'VOLUME',
@@ -77,8 +82,29 @@ dt = None
 pins_monitor = []		# list of pins to monitor
 pins_state = {}			# pin (previous) state
 pins_function = {}		# pin function(s)
+pins_config = {}		# consolidated config, key=pin
 
 active_modes = []
+
+'''
+pins_config = 
+	{ "23": {
+		dev_name
+		dev_type
+		functions: [ {
+			fnc_name
+			fnc_code
+			fnc_short_press/fnc_long_press
+			}
+		]
+		has_short
+		has_long
+		has_multi
+		},
+	  "26": { .. }
+	 }
+		
+'''
 
 # ********************************************************************************
 # Output wrapper
@@ -116,6 +142,250 @@ def get_device_config(name):
 		if device['name'] == name:
 			return device
 	return None
+	
+def get_device_config_by_pin(pin):
+	for device in cfg_ctrlgpio['devices']:
+		if device['clk'] == pin:
+			return device
+		elif device['dt'] == pin:
+			return device
+		elif device['sw'] == pin:
+			return device
+	return None
+
+def get_encoder_function_by_pin(pin):
+	""" Returns function dictionary
+	"""
+	# loop through all possible functions for given pin
+	# examine if func meets all requirements (only one check needed for encoders: mode)
+	for function_ix in pins_function[pin]:
+		
+		func_cfg = cfg_ctrlgpio['functions'][function_ix]
+		ok = True
+		
+		# check mode
+		if 'mode' in func_cfg and func_cfg['mode'] not in active_modes:
+			print "DEBUG: not in the required mode"
+			return None
+		else:
+			if 'encoder' in func_cfg:
+				return func_cfg
+
+def get_function_by_pin(pin,type):
+	""" Returns function dictionary
+	pin = pin
+	type = encoder | short_press | long_press
+	"""
+	# loop through all possible functions for given pin
+	# examine if func meets all requirements (only one check needed for encoders: mode)
+	for function_ix in pins_function[pin]:
+		
+		func_cfg = cfg_ctrlgpio['functions'][function_ix]
+		ok = True
+		
+		# check mode
+		if 'mode' in func_cfg and func_cfg['mode'] not in active_modes:
+			print "DEBUG: not in the required mode"
+			return None
+		else:
+			if type in func_cfg:
+				return func_cfg
+
+			# check multi-press
+
+def get_functions_by_pin(pin):
+	""" Returns list of valiid functions for given pin
+		It will take the mode into account
+	"""
+	retlist = []
+	# loop through all possible functions for given pin
+	for function_ix in pins_function[pin]:
+		
+		func_cfg = cfg_ctrlgpio['functions'][function_ix]
+		ok = True
+		
+		# check mode
+		if 'mode' in func_cfg and func_cfg['mode'] not in active_modes:
+			print "DEBUG: not in the required mode"
+		else:
+			retlist.append(func_cfg)
+		
+	return retlist
+			
+
+def handle_pin_change(pin,value_old,value_new):
+	""" When a pin changes value
+	"""
+	print "DEBUG: handle pin change for pin: {0}".format(pin)
+	
+	if pin not in pins_function:
+		print "WHat??"
+		return None
+	
+	print "DEBUG: This pins config:"
+	print pins_config[pin]
+	
+		
+	for function_ix in pins_function[pin]:
+		
+		#examine if func meets all requirements
+		func_cfg = cfg_ctrlgpio['functions'][function_ix]
+		ok = True
+		
+		# check mode
+		if 'mode' in func_cfg and func_cfg['mode'] not in active_modes:
+			print "DEBUG: not in the required mode"
+		else:
+			# encoder: check dt pin
+			if 'encoder' in func_cfg:
+				device_cfg = get_device_config( func_cfg['encoder'] )
+				pin_clk = pin
+				pin_dt = device_cfg['dt']
+				#if clkState != encoder1_last_clk_state:
+				#  if dtState != clkState:
+				if value_new != value_old:
+					if GPIO.input(pin_dt) != value_new:
+						print function_map[func_cfg['function']]
+						#function_map[func_cfg['function']] = { "zmq_path":"volume", "zmq_command":"PUT" }
+						print "ENCODER: INCREASE"
+					else:
+						print function_map[func_cfg['function']]
+						print "ENCODER: DECREASE"
+
+			# switch (long or short): check if other switches need to be engaged
+			elif 'short_press' in func_cfg:
+				if len( func_cfg['short_press'] ) == 1:
+					print function_map[func_cfg['function']]
+					# assume(?) it's the same gpio number?
+				else:
+					#check if other buttons are pressed
+					for switch in func_cfg['short_press']:
+						switch_cfg = get_device_config( switch )
+						i = 0
+						if GPIO.input(switch_cfg['sw']) == switch_cfg['on']:
+							i += 1
+							
+					if i == len(func_cfg['short_press']):								
+						print function_map[func_cfg['function']]
+					
+			#elif 'long_press' in .. #todo
+			else:
+				printer("Unsupported device or incomplete configuration",level=LL_WARNING)
+	
+
+def handle_switch_interrupt(pin):
+	""" Callback function for switches
+	"""
+	press_start = clock()
+
+	# nothing to do, if no attached function
+	if pin not in pins_function:
+		print "WHat??"
+		return None	
+	
+	# check wheather we have short and/or long press functions and multi-press functions
+	if pins_config[pin]['has_short'] and not pins_config[pin]['has_long']:
+		# short only, handle it..		
+		if not pins_config['has_multi']:
+			print "EXECUTING THE SHORT FUNCTION (only option)"
+		else:
+			# todo try combinations with highest button count first (even though overlap is not recommended)
+			print "checking multi-button..."
+			for function_ix in pins_function[pin]:
+				func_cfg = cfg_ctrlgpio['functions'][function_ix]
+				button_count = len( func_cfg['short_press'] )
+				if button_count > 1
+					i = 0
+					for switch in func_cfg['short_press']:
+						if GPIO.input(switch) == pins_config[pin]['gpio_on']:
+							i += 1
+					print "i={0}. if i<count then not all buttons are pressed".format(i)
+					if i == button_count:
+						print "WE HAVE A MULTI-BUTTON MATCH! Stop"
+				else:
+					single_button_value = GPIO.input(func_cfg['short_press'][0])
+					
+			print "no multi-button match, trying single-button (value={0})".format(single_button_value)
+			if single_button_value == pins_config[pin]['gpio_on']:
+				print "SINGLE BUTTON MATCH! Stop"
+			else:
+				print "No single-button match. Stop."
+		
+		#sp_func = get_function_by_ptm(pin,'short_press',mode)
+		#print function_map[sp_func['function']]
+	else:
+		# wait for release of button
+		# handle according to press length
+
+		printer("Waiting for button to be released")
+		pressed = True
+		while pressed == True or press_time >= LONG_PRESS:
+			state = GPIO.input(pin)
+			if state != pins_config[pin]['gpio_on']
+				pressed = False
+			press_time = clock()-press_start
+			delay(0.01)
+				
+		print "DEBUG"
+		print "switch was pressed for {0} seconds".format(press_time)
+		
+		if pins_config[pin]['has_long'] and not pins_config[pin]['has_short']:
+			print "EXECUTING THE LONG FUNCTION (only long)"
+		elif press_time >= LONG_PRESS and pins_config[pin]['has_long']:
+			print "EXECUTING THE LONG FUNCTION (long enough pressed)"
+		else press_time < LONG_PRESS and pins_config[pin]['has_short']:
+			print "EXECUTING THE SHORT FUNCTION (not long enough pressed)"
+		else:
+			print "No Match!"	
+		
+
+# Rotarty encoder interrupt:
+# this one is called for both inputs from rotary switch (A and B)
+def handle_rotary_interrupt(pin):
+	global pins_state
+	
+	# nothing to do, if no attached function
+	if pin not in pins_function:
+		print "WHat??"
+		return None
+
+	
+	device = get_device_config_by_pin(pin)
+	
+	encoder_pinA = device['clk'']
+	encoder_pinB = device['dt']
+	print "DEBUG! Found encoder pins:"
+	print encoder_pinA
+	print encoder_pinB
+
+	Switch_A = GPIO.input(encoder_pinA)
+	Switch_B = GPIO.input(encoder_pinB)
+													# now check if state of A or B has changed
+													# if not that means that bouncing caused it	
+	Current_A = pins_state[encoder_pinA]
+	Current_B = pins_state[encoder_pinB]
+	if Current_A == Switch_A and Current_B == Switch_B:		# Same interrupt as before (Bouncing)?
+		return										# ignore interrupt!
+
+	pins_state[encoder_pinA] = Switch_A								# remember new state
+	pins_state[encoder_pinB] = Switch_B								# for next bouncing check
+	
+	# -------------------------------
+	
+	function = get_encoder_function_by_pin(pin)
+	
+	if function is not None:
+
+		if (Switch_A and Switch_B):						# Both one active? Yes -> end of sequence
+			if pin == encoder_pinB:							# Turning direction depends on 
+				#clockwise
+				print function_map[func_cfg['function']]
+				print "ENCODER: INCREASE"
+				#function_map[func_cfg['function']] = { "zmq_path":"volume", "zmq_command":"PUT" }
+			else:
+				#counter clockwise
+				print function_map[func_cfg['function']]
+				print "ENCODER: DECREASE"
 
 	
 #********************************************************************************
@@ -190,28 +460,68 @@ def setup():
 	GPIO.setmode(GPIO.BCM)
 
 	# init all pins in configuration
-	for ix, device in enumerate(cfg_ctrlgpio['devices']):
+	#for ix, device in enumerate(cfg_ctrlgpio['devices']):
+	for device in cfg_ctrlgpio['devices']:
 		if 'sw' in device:
-			pin = cfg_ctrlgpio['devices'][ix]['sw']
+			#pin = cfg_ctrlgpio['devices'][ix]['sw']
+			pin = device['sw']
 			pins_monitor.append(pin)
-			GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)	
+
+			GPIO.setup(pin, GPIO.IN, bouncetime=200)
+			
+			# get pull up/down setting
+			if device['gpio_pullupdown'] == 'up':
+				GPIO.setup(pin, pull_up_down=GPIO.PUD_UP)
+			elif device['gpio_pullupdown'] == 'down':
+				GPIO.setup(pin, pull_up_down=GPIO.PUD_DOWN)
+			else:
+				printer('ERROR: invalid pull_up_down value.',level=LL_ERROR)
+
+			# setup edge detection trigger type
+			if device['gpio_edgedetect'] == 'rising':
+				GPIO.add_event_detect(pin, GPIO.RISING, callback=handle_switch_interrupt)
+			elif device['gpio_edgedetect'] == 'falling':
+				GPIO.add_event_detect(pin, GPIO.FALLING, callback=handle_switch_interrupt)
+			elif device['gpio_edgedetect'] == 'both':
+				GPIO.add_event_detect(pin, GPIO.BOTH, callback=handle_switch_interrupt)
+				printer("Warning: detection both high and low level will cause an event to trigger on both press and release.",level=LL_WARNING)
+			else:
+				printer("ERROR: invalid edge detection value.",level=LL_ERROR)
+			
+			# convert high/1, low/0 to bool
+			if device['gpio_on'] == "high" or device['gpio_on'] == 1:
+				gpio_on = GPIO.HIGH
+			else:
+				gpio_on = GPIO.LOW
+
 			pins_state[pin] = GPIO.input(pin)
+				
+			# consolidated config
+			pins_config[pin] = { "dev_name":device['name'], "dev_type":"sw", "has_multi":False, "gpio_on": gpio_on }
+			
 		if 'clk' in device:
-			pin = cfg_ctrlgpio['devices'][ix]['clk']
+			#pin = cfg_ctrlgpio['devices'][ix]['clk']
+			pin = device['clk']
 			pins_monitor.append(pin)
-			GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)	
+			GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+			GPIO.add_event_detect(pin, GPIO.RISING, callback=handle_rotary_interrupt) # NO bouncetime 
 			pins_state[pin] = GPIO.input(pin)
+			
+			# consolidated config
+			pins_config[pin] = { "dev_name":device['name'], "dev_type":"clk" }
+			
 		#We don't need to monitor the DT-pin!
 		#if 'dt' in device:
-			pin = cfg_ctrlgpio['devices'][ix]['dt']
+			#pin = cfg_ctrlgpio['devices'][ix]['dt']
+			pin = device['dt']
 			#pins_monitor.append(pin)
 			GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)	
+			GPIO.add_event_detect(pin, GPIO.RISING, callback=handle_rotary_interrupt) # NO bouncetime 
 			pins_state[pin] = GPIO.input(pin)
 		
-		if 'type' == 'rotenc':
-			#encoder1_last_clk_state = GPIO.input(clk)
-			#encoder1_cnt = 0
-			pass
+			# consolidated config
+			pins_config[pin] = { "dev_name":device['name'], "dev_type":"dt" }
+			
 
 	# map pins to functions
 	for ix, function in enumerate(cfg_ctrlgpio['functions']):
@@ -225,8 +535,20 @@ def setup():
 			else:
 				pins_function[ pin_clk ] = []
 				pins_function[ pin_clk ].append( ix )
-			
+
+			# consolidated config
+			fnc = { "fnc_name":function['name'], "fnc_code":function['function'] }
+			if 'functions' in pins_config[pin_sw]:
+				pins_config[pin_sw]["functions"].append(fnc)
+			else:
+				pins_config[pin_sw]["functions"] = []
+				pins_config[pin_sw]["functions"].append(fnc)
+				
 		if 'short_press' in function:
+		
+			if len(function['short_press']) > 1:
+				pins_config[pin_sw]["has_multi"] = True
+				
 			for short_press_button in function['short_press']:
 				device = get_device_config(short_press_button)
 				pin_sw = device['sw']
@@ -235,35 +557,29 @@ def setup():
 				else:
 					pins_function[ pin_sw ] = []
 					pins_function[ pin_sw ].append( ix )
+					
+			# consolidated config
+			fnc = { "fnc_name":function['name'], "fnc_code":function['function'] }
+			pins_config[pin_sw]["has_short"] = True
+			if 'functions' in pins_config[pin_sw]:
+				pins_config[pin_sw]["functions"].append(fnc)
+			else:
+				pins_config[pin_sw]["functions"] = []
+				pins_config[pin_sw]["functions"].append(fnc)
 				
 		if 'long_press' in function:
-			pass
+			# consolidated config
+			pin_sw=0#todo
+			pins_config[pin_sw]["has_long"] = True
 		
 	print pins_function
+	print pins_config
 		
 	# check for any duplicates, but don't exit on it. (#todo: consider making this configurable)
 	if len(pins_monitor) != len(set(pins_monitor)):
 		printer("WARNING: Same pin used multiple times, this may lead to unpredictable results.",level=LL_WARNING)
 		pins_monitor = set(pins_monitor) # no use in keeping duplicates
 	
-	# initialize pins
-	#for pin in pins_monitor:
-	#	GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)	
-	
-	#temp:
-	
-	"""
-	global clk
-	global dt
-
-	clk = cfg_ctrlgpio['encoder_1']['clk']
-	dt = cfg_ctrlgpio['encoder_1']['dt']
-	#btn = cfg_ctrlgpio['encoder_1']['btn']
-	#GPIO.setup(clk, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-	#GPIO.setup(dt, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-	encoder1_cnt = 0
-	encoder1_last_clk_state = GPIO.input(clk)
-	"""
 
 	printer('Initialized [OK]')
 		
@@ -307,70 +623,28 @@ def main():
 		else:
 			printer('No function configured for this button')
 		"""
-		
-	def handle_pin_change(pin,value_old,value_new):
-		print "DEBUG: handle pin change for pin: {0}".format(pin)
-		
-		if pin not in pins_function:
-			print "WHat??"
-			return None
-		
-		for function_ix in pins_function[pin]:
-			
-			#examine if func meets all requirements
-			func_cfg = cfg_ctrlgpio['functions'][function_ix]
-			ok = True
-			
-			# check mode
-			if 'mode' in func_cfg and func_cfg['mode'] not in active_modes:
-				print "DEBUG: not in the required mode"
-			else:
-				# encoder: check dt pin
-				if 'encoder' in func_cfg:
-					device_cfg = get_device_config( func_cfg['encoder'] )
-					pin_clk = pin
-					pin_dt = device_cfg['dt']
-					#if clkState != encoder1_last_clk_state:
-					#  if dtState != clkState:
-					if value_new != value_old:
-						if GPIO.input(pin_dt) != value_new:
-							print function_map[func_cfg['function']]
-							#function_map[func_cfg['function']] = { "zmq_path":"volume", "zmq_command":"PUT" }
-							print "ENCODER: INCREASE"
-						else:
-							print function_map[func_cfg['function']]
-							print "ENCODER: DECREASE"
-
-				# switch (long or short): check if other switches need to be engaged
-				elif 'short_press' in func_cfg:
-					if len( func_cfg['short_press'] ) == 1:
-						print function_map[func_cfg['function']]
-						# assume(?) it's the same gpio number?
-					else:
-						#check if other buttons are pressed
-						for switch in func_cfg['short_press']:
-							switch_cfg = get_device_config( switch )
-							i = 0
-							if GPIO.input(switch_cfg['sw']) == switch_cfg['on']:
-								i += 1
-								
-						if i == len(func_cfg['short_press']):								
-							print function_map[func_cfg['function']]
-						
-				#elif 'long_press' in .. #todo
-				else:
-					printer("Unsupported device or incomplete configuration",level=LL_WARNING)
 							
 			
 	while True:
 
-		# get all states
+		# loop through monitored pins, looking for changes
+		# ?? CAN WE USE INTERRUPTS? ??
+
+		''' using INT's now...
+		long_press_start = None
+
 		for pin in pins_monitor:
 			if pins_state[pin] != GPIO.input(pin):
-				# handle this pin, pref. asynchronous..
-				handle_pin_change(pin,pins_state[pin],GPIO.input(pin))
-				pins_state[pin] = GPIO.input(pin)
+				# pin has changed; handle it, pref. asynchronous..
 				
+				# if this button also has a long press function, then execute on button release
+				# if this button only has a short press function, then execute on press
+				# if this button has a delay, then repeat until delay time finished [todo]
+				
+				# wait for release:
+					handle_pin_change(pin,pins_state[pin],GPIO.input(pin))
+				pins_state[pin] = GPIO.input(pin)
+		'''
 	
 		"""
 		clkState = GPIO.input(clk)

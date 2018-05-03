@@ -70,17 +70,23 @@
 				{ 	  "name": "vol_enc_sw"
 					, "type": "mom"
 					, "sw":26
-					, "on":true
+					, "gpio_on": "high"
+					, "gpio_pullupdown": "down"
+					, "gpio_edgedetect": "both"
 				},
 				{ 	  "name": "bas_enc_sw"
 					, "type": "mom"
 					, "sw":23
-					, "on":true
+					, "gpio_on": "high"
+					, "gpio_pullupdown": "down"
+					, "gpio_edgedetect": "both"
 				},
 				{ 	  "name": "tre_enc_sw"
 					, "type": "mom"
 					, "sw":23
-					, "on":true
+					, "gpio_on": "high"
+					, "gpio_pullupdown": "down"
+					, "gpio_edgedetect": "both"
 				}
 			]
 			,"functions": [
