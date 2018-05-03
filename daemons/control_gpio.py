@@ -294,7 +294,7 @@ def handle_switch_interrupt(pin):
 			for function_ix in pins_function[pin]:
 				func_cfg = cfg_ctrlgpio['functions'][function_ix]
 				button_count = len( func_cfg['short_press'] )
-				if button_count > 1
+				if button_count > 1:
 					i = 0
 					for switch in func_cfg['short_press']:
 						if GPIO.input(switch) == pins_config[pin]['gpio_on']:
