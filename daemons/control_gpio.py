@@ -300,10 +300,10 @@ def cb_mode_reset(pin,function_ix):
 	print "TODO! RESET MODE!"
 
 def check_mode(pin,function_ix):
-	print "CHECK_MODE() {0}".format(function_ix)
 
 	function = pins_config[pin]['functions'][function_ix]
-
+	print function
+	
 	if 'mode_toggle' in function: # and 'mode' in pins_config[pin]:
 		print "DEBUG: Toggeling Mode"
 		if function['mode_toggle'] in active_modes:
@@ -316,6 +316,14 @@ def check_mode(pin,function_ix):
 	elif 'mode_select' in function: # and 'mode' in pins_config[pin]:
 		print "DEBUG: Next Mode"
 		# get current mode
+		if not active_modes:
+			mode_ix = 1
+			print "Next>>>"
+			print "DEBUG: New    : {0}:{1}".format(mode_ix,function['mode_select'][mode_ix])
+			active_modes.append(function['mode_select'][mode_ix])
+			if 'mode_reset' in function:
+				print "TODO! START RESET TIMER!! Seconds: {0}".format(pins_config[pin]['mode_reset'])
+			
 		for mode in active_modes:
 			print "-"
 			mode_ix = function['mode_select'].index(mode)
@@ -330,7 +338,7 @@ def check_mode(pin,function_ix):
 				active_modes.append(function['mode_select'][mode_ix])
 				if 'mode_reset' in function:
 					print "TODO! START RESET TIMER!! Seconds: {0}".format(pins_config[pin]['mode_reset'])
-					gobject.timeout_add_seconds(function['mode_reset'],cb_mode_reset,pin,function_ix)
+					#gobject.timeout_add_seconds(function['mode_reset'],cb_mode_reset,pin,function_ix)
 				break
 
 				
