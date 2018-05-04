@@ -300,6 +300,7 @@ def cb_mode_reset(pin,function_ix):
 	print "TODO! RESET MODE!"
 
 def check_mode(pin,function_ix):
+	print "CHECK_MODE()"
 
 	function = pins_config[pin]['functions'][function_ix]
 
@@ -376,11 +377,14 @@ def handle_switch_interrupt(pin):
 
 		printer("Waiting for button to be released....")
 		pressed = True
-		while pressed == True or press_time >= LONG_PRESS:
+		while True: #pressed == True or press_time >= LONG_PRESS:
 			state = GPIO.input(pin)
 			if state != pins_config[pin]['gpio_on']:
 				print "RELEASED!"
 				pressed = False
+				break
+			if press_time >= LONG_PRESS:
+				print "TIMEOUT"
 				break
 			press_time = clock()-press_start
 			sleep(0.01)
@@ -393,16 +397,21 @@ def handle_switch_interrupt(pin):
 			
 			# execute, checking mode
 			for fun in pins_config[pin]['functions']:
+				print "1"
 				if fun['press_type'] == 'long_press':
+					print "2"
 					if 'mode' in fun:
 						if fun['mode'] in active_modes:
 							exec_function_by_code(fun['fnc_code'])
+							print "3"
 						else:
 							print "DEBUG mode mismatch"
 					else:
 						if 'mode_toggle' in fun or 'mode_select' in fun:
+							print "4"
 							check_mode(pin,ix)
 						exec_function_by_code(fun['fnc_code'])			
+						print "5"
 			
 		elif press_time < LONG_PRESS and pins_config[pin]['has_short']:
 			print "EXECUTING THE SHORT FUNCTION (not long enough pressed)"
