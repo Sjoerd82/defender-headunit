@@ -87,7 +87,7 @@ pins_state = {}			# pin (previous) state
 pins_function = {}		# pin function(s)
 pins_config = {}		# consolidated config, key=pin
 
-active_modes = []
+active_modes = [ None ]
 
 '''
 pins_config = 
@@ -314,11 +314,9 @@ def check_mode(pin,function_ix):
 			print "DEBUG: Active Mode(s): {0}".format(active_modes)
 			
 	elif 'mode_select' in function: # and 'mode' in pins_config[pin]:
-		print "DEBUG: Next Mode"
-		# get current mode
 		if not active_modes:
 			mode_ix = 1
-			print "Next>>>"
+			print "First!"
 			print "DEBUG: New    : {0}:{1}".format(mode_ix,function['mode_select'][mode_ix])
 			active_modes.append(function['mode_select'][mode_ix])
 			if 'mode_reset' in function:
@@ -330,8 +328,6 @@ def check_mode(pin,function_ix):
 				if mode_ix is not None:
 					mode_old = function['mode_select'][mode_ix]
 					active_modes.remove(mode_old)
-					#print mode_ix
-					#print len(function['mode_select'])
 					if mode_ix >= len(function['mode_select'])-1:
 						mode_ix = 0
 					else:
