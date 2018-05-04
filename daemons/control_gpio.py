@@ -300,7 +300,7 @@ def cb_mode_reset(pin,function_ix):
 	print "TODO! RESET MODE!"
 
 def check_mode(pin,function_ix):
-	print "CHECK_MODE()"
+	print "CHECK_MODE() {0}".format(ix)
 
 	function = pins_config[pin]['functions'][function_ix]
 
@@ -397,7 +397,7 @@ def handle_switch_interrupt(pin):
 			print "EXECUTING THE LONG FUNCTION (long enough pressed)"
 			
 			# execute, checking mode
-			for fun in pins_config[pin]['functions']:
+			for ix, fun in iter(pins_config[pin]['functions']):
 				if fun['press_type'] == 'long':
 					if 'mode' in fun:
 						if fun['mode'] in active_modes:
