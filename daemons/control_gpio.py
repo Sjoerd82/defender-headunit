@@ -359,7 +359,7 @@ def handle_switch_interrupt(pin):
 		print "EXECUTING THE SHORT FUNCTION (only option)..."
 		
 		# execute, checking mode
-		for ix, fun in iter(pins_config[pin]['functions']):
+		for ix, fun in enumerate(pins_config[pin]['functions']):
 			if 'mode' in fun:
 				if fun['mode'] in active_modes:
 					exec_function_by_code(fun['fnc_code'])
@@ -397,7 +397,7 @@ def handle_switch_interrupt(pin):
 			print "EXECUTING THE LONG FUNCTION (long enough pressed)"
 			
 			# execute, checking mode
-			for ix, fun in iter(pins_config[pin]['functions']):
+			for ix, fun in enumerate(pins_config[pin]['functions']):
 				if fun['press_type'] == 'long':
 					if 'mode' in fun:
 						if fun['mode'] in active_modes:
@@ -413,7 +413,7 @@ def handle_switch_interrupt(pin):
 			print "EXECUTING THE SHORT FUNCTION (not long enough pressed)"
 			
 			# execute, checking mode
-			for ix, fun in iter(pins_config[pin]['functions']):
+			for ix, fun in enumerate(pins_config[pin]['functions']):
 				if fun['press_type'] == 'short':
 					if 'mode' in fun:
 						if fun['mode'] in active_modes:
