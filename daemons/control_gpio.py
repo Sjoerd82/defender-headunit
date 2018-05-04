@@ -697,7 +697,7 @@ def setup():
 					pins_function[ pin_sw ].append( ix )
 					
 			# consolidated config
-			fnc = { "fnc_name":function['name'], "fnc_code":function['function'] }
+			fnc = { "fnc_name":function['name'], "fnc_code":function['function'], "multicount":0 }
 			pins_config[pin_sw]["has_long"] = True
 			if 'functions' in pins_config[pin_sw]:
 				pins_config[pin_sw]["functions"].append(fnc)
