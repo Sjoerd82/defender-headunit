@@ -664,6 +664,7 @@ def setup():
 					printer("ID not found in devices: {0}".format(function['short_press'][0]),level=LL_CRITICAL)
 					exit(1)
 				pin_sw = device['sw']
+				pins_config[pin_sw]["has_short"] = True
 				pins_config[pin_sw]["has_multi"] = False
 				fnc = { "fnc_name":function['name'], "fnc_code":function['function'], "multicount":0 }
 				print "1 DBG: appending {0} to pin {1}".format(fnc,pin_sw)
@@ -689,7 +690,7 @@ def setup():
 				pins_config[pin_sw]["functions"].append(fnc)
 				print "2 DBG: appending {0} to pin {1}".format(fnc,pin_sw)
 				
-									
+"""
 		if 'long_press' in function:
 
 			multicount = len(function['long_press'])
@@ -699,6 +700,7 @@ def setup():
 					printer("ID not found in devices: {0}".format(function['long_press'][0]),level=LL_CRITICAL)
 					exit(1)
 				pin_sw = device['sw']
+				pins_config[pin_sw]["has_long"] = True
 				pins_config[pin_sw]["has_multi"] = False
 				fnc = { "fnc_name":function['name'], "fnc_code":function['function'], "multicount":0 }
 				print "3 DBG: appending {0} to pin {1}".format(fnc,pin_sw)
@@ -720,9 +722,10 @@ def setup():
 						pins_function[ pin_sw ] = []
 						pins_function[ pin_sw ].append( ix )
 
-				fnc = { "fnc_name":function['name'], "fnc_code":function['function'], "press_type":"short", "multicount":multicount, "multi":multi }
+				fnc = { "fnc_name":function['name'], "fnc_code":function['function'], "press_type":"long", "multicount":multicount, "multi":multi }
 				pins_config[pin_sw]["functions"].append(fnc)
 				print "4 DBG: appending {0} to pin {1}".format(fnc,pin_sw)
+"""
 
 	# we sort the functions so that the multi-button functions are on top, the one with most buttons first
 	# that way we can reliably check which multi-button combination is pressed, if any.
