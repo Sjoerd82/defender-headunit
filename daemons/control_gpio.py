@@ -322,7 +322,7 @@ def check_mode(pin,function_ix):
 			print "DEBUG: New    : {0}:{1}".format(mode_ix,function['mode_select'][mode_ix])
 			active_modes.append(function['mode_select'][mode_ix])
 			if 'mode_reset' in function:
-				print "TODO! START RESET TIMER!! Seconds: {0}".format(pins_config[pin]['mode_reset'])
+				print "TODO! START RESET TIMER!! Seconds: {0}".format(function['mode_reset'])
 			
 		for mode in active_modes:
 			print "-"
@@ -337,7 +337,7 @@ def check_mode(pin,function_ix):
 				print "DEBUG: New    : {0}:{1}".format(mode_ix,function['mode_select'][mode_ix])
 				active_modes.append(function['mode_select'][mode_ix])
 				if 'mode_reset' in function:
-					print "TODO! START RESET TIMER!! Seconds: {0}".format(pins_config[pin]['mode_reset'])
+					print "TODO! START RESET TIMER!! Seconds: {0}".format(function['mode_reset'])
 					#gobject.timeout_add_seconds(function['mode_reset'],cb_mode_reset,pin,function_ix)
 				break
 
