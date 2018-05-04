@@ -659,7 +659,6 @@ def setup():
 					exit(1)
 				pin_sw = device['sw']
 				pins_config[pin_sw]["has_multi"] = False
-				print function
 				fnc = { "fnc_name":function['name'], "fnc_code":function['function'] }
 			else:
 				#device = get_device_config(function['short_press'][0])
@@ -711,7 +710,7 @@ def setup():
 	# sort pins_config[n]['functions'] by pins_config[n]['functions']['multicount'], highest first
 	for pin in pins_config:
 		#newlist = sorted(list_to_be_sorted, key=lambda k: k['name'])
-		newlist = sorted(pins_config[n]['functions'], key=lambda k: k['multicount'], reverse=True)
+		newlist = sorted(pins_config[pin]['functions'], key=lambda k: k['multicount'], reverse=True)
 		print "DEBUG: Sorted function list:"
 		print newlist
 		#pins_config[pin]['functions'] = newlist
