@@ -300,7 +300,7 @@ def cb_mode_reset(pin,function_ix):
 	print "TODO! RESET MODE!"
 
 def check_mode(pin,function_ix):
-	print "CHECK_MODE() {0}".format(ix)
+	print "CHECK_MODE() {0}".format(function_ix)
 
 	function = pins_config[pin]['functions'][function_ix]
 
