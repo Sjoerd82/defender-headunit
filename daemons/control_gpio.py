@@ -323,23 +323,24 @@ def check_mode(pin,function_ix):
 			active_modes.append(function['mode_select'][mode_ix])
 			if 'mode_reset' in function:
 				print "TODO! START RESET TIMER!! Seconds: {0}".format(function['mode_reset'])
+		else:
 			
-		for mode in active_modes:
-			print "-"
-			mode_ix = function['mode_select'].index(mode)
-			if mode_ix is not None:
-				print "DEBUG: Current: {0}:{1}".format(mode_ix,function['mode_select'][mode_ix])
-				active_modes.remove( function['mode_select'][mode_ix] )
-				if mode_ix > function['mode_select'].count()-1:
-					mode_ix = 0
-				else:
-					mode_ix += 1
-				print "DEBUG: New    : {0}:{1}".format(mode_ix,function['mode_select'][mode_ix])
-				active_modes.append(function['mode_select'][mode_ix])
-				if 'mode_reset' in function:
-					print "TODO! START RESET TIMER!! Seconds: {0}".format(function['mode_reset'])
-					#gobject.timeout_add_seconds(function['mode_reset'],cb_mode_reset,pin,function_ix)
-				break
+			for mode in active_modes:
+				print "-"
+				mode_ix = function['mode_select'].index(mode)
+				if mode_ix is not None:
+					print "DEBUG: Current: {0}:{1}".format(mode_ix,function['mode_select'][mode_ix])
+					active_modes.remove( function['mode_select'][mode_ix] )
+					if mode_ix > function['mode_select'].count()-1:
+						mode_ix = 0
+					else:
+						mode_ix += 1
+					print "DEBUG: New    : {0}:{1}".format(mode_ix,function['mode_select'][mode_ix])
+					active_modes.append(function['mode_select'][mode_ix])
+					if 'mode_reset' in function:
+						print "TODO! START RESET TIMER!! Seconds: {0}".format(function['mode_reset'])
+						#gobject.timeout_add_seconds(function['mode_reset'],cb_mode_reset,pin,function_ix)
+					break
 
 				
 def handle_switch_interrupt(pin):
