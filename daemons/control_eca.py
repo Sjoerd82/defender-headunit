@@ -56,7 +56,7 @@ ECA_CHAIN_MASTER_AMP = 'PRE'	# chain object that contains the master amp
 ECA_CHAIN_MUTE = 'PRE'			# chain object to mute
 ECA_CHAIN_EQ = None				# chain object that contains the equalizer
 
-
+cfg_ecasound = None
 eca_chain_op_master_amp = None
 att_level = 20		# TODO, get from configuration
 local_volume = 50	
@@ -103,7 +103,7 @@ def load_ecasound_configuration():
 			True: 	Success
 			False:	Critical failure
 	"""
-
+	global cfg_ecasound
 	global eca_chainsetup
 	global eca_chain_master_amp
 	global eca_chain_mute

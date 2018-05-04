@@ -401,44 +401,44 @@ def handle_switch_interrupt(pin):
 	if pins_config[pin]['has_multi']:
 		""" There are multi-button combinations possible. The function pin list is sorted with highest button counts first.
 			Looping from top to bottom we will check if any of these are valid.	"""
-			print "checking multi-button..."
-			matched_short_press_function_code = None
-			matched_long_press_function_code = None
-			for function in pins_config[pin]['functions']:
-			
-				if 'mode' in function and function['mode'] in active_modes:
-			
-					multi_match = True
-					for multi_pin in function['multi']:
-						if not GPIO.input(multi_pin) == pins_config[pin]['gpio_on']:
-							multi_match = False
-					if multi_match == True:
-						if function['press_type'] == 'short_press':
-							matched_short_press_function_code = function['fnc_code']
-						elif function['press_type'] == 'long_press':
-							matched_long_press_function_code = function['fnc_code']
-					
-			printer("Waiting for button to be released....")
-			pressed = True
-			while pressed == True or press_time >= LONG_PRESS:
-				state = GPIO.input(pin)
-				if state != pins_config[pin]['gpio_on']:
-					print "RELEASED!"
-					pressed = False
-				press_time = clock()-press_start
-				sleep(0.01)
-					
-			print "....done"
-			print "switch was pressed for {0} seconds".format(press_time)
-			
+		print "checking multi-button..."
+		matched_short_press_function_code = None
+		matched_long_press_function_code = None
+		for function in pins_config[pin]['functions']:
+		
+			if 'mode' in function and function['mode'] in active_modes:
+		
+				multi_match = True
+				for multi_pin in function['multi']:
+					if not GPIO.input(multi_pin) == pins_config[pin]['gpio_on']:
+						multi_match = False
+				if multi_match == True:
+					if function['press_type'] == 'short_press':
+						matched_short_press_function_code = function['fnc_code']
+					elif function['press_type'] == 'long_press':
+						matched_long_press_function_code = function['fnc_code']
+				
+		printer("Waiting for button to be released....")
+		pressed = True
+		while pressed == True or press_time >= LONG_PRESS:
+			state = GPIO.input(pin)
+			if state != pins_config[pin]['gpio_on']:
+				print "RELEASED!"
+				pressed = False
+			press_time = clock()-press_start
+			sleep(0.01)
+				
+		print "....done"
+		print "switch was pressed for {0} seconds".format(press_time)
+		
 #			if pins_config[pin]['has_long'] and not pins_config[pin]['has_short']:
 #				print "EXECUTING THE LONG FUNCTION (only long)"
-			if press_time >= LONG_PRESS and pins_config[pin]['has_long'] and matched_long_press_function_code is not None:
-				print "EXECUTING THE LONG FUNCTION (long enough pressed)"
-			elif press_time < LONG_PRESS and pins_config[pin]['has_short'] and matched_short_press_function_code is not None::
-				print "EXECUTING THE SHORT FUNCTION (not long enough pressed)"
-			else:
-				print "No Match!"		
+		if press_time >= LONG_PRESS and pins_config[pin]['has_long'] and matched_long_press_function_code is not None:
+			print "EXECUTING THE LONG FUNCTION (long enough pressed)"
+		elif press_time < LONG_PRESS and pins_config[pin]['has_short'] and matched_short_press_function_code is not None::
+			print "EXECUTING THE SHORT FUNCTION (not long enough pressed)"
+		else:
+			print "No Match!"		
 
 # Rotarty encoder interrupt:
 # this one is called for both inputs from rotary switch (A and B)
