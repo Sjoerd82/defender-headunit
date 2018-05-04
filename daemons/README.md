@@ -45,6 +45,44 @@ Remote Controls are (Python) daemons.
 ## GPIO controller
 The GPIO controller enables use of switches and encoders. Configure the controls in the configuration:
 
+Rotary encoder, device section:
+
+Field | Description
+--- | ---
+`name` | ID
+`type` | `rotenc`
+`clk` | Pin 1 (BCM*)
+`dt` | Pin 2 (BCM*)
+
+Switch, device section:
+
+Field | Description
+--- | ---
+`name` | ID
+`type` | `sw`
+`pin` | Pin number (BCM*)
+`gpio_on` | Logic level for "on". Valid: `high`\`1` or `low`\`0`
+`debounce` | OPTIONAL. Debounce time in ms 
+`gpio_pullupdown` | OPTIONAL. `true | "down" | "up"`
+`gpio_edgedetect` | OPTIONAL. `"rising" | "falling" | "both"`
+
+Function section:
+
+Field | Description
+--- | ---
+`name` | not used...
+`function` | function ID*
+`short_press` | List of (switch) device(s)
+`long_press` | List of (switch) device(s)
+`encoder` | Device ID of encoder
+`mode` | Required mode for this function
+`mode_toggle` | Toggles this mode on/off
+`mode_select` | Loops through a list of modes
+`mode_reset` | Remove mode afer this number of seconds
+
+List of supported functions:
+
+
 Example for three encoders and three switches.
 In this example we have three encoders with build-in switch.
 The encoders are used to control Bass, Treble and Volume.

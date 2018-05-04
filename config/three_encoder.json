@@ -1,0 +1,119 @@
+{
+	  "gpio_mode":"BCM"
+	, "devices": [
+		{ 	  "name": "vol_encoder"
+			, "type": "rotenc"
+			, "clk":13
+			, "dt":6
+		},
+		{ 	  "name": "bas_encoder"
+			, "type": "rotenc"
+			, "clk":5
+			, "dt":0
+		},
+		{ 	  "name": "tre_encoder"
+			, "type": "rotenc"
+			, "clk":22
+			, "dt":23
+		},
+		{ 	  "name": "vol_enc_sw"
+			, "sw":26
+			, "gpio_on": "high"
+			, "debounce": 10
+		},
+		{ 	  "name": "bas_enc_sw"
+			, "sw":24
+			, "gpio_on": "high"
+			, "gpio_pullupdown": "down"
+			, "gpio_edgedetect": "rising"
+		},
+		{ 	  "name": "tre_enc_sw"
+			, "sw":25
+			, "gpio_on": "high"
+			, "gpio_pullupdown": "down"
+			, "gpio_edgedetect": "rising"
+		}
+	]
+	,"functions": [
+		{
+			  "name":"volume"
+			, "function":"VOLUME"
+			, "encoder" : "vol_encoder"
+		},
+		{
+			  "name":"bass"
+			, "function":"BASS"
+			, "encoder" : "bas_encoder"
+		},
+		{
+			  "name":"treble"
+			, "function":"TREBLE"
+			, "encoder" : "tre_encoder"
+		},
+		{
+			  "name":"source"
+			, "function":"SOURCE"
+			, "short_press": [ "vol_enc_sw" ]
+		},
+		{
+			  "name":"poweroff"
+			, "function":"POWEROFF"
+			, "long_press": [ "vol_enc_sw" ]
+		},
+		{
+			  "name":"next_track"
+			, "function":"NEXT_TRACK"
+			, "short_press": [ "tre_enc_sw" ]
+		},
+		{
+			  "name":"next_folder"
+			, "function":"NEXT_FOLDER"
+			, "long_press": [ "tre_enc_sw" ]
+		},
+		{
+			  "name":"prev_track"
+			, "function":"PREV_TRACK"
+			, "short_press": [ "bas_enc_sw" ]
+		},
+		{
+			  "name":"prev_folder"
+			, "function":"PREV_FOLDER"
+			, "long_press": [ "bas_enc_sw" ]
+		},
+		{
+			  "name":"toggle_random"
+			, "function":"RANDOM"
+			, "short_press": [ "bas_enc_sw", "tre_enc_sw" ]
+		},
+		{
+			  "name":"enter_menu"
+			, "function":"MENU_ENTER"
+			, "short_press": [ "bas_enc_sw", "tre_enc_sw", "vol_enc_sw" ]
+			, "mode_toggle": "menu"
+		},
+		{
+			  "name":"browse_menu1"
+			, "mode":"menu"
+			, "function":"MENU_SCROLL"
+			, "encoder" : "bas_encoder"
+		},
+		{
+			  "name":"browse_menu2"
+			, "mode":"menu"
+			, "function":"MENU_SCROLL"
+			, "encoder" : "tre_encoder"
+		},
+		{
+			  "name":"menu_select1"
+			, "mode":"menu"
+			, "function":"MENU_SELECT"
+			, "short_press": [ "tre_enc_sw" ]
+		},
+		{
+			  "name":"menu_select2"
+			, "mode":"menu"
+			, "function":"MENU_SELECT"
+			, "short_press": [ "bas_enc_sw" ]
+		}
+	]
+}

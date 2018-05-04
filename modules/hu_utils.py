@@ -282,6 +282,41 @@ def tag ( tagname, format='ANSI', tagsize=6 ):
 			
 	return ctag
 	#return self.colorize(ftag.center(self.tag_size),color)
+
+# *******************************************************************************
+# ArgParse
+#
+	print "************************************************************"
+	print "* "+WELCOME
+	print "************************************************************"
+	
+	parser = argparse.ArgumentParser(description=DESCRIPTION)
+	parser.add_argument('--loglevel', action='store', default=DEFAULT_LOG_LEVEL, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)
+	parser.add_argument('--config','-c', action='store', help='Configuration file', default=DEFAULT_CONFIG_FILE)
+	#parser.add_argument('-v', action='store_true', default=False)
+	parser.add_argument('-b', action='store_true', default=False)
+	parser.add_argument('--port_publisher', action='store')
+	parser.add_argument('--port_subscriber', action='store')
+
+def default_parser(banner=None):
+
+	import argparse
+	DEFAULT_LOG_LEVEL = LL_INFO
+	DEFAULT_CONFIG_FILE = '/etc/configuration.json'
+	
+	if banner is not None:
+		print "************************************************************"
+		print "* "+banner
+		print "************************************************************"
+	
+	parser = argparse.ArgumentParser(description=DESCRIPTION)
+	parser.add_argument('--loglevel', action='store', default=DEFAULT_LOG_LEVEL, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)
+	parser.add_argument('--config','-c', action='store', help='Configuration file', default=DEFAULT_CONFIG_FILE)
+	parser.add_argument('-b', action='store_true', default=False)
+	parser.add_argument('--port_publisher', action='store')
+	parser.add_argument('--port_subscriber', action='store')
+	return parser
+
 	
 # ********************************************************************************
 # Load JSON configuration
