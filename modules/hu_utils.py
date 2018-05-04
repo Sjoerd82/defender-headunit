@@ -286,19 +286,7 @@ def tag ( tagname, format='ANSI', tagsize=6 ):
 # *******************************************************************************
 # ArgParse
 #
-	print "************************************************************"
-	print "* "+WELCOME
-	print "************************************************************"
-	
-	parser = argparse.ArgumentParser(description=DESCRIPTION)
-	parser.add_argument('--loglevel', action='store', default=DEFAULT_LOG_LEVEL, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)
-	parser.add_argument('--config','-c', action='store', help='Configuration file', default=DEFAULT_CONFIG_FILE)
-	#parser.add_argument('-v', action='store_true', default=False)
-	parser.add_argument('-b', action='store_true', default=False)
-	parser.add_argument('--port_publisher', action='store')
-	parser.add_argument('--port_subscriber', action='store')
-
-def default_parser(banner=None):
+def default_parser(description,banner=None):
 
 	import argparse
 	DEFAULT_LOG_LEVEL = LL_INFO

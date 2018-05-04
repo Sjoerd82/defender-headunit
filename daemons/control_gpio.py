@@ -140,13 +140,12 @@ def load_zeromq_configuration():
 	return configuration
 
 def load_gpio_configuration():
-
 	global cfg_ctrlgpio
 	gpio_ix = 4	#todo!
 	config_dir = configuration['daemons'][gpio_ix]['config-dir']
 	config_file = configuration['daemons'][gpio_ix]['config']
 	configfile = os.path.join(config_dir,config_file)
-	cfg_ctrlgpio = configuration_load(LOGGER_NAME,configfile):
+	cfg_ctrlgpio = configuration_load(LOGGER_NAME,configfile)
 	
 def get_device_config(name):
 	for device in cfg_ctrlgpio['devices']:

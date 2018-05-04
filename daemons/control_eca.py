@@ -376,7 +376,7 @@ def parse_args():
 
 	global args
 	import argparse
-	parser = default_parser(WELCOME)
+	parser = default_parser(DESCRIPTION,WELCOME)
 	# additional command line arguments mat be added here
 	args = parser.parse_args()
 
