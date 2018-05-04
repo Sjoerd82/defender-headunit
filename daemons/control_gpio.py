@@ -388,7 +388,7 @@ def handle_switch_interrupt(pin):
 				print "TIMEOUT"
 				break
 			press_time = clock()-press_start
-			sleep(0.01)
+			sleep(0.005)
 			
 		print "....done"
 		print "switch was pressed for {0} seconds".format(press_time*100)		
@@ -398,28 +398,23 @@ def handle_switch_interrupt(pin):
 			
 			# execute, checking mode
 			for fun in pins_config[pin]['functions']:
-				print "1"
-				if fun['press_type'] == 'long_press':
-					print "2"
+				if fun['press_type'] == 'long':
 					if 'mode' in fun:
 						if fun['mode'] in active_modes:
 							exec_function_by_code(fun['fnc_code'])
-							print "3"
 						else:
 							print "DEBUG mode mismatch"
 					else:
 						if 'mode_toggle' in fun or 'mode_select' in fun:
-							print "4"
 							check_mode(pin,ix)
 						exec_function_by_code(fun['fnc_code'])			
-						print "5"
 			
 		elif press_time < LONG_PRESS and pins_config[pin]['has_short']:
 			print "EXECUTING THE SHORT FUNCTION (not long enough pressed)"
 			
 			# execute, checking mode
 			for fun in pins_config[pin]['functions']:
-				if fun['press_type'] == 'short_press':
+				if fun['press_type'] == 'short':
 					if 'mode' in fun:
 						if fun['mode'] in active_modes:
 							exec_function_by_code(fun['fnc_code'])
