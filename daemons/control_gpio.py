@@ -622,7 +622,7 @@ def setup():
 			pins_state[pin] = GPIO.input(pin)
 				
 			# consolidated config
-			pins_config[pin] = { "dev_name":device['name'], "dev_type":"sw", "gpio_on": gpio_on, "has_multi":False, "has_short":False, "has_long":False }
+			pins_config[pin] = { "dev_name":device['name'], "dev_type":"sw", "gpio_on": gpio_on, "has_multi":False, "has_short":False, "has_long":False, "functions":[] }
 			
 		if 'clk' in device:
 			pin_clk = device['clk']
