@@ -331,6 +331,8 @@ def check_mode(pin,function_ix):
 				if mode_ix is not None:
 					print "DEBUG: Current: {0}:{1}".format(mode_ix,function['mode_select'][mode_ix])
 					active_modes.remove( function['mode_select'][mode_ix] )
+					print mode_ix
+					print len(function['mode_select'])
 					if mode_ix >= len(function['mode_select'])-1:
 						mode_ix = 0
 					else:
@@ -360,7 +362,6 @@ def handle_switch_interrupt(pin):
 		return None
 	
 	print "DEBUG: HANDLE_SWITCH_INTERRUPT! for pin: {0}".format(pin)
-	print pins_config[pin]
 
 	# check wheather we have short and/or long press functions and multi-press functions
 	if pins_config[pin]['has_short'] and not pins_config[pin]['has_long'] and not pins_config[pin]['has_multi']:
