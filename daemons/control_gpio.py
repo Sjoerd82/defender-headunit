@@ -35,7 +35,7 @@ from hu_msg import MqPubSubFwdController
 # Global variables and constants
 #
 DESCRIPTION = "GPIO Remote Control"
-WELCOME = "GPIO Controller Daemon"
+BANNER = "GPIO Controller Daemon"
 LOG_TAG = 'GPIO'
 LOGGER_NAME = 'gpio'
 
@@ -490,15 +490,10 @@ def handle_rotary_interrupt(pin):
 #
 def parse_args():
 
-	import argparse
 	global args
-
-	parser = argparse.ArgumentParser(description=DESCRIPTION)
-	parser.add_argument('--loglevel', action='store', default=DEFAULT_LOG_LEVEL, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)
-	parser.add_argument('--config','-c', action='store', help='Configuration file', default=DEFAULT_CONFIG_FILE)
-	parser.add_argument('-b', action='store_true', default=False)
-	parser.add_argument('--port_publisher', action='store')
-	parser.add_argument('--port_subscriber', action='store')
+	import argparse
+	parser = default_parser(DESCRIPTION,BANNER)
+	# additional command line arguments mat be added here
 	args = parser.parse_args()
 
 def setup():
@@ -655,13 +650,17 @@ def setup():
 			pins_config[pin_clk]["functions"].append(fnc)
 				
 		if 'short_press' in function:
-		
+					
 			multicount = len(function['short_press'])
 			if multicount == 1:
+				device = get_device_config(function['short_press'][0])
+				pin_sw = device['sw']
 				pins_config[pin_sw]["has_multi"] = False
 				fnc = { "fnc_name":function['name'], "fnc_code":function['function'] }
 			else:
-				pins_config[pin_sw]["has_multi"] = True
+				#device = get_device_config(function['short_press'][0])
+				#pin_sw = device['sw']
+				#pins_config[pin_sw]["has_multi"] = True
 				multi = []	# list of buttons for multi-press
 
 				# pins_function
@@ -669,6 +668,7 @@ def setup():
 					device = get_device_config(short_press_button)
 					pin_sw = device['sw']
 					multi.append( pin_sw )
+					pins_config[pin_sw]["has_multi"] = True
 					if pin_sw in pins_function:
 						pins_function[ pin_sw ].append( ix )
 					else:

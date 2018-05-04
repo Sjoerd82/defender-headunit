@@ -16,7 +16,7 @@
 		{
 			  "name":"toggler"
 			, "short_press": [ "vol_enc_sw" ]
-			, "mode_select": [ None, "volume", "bass", "treble", "menu" ]
+			, "mode_select": [ null, "volume", "bass", "treble", "menu" ]
 			, "mode_reset": 5
 		},
 		{
