@@ -24,6 +24,7 @@
 			  "name":"track_select"
 			, "function":"TRACK"
 			, "encoder":"multi_encoder"
+			, "mode": null
 		},
 		{
 			  "name":"volume"
