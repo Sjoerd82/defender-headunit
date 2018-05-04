@@ -49,7 +49,7 @@ DEFAULT_PORT_SUB = 5560
 
 #DELAY = 0.005
 DELAY = 0.01
-LONG_PRESS = 0.5
+LONG_PRESS = 0.05
 
 FUNCTIONS = [
 	'VOLUME',
@@ -383,26 +383,42 @@ def handle_switch_interrupt(pin):
 				pressed = False
 			press_time = clock()-press_start
 			sleep(0.01)
-
-		# execute, checking mode
-		for fun in pins_config[pin]['functions']:
-			if 'mode' in fun:
-				if fun['mode'] in active_modes:
-					exec_function_by_code(fun['fnc_code'])
-				else:
-					print "DEBUG mode mismatch"
-			else:
-				if 'mode_toggle' in fun or 'mode_select' in fun:
-					check_mode(pin,ix)
-				exec_function_by_code(fun['fnc_code'])
 			
 		print "....done"
-		print "switch was pressed for {0} seconds".format(press_time)		
+		print "switch was pressed for {0} seconds".format(press_time*100)		
 
 		if press_time >= LONG_PRESS and pins_config[pin]['has_long']:
 			print "EXECUTING THE LONG FUNCTION (long enough pressed)"
+			
+			# execute, checking mode
+			for fun in pins_config[pin]['functions']:
+				if fun['press_type'] == 'long_press':
+					if 'mode' in fun:
+						if fun['mode'] in active_modes:
+							exec_function_by_code(fun['fnc_code'])
+						else:
+							print "DEBUG mode mismatch"
+					else:
+						if 'mode_toggle' in fun or 'mode_select' in fun:
+							check_mode(pin,ix)
+						exec_function_by_code(fun['fnc_code'])			
+			
 		elif press_time < LONG_PRESS and pins_config[pin]['has_short']:
 			print "EXECUTING THE SHORT FUNCTION (not long enough pressed)"
+			
+			# execute, checking mode
+			for fun in pins_config[pin]['functions']:
+				if fun['press_type'] == 'long_press':
+					if 'mode' in fun:
+						if fun['mode'] in active_modes:
+							exec_function_by_code(fun['fnc_code'])
+						else:
+							print "DEBUG mode mismatch"
+					else:
+						if 'mode_toggle' in fun or 'mode_select' in fun:
+							check_mode(pin,ix)
+						exec_function_by_code(fun['fnc_code'])
+
 		else:
 			print "No Match!"
 			
@@ -670,7 +686,7 @@ def setup():
 				pin_sw = device['sw']
 				pins_config[pin_sw]["has_short"] = True
 				pins_config[pin_sw]["has_multi"] = False
-				fnc = { "fnc_name":function['name'], "fnc_code":function['function'], "multicount":0 }
+				fnc = { "fnc_name":function['name'], "fnc_code":function['function'], "press_type":"short", "multicount":0 }
 				pins_config[pin_sw]["functions"].append(fnc)
 			else:
 				#device = get_device_config(function['short_press'][0])
@@ -704,7 +720,7 @@ def setup():
 				pin_sw = device['sw']
 				pins_config[pin_sw]["has_long"] = True
 				pins_config[pin_sw]["has_multi"] = False
-				fnc = { "fnc_name":function['name'], "fnc_code":function['function'], "multicount":0 }
+				fnc = { "fnc_name":function['name'], "fnc_code":function['function'], "press_type":"long", "multicount":0 }
 				pins_config[pin_sw]["functions"].append(fnc)
 			else:
 				#device = get_device_config(function['long_press'][0])
