@@ -331,7 +331,7 @@ def check_mode(pin,function_ix):
 				if mode_ix is not None:
 					print "DEBUG: Current: {0}:{1}".format(mode_ix,function['mode_select'][mode_ix])
 					active_modes.remove( function['mode_select'][mode_ix] )
-					if mode_ix > len(function['mode_select'])-1:
+					if mode_ix >= len(function['mode_select'])-1:
 						mode_ix = 0
 					else:
 						mode_ix += 1
