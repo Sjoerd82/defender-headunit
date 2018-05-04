@@ -372,7 +372,7 @@ def handle_switch_interrupt(pin):
 
 	if (pins_config[pin]['has_long'] or pins_config[pin]['has_short']) and not pins_config[pin]['has_multi']:
 		""" LONG + possible short press functions, no multi-buttons, go ahead and execute, if pressed long enough """
-		print "EXECUTING THE LONG FUNCTION (only option) IF LONG ENOUGH PRESSED FOR. STOP."
+		print "EXECUTING THE LONG or SHORT FUNCTION, DEPENDING ON PRESS TIME."
 
 		printer("Waiting for button to be released....")
 		pressed = True
@@ -381,6 +381,7 @@ def handle_switch_interrupt(pin):
 			if state != pins_config[pin]['gpio_on']:
 				print "RELEASED!"
 				pressed = False
+				break
 			press_time = clock()-press_start
 			sleep(0.01)
 			
@@ -408,7 +409,7 @@ def handle_switch_interrupt(pin):
 			
 			# execute, checking mode
 			for fun in pins_config[pin]['functions']:
-				if fun['press_type'] == 'long_press':
+				if fun['press_type'] == 'short_press':
 					if 'mode' in fun:
 						if fun['mode'] in active_modes:
 							exec_function_by_code(fun['fnc_code'])
@@ -452,6 +453,7 @@ def handle_switch_interrupt(pin):
 			if state != pins_config[pin]['gpio_on']:
 				print "RELEASED!"
 				pressed = False
+				break
 			press_time = clock()-press_start
 			sleep(0.01)
 				
