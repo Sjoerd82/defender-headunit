@@ -645,7 +645,7 @@ def setup():
 			pin_dt = device['dt']
 			pin_clk = device['clk']
 			
-			fnc = { "fnc_name":function['name'], "fnc_code":function['function'] }
+			fnc = { "fnc_name":function['name'], "fnc_code":function['function'], "multicount":0 }
 			pins_config[pin_dt]["functions"].append(fnc)
 			pins_config[pin_clk]["functions"].append(fnc)
 				
@@ -659,7 +659,7 @@ def setup():
 					exit(1)
 				pin_sw = device['sw']
 				pins_config[pin_sw]["has_multi"] = False
-				fnc = { "fnc_name":function['name'], "fnc_code":function['function'] }
+				fnc = { "fnc_name":function['name'], "fnc_code":function['function'], "multicount":0 }
 			else:
 				#device = get_device_config(function['short_press'][0])
 				#pin_sw = device['sw']
