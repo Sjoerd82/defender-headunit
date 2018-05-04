@@ -342,7 +342,7 @@ def handle_switch_interrupt(pin):
 	#	sleep(debounce)
 	#	
 	sleep(0.02)
-	if not GPIO.input(pin) == pins_config[pin]['gpio_on']
+	if not GPIO.input(pin) == pins_config[pin]['gpio_on']:
 		return None
 	
 	print "DEBUG: HANDLE_SWITCH_INTERRUPT! for pin: {0}".format(pin)
