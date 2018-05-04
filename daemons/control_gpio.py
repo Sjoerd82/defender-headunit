@@ -370,8 +370,8 @@ def handle_switch_interrupt(pin):
 			
 		return
 
-	if pins_config[pin]['has_long'] and not pins_config[pin]['has_short'] and not pins_config[pin]['has_multi']:
-		""" Only a LONG function, no short press functions, no multi-buttons, go ahead and execute, if pressed long enough """
+	if (pins_config[pin]['has_long'] or pins_config[pin]['has_short']) and not pins_config[pin]['has_multi']:
+		""" LONG + possible short press functions, no multi-buttons, go ahead and execute, if pressed long enough """
 		print "EXECUTING THE LONG FUNCTION (only option) IF LONG ENOUGH PRESSED FOR. STOP."
 
 		printer("Waiting for button to be released....")
@@ -398,6 +398,14 @@ def handle_switch_interrupt(pin):
 			
 		print "....done"
 		print "switch was pressed for {0} seconds".format(press_time)		
+
+		if press_time >= LONG_PRESS and pins_config[pin]['has_long'] and matched_long_press_function_code is not None:
+			print "EXECUTING THE LONG FUNCTION (long enough pressed)"
+		elif press_time < LONG_PRESS and pins_config[pin]['has_short'] and matched_short_press_function_code is not None:
+			print "EXECUTING THE SHORT FUNCTION (not long enough pressed)"
+		else:
+			print "No Match!"
+			
 		return
 		
 	# check wheather we have short and/or long press functions and multi-press functions
@@ -441,7 +449,7 @@ def handle_switch_interrupt(pin):
 		elif press_time < LONG_PRESS and pins_config[pin]['has_short'] and matched_short_press_function_code is not None:
 			print "EXECUTING THE SHORT FUNCTION (not long enough pressed)"
 		else:
-			print "No Match!"		
+			print "No Match!"
 
 # Rotarty encoder interrupt:
 # this one is called for both inputs from rotary switch (A and B)
@@ -639,11 +647,7 @@ def setup():
 			# consolidated config
 			pins_config[pin_clk] = { "dev_name":device['name'], "dev_type":"clk", "functions":[] }
 			pins_config[pin_dt] = { "dev_name":device['name'], "dev_type":"dt", "functions":[] }
-			
-
-	print "DEBUG -- DEVICES DONE:"
-	print pins_config
-			
+					
 	# map pins to functions
 	for ix, function in enumerate(cfg_ctrlgpio['functions']):
 		if 'encoder' in function:		
@@ -668,7 +672,6 @@ def setup():
 				pins_config[pin_sw]["has_multi"] = False
 				fnc = { "fnc_name":function['name'], "fnc_code":function['function'], "multicount":0 }
 				pins_config[pin_sw]["functions"].append(fnc)
-				print "1 DBG: appending {0} to pin {1}".format(fnc,pin_sw)
 			else:
 				#device = get_device_config(function['short_press'][0])
 				#pin_sw = device['sw']
@@ -689,7 +692,6 @@ def setup():
 
 				fnc = { "fnc_name":function['name'], "fnc_code":function['function'], "press_type":"short", "multicount":multicount, "multi":multi }
 				pins_config[pin_sw]["functions"].append(fnc)
-				print "2 DBG: appending {0} to pin {1}".format(fnc,pin_sw)
 				
 		if 'long_press' in function:
 
@@ -704,7 +706,6 @@ def setup():
 				pins_config[pin_sw]["has_multi"] = False
 				fnc = { "fnc_name":function['name'], "fnc_code":function['function'], "multicount":0 }
 				pins_config[pin_sw]["functions"].append(fnc)
-				print "3 DBG: appending {0} to pin {1}".format(fnc,pin_sw)
 			else:
 				#device = get_device_config(function['long_press'][0])
 				#pin_sw = device['sw']
@@ -725,7 +726,6 @@ def setup():
 
 				fnc = { "fnc_name":function['name'], "fnc_code":function['function'], "press_type":"long", "multicount":multicount, "multi":multi }
 				pins_config[pin_sw]["functions"].append(fnc)
-				print "4 DBG: appending {0} to pin {1}".format(fnc,pin_sw)
 
 	# we sort the functions so that the multi-button functions are on top, the one with most buttons first
 	# that way we can reliably check which multi-button combination is pressed, if any.
