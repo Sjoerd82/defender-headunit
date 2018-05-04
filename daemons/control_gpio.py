@@ -641,6 +641,9 @@ def setup():
 			pins_config[pin_dt] = { "dev_name":device['name'], "dev_type":"dt", "functions":[] }
 			
 
+	print "DEBUG -- DEVICES DONE:"
+	print pins_config
+			
 	# map pins to functions
 	for ix, function in enumerate(cfg_ctrlgpio['functions']):
 		if 'encoder' in function:		
@@ -651,7 +654,7 @@ def setup():
 			fnc = { "fnc_name":function['name'], "fnc_code":function['function'], "multicount":0 }
 			pins_config[pin_dt]["functions"].append(fnc)
 			pins_config[pin_clk]["functions"].append(fnc)
-				
+			
 		if 'short_press' in function:
 					
 			multicount = len(function['short_press'])
@@ -663,6 +666,7 @@ def setup():
 				pin_sw = device['sw']
 				pins_config[pin_sw]["has_multi"] = False
 				fnc = { "fnc_name":function['name'], "fnc_code":function['function'], "multicount":0 }
+				print "1 DBG: appending {0} to pin {1}".format(fnc,pin_sw)
 			else:
 				#device = get_device_config(function['short_press'][0])
 				#pin_sw = device['sw']
@@ -683,6 +687,7 @@ def setup():
 
 				fnc = { "fnc_name":function['name'], "fnc_code":function['function'], "press_type":"short", "multicount":multicount, "multi":multi }
 				pins_config[pin_sw]["functions"].append(fnc)
+				print "2 DBG: appending {0} to pin {1}".format(fnc,pin_sw)
 				
 									
 		if 'long_press' in function:
