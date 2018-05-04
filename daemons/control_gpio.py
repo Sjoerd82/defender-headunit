@@ -667,6 +667,7 @@ def setup():
 				pins_config[pin_sw]["has_short"] = True
 				pins_config[pin_sw]["has_multi"] = False
 				fnc = { "fnc_name":function['name'], "fnc_code":function['function'], "multicount":0 }
+				pins_config[pin_sw]["functions"].append(fnc)
 				print "1 DBG: appending {0} to pin {1}".format(fnc,pin_sw)
 			else:
 				#device = get_device_config(function['short_press'][0])
@@ -702,6 +703,7 @@ def setup():
 				pins_config[pin_sw]["has_long"] = True
 				pins_config[pin_sw]["has_multi"] = False
 				fnc = { "fnc_name":function['name'], "fnc_code":function['function'], "multicount":0 }
+				pins_config[pin_sw]["functions"].append(fnc)
 				print "3 DBG: appending {0} to pin {1}".format(fnc,pin_sw)
 			else:
 				#device = get_device_config(function['long_press'][0])
