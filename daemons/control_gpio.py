@@ -710,6 +710,7 @@ def setup():
 	# sort pins_config[n]['functions'] by pins_config[n]['functions']['multicount'], highest first
 	for pin in pins_config:
 		#newlist = sorted(list_to_be_sorted, key=lambda k: k['name'])
+		print pins_config[pin]['functions']
 		newlist = sorted(pins_config[pin]['functions'], key=lambda k: k['multicount'], reverse=True)
 		print "DEBUG: Sorted function list:"
 		print newlist
