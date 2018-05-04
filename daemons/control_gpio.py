@@ -692,35 +692,46 @@ def setup():
 									
 		if 'long_press' in function:
 
-			if len(function['long_press']) > 1:
-				pins_config[pin_sw]["has_multi"] = True
-				
-			for long_press_button in function['long_press']:
-				device = get_device_config(long_press_button)
+			multicount = len(function['long_press'])
+			if multicount == 1:
+				device = get_device_config(function['long_press'][0])
+				if device is None:
+					printer("ID not found in devices: {0}".format(function['long_press'][0]),level=LL_CRITICAL)
+					exit(1)
 				pin_sw = device['sw']
-				if pin_sw in pins_function:
-					pins_function[ pin_sw ].append( ix )
-				else:
-					pins_function[ pin_sw ] = []
-					pins_function[ pin_sw ].append( ix )
-					
-			# consolidated config
-			fnc = { "fnc_name":function['name'], "fnc_code":function['function'], "multicount":0 }
-			pins_config[pin_sw]["has_long"] = True
-			if 'functions' in pins_config[pin_sw]:
-				pins_config[pin_sw]["functions"].append(fnc)
+				pins_config[pin_sw]["has_multi"] = False
+				fnc = { "fnc_name":function['name'], "fnc_code":function['function'], "multicount":0 }
+				print "3 DBG: appending {0} to pin {1}".format(fnc,pin_sw)
 			else:
-				pins_config[pin_sw]["functions"] = []
+				#device = get_device_config(function['long_press'][0])
+				#pin_sw = device['sw']
+				#pins_config[pin_sw]["has_multi"] = True
+				multi = []	# list of buttons for multi-press
+
+				# pins_function
+				for short_press_button in function['long_press']:
+					device = get_device_config(short_press_button)
+					pin_sw = device['sw']
+					multi.append( pin_sw )
+					pins_config[pin_sw]["has_multi"] = True
+					if pin_sw in pins_function:
+						pins_function[ pin_sw ].append( ix )
+					else:
+						pins_function[ pin_sw ] = []
+						pins_function[ pin_sw ].append( ix )
+
+				fnc = { "fnc_name":function['name'], "fnc_code":function['function'], "press_type":"short", "multicount":multicount, "multi":multi }
 				pins_config[pin_sw]["functions"].append(fnc)
+				print "4 DBG: appending {0} to pin {1}".format(fnc,pin_sw)
 
 	# we sort the functions so that the multi-button functions are on top, the one with most buttons first
 	# that way we can reliably check which multi-button combination is pressed, if any.
 	# sort pins_config[n]['functions'] by pins_config[n]['functions']['multicount'], highest first
-	for pin in pins_config:
-		#newlist = sorted(list_to_be_sorted, key=lambda k: k['name'])
-		newlist = sorted(pins_config[pin]['functions'], key=lambda k: k['multicount'], reverse=True)
-		print "DEBUG: Sorted function list: -- todo:test --"
-		print newlist
+#	for pin in pins_config:
+#		#newlist = sorted(list_to_be_sorted, key=lambda k: k['name'])
+#		newlist = sorted(pins_config[pin]['functions'], key=lambda k: k['multicount'], reverse=True)
+#		print "DEBUG: Sorted function list: -- todo:test --"
+#		print newlist
 		#pins_config[pin]['functions'] = newlist
 				
 	# check for any duplicates, but don't exit on it. (#todo: consider making this configurable)
