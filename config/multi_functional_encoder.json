@@ -8,7 +8,7 @@
 		},
 		{ 	  "name": "multi_enc_sw"
 			, "sw":26
-			, "gpio_on": "high"
+			, "gpio_on": "low"
 			, "debounce": 10
 		}
 	]
