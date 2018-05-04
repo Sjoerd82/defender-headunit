@@ -413,7 +413,7 @@ def handle_switch_interrupt(pin):
 			print "EXECUTING THE SHORT FUNCTION (not long enough pressed)"
 			
 			# execute, checking mode
-			for fun in pins_config[pin]['functions']:
+			for ix, fun in iter(pins_config[pin]['functions']):
 				if fun['press_type'] == 'short':
 					if 'mode' in fun:
 						if fun['mode'] in active_modes:
@@ -718,7 +718,13 @@ def setup():
 						pins_function[ pin_sw ] = []
 						pins_function[ pin_sw ].append( ix )
 
-				fnc = { "fnc_name":function['name'], "fnc_code":function['function'], "press_type":"short", "multicount":multicount, "multi":multi }
+				#fnc = { "fnc_name":function['name'], "fnc_code":function['function'], "press_type":"short", "multicount":multicount, "multi":multi }
+				fnc = function
+				fnc["fnc_name"]=function['name']
+				fnc["fnc_code"]=function['function']
+				fnc["press_type"]="short"
+				fnc["multicount"]=multicount
+				fnc["multi"]=multi
 				pins_config[pin_sw]["functions"].append(fnc)
 				
 		if 'long_press' in function:
