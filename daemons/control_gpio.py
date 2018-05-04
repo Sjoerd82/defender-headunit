@@ -690,7 +690,7 @@ def setup():
 				pins_config[pin_sw]["functions"].append(fnc)
 				print "2 DBG: appending {0} to pin {1}".format(fnc,pin_sw)
 				
-"""
+		"""
 		if 'long_press' in function:
 
 			multicount = len(function['long_press'])
@@ -725,16 +725,16 @@ def setup():
 				fnc = { "fnc_name":function['name'], "fnc_code":function['function'], "press_type":"long", "multicount":multicount, "multi":multi }
 				pins_config[pin_sw]["functions"].append(fnc)
 				print "4 DBG: appending {0} to pin {1}".format(fnc,pin_sw)
-"""
+		"""
 
 	# we sort the functions so that the multi-button functions are on top, the one with most buttons first
 	# that way we can reliably check which multi-button combination is pressed, if any.
 	# sort pins_config[n]['functions'] by pins_config[n]['functions']['multicount'], highest first
-#	for pin in pins_config:
-#		#newlist = sorted(list_to_be_sorted, key=lambda k: k['name'])
-#		newlist = sorted(pins_config[pin]['functions'], key=lambda k: k['multicount'], reverse=True)
-#		print "DEBUG: Sorted function list: -- todo:test --"
-#		print newlist
+	for pin in pins_config:
+		#newlist = sorted(list_to_be_sorted, key=lambda k: k['name'])
+		newlist = sorted(pins_config[pin]['functions'], key=lambda k: k['multicount'], reverse=True)
+		print "DEBUG: Sorted function list: -- todo:test --"
+		print newlist
 		#pins_config[pin]['functions'] = newlist
 				
 	# check for any duplicates, but don't exit on it. (#todo: consider making this configurable)
