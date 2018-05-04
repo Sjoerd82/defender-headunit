@@ -26,6 +26,9 @@ from time import clock
 from logging import getLogger	# logger
 from RPi import GPIO			# GPIO
 
+import gobject				# main loop
+from dbus.mainloop.glib import DBusGMainLoop
+
 #sys.path.append('../modules')
 sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
