@@ -185,11 +185,11 @@ def get_encoder_function_by_pin(pin):
 		# check mode #TODO!! TODO!! add mode here!!
 		if 'mode' in func_cfg and func_cfg['mode'] not in active_modes:
 			print "DEBUG: not in the required mode"
-			#return None
+			return None
 		else:
 			#if 'encoder' in func_cfg:
-			#return func_cfg
-			pass
+			return func_cfg
+			#pass
 
 def get_function_by_pin(pin,type):
 	""" Returns function dictionary
@@ -677,7 +677,11 @@ def setup():
 			pin_dt = device['dt']
 			pin_clk = device['clk']
 			
-			fnc = { "fnc_name":function['name'], "fnc_code":function['function'], "multicount":0 }
+			#fnc = { "fnc_name":function['name'], "fnc_code":function['function'], "multicount":0 }
+			fnc = function
+			fnc["fnc_name"]=function['name']
+			fnc["fnc_code"]=function['function']			
+			fnc["multicount"]=0
 			pins_config[pin_dt]["functions"].append(fnc)
 			pins_config[pin_clk]["functions"].append(fnc)
 			
