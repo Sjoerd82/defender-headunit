@@ -693,7 +693,12 @@ def setup():
 				pin_sw = device['sw']
 				pins_config[pin_sw]["has_short"] = True
 				pins_config[pin_sw]["has_multi"] = False
-				fnc = { "fnc_name":function['name'], "fnc_code":function['function'], "press_type":"short", "multicount":0 }
+				fnc = function
+				#fnc = { "fnc_name":function['name'], "fnc_code":function['function'], "press_type":"short", "multicount":0 }
+				fnc["fnc_name"]=function['name']
+				fnc["fnc_code"]=function['function']
+				fnc["press_type"]="short"
+				fnc["multicount"]=0
 				pins_config[pin_sw]["functions"].append(fnc)
 			else:
 				#device = get_device_config(function['short_press'][0])
