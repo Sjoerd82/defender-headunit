@@ -435,7 +435,7 @@ def handle_switch_interrupt(pin):
 #				print "EXECUTING THE LONG FUNCTION (only long)"
 		if press_time >= LONG_PRESS and pins_config[pin]['has_long'] and matched_long_press_function_code is not None:
 			print "EXECUTING THE LONG FUNCTION (long enough pressed)"
-		elif press_time < LONG_PRESS and pins_config[pin]['has_short'] and matched_short_press_function_code is not None::
+		elif press_time < LONG_PRESS and pins_config[pin]['has_short'] and matched_short_press_function_code is not None:
 			print "EXECUTING THE SHORT FUNCTION (not long enough pressed)"
 		else:
 			print "No Match!"		
