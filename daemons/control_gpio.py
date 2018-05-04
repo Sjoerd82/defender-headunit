@@ -659,6 +659,7 @@ def setup():
 					exit(1)
 				pin_sw = device['sw']
 				pins_config[pin_sw]["has_multi"] = False
+				print function
 				fnc = { "fnc_name":function['name'], "fnc_code":function['function'] }
 			else:
 				#device = get_device_config(function['short_press'][0])
