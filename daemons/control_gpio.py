@@ -338,6 +338,7 @@ def handle_switch_interrupt(pin):
 	""" Callback function for switches
 	"""
 	press_start = clock()
+	press_time = 0
 
 	# debounce
 	#if 'debounce' in pins_config[pin]:
