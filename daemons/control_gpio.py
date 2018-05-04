@@ -713,9 +713,8 @@ def setup():
 	# sort pins_config[n]['functions'] by pins_config[n]['functions']['multicount'], highest first
 	for pin in pins_config:
 		#newlist = sorted(list_to_be_sorted, key=lambda k: k['name'])
-		print pins_config[pin]['functions']
 		newlist = sorted(pins_config[pin]['functions'], key=lambda k: k['multicount'], reverse=True)
-		print "DEBUG: Sorted function list:"
+		print "DEBUG: Sorted function list: -- todo:test --"
 		print newlist
 		#pins_config[pin]['functions'] = newlist
 				
@@ -734,16 +733,17 @@ def setup():
 		
 def main():		
 
-	global bus
-	
 	# Initialize the mainloop
-	DBusGMainLoop(set_as_default=True)
-	mainloop = gobject.MainLoop()
+	#DBusGMainLoop(set_as_default=True)
+	#mainloop = gobject.MainLoop()
 
-	try:
-		mainloop.run()
-	finally:
-		mainloop.quit()
+	#try:
+	#	mainloop.run()
+	#finally:
+	#	mainloop.quit()
+	
+	while True:
+		sleep(0.1)
 
 
 if __name__ == "__main__":
