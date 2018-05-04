@@ -15,7 +15,7 @@
 	,"functions": [
 		{
 			  "name":"toggler"
-			, "short_press": [ "vol_enc_sw" ]
+			, "short_press": [ "multi_enc_sw" ]
 			, "mode_select": [ null, "volume", "bass", "treble", "menu" ]
 			, "mode_reset": 5
 		},
@@ -43,64 +43,15 @@
 			, "mode":"treble"
 		},
 		{
-			  "name":"poweroff"
-			, "function":"POWEROFF"
-			, "long_press": [ "vol_enc_sw" ]
-		},
-		{
-			  "name":"next_track"
-			, "function":"NEXT_TRACK"
-			, "short_press": [ "tre_enc_sw" ]
-		},
-		{
-			  "name":"next_folder"
-			, "function":"NEXT_FOLDER"
-			, "long_press": [ "tre_enc_sw" ]
-		},
-		{
-			  "name":"prev_track"
-			, "function":"PREV_TRACK"
-			, "short_press": [ "bas_enc_sw" ]
-		},
-		{
-			  "name":"prev_folder"
-			, "function":"PREV_FOLDER"
-			, "long_press": [ "bas_enc_sw" ]
+			  "name":"browse_menu"
+			, "function":"MENU_SCROLL"
+			, "encoder":"multi_encoder"
+			, "mode":"menu"
 		},
 		{
 			  "name":"toggle_random"
 			, "function":"RANDOM"
-			, "short_press": [ "bas_enc_sw", "tre_enc_sw" ]
-		},
-		{
-			  "name":"enter_menu"
-			, "function":"MENU_ENTER"
-			, "short_press": [ "bas_enc_sw", "tre_enc_sw", "vol_enc_sw" ]
-			, "mode_toggle": "menu"
-		},
-		{
-			  "name":"browse_menu1"
-			, "mode":"menu"
-			, "function":"MENU_SCROLL"
-			, "encoder" : "bas_encoder"
-		},
-		{
-			  "name":"browse_menu2"
-			, "mode":"menu"
-			, "function":"MENU_SCROLL"
-			, "encoder" : "tre_encoder"
-		},
-		{
-			  "name":"menu_select1"
-			, "mode":"menu"
-			, "function":"MENU_SELECT"
-			, "short_press": [ "tre_enc_sw" ]
-		},
-		{
-			  "name":"menu_select2"
-			, "mode":"menu"
-			, "function":"MENU_SELECT"
-			, "short_press": [ "bas_enc_sw" ]
+			, "long_press": [ "multi_enc_sw" ]
 		}
 	]
 }

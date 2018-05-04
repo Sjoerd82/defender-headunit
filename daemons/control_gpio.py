@@ -653,9 +653,10 @@ def setup():
 					
 			multicount = len(function['short_press'])
 			if multicount == 1:
-				print function['short_press'][0]
 				device = get_device_config(function['short_press'][0])
-				print device
+				if device is None:
+					printer("ID not found in devices: {0}".format(function['short_press'][0]),level=LL_CRITICAL)
+					exit(1)
 				pin_sw = device['sw']
 				pins_config[pin_sw]["has_multi"] = False
 				fnc = { "fnc_name":function['name'], "fnc_code":function['function'] }
