@@ -178,17 +178,18 @@ def get_encoder_function_by_pin(pin):
 	
 	#for function_ix in pins_function[pin]:
 	for func_cfg in pins_config[pin]['functions']:
-		
+		print func_cfg
 		#func_cfg = cfg_ctrlgpio['functions'][function_ix]
 		#ok = True
 		
 		# check mode #TODO!! TODO!! add mode here!!
 		if 'mode' in func_cfg and func_cfg['mode'] not in active_modes:
 			print "DEBUG: not in the required mode"
-			return None
+			#return None
 		else:
 			#if 'encoder' in func_cfg:
-			return func_cfg
+			#return func_cfg
+			pass
 
 def get_function_by_pin(pin,type):
 	""" Returns function dictionary
@@ -313,33 +314,24 @@ def check_mode(pin,function_ix):
 			active_modes.append(function['mode_toggle'])
 			print "DEBUG: Active Mode(s): {0}".format(active_modes)
 			
-	elif 'mode_select' in function: # and 'mode' in pins_config[pin]:
-		if not active_modes:
-			mode_ix = 1
-			print "First!"
-			print "DEBUG: New    : {0}:{1}".format(mode_ix,function['mode_select'][mode_ix])
-			active_modes.append(function['mode_select'][mode_ix])
-			if 'mode_reset' in function:
-				print "TODO! START RESET TIMER!! Seconds: {0}".format(function['mode_reset'])
-		else:
-			
-			for mode in active_modes:
-				mode_ix = function['mode_select'].index(mode)
-				if mode_ix is not None:
-					mode_old = function['mode_select'][mode_ix]
-					active_modes.remove(mode_old)
-					if mode_ix >= len(function['mode_select'])-1:
-						mode_ix = 0
-					else:
-						mode_ix += 1
-					mode_new = function['mode_select'][mode_ix]
-					print "Mode change {0} -> {1}".format(mode_old,mode_new)
-					active_modes.append(mode_new)
-					
-					if 'mode_reset' in function:
-						print "TODO! START RESET TIMER!! Seconds: {0}".format(function['mode_reset'])
-						#gobject.timeout_add_seconds(function['mode_reset'],cb_mode_reset,pin,function_ix)
-					break
+	elif 'mode_select' in function: # and 'mode' in pins_config[pin]:		
+		for mode in active_modes:
+			mode_ix = function['mode_select'].index(mode)
+			if mode_ix is not None:
+				mode_old = function['mode_select'][mode_ix]
+				active_modes.remove(mode_old)
+				if mode_ix >= len(function['mode_select'])-1:
+					mode_ix = 0
+				else:
+					mode_ix += 1
+				mode_new = function['mode_select'][mode_ix]
+				print "Mode change {0} -> {1}".format(mode_old,mode_new)
+				active_modes.append(mode_new)
+				
+				if 'mode_reset' in function:
+					print "TODO! START RESET TIMER!! Seconds: {0}".format(function['mode_reset'])
+					#gobject.timeout_add_seconds(function['mode_reset'],cb_mode_reset,pin,function_ix)
+				break
 
 				
 def handle_switch_interrupt(pin):
