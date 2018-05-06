@@ -201,11 +201,17 @@ def eca_load_chainsetup_file(ecs_file):
 				printer("Master amp chain: {0} [OK]".format(cfg_ecasound['chain_master_amp']))
 				
 				eca.command("cop-select '{0}'".format(cfg_ecasound['chain_master_amp']))
+				print "copp-list:"
 				print eca.command("copp-list")
-				#print eca.command("copp-select 'amp-%'")
-				print eca.command("copp-index-select '0'")
+
+				eca.command("copp-select '0.0'")
+				print eca.command("copp-selected")
+				
+				eca.command("copp-index-select '0'")
+				print eca.command("copp-selected")
 				print eca.command("copp-get")	#cop?
-				print eca.command("copp-iselect '0'")
+				eca.command("copp-iselect '0'")
+				print eca.command("copp-selected")
 				print eca.command("copp-get")	#cop?
 				
 			else:
