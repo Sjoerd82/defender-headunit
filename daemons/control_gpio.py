@@ -232,9 +232,9 @@ def exec_function_by_code(code,param=None):
 		zmq_command = 'PUT'
 		arguments = None
 		if code == 'VOLUME':
-			if param='cw':
+			if param=='cw':
 				arguments = 'up'
-			if param='ccw':
+			if param=='ccw':
 				arguments = 'down'
 		messaging.publish_command(zmq_path,zmq_command,arguments)
 	else:
