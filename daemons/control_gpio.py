@@ -67,7 +67,7 @@ FUNCTIONS = [
 	'MENU_SELECT' ]
 
 function_map = {}
-function_map['VOLUME'] = { "zmq_path":"volume", "zmq_command":"PUT" }
+function_map['VOLUME'] = { "zmq_path":"/volume", "zmq_command":"PUT" }
 function_map['SOURCE'] = { "zmq_path":"source", "zmq_command":"PUT" }
 
 
@@ -512,12 +512,12 @@ def handle_rotary_interrupt(pin):
 		if (Switch_A and Switch_B):						# Both one active? Yes -> end of sequence
 			if pin == encoder_pinB:							# Turning direction depends on 
 				#clockwise
-				print "[Encoder] {0}: INCREASE/CW".format(function['function'])			
-				exec_function_by_code(function['function'],'cw')
+				print "[Encoder] {0}: DECREASE/CCW".format(function['function'])			
+				exec_function_by_code(function['function'],'ccw')
 			else:
 				#counter clockwise
-				print "[Encoder] {0}: DECREASE/CCW".format(function['function'])
-				exec_function_by_code(function['function'],'ccw')
+				print "[Encoder] {0}: INCREASE/CW".format(function['function'])
+				exec_function_by_code(function['function'],'cw')
 
 	
 #********************************************************************************
