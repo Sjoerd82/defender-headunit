@@ -3,12 +3,12 @@
 echo $(date "+%H:%M.%s") $0 $1 >> /root/boot.log
 
 # APPLICATION
-NAME="PulseAudio Volume Controller"
+NAME="Ecasound Volume Controller"
 # PID (created by start-stop-daemon -m)
-PID="pavolctrl"
+PID="ecactrl"
 PID_FILE=/var/run/$PID.pid
-DAEMON="volume.py"
-DAEMON_OPTS=""
+DAEMON="control_eca.py"
+DAEMON_OPTS="-b"
 DAEMON_PATH="/mnt/PIHU_APP/defender-headunit/daemons"
 DAEMON_FILE=$DAEMON_PATH/$DAEMON
 
