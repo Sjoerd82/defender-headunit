@@ -230,8 +230,13 @@ def exec_function_by_code(code,param=None):
 	if code in function_map:
 		zmq_path = function_map[code]['zmq_path']
 		zmq_command = 'PUT'
-		#arguments = ''
-		messaging.publish_command(zmq_path,zmq_command)
+		arguments = None
+		if code = 'VOLUME':
+			if param='cw':
+				arguments = 'up'
+			if param='ccw':
+				arguments = 'down'
+		messaging.publish_command(zmq_path,zmq_command,arguments)
 	else:
 		print "function {0} not in function_map".format(code)
 	
