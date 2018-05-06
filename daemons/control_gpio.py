@@ -185,11 +185,11 @@ def get_encoder_function_by_pin(pin):
 		# check mode #TODO!! TODO!! add mode here!!
 		if 'mode' in func_cfg and func_cfg['mode'] not in active_modes:
 			print "DEBUG: not in the required mode"
-			return None
 		else:
 			#if 'encoder' in func_cfg:
 			return func_cfg
-			#pass
+			
+	return None
 
 def get_function_by_pin(pin,type):
 	""" Returns function dictionary
