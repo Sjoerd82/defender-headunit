@@ -231,7 +231,7 @@ def exec_function_by_code(code,param=None):
 		zmq_path = function_map[code]['zmq_path']
 		zmq_command = 'PUT'
 		arguments = None
-		if code = 'VOLUME':
+		if code == 'VOLUME':
 			if param='cw':
 				arguments = 'up'
 			if param='ccw':
