@@ -274,12 +274,14 @@ def handle_path_volume(path,cmd,params):
 			Arguments:		<str:up|down|+n|-n|att>
 			Return data:	Nothing
 		"""
+		global local_volume
 		local_volume += 5
 		eca.command('copp-set {0}'.format(local_volume))
 		if not args.b:
 			printer("Amp level: {0}%".format(local_volume))
 		
 	def put_decrease(params):
+		global local_volume
 		local_volume -= 5
 		eca.command('copp-set {0}'.format(local_volume))
 		if not args.b:
