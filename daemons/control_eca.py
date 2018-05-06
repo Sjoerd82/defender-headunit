@@ -200,8 +200,10 @@ def eca_load_chainsetup_file(ecs_file):
 			if 'amp-%' not in chain_ops:		
 				printer("Master amp chain: {0} [OK]".format(cfg_ecasound['chain_master_amp']))
 				
-				print eca.command("cop-select '{0}'".format(cfg_ecasound['chain_master_amp']))
-				print eca.command("copp-select '0'")
+				eca.command("cop-select '{0}'".format(cfg_ecasound['chain_master_amp']))
+				eca.command("copp-list")
+				#print eca.command("copp-select 'amp-%'")
+				print eca.command("copp-index-select '0'")
 				print eca.command("copp-get")	#cop?
 				
 			else:
@@ -243,9 +245,10 @@ def eca_load_chainsetup_file(ecs_file):
 def eca_get_effect_amplification():
 	print "get!"
 	eca_chain_op_master_amp = 'Amplify'
-	print eca.command("c-select '{0}'".format(ECA_CHAIN_MASTER_AMP))
-	print eca.command("cop-select '{0}'".format(eca_chain_op_master_amp))
-	print eca.command("copp-select '0'")
+	eca.command("c-select '{0}'".format(ECA_CHAIN_MASTER_AMP))
+	eca.command("cop-select '{0}'".format(eca_chain_op_master_amp))
+	#print eca.command("copp-select '0'")
+	print eca.command("copp-index-select '0'")
 	ea_value = eca.command("copp-get")	#cop?
 	#ea_value = 50
 	return ea_value
@@ -254,9 +257,10 @@ def eca_set_effect_amplification(level):
 	print "set!"
 	eca_chain_op_master_amp = 'Amplify'
 	#eca_chain_selected
-	print eca.command("c-select '{0}'".format(ECA_CHAIN_MASTER_AMP))
-	print eca.command("cop-select '{0}'".format(eca_chain_op_master_amp))
-	print eca.command("copp-select '0'")
+	eca.command("c-select '{0}'".format(ECA_CHAIN_MASTER_AMP))
+	eca.command("cop-select '{0}'".format(eca_chain_op_master_amp))
+	#print eca.command("copp-select '0'")
+	print eca.command("copp-index-select '0'")
 	print eca.command("copp-set '{0}'".format(level))	# cop?
 	return level
 	
