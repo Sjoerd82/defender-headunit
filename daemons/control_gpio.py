@@ -176,6 +176,8 @@ def get_encoder_function_by_pin(pin):
 #	print pins_config[pin]
 #	print pins_config[pin]['functions']
 	
+	print "gefbp {0}".format(pin)
+	
 	#for function_ix in pins_function[pin]:
 	for func_cfg in pins_config[pin]['functions']:
 		print func_cfg
@@ -184,7 +186,7 @@ def get_encoder_function_by_pin(pin):
 		
 		# check mode #TODO!! TODO!! add mode here!!
 		if 'mode' in func_cfg and func_cfg['mode'] not in active_modes:
-			print "DEBUG: not in the required mode"
+			pass # these are not the mode you're looking for
 		else:
 			#if 'encoder' in func_cfg:
 			return func_cfg
