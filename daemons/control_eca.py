@@ -201,18 +201,23 @@ def eca_load_chainsetup_file(ecs_file):
 				printer("Master amp chain: {0} [OK]".format(cfg_ecasound['chain_master_amp']))
 				
 				eca.command("cop-select '{0}'".format(cfg_ecasound['chain_master_amp']))
+				print "cop-list:"
+				print eca.command("cop-list")			#
 				print "copp-list:"
-				print eca.command("copp-list")
+				print eca.command("copp-list")			# ['amp-%']
 
-				eca.command("copp-select '0.0'")
-				print eca.command("copp-selected")
+				eca.command("copp-index-select 'amp-%'")
+				print eca.command("copp-selected")		# 
+
+				eca.command("copp-index-select '1'")
+				print eca.command("copp-selected")		# 
 				
 				eca.command("copp-index-select '0'")
-				print eca.command("copp-selected")
-				print eca.command("copp-get")	#cop?
+				print eca.command("copp-selected")		# 0
+				print eca.command("copp-get")	#cop?	# 0.0
 				eca.command("copp-iselect '0'")
-				print eca.command("copp-selected")
-				print eca.command("copp-get")	#cop?
+				print eca.command("copp-selected")		# 0
+				print eca.command("copp-get")	#cop?	# 0.0
 				
 			else:
 				printer("Operator 'Amplify' not found!",level=LL_CRITICAL)
