@@ -233,8 +233,10 @@ def exec_function_by_code(code,param=None):
 		arguments = None
 		if code == 'VOLUME':
 			if param=='cw':
+				zmq_path= '/volume/increase'
 				arguments = 'up'
 			if param=='ccw':
+				zmq_path= '/volume/decrease'
 				arguments = 'down'
 		messaging.publish_command(zmq_path,zmq_command,arguments)
 	else:
