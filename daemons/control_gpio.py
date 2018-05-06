@@ -171,26 +171,14 @@ def get_encoder_function_by_pin(pin):
 	"""
 	# loop through all possible functions for given pin
 	# examine if func meets all requirements (only one check needed for encoders: mode)
-
-#	print "DEBUG: get_encoder_function_by_pin"
-#	print pins_config[pin]
-#	print pins_config[pin]['functions']
 	
-	print "gefbp {0}".format(pin)
-	
-	#for function_ix in pins_function[pin]:
 	for func_cfg in pins_config[pin]['functions']:
-		print func_cfg
-		#func_cfg = cfg_ctrlgpio['functions'][function_ix]
-		#ok = True
-		
 		# check mode #TODO!! TODO!! add mode here!!
 		if 'mode' in func_cfg and func_cfg['mode'] not in active_modes:
 			pass # these are not the mode you're looking for
 		else:
 			#if 'encoder' in func_cfg:
-			#return func_cfg
-			pass
+			return func_cfg
 			
 	return None
 
@@ -506,19 +494,18 @@ def handle_rotary_interrupt(pin):
 	# -------------------------------
 	
 	function = get_encoder_function_by_pin(pin)
-	print function
 	if function is not None:
 
 		if (Switch_A and Switch_B):						# Both one active? Yes -> end of sequence
 			if pin == encoder_pinB:							# Turning direction depends on 
 				#clockwise
 				#print function_map[func_cfg['function']]
-				print "ENCODER: INCREASE"
+				print "[Encoder] {0}: INCREASE".format(function['function'])
 				#function_map[func_cfg['function']] = { "zmq_path":"volume", "zmq_command":"PUT" }
 			else:
 				#counter clockwise
 				#print function_map[func_cfg['function']]
-				print "ENCODER: DECREASE"
+				print "[Encoder] {0}: DECREASE".format(function['function'])
 
 	
 #********************************************************************************
