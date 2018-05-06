@@ -189,7 +189,8 @@ def get_encoder_function_by_pin(pin):
 			pass # these are not the mode you're looking for
 		else:
 			#if 'encoder' in func_cfg:
-			return func_cfg
+			#return func_cfg
+			pass
 			
 	return None
 
