@@ -232,10 +232,10 @@ def eca_load_chainsetup_file(ecs_file):
 	return True
 	
 def eca_get_effect_amplification():
-	eca.command("c-select '{0}'".format(ECA_CHAIN_MASTER_AMP))
-	eca.command("cop-select '{0}'".format(eca_chain_op_master_amp))
-	eca.command("copp-select '0'")
-	ea_value = eca.command("cop-get")
+	print eca.command("c-select '{0}'".format(ECA_CHAIN_MASTER_AMP))
+	print eca.command("cop-select '{0}'".format(eca_chain_op_master_amp))
+	print eca.command("copp-select '0'")
+	ea_value = eca.command("copp-get")	#cop?
 	#ea_value = 50
 	return ea_value
 	
@@ -244,7 +244,7 @@ def eca_set_effect_amplification(level):
 	print eca.command("c-select '{0}'".format(ECA_CHAIN_MASTER_AMP))
 	print eca.command("cop-select '{0}'".format(eca_chain_op_master_amp))
 	print eca.command("copp-select '0'")
-	print eca.command("cop-set '{0}'".format(level))
+	print eca.command("copp-set '{0}'".format(level))	# cop?
 	return level
 	
 def eca_mute(state):
