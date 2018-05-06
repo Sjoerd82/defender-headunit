@@ -199,6 +199,11 @@ def eca_load_chainsetup_file(ecs_file):
 			chain_ops = eca.command("cop-list")
 			if 'amp-%' not in chain_ops:		
 				printer("Master amp chain: {0} [OK]".format(cfg_ecasound['chain_master_amp']))
+				
+				print eca.command("cop-select '{0}'".format(cfg_ecasound['chain_master_amp']))
+				print eca.command("copp-select '0'")
+				print eca.command("copp-get")	#cop?
+				
 			else:
 				printer("Operator 'Amplify' not found!",level=LL_CRITICAL)
 				#eca.command("stop")
