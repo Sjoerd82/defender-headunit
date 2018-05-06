@@ -52,8 +52,8 @@ SUBSCRIPTIONS = ['/volume/','/equalizer/']
 PATH_VOLUME = '/volume'
 PATH_VOLUME_EVENT = '/events/volume'
 
-ECA_CHAIN_MASTER_AMP = 'PRE'	# chain object that contains the master amp
-ECA_CHAIN_MUTE = 'PRE'			# chain object to mute
+ECA_CHAIN_MASTER_AMP = 'pre'	# chain object that contains the master amp
+ECA_CHAIN_MUTE = 'pre'			# chain object to mute
 ECA_CHAIN_EQ = None				# chain object that contains the equalizer
 
 cfg_ecasound = None
@@ -237,6 +237,7 @@ def eca_load_chainsetup_file(ecs_file):
 	
 def eca_get_effect_amplification():
 	print "get!"
+	eca_chain_op_master_amp = 'Amplify'
 	print eca.command("c-select '{0}'".format(ECA_CHAIN_MASTER_AMP))
 	print eca.command("cop-select '{0}'".format(eca_chain_op_master_amp))
 	print eca.command("copp-select '0'")
@@ -246,6 +247,7 @@ def eca_get_effect_amplification():
 	
 def eca_set_effect_amplification(level):
 	print "set!"
+	eca_chain_op_master_amp = 'Amplify'
 	#eca_chain_selected
 	print eca.command("c-select '{0}'".format(ECA_CHAIN_MASTER_AMP))
 	print eca.command("cop-select '{0}'".format(eca_chain_op_master_amp))
