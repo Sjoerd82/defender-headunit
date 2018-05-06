@@ -224,9 +224,15 @@ def get_functions_by_pin(pin):
 	return retlist
 			
 
-def exec_function_by_code(code):
-	print "EXECUTE: {0}".format(code)
+def exec_function_by_code(code,param=None):
+	print "EXECUTE: {0} {1}".format(code,param)
+	#function_map[func_cfg['function']] = { "zmq_path":"volume", "zmq_command":"PUT" }
+	zmq_path = function_map[func_cfg['function']]['zmq_path']
+	zmq_command = 'PUT'
+	#arguments = ''
+	publish_command(zmq_path,zmq_command)
 	pass
+	
 			
 def handle_pin_change(pin,value_old,value_new):
 	""" When a pin changes value
@@ -499,13 +505,12 @@ def handle_rotary_interrupt(pin):
 		if (Switch_A and Switch_B):						# Both one active? Yes -> end of sequence
 			if pin == encoder_pinB:							# Turning direction depends on 
 				#clockwise
-				#print function_map[func_cfg['function']]
-				print "[Encoder] {0}: INCREASE".format(function['function'])
-				#function_map[func_cfg['function']] = { "zmq_path":"volume", "zmq_command":"PUT" }
+				print "[Encoder] {0}: INCREASE/CW".format(function['function'])			
+				exec_function_by_code(function['function'],'cw')
 			else:
 				#counter clockwise
-				#print function_map[func_cfg['function']]
-				print "[Encoder] {0}: DECREASE".format(function['function'])
+				print "[Encoder] {0}: DECREASE/CCW".format(function['function'])
+				exec_function_by_code(function['function'],'ccw')
 
 	
 #********************************************************************************
