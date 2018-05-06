@@ -227,11 +227,16 @@ def eca_load_chainsetup_file(ecs_file):
 		printer("EQ chain: {0}".format(cfg_ecasound['chain_eq']))
 	'''
 	# all good!
+	printer("Current amp level: {0}%".format(eca_get_effect_amplification()))
+
 	eca.command("cs-connect")
+	eca.command("start")
+	
 	printer("Current amp level: {0}%".format(eca_get_effect_amplification()))
 	return True
 	
 def eca_get_effect_amplification():
+	print "get!"
 	print eca.command("c-select '{0}'".format(ECA_CHAIN_MASTER_AMP))
 	print eca.command("cop-select '{0}'".format(eca_chain_op_master_amp))
 	print eca.command("copp-select '0'")
@@ -240,6 +245,7 @@ def eca_get_effect_amplification():
 	return ea_value
 	
 def eca_set_effect_amplification(level):
+	print "set!"
 	#eca_chain_selected
 	print eca.command("c-select '{0}'".format(ECA_CHAIN_MASTER_AMP))
 	print eca.command("cop-select '{0}'".format(eca_chain_op_master_amp))
@@ -507,7 +513,7 @@ def main():
 	gobject.idle_add(handle_mq_message)
 
 	try:
-		eca.command("start")
+		#eca.command("start")
 		mainloop.run()
 	finally:
 		mainloop.quit()
