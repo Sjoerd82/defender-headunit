@@ -227,11 +227,13 @@ def get_functions_by_pin(pin):
 def exec_function_by_code(code,param=None):
 	print "EXECUTE: {0} {1}".format(code,param)
 	#function_map[func_cfg['function']] = { "zmq_path":"volume", "zmq_command":"PUT" }
-	zmq_path = function_map[func_cfg['function']]['zmq_path']
-	zmq_command = 'PUT'
-	#arguments = ''
-	publish_command(zmq_path,zmq_command)
-	pass
+	if code in function_map:
+		zmq_path = function_map[code]['zmq_path']
+		zmq_command = 'PUT'
+		#arguments = ''
+		publish_command(zmq_path,zmq_command)
+	else:
+		print "function {0} not in function_map".format(code)
 	
 			
 def handle_pin_change(pin,value_old,value_new):

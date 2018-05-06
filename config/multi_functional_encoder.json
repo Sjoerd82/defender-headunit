@@ -52,7 +52,7 @@
 		},
 		{
 			  "name":"toggle_random"
-			, "function":"RANDOM"
+			, "function":"SOURCE"
 			, "long_press": [ "multi_enc_sw" ]
 		}
 	]
