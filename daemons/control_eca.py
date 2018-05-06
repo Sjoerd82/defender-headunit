@@ -202,7 +202,13 @@ def eca_load_chainsetup_file(ecs_file):
 				printer("Master amp chain: {0} [OK]".format(cfg_ecasound['chain_master_amp']))
 				
 				eca.command("cop-select '{0}'".format(cfg_ecasound['chain_master_amp']))
-				print eca.command("cop-selected")
+				
+				eca.command("cs-connect")
+				eca.command("start")
+				time.sleep(4)
+
+				
+				print eca.command("cop-selected")		# 1
 				
 				print "cop-list:"
 				print eca.command("cop-list")			# ['Amplify']
@@ -211,11 +217,11 @@ def eca_load_chainsetup_file(ecs_file):
 
 				eca.command("copp-select 'amp-%'")
 				print eca.command("copp-selected")		# 0
-				print eca.command("copp-get")	#cop?	# ?
+				print eca.command("copp-get")	#cop?	# 0.0
 
 				eca.command("copp-index-select '1'")
 				print eca.command("copp-selected")		# 0
-				print eca.command("copp-get")	#cop?	# ?
+				print eca.command("copp-get")	#cop?	# 0.0
 				
 				eca.command("copp-index-select '0'")
 				print eca.command("copp-selected")		# 0
@@ -252,10 +258,9 @@ def eca_load_chainsetup_file(ecs_file):
 		printer("EQ chain: {0}".format(cfg_ecasound['chain_eq']))
 	'''
 	# all good!
-	printer("Current amp level: {0}%".format(eca_get_effect_amplification()))
 
-	eca.command("cs-connect")
-	eca.command("start")
+#	eca.command("cs-connect")
+#	eca.command("start")
 	
 	printer("Current amp level: {0}%".format(eca_get_effect_amplification()))
 	return True
