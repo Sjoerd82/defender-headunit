@@ -197,20 +197,25 @@ def eca_load_chainsetup_file(ecs_file):
 		if cfg_ecasound['chain_master_amp'] in eca_chain_selected:
 
 			chain_ops = eca.command("cop-list")
-			if 'amp-%' not in chain_ops:		
+			#if 'amp-%' not in chain_ops:		
+			if 'Amplify' in chain_ops:
 				printer("Master amp chain: {0} [OK]".format(cfg_ecasound['chain_master_amp']))
 				
 				eca.command("cop-select '{0}'".format(cfg_ecasound['chain_master_amp']))
+				print eca.command("cop-selected")
+				
 				print "cop-list:"
-				print eca.command("cop-list")			#
+				print eca.command("cop-list")			# ['Amplify']
 				print "copp-list:"
 				print eca.command("copp-list")			# ['amp-%']
 
-				eca.command("copp-index-select 'amp-%'")
-				print eca.command("copp-selected")		# 
+				eca.command("copp-select 'amp-%'")
+				print eca.command("copp-selected")		# 0
+				print eca.command("copp-get")	#cop?	# ?
 
 				eca.command("copp-index-select '1'")
-				print eca.command("copp-selected")		# 
+				print eca.command("copp-selected")		# 0
+				print eca.command("copp-get")	#cop?	# ?
 				
 				eca.command("copp-index-select '0'")
 				print eca.command("copp-selected")		# 0
