@@ -201,35 +201,6 @@ def eca_load_chainsetup_file(ecs_file):
 			if 'Amplify' in chain_ops:
 				printer("Master amp chain: {0} [OK]".format(cfg_ecasound['chain_master_amp']))
 				
-				eca.command("cop-select '{0}'".format(cfg_ecasound['chain_master_amp']))
-				
-				eca.command("cs-connect")
-				eca.command("start")
-				time.sleep(4)
-
-				
-				print eca.command("cop-selected")		# 1
-				
-				print "cop-list:"
-				print eca.command("cop-list")			# ['Amplify']
-				print "copp-list:"
-				print eca.command("copp-list")			# ['amp-%']
-
-				eca.command("copp-select 'amp-%'")
-				print eca.command("copp-selected")		# 0
-				print eca.command("copp-get")	#cop?	# 0.0
-
-				eca.command("copp-index-select '1'")
-				print eca.command("copp-selected")		# 0
-				print eca.command("copp-get")	#cop?	# 0.0
-				
-				eca.command("copp-index-select '0'")
-				print eca.command("copp-selected")		# 0
-				print eca.command("copp-get")	#cop?	# 0.0
-				eca.command("copp-iselect '0'")
-				print eca.command("copp-selected")		# 0
-				print eca.command("copp-get")	#cop?	# 0.0
-				
 			else:
 				printer("Operator 'Amplify' not found!",level=LL_CRITICAL)
 				#eca.command("stop")
@@ -259,32 +230,27 @@ def eca_load_chainsetup_file(ecs_file):
 	'''
 	# all good!
 
-#	eca.command("cs-connect")
+	eca.command("cs-connect")
 #	eca.command("start")
 	
 	printer("Current amp level: {0}%".format(eca_get_effect_amplification()))
 	return True
 	
 def eca_get_effect_amplification():
-	print "get!"
 	eca_chain_op_master_amp = 'Amplify'
 	eca.command("c-select '{0}'".format(ECA_CHAIN_MASTER_AMP))
 	eca.command("cop-select '{0}'".format(eca_chain_op_master_amp))
-	#print eca.command("copp-select '0'")
-	print eca.command("copp-index-select '0'")
-	ea_value = eca.command("copp-get")	#cop?
-	#ea_value = 50
+	eca.command("copp-index-select 1")
+	ea_value = eca.command("copp-get")
 	return ea_value
 	
 def eca_set_effect_amplification(level):
-	print "set!"
 	eca_chain_op_master_amp = 'Amplify'
 	#eca_chain_selected
 	eca.command("c-select '{0}'".format(ECA_CHAIN_MASTER_AMP))
 	eca.command("cop-select '{0}'".format(eca_chain_op_master_amp))
-	#print eca.command("copp-select '0'")
-	print eca.command("copp-index-select '0'")
-	print eca.command("copp-set '{0}'".format(level))	# cop?
+	eca.command("copp-index-select 1")
+	print eca.command("copp-set {0}".format(level))
 	return level
 	
 def eca_mute(state):
@@ -547,7 +513,7 @@ def main():
 	gobject.idle_add(handle_mq_message)
 
 	try:
-		#eca.command("start")
+		eca.command("start")
 		mainloop.run()
 	finally:
 		mainloop.quit()
