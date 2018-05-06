@@ -238,8 +238,8 @@ def eca_load_chainsetup_file(ecs_file):
 	
 def eca_get_effect_amplification():
 	eca_chain_op_master_amp = 'Amplify'
-	eca.command("c-select '{0}'".format(ECA_CHAIN_MASTER_AMP))
-	eca.command("cop-select '{0}'".format(eca_chain_op_master_amp))
+	eca.command("c-select {0}".format(ECA_CHAIN_MASTER_AMP))
+	eca.command("cop-select {0}".format(eca_chain_op_master_amp))
 	eca.command("copp-index-select 1")
 	ea_value = eca.command("copp-get")
 	return ea_value
@@ -247,8 +247,8 @@ def eca_get_effect_amplification():
 def eca_set_effect_amplification(level):
 	eca_chain_op_master_amp = 'Amplify'
 	#eca_chain_selected
-	eca.command("c-select '{0}'".format(ECA_CHAIN_MASTER_AMP))
-	eca.command("cop-select '{0}'".format(eca_chain_op_master_amp))
+	eca.command("c-select {0}".format(ECA_CHAIN_MASTER_AMP))
+	eca.command("cop-select {0}".format(eca_chain_op_master_amp))
 	eca.command("copp-index-select 1")
 	print eca.command("copp-set {0}".format(level))
 	return level
