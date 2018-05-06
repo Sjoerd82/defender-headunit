@@ -79,7 +79,7 @@
 		, "port_subscriber": 5560
 	}
 	, "ecasound": {
-		  "chainsetup": "jack_alsa_xover_2ch_m"
+		  "chainsetup": "temp"
 		, "chain_master_amp": "pre"
 		, "chain_mute": "pre"
 		, "chain_eq": "pre"
