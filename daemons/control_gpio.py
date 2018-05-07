@@ -158,7 +158,7 @@ def load_cfg_zmq():
 		if not 'port_publisher' in cfg_main['zeromq']:
 			#cfg_main['zeromq']['port_publisher'] = DEFAULT_PORT_PUB
 			config['port_publisher'] = DEFAULT_PORT_PUB
-		if not 'port_subscriber' in configuration['zeromq']:
+		if not 'port_subscriber' in cfg_main['zeromq']:
 			#cfg_main['zeromq']['port_subscriber'] = DEFAULT_PORT_SUB
 			config['port_subscriber'] = DEFAULT_PORT_SUB
 		return config
