@@ -385,8 +385,11 @@ def check_mode(pin,function_ix):
 				
 				if 'reset' in modes[0]:
 					print "Starting mode reset timer, seconds: {0}".format(modes[0]['reset'])
-					timer_mode = Timer(float(modes[0]['reset']), cb_mode_reset)
-					timer_mode.start()
+					#if timer_mode is not None:
+					#	timer_mode.cancel()
+					#timer_mode = Timer(float(modes[0]['reset']), cb_mode_reset)
+					#timer_mode.start()
+					reset_mode_timer(modes[0]['reset'])
 				break
 
 def reset_mode_timer(seconds):
@@ -395,9 +398,7 @@ def reset_mode_timer(seconds):
 	#mode_timer = 0
 	#gobject.timeout_add_seconds(function['mode_reset'],cb_mode_reset,pin,function_ix)
 	if timer_mode is not None:
-		print "Cancel"
 		timer_mode.cancel()
-	print "New"
 	timer_mode = Timer(seconds, cb_mode_reset)
 	timer_mode.start()
 				
