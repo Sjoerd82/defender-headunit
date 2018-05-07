@@ -30,8 +30,8 @@
 		},
 		{
 			  "name":"track_select"
-			, "function_cw":"PLAYER_TRACK_NEXT"
-			, "function_ccw":"PLAYER_TRACK_PREV"
+			, "function_cw":"PLAYER_NEXT"
+			, "function_ccw":"PLAYER_PREV"
 			, "encoder":"multi_encoder"
 			, "mode": "track"
 		},

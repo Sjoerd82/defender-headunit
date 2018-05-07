@@ -347,6 +347,7 @@ def handle_pin_change(pin,value_old,value_new):
 				
 
 def cb_mode_reset(): #(pin,function_ix):
+	global active_modes
 	active_modes = [ 'track' ]	# FIX THIS!!!!
 
 def check_mode(pin,function_ix):
