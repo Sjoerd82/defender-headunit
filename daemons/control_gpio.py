@@ -154,13 +154,18 @@ def load_cfg_zmq():
 		config = { "port_publisher": DEFAULT_PORT_PUB, "port_subscriber":DEFAULT_PORT_SUB }
 		return config
 	else:
+		config = {}
 		# Get portnumbers from either the config, or default value
-		if not 'port_publisher' in cfg_main['zeromq']:
-			#cfg_main['zeromq']['port_publisher'] = DEFAULT_PORT_PUB
+		if 'port_publisher' in cfg_main['zeromq']:
+			config['port_publisher'] = cfg_main['zeromq']['port_publisher']
+		else:
 			config['port_publisher'] = DEFAULT_PORT_PUB
-		if not 'port_subscriber' in cfg_main['zeromq']:
-			#cfg_main['zeromq']['port_subscriber'] = DEFAULT_PORT_SUB
+		
+		if 'port_subscriber' in cfg_main['zeromq']:
+			config['port_subscriber'] = cfg_main['zeromq']['port_subscriber']		
+		else:
 			config['port_subscriber'] = DEFAULT_PORT_SUB
+			
 		return config
 
 def load_cfg_daemon():
