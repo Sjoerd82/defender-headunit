@@ -174,7 +174,7 @@ def load_cfg_daemon():
 		return
 	else:
 		for daemon in cfg_main['daemons']:
-			if daemon['script'] == os.path.basename(__file__):
+			if 'script' in daemon and daemon['script'] == os.path.basename(__file__):
 				return daemon
 
 def load_cfg_gpio():		
