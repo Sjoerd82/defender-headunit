@@ -377,7 +377,7 @@ def check_mode(pin,function_ix):
 				
 				if 'reset' in modes[0]:
 					print "Starting mode reset timer, seconds: {0}".format(modes[0]['reset'])
-					timer_mode = Timer(float((modes[0]['reset']), cb_mode_reset)
+					timer_mode = Timer(float(modes[0]['reset']), cb_mode_reset)
 					timer_mode.start()
 				break
 
