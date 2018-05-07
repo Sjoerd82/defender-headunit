@@ -423,7 +423,8 @@ def int_handle_switch(pin):
 	print "DEBUG THIS!!"
 	# if acitve_modes is empty then we don't need to check the mode
 	if active_modes:
-		reset_mode_timer(modes[0]['reset'])
+		print modes
+		#reset_mode_timer(modes[0]['reset'])
 
 	# check wheather we have short and/or long press functions and multi-press functions
 	if pins_config[pin]['has_short'] and not pins_config[pin]['has_long'] and not pins_config[pin]['has_multi']:
@@ -553,7 +554,8 @@ def int_handle_encoder(pin):
 	#print "DEBUG: int_handle_encoder! for pin: {0}".format(pin)
 	
 	if active_modes:
-		reset_mode_timer(modes[0]['reset'])
+		print modes
+		#reset_mode_timer(modes[0]['reset'])
 	
 	device = get_device_config_by_pin(pin)
 	
