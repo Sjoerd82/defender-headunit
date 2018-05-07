@@ -174,7 +174,7 @@ def load_cfg_daemon():
 
 def load_cfg_gpio():		
 	""" load specified GPIO configuration """	
-	if 'directories' not in cfg_main 'daemon-config' not in cfg_main['directories'] or 'config' not in cfg_daemon:
+	if 'directories' not in cfg_main or 'daemon-config' not in cfg_main['directories'] or 'config' not in cfg_daemon:
 		return
 	else:		
 		config_dir = cfg_main['directories']['daemon-config']
