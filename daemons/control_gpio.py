@@ -553,10 +553,7 @@ def int_handle_encoder(pin):
 	global pins_state
 	
 	#print "DEBUG: int_handle_encoder! for pin: {0}".format(pin)
-	
-	if active_modes:
-		reset_mode_timer(modes[0]['reset'])
-	
+		
 	device = get_device_config_by_pin(pin)
 	
 	encoder_pinA = device['clk']
@@ -583,6 +580,10 @@ def int_handle_encoder(pin):
 	if function is not None:
 
 		if (Switch_A and Switch_B):						# Both one active? Yes -> end of sequence
+		
+			if active_modes:
+				reset_mode_timer(modes[0]['reset'])
+
 			if pin == encoder_pinB:							# Turning direction depends on 
 				#counter clockwise
 				print "[Encoder] {0}: DECREASE/CCW".format(function['function_ccw'])			
