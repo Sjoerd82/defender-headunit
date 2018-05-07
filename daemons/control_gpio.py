@@ -346,7 +346,7 @@ def handle_pin_change(pin,value_old,value_new):
 				printer("Unsupported device or incomplete configuration",level=LL_WARNING)
 				
 
-def cb_mode_reset(pin,function_ix):
+def cb_mode_reset(): #(pin,function_ix):
 	print "TODO! RESET MODE!"
 
 def check_mode(pin,function_ix):
