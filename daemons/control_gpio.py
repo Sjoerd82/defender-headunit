@@ -552,7 +552,8 @@ def int_handle_encoder(pin):
 	
 	#print "DEBUG: int_handle_encoder! for pin: {0}".format(pin)
 	
-	timer_mode_reset
+	if active_modes:
+		reset_mode_timer(modes[0]['reset'])
 	
 	device = get_device_config_by_pin(pin)
 	
