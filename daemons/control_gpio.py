@@ -594,6 +594,11 @@ def int_handle_encoder(pin):
 # 
 def gpio_setup():
 	global pins_function # old?
+	global pins_state
+	global pins_config
+	global mode_timer
+	global modes
+	global active_modes
 	
 	# gpio mode: BCM or board
 	if 'gpio_mode' in cfg_gpio:
