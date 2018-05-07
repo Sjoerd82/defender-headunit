@@ -395,7 +395,9 @@ def reset_mode_timer(seconds):
 	#mode_timer = 0
 	#gobject.timeout_add_seconds(function['mode_reset'],cb_mode_reset,pin,function_ix)
 	if timer_mode is not None:
+		print "Cancel"
 		timer_mode.cancel()
+	print "New"
 	timer_mode = Timer(seconds, cb_mode_reset)
 	timer_mode.start()
 				
