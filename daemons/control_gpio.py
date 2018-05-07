@@ -151,7 +151,7 @@ def load_cfg_zmq():
 		printer('Publisher port: {0}'.format(args.port_publisher))
 		printer('Subscriber port: {0}'.format(args.port_subscriber))
 		#cfg_main["zeromq"] = { "port_publisher": DEFAULT_PORT_PUB, "port_subscriber":DEFAULT_PORT_SUB } }
-		config = { "port_publisher": DEFAULT_PORT_PUB, "port_subscriber":DEFAULT_PORT_SUB } }
+		config = { "port_publisher": DEFAULT_PORT_PUB, "port_subscriber":DEFAULT_PORT_SUB }
 		return config
 	else:
 		# Get portnumbers from either the config, or default value
