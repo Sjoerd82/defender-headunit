@@ -37,17 +37,20 @@
 	,"functions": [
 		{
 			  "name":"volume"
-			, "function":"VOLUME"
+			, "function_cw":"VOLUME_INC"
+			, "function_ccw":"VOLUME_DEC"
 			, "encoder" : "vol_encoder"
 		},
 		{
 			  "name":"bass"
-			, "function":"BASS"
+			, "function_cw":"BASS_INC"
+			, "function_ccw":"BASS_DEC"
 			, "encoder" : "bas_encoder"
 		},
 		{
 			  "name":"treble"
-			, "function":"TREBLE"
+			, "function_cw":"TREBLE_INC"
+			, "function_ccw":"TREBLE_DEC"
 			, "encoder" : "tre_encoder"
 		},
 		{

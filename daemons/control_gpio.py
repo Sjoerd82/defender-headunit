@@ -8,6 +8,8 @@
 # GPIO remote control enables GPIO input for buttons and encoders.
 # It comes with optional rudimentary debouncing.
 #
+# Only one mode group is supported at the moment!
+#
 
 # Button presses are NOT asynchronous!! i.e. wait until a button press is handled before the next button can be handled.
 # TODO: Consider making them asynchronous, or at least the update lib (long) / volume (short) buttons
@@ -25,6 +27,7 @@ from time import sleep
 from time import clock
 from logging import getLogger	# logger
 from RPi import GPIO			# GPIO
+from threading import Timer		# timer to reset mode change
 
 import gobject				# main loop
 from dbus.mainloop.glib import DBusGMainLoop
@@ -66,28 +69,43 @@ FUNCTIONS = [
 	'MENU_SCROLL',
 	'MENU_SELECT' ]
 
-function_map = {}
-function_map['VOLUME'] = { "zmq_path":"/volume", "zmq_command":"PUT" }
-function_map['SOURCE'] = { "zmq_path":"source", "zmq_command":"PUT" }
-
-
 logger = None
 args = None
 messaging = None
+timer_mode = None
 
-cfg_ctrlgpio = None
+# configuration
+cfg_main = None		# main
+cfg_daemon = None	# daemon
+cfg_zmq = None		# Zero MQ
+cfg_gpio = None		# GPIO setup
 
-encoder1_cnt = 0
-encoder1_last_clk_state = None
-#temp
-clk = None
-dt = None
-
+# pins
 pins_state = {}			# pin (previous) state
 pins_function = {}		# pin function(s)
 pins_config = {}		# consolidated config, key=pin
+mode_timer = 0			# mode reset timer
 
-active_modes = [ None ]
+function_map = {}
+function_map['SOURCE_NEXT'] = { 'zmq_path':'/source/next', 'zmq_command':'PUT' }
+function_map['SOURCE_PREV'] = { 'zmq_path':'/source/prev', 'zmq_command':'PUT' }
+function_map['SOURCE_PRI_NEXT'] = { 'zmq_path':'/source/next_primary', 'zmq_command':'PUT' }
+function_map['SOURCE_PRI_PREV'] = { 'zmq_path':'/source/prev_primary', 'zmq_command':'PUT' }
+function_map['SOURCE_CHECK'] = { 'zmq_path':'/source/check', 'zmq_command':'PUT' }
+function_map['PLAYER_PAUSE'] = { 'zmq_path':'/player/pause', 'zmq_command':'PUT' }
+function_map['PLAYER_RANDOM'] = { 'zmq_path':'/player/random', 'zmq_command':'PUT' }
+function_map['PLAYER_NEXT'] = { 'zmq_path':'/player/next', 'zmq_command':'PUT' }
+function_map['PLAYER_PREV'] = { 'zmq_path':'/player/prev', 'zmq_command':'PUT' }
+function_map['PLAYER_FOLDER_NEXT'] = { 'zmq_path':'/player/next_folder', 'zmq_command':'PUT' }
+function_map['PLAYER_FOLDER_PREV'] = { 'zmq_path':'/player/prev_folder', 'zmq_command':'PUT' }
+function_map['VOLUME_INC'] = { 'zmq_path':'/volume/master/increase', 'zmq_command':'PUT' }
+function_map['VOLUME_DEC'] = { 'zmq_path':'/volume/master/decrease', 'zmq_command':'PUT' }
+function_map['VOLUME_ATT'] = { 'zmq_path':'/volume/att', 'zmq_command':'PUT' }
+function_map['VOLUME_MUTE'] = { 'zmq_path':'/volume/mute', 'zmq_command':'PUT' }
+function_map['SYSTEM_SHUTDOWN'] = { 'zmq_path':'/system/shutdown', 'zmq_command':'PUT' }
+
+modes = []
+active_modes = []
 
 '''
 pins_config = 
@@ -121,43 +139,67 @@ def printer( message, level=LL_INFO, continuation=False, tag=LOG_TAG ):
 # ********************************************************************************
 # Load configuration
 #
-def load_zeromq_configuration():
-	
-	configuration = configuration_load(LOGGER_NAME,args.config)
-	
-	if not configuration or not 'zeromq' in configuration:
+def load_cfg_main():
+	""" load main configuration """
+	config = configuration_load(LOGGER_NAME,args.config)
+	return config
+
+def load_cfg_zmq():
+	""" load zeromq configuration """	
+	if not 'zeromq' in cfg_main:
 		printer('Error: Configuration not loaded or missing ZeroMQ, using defaults:')
 		printer('Publisher port: {0}'.format(args.port_publisher))
 		printer('Subscriber port: {0}'.format(args.port_subscriber))
-		configuration = { "zeromq": { "port_publisher": DEFAULT_PORT_PUB, "port_subscriber":DEFAULT_PORT_SUB } }
-		return configuration
-		
+		#cfg_main["zeromq"] = { "port_publisher": DEFAULT_PORT_PUB, "port_subscriber":DEFAULT_PORT_SUB } }
+		config = { "port_publisher": DEFAULT_PORT_PUB, "port_subscriber":DEFAULT_PORT_SUB } }
+		return config
 	else:
 		# Get portnumbers from either the config, or default value
-		if not 'port_publisher' in configuration['zeromq']:
-			configuration['zeromq']['port_publisher'] = DEFAULT_PORT_PUB
-			
+		if not 'port_publisher' in cfg_main['zeromq']:
+			#cfg_main['zeromq']['port_publisher'] = DEFAULT_PORT_PUB
+			config['port_publisher'] = DEFAULT_PORT_PUB
 		if not 'port_subscriber' in configuration['zeromq']:
-			configuration['zeromq']['port_subscriber'] = DEFAULT_PORT_SUB
-			
-	return configuration
+			#cfg_main['zeromq']['port_subscriber'] = DEFAULT_PORT_SUB
+			config['port_subscriber'] = DEFAULT_PORT_SUB
+		return config
 
-def load_gpio_configuration():
-	global cfg_ctrlgpio
-	gpio_ix = 4	#todo!
-	config_dir = configuration['daemons'][gpio_ix]['config-dir']
-	config_file = configuration['daemons'][gpio_ix]['config']
-	configfile = os.path.join(config_dir,config_file)
-	cfg_ctrlgpio = configuration_load(LOGGER_NAME,configfile)
+def load_cfg_daemon():
+	""" load daemon configuration """
+	if 'daemons' not in cfg_main:
+		return
+	else:
+		for daemon in cfg_main['daemons']:
+			if daemon['script'] == os.path.basename(__file__):
+				return daemon
+
+def load_cfg_gpio():		
+	""" load specified GPIO configuration """	
+	if 'directories' not in cfg_main 'daemon-config' not in cfg_main['directories'] or 'config' not in cfg_daemon:
+		return
+	else:		
+		config_dir = cfg_main['directories']['daemon-config']
+		config_file = cfg_daemon['config']
+		gpio_config_file = os.path.join(config_dir,config_file)
 	
+	# load gpio configuration
+	if os.path.exists(gpio_config_file):
+		config = configuration_load(LOGGER_NAME,gpio_config_file)
+		return config
+	else:
+		return
+
+
+# ********************************************************************************
+# GPIO helpers
+# 
 def get_device_config(name):
-	for device in cfg_ctrlgpio['devices']:
+	for device in cfg_gpio['devices']:
 		if device['name'] == name:
 			return device
 	return None
 	
 def get_device_config_by_pin(pin):
-	for device in cfg_ctrlgpio['devices']:
+	for device in cfg_gpio['devices']:
 		if device['clk'] == pin:
 			return device
 		elif device['dt'] == pin:
@@ -191,7 +233,7 @@ def get_function_by_pin(pin,type):
 	# examine if func meets all requirements (only one check needed for encoders: mode)
 	for function_ix in pins_function[pin]:
 		
-		func_cfg = cfg_ctrlgpio['functions'][function_ix]
+		func_cfg = cfg_gpio['functions'][function_ix]
 		ok = True
 		
 		# check mode
@@ -212,7 +254,7 @@ def get_functions_by_pin(pin):
 	# loop through all possible functions for given pin
 	for function_ix in pins_function[pin]:
 		
-		func_cfg = cfg_ctrlgpio['functions'][function_ix]
+		func_cfg = cfg_gpio['functions'][function_ix]
 		ok = True
 		
 		# check mode
@@ -229,15 +271,8 @@ def exec_function_by_code(code,param=None):
 	#function_map[func_cfg['function']] = { "zmq_path":"volume", "zmq_command":"PUT" }
 	if code in function_map:
 		zmq_path = function_map[code]['zmq_path']
-		zmq_command = 'PUT'
+		zmq_command = function_map[code]['zmq_command']
 		arguments = None
-		if code == 'VOLUME':
-			if param=='cw':
-				zmq_path= '/volume/increase'
-				arguments = 'up'
-			if param=='ccw':
-				zmq_path= '/volume/decrease'
-				arguments = 'down'
 		messaging.publish_command(zmq_path,zmq_command,arguments)
 	else:
 		print "function {0} not in function_map".format(code)
@@ -259,7 +294,7 @@ def handle_pin_change(pin,value_old,value_new):
 	for function_ix in pins_function[pin]:
 		
 		#examine if func meets all requirements
-		func_cfg = cfg_ctrlgpio['functions'][function_ix]
+		func_cfg = cfg_gpio['functions'][function_ix]
 		ok = True
 		
 		# check mode
@@ -311,7 +346,8 @@ def check_mode(pin,function_ix):
 	function = pins_config[pin]['functions'][function_ix]
 	print function
 	
-	if 'mode_toggle' in function: # and 'mode' in pins_config[pin]:
+	"""
+	if 'mode_cycle' in function: # and 'mode' in pins_config[pin]:
 		print "DEBUG: Toggeling Mode"
 		if function['mode_toggle'] in active_modes:
 			active_modes.remove(function['mode_toggle'])
@@ -320,32 +356,48 @@ def check_mode(pin,function_ix):
 			active_modes.append(function['mode_toggle'])
 			print "DEBUG: Active Mode(s): {0}".format(active_modes)
 			
-	elif 'mode_select' in function: # and 'mode' in pins_config[pin]:		
+	el
+	"""
+	if 'mode_cycle' in function: # and 'mode' in pins_config[pin]:		
 		for mode in active_modes:
-			mode_ix = function['mode_select'].index(mode)
+				
+			#mode_ix = function['mode_select'].index(mode)
+			mode_list = modes[0]['mode_list']
+			mode_ix = mode_list.index(mode)			# get index of mode in mode_list
 			if mode_ix is not None:
-				mode_old = function['mode_select'][mode_ix]
+				mode_old = mode_list[mode_ix]
 				active_modes.remove(mode_old)
-				if mode_ix >= len(function['mode_select'])-1:
+				if mode_ix >= len(mode_list)-1:
 					mode_ix = 0
 				else:
 					mode_ix += 1
-				mode_new = function['mode_select'][mode_ix]
+				mode_new = mode_list[mode_ix]
 				print "Mode change {0} -> {1}".format(mode_old,mode_new)
 				active_modes.append(mode_new)
 				
-				if 'mode_reset' in function:
-					print "TODO! START RESET TIMER!! Seconds: {0}".format(function['mode_reset'])
-					#gobject.timeout_add_seconds(function['mode_reset'],cb_mode_reset,pin,function_ix)
+				if 'reset' in modes[0]:
+					print "Starting mode reset timer, seconds: {0}".format(modes[0]['reset'])
+					timer_mode = Timer(float((modes[0]['reset']), cb_mode_reset)
+					timer_mode.start
 				break
 
+def reset_mode_timer(seconds):
+	""" reset the mode time-out if there is still activity in current mode """
+	#global mode_timer
+	#mode_timer = 0
+	#gobject.timeout_add_seconds(function['mode_reset'],cb_mode_reset,pin,function_ix)
+	timer_mode.cancel()
+	timer_mode = Timer(seconds, cb_mode_reset)
+	timer_mode.start
 				
-def handle_switch_interrupt(pin):
-	""" Callback function for switches
-	"""
+# ********************************************************************************
+# GPIO interrupt handlers
+# 
+def int_handle_switch(pin):
+	""" Callback function for switches """
 	press_start = clock()
 	press_time = 0
-
+	
 	# debounce
 	#if 'debounce' in pins_config[pin]:
 	#	debounce = pins_config[pin]['debounce'] / 1000
@@ -356,7 +408,13 @@ def handle_switch_interrupt(pin):
 	if not GPIO.input(pin) == pins_config[pin]['gpio_on']:
 		return None
 	
-	print "DEBUG: HANDLE_SWITCH_INTERRUPT! for pin: {0}".format(pin)
+	print "DEBUG: int_handle_switch! for pin: {0}".format(pin)
+
+	# try-except?
+	print "DEBUG THIS!!"
+	# if acitve_modes is empty then we don't need to check the mode
+	if active_modes:
+		reset_mode_timer(modes[0]['reset'])
 
 	# check wheather we have short and/or long press functions and multi-press functions
 	if pins_config[pin]['has_short'] and not pins_config[pin]['has_long'] and not pins_config[pin]['has_multi']:
@@ -479,12 +537,13 @@ def handle_switch_interrupt(pin):
 		else:
 			print "No Match!"
 
-# Rotarty encoder interrupt:
-# this one is called for both inputs from rotary switch (A and B)
-def handle_rotary_interrupt(pin):
+def int_handle_encoder(pin):
+	""" Called for either inputs from rotary switch (A and B) """
 	global pins_state
 	
-	#print "DEBUG: HANDLE_ROTARY_INTERRUPT! for pin: {0}".format(pin)
+	#print "DEBUG: int_handle_encoder! for pin: {0}".format(pin)
+	
+	timer_mode_reset
 	
 	device = get_device_config_by_pin(pin)
 	
@@ -513,82 +572,61 @@ def handle_rotary_interrupt(pin):
 
 		if (Switch_A and Switch_B):						# Both one active? Yes -> end of sequence
 			if pin == encoder_pinB:							# Turning direction depends on 
-				#clockwise
-				print "[Encoder] {0}: DECREASE/CCW".format(function['function'])			
+				#counter clockwise
+				print "[Encoder] {0}: DECREASE/CCW".format(function['function_ccw'])			
 				exec_function_by_code(function['function'],'ccw')
 			else:
-				#counter clockwise
-				print "[Encoder] {0}: INCREASE/CW".format(function['function'])
+				#clockwise
+				print "[Encoder] {0}: INCREASE/CW".format(function['function_cw'])
 				exec_function_by_code(function['function'],'cw')
 
-	
-#********************************************************************************
-# Parse command line arguments
-#
-def parse_args():
-
-	global args
-	import argparse
-	parser = default_parser(DESCRIPTION,BANNER)
-	# additional command line arguments mat be added here
-	args = parser.parse_args()
-
-def setup():
-
-	#
-	# Logging
-	# -> Output will be logged to the syslog, if -b specified, otherwise output will be printed to console
-	#
-	global logger
-	logger = logging.getLogger(LOGGER_NAME)
-	logger.setLevel(logging.DEBUG)
-
-	if args.b:
-		logger = log_create_syslog_loghandler(logger, args.loglevel, LOG_TAG, address='/dev/log') 	# output to syslog
-	else:
-		logger = log_create_console_loghandler(logger, args.loglevel, LOG_TAG) 						# output to console
-	
-	#
-	# Load configuration
-	#
-	global configuration
-	if not args.port_publisher and not args.port_subscriber:
-		configuration = load_zeromq_configuration()
-	else:
-		if args.port_publisher and args.port_subscriber:
-			pass
-		else:
-			configuration = load_zeromq_configuration()
-	
-		# Pub/Sub port override
-		if args.port_publisher:
-			configuration['zeromq']['port_publisher'] = args.port_publisher
-		if args.port_subscriber:
-			configuration['zeromq']['port_subscriber'] = args.port_subscriber
-			
-	#
-	# ZMQ
-	#
-	global messaging
-	printer("ZeroMQ: Initializing")
-	messaging = MqPubSubFwdController('localhost',DEFAULT_PORT_PUB,DEFAULT_PORT_SUB)
-	
-	printer("ZeroMQ: Creating Publisher: {0}".format(DEFAULT_PORT_PUB))
-	messaging.create_publisher()
-
-	#
-	# GPIO
-	#
+# ********************************************************************************
+# GPIO setup
+# 
+def gpio_setup():
 	global pins_function # old?
-	load_gpio_configuration()
-	GPIO.setmode(GPIO.BCM)	# todo: get this from the config file
+	
+	# gpio mode: BCM or board
+	if 'gpio_mode' in cfg_gpio:
+		if cfg_gpio['gpio_mode'] == 'BCM':
+			GPIO.setmode(GPIO.BCM)
+		elif cfg_gpio['gpio_mode'] == 'BOARD':
+			GPIO.setmode(GPIO.BOARD)
+	else:
+		GPIO.setmode(GPIO.BCM)	# default
 
-	# init all pins in configuration
+	# check if mandatory sections present
+	if not 'devices' in cfg_gpio:
+		printer("Error: 'devices'-section missing in configuration.", level=LL_CRITICAL)
+		return False
+		
+	if not 'functions' in cfg_gpio:
+		printer("Error: 'functions'-section missing in configuration.", level=LL_CRITICAL)
+		return False
+	
+	# set mode, if configured
+	if 'start_mode' in cfg_gpio:
+		active_modes.append(cfg_gpio['start_mode'])
+	else:
+		active_modes.append(None)
+	
+	# modes
+	if 'modes' in cfg_gpio:
+		if len(cfg_gpio['modes']) > 1:
+			printer("WARNING: Multiple modes specified, but currently one one set is supported (only loading the first).", level=LL_WARNING)
+			modes.append(cfg_gpio['modes'][0])
+	else:
+		# don't deal with modes at all
+		if len(active_modes) > 0:
+			printer("WARNING: No 'modes'-section, modes will not be available.", level=LL_WARNING)
+		active_modes = []
+	'''
+	
+	# initialize all pins in configuration
 	pins_monitor = []
-	#for ix, device in enumerate(cfg_ctrlgpio['devices']):
-	for device in cfg_ctrlgpio['devices']:
+	for device in cfg_gpio['devices']:
 		if 'sw' in device:
-			#pin = cfg_ctrlgpio['devices'][ix]['sw']
+			#pin = cfg_gpio['devices'][ix]['sw']
 			pin = device['sw']
 			pins_monitor.append(pin)
 			
@@ -633,23 +671,23 @@ def setup():
 			# if left out, the trigger will be based on the on-level
 			if 'gpio_edgedetect' in device:				
 				if device['gpio_edgedetect'] == 'rising':
-					GPIO.add_event_detect(pin, GPIO.RISING, callback=handle_switch_interrupt) #
+					GPIO.add_event_detect(pin, GPIO.RISING, callback=int_handle_switch) #
 					printer("Pin {0}: Added Rising Edge interrupt; bouncetime=600".format(pin))
 				elif device['gpio_edgedetect'] == 'falling':
-					GPIO.add_event_detect(pin, GPIO.FALLING, callback=handle_switch_interrupt) #
+					GPIO.add_event_detect(pin, GPIO.FALLING, callback=int_handle_switch) #
 					printer("Pin {0}: Added Falling Edge interrupt; bouncetime=600".format(pin))
 				elif device['gpio_edgedetect'] == 'both':
-					GPIO.add_event_detect(pin, GPIO.BOTH, callback=handle_switch_interrupt) #
+					GPIO.add_event_detect(pin, GPIO.BOTH, callback=int_handle_switch) #
 					printer("Pin {0}: Added Both Rising and Falling Edge interrupt; bouncetime=600".format(pin))
 					printer("Pin {0}: Warning: detection both high and low level will cause an event to trigger on both press and release.".format(pin),level=LL_WARNING)
 				else:
 					printer("Pin {0}: ERROR: invalid edge detection value.".format(pin),level=LL_ERROR)
 			else:
 				if gpio_on == GPIO.HIGH:
-					GPIO.add_event_detect(pin, GPIO.RISING, callback=handle_switch_interrupt) #
+					GPIO.add_event_detect(pin, GPIO.RISING, callback=int_handle_switch) #
 					printer("Pin {0}: Added Rising Edge interrupt; bouncetime=600".format(pin))				
 				else:
-					GPIO.add_event_detect(pin, GPIO.FALLING, callback=handle_switch_interrupt) #, bouncetime=600
+					GPIO.add_event_detect(pin, GPIO.FALLING, callback=int_handle_switch) #, bouncetime=600
 					printer("Pin {0}: Added Falling Edge interrupt; bouncetime=600".format(pin))
 
 			
@@ -664,8 +702,8 @@ def setup():
 			
 			printer("Setting up encoder on pins: {0} and {1}".format(pin_clk, pin_dt))
 			GPIO.setup((pin_clk,pin_dt), GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-			GPIO.add_event_detect(pin_clk, GPIO.RISING, callback=handle_rotary_interrupt) # NO bouncetime 
-			GPIO.add_event_detect(pin_dt, GPIO.RISING, callback=handle_rotary_interrupt) # NO bouncetime 
+			GPIO.add_event_detect(pin_clk, GPIO.RISING, callback=int_handle_encoder) # NO bouncetime 
+			GPIO.add_event_detect(pin_dt, GPIO.RISING, callback=int_handle_encoder) # NO bouncetime 
 			
 			pins_state[pin_clk] = GPIO.input(pin_clk)
 			pins_state[pin_dt] = GPIO.input(pin_dt)
@@ -675,7 +713,7 @@ def setup():
 			pins_config[pin_dt] = { "dev_name":device['name'], "dev_type":"dt", "functions":[] }
 					
 	# map pins to functions
-	for ix, function in enumerate(cfg_ctrlgpio['functions']):
+	for ix, function in enumerate(cfg_gpio['functions']):
 		if 'encoder' in function:		
 			device = get_device_config(function['encoder'])
 			pin_dt = device['dt']
@@ -782,7 +820,95 @@ def setup():
 	if len(pins_monitor) != len(set(pins_monitor)):
 		printer("WARNING: Same pin used multiple times, this may lead to unpredictable results.",level=LL_WARNING)
 		pins_monitor = set(pins_monitor) # no use in keeping duplicates
+
+#********************************************************************************
+# Parse command line arguments
+#
+def parse_args():
+
+	global args
+	import argparse
+	parser = default_parser(DESCRIPTION,BANNER)
+	# additional command line arguments mat be added here
+	args = parser.parse_args()
+
+def setup():
+
+	#
+	# Logging
+	# -> Output will be logged to the syslog, if -b specified, otherwise output will be printed to console
+	#
+	global logger
+	logger = logging.getLogger(LOGGER_NAME)
+	logger.setLevel(logging.DEBUG)
+
+	if args.b:
+		logger = log_create_syslog_loghandler(logger, args.loglevel, LOG_TAG, address='/dev/log') 	# output to syslog
+	else:
+		logger = log_create_console_loghandler(logger, args.loglevel, LOG_TAG) 						# output to console
 	
+	#
+	# Configuration
+	#
+	global cfg_main
+	global cfg_zmq
+	global cfg_daemon
+	global cfg_gpio
+
+	# main
+	cfg_main = load_cfg_main()
+	if cfg_main is None:
+		printer("Main configuration could not be loaded.", level=LL_CRITICAL)
+		exit(1)
+	
+	# zeromq
+	if not args.port_publisher and not args.port_subscriber:
+		cfg_zmq = load_cfg_zmq()
+	else:
+		if args.port_publisher and args.port_subscriber:
+			pass
+		else:
+			load_cfg_zmq()
+	
+		# Pub/Sub port override
+		if args.port_publisher:
+			configuration['zeromq']['port_publisher'] = args.port_publisher
+		if args.port_subscriber:
+			configuration['zeromq']['port_subscriber'] = args.port_subscriber
+
+	if cfg_zmq is None:
+		printer("Error loading Zero MQ configuration.", level=LL_CRITICAL)
+		exit(1)
+			
+	# daemon
+	cfg_daemon = load_cfg_daemon()
+	if cfg_daemon is None:
+		printer("Daemon configuration could not be loaded.", level=LL_CRITICAL)
+		exit(1)
+	
+	# gpio
+	cfg_gpio = load_cfg_gpio()
+	if cfg_gpio is None:
+		printer("GPIO configuration could not be loaded.", level=LL_CRITICAL)
+		exit(1)
+	
+	#
+	# ZMQ
+	#
+	global messaging
+	printer("ZeroMQ: Initializing")
+	messaging = MqPubSubFwdController('localhost',DEFAULT_PORT_PUB,DEFAULT_PORT_SUB)
+	
+	printer("ZeroMQ: Creating Publisher: {0}".format(DEFAULT_PORT_PUB))
+	messaging.create_publisher()
+
+	#
+	# GPIO
+	#
+	retval = gpio_setup()
+	if retval == False:
+		printer("GPIO: Error setting up")
+		exit(1)
 
 	printer('Initialized [OK]')
 	print "\nDEBUG; pins_function:"

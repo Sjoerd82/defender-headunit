@@ -8,6 +8,8 @@
 		, "controls": "/mnt/PIHU_APP/defender-headunit/plugins/control/"
 		, "output": "/mnt/PIHU_APP/defender-headunit/plugins/output/"
 		, "app-root": "/mnt/PIHU_APP/defender-headunit"
+		, "app-config": "/mnt/PIHU_CONFIG"
+		, "daemon-config": "/mnt/PIHU_CONFIG/daemon"
 		, "plugin-other": "/mnt/PIHU_APP/defender-headunit/plugin_other/"
 		, "config": "/mnt/PIHU_CONFIG"
 		, "log": "/mnt/PIHU_CONFIG/log"
@@ -49,8 +51,8 @@
 		},
 		{
 			  "name": "Control: GPIO"
+			, "script":"control_gpio.py"
 			, "init.d":"S72ctrlgpio"
-			, "config-dir": "/mnt/PIHU_CONFIG"
 			, "config": "multi_functional_encoder.json"
 		}
 	]

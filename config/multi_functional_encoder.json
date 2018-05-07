@@ -1,59 +1,73 @@
 {
-	  "gpio_mode":"BCM"
+	  "gpio_mode": "BCM"
+	, "start_mode": "track"
+	, "mode_timeout": 5
 	, "devices": [
 		{ 	  "name": "multi_encoder"
 			, "type": "rotenc"
-			, "clk":13
-			, "dt":6
+			, "clk": 13
+			, "dt": 6
 		},
 		{ 	  "name": "multi_enc_sw"
-			, "sw":26
+			, "sw": 26
 			, "gpio_on": "low"
 			, "debounce": 10
 		}
 	]
+	,"modes": [
+		{	  "name": "modecycle1"
+			, "mode_list": [ "track", "volume", "bass", "treble", "menu" ]
+			, "reset": 5
+		}
+	]
 	,"functions": [
 		{
-			  "name":"toggler"
-			, "function":null
+			  "name": "toggler"
+			, "function": null
 			, "short_press": [ "multi_enc_sw" ]
-			, "mode_select": [ null, "volume", "bass", "treble", "menu" ]
-			, "mode_reset": 5
+			, "mode_cycle": "modecycle1"
+			, "mode_select": [ "track", "volume", "bass", "treble", "menu" ]
 		},
 		{
 			  "name":"track_select"
-			, "function":"TRACK"
+			, "function_cw":"PLAYER_TRACK_NEXT"
+			, "function_ccw":"PLAYER_TRACK_PREV"
 			, "encoder":"multi_encoder"
-			, "mode": null
+			, "mode": "track"
 		},
 		{
 			  "name":"volume"
-			, "function":"VOLUME"
+			, "function_cw":"VOLUME_INC"
+			, "function_ccw":"VOLUME_DEC"
 			, "encoder":"multi_encoder"
 			, "mode":"volume"
 		},
 		{
 			  "name":"bass"
-			, "function":"BASS"
+			, "function_cw":"BASS_INC"
+			, "function_ccw":"BASS_DEC"
 			, "encoder" :"multi_encoder"
 			, "mode":"bass"
 		},
 		{
 			  "name":"treble"
-			, "function":"TREBLE"
+			, "function_cw":"TREBLE_INC"
+			, "function_ccw":"TREBLE_DEC"
 			, "encoder" :"multi_encoder"
 			, "mode":"treble"
 		},
 		{
 			  "name":"browse_menu"
-			, "function":"MENU_SCROLL"
+			, "function_cw":"MENU_SCROLL_DOWN"
+			, "function_ccw":"MENU_SCROLL_UP"
 			, "encoder":"multi_encoder"
 			, "mode":"menu"
 		},
 		{
-			  "name":"toggle_random"
-			, "function":"SOURCE"
+			  "name":"next_source"
+			, "function":"SOURCE_NEXT"
 			, "long_press": [ "multi_enc_sw" ]
+			, "mode": "all"
 		}
 	]
 }
