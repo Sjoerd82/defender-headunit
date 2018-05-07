@@ -180,11 +180,13 @@ def load_cfg_daemon():
 def load_cfg_gpio():		
 	""" load specified GPIO configuration """	
 	if 'directories' not in cfg_main or 'daemon-config' not in cfg_main['directories'] or 'config' not in cfg_daemon:
-		print "ERROR: Configuration"
 		return
 	else:		
 		config_dir = cfg_main['directories']['daemon-config']
+		# TODO
+		config_dir = "/mnt/PIHU_CONFIG/"	# fix!
 		config_file = cfg_daemon['config']
+		
 		gpio_config_file = os.path.join(config_dir,config_file)
 	
 	# load gpio configuration
