@@ -620,7 +620,6 @@ def gpio_setup():
 		if len(active_modes) > 0:
 			printer("WARNING: No 'modes'-section, modes will not be available.", level=LL_WARNING)
 		active_modes = []
-	'''
 	
 	# initialize all pins in configuration
 	pins_monitor = []
