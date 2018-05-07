@@ -423,8 +423,7 @@ def int_handle_switch(pin):
 	print "DEBUG THIS!!"
 	# if acitve_modes is empty then we don't need to check the mode
 	if active_modes:
-		print modes
-		#reset_mode_timer(modes[0]['reset'])
+		reset_mode_timer(modes[0]['reset'])
 
 	# check wheather we have short and/or long press functions and multi-press functions
 	if pins_config[pin]['has_short'] and not pins_config[pin]['has_long'] and not pins_config[pin]['has_multi']:
@@ -554,8 +553,7 @@ def int_handle_encoder(pin):
 	#print "DEBUG: int_handle_encoder! for pin: {0}".format(pin)
 	
 	if active_modes:
-		print modes
-		#reset_mode_timer(modes[0]['reset'])
+		reset_mode_timer(modes[0]['reset'])
 	
 	device = get_device_config_by_pin(pin)
 	
@@ -631,7 +629,7 @@ def gpio_setup():
 	if 'modes' in cfg_gpio:
 		if len(cfg_gpio['modes']) > 1:
 			printer("WARNING: Multiple modes specified, but currently one one set is supported (only loading the first).", level=LL_WARNING)
-			modes.append(cfg_gpio['modes'][0])
+		modes.append(cfg_gpio['modes'][0])
 	else:
 		# don't deal with modes at all
 		if len(active_modes) > 0:
