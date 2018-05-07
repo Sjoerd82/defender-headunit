@@ -394,7 +394,8 @@ def reset_mode_timer(seconds):
 	global timer_mode
 	#mode_timer = 0
 	#gobject.timeout_add_seconds(function['mode_reset'],cb_mode_reset,pin,function_ix)
-	timer_mode.cancel()
+	if timer_mode is not None:
+		timer_mode.cancel()
 	timer_mode = Timer(seconds, cb_mode_reset)
 	timer_mode.start()
 				
