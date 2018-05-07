@@ -378,7 +378,7 @@ def check_mode(pin,function_ix):
 				if 'reset' in modes[0]:
 					print "Starting mode reset timer, seconds: {0}".format(modes[0]['reset'])
 					timer_mode = Timer(float((modes[0]['reset']), cb_mode_reset)
-					timer_mode.start
+					timer_mode.start()
 				break
 
 def reset_mode_timer(seconds):
@@ -388,7 +388,7 @@ def reset_mode_timer(seconds):
 	#gobject.timeout_add_seconds(function['mode_reset'],cb_mode_reset,pin,function_ix)
 	timer_mode.cancel()
 	timer_mode = Timer(seconds, cb_mode_reset)
-	timer_mode.start
+	timer_mode.start()
 				
 # ********************************************************************************
 # GPIO interrupt handlers
