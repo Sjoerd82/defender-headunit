@@ -84,7 +84,6 @@ cfg_gpio = None		# GPIO setup
 pins_state = {}			# pin (previous) state
 pins_function = {}		# pin function(s)
 pins_config = {}		# consolidated config, key=pin
-mode_timer = 0			# mode reset timer
 
 function_map = {}
 function_map['SOURCE_NEXT'] = { 'zmq_path':'/source/next', 'zmq_command':'PUT' }
@@ -392,7 +391,7 @@ def check_mode(pin,function_ix):
 
 def reset_mode_timer(seconds):
 	""" reset the mode time-out if there is still activity in current mode """
-	#global mode_timer
+	global timer_mode
 	#mode_timer = 0
 	#gobject.timeout_add_seconds(function['mode_reset'],cb_mode_reset,pin,function_ix)
 	timer_mode.cancel()
