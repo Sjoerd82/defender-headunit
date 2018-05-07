@@ -114,7 +114,7 @@ pins_config =
 		dev_type
 		functions: [ {
 			fnc_name
-			fnc_code
+			function
 			mode							= valid for this mode only
 			fnc_short_press/fnc_long_press 	= list of 
 			}
@@ -434,13 +434,13 @@ def int_handle_switch(pin):
 		for ix, fun in enumerate(pins_config[pin]['functions']):
 			if 'mode' in fun:
 				if fun['mode'] in active_modes:
-					exec_function_by_code(fun['fnc_code'])
+					exec_function_by_code(fun['function'])
 				else:
 					print "DEBUG mode mismatch"
 			else:
 				if 'mode_toggle' in fun or 'mode_select' in fun:
 					check_mode(pin,ix)
-				exec_function_by_code(fun['fnc_code'])
+				exec_function_by_code(fun['function'])
 			
 		return
 
@@ -473,13 +473,13 @@ def int_handle_switch(pin):
 				if fun['press_type'] == 'long':
 					if 'mode' in fun:
 						if fun['mode'] in active_modes:
-							exec_function_by_code(fun['fnc_code'])
+							exec_function_by_code(fun['function'])
 						else:
 							print "DEBUG mode mismatch"
 					else:
 						if 'mode_toggle' in fun or 'mode_select' in fun:
 							check_mode(pin,ix)
-						exec_function_by_code(fun['fnc_code'])			
+						exec_function_by_code(fun['function'])			
 			
 		elif press_time < LONG_PRESS and pins_config[pin]['has_short']:
 			print "EXECUTING THE SHORT FUNCTION (not long enough pressed)"
@@ -489,13 +489,13 @@ def int_handle_switch(pin):
 				if fun['press_type'] == 'short':
 					if 'mode' in fun:
 						if fun['mode'] in active_modes:
-							exec_function_by_code(fun['fnc_code'])
+							exec_function_by_code(fun['function'])
 						else:
 							print "DEBUG mode mismatch"
 					else:
 						if 'mode_toggle' in fun or 'mode_select' in fun:
 							check_mode(pin,ix)
-						exec_function_by_code(fun['fnc_code'])
+						exec_function_by_code(fun['function'])
 
 		else:
 			print "No Match!"
@@ -519,9 +519,9 @@ def int_handle_switch(pin):
 						multi_match = False
 				if multi_match == True:
 					if function['press_type'] == 'short_press':
-						matched_short_press_function_code = function['fnc_code']
+						matched_short_press_function_code = function['function']
 					elif function['press_type'] == 'long_press':
-						matched_long_press_function_code = function['fnc_code']
+						matched_long_press_function_code = function['function']
 				
 		printer("Waiting for button to be released....")
 		pressed = True
@@ -583,11 +583,11 @@ def int_handle_encoder(pin):
 			if pin == encoder_pinB:							# Turning direction depends on 
 				#counter clockwise
 				print "[Encoder] {0}: DECREASE/CCW".format(function['function_ccw'])			
-				exec_function_by_code(function['function'],'ccw')
+				exec_function_by_code(function['function_ccw'],'ccw')
 			else:
 				#clockwise
 				print "[Encoder] {0}: INCREASE/CW".format(function['function_cw'])
-				exec_function_by_code(function['function'],'cw')
+				exec_function_by_code(function['function_cw'],'cw')
 
 # ********************************************************************************
 # GPIO setup
@@ -735,7 +735,7 @@ def gpio_setup():
 			#fnc = { "fnc_name":function['name'], "fnc_code":function['function'], "multicount":0 }
 			fnc = function
 			fnc["fnc_name"]=function['name']
-			fnc["fnc_code"]=function['function']			
+			#fnc["fnc_code"]=function['function']			
 			fnc["multicount"]=0
 			pins_config[pin_dt]["functions"].append(fnc)
 			pins_config[pin_clk]["functions"].append(fnc)
@@ -754,7 +754,7 @@ def gpio_setup():
 				fnc = function
 				#fnc = { "fnc_name":function['name'], "fnc_code":function['function'], "press_type":"short", "multicount":0 }
 				fnc["fnc_name"]=function['name']
-				fnc["fnc_code"]=function['function']
+				#fnc["fnc_code"]=function['function']
 				fnc["press_type"]="short"
 				fnc["multicount"]=0
 				pins_config[pin_sw]["functions"].append(fnc)
@@ -779,7 +779,7 @@ def gpio_setup():
 				#fnc = { "fnc_name":function['name'], "fnc_code":function['function'], "press_type":"short", "multicount":multicount, "multi":multi }
 				fnc = function
 				fnc["fnc_name"]=function['name']
-				fnc["fnc_code"]=function['function']
+				#fnc["fnc_code"]=function['function']
 				fnc["press_type"]="short"
 				fnc["multicount"]=multicount
 				fnc["multi"]=multi
@@ -796,7 +796,7 @@ def gpio_setup():
 				pin_sw = device['sw']
 				pins_config[pin_sw]["has_long"] = True
 				pins_config[pin_sw]["has_multi"] = False
-				fnc = { "fnc_name":function['name'], "fnc_code":function['function'], "press_type":"long", "multicount":0 }
+				fnc = { "fnc_name":function['name'], "function":function['function'], "press_type":"long", "multicount":0 }
 				pins_config[pin_sw]["functions"].append(fnc)
 			else:
 				#device = get_device_config(function['long_press'][0])
@@ -816,7 +816,7 @@ def gpio_setup():
 						pins_function[ pin_sw ] = []
 						pins_function[ pin_sw ].append( ix )
 
-				fnc = { "fnc_name":function['name'], "fnc_code":function['function'], "press_type":"long", "multicount":multicount, "multi":multi }
+				fnc = { "fnc_name":function['name'], "function":function['function'], "press_type":"long", "multicount":multicount, "multi":multi }
 				pins_config[pin_sw]["functions"].append(fnc)
 
 	# we sort the functions so that the multi-button functions are on top, the one with most buttons first
