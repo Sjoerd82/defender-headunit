@@ -449,7 +449,7 @@ def int_handle_switch(pin):
 				print "RELEASED!"
 				pressed = False
 				break
-			if press_time.miliseconds >= long_press_ms:
+			if press_time >= long_press_ms:
 				print "TIMEOUT"
 				break
 			#press_time = (clock()-press_start)*1000
@@ -457,9 +457,9 @@ def int_handle_switch(pin):
 			press_time = int(delta.total_seconds() * 1000)
 			sleep(0.005)
 			
-		print "switch was pressed for {0} miliseconds".format(press_time.miliseconds) #,press_start,clock())
+		print "switch was pressed for {0} miliseconds".format(press_time) #,press_start,clock())
 
-		if press_time.miliseconds >= long_press_ms and pins_config[pin]['has_long']:
+		if press_time >= long_press_ms and pins_config[pin]['has_long']:
 			print "EXECUTING THE LONG FUNCTION (long enough pressed)"
 			
 			# execute, checking mode
@@ -475,7 +475,7 @@ def int_handle_switch(pin):
 							check_mode(pin,ix)
 						exec_function_by_code(fun['function'])			
 			
-		elif press_time.miliseconds < long_press_ms and pins_config[pin]['has_short']:
+		elif press_time < long_press_ms and pins_config[pin]['has_short']:
 			print "EXECUTING THE SHORT FUNCTION (not long enough pressed)"
 			
 			# execute, checking mode
@@ -519,7 +519,7 @@ def int_handle_switch(pin):
 				
 		printer("Waiting for button to be released....")
 		pressed = True
-		while pressed == True or press_time.miliseconds >= long_press_ms:
+		while pressed == True or press_time >= long_press_ms:
 			state = GPIO.input(pin)
 			if state != pins_config[pin]['gpio_on']:
 				print "RELEASED!"
@@ -531,7 +531,7 @@ def int_handle_switch(pin):
 			sleep(0.01)
 				
 		print "....done"
-		print "switch was pressed for {0} ms".format(press_time.miliseconds)
+		print "switch was pressed for {0} ms".format(press_time)
 		
 #			if pins_config[pin]['has_long'] and not pins_config[pin]['has_short']:
 #				print "EXECUTING THE LONG FUNCTION (only long)"
