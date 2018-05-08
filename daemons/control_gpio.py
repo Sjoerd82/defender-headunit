@@ -92,7 +92,7 @@ function_map['SYSTEM_SHUTDOWN'] = { 'zmq_path':'/system/shutdown', 'zmq_command'
 
 modes = []
 active_modes = []
-long_press_ms = 1500
+long_press_ms = 800
 
 '''
 pins_config = 
