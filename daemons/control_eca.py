@@ -167,10 +167,13 @@ def eca_execute(command,tries=3):
 				time.sleep(1)
 				printer("Executed: {0:30}; [FAIL] {1}".format(command,reteca),level=LL_ERROR)
 			else:
-				printer("Executed: {0:30}; [OK] Response: {1}".format(command,reteca),level=LL_INFO)	#change to LL_DEBUG
+				printer(colorize("Executed: {0:30}; [OK] Response: {1}".format(command,reteca),'light_magenta'),level=LL_INFO)	#change to LL_DEBUG
 				return reteca
+		elif reteca is None:
+			printer(colorize("Executed: {0:30}; [OK]".format(command,type(reteca)),'light_magenta'),level=LL_INFO)	#change to LL_DEBUG
+			return reteca		
 		else:
-			printer("Executed: {0:30}; [OK] Response type: {1}".format(command,type(reteca)),level=LL_INFO)	#change to LL_DEBUG
+			printer(colorize("Executed: {0:30}; [OK] Response type: {1}".format(command,type(reteca)),'light_magenta'),level=LL_INFO)	#change to LL_DEBUG
 			return reteca
 
 def eca_load_chainsetup_file(ecs_file):
