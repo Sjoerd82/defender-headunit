@@ -128,7 +128,26 @@ def dict_track(	display=None
 	track['date'] = date
 	return track
 
- 
+def dict_volume( system=None
+				,device=None
+				,simple_vol=None
+				,channels=None
+				,muted=None ):
+	"""
+	`system` | "alsa", "jack", "pulseaudio", "mpd"(?)
+	`device` | Ex. "hw:0,0", "default-sink", etc.
+	`channels` | `[{level}]` list of levels
+	`muted` | Useful?
+	"""
+	volume = {}
+	volume['system'] = system
+	volume['device'] = device
+	volume['simple_vol'] = simple_vol
+	volume['channels'] = channels
+	volume['muted'] = muted
+	return volume
+
+	
 def printer( message, level=LL_INFO, tag="",logger_name=""):
 	logger = logging.getLogger(logger_name)
 	logger.log(level, message, extra={'tag': tag})

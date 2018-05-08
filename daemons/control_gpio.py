@@ -52,23 +52,9 @@ DEFAULT_PORT_SUB = 5560
 
 #DELAY = 0.005
 DELAY = 0.01
-LONG_PRESS = 0.05
+#LONG_PRESS = 0.05
 
-FUNCTIONS = [
-	'VOLUME',
-	'BASS',
-	'TREBLE',
-	'SOURCE',
-	'POWEROFF',
-	'NEXT_TRACK',
-	'NEXT_FOLDER',
-	'PREV_TRACK',
-	'PREV_FOLDER',
-	'RANDOM',
-	'MENU_ENTER',
-	'MENU_SCROLL',
-	'MENU_SELECT' ]
-
+# global variables
 logger = None
 args = None
 messaging = None
@@ -105,6 +91,7 @@ function_map['SYSTEM_SHUTDOWN'] = { 'zmq_path':'/system/shutdown', 'zmq_command'
 
 modes = []
 active_modes = []
+long_press_ms = 1500
 
 '''
 pins_config = 
@@ -454,22 +441,21 @@ def int_handle_switch(pin):
 
 		printer("Waiting for button to be released....")
 		pressed = True
-		while True: #pressed == True or press_time >= LONG_PRESS:
+		while True: #pressed == True or press_time >= long_press_ms:
 			state = GPIO.input(pin)
 			if state != pins_config[pin]['gpio_on']:
 				print "RELEASED!"
 				pressed = False
 				break
-			if press_time >= LONG_PRESS:
+			if press_time_ms >= long_press_ms:
 				print "TIMEOUT"
 				break
-			press_time = clock()-press_start
+			press_time_ms = (clock()-press_start)*1000
 			sleep(0.005)
 			
-		print "....done"
-		print "switch was pressed for {0} seconds".format(press_time*100)		
+		print "switch was pressed for {0} miliseconds".format(press_time)		
 
-		if press_time >= LONG_PRESS and pins_config[pin]['has_long']:
+		if press_time >= long_press_ms and pins_config[pin]['has_long']:
 			print "EXECUTING THE LONG FUNCTION (long enough pressed)"
 			
 			# execute, checking mode
@@ -485,7 +471,7 @@ def int_handle_switch(pin):
 							check_mode(pin,ix)
 						exec_function_by_code(fun['function'])			
 			
-		elif press_time < LONG_PRESS and pins_config[pin]['has_short']:
+		elif press_time < long_press_ms and pins_config[pin]['has_short']:
 			print "EXECUTING THE SHORT FUNCTION (not long enough pressed)"
 			
 			# execute, checking mode
@@ -529,7 +515,7 @@ def int_handle_switch(pin):
 				
 		printer("Waiting for button to be released....")
 		pressed = True
-		while pressed == True or press_time >= LONG_PRESS:
+		while pressed == True or press_time >= long_press_ms:
 			state = GPIO.input(pin)
 			if state != pins_config[pin]['gpio_on']:
 				print "RELEASED!"
@@ -543,9 +529,9 @@ def int_handle_switch(pin):
 		
 #			if pins_config[pin]['has_long'] and not pins_config[pin]['has_short']:
 #				print "EXECUTING THE LONG FUNCTION (only long)"
-		if press_time >= LONG_PRESS and pins_config[pin]['has_long'] and matched_long_press_function_code is not None:
+		if press_time >= long_press_ms and pins_config[pin]['has_long'] and matched_long_press_function_code is not None:
 			print "EXECUTING THE LONG FUNCTION (long enough pressed)"
-		elif press_time < LONG_PRESS and pins_config[pin]['has_short'] and matched_short_press_function_code is not None:
+		elif press_time < long_press_ms and pins_config[pin]['has_short'] and matched_short_press_function_code is not None:
 			print "EXECUTING THE SHORT FUNCTION (not long enough pressed)"
 		else:
 			print "No Match!"
@@ -602,6 +588,7 @@ def gpio_setup():
 	global pins_function # old?
 	global pins_state
 	global pins_config
+	global long_press_ms
 	global mode_timer
 	global modes
 	global active_modes
@@ -623,7 +610,11 @@ def gpio_setup():
 	if not 'functions' in cfg_gpio:
 		printer("Error: 'functions'-section missing in configuration.", level=LL_CRITICAL)
 		return False
-	
+
+	# get global settings (default already set)
+	if 'long_press_ms' in cfg_gpio:
+		long_press_ms = cfg_gpio['long_press_ms']
+		
 	# set mode, if configured
 	if 'start_mode' in cfg_gpio:
 		active_modes.append(cfg_gpio['start_mode'])

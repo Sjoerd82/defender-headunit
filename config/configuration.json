@@ -81,7 +81,7 @@
 		, "port_subscriber": 5560
 	}
 	, "ecasound": {
-		  "chainsetup": "temp"
+		  "chainsetup": "jack_alsa_simple"
 		, "chain_master_amp": "pre"
 		, "chain_mute": "pre"
 		, "chain_eq": "pre"
@@ -236,6 +236,18 @@
 			  "location":	"/etc/ecasound/"
 			, "chainsetups": [
 				{
+					  "n":		"jack_alsa_simple"
+					, "chains": [
+						{
+							  "a":		"pre"
+							, "i":		"jack,system"
+							, "o":		"alsa"
+							, "f":		"s32_le,2,44100"
+							, "ea":		"100"
+						}
+					]
+				}
+				,				{
 					  "n":		"jack_alsa_xover_2ch_m"
 					, "chains": [
 						{
@@ -357,9 +369,10 @@
 					 , "command":"ecasound -q --server -z:nodb -z:mixmode,sum -a:pre -f:s32_le,2,44100 -i:stdin -pf:/etc/pre.ecp -o:loop,1 -a:woofer,tweeter -i:loop,1 -a:woofer -pf:/etc/woofer.ecp -chorder:1,2,0,0 -a:tweeter -pf:/etc/tweeter.ecp -chorder:0,0,1,2 -a:woofer,tweeter -f:16,4,44100 -o:alsa"
 					 , "enabled":"no"
 				  }
-				, {  "type":"jack"
-				    , "name":"Jack"
-					, "enabled":"yes"
+				, {  "type": "jack"
+				    , "name": "Jack"
+					, "destination_ports": "system:playback_1,system:playback_2"
+					, "enabled": "yes"
 				   }
 			   ]
 		}

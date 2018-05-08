@@ -180,9 +180,11 @@ Volume level. Todo: mute?
 
 Field | Value
 --- | ---
-`system` | "alsa", "jack", "pulseaudio", "mpd"(?)
+`system` | "alsa", "ecasound", "jack", "pulseaudio", "mpd"
 `device` | Ex. "hw:0,0", "default-sink", etc.
+`simple_vol` | Temporary shortcut for ecasound pre-amp
 `channels` | `[{level}]` list of levels
+`muted` | Useful?
 
 #### {level}
 

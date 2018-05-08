@@ -1,0 +1,45 @@
+# Remove this comment, JSON does not support comments
+# This example shows two implementations of the long press
+#
+# Button 1: Long press (1500ms minimum) to go to next folder
+# Button 2: Short press calls "next track"
+# Button 2: Keep pressed down to do a repetitive "next track", every 200ms for as long as the button is pressed. Repetition starts after 800ms.
+#
+# Reduce/increase the wait time (in miliseconds) to slow down/speed up the repetitions
+{
+	  "gpio_mode":"BCM"
+	, "long_press_ms": 1500
+	, "devices": [
+		{ 	  "name": "button_1"
+			, "sw":24
+			, "gpio_on": "high"
+			, "debounce": 10
+		},
+		{ 	  "name": "button_2"
+			, "sw":26
+			, "gpio_on": "high"
+			, "debounce": 10
+			, "long_press_ms": 800
+		}
+	]
+	,"functions": [
+		{
+			  "name":"folder"
+			, "function":"TRACK_NEXT_FOLDER"
+			, "long_press": [ "button_1" ]
+			, "function_repeat": false
+		},
+		{
+			  "name":"track"
+			, "function":"TRACK_NEXT"
+			, "short_press": [ "button_2" ]
+		},
+		{
+			  "name":"track_repeat"
+			, "function":"TRACK_NEXT"
+			, "long_press": [ "button_2" ]
+			, "repeat": true
+			, "repeat_wait_ms": 200
+		}
+	]
+}

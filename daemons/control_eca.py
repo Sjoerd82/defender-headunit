@@ -61,6 +61,7 @@ eca_chain_op_master_amp = None
 att_level = 20		# TODO, get from configuration
 local_volume = 50	
 eca_chain_selected = None
+volume_increment = 5
 
 logger = None
 args = None
@@ -156,6 +157,20 @@ def load_ecasound_configuration():
 # ********************************************************************************
 # Ecasound
 #
+def eca_execute(command,tries=3):
+	""" executes an IAM command and examines the output, retries if neccessary """
+	for i in range(tries):
+		reteca = eca_execute(command)
+		if type(reteca) is StringType:
+			if reteca[0:20] == "Response length error":
+				time.sleep(0.5)
+				printer("Executed: {0:30}; [FAIL] {1}".format(command,reteca),level=LL_ERROR)
+			else:
+				printer("Executed: {0:30}; [OK] Response: {1}".format(command,reteca),level=LL_INFO)	#change to LL_DEBUG
+				return reteca
+		else:
+			printer("Executed: {0:30}; [OK] Response type: {1}".format(command,type(reteca)),level=LL_INFO)	#change to LL_DEBUG
+			return reteca
 
 def eca_load_chainsetup_file(ecs_file):
 	""" Load, Test and Connect chainsetup file
@@ -164,27 +179,27 @@ def eca_load_chainsetup_file(ecs_file):
 			False:	Chainsetup not loaded
 	"""
 	# load chainsetup from file, it will be automatically selected
-	eca.command("cs-load {0}".format(ecs_file))
+	eca_execute("cs-load {0}".format(ecs_file))
 	
 	#
 	# test the loaded chainsetup
 	#
-	eca_chain_selected = eca.command("cs-selected")
+	eca_chain_selected = eca_execute("cs-selected")
 	if eca_chain_selected[:5] is not 'ERROR':
 		printer("Loaded chainsetup: {0}".format(eca_chain_selected))
 	else:
 		printer("Could not select chainsetup!",level=LL_CRITICAL)
-		#eca.command("stop")
-		#eca.command("cs-disconnect")
+		#eca_execute("stop")
+		#eca_execute("cs-disconnect")
 		#exit(1)
 		return False
 	
-	chains = eca.command("c-list")
+	chains = eca_execute("c-list")
 	printer("Chainsetup contains chains and operators:")
 	for chain in chains:
 		printer("Chain: {0}".format(chain))
-		eca.command("c-select {0}".format(chain))
-		chain_ops = eca.command("cop-list")
+		eca_execute("c-select {0}".format(chain))
+		chain_ops = eca_execute("cop-list")
 		for chain_op in chain_ops:
 			printer(" - {0}".format(chain_op))
 	
@@ -192,26 +207,26 @@ def eca_load_chainsetup_file(ecs_file):
 	if cfg_ecasound['chain_master_amp'] not in chains:
 		printer("Master amp chain ({0}) not found!".format(cfg_ecasound['chain_master_amp']))
 	else:
-		eca.command("c-select {0}".format(cfg_ecasound['chain_master_amp']))
-		eca_chain_selected = eca.command("c-selected")
+		eca_execute("c-select {0}".format(cfg_ecasound['chain_master_amp']))
+		eca_chain_selected = eca_execute("c-selected")
 		if cfg_ecasound['chain_master_amp'] in eca_chain_selected:
 
-			chain_ops = eca.command("cop-list")
+			chain_ops = eca_execute("cop-list")
 			#if 'amp-%' not in chain_ops:		
 			if 'Amplify' in chain_ops:
 				printer("Master amp chain: {0} [OK]".format(cfg_ecasound['chain_master_amp']))
 				
 			else:
 				printer("Operator 'Amplify' not found!",level=LL_CRITICAL)
-				#eca.command("stop")
-				#eca.command("cs-disconnect")
+				#eca_execute("stop")
+				#eca_execute("cs-disconnect")
 				#exit(1)
 				return False
 				
 		else:
 			printer("Could not select master amp chain!",level=LL_CRITICAL)
-			#eca.command("stop")
-			#eca.command("cs-disconnect")
+			#eca_execute("stop")
+			#eca_execute("cs-disconnect")
 			#exit(1)
 			return False
 
@@ -230,77 +245,236 @@ def eca_load_chainsetup_file(ecs_file):
 	'''
 	# all good!
 
-	eca.command("cs-connect")
-#	eca.command("start")
+	eca_execute("cs-connect")
+#	eca_execute("start")
 	
 	printer("Current amp level: {0}%".format(eca_get_effect_amplification()))
 	return True
 	
 def eca_get_effect_amplification():
 	eca_chain_op_master_amp = 'Amplify'
-	eca.command("c-select {0}".format(ECA_CHAIN_MASTER_AMP))
-	eca.command("cop-select {0}".format(eca_chain_op_master_amp))
-	eca.command("copp-index-select 1")
-	ea_value = eca.command("copp-get")
+	eca_execute("c-select {0}".format(ECA_CHAIN_MASTER_AMP))
+	eca_execute("cop-select {0}".format(eca_chain_op_master_amp))
+	eca_execute("copp-index-select 1")
+	ea_value = eca_execute("copp-get")
 	return ea_value
 	
 def eca_set_effect_amplification(level):
 	eca_chain_op_master_amp = 'Amplify'
 	#eca_chain_selected
-	eca.command("c-select {0}".format(ECA_CHAIN_MASTER_AMP))
-	eca.command("cop-select {0}".format(eca_chain_op_master_amp))
-	eca.command("copp-index-select 1")
-	print eca.command("copp-set {0}".format(level))
+	
+	# todo, keep local track of selected cs, c, etc.
+	
+	eca_execute("c-select {0}".format(ECA_CHAIN_MASTER_AMP))
+	eca_execute("cop-select {0}".format(eca_chain_op_master_amp))
+	eca_execute("copp-index-select 1")
+	print eca_execute("copp-set {0}".format(level),tries=1)
 	return level
 	
 def eca_mute(state):
 	""" state can be: 'on', 'off' or 'toggle' """
-	eca.command("c-select '{0}'".format(ECA_CHAIN_MUTE))
-	eca.command("c-mute '{0}'".format(state))
-	
-def handle_path_volume(path,cmd,params):
+	if state in ['on','off','mute']:
+		eca_execute("c-select {0}".format(ECA_CHAIN_MUTE))
+		eca_execute("c-mute {0}".format(state))
+		return True
+	else:
+		printer("Invalid mute parameter: {0}. Valid parameters are 'on','off' or 'toggle'".format(state),level=LL_ERROR)
+		return False
 
+# ********************************************************************************
+# MQ handler
+#	
+def handle_mq_message():
+	#print "DEBUG: idle_msg_receiver()"
+	
+	def dispatcher(path, command, arguments):
+		handler_function = 'handle_path_' + path[0]
+		if handler_function in globals():
+			ret = globals()[handler_function](path, command, arguments)
+			return ret
+		else:
+			print("No handler for: {0}".format(handler_function))
+			return None
+		
+	rawmsg = messaging.poll(timeout=None)				#None=Blocking
+	if rawmsg:
+		printer("Received message: {0}".format(rawmsg),level=LL_DEBUG)
+		parsed_msg = parse_message(rawmsg)
+
+		# send message to dispatcher for handling	
+		retval = dispatcher(parsed_msg['path'],parsed_msg['cmd'],parsed_msg['args'])
+		
+		if parsed_msg['resp_path']:
+			#print "DEBUG: Resp Path present.. returing message.."
+			messaging.publish_command(parsed_msg['resp_path'],'DATA',retval)
+		
+	return True # Important! Returning true re-enables idle routine.
+
+def validate_args(args, min_args, max_args):
+
+	if len(args) < min_args:
+		printer('Function arguments missing', level=LL_ERROR)
+		return False
+		
+	if len(args) > max_args:
+		printer('More than {0} argument(s) given, ignoring extra arguments'.format(max_args), level=LL_WARNING)
+		#args = args[:max_args]
+		
+	return True
+
+def get_data(ret,returndata=False,eventpath=None):
+
+	print "DEBUG: ret = {0}".format(ret)
+
+	data = {}
+	
+	if ret is None:
+		data['retval'] = 500
+		data['payload'] = None
+		
+	elif ret is False:
+		data['retval'] = 500
+		data['payload'] = None
+		
+	elif ret is True:
+		data['retval'] = 200
+		data['payload'] = None
+
+	else:
+		data['retval'] = 200
+		data['payload'] = ret
+
+	if eventpath == '/events/volume/changed' or 
+	   eventpath == '/events/volume/att' or
+	   eventpath == '/events/volume/mute'
+		data['payload'] = curr_source
+		messaging.publish_command(eventpath,'DATA',data)
+			
+	if not returndata:
+		data['payload'] = None
+		
+	return data
+
+def handle_path_volume(path,cmd,params):
+	""" This function implements /volume/-functions:
+		get /volume/master
+		put /volume/master
+		put /volume/master/increase
+		put /volume/master/decrease
+		put /volume/att
+		put /volume/mute
+	"""
+	global local_volume
+	
 	base_path = 'volume'
 	# remove base path
 	del path[0]
 
 	def get_master(params):
+		""" get master volume """
+		validate_args(params,0,0)	# no args
 		level = eca_get_effect_amplification()
-		print level
+		data = get_data(dict_volume(system='ecasound', simple_vol=level),returndata=True)
+		print "DEBUG data:"
+		print data
+		return data
 
 	def put_master(params):
-	
-		# arg can be: <str:up|down|+n|-n|att>
-	
-		level = 20
-		eca_set_effect_amplification(level)
+		""" set master volume """
+		validate_args(params,1,1)	# arg can be: <str:up|down|+n|-n|att>
+		old_volume = local_volume
+		if params[0] == 'up':
+			local_volume += volume_increment
+			
+		elif params[0] == 'down':
+			local_volume -= volume_increment
+			
+		elif params[0][0] == '+':
+			try:
+				change = int(params[0][1:])
+				local_volume += change
+				print "DEBUG: LEVEL = + {0}".format(change)
+			except:
+				print "ERROR converting volume level to integer"
+			
+		elif params[0][0] == '-':
+			try:
+				change = int(params[0][1:])
+				local_volume += change
+				print "DEBUG: LEVEL = - {0}".format(change)
+			except:
+				print "ERROR converting volume level to integer"
 
-	def put_increase(params):
+		elif params[0] == 'att':
+			local_volume = att_level
+			
+		eca_set_effect_amplification(local_volume)
+		get_data(None,eventpath='/events/volume/changed')
+
+	def put_master_increase(params):
 		"""	Increase Volume
-			Arguments:		<str:up|down|+n|-n|att>
+			Arguments:		[percentage]
 			Return data:	Nothing
 		"""
-		global local_volume
-		local_volume += 5
-		eca.command('copp-set {0}'.format(local_volume))
-		if not args.b:
-			printer("Amp level: {0}%".format(local_volume))
+		#global local_volume
+		validate_args(params,0,1)	# [percentage]
 		
-	def put_decrease(params):
-		global local_volume
-		local_volume -= 5
-		eca.command('copp-set {0}'.format(local_volume))
-		if not args.b:
-			printer("Amp level: {0}%".format(local_volume))
-		
-	def put_att(params):
-		# arg can be: <str:on|off|toggle>,[int:Volume, in %]
+		if not params:
+			local_volume += volume_increment
+		else:
+			change = int(params[0][1])
+			local_volume += change
 
-		eca_set_effect_amplification(att_level)
+		eca_set_effect_amplification(local_volume)	
+		if not args.b:
+			printer("Amp level: {0}%".format(local_volume))
+
+		get_data(None,eventpath='/events/volume/changed')
+		
+	def put_master_decrease(params):
+		validate_args(params,0,1)	# [percentage]
+		
+		if not params:
+			local_volume -= volume_increment
+		else:
+			change = int(params[0][1])
+			local_volume -= change
+
+		eca_set_effect_amplification(local_volume)	
+		if not args.b:
+			printer("Amp level: {0}%".format(local_volume))
+			
+		get_data(None,eventpath='/events/volume/changed')
+			
+	def put_att(params):
+		validate_args(params,0,2)	# [str:on|off|toggle],[int:Volume, in %]
+
+		if not params:
+			local_volume = att_level
+			
+		if len(params) == 2:
+			tmp_att_level = params[1]
+		else:
+			tmp_att_level = att_level
+			
+		elif len(params) == 1:
+			if params[0] == "on":
+				local_volume = tmp_att_level
+			#elif params[0] == "off":
+			#	local_volume = ?
+			#elif params[0] == "toggle":
+			#	pass
+		eca_set_effect_amplification(local_volume)
+		get_data(None,eventpath='/events/volume/att')
 
 	def put_mute(params):
-		#arg can be <str:on|off|toggle>
-		eca_mute(params)
+		validate_args(params,0,1)	# arg can be [str:on|off|toggle]
+		if not params:
+			eca_mute('toggle')
+		else:
+			eca_mute(params[0])
+			
+		get_data(None,eventpath='/events/volume/mute')
 	
 	if path:
 		function_to_call = cmd + '_' + '_'.join(path)
@@ -346,36 +520,6 @@ def handle_path_equalizer(path,cmd,args):
 		printer('Function {0} does not exist'.format(function_to_call))
 
 	return ret
-
-# ********************************************************************************
-# On Idle
-#
-def handle_mq_message():
-	#print "DEBUG: idle_msg_receiver()"
-	
-	def dispatcher(path, command, arguments):
-		handler_function = 'handle_path_' + path[0]
-		if handler_function in globals():
-			ret = globals()[handler_function](path, command, arguments)
-			return ret
-		else:
-			print("No handler for: {0}".format(handler_function))
-			return None
-		
-	rawmsg = messaging.poll(timeout=None)				#None=Blocking
-	if rawmsg:
-		printer("Received message: {0}".format(rawmsg),level=LL_DEBUG)
-		parsed_msg = parse_message(rawmsg)
-
-		# send message to dispatcher for handling	
-		retval = dispatcher(parsed_msg['path'],parsed_msg['cmd'],parsed_msg['args'])
-		
-		if parsed_msg['resp_path']:
-			#print "DEBUG: Resp Path present.. returing message.."
-			messaging.publish_command(parsed_msg['resp_path'],'DATA',retval)
-		
-	return True # Important! Returning true re-enables idle routine.
-
 
 #********************************************************************************
 # Parse command line arguments
@@ -513,13 +657,13 @@ def main():
 	gobject.idle_add(handle_mq_message)
 
 	try:
-		eca.command("start")
+		eca_execute("start")
 		mainloop.run()
 	finally:
 		mainloop.quit()
 		print "Stopping Ecasound"
-		eca.command("stop")
-		eca.command("cs-disconnect")
+		eca_execute("stop")
+		eca_execute("cs-disconnect")
 
 if __name__ == "__main__":
 	parse_args()
