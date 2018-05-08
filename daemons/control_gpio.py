@@ -454,7 +454,7 @@ def int_handle_switch(pin):
 			press_time = (clock()-press_start)*1000
 			sleep(0.005)
 			
-		print "switch was pressed for {0} miliseconds".format(press_time)		
+		print "switch was pressed for {0} miliseconds; start: {1}, now: {2}".format(press_time,press_start,clock())
 
 		if press_time >= long_press_ms and pins_config[pin]['has_long']:
 			print "EXECUTING THE LONG FUNCTION (long enough pressed)"
