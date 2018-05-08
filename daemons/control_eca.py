@@ -368,9 +368,7 @@ def handle_path_volume(path,cmd,params):
 		put /volume/master/decrease
 		put /volume/att
 		put /volume/mute
-	"""
-	global local_volume
-	
+	"""	
 	base_path = 'volume'
 	# remove base path
 	del path[0]
@@ -386,6 +384,7 @@ def handle_path_volume(path,cmd,params):
 
 	def put_master(params):
 		""" set master volume """
+		global local_volume
 		validate_args(params,1,1)	# arg can be: <str:up|down|+n|-n|att>
 		old_volume = local_volume
 		if params[0] == 'up':
@@ -421,7 +420,7 @@ def handle_path_volume(path,cmd,params):
 			Arguments:		[percentage]
 			Return data:	Nothing
 		"""
-		#global local_volume
+		global local_volume
 		validate_args(params,0,1)	# [percentage]
 		
 		if not params:
@@ -437,6 +436,7 @@ def handle_path_volume(path,cmd,params):
 		get_data(None,eventpath='/events/volume/changed')
 		
 	def put_master_decrease(params):
+		global local_volume
 		validate_args(params,0,1)	# [percentage]
 		
 		if not params:
@@ -452,6 +452,7 @@ def handle_path_volume(path,cmd,params):
 		get_data(None,eventpath='/events/volume/changed')
 			
 	def put_att(params):
+		global local_volume
 		validate_args(params,0,2)	# [str:on|off|toggle],[int:Volume, in %]
 
 		if not params:
