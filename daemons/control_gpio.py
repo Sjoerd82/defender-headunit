@@ -442,7 +442,6 @@ def int_handle_switch(pin):
 		printer("Waiting for button to be released....")
 		pressed = True
 		while True: #pressed == True or press_time >= long_press_ms:
-			print press_time
 			state = GPIO.input(pin)
 			if state != pins_config[pin]['gpio_on']:
 				print "RELEASED!"
