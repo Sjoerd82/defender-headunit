@@ -166,12 +166,13 @@ def eca_execute(command,tries=3):
 			if reteca[0:20] == "Response length error":
 				time.sleep(1)
 				printer("Executed: {0:30}; [FAIL] {1}".format(command,reteca),level=LL_ERROR)
+			elif reteca == "":
+				printer(colorize("Executed: {0:30}; [OK]".format(command,type(reteca)),'light_magenta'),level=LL_INFO)	#change to LL_DEBUG
+				return reteca		
 			else:
 				printer(colorize("Executed: {0:30}; [OK] Response: {1}".format(command,reteca),'light_magenta'),level=LL_INFO)	#change to LL_DEBUG
 				return reteca
-		elif reteca is None:
-			printer(colorize("Executed: {0:30}; [OK]".format(command,type(reteca)),'light_magenta'),level=LL_INFO)	#change to LL_DEBUG
-			return reteca		
+		#elif reteca is None:
 		else:
 			printer(colorize("Executed: {0:30}; [OK] Response type: {1}".format(command,type(reteca)),'light_magenta'),level=LL_INFO)	#change to LL_DEBUG
 			return reteca

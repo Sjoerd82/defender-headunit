@@ -447,10 +447,10 @@ def int_handle_switch(pin):
 				print "RELEASED!"
 				pressed = False
 				break
-			if press_time_ms >= long_press_ms:
+			if press_time >= long_press_ms:
 				print "TIMEOUT"
 				break
-			press_time_ms = (clock()-press_start)*1000
+			press_time = (clock()-press_start)*1000
 			sleep(0.005)
 			
 		print "switch was pressed for {0} miliseconds".format(press_time)		
