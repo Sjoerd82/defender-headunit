@@ -240,19 +240,31 @@
 					, "chains": [
 						{
 							  "a":		"pre"
-							, "i":		"jack,system"
+							, "i":		"jack"
 							, "o":		"alsa"
 							, "f":		"s32_le,2,44100"
 							, "ea":		"100"
 						}
 					]
 				}
-				,				{
+				, {
+					  "n":		"jack_alsa_mpd"
+					, "chains": [
+						{
+							  "a":		"pre"
+							, "i":		"jack,MPD"
+							, "o":		"alsa"
+							, "f":		"s32_le,2,44100"
+							, "ea":		"100"
+						}
+					]
+				}
+				, {
 					  "n":		"jack_alsa_xover_2ch_m"
 					, "chains": [
 						{
 							  "a":		"pre"
-							, "i":		"jack,\"Music Player Daemon\""
+							, "i":		"jack,MPD"
 							, "o":		"loop,1"
 							, "f":		"s32_le,2,44100"
 							, "pf":		"/usr/share/ecasound/pre.ecp"
@@ -370,8 +382,13 @@
 					 , "enabled":"no"
 				  }
 				, {  "type": "jack"
-				    , "name": "Jack"
+				    , "name": "Jack System"
 					, "destination_ports": "system:playback_1,system:playback_2"
+					, "enabled": "no"
+				   }
+				, {  "type": "jack"
+				    , "name": "Jack Ecasound"
+					, "destination_ports": "ecasound:in_1,ecasound:in_2"
 					, "enabled": "yes"
 				   }
 			   ]
