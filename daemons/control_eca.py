@@ -457,7 +457,7 @@ def handle_path_volume(path,cmd,params):
 		else:
 			tmp_att_level = att_level
 			
-		elif len(params) == 1:
+		if len(params) == 1:
 			if params[0] == "on":
 				local_volume = tmp_att_level
 			#elif params[0] == "off":
