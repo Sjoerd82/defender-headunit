@@ -59,7 +59,7 @@ ECA_CHAIN_EQ = None				# chain object that contains the equalizer
 cfg_ecasound = None
 eca_chain_op_master_amp = None
 att_level = 20		# TODO, get from configuration
-local_volume = 50	
+local_volume = 30	# TOOD, retrieve from resume!
 eca_chain_selected = None
 volume_increment = 5
 
@@ -249,6 +249,9 @@ def eca_load_chainsetup_file(ecs_file):
 		printer("EQ chain: {0}".format(cfg_ecasound['chain_eq']))
 	'''
 	# all good!
+	
+	# TODO TODO TODO -- GET FROM RESUME -- !!! !!!
+	eca_set_effect_amplification(local_volume)
 
 	eca_execute("cs-connect")
 #	eca_execute("start")
