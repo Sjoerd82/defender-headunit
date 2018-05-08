@@ -398,7 +398,7 @@ def int_handle_switch(pin):
 	""" Callback function for switches """
 	#press_start = clock()
 	press_start = datetime.now()
-	press_time = 0
+	press_time = None
 	
 	# debounce
 	#if 'debounce' in pins_config[pin]:
