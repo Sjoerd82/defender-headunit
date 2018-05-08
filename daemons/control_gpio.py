@@ -102,7 +102,7 @@ pins_config =
 			fnc_name
 			function
 			mode							= valid for this mode only
-			fnc_short_press/fnc_long_press 	= list of 
+			fnc_short_press/fnc_long_press 	= list of
 			}
 		]
 		has_short
