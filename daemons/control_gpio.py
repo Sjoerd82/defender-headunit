@@ -24,7 +24,8 @@
 import sys						# path
 import os						# 
 from time import sleep
-from time import clock
+#from time import clock			# cpu time, not easily relateable to ms.
+from datetime import datetime
 from logging import getLogger	# logger
 from RPi import GPIO			# GPIO
 from threading import Timer		# timer to reset mode change
@@ -395,7 +396,8 @@ def reset_mode_timer(seconds):
 # 
 def int_handle_switch(pin):
 	""" Callback function for switches """
-	press_start = clock()
+	#press_start = clock()
+	press_start = datetime.now()
 	press_time = 0
 	
 	# debounce
@@ -447,15 +449,16 @@ def int_handle_switch(pin):
 				print "RELEASED!"
 				pressed = False
 				break
-			if press_time >= long_press_ms:
+			if press_time.miliseconds >= long_press_ms:
 				print "TIMEOUT"
 				break
-			press_time = (clock()-press_start)*1000
+			#press_time = (clock()-press_start)*1000
+			press_time = datetime.now() - press_start
 			sleep(0.005)
 			
-		print "switch was pressed for {0} miliseconds; start: {1}, now: {2}".format(press_time,press_start,clock())
+		print "switch was pressed for {0} miliseconds".format(press_time.miliseconds) #,press_start,clock())
 
-		if press_time >= long_press_ms and pins_config[pin]['has_long']:
+		if press_time.miliseconds >= long_press_ms and pins_config[pin]['has_long']:
 			print "EXECUTING THE LONG FUNCTION (long enough pressed)"
 			
 			# execute, checking mode
@@ -471,7 +474,7 @@ def int_handle_switch(pin):
 							check_mode(pin,ix)
 						exec_function_by_code(fun['function'])			
 			
-		elif press_time < long_press_ms and pins_config[pin]['has_short']:
+		elif press_time.miliseconds < long_press_ms and pins_config[pin]['has_short']:
 			print "EXECUTING THE SHORT FUNCTION (not long enough pressed)"
 			
 			# execute, checking mode
@@ -515,23 +518,24 @@ def int_handle_switch(pin):
 				
 		printer("Waiting for button to be released....")
 		pressed = True
-		while pressed == True or press_time >= long_press_ms:
+		while pressed == True or press_time.miliseconds >= long_press_ms:
 			state = GPIO.input(pin)
 			if state != pins_config[pin]['gpio_on']:
 				print "RELEASED!"
 				pressed = False
 				break
-			press_time = clock()-press_start
+			#press_time = clock()-press_start
+			press_time = datetime.now() - press_start
 			sleep(0.01)
 				
 		print "....done"
-		print "switch was pressed for {0} seconds".format(press_time)
+		print "switch was pressed for {0} ms".format(press_time.miliseconds)
 		
 #			if pins_config[pin]['has_long'] and not pins_config[pin]['has_short']:
 #				print "EXECUTING THE LONG FUNCTION (only long)"
-		if press_time >= long_press_ms and pins_config[pin]['has_long'] and matched_long_press_function_code is not None:
+		if press_timemiliseconds >= long_press_ms and pins_config[pin]['has_long'] and matched_long_press_function_code is not None:
 			print "EXECUTING THE LONG FUNCTION (long enough pressed)"
-		elif press_time < long_press_ms and pins_config[pin]['has_short'] and matched_short_press_function_code is not None:
+		elif press_timemiliseconds < long_press_ms and pins_config[pin]['has_short'] and matched_short_press_function_code is not None:
 			print "EXECUTING THE SHORT FUNCTION (not long enough pressed)"
 		else:
 			print "No Match!"
