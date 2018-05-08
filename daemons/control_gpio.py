@@ -398,7 +398,7 @@ def int_handle_switch(pin):
 	""" Callback function for switches """
 	#press_start = clock()
 	press_start = datetime.now()
-	press_time = datetime.now() - datetime.now()	# wtf?
+	press_time = 0 #datetime.now() - datetime.now()	# wtf?
 	
 	# debounce
 	#if 'debounce' in pins_config[pin]:
@@ -453,7 +453,8 @@ def int_handle_switch(pin):
 				print "TIMEOUT"
 				break
 			#press_time = (clock()-press_start)*1000
-			press_time = datetime.now() - press_start
+			delta = datetime.now() - press_start
+			press_time = int(delta.total_seconds() * 1000)
 			sleep(0.005)
 			
 		print "switch was pressed for {0} miliseconds".format(press_time.miliseconds) #,press_start,clock())
@@ -525,7 +526,8 @@ def int_handle_switch(pin):
 				pressed = False
 				break
 			#press_time = clock()-press_start
-			press_time = datetime.now() - press_start
+			delta = datetime.now() - press_start
+			press_time = int(delta.total_seconds() * 1000)
 			sleep(0.01)
 				
 		print "....done"
