@@ -344,9 +344,9 @@ def get_data(ret,returndata=False,eventpath=None):
 		data['retval'] = 200
 		data['payload'] = ret
 
-	if eventpath == '/events/volume/changed' or 
-	   eventpath == '/events/volume/att' or
-	   eventpath == '/events/volume/mute'
+	if ( eventpath == '/events/volume/changed' or 
+	     eventpath == '/events/volume/att' or
+	     eventpath == '/events/volume/mute' )
 		data['payload'] = curr_source
 		messaging.publish_command(eventpath,'DATA',data)
 			
