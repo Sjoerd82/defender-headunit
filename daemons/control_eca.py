@@ -161,7 +161,8 @@ def eca_execute(command,tries=3):
 	""" executes an IAM command and examines the output, retries if neccessary """
 	for i in range(tries):
 		reteca = eca.command(command)
-		if type(reteca) is StringType:
+		#if type(reteca) is StringType:
+		if isinstance(reteca, str):
 			if reteca[0:20] == "Response length error":
 				time.sleep(1)
 				printer("Executed: {0:30}; [FAIL] {1}".format(command,reteca),level=LL_ERROR)
