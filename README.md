@@ -157,7 +157,26 @@ Resume playback information (pickled)
 Operational state. May be kept on a ramdrive (no need for persistance).
 May be used to read from to quickly get state information. Will see a lot of R/W.
 
-## Hardware
+
+# Tools
+
+## config-tool
+
+The config-tool takes care of various configuration files on the system.
+
+## mq_recv
+
+Monitors MQ traffic. Prints all MQ messages to screen.
+
+## mq_cmd
+
+Send out a standardized command over MQ or a custom MQ message.
+Currently still called cmd (todo).
+
+
+
+
+# Hardware
 
 Tailored for the Raspberry Pi Zero
 

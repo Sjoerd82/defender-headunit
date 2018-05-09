@@ -33,6 +33,7 @@ commands = [
 	'system-shutdown',
 	'events-udisks-add'	]
 
+#	   COMMAND, PARAMETERS                     DESCRIPTION, REST COMMAND, PATH
 commands2 = [
 	 ('source-check',  '[index, subindex]',   'Check source availability','PUT','/source/check',)
 	,('source-select', 'index, [subindex]',   'Select a source','PUT','/source/subsource',)
@@ -76,27 +77,39 @@ def parse_args():
 	import argparse
 	global args
 	
-	# cmd.py							Show available commands and switches
-	# cmd.py [options] <command> [args]			Execute command, with optional parmeter
-	# cmd.py [options] <-p> <-c> [-a] [-r]		Execute specified path and command, with optional parameters and return path
+	# cmd.py										Show available commands and switches
+	# cmd.py [options] <command> [args]				Execute command, with optional parmeter
+	# cmd.py [options] [-x <-p> <-c> [-a] [-r] ]	Execute specified path and command, with optional parameters and return path
 	
 	description_with_commands = DESCRIPTION
 	for command in commands2:
 		description = description +'\n {0} {1} {2}'.format(command[0],command[1],command[2])
 	
 	parser = argparse.ArgumentParser(description=description_with_commands)
+	subparsers = parser.add_subparsers(help='Specify MQ message')
+	# options:
 	parser.add_argument('-v', action='store', help='Verbose')
-	#parser.add_argument('-p', action='store', required=True)
-	#parser.add_argument('-c', action='store', required=True)
-	#parser.add_argument('-a', action='store')
-	#parser.add_argument('-r', action='store_true')
-	#parser.add_argument('-j','--json', action='store_true')
-	parser.add_argument('--port_publisher', action='store')
-	parser.add_argument('--port_subscriber', action='store')
+	parser.add_argument('--port_publisher','-pp',  action='store')
+	parser.add_argument('--port_subscriber','-ps', action='store')
+
+	x_parser = subparsers.add_parser("-x")
+
+	# -x
+	#parser.add_argument('-x', action='store', help='Specify MQ message')
+	x_parser.add_argument('-p', action='store', required=True)
+	x_parser.add_argument('-c', action='store', required=True)
+	x_parser.add_argument('-a', action='store')
+	x_parser.add_argument('-r', action='store_true')
+	x_parser.add_argument('-j','--json', action='store_true')
+	
+	# command
+	cmd_parser = subparsers.add_parser("command")
 	parser.add_argument('command', action='store', choices=commands)
 	parser.add_argument('command_arg', action='store') # how to make this positional optional??
 	
 	args = parser.parse_args()
+	print args
+	exit(0)
 
 #********************************************************************************
 # Setup
