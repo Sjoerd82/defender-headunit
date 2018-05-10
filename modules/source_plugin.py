@@ -82,6 +82,8 @@ class SourcePlugin(object):
 		
 		# return configuration (from json config file)
 		plugindir = "sources"	#TODO
+		plugindir = "/mnt/PIHU_APP/defender-headunit/sources"	#TOOD
+		jsConfigFile=None
 		configFileName = os.path.join(plugindir,self.name+'.json')
 		if not os.path.exists( configFileName):
 			printer('Configuration not found: {0}'.format(configFileName))
