@@ -103,10 +103,20 @@ class SourcePlugin(object):
 		#if 'subsources' in main_configuration:
 			#ABORT!
 			#TODO
+			
+		print "DEBUG!!"
+		print configFileName
+		print jsConfigFile
+		print config
+		print DEFAULT_CONFIG_FILE
+		print main_configuration
 		
 		if 'source_config' in main_configuration and self.name in main_configuration['source_config']:
 			config.update(main_configuration['source_config'][self.name])
 			
+		print "DEBUG!!"
+		print config
+		
 		return config
 			
 	def play(self, index=None, subindex=None, **kwargs):
