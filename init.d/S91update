@@ -60,7 +60,8 @@ start() {
         # stop all S7* services
         /etc/init.d/S95flask stop
         /etc/init.d/S71ads1x15 stop
-        /etc/init.d/quickplay/S80headunit stop
+        /etc/init.d/quickplay/S95source stop
+		#/etc/init.d/quickplay/S80headunit stop
 		/etc/init.d/quickplay/S75udisks stop
         /etc/init.d/S72ctrlgpio stop
         /etc/init.d/quickplay/S70source stop
@@ -125,6 +126,7 @@ start() {
 			/etc/init.d/quickplay/S75udisks start
 			/etc/init.d/S72ctrlgpio start
 			/etc/init.d/quickplay/S70source start
+			/etc/init.d/quickplay/S95source start
 		    /etc/init.d/S95flask start
 		else
             /etc/init.d/S30zmqfwd start
@@ -134,6 +136,7 @@ start() {
 			/etc/init.d/quickplay/S60udisks-glue start
 			/etc/init.d/quickplay/S70source start
 			/etc/init.d/quickplay/S75udisks start
+			/etc/init.d/quickplay/S95source start
             /etc/init.d/S71ads1x15 start
 			/etc/init.d/S72ctrlgpio start
 		    #/etc/init.d/S95flask start
