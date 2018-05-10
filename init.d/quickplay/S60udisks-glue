@@ -17,7 +17,7 @@ PID="udisks-glue"
 PID_FILE=/var/run/$PID.pid
 DAEMON="udisks-glue"
 DAEMON_OPTS="-c /etc/udisks-glue.conf"
-DAEMON_PATH="/usr/bin/"
+DAEMON_PATH="/usr/bin"
 DAEMON_FILE=$DAEMON_PATH/$DAEMON
 
 
