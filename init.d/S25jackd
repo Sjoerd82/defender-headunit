@@ -37,7 +37,7 @@ RETVAL=0
 start() {
     log_boot_start
     if [ -f $DAEMON_FILE ]; then
-        echo "Starting $NAME..."
+        boot_mesg -n "Starting $NAME..."
         start-stop-daemon -b -x $DAEMON_FILE -m -p $PID_FILE -S -- $DAEMON_OPTS
         RETVAL=$?
     else
@@ -47,7 +47,7 @@ start() {
     fi
 	
     if [ -f $ECA_DAEMON_FILE ]; then
-        echo "Starting $ECA_NAME..."
+        boot_mesg -n "Starting $ECA_NAME..."
 		start-stop-daemon -b -x $ECA_DAEMON_FILE -m -p $ECA_PID_FILE -S -- $ECA_DAEMON_OPTS
         RETVAL=$?
     else
@@ -59,7 +59,7 @@ start() {
 }
 
 stop() {
-        echo "Stopping $NAME"
+        boot_mesg -n "Stopping $NAME"
         start-stop-daemon -p $PID_FILE -K
         RETVAL=$?
 		# --remove-pidfile not supported by busybox

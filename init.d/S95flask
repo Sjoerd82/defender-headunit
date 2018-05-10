@@ -25,7 +25,7 @@ PIDFILE=/var/run/flask.pid
 
 start() {
     log_boot_start
-    echo "Starting $NAME..."
+    boot_mesg -n "Starting $NAME..."
     start-stop-daemon -b -x $DAEMON -m -p $PIDFILE -S -- $DAEMONOPTS
     retval=$?
     #  echo "Starting $NAME..."
@@ -34,7 +34,7 @@ start() {
 }
 
 stop() {
-        echo "Stopping $NAME"
+        boot_mesg -n "Stopping $NAME"
         start-stop-daemon -p $PIDFILE -K
         retval=$?
         # --remove-pidfile not supported in busybox
