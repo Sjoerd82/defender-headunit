@@ -1,17 +1,30 @@
 #!/bin/sh
-echo $(date "+%H:%M.%s") $0 $1 >> /root/boot.log
+######################################################################
+#
+# Description : Mount SMB music folder
+# Authors     : Sjoerd Venema
+# Version     : 00.01
+# Notes       : Temporary solution
+#
+########################################################################
+
+. /etc/sysconfig/functions
 
 #
 # Todo: This should change, obviously
 
+NAME="SMB mount 172.16.8.11 music (temporary)"
 
 start() {
-                mkdir -p /media/PIHU_SMB/music
-				# TODO: check if already mounted
-				#if ! mountpoint -q /media/PIHU_SMB/music; then
-                mount -t cifs -o user=root,password=kungfu //172.16.8.11/music/mpd /media/PIHU_SMB/music
-				#fi
-        }
+    log_boot_start
+	boot_mesg -n "Starting $NAME..."
+    mkdir -p /media/PIHU_SMB/music
+    # TODO: check if already mounted
+    #if ! mountpoint -q /media/PIHU_SMB/music; then
+    mount -t cifs -o user=root,password=kungfu //172.16.8.11/music/mpd /media/PIHU_SMB/music
+    #fi
+    log_boot_finish
+}
 
 case "$1" in
   start)

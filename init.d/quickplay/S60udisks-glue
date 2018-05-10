@@ -1,5 +1,14 @@
 #!/bin/sh
-echo $(date "+%H:%M.%s") $0 $1 >> /root/boot.log
+######################################################################
+#
+# Description : Udisks-Glue
+# Authors     : Sjoerd Venema
+# Version     : 00.01
+# Notes       : 
+#
+########################################################################
+
+. /etc/sysconfig/functions
 
 NAME=udisks-glue
 PIDFILE=/var/run/udisks.pid
@@ -7,35 +16,35 @@ DAEMON="/usr/bin/udisks-glue"
 DAEMON_OPTS="-c /etc/udisks-glue.conf"
 
 case "$1" in
-        start)
-                #log_daemon_msg "Starting Automounter" "$NAME"
-                start-stop-daemon --start --exec $DAEMON -- $DAEMON_OPTS -p $PIDFILE
-                #log_end_msg $?
-                ;;
-        stop)
-                #log_daemon_msg "Stopping Automounter" "$NAME"
-                start-stop-daemon --stop --exec $DAEMON
-                #log_end_msg $?
-                rm -f $PIDFILE
-                ;;
-        restart | force-reload)
-                $0 stop && sleep 2 && $0 start
-                ;;
-        try-restart)
-                if $0 status >/dev/null; then
-                        $0 restart
-                else
-                        exit 0
-                fi
-                ;;
-        reload)
-                exit 3
-                ;;
-        status)
-                status_of_proc $DAEMON "udisks-glue"
-                ;;
-        *)
-                echo "Usage: $0 {start|stop|restart|try-restart|force-reload|status}"
-                exit 2
+    start)
+        log_boot_start
+		boot_mesg -n "Starting $NAME..."
+        start-stop-daemon --start --exec $DAEMON -- $DAEMON_OPTS -p $PIDFILE
+		log_boot_finish
+        ;;
+    stop)
+        boot_mesg -n "Starting $NAME..."
+        start-stop-daemon --stop --exec $DAEMON
+        rm -f $PIDFILE
+        ;;
+    restart | force-reload)
+        $0 stop && sleep 2 && $0 start
+        ;;
+    try-restart)
+        if $0 status >/dev/null; then
+            $0 restart
+        else
+            exit 0
+        fi
+        ;;
+    reload)
+        exit 3
+        ;;
+    status)
+        status_of_proc $DAEMON "udisks-glue"
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|restart|try-restart|force-reload|status}"
+        exit 2
         ;;
 esac
