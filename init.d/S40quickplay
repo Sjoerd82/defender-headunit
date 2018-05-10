@@ -1,5 +1,14 @@
 #!/bin/sh
-echo $(date "+%H:%M.%s") $0 $1 >> /root/boot.log
+######################################################################
+#
+# Description : Ecasound
+# Authors     : Sjoerd Venema
+# Version     : 00.01
+# Notes       : 
+#
+########################################################################
+
+. /etc/sysconfig/functions
 
 #
 # Starts scripts in qp_-folder
@@ -14,36 +23,35 @@ EXEC_PATH=/etc/init.d/quickplay
 retval=0
 
 case "$1" in
-        start)
-                printf "Start QuickPlay"
-                for i in $EXEC_PATH/S??* ;do
-
-                     # Ignore dangling symlinks (if any).
-                     [ ! -f "$i" ] && continue
-
-                     case "$i" in
-                        *.sh)
-                            # Source shell script for speed.
-                            (
-                                trap - INT QUIT TSTP
-                                set start
-                                . $i
-                            )
-                            ;;
-                        *)
-                            # No sh extension, so fork subprocess.
-                            if [[ "$i" == "S70headunit" -a ! "$retval_sum" == "0" ]]; then
-                                echo "Skipping early Headunit start"
-                            else
-                                $i start
-                                retval_sum=`expr $retval_sum+$?`
-                            fi
-                            ;;
-                    esac
-                done
-
-                ;;
-        stop)
+    start)
+        log_boot_start
+        printf "Start QuickPlay"
+        for i in $EXEC_PATH/S??* ;do
+            # Ignore dangling symlinks (if any).
+            [ ! -f "$i" ] && continue
+                case "$i" in
+                    *.sh)
+                        # Source shell script for speed.
+                        (
+                            trap - INT QUIT TSTP
+                            set start
+                            . $i
+                        )
+                        ;;
+                    *)
+                        # No sh extension, so fork subprocess.
+                        if [[ "$i" == "S70headunit" -a ! "$retval_sum" == "0" ]]; then
+                            echo "Skipping early Headunit start"
+                        else
+                            $i start
+                            retval_sum=`expr $retval_sum+$?`
+                        fi
+                    ;;
+            esac
+        done
+        log_boot_finish
+        ;;
+    stop)
                 printf "Stopping execution of wlan-ap scripts"
                 for i in $(ls -r $EXEC_PATH/S??*) ;do
 

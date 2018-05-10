@@ -1,6 +1,14 @@
 #!/bin/sh
+######################################################################
+#
+# Description : Flask
+# Authors     : Sjoerd Venema
+# Version     : 00.01
+# Notes       : 
+#
+########################################################################
 
-echo $(date "+%H:%M.%s") $0 $1 >> /root/boot.log
+. /etc/sysconfig/functions
 
 # APPLICATION
 NAME="Headunit Flask HTTP server"
@@ -16,11 +24,13 @@ retval=0
 PIDFILE=/var/run/flask.pid
 
 start() {
-        echo "Starting $NAME..."
-        start-stop-daemon -b -x $DAEMON -m -p $PIDFILE -S -- $DAEMONOPTS
-        retval=$?
-        #  echo "Starting $NAME..."
-        #  $DAEMON $DAEMONOPTS &
+    log_boot_start
+    echo "Starting $NAME..."
+    start-stop-daemon -b -x $DAEMON -m -p $PIDFILE -S -- $DAEMONOPTS
+    retval=$?
+    #  echo "Starting $NAME..."
+    #  $DAEMON $DAEMONOPTS &
+    log_boot_finish
 }
 
 stop() {

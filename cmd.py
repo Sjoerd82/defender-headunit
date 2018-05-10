@@ -83,12 +83,12 @@ def parse_args():
 	
 	description_with_commands = DESCRIPTION
 	for command in commands2:
-		description = description +'\n {0} {1} {2}'.format(command[0],command[1],command[2])
+		description_with_commands = description_with_commands +'\n {0} {1} {2}'.format(command[0],command[1],command[2])
 	
 	parser = argparse.ArgumentParser(description=description_with_commands)
 	subparsers = parser.add_subparsers(help='Specify MQ message')
 	# options:
-	parser.add_argument('-v', action='store', help='Verbose')
+	parser.add_argument('-v', action='store_true', help='Verbose')
 	parser.add_argument('--port_publisher','-pp',  action='store')
 	parser.add_argument('--port_subscriber','-ps', action='store')
 

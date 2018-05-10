@@ -1,17 +1,26 @@
 #!/bin/sh
+######################################################################
+#
+# Description : GPIO init / beeper
+# Authors     : Sjoerd Venema
+# Version     : 00.01
+# Notes       : 
+#
+########################################################################
 
-echo $(date "+%H:%M.%s") $0 $1 >> /root/boot.log
+. /etc/sysconfig/functions
 
 # Enabling GPIO output on pin 6 (beeper)
-
 PIN="6"
 
 start() {
-        gpio write 6 0
-        gpio mode 6 out
-        gpio write 6 1
-        gpio write 6 0
-        }
+    log_boot_start
+    gpio write 6 0
+    gpio mode 6 out
+    gpio write 6 1
+    gpio write 6 0
+	log_boot_finish
+}
 
 case "$1" in
   start)

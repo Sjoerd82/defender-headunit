@@ -1,32 +1,37 @@
 #!/bin/sh
-
-echo $(date "+%H:%M.%s") $0 $1 >> /root/boot.log
-
-# Filesystem operations
-#  - Run a fsck check
+######################################################################
 #
+# Description : Filesystem operations
+# Authors     : Sjoerd Venema
+# Version     : 00.01
+# Notes       : Runs a fsck check
+#
+########################################################################
+
+. /etc/sysconfig/functions
+
+
 # Todo: RO filesystems don't need to be checked at every boot..
 # Only check them after X boots.
 
-NETWORKS="wpa_supplicant.conf"
-
 start() {
-        # mmcblk0p1 PIHU_BOOT   fat
-        # mmcblk0p2 PIHU        ext
-        # mmcblk0p3 PIHU_APP    ext
-        # mmcblk0p5 PIHU_CONFIG fat
-        # mmcblk0p6 PIHU_DATA   fat
-        fsck -p /dev/mmcblk0p1
-        fsck -p /dev/mmcblk0p2
-        fsck -p /dev/mmcblk0p3
-        fsck -p /dev/mmcblk0p5
-        fsck -p /dev/mmcblk0p6
-
-        # Mount application
-        mount /dev/mmcblk0p3 /mnt/PIHU_APP
-        mount /dev/mmcblk0p5 /mnt/PIHU_CONFIG
-
-        }
+    log_boot_start
+    # mmcblk0p1 PIHU_BOOT   fat
+    # mmcblk0p2 PIHU        ext
+    # mmcblk0p3 PIHU_APP    ext
+    # mmcblk0p5 PIHU_CONFIG fat
+    # mmcblk0p6 PIHU_DATA   fat
+    fsck -p /dev/mmcblk0p1
+    fsck -p /dev/mmcblk0p2
+    fsck -p /dev/mmcblk0p3
+    fsck -p /dev/mmcblk0p5
+    fsck -p /dev/mmcblk0p6
+    
+    # Mount application
+    mount /dev/mmcblk0p3 /mnt/PIHU_APP
+    mount /dev/mmcblk0p5 /mnt/PIHU_CONFIG
+    log_boot_finish
+}
 
 case "$1" in
   start)

@@ -1,5 +1,14 @@
 #!/bin/sh
-echo $(date "+%H:%M.%s") $0 $1 >> /root/boot.log
+######################################################################
+#
+# Description : Updater
+# Authors     : Sjoerd Venema
+# Version     : 00.01
+# Notes       : 
+#
+########################################################################
+
+. /etc/sysconfig/functions
 
 # Check for updates
 # Requires a working internet connection, therefore, place it after S90wlan
@@ -29,7 +38,7 @@ if [ -z "$COMMIT_REMOTE" ]; then
 fi
 
 start() {
-
+    log_boot_start
     ######################################################################
 	# check git status
     if [ $COMMIT_LOCAL == $COMMIT_REMOTE ]; then
@@ -136,6 +145,7 @@ start() {
         #else
         #  echo "Update script not available."
         #fi
+    log_boot_finish
 }
 
 case "$1" in

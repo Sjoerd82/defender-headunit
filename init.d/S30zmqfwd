@@ -1,6 +1,14 @@
 #!/bin/sh
+######################################################################
+#
+# Description : ZeroMQ
+# Authors     : Sjoerd Venema
+# Version     : 00.01
+# Notes       : 
+#
+########################################################################
 
-echo $(date "+%H:%M.%s") $0 $1 >> /root/boot.log
+. /etc/sysconfig/functions
 
 # APPLICATION
 NAME="ZMQ forwarder"
@@ -15,6 +23,7 @@ DAEMON_FILE=$DAEMON_PATH/$DAEMON
 RETVAL=0
 
 start() {
+    log_boot_start
     if [ -f $DAEMON_FILE ]; then
         echo "Starting $NAME..."
         start-stop-daemon -b -x $DAEMON_FILE -m -p $PID_FILE -S -- $DAEMON_OPTS
@@ -23,6 +32,7 @@ start() {
 	    RETVAL=-1
         echo "$DAEMON not found!"
     fi
+    log_boot_finish
 }
 
 stop() {
