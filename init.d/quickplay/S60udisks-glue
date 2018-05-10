@@ -25,12 +25,22 @@ case "$1" in
     start)
         log_boot_start
 		boot_mesg -n "Starting $NAME..."
-        start-stop-daemon -b -x $DAEMON_FILE -m -S -- $DAEMON_OPTS
+        start-stop-daemon -q -b -x $DAEMON_FILE -S -- $DAEMON_OPTS
+        if [ $? -eq 0 ]; then
+            boot_mesg "[ OK ]"
+		else
+            boot_mesg "[FAIL]"
+        fi
 		log_boot_finish
         ;;
     stop)
         boot_mesg -n "Stopping $NAME..."
         start-stop-daemon -q -p $PID_FILE -K
+        if [ $? -eq 0 ]; then
+            boot_mesg "[ OK ]"
+		else
+            boot_mesg "[FAIL]"
+        fi
 		# --remove-pidfile not supported by busybox
 		#[ $RETVAL = 0 ] && rm -f $PID_FILE
         if [ -f $PID_FILE ]; then
