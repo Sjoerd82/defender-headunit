@@ -52,6 +52,8 @@ case "$1" in
         log_boot_finish
         ;;
     stop)
+	    printf "Cuz the other failz"
+    stopX)
                 printf "Stopping execution of wlan-ap scripts"
                 for i in $(ls -r $EXEC_PATH/S??*) ;do
 
