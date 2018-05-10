@@ -29,7 +29,7 @@ case "$1" in
 		log_boot_finish
         ;;
     stop)
-        boot_mesg -n "Starting $NAME..."
+        boot_mesg -n "Stopping $NAME..."
         start-stop-daemon -q -p $PIDFILE -K
         rm -f $PIDFILE
         ;;
