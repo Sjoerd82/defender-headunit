@@ -10,16 +10,22 @@
 
 . /etc/sysconfig/functions
 
+
 NAME="udisks-glue"
-PIDFILE=/var/run/udisks.pid
-DAEMON="/usr/bin/udisks-glue"
+# PID (created by start-stop-daemon -m)
+PID="udisks-glue"
+PID_FILE=/var/run/$PID.pid
+DAEMON="udisks-glue"
 DAEMON_OPTS="-c /etc/udisks-glue.conf"
+DAEMON_PATH="/usr/bin/"
+DAEMON_FILE=$DAEMON_PATH/$DAEMON
+
 
 case "$1" in
     start)
         log_boot_start
 		boot_mesg -n "Starting $NAME..."
-        start-stop-daemon --start --exec $DAEMON -- $DAEMON_OPTS -p $PIDFILE
+        start-stop-daemon -b -x $DAEMON_FILE -m -p $PID_FILE -S -- $DAEMON_OPTS
 		log_boot_finish
         ;;
     stop)
