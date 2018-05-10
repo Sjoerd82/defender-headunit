@@ -696,7 +696,13 @@ def main():
 		flask_port = DEFAULT_PORT_WWW
 	
 	# start server
-	app.run(host='0.0.0.0', port=flask_port, debug=False, use_reloader=False)
+	try:
+		app.run(host='0.0.0.0', port=flask_port, debug=False, use_reloader=False)
+	except:
+		func = request.environ.get('werkzeug.server.shutdown')
+		if func is None:
+			raise RuntimeError('Not running with the Werkzeug Server')
+		func()
 	
 if __name__ == '__main__':
 	

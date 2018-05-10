@@ -16,7 +16,7 @@ NAME="udisks-glue"
 PID="udisks-glue"
 PID_FILE=/var/run/$PID.pid
 DAEMON="udisks-glue"
-DAEMON_OPTS="-c /etc/udisks-glue.conf"
+DAEMON_OPTS="--config /etc/udisks-glue.conf --pidfile $PID_FILE"
 DAEMON_PATH="/usr/bin"
 DAEMON_FILE=$DAEMON_PATH/$DAEMON
 
@@ -25,7 +25,7 @@ case "$1" in
     start)
         log_boot_start
 		boot_mesg -n "Starting $NAME..."
-        start-stop-daemon -b -x $DAEMON_FILE -m -p $PID_FILE -S -- $DAEMON_OPTS
+        start-stop-daemon -b -x $DAEMON_FILE -m -S -- $DAEMON_OPTS
 		log_boot_finish
         ;;
     stop)
