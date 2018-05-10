@@ -24,7 +24,7 @@ case "$1" in
         ;;
     stop)
         boot_mesg -n "Starting $NAME..."
-        start-stop-daemon --stop --exec $DAEMON
+        start-stop-daemon -q -p $PIDFILE -K
         rm -f $PIDFILE
         ;;
     restart | force-reload)
