@@ -10,7 +10,7 @@
 
 . /etc/sysconfig/functions
 
-NAME=udisks-glue
+NAME="udisks-glue"
 PIDFILE=/var/run/udisks.pid
 DAEMON="/usr/bin/udisks-glue"
 DAEMON_OPTS="-c /etc/udisks-glue.conf"
