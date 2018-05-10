@@ -39,7 +39,7 @@ start() {
 
 stop() {
         boot_mesg -n "Stopping $NAME..."
-        start-stop-daemon -p $PID_FILE -K
+        start-stop-daemon -q -p $PID_FILE -K
         RETVAL=$?
 		# --remove-pidfile not supported by busybox
 		#[ $RETVAL = 0 ] && rm -f $PID_FILE

@@ -30,8 +30,12 @@ case "$1" in
         ;;
     stop)
         boot_mesg -n "Stopping $NAME..."
-        start-stop-daemon -q -p $PIDFILE -K
-        rm -f $PIDFILE
+        start-stop-daemon -q -p $PID_FILE -K
+		# --remove-pidfile not supported by busybox
+		#[ $RETVAL = 0 ] && rm -f $PID_FILE
+        if [ -f $PID_FILE ]; then
+            rm -f $PID_FILE
+        fi
         ;;
     restart | force-reload)
         $0 stop && sleep 2 && $0 start
