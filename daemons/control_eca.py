@@ -316,7 +316,7 @@ def eca_set_effect_amplification(level):
 	
 	# todo, keep local track of selected cs, c, etc.
 	
-	eca_execute("c-select {0}".format(ECA_CHAIN_MASTER_AMP))
+	#eca_execute("c-select {0}".format(ECA_CHAIN_MASTER_AMP))	# redundant, for now... #todo
 	eca_execute("cop-select {0}".format(eca_chain_op_master_amp))
 	eca_execute("copp-index-select 1")
 	print eca_execute("copp-set {0}".format(level),tries=1)
