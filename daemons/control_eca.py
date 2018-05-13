@@ -641,6 +641,7 @@ def setup():
 	"""
 	#New:
 	global cfg_main
+	global cfg_ecasound
 	cfg_main = load_cfg_main()
 	if cfg_main is None:
 		printer("Main configuration could not be loaded.", level=LL_CRITICAL)
