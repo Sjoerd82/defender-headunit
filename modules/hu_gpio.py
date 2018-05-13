@@ -131,7 +131,7 @@ class GpioController(object):
 			for mode in self.active_modes:
 					
 				#mode_ix = function['mode_select'].index(mode)
-				mode_list = modes[0]['mode_list']
+				mode_list = self.modes[0]['mode_list']
 				mode_ix = mode_list.index(mode)			# get index of mode in mode_list
 				if mode_ix is not None:
 					mode_old = mode_list[mode_ix]
@@ -144,13 +144,13 @@ class GpioController(object):
 					print "Mode change {0} -> {1}".format(mode_old,mode_new)
 					self.active_modes.append(mode_new)
 					
-					if 'reset' in modes[0]:
-						print "Starting mode reset timer, seconds: {0}".format(modes[0]['reset'])
+					if 'reset' in self.modes[0]:
+						print "Starting mode reset timer, seconds: {0}".format(self.modes[0]['reset'])
 						#if self.timer_mode is not None:
 						#	self.timer_mode.cancel()
-						#self.timer_mode = Timer(float(modes[0]['reset']), self.cb_mode_reset)
+						#self.timer_mode = Timer(float(self.modes[0]['reset']), self.cb_mode_reset)
 						#self.timer_mode.start()
-						self.reset_mode_timer(modes[0]['reset'])
+						self.reset_mode_timer(self.modes[0]['reset'])
 					break
 
 	def reset_mode_timer(self,seconds):
@@ -185,9 +185,9 @@ class GpioController(object):
 
 		# try-except?
 		print "DEBUG THIS!!"
-		# if acitve_modes is empty then we don't need to check the mode
+		# if active_modes is empty then we don't need to check the mode
 		if self.active_modes:
-			self.reset_mode_timer(modes[0]['reset'])
+			self.reset_mode_timer(self.modes[0]['reset'])
 
 		# check wheather we have short and/or long press functions and multi-press functions
 		if self.pins_config[pin]['has_short'] and not self.pins_config[pin]['has_long'] and not self.pins_config[pin]['has_multi']:
@@ -346,7 +346,7 @@ class GpioController(object):
 			if (Switch_A and Switch_B):						# Both one active? Yes -> end of sequence
 			
 				if self.active_modes:
-					self.reset_mode_timer(modes[0]['reset'])
+					self.reset_mode_timer(self.modes[0]['reset'])
 
 				if pin == encoder_pinB:							# Turning direction depends on 
 					#counter clockwise
