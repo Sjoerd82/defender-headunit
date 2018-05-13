@@ -46,6 +46,10 @@ class GpioController(object):
 	def __init__(self, cfg_gpio, int_switch=None, int_encoder=None):
 		self.cfg_gpio = cfg_gpio
 
+		# callbacks
+		self.cb_int_sw = int_switch
+		self.cb_int_en = int_encoder
+		
 		# pins
 		self.pins_state = {}			# pin (previous) state
 		self.pins_function = {}		# pin function(s)
@@ -56,7 +60,7 @@ class GpioController(object):
 		self.long_press_ms = 800
 		self.timer_mode = None		# timer object
 
-		self.gpio_setup(int_switch,int_encoder)
+		self.gpio_setup(self.int_handle_switch,self.int_handle_encoder)
 	
 	
 	# ********************************************************************************
@@ -182,6 +186,7 @@ class GpioController(object):
 			return None
 		
 		print "DEBUG: self.int_handle_switch! for pin: {0}".format(pin)
+		staticmethod(self.cb_int_sw)
 
 		# try-except?
 		print "DEBUG THIS!!"
@@ -351,11 +356,14 @@ class GpioController(object):
 				if pin == encoder_pinB:							# Turning direction depends on 
 					#counter clockwise
 					print "[Encoder] {0}: DECREASE/CCW".format(function['function_ccw'])			
+					staticmethod(self.cb_int_en)
 					self.exec_function_by_code(function['function_ccw'],'ccw')
 				else:
 					#clockwise
 					print "[Encoder] {0}: INCREASE/CW".format(function['function_cw'])
+					staticmethod(self.cb_int_en)
 					self.exec_function_by_code(function['function_cw'],'cw')
+
 
 	# ********************************************************************************
 	# GPIO setup

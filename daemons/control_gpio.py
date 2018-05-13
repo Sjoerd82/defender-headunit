@@ -119,6 +119,10 @@ pins_config =
 
 '''
 
+
+def demo():
+	print "Woha!! My Own Callback Works!!!"
+
 # ********************************************************************************
 # Output wrapper
 #
@@ -928,7 +932,8 @@ def setup():
 #		exit(1)
 
 	#gpio = GpioController(cfg_gpio)
-	gpio = GpioController(cfg_gpio, int_switch=int_handle_switch, int_encoder=int_handle_encoder)
+	#gpio = GpioController(cfg_gpio, int_switch=int_handle_switch, int_encoder=int_handle_encoder)
+	gpio = GpioController(cfg_gpio,demo,demo)
 	
 	printer('Initialized [OK]')
 	print "\nDEBUG; pins_function:"
