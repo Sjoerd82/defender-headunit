@@ -51,9 +51,9 @@ long_press_ms = 800
 #********************************************************************************
 # GPIO stuff
 #
-class GpioController(object,cfg_gpio):
+class GpioController(object):
 
-	def __init__(self):
+	def __init__(self,cfg_gpio):
 		gpio_setup(cfg_gpio)
 	
 	
