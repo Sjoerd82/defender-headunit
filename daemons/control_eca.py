@@ -657,6 +657,8 @@ def setup():
 	# Configuration
 	#
 	global cfg_main
+	global cfg_daemon
+	#global cfg_zmq	#only used here(?)
 	global cfg_ecasound
 	cfg_main = load_cfg_main()
 	if cfg_main is None:
