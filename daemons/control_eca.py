@@ -758,7 +758,7 @@ def main():
 
 	eca_execute("start")
 	while True:
-		sleep(0.1)
+		time.sleep(0.1)
 	print "Stopping Ecasound"
 	eca_execute("stop")
 	eca_execute("cs-disconnect")
