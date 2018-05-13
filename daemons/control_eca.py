@@ -206,7 +206,7 @@ def eca_execute(command,tries=3):
 		reteca = eca.command(command)
 		#if type(reteca) is StringType:
 		if isinstance(reteca, str):
-			if reteca[0:20] == "Response length error":
+			if reteca[0:21] == "Response length error":
 				time.sleep(1)
 				printer("Executed: {0:30}; [FAIL] {1}".format(command,reteca),level=LL_ERROR)
 			elif reteca == "":
@@ -741,7 +741,8 @@ def setup():
 	# GPIO
 	#
 	gpio = GpioController(cfg_gpio,cb_gpio_function)
-
+	#todo: GPIO cleanup
+	
 	printer('Initialized [OK]')
 
 def main():
@@ -755,6 +756,15 @@ def main():
 	# Initialize MQ message receiver
 	gobject.idle_add(handle_mq_message)
 
+	eca_execute("start")
+	while True:
+		sleep(0.1)
+	print "Stopping Ecasound"
+	eca_execute("stop")
+	eca_execute("cs-disconnect")
+	# gpio disconnect #TODO!
+	
+	"""
 	try:
 		eca_execute("start")
 		mainloop.run()
@@ -763,6 +773,7 @@ def main():
 		print "Stopping Ecasound"
 		eca_execute("stop")
 		eca_execute("cs-disconnect")
+	"""
 
 if __name__ == "__main__":
 	parse_args()
