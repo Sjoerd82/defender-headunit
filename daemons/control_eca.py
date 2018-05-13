@@ -336,7 +336,7 @@ def eca_mute(state):
 # GPIO Callback
 #
 def cb_gpio_function(code):
-	#print "CALL: {0}".format(function)
+	global local_volume
 	print "EXECUTE: {0}".format(code)
 	if code in ('VOLUME_INC','VOLUME_DEC'):#function_map:
 		if code == 'VOLUME_INC':
