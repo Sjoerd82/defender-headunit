@@ -44,7 +44,7 @@ function_map['SYSTEM_SHUTDOWN'] = { 'zmq_path':'/system/shutdown', 'zmq_command'
 class GpioController(object):
 
 	def __init__(self,cfg_gpio):
-		self.cfg_gpio = None
+		self.cfg_gpio = cfg_gpio
 
 		# pins
 		self.pins_state = {}			# pin (previous) state
