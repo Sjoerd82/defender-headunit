@@ -933,6 +933,7 @@ def setup():
 
 	#gpio = GpioController(cfg_gpio)
 	#gpio = GpioController(cfg_gpio, int_switch=int_handle_switch, int_encoder=int_handle_encoder)
+	demo()
 	gpio = GpioController(cfg_gpio,demo,demo)
 	
 	printer('Initialized [OK]')

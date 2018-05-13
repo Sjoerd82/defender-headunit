@@ -47,8 +47,11 @@ class GpioController(object):
 		self.cfg_gpio = cfg_gpio
 
 		# callbacks
+		staticmethod(int_switch)
 		self.cb_int_sw = int_switch
+		staticmethod(self.cb_int_sw)
 		self.cb_int_en = int_encoder
+		staticmethod(self.cb_int_en)
 		
 		# pins
 		self.pins_state = {}			# pin (previous) state
