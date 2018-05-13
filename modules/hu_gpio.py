@@ -47,11 +47,14 @@ class GpioController(object):
 		self.cfg_gpio = cfg_gpio
 
 		# callbacks
-		staticmethod(int_switch)
+		#staticmethod(int_switch)
 		self.cb_int_sw = int_switch
 		staticmethod(self.cb_int_sw)
 		self.cb_int_en = int_encoder
 		staticmethod(self.cb_int_en)
+		
+		self.cb_int_sw()
+		self.cb_int_en()
 		
 		# pins
 		self.pins_state = {}			# pin (previous) state
@@ -359,12 +362,14 @@ class GpioController(object):
 				if pin == encoder_pinB:							# Turning direction depends on 
 					#counter clockwise
 					print "[Encoder] {0}: DECREASE/CCW".format(function['function_ccw'])			
-					staticmethod(self.cb_int_en)
+					#staticmethod(self.cb_int_en)
+					self.cb_int_en()
 					self.exec_function_by_code(function['function_ccw'],'ccw')
 				else:
 					#clockwise
 					print "[Encoder] {0}: INCREASE/CW".format(function['function_cw'])
-					staticmethod(self.cb_int_en)
+					#staticmethod(self.cb_int_en)
+					self.cb_int_en()
 					self.exec_function_by_code(function['function_cw'],'cw')
 
 
