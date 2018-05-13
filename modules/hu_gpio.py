@@ -43,7 +43,7 @@ function_map['SYSTEM_SHUTDOWN'] = { 'zmq_path':'/system/shutdown', 'zmq_command'
 #
 class GpioController(object):
 
-	def __init__(self,cfg_gpio):
+	def __init__(self, cfg_gpio, int_switch=None, int_encoder=None):
 		self.cfg_gpio = cfg_gpio
 
 		# pins
@@ -56,7 +56,7 @@ class GpioController(object):
 		self.long_press_ms = 800
 		self.timer_mode = None		# timer object
 
-		self.gpio_setup()
+		self.gpio_setup(int_switch,int_encoder)
 	
 	
 	# ********************************************************************************
@@ -360,7 +360,7 @@ class GpioController(object):
 	# ********************************************************************************
 	# GPIO setup
 	# 
-	def gpio_setup(self):
+	def gpio_setup(self,int_switch,int_encoder):
 		
 		# gpio mode: BCM or board
 		if 'gpio_mode' in self.cfg_gpio:
@@ -404,7 +404,7 @@ class GpioController(object):
 		# initialize all pins in configuration
 		pins_monitor = []
 		for device in self.cfg_gpio['devices']:
-			if 'sw' in device:
+			if 'sw' in device and int_switch is not None:
 				#pin = self.cfg_gpio['devices'][ix]['sw']
 				pin = device['sw']
 				pins_monitor.append(pin)
@@ -450,23 +450,23 @@ class GpioController(object):
 				# if left out, the trigger will be based on the on-level
 				if 'gpio_edgedetect' in device:				
 					if device['gpio_edgedetect'] == 'rising':
-						GPIO.add_event_detect(pin, GPIO.RISING, callback=self.int_handle_switch) #
+						GPIO.add_event_detect(pin, GPIO.RISING, callback=int_switch) #
 						printer("Pin {0}: Added Rising Edge interrupt; bouncetime=600".format(pin))
 					elif device['gpio_edgedetect'] == 'falling':
-						GPIO.add_event_detect(pin, GPIO.FALLING, callback=self.int_handle_switch) #
+						GPIO.add_event_detect(pin, GPIO.FALLING, callback=self.int_switch) #
 						printer("Pin {0}: Added Falling Edge interrupt; bouncetime=600".format(pin))
 					elif device['gpio_edgedetect'] == 'both':
-						GPIO.add_event_detect(pin, GPIO.BOTH, callback=self.int_handle_switch) #
+						GPIO.add_event_detect(pin, GPIO.BOTH, callback=self.int_switch) #
 						printer("Pin {0}: Added Both Rising and Falling Edge interrupt; bouncetime=600".format(pin))
 						printer("Pin {0}: Warning: detection both high and low level will cause an event to trigger on both press and release.".format(pin),level=LL_WARNING)
 					else:
 						printer("Pin {0}: ERROR: invalid edge detection value.".format(pin),level=LL_ERROR)
 				else:
 					if gpio_on == GPIO.HIGH:
-						GPIO.add_event_detect(pin, GPIO.RISING, callback=self.int_handle_switch) #
+						GPIO.add_event_detect(pin, GPIO.RISING, callback=self.int_switch) #
 						printer("Pin {0}: Added Rising Edge interrupt; bouncetime=600".format(pin))				
 					else:
-						GPIO.add_event_detect(pin, GPIO.FALLING, callback=self.int_handle_switch) #, bouncetime=600
+						GPIO.add_event_detect(pin, GPIO.FALLING, callback=self.int_switch) #, bouncetime=600
 						printer("Pin {0}: Added Falling Edge interrupt; bouncetime=600".format(pin))
 
 				
@@ -475,14 +475,14 @@ class GpioController(object):
 				# consolidated config
 				self.pins_config[pin] = { "dev_name":device['name'], "dev_type":"sw", "gpio_on": gpio_on, "has_multi":False, "has_short":False, "has_long":False, "functions":[] }
 				
-			if 'clk' in device:
+			if 'clk' in device and int_encoder is not None:
 				pin_clk = device['clk']
 				pin_dt = device['dt']
 				
 				printer("Setting up encoder on pins: {0} and {1}".format(pin_clk, pin_dt))
 				GPIO.setup((pin_clk,pin_dt), GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-				GPIO.add_event_detect(pin_clk, GPIO.RISING, callback=self.int_handle_encoder) # NO bouncetime 
-				GPIO.add_event_detect(pin_dt, GPIO.RISING, callback=self.int_handle_encoder) # NO bouncetime 
+				GPIO.add_event_detect(pin_clk, GPIO.RISING, callback=int_encoder) # NO bouncetime 
+				GPIO.add_event_detect(pin_dt, GPIO.RISING, callback=int_encoder) # NO bouncetime 
 				
 				self.pins_state[pin_clk] = GPIO.input(pin_clk)
 				self.pins_state[pin_dt] = GPIO.input(pin_dt)
