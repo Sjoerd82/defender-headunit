@@ -25,12 +25,12 @@ from hu_utils import *
 #
 class GpioController(object):
 
-	def __init__(self, cfg_gpio, callback_function=None):
+	def __init__(self, cfg_gpio, cb_function=None):
 		self.cfg_gpio = cfg_gpio
 
 		# callbacks
 		#staticmethod(int_switch)
-		self.callback_function = callback_function
+		self.callback_function = cb_function
 		staticmethod(self.callback_function)
 		
 		# pins
@@ -83,7 +83,7 @@ class GpioController(object):
 
 	def exec_function_by_code(self,code,param=None):
 		print "EXECUTE: {0} {1}".format(code,param)
-		callback_function(code)
+		self.callback_function(code)
 		"""
 		if code in function_map:
 			zmq_path = function_map[code]['zmq_path']
