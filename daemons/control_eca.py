@@ -31,6 +31,7 @@ from pyeca import *				# default implementation
 #sys.path.append('../modules')
 sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
+from hu_gpio import GpioController
 from hu_msg import MqPubSubFwdController
 from hu_msg import parse_message
 
@@ -56,7 +57,6 @@ ECA_CHAIN_MASTER_AMP = 'pre'	# chain object that contains the master amp
 ECA_CHAIN_MUTE = 'pre'			# chain object to mute
 ECA_CHAIN_EQ = None				# chain object that contains the equalizer
 
-cfg_ecasound = None
 eca_chain_op_master_amp = None
 att_level = 20		# TODO, get from configuration
 local_volume = 30	# TOOD, retrieve from resume!
@@ -66,8 +66,14 @@ volume_increment = 5
 logger = None
 args = None
 messaging = None
+gpio = None
 eca = None
+
 cfg_main = None
+cfg_zmq = None		# Zero MQ
+cfg_ecasound = None
+cfg_gpio = None		# GPIO setup
+
 
 # ********************************************************************************
 # Output wrapper
@@ -171,6 +177,25 @@ def load_cfg_ecasound():
 		
 	return config
 
+def load_cfg_gpio():		
+	""" load specified GPIO configuration """	
+	if 'directories' not in cfg_main or 'daemon-config' not in cfg_main['directories'] or 'config' not in cfg_daemon:
+		return
+	else:		
+		config_dir = cfg_main['directories']['daemon-config']
+		# TODO
+		config_dir = "/mnt/PIHU_CONFIG/"	# fix!
+		config_file = cfg_daemon['config']
+		
+		gpio_config_file = os.path.join(config_dir,config_file)
+	
+	# load gpio configuration
+	if os.path.exists(gpio_config_file):
+		config = configuration_load(LOGGER_NAME,gpio_config_file)
+		return config
+	else:
+		print "ERROR: not found: {0}".format(gpio_config_file)
+		return
 # ********************************************************************************
 # Ecasound
 #
@@ -305,6 +330,17 @@ def eca_mute(state):
 	else:
 		printer("Invalid mute parameter: {0}. Valid parameters are 'on','off' or 'toggle'".format(state),level=LL_ERROR)
 		return False
+
+# ********************************************************************************
+# GPIO Callback
+#
+def cb_gpio_function(code):
+	#print "CALL: {0}".format(function)
+	print "EXECUTE: {0}".format(code)
+	if code in function_map:
+		pass
+	else:
+		print "function {0} not in function_map".format(code)	
 
 # ********************************************************************************
 # MQ handler
@@ -657,6 +693,11 @@ def setup():
 		printer("Ecasound configuration could not be loaded.", level=LL_CRITICAL)
 		exit(1)
 
+	# gpio
+	cfg_gpio = load_cfg_gpio()
+	if cfg_gpio is None:
+		printer("GPIO configuration could not be loaded. GPIO input will not be available", level=LL_WARNING)
+
 	#
 	# ECA
 	#	
@@ -687,7 +728,12 @@ def setup():
 
 	printer("ZeroMQ: Creating Publisher: {0}".format(DEFAULT_PORT_PUB))
 	messaging.create_publisher()
-		
+
+	#
+	# GPIO
+	#
+	gpio = GpioController(cfg_gpio,cb_gpio_function)
+
 	printer('Initialized [OK]')
 
 def main():

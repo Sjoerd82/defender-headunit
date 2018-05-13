@@ -27,8 +27,6 @@ from time import sleep
 #from time import clock			# cpu time, not easily relateable to ms.
 from datetime import datetime
 from logging import getLogger	# logger
-from RPi import GPIO			# GPIO
-from threading import Timer		# timer to reset mode change
 
 import gobject					# main loop
 from dbus.mainloop.glib import DBusGMainLoop
@@ -60,7 +58,6 @@ DELAY = 0.01
 logger = None
 args = None
 messaging = None
-timer_mode = None
 gpio = None
 
 # configuration
@@ -68,11 +65,6 @@ cfg_main = None		# main
 cfg_daemon = None	# daemon
 cfg_zmq = None		# Zero MQ
 cfg_gpio = None		# GPIO setup
-
-# pins
-pins_state = {}			# pin (previous) state
-pins_function = {}		# pin function(s)
-pins_config = {}		# consolidated config, key=pin
 
 function_map = {}
 function_map['SOURCE_NEXT'] = { 'zmq_path':'/source/next', 'zmq_command':'PUT' }
@@ -91,10 +83,6 @@ function_map['VOLUME_DEC'] = { 'zmq_path':'/volume/master/decrease', 'zmq_comman
 function_map['VOLUME_ATT'] = { 'zmq_path':'/volume/att', 'zmq_command':'PUT' }
 function_map['VOLUME_MUTE'] = { 'zmq_path':'/volume/mute', 'zmq_command':'PUT' }
 function_map['SYSTEM_SHUTDOWN'] = { 'zmq_path':'/system/shutdown', 'zmq_command':'PUT' }
-
-modes = []
-active_modes = []
-long_press_ms = 800
 
 '''
 pins_config = 
@@ -188,8 +176,8 @@ def load_cfg_gpio():
 		return
 
 # ********************************************************************************
-# GPIO helpers
-# 
+# GPIO Callback
+#
 def cb_gpio_function(code):
 	#print "CALL: {0}".format(function)
 	print "EXECUTE: {0}".format(code)
