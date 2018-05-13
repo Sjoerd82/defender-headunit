@@ -771,12 +771,13 @@ def main():
 
 	eca_execute("start")
 	while True:
-		item = qVolume.get_nowait()
-		if item is not None:
-			handle_queue(item)
-			# sign off task
-			qVolume.task_done()
-		time.sleep(0.1)
+		while not qVolume.empty():
+			item = qVolume.get_nowait()
+			if item is not None:
+				handle_queue(item)
+				# sign off task
+				qVolume.task_done()
+			time.sleep(0.1)
 	print "Stopping Ecasound"
 	eca_execute("stop")
 	eca_execute("cs-disconnect")
