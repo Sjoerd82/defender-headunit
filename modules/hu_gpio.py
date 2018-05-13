@@ -20,41 +20,18 @@ from threading import Timer		# timer to reset mode change
 sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
 
-function_map = {}
-function_map['SOURCE_NEXT'] = { 'zmq_path':'/source/next', 'zmq_command':'PUT' }
-function_map['SOURCE_PREV'] = { 'zmq_path':'/source/prev', 'zmq_command':'PUT' }
-function_map['SOURCE_PRI_NEXT'] = { 'zmq_path':'/source/next_primary', 'zmq_command':'PUT' }
-function_map['SOURCE_PRI_PREV'] = { 'zmq_path':'/source/prev_primary', 'zmq_command':'PUT' }
-function_map['SOURCE_CHECK'] = { 'zmq_path':'/source/check', 'zmq_command':'PUT' }
-function_map['PLAYER_PAUSE'] = { 'zmq_path':'/player/pause', 'zmq_command':'PUT' }
-function_map['PLAYER_RANDOM'] = { 'zmq_path':'/player/random', 'zmq_command':'PUT' }
-function_map['PLAYER_NEXT'] = { 'zmq_path':'/player/next', 'zmq_command':'PUT' }
-function_map['PLAYER_PREV'] = { 'zmq_path':'/player/prev', 'zmq_command':'PUT' }
-function_map['PLAYER_FOLDER_NEXT'] = { 'zmq_path':'/player/next_folder', 'zmq_command':'PUT' }
-function_map['PLAYER_FOLDER_PREV'] = { 'zmq_path':'/player/prev_folder', 'zmq_command':'PUT' }
-function_map['VOLUME_INC'] = { 'zmq_path':'/volume/master/increase', 'zmq_command':'PUT' }
-function_map['VOLUME_DEC'] = { 'zmq_path':'/volume/master/decrease', 'zmq_command':'PUT' }
-function_map['VOLUME_ATT'] = { 'zmq_path':'/volume/att', 'zmq_command':'PUT' }
-function_map['VOLUME_MUTE'] = { 'zmq_path':'/volume/mute', 'zmq_command':'PUT' }
-function_map['SYSTEM_SHUTDOWN'] = { 'zmq_path':'/system/shutdown', 'zmq_command':'PUT' }
-
 #********************************************************************************
 # GPIO stuff
 #
 class GpioController(object):
 
-	def __init__(self, cfg_gpio, int_switch=None, int_encoder=None):
+	def __init__(self, cfg_gpio, callback_function=None):
 		self.cfg_gpio = cfg_gpio
 
 		# callbacks
 		#staticmethod(int_switch)
-		self.cb_int_sw = int_switch
-		staticmethod(self.cb_int_sw)
-		self.cb_int_en = int_encoder
-		staticmethod(self.cb_int_en)
-		
-		self.cb_int_sw()
-		self.cb_int_en()
+		self.callback_function = callback_function
+		staticmethod(self.callback_function)
 		
 		# pins
 		self.pins_state = {}			# pin (previous) state
@@ -106,6 +83,7 @@ class GpioController(object):
 
 	def exec_function_by_code(self,code,param=None):
 		print "EXECUTE: {0} {1}".format(code,param)
+		callback_function(code)
 		"""
 		if code in function_map:
 			zmq_path = function_map[code]['zmq_path']
@@ -192,7 +170,6 @@ class GpioController(object):
 			return None
 		
 		print "DEBUG: self.int_handle_switch! for pin: {0}".format(pin)
-		staticmethod(self.cb_int_sw)
 
 		# try-except?
 		print "DEBUG THIS!!"
@@ -362,14 +339,10 @@ class GpioController(object):
 				if pin == encoder_pinB:							# Turning direction depends on 
 					#counter clockwise
 					print "[Encoder] {0}: DECREASE/CCW".format(function['function_ccw'])			
-					#staticmethod(self.cb_int_en)
-					self.cb_int_en()
 					self.exec_function_by_code(function['function_ccw'],'ccw')
 				else:
 					#clockwise
 					print "[Encoder] {0}: INCREASE/CW".format(function['function_cw'])
-					#staticmethod(self.cb_int_en)
-					self.cb_int_en()
 					self.exec_function_by_code(function['function_cw'],'cw')
 
 
