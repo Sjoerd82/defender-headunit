@@ -56,7 +56,7 @@ class GpioController(object):
 		self.long_press_ms = 800
 		self.timer_mode = None		# timer object
 
-		self.gpio_setup(self.cfg_gpio)
+		self.gpio_setup()
 	
 	
 	# ********************************************************************************
