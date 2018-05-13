@@ -56,6 +56,9 @@
 			, "config": "multi_functional_encoder.json"
 		}
 	]
+	, "gpio": {
+		"todo": "todo"
+	}
 	, "audio_output": {
 		"pulse-sink": "alsa_output.platform-soc_sound.analog-stereo"
 	   ,"mpd_output": "pulse audio"

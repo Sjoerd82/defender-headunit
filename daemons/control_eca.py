@@ -67,6 +67,7 @@ logger = None
 args = None
 messaging = None
 eca = None
+cfg_main = None
 
 # ********************************************************************************
 # Output wrapper
@@ -77,34 +78,50 @@ def printer( message, level=LL_INFO, continuation=False, tag=LOG_TAG ):
 # ********************************************************************************
 # Load configuration
 #
-def load_zeromq_configuration():
-	
-	configuration = configuration_load(LOGGER_NAME,args.config)
-	
-	if not configuration or not 'zeromq' in configuration:
+def load_cfg_main():
+	""" load main configuration """
+	config = configuration_load(LOGGER_NAME,args.config)
+	return config
+
+def load_cfg_zmq():
+	""" load zeromq configuration """	
+	if not 'zeromq' in cfg_main:
 		printer('Error: Configuration not loaded or missing ZeroMQ, using defaults:')
 		printer('Publisher port: {0}'.format(args.port_publisher))
 		printer('Subscriber port: {0}'.format(args.port_subscriber))
-		configuration = { "zeromq": { "port_publisher": DEFAULT_PORT_PUB, "port_subscriber":DEFAULT_PORT_SUB } }
-		return configuration
-		
+		#cfg_main["zeromq"] = { "port_publisher": DEFAULT_PORT_PUB, "port_subscriber":DEFAULT_PORT_SUB } }
+		config = { "port_publisher": DEFAULT_PORT_PUB, "port_subscriber":DEFAULT_PORT_SUB }
+		return config
 	else:
+		config = {}
 		# Get portnumbers from either the config, or default value
-		if not 'port_publisher' in configuration['zeromq']:
-			configuration['zeromq']['port_publisher'] = DEFAULT_PORT_PUB
+		if 'port_publisher' in cfg_main['zeromq']:
+			config['port_publisher'] = cfg_main['zeromq']['port_publisher']
+		else:
+			config['port_publisher'] = DEFAULT_PORT_PUB
+		
+		if 'port_subscriber' in cfg_main['zeromq']:
+			config['port_subscriber'] = cfg_main['zeromq']['port_subscriber']		
+		else:
+			config['port_subscriber'] = DEFAULT_PORT_SUB
 			
-		if not 'port_subscriber' in configuration['zeromq']:
-			configuration['zeromq']['port_subscriber'] = DEFAULT_PORT_SUB
-			
-	return configuration
+		return config
 
-def load_ecasound_configuration():
+def load_cfg_daemon():
+	""" load daemon configuration """
+	if 'daemons' not in cfg_main:
+		return
+	else:
+		for daemon in cfg_main['daemons']:
+			if 'script' in daemon and daemon['script'] == os.path.basename(__file__):
+				return daemon
+
+def load_cfg_ecasound():
 	""" Load ecasound configuration
 		Returns:
 			True: 	Success
 			False:	Critical failure
 	"""
-	global cfg_ecasound
 	global eca_chainsetup
 	global eca_chain_master_amp
 	global eca_chain_mute
@@ -113,46 +130,46 @@ def load_ecasound_configuration():
 	global eca_volume_increment
 	
 	# load ecasound
-	if 'ecasound' not in configuration:
+	if 'ecasound' not in cfg_main:
 		printer("Ecasound section not found in configuration.",level=LL_CRITICAL)
-		return False
+		return
 	else:
-		cfg_ecasound = configuration['ecasound']
+		config = cfg_main['ecasound']
 	
 	# load mandatory variables
 	try:
-		eca_chainsetup = configuration['ecasound']['chainsetup']
-		eca_chain_master_amp = configuration['ecasound']['chain_master_amp']
+		eca_chainsetup = cfg_main['ecasound']['chainsetup']
+		eca_chain_master_amp = cfg_main['ecasound']['chain_master_amp']
 	except KeyError:
 		printer("Mandatory configuration items missing in ecasound section",level=LL_CRITICAL)
-		return False
+		return
 	
 	# load other, less important, variables
 	try:
-		eca_chain_mute = configuration['ecasound']['chain_mute']
+		eca_chain_mute = cfg_main['ecasound']['chain_mute']
 	except KeyError:
 		eca_chain_mute = None
 		printer("No muting chain specified, mute not available",level=LL_WARNING)
 
 	try:
-		eca_chain_eq = configuration['ecasound']['chain_eq']
+		eca_chain_eq = cfg_main['ecasound']['chain_eq']
 	except KeyError:
 		eca_chain_eq = None
 		printer("No EQ chain specified, EQ not available",level=LL_WARNING)
 		
 	try:
-		eca_amplify_max = configuration['ecasound']['amplify_max']
+		eca_amplify_max = cfg_main['ecasound']['amplify_max']
 	except KeyError:
 		eca_amplify_max = 100
 		printer("No maximum amplification level specified, setting maximum amplification to 100%",level=LL_INFO)
 
 	try:
-		eca_amplify_max = configuration['ecasound']['volume_increment']
+		eca_amplify_max = cfg_main['ecasound']['volume_increment']
 	except KeyError:
 		eca_volume_increment = 5
 		printer("No default volume increment specified, setting volume increment to 5%",level=LL_INFO)
 		
-	return True
+	return config
 
 # ********************************************************************************
 # Ecasound
@@ -600,8 +617,9 @@ def setup():
 		logger = log_create_console_loghandler(logger, args.loglevel, LOG_TAG) 						# output to console
 	
 	#
-	# Load configuration
+	# Configuration
 	#
+	""" OLD WAY:
 	global configuration
 	if not args.port_publisher and not args.port_subscriber:
 		configuration = load_zeromq_configuration()
@@ -620,6 +638,44 @@ def setup():
 	retval = load_ecasound_configuration()
 	if not retval:
 		exit(1)
+	"""
+	#New:
+	global cfg_main
+	cfg_main = load_cfg_main()
+	if cfg_main is None:
+		printer("Main configuration could not be loaded.", level=LL_CRITICAL)
+		exit(1)
+
+	# zeromq
+	if not args.port_publisher and not args.port_subscriber:
+		cfg_zmq = load_cfg_zmq()
+	else:
+		if args.port_publisher and args.port_subscriber:
+			pass
+		else:
+			load_cfg_zmq()
+	
+		# Pub/Sub port override
+		if args.port_publisher:
+			configuration['zeromq']['port_publisher'] = args.port_publisher
+		if args.port_subscriber:
+			configuration['zeromq']['port_subscriber'] = args.port_subscriber
+
+	if cfg_zmq is None:
+		printer("Error loading Zero MQ configuration.", level=LL_CRITICAL)
+		exit(1)
+			
+	# daemon
+	#cfg_daemon = load_cfg_daemon()
+	#if cfg_daemon is None:
+	#	printer("Daemon configuration could not be loaded.", level=LL_CRITICAL)
+	#	exit(1)
+	
+	# eca
+	cfg_ecasound = load_cfg_ecasound()
+	if cfg_ecasound is None:
+		printer("Ecasound configuration could not be loaded.", level=LL_CRITICAL)
+		exit(1)
 
 	#
 	# ECA
@@ -628,7 +684,7 @@ def setup():
 	os.environ['ECASOUND'] = '/usr/bin/ecasound --server'
 	eca = ECA_CONTROL_INTERFACE(2)	# # debug level (0, 1, 2, ...)
 	
-	cs_location = configuration['system_configuration']['ecasound_ecs']['location']
+	cs_location = cfg_main['system_configuration']['ecasound_ecs']['location']
 	ecs_file = os.path.join(cs_location,eca_chainsetup+'.ecs')
 	if os.path.exists(ecs_file):
 		printer("Using chainsetup: {0} [OK]".format(ecs_file))
