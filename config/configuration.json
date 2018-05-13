@@ -46,6 +46,12 @@
 		, "init.d":"S95flask"
 		},
 		{
+			  "name": "Control: Ecasound"
+			, "script":"control_eca.py"
+			, "init.d":"S35ecasound"
+			, "config": "multi_functional_encoder.json"			
+		},
+		{
 			  "name":"Control: ADS1x15"
 			, "init.d":"S71ads1x15"
 		},

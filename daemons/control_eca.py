@@ -69,7 +69,8 @@ messaging = None
 gpio = None
 eca = None
 
-cfg_main = None
+cfg_main = None		# main
+cfg_daemon = None	# daemon
 cfg_zmq = None		# Zero MQ
 cfg_ecasound = None
 cfg_gpio = None		# GPIO setup
@@ -682,10 +683,10 @@ def setup():
 		exit(1)
 			
 	# daemon
-	#cfg_daemon = load_cfg_daemon()
-	#if cfg_daemon is None:
-	#	printer("Daemon configuration could not be loaded.", level=LL_CRITICAL)
-	#	exit(1)
+	cfg_daemon = load_cfg_daemon()
+	if cfg_daemon is None:
+		printer("Daemon configuration could not be loaded.", level=LL_CRITICAL)
+		exit(1)
 	
 	# eca
 	cfg_ecasound = load_cfg_ecasound()
