@@ -453,20 +453,20 @@ class GpioController(object):
 						GPIO.add_event_detect(pin, GPIO.RISING, callback=int_switch) #
 						printer("Pin {0}: Added Rising Edge interrupt; bouncetime=600".format(pin))
 					elif device['gpio_edgedetect'] == 'falling':
-						GPIO.add_event_detect(pin, GPIO.FALLING, callback=self.int_switch) #
+						GPIO.add_event_detect(pin, GPIO.FALLING, callback=int_switch) #
 						printer("Pin {0}: Added Falling Edge interrupt; bouncetime=600".format(pin))
 					elif device['gpio_edgedetect'] == 'both':
-						GPIO.add_event_detect(pin, GPIO.BOTH, callback=self.int_switch) #
+						GPIO.add_event_detect(pin, GPIO.BOTH, callback=int_switch) #
 						printer("Pin {0}: Added Both Rising and Falling Edge interrupt; bouncetime=600".format(pin))
 						printer("Pin {0}: Warning: detection both high and low level will cause an event to trigger on both press and release.".format(pin),level=LL_WARNING)
 					else:
 						printer("Pin {0}: ERROR: invalid edge detection value.".format(pin),level=LL_ERROR)
 				else:
 					if gpio_on == GPIO.HIGH:
-						GPIO.add_event_detect(pin, GPIO.RISING, callback=self.int_switch) #
+						GPIO.add_event_detect(pin, GPIO.RISING, callback=int_switch) #
 						printer("Pin {0}: Added Rising Edge interrupt; bouncetime=600".format(pin))				
 					else:
-						GPIO.add_event_detect(pin, GPIO.FALLING, callback=self.int_switch) #, bouncetime=600
+						GPIO.add_event_detect(pin, GPIO.FALLING, callback=int_switch) #, bouncetime=600
 						printer("Pin {0}: Added Falling Edge interrupt; bouncetime=600".format(pin))
 
 				
