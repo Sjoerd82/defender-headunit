@@ -340,9 +340,11 @@ def cb_gpio_function(code):
 	print "EXECUTE: {0}".format(code)
 	if code in ('VOLUME_INC','VOLUME_DEC'):#function_map:
 		if code == 'VOLUME_INC':
-			pass
+			local_volume += 5
+			eca_set_effect_amplification(local_volume)
 		elif code == 'VOLUME_DEC':
-			pass
+			local_volume -= 5
+			eca_set_effect_amplification(local_volume)
 	else:
 		print "function {0} not in function_map".format(code)	
 
