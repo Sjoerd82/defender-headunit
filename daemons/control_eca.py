@@ -338,8 +338,11 @@ def eca_mute(state):
 def cb_gpio_function(code):
 	#print "CALL: {0}".format(function)
 	print "EXECUTE: {0}".format(code)
-	if code in function_map:
-		pass
+	if code in ('VOLUME_INC','VOLUME_DEC'):#function_map:
+		if code == 'VOLUME_INC':
+			pass
+		elif code == 'VOLUME_DEC':
+			pass
 	else:
 		print "function {0} not in function_map".format(code)	
 
