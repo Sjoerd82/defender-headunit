@@ -56,7 +56,7 @@ class GpioController(object):
 		self.long_press_ms = 800
 		self.timer_mode = None		# timer object
 
-		gpio_setup(self.cfg_gpio)
+		self.gpio_setup(self.cfg_gpio)
 	
 	
 	# ********************************************************************************
@@ -92,53 +92,11 @@ class GpioController(object):
 				#if 'encoder' in func_cfg:
 				return func_cfg
 				
-		return None
-
-	def get_function_by_pin(self,pin,type):
-		""" Returns function dictionary
-		pin = pin
-		type = encoder | short_press | long_press
-		"""
-		# loop through all possible functions for given pin
-		# examine if func meets all requirements (only one check needed for encoders: mode)
-		for function_ix in self.pins_function[pin]:
-			
-			func_cfg = self.cfg_gpio['functions'][function_ix]
-			ok = True
-			
-			# check mode
-			if 'mode' in func_cfg and func_cfg['mode'] not in self.active_modes:
-				print "DEBUG: not in the required mode"
-				return None
-			else:
-				if type in func_cfg:
-					return func_cfg
-
-				# check multi-press
-
-	def get_functions_by_pin(self,pin):
-		""" Returns list of valiid functions for given pin
-			It will take the mode into account
-		"""
-		retlist = []
-		# loop through all possible functions for given pin
-		for function_ix in self.pins_function[pin]:
-			
-			func_cfg = self.cfg_gpio['functions'][function_ix]
-			ok = True
-			
-			# check mode
-			if 'mode' in func_cfg and func_cfg['mode'] not in self.active_modes:
-				print "DEBUG: not in the required mode"
-			else:
-				retlist.append(func_cfg)
-			
-		return retlist
-				
+		return None				
 
 	def exec_function_by_code(self,code,param=None):
 		print "EXECUTE: {0} {1}".format(code,param)
-		#function_map[func_cfg['function']] = { "zmq_path":"volume", "zmq_command":"PUT" }
+		"""
 		if code in function_map:
 			zmq_path = function_map[code]['zmq_path']
 			zmq_command = function_map[code]['zmq_command']
@@ -146,67 +104,8 @@ class GpioController(object):
 			messaging.publish_command(zmq_path,zmq_command,arguments)
 		else:
 			print "function {0} not in function_map".format(code)
-		
-				
-	def handle_pin_change(self,pin,value_old,value_new):
-		""" When a pin changes value
 		"""
-		print "DEBUG: handle pin change for pin: {0}".format(pin)
 		
-		if pin not in self.pins_function:
-			print "WHat??"
-			return None
-		
-		print "DEBUG: This pins config:"
-		print self.pins_config[pin]
-		
-			
-		for function_ix in self.pins_function[pin]:
-			
-			#examine if func meets all requirements
-			func_cfg = self.cfg_gpio['functions'][function_ix]
-			ok = True
-			
-			# check mode
-			if 'mode' in func_cfg and func_cfg['mode'] not in self.active_modes:
-				print "DEBUG: not in the required mode"
-			else:
-				# encoder: check dt pin
-				if 'encoder' in func_cfg:
-					device_cfg = get_device_config( func_cfg['encoder'] )
-					pin_clk = pin
-					pin_dt = device_cfg['dt']
-					#if clkState != encoder1_last_clk_state:
-					#  if dtState != clkState:
-					if value_new != value_old:
-						if GPIO.input(pin_dt) != value_new:
-							print function_map[func_cfg['function']]
-							#function_map[func_cfg['function']] = { "zmq_path":"volume", "zmq_command":"PUT" }
-							print "ENCODER: INCREASE"
-						else:
-							print function_map[func_cfg['function']]
-							print "ENCODER: DECREASE"
-
-				# switch (long or short): check if other switches need to be engaged
-				elif 'short_press' in func_cfg:
-					if len( func_cfg['short_press'] ) == 1:
-						print function_map[func_cfg['function']]
-						# assume(?) it's the same gpio number?
-					else:
-						#check if other buttons are pressed
-						for switch in func_cfg['short_press']:
-							switch_cfg = get_device_config( switch )
-							i = 0
-							if GPIO.input(switch_cfg['sw']) == switch_cfg['on']:
-								i += 1
-								
-						if i == len(func_cfg['short_press']):								
-							print function_map[func_cfg['function']]
-						
-				#elif 'long_press' in .. #todo
-				else:
-					printer("Unsupported device or incomplete configuration",level=LL_WARNING)
-					
 
 	def cb_mode_reset(self): #(pin,function_ix):
 		self.active_modes = [ 'track' ]	# FIX THIS!!!!
@@ -249,18 +148,18 @@ class GpioController(object):
 						print "Starting mode reset timer, seconds: {0}".format(modes[0]['reset'])
 						#if self.timer_mode is not None:
 						#	self.timer_mode.cancel()
-						#self.timer_mode = Timer(float(modes[0]['reset']), cb_mode_reset)
+						#self.timer_mode = Timer(float(modes[0]['reset']), self.cb_mode_reset)
 						#self.timer_mode.start()
-						reset_mode_timer(modes[0]['reset'])
+						self.reset_mode_timer(modes[0]['reset'])
 					break
 
 	def reset_mode_timer(self,seconds):
 		""" reset the mode time-out if there is still activity in current mode """
 		#mode_timer = 0
-		#gobject.timeout_add_seconds(function['mode_reset'],cb_mode_reset,pin,function_ix)
+		#gobject.timeout_add_seconds(function['mode_reset'],self.cb_mode_reset,pin,function_ix)
 		if self.timer_mode is not None:
 			self.timer_mode.cancel()
-		self.timer_mode = Timer(seconds, cb_mode_reset)
+		self.timer_mode = Timer(seconds, self.cb_mode_reset)
 		self.timer_mode.start()
 					
 	# ********************************************************************************
@@ -282,13 +181,13 @@ class GpioController(object):
 		if not GPIO.input(pin) == self.pins_config[pin]['gpio_on']:
 			return None
 		
-		print "DEBUG: int_handle_switch! for pin: {0}".format(pin)
+		print "DEBUG: self.int_handle_switch! for pin: {0}".format(pin)
 
 		# try-except?
 		print "DEBUG THIS!!"
 		# if acitve_modes is empty then we don't need to check the mode
 		if self.active_modes:
-			reset_mode_timer(modes[0]['reset'])
+			self.reset_mode_timer(modes[0]['reset'])
 
 		# check wheather we have short and/or long press functions and multi-press functions
 		if self.pins_config[pin]['has_short'] and not self.pins_config[pin]['has_long'] and not self.pins_config[pin]['has_multi']:
@@ -299,13 +198,13 @@ class GpioController(object):
 			for ix, fun in enumerate(self.pins_config[pin]['functions']):
 				if 'mode' in fun:
 					if fun['mode'] in self.active_modes:
-						exec_function_by_code(fun['function'])
+						self.exec_function_by_code(fun['function'])
 					else:
 						print "DEBUG mode mismatch"
 				else:
 					if 'mode_toggle' in fun or 'mode_select' in fun:
-						check_mode(pin,ix)
-					exec_function_by_code(fun['function'])
+						self.check_mode(pin,ix)
+					self.exec_function_by_code(fun['function'])
 				
 			return
 
@@ -339,13 +238,13 @@ class GpioController(object):
 					if fun['press_type'] == 'long':
 						if 'mode' in fun:
 							if fun['mode'] in self.active_modes:
-								exec_function_by_code(fun['function'])
+								self.exec_function_by_code(fun['function'])
 							else:
 								print "DEBUG mode mismatch"
 						else:
 							if 'mode_toggle' in fun or 'mode_select' in fun:
-								check_mode(pin,ix)
-							exec_function_by_code(fun['function'])			
+								self.check_mode(pin,ix)
+							self.exec_function_by_code(fun['function'])			
 				
 			elif press_time < self.long_press_ms and self.pins_config[pin]['has_short']:
 				print "EXECUTING THE SHORT FUNCTION (not long enough pressed)"
@@ -355,13 +254,13 @@ class GpioController(object):
 					if fun['press_type'] == 'short':
 						if 'mode' in fun:
 							if fun['mode'] in self.active_modes:
-								exec_function_by_code(fun['function'])
+								self.exec_function_by_code(fun['function'])
 							else:
 								print "DEBUG mode mismatch"
 						else:
 							if 'mode_toggle' in fun or 'mode_select' in fun:
-								check_mode(pin,ix)
-							exec_function_by_code(fun['function'])
+								self.check_mode(pin,ix)
+							self.exec_function_by_code(fun['function'])
 
 			else:
 				print "No Match!"
@@ -417,9 +316,9 @@ class GpioController(object):
 	def int_handle_encoder(self,pin):
 		""" Called for either inputs from rotary switch (A and B) """
 		
-		#print "DEBUG: int_handle_encoder! for pin: {0}".format(pin)
+		#print "DEBUG: self.int_handle_encoder! for pin: {0}".format(pin)
 			
-		device = get_device_config_by_pin(pin)
+		device = self.get_device_config_by_pin(pin)
 		
 		encoder_pinA = device['clk']
 		encoder_pinB = device['dt']
@@ -441,22 +340,22 @@ class GpioController(object):
 		
 		# -------------------------------
 		
-		function = get_encoder_function_by_pin(pin)
+		function = self.get_encoder_function_by_pin(pin)
 		if function is not None:
 
 			if (Switch_A and Switch_B):						# Both one active? Yes -> end of sequence
 			
 				if self.active_modes:
-					reset_mode_timer(modes[0]['reset'])
+					self.reset_mode_timer(modes[0]['reset'])
 
 				if pin == encoder_pinB:							# Turning direction depends on 
 					#counter clockwise
 					print "[Encoder] {0}: DECREASE/CCW".format(function['function_ccw'])			
-					exec_function_by_code(function['function_ccw'],'ccw')
+					self.exec_function_by_code(function['function_ccw'],'ccw')
 				else:
 					#clockwise
 					print "[Encoder] {0}: INCREASE/CW".format(function['function_cw'])
-					exec_function_by_code(function['function_cw'],'cw')
+					self.exec_function_by_code(function['function_cw'],'cw')
 
 	# ********************************************************************************
 	# GPIO setup
@@ -551,23 +450,23 @@ class GpioController(object):
 				# if left out, the trigger will be based on the on-level
 				if 'gpio_edgedetect' in device:				
 					if device['gpio_edgedetect'] == 'rising':
-						GPIO.add_event_detect(pin, GPIO.RISING, callback=int_handle_switch) #
+						GPIO.add_event_detect(pin, GPIO.RISING, callback=self.int_handle_switch) #
 						printer("Pin {0}: Added Rising Edge interrupt; bouncetime=600".format(pin))
 					elif device['gpio_edgedetect'] == 'falling':
-						GPIO.add_event_detect(pin, GPIO.FALLING, callback=int_handle_switch) #
+						GPIO.add_event_detect(pin, GPIO.FALLING, callback=self.int_handle_switch) #
 						printer("Pin {0}: Added Falling Edge interrupt; bouncetime=600".format(pin))
 					elif device['gpio_edgedetect'] == 'both':
-						GPIO.add_event_detect(pin, GPIO.BOTH, callback=int_handle_switch) #
+						GPIO.add_event_detect(pin, GPIO.BOTH, callback=self.int_handle_switch) #
 						printer("Pin {0}: Added Both Rising and Falling Edge interrupt; bouncetime=600".format(pin))
 						printer("Pin {0}: Warning: detection both high and low level will cause an event to trigger on both press and release.".format(pin),level=LL_WARNING)
 					else:
 						printer("Pin {0}: ERROR: invalid edge detection value.".format(pin),level=LL_ERROR)
 				else:
 					if gpio_on == GPIO.HIGH:
-						GPIO.add_event_detect(pin, GPIO.RISING, callback=int_handle_switch) #
+						GPIO.add_event_detect(pin, GPIO.RISING, callback=self.int_handle_switch) #
 						printer("Pin {0}: Added Rising Edge interrupt; bouncetime=600".format(pin))				
 					else:
-						GPIO.add_event_detect(pin, GPIO.FALLING, callback=int_handle_switch) #, bouncetime=600
+						GPIO.add_event_detect(pin, GPIO.FALLING, callback=self.int_handle_switch) #, bouncetime=600
 						printer("Pin {0}: Added Falling Edge interrupt; bouncetime=600".format(pin))
 
 				
@@ -582,8 +481,8 @@ class GpioController(object):
 				
 				printer("Setting up encoder on pins: {0} and {1}".format(pin_clk, pin_dt))
 				GPIO.setup((pin_clk,pin_dt), GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-				GPIO.add_event_detect(pin_clk, GPIO.RISING, callback=int_handle_encoder) # NO bouncetime 
-				GPIO.add_event_detect(pin_dt, GPIO.RISING, callback=int_handle_encoder) # NO bouncetime 
+				GPIO.add_event_detect(pin_clk, GPIO.RISING, callback=self.int_handle_encoder) # NO bouncetime 
+				GPIO.add_event_detect(pin_dt, GPIO.RISING, callback=self.int_handle_encoder) # NO bouncetime 
 				
 				self.pins_state[pin_clk] = GPIO.input(pin_clk)
 				self.pins_state[pin_dt] = GPIO.input(pin_dt)
@@ -595,7 +494,7 @@ class GpioController(object):
 		# map pins to functions
 		for ix, function in enumerate(self.cfg_gpio['functions']):
 			if 'encoder' in function:		
-				device = get_device_config(function['encoder'])
+				device = self.get_device_config(function['encoder'])
 				pin_dt = device['dt']
 				pin_clk = device['clk']
 				
@@ -611,7 +510,7 @@ class GpioController(object):
 						
 				multicount = len(function['short_press'])
 				if multicount == 1:
-					device = get_device_config(function['short_press'][0])
+					device = self.get_device_config(function['short_press'][0])
 					if device is None:
 						printer("ID not found in devices: {0}".format(function['short_press'][0]),level=LL_CRITICAL)
 						exit(1)
@@ -626,14 +525,14 @@ class GpioController(object):
 					fnc["multicount"]=0
 					self.pins_config[pin_sw]["functions"].append(fnc)
 				else:
-					#device = get_device_config(function['short_press'][0])
+					#device = self.get_device_config(function['short_press'][0])
 					#pin_sw = device['sw']
 					#self.pins_config[pin_sw]["has_multi"] = True
 					multi = []	# list of buttons for multi-press
 
 					# self.pins_function
 					for short_press_button in function['short_press']:
-						device = get_device_config(short_press_button)
+						device = self.get_device_config(short_press_button)
 						pin_sw = device['sw']
 						multi.append( pin_sw )
 						self.pins_config[pin_sw]["has_multi"] = True
@@ -656,7 +555,7 @@ class GpioController(object):
 
 				multicount = len(function['long_press'])
 				if multicount == 1:
-					device = get_device_config(function['long_press'][0])
+					device = self.get_device_config(function['long_press'][0])
 					if device is None:
 						printer("ID not found in devices: {0}".format(function['long_press'][0]),level=LL_CRITICAL)
 						exit(1)
@@ -666,14 +565,14 @@ class GpioController(object):
 					fnc = { "fnc_name":function['name'], "function":function['function'], "press_type":"long", "multicount":0 }
 					self.pins_config[pin_sw]["functions"].append(fnc)
 				else:
-					#device = get_device_config(function['long_press'][0])
+					#device = self.get_device_config(function['long_press'][0])
 					#pin_sw = device['sw']
 					#self.pins_config[pin_sw]["has_multi"] = True
 					multi = []	# list of buttons for multi-press
 
 					# self.pins_function
 					for short_press_button in function['long_press']:
-						device = get_device_config(short_press_button)
+						device = self.get_device_config(short_press_button)
 						pin_sw = device['sw']
 						multi.append( pin_sw )
 						self.pins_config[pin_sw]["has_multi"] = True

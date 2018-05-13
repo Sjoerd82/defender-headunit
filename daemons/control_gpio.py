@@ -928,6 +928,7 @@ def setup():
 #		exit(1)
 
 	gpio = GpioController(cfg_gpio)
+	#gpio = GpioController(cfg_gpio,int_handle_switch,int_handle_encoder)
 	
 	printer('Initialized [OK]')
 	print "\nDEBUG; pins_function:"
