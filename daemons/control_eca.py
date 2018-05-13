@@ -26,6 +26,7 @@ from dbus.mainloop.glib import DBusGMainLoop
 # ecasound
 from pyeca import *				# default implementation
 #from ecacontrol import *		# native Python implementation
+from Queue import Queue		# queuing
 
 # Utils
 #sys.path.append('../modules')
