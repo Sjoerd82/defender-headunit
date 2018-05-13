@@ -54,6 +54,7 @@ class GpioController(object):
 		self.modes = []
 		self.active_modes = []
 		self.long_press_ms = 800
+		self.timer_mode = None		# timer object
 
 		gpio_setup(self.cfg_gpio)
 	
@@ -208,7 +209,6 @@ class GpioController(object):
 					
 
 	def cb_mode_reset(self): #(pin,function_ix):
-		global self.active_modes
 		self.active_modes = [ 'track' ]	# FIX THIS!!!!
 
 	def check_mode(self,pin,function_ix):
@@ -247,22 +247,21 @@ class GpioController(object):
 					
 					if 'reset' in modes[0]:
 						print "Starting mode reset timer, seconds: {0}".format(modes[0]['reset'])
-						#if timer_mode is not None:
-						#	timer_mode.cancel()
-						#timer_mode = Timer(float(modes[0]['reset']), cb_mode_reset)
-						#timer_mode.start()
+						#if self.timer_mode is not None:
+						#	self.timer_mode.cancel()
+						#self.timer_mode = Timer(float(modes[0]['reset']), cb_mode_reset)
+						#self.timer_mode.start()
 						reset_mode_timer(modes[0]['reset'])
 					break
 
 	def reset_mode_timer(self,seconds):
 		""" reset the mode time-out if there is still activity in current mode """
-		global timer_mode
 		#mode_timer = 0
 		#gobject.timeout_add_seconds(function['mode_reset'],cb_mode_reset,pin,function_ix)
-		if timer_mode is not None:
-			timer_mode.cancel()
-		timer_mode = Timer(seconds, cb_mode_reset)
-		timer_mode.start()
+		if self.timer_mode is not None:
+			self.timer_mode.cancel()
+		self.timer_mode = Timer(seconds, cb_mode_reset)
+		self.timer_mode.start()
 					
 	# ********************************************************************************
 	# GPIO interrupt handlers
