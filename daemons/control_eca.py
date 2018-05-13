@@ -75,6 +75,8 @@ cfg_zmq = None		# Zero MQ
 cfg_ecasound = None
 cfg_gpio = None		# GPIO setup
 
+qVolume = None
+
 
 # ********************************************************************************
 # Output wrapper
@@ -336,6 +338,10 @@ def eca_mute(state):
 # GPIO Callback
 #
 def cb_gpio_function(code):
+	print "Added to queue: EXECUTE: {0}".format(code)
+	qVolume.put(code)
+
+def handle_queue(code):
 	global local_volume
 	print "EXECUTE: {0}".format(code)
 	if code in ('VOLUME_INC','VOLUME_DEC'):#function_map:
@@ -346,7 +352,9 @@ def cb_gpio_function(code):
 			local_volume -= 5
 			eca_set_effect_amplification(local_volume)
 	else:
-		print "function {0} not in function_map".format(code)	
+		print "function {0} not in function_map".format(code)
+
+
 
 # ********************************************************************************
 # MQ handler
@@ -748,16 +756,25 @@ def setup():
 def main():
 
 	global bus
+	global qVolume
 	
 	# Initialize the mainloop
-	DBusGMainLoop(set_as_default=True)
-	mainloop = gobject.MainLoop()
+	#DBusGMainLoop(set_as_default=True)
+	#mainloop = gobject.MainLoop()
 	
 	# Initialize MQ message receiver
-	gobject.idle_add(handle_mq_message)
+	#gobject.idle_add(handle_mq_message)
+	
+	qVolume = Queue(maxsize=4)	# Short stuff that can run anytime:
+
 
 	eca_execute("start")
 	while True:
+		item = qVolume.get_nowait()
+		if item is not None:
+			handle_queue(item)
+			# sign off task
+			qVolume.task_done()
 		time.sleep(0.1)
 	print "Stopping Ecasound"
 	eca_execute("stop")
