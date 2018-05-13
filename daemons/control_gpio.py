@@ -190,7 +190,7 @@ def load_cfg_gpio():
 # ********************************************************************************
 # GPIO helpers
 # 
-def cb_gpio_function(function):
+def cb_gpio_function(code):
 	#print "CALL: {0}".format(function)
 	print "EXECUTE: {0}".format(code)
 	if code in function_map:
@@ -293,11 +293,6 @@ def setup():
 	gpio = GpioController(cfg_gpio,cb_gpio_function)
 	
 	printer('Initialized [OK]')
-	print "\nDEBUG; pins_function:"
-	print pins_function
-	
-	print "DEBUG; pins_config:"
-	print pins_config
 		
 def main():		
 
