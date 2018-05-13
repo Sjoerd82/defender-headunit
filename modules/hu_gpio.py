@@ -1,25 +1,11 @@
-#!/usr/bin/python
-
 #
-# GPIO Remote Control
+# GPIO
 # Venema, S.R.G.
-# 2018-05-04
+# 2018-05-13
 #
-# GPIO remote control enables GPIO input for buttons and encoders.
-# It comes with optional rudimentary debouncing.
-#
-# Only one mode group is supported at the moment!
-#
-
-# Button presses are NOT asynchronous!! i.e. wait until a button press is handled before the next button can be handled.
-# TODO: Consider making them asynchronous, or at least the update lib (long) / volume (short) buttons
-
-# printer -> syslog adds considerable latency!  ?
-# (and?) Or.. is it the MQ send() ?
-
-# TODO:
+# GPIO stuff
 # 
-# 
+#
 
 import sys						# path
 import os						# 
@@ -30,44 +16,10 @@ from logging import getLogger	# logger
 from RPi import GPIO			# GPIO
 from threading import Timer		# timer to reset mode change
 
-import gobject					# main loop
-from dbus.mainloop.glib import DBusGMainLoop
-
 #sys.path.append('../modules')
 sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
-from hu_msg import MqPubSubFwdController
-from hu_gpio import GpioController
 
-# *******************************************************************************
-# Global variables and constants
-#
-DESCRIPTION = "GPIO Remote Control"
-BANNER = "GPIO Controller Daemon"
-LOG_TAG = 'GPIO'
-LOGGER_NAME = 'gpio'
-
-DEFAULT_CONFIG_FILE = '/etc/configuration.json'
-DEFAULT_LOG_LEVEL = LL_INFO
-DEFAULT_PORT_PUB = 5559
-DEFAULT_PORT_SUB = 5560
-
-#DELAY = 0.005
-DELAY = 0.01
-#LONG_PRESS = 0.05
-
-# global variables
-logger = None
-args = None
-messaging = None
-timer_mode = None
-gpio = None
-
-# configuration
-cfg_main = None		# main
-cfg_daemon = None	# daemon
-cfg_zmq = None		# Zero MQ
-cfg_gpio = None		# GPIO setup
 
 # pins
 pins_state = {}			# pin (previous) state
@@ -96,97 +48,15 @@ modes = []
 active_modes = []
 long_press_ms = 800
 
-'''
-pins_config = 
-	{ "23": {
-		dev_name
-		dev_type
-		functions: [ {
-			fnc_name
-			function
-			mode							= valid for this mode only
-			fnc_short_press/fnc_long_press 	= list of
-			}
-		]
-		has_short
-		has_long
-		has_multi
-		},
-	  "26": { .. }
-	 }
-
-
-
-'''
-
-# ********************************************************************************
-# Output wrapper
+#********************************************************************************
+# GPIO stuff
 #
-def printer( message, level=LL_INFO, continuation=False, tag=LOG_TAG ):
-	logger.log(level, message, extra={'tag': tag})
+class GpioController(object,cfg_gpio):
 
-# ********************************************************************************
-# Load configuration
-#
-def load_cfg_main():
-	""" load main configuration """
-	config = configuration_load(LOGGER_NAME,args.config)
-	return config
-
-def load_cfg_zmq():
-	""" load zeromq configuration """	
-	if not 'zeromq' in cfg_main:
-		printer('Error: Configuration not loaded or missing ZeroMQ, using defaults:')
-		printer('Publisher port: {0}'.format(args.port_publisher))
-		printer('Subscriber port: {0}'.format(args.port_subscriber))
-		#cfg_main["zeromq"] = { "port_publisher": DEFAULT_PORT_PUB, "port_subscriber":DEFAULT_PORT_SUB } }
-		config = { "port_publisher": DEFAULT_PORT_PUB, "port_subscriber":DEFAULT_PORT_SUB }
-		return config
-	else:
-		config = {}
-		# Get portnumbers from either the config, or default value
-		if 'port_publisher' in cfg_main['zeromq']:
-			config['port_publisher'] = cfg_main['zeromq']['port_publisher']
-		else:
-			config['port_publisher'] = DEFAULT_PORT_PUB
-		
-		if 'port_subscriber' in cfg_main['zeromq']:
-			config['port_subscriber'] = cfg_main['zeromq']['port_subscriber']		
-		else:
-			config['port_subscriber'] = DEFAULT_PORT_SUB
-			
-		return config
-
-def load_cfg_daemon():
-	""" load daemon configuration """
-	if 'daemons' not in cfg_main:
-		return
-	else:
-		for daemon in cfg_main['daemons']:
-			if 'script' in daemon and daemon['script'] == os.path.basename(__file__):
-				return daemon
-
-def load_cfg_gpio():		
-	""" load specified GPIO configuration """	
-	if 'directories' not in cfg_main or 'daemon-config' not in cfg_main['directories'] or 'config' not in cfg_daemon:
-		return
-	else:		
-		config_dir = cfg_main['directories']['daemon-config']
-		# TODO
-		config_dir = "/mnt/PIHU_CONFIG/"	# fix!
-		config_file = cfg_daemon['config']
-		
-		gpio_config_file = os.path.join(config_dir,config_file)
+	def __init__(self):
+		gpio_setup(cfg_gpio)
 	
-	# load gpio configuration
-	if os.path.exists(gpio_config_file):
-		config = configuration_load(LOGGER_NAME,gpio_config_file)
-		return config
-	else:
-		print "ERROR: not found: {0}".format(gpio_config_file)
-		return
-
-
+	
 # ********************************************************************************
 # GPIO helpers
 # 
@@ -592,7 +462,7 @@ def int_handle_encoder(pin):
 # ********************************************************************************
 # GPIO setup
 # 
-def gpio_setup():
+def gpio_setup(cfg_gpio):
 	global pins_function # old?
 	global pins_state
 	global pins_config
@@ -839,124 +709,3 @@ def gpio_setup():
 		printer("WARNING: Same pin used multiple times, this may lead to unpredictable results.",level=LL_WARNING)
 		pins_monitor = set(pins_monitor) # no use in keeping duplicates
 
-#********************************************************************************
-# Parse command line arguments
-#
-def parse_args():
-
-	global args
-	import argparse
-	parser = default_parser(DESCRIPTION,BANNER)
-	# additional command line arguments mat be added here
-	args = parser.parse_args()
-
-def setup():
-
-	#
-	# Logging
-	# -> Output will be logged to the syslog, if -b specified, otherwise output will be printed to console
-	#
-	global logger
-	logger = logging.getLogger(LOGGER_NAME)
-	logger.setLevel(logging.DEBUG)
-
-	if args.b:
-		logger = log_create_syslog_loghandler(logger, args.loglevel, LOG_TAG, address='/dev/log') 	# output to syslog
-	else:
-		logger = log_create_console_loghandler(logger, args.loglevel, LOG_TAG) 						# output to console
-	
-	#
-	# Configuration
-	#
-	global cfg_main
-	global cfg_zmq
-	global cfg_daemon
-	global cfg_gpio
-
-	# main
-	cfg_main = load_cfg_main()
-	if cfg_main is None:
-		printer("Main configuration could not be loaded.", level=LL_CRITICAL)
-		exit(1)
-	
-	# zeromq
-	if not args.port_publisher and not args.port_subscriber:
-		cfg_zmq = load_cfg_zmq()
-	else:
-		if args.port_publisher and args.port_subscriber:
-			pass
-		else:
-			load_cfg_zmq()
-	
-		# Pub/Sub port override
-		if args.port_publisher:
-			configuration['zeromq']['port_publisher'] = args.port_publisher
-		if args.port_subscriber:
-			configuration['zeromq']['port_subscriber'] = args.port_subscriber
-
-	if cfg_zmq is None:
-		printer("Error loading Zero MQ configuration.", level=LL_CRITICAL)
-		exit(1)
-			
-	# daemon
-	cfg_daemon = load_cfg_daemon()
-	if cfg_daemon is None:
-		printer("Daemon configuration could not be loaded.", level=LL_CRITICAL)
-		exit(1)
-	
-	# gpio
-	cfg_gpio = load_cfg_gpio()
-	if cfg_gpio is None:
-		printer("GPIO configuration could not be loaded.", level=LL_CRITICAL)
-		exit(1)
-	
-	#
-	# ZMQ
-	#
-	global messaging
-	printer("ZeroMQ: Initializing")
-	messaging = MqPubSubFwdController('localhost',DEFAULT_PORT_PUB,DEFAULT_PORT_SUB)
-	
-	printer("ZeroMQ: Creating Publisher: {0}".format(DEFAULT_PORT_PUB))
-	messaging.create_publisher()
-
-	#
-	# GPIO
-	#
-#	retval = gpio_setup()
-#	if retval == False:
-#		printer("GPIO: Error setting up")
-#		exit(1)
-
-	gpio = GpioController(cfg_gpio)
-	
-	printer('Initialized [OK]')
-	print "\nDEBUG; pins_function:"
-	print pins_function
-	
-	print "DEBUG; pins_config:"
-	print pins_config
-		
-def main():		
-
-	# Initialize the mainloop
-	#DBusGMainLoop(set_as_default=True)
-	#mainloop = gobject.MainLoop()
-
-	#try:
-	#	mainloop.run()
-	#finally:
-	#	mainloop.quit()
-	
-	while True:
-		sleep(0.1)
-
-
-if __name__ == "__main__":
-	parse_args()
-	setup()
-	try:
-		main()
-	finally:
-		GPIO.cleanup()
-	

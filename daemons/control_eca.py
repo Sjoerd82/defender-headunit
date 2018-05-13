@@ -619,27 +619,6 @@ def setup():
 	#
 	# Configuration
 	#
-	""" OLD WAY:
-	global configuration
-	if not args.port_publisher and not args.port_subscriber:
-		configuration = load_zeromq_configuration()
-	else:
-		if args.port_publisher and args.port_subscriber:
-			pass
-		else:
-			configuration = load_zeromq_configuration()
-	
-		# Pub/Sub port override
-		if args.port_publisher:
-			configuration['zeromq']['port_publisher'] = args.port_publisher
-		if args.port_subscriber:
-			configuration['zeromq']['port_subscriber'] = args.port_subscriber
-	
-	retval = load_ecasound_configuration()
-	if not retval:
-		exit(1)
-	"""
-	#New:
 	global cfg_main
 	global cfg_ecasound
 	cfg_main = load_cfg_main()
