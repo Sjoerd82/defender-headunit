@@ -597,7 +597,6 @@ def gpio_setup():
 	global pins_state
 	global pins_config
 	global long_press_ms
-	global mode_timer
 	global modes
 	global active_modes
 	
