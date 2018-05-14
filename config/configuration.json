@@ -246,6 +246,7 @@
 			, "chainsetups": [
 				{
 					  "n":		"jack_alsa_simple"
+					, "b":		"4096"
 					, "chains": [
 						{
 							  "a":		"pre"
