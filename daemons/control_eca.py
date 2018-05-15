@@ -49,7 +49,7 @@ LOGGER_NAME = 'ecasnd'
 #DEFAULT_LOG_LEVEL = LL_INFO
 DEFAULT_PORT_PUB = 5559
 DEFAULT_PORT_SUB = 5560
-SUBSCRIPTIONS = ['/volume/','/equalizer/']
+SUBSCRIPTIONS = ['/volume/','/equalizer/','/events/source/']
 
 PATH_VOLUME = '/volume'
 PATH_VOLUME_EVENT = '/events/volume'
@@ -592,6 +592,31 @@ def handle_path_equalizer(path,cmd,args):
 	ret = None
 	if function_to_call in locals():
 		ret = locals()[function_to_call](args)
+		printer('Executed {0} function {1} with result status: {2}'.format(base_path,function_to_call,ret),level=LL_DEBUG)
+	else:
+		printer('Function {0} does not exist'.format(function_to_call))
+
+	return ret
+
+def handle_path_events(path,cmd,params):
+
+	base_path = 'events'
+	# remove base path
+	del path[0]
+	
+	def data_source_active(params):
+		payload = json.loads(params[0])
+		print payload
+
+	if path:
+		function_to_call = cmd + '_' + '_'.join(path)
+	else:
+		# called without sub-paths
+		function_to_call = cmd + '_' + base_path
+
+	ret = None
+	if function_to_call in locals():
+		ret = locals()[function_to_call](params)
 		printer('Executed {0} function {1} with result status: {2}'.format(base_path,function_to_call,ret),level=LL_DEBUG)
 	else:
 		printer('Function {0} does not exist'.format(function_to_call))
