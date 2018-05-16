@@ -206,8 +206,8 @@ def parse_args():
 
 	def epi(name=None):
 		epilog = "List of commands:\n"
-		epilog += list_of_commands()
-		epilog += "\nhelp <command> explains how to use the command\n"
+		epilog += list_of_commands_descr()
+		epilog += '\n"{0} help <command>" explains how to use the command\n'.format(os.path.basename(__file__))
 		return epilog
 
 	def list_of_commands():
@@ -272,7 +272,7 @@ def parse_args():
 		print "{0} -h".format(program)
 		print "{0} [options] [help] <command> [args]".format(program)
 		print "{0} [options] <mq> <-p path> <-c mq-command> [-a] [-r]".format(program)
-		print "Run {0} -h for a list of commands".format(program)		
+		print 'Run "{0} -h" for a list of commands'.format(program)		
 		exit(0)
 
 	args = p2.parse_args()
