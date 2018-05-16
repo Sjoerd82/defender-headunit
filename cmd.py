@@ -226,8 +226,10 @@ def parse_args():
 
 	import argparse
 	global commands
-	global cmd_exec
-	global cmd_params
+	global mq_cmd
+	global mq_path
+	global mq_args
+	global mq_rpath
 
 	for command in app_commands:
 		commands.append(command['name'])
@@ -367,7 +369,7 @@ def main():
 		ret = messaging.publish_command(mq_path,mq_cmd,response_path=RETURN_PATH)
 	else:
 		#ret = messaging.publish_command(args.p,args.c,params)
-		ret = messaging.publish_command(mq_path,mq_cmd,mq_param)
+		ret = messaging.publish_command(mq_path,mq_cmd,mq_args)
 		
 	print ret
 
