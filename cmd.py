@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import os
+import json
 from time import sleep
 from modules.hu_msg import MqPubSubFwdController
 
@@ -199,9 +200,9 @@ def parse_args():
 
 	def msg(name=None):
 		return '''Headunit Command Interpreter
-		   %(prog)s -h
-		   %(prog)s [options] [help] <command> [args]
-		   %(prog)s [options] <mq> <-p path> <-c mq-command> [-a] [-r]
+	   %(prog)s -h
+	   %(prog)s [options] [help] <command> [args]
+	   %(prog)s [options] <mq> <-p path> <-c mq-command> [-a] [-r]
 	'''
 
 	def epi(name=None):
