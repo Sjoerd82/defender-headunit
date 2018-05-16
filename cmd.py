@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
+import os
 from time import sleep
-
 from modules.hu_msg import MqPubSubFwdController
 
 DESCRIPTION = "Send a MQ command"
@@ -11,105 +11,335 @@ RETURN_PATH = '/bladiebla/'
 
 args = None
 messaging = None
+commands = []
+mq_cmd = None
+mq_path = None
+mq_args = None
 
-commands = [
-	'source-check',
-	'source-select',
-	'source-next',
-	'source-prev',
-	'player-play',
-	'player-pause',
-	'player-stop',
-	'player-next',
-	'player-prev',
-	'player-nextfolder',
-	'player-prevfolder',
-	'player-update',
-	'player-random',
-	'volume',
-	'volume-att',
-	'volume-mute',
-	'system-reboot',
-	'system-shutdown',
-	'events-udisks-add'	]
-
-#	   COMMAND, PARAMETERS                     DESCRIPTION, REST COMMAND, PATH
-commands2 = [
-	 ('source-check',  '[index, subindex]',   'Check source availability','PUT','/source/check',)
-	,('source-select', 'index, [subindex]',   'Select a source','PUT','/source/subsource',)
-	,('source-next-primary', None,            'Select next primary source','PUT','/source/next_primary',)
-	,('source-prev-primary', None,            'Select previous primary source','PUT','/source/prev_primary',)
-	,('source-next', None,                    'Select next source','PUT','/source/next',)
-	,('source-prev', None,                    'Select previous source','PUT','/source/prev',)
-	,('source-available', 'true|false, index, subindex',  'Set source availability','PUT','/source/available',)
-	,('source-details', '[index, subindex]',  'Get source details','GET','/source/subsource',)
-	,('player-play', None,                    'Start playback','PUT','/player/state',)
-	,('player-pause', None,                   'Pause playback','PUT','/player/state',)
-	,('player-stop', None,                    'Stop playback','PUT','/player/state',)
-	,('player-state', None,                   'Get state','GET','/player/state',)
-	,('player-next', None,                    'Play next song','PUT','/player/next',)
-	,('player-prev', None,                    'Play previous song','PUT','/player/prev',)
-	,('player-seek', '[+/-]seconds',          'Seek','PUT','/player/seek',)
-	,('player-folders', None,                 'List folders','GET','/player/folders',)
-	,('player-nextfolder', None,              'Next folder','PUT','/player/nextfolder',)
-	,('player-prevfolder',None,               'Prev folder','PUT','/player/prevfolder',)
-	,('player-update', '[location]',          'Update MPD database','PUT','/player/update',)
-	,('player-random-modes', None,            'Get available random modes','GET','/player/randommode',)
-	,('player-random', '[on | off | mode]',   'Set random','PUT','/player/random',)
-	,('player-details', None,                 'Get player details','GET','/player/track',)
-	,('volume', 'volume',                     'Set volume','PUT','/volume',)
-	,('volume-att', '[on | off]',             'Set volume to ATT level','PUT','/volume/att',)
-	,('volume-mute', '[on | off]',            'Mute volume','PUT','/volume/mute',)
-	,('system-reboot', '[timer]',             'Reboot system','PUT','/system/reboot',)
-	,('system-shutdown', '[timer]',           'Shutdown system' ,'PUT','/system/shutdown',)
-	,('events-udisks-add', 'payload',         'Emulate a udisks-add event','DATA','/events/udisks/added',)
-	,('events-udisks-rem', 'payload',         'Emulate a udisks-rem event','DATA','/events/udisks/removed',)
-	,('events-network-up', 'payload',         'Emulate a network-up event','DATA','/events/network/up',)
-	,('events-network-down', 'payload',       'Emulate a network-down event','DATA','/events/network/down',)
+app_commands =	[
+	{	'name': 'source-check',
+		'params': [
+			{'name':'index','required':False, 'help':''},
+			{'name':'subindex','required':False, 'help':''}
+		],
+		'description': 'Check source availability',
+		'command': 'PUT',
+		'path': '/source/check'
+	},
+	{	'name': 'source-select',
+		 'params': [
+			{'name':'index', 'required':True, 'help':''},
+			{'name':'subindex','required':False, 'help':''}
+		],
+		 'description': 'Select a source',
+		 'command':'PUT',
+		 'path': '/source/subsource'
+	},
+	{	'name': 'source-next-primary',
+		'params': None,
+		'description': 'Select next primary source',
+		'command': 'PUT',
+		'path': '/source/next_primary'
+	},
+	{	'name': 'source-prev-primary',
+		'params': None,
+		'description': 'Select previous primary source',
+		'command': 'PUT',
+		'path': '/source/prev_primary'
+	},	
+	{	'name': 'source-next',
+		'params': None,
+		'description': 'Select next source',
+		'command': 'PUT',
+		'path': '/source/next'
+	},
+	{	'name': 'source-prev',
+		'params': None,
+		'description': 'Select previous source',
+		'command': 'PUT',
+		'path': '/source/prev'
+	},
+	{	'name': 'source-available',
+		 'params': [
+			{'name':'availability', 'required':True, 'help':''},
+			{'name':'index', 'required':True, 'help':''},
+			{'name':'subindex','required':True, 'help':''}
+		],
+		'description': 'Set source availability',
+		'command': 'PUT',
+		'path': '/source/available'
+	},
+	{	'name': 'source-details',
+		'params': [
+			{'name':'index','required':False, 'help':'Source index'},
+			{'name':'subindex','required':False, 'help':'Source subindex'}
+		],
+		'description': 'Get source details',
+		'command': 'GET',
+		'path': '/source/subsource'
+	},
+	{	'name': 'player-play',
+		'params': None,
+		'description': 'Start playback',
+		'command': 'PUT',
+		'path': '/player/state'
+	},
+	{	'name': 'player-pause',
+		'params': None,
+		'description': 'Pause playback',
+		'command': 'PUT',
+		'path': '/player/state'
+	},
+	{	'name': 'player-stop',
+		'params': None,
+		'description': 'Stop playback',
+		'command': 'PUT',
+		'path': '/player/state'
+	},
+	{	'name': 'player-state',
+		'params': None,
+		'description': 'Get state',
+		'command': 'GET',
+		'path': '/player/state'
+	},
+	{	'name': 'player-next',
+		'params': None,
+		'description': 'Play next song',
+		'command': 'PUT',
+		'path': '/player/next'
+	},
+	{	'name': 'player-prev',
+		'params': None,
+		'description': 'Play previous song',
+		'command': 'PUT',
+		'path': '/player/prev'
+	},
+	{	'name': 'player-seek',
+		'params': [ {'name':'seconds', 'required':True, 'help':'Use a + or - sign to seek forward or reverse'} ],
+		'description': 'Seek',
+		'command': 'PUT',
+		'path': '/player/seek'
+	},
+	{	'name': 'player-folders',
+		'params': None,
+		'description': 'List folders',
+		'command': 'GET',
+		'path': '/player/folders'
+	},
+	{	'name': 'player-nextfolder',
+		'params': None,
+		'description': 'Next folder',
+		'command': 'PUT',
+		'path': '/player/nextfolder'
+	},
+	{	'name': 'player-prevfolder',
+		'params': None,
+		'description': 'Prev folder',
+		'command': 'PUT',
+		'path': '/player/prevfolder'
+	},
+	{	'name': 'player-update',
+		'params': [ {'name':'location', 'required':False, 'help':'Location to update'} ],
+		'description': 'Update MPD database',
+		'command': 'PUT',
+		'path': '/player/update'
+	},
+	{	'name': 'player-random-modes',
+		'params': None,
+		'description': 'Get available random modes',
+		'command': 'GET',
+		'path': '/player/randommode'
+	},
+	{	'name': 'player-random',
+		'params': [ {'name':'mode', 'required':False, 'help':'ON | OFF | TOGGLE (default)'} ],
+		'description': 'Set random',
+		'command': 'PUT',
+		'path': '/player/random'
+	},
+	{	'name': 'player-details',
+		'params': None,
+		'description': 'Get player details',
+		'command': 'GET',
+		'path': '/player/track'
+	},
+	{	'name': 'volume',
+		'params': [ {'name':'volume', 'required':True,'help':'Volume in percentage'} ],
+		'description': 'Set volume',
+		'command': 'PUT',
+		'path': '/volume'
+	},
+	{	'name': 'volume-att',
+		'params': [ {'name':'mode', 'required':False, 'help':'ON (default) | OFF | TOGGLE'} ],
+		'description': 'Set volume to ATT level',
+		'command': 'PUT',
+		'path': '/volume/att'
+	},
+	{	'name': 'volume-mute',
+		'params': [ {'name':'mode', 'required':False, 'help':'ON | OFF | TOGGLE (default)'} ],
+		'description': 'Mute volume',
+		'command': 'PUT',
+		'path': '/volume/mute'
+	},
+	{	'name': 'system-reboot',
+		'params': [ {'name':'timer', 'required':False, 'help':'Time in seconds to shutdown. Default: 0'} ],
+		'description': 'Reboot system',
+		'command': 'PUT',
+		'path': '/system/reboot'
+	},
+	{	'name': 'system-shutdown',
+		'params': [ {'name':'timer', 'required':False, 'help':'Time in seconds to shutdown. Default: 0'} ],
+		'description': 'Shutdown system' ,
+		'command': 'PUT',
+		'path': '/system/shutdown'
+	}
 	]
+	
 
-
-#********************************************************************************
-# Parse command line arguments
-#
 def parse_args():
 
+	def msg(name=None):
+		return '''Headunit Command Interpreter
+		   %(prog)s -h
+		   %(prog)s [options] [help] <command> [args]
+		   %(prog)s [options] <mq> <-p path> <-c mq-command> [-a] [-r]
+	'''
+
+	def epi(name=None):
+		epilog = "List of commands:\n"
+		epilog += list_of_commands()
+		epilog += "\nhelp <command> explains how to use the command\n"
+		return epilog
+
+	def list_of_commands():
+		cmd_list = ""
+		for command in app_commands:
+			cmd_list += command['name'] +"\n"
+		return cmd_list
+
+	def list_of_commands_descr():
+		cmd_list = ""
+		for command in app_commands:
+			cmd_list += " {0:20} {1}\n".format(command['name'],command['description'])
+		return cmd_list
+
 	import argparse
-	global args
+	global commands
+	global cmd_exec
+	global cmd_params
+
+	for command in app_commands:
+		commands.append(command['name'])
 	
-	# cmd.py										Show available commands and switches
-	# cmd.py [options] <command> [args]				Execute command, with optional parmeter
-	# cmd.py [options] [-x <-p> <-c> [-a] [-r] ]	Execute specified path and command, with optional parameters and return path
+	# cmd.py -h										Show available commands and switches
+	# cmd.py [options] [help] <command> [args]		Execute command, with optional parmeter
+	# cmd.py [options] <mq> <-p> <-c> [-a] [-r] 	Execute specified path and command, with optional parameters and return path
 	
-	description_with_commands = DESCRIPTION
-	for command in commands2:
-		description_with_commands = description_with_commands +'\n {0} {1} {2}'.format(command[0],command[1],command[2])
+	parser = argparse.ArgumentParser(description=None, usage=msg(), epilog=epi(), formatter_class=argparse.RawDescriptionHelpFormatter) #, add_help=False)
 	
-	parser = argparse.ArgumentParser(description=description_with_commands)
-	subparsers = parser.add_subparsers(help='Specify MQ message')
 	# options:
 	parser.add_argument('-v', action='store_true', help='Verbose')
-	parser.add_argument('--port_publisher','-pp',  action='store')
-	parser.add_argument('--port_subscriber','-ps', action='store')
-
-	x_parser = subparsers.add_parser("-x")
-
-	# -x
-	#parser.add_argument('-x', action='store', help='Specify MQ message')
-	x_parser.add_argument('-p', action='store', required=True)
-	x_parser.add_argument('-c', action='store', required=True)
-	x_parser.add_argument('-a', action='store')
-	x_parser.add_argument('-r', action='store_true')
-	x_parser.add_argument('-j','--json', action='store_true')
+	parser.add_argument('--port_pub',  action='store')
+	parser.add_argument('--port_sub', action='store')
 	
-	# command
-	cmd_parser = subparsers.add_parser("command")
-	parser.add_argument('command', action='store', choices=commands)
-	parser.add_argument('command_arg', action='store') # how to make this positional optional??
+	p2 = argparse.ArgumentParser( parents = [ parser ], add_help=False )
+	subparsers = p2.add_subparsers()
 	
-	args = parser.parse_args()
-	print args
-	exit(0)
+	# command help
+	parser_help = subparsers.add_parser('help')
+	parser_help.add_argument('command', action='store', nargs='*')
+	parser_help.set_defaults(which='help')
+
+	# MQ
+	parser_mq = subparsers.add_parser('mq')
+	parser_mq.add_argument('-p', action='store', nargs='?', const='None')	# required, but not marking here to avoid argparse feedback
+	parser_mq.add_argument('-c', action='store', nargs='?', const='None')	# required, but not marking here to avoid argparse feedback
+	parser_mq.add_argument('-a', action='store')
+	parser_mq.add_argument('-r', action='store_true')
+	#parser_mq.add_argument('-j','--json', action='store_true')
+	parser_mq.set_defaults(which='mq')
+
+	# commands
+	for command in app_commands:
+		parser_cmd = subparsers.add_parser(command['name'])
+		parser_cmd.add_argument('command_args', action='store', nargs='*')
+		parser_cmd.set_defaults(which=command['name'])
+	
+	args1, unknown_args = parser.parse_known_args()
+	
+	if not unknown_args:
+		program = os.path.basename(__file__)
+		print "Headunit Command Interpreter"
+		print "{0} -h".format(program)
+		print "{0} [options] [help] <command> [args]".format(program)
+		print "{0} [options] <mq> <-p path> <-c mq-command> [-a] [-r]".format(program)
+		print "Run {0} -h for a list of commands".format(program)		
+		exit(0)
+
+	args = p2.parse_args()
+	
+	if args.which == 'help':
+		if not args.command:
+			print "Available commands:"
+			print list_of_commands_descr()
+			print 'Run "{0} help <command>" for more details'.format(os.path.basename(__file__))
+			exit(1)
+		elif args.command[0] in commands:
+			ix = commands.index(args.command[0])
+			print "{0}".format(app_commands[ix]['description'])
+			param_string = ""
+			if 'params' in app_commands[ix]:
+				param_help = ""
+				for param in app_commands[ix]['params']:
+					if param['required']:
+						param_string += "<"+param['name']+"> "
+					else:
+						param_string += "["+param['name']+"] "
+					if 'help' in param:
+						param_help += " {0:12}{1}\n".format(param['name'], param['help'])
+			print "Syntax:\n {0} {1}".format(args.command[0],param_string)
+			if not param_help == "":
+				print "Parameters:"
+				print "{0}".format(param_help)
+			exit(0)
+		else:
+			print "Unknown command: {0}".format(args.command[0])
+			print 'Run "{0} help" for a list of commands'.format(os.path.basename(__file__))
+			exit(1)
+		
+	# MQ command
+	if args.which == 'mq':
+	
+		if not args.p:
+			print "error: argument -p is required"
+		elif args.p == 'None':
+			print "error: argument -p syntax: -p path"
+	
+		if not args.c:
+			print "error: argument -c is required"
+		elif args.c == 'None':
+			print "error: argument -c syntax: -c command; example: GET, PUT, DATA"
+		
+		#TODO
+		cmd_type = 'mq'
+		cmd_exec = args.c
+		#cmd_params = args.
+		exit(0)
+	
+	# Pre-defined command
+	if args.which in commands:
+		ix = commands.index(args.which)
+
+		mq_cmd = app_commands[ix]['command']
+		mq_path = app_commands[ix]['path']
+		params = {}
+		for pix, command_arg in enumerate(args.command_args):
+			key = app_commands[ix]['params'][pix]['name']
+			params[key] = command_arg
+		
+		mq_param = json.dumps(params)
+		print type(mq_param)
+		
+	print "excuting command! {0} {1} with params {2}".format(mq_cmd,mq_path,mq_param)
 
 #********************************************************************************
 # Setup
@@ -129,6 +359,15 @@ def setup():
 	
 def main():
 
+	if args.r:
+		ret = messaging.publish_command(args.p,args.c,response_path=RETURN_PATH)
+	else:
+		ret = messaging.publish_command(args.p,args.c,params)
+		
+	print ret
+
+	
+	exit(0)
 	cmd = 'PUT'
 	params = None
 	
