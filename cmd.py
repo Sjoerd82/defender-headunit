@@ -363,9 +363,11 @@ def setup():
 def main():
 
 	if mq_rpath is not None:
-		ret = messaging.publish_command(args.p,args.c,response_path=RETURN_PATH)
+		#ret = messaging.publish_command(args.p,args.c,response_path=RETURN_PATH)
+		ret = messaging.publish_command(mq_path,mq_cmd,response_path=RETURN_PATH)
 	else:
-		ret = messaging.publish_command(args.p,args.c,params)
+		#ret = messaging.publish_command(args.p,args.c,params)
+		ret = messaging.publish_command(mq_path,mq_cmd,mq_param)
 		
 	print ret
 
