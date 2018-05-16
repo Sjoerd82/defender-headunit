@@ -342,7 +342,8 @@ def parse_args():
 			params[key] = command_arg
 		
 		mq_param = json.dumps(params)
-		print type(mq_param)
+		if mq_cmd == 'GET':
+			mq_rpath = RETURN_PATH
 		
 	print "excuting command! {0} {1} with params {2}".format(mq_cmd,mq_path,mq_param)
 
@@ -368,7 +369,6 @@ def main():
 		#ret = messaging.publish_command(args.p,args.c,response_path=RETURN_PATH)
 		ret = messaging.publish_command(mq_path,mq_cmd,response_path=RETURN_PATH)
 	else:
-		#ret = messaging.publish_command(args.p,args.c,params)
 		ret = messaging.publish_command(mq_path,mq_cmd,mq_args)
 		
 	print ret
