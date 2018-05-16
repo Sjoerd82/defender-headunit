@@ -16,6 +16,7 @@ commands = []
 mq_cmd = None
 mq_path = None
 mq_args = None
+mq_rpath = None
 
 app_commands =	[
 	{	'name': 'source-check',
@@ -321,9 +322,10 @@ def parse_args():
 			print "error: argument -c syntax: -c command; example: GET, PUT, DATA"
 		
 		#TODO
-		cmd_type = 'mq'
-		cmd_exec = args.c
-		#cmd_params = args.
+		mq_cmd = None
+		mq_path = None
+		mq_args = None
+		mq_rpath = None
 		exit(0)
 	
 	# Pre-defined command
@@ -360,7 +362,7 @@ def setup():
 	
 def main():
 
-	if args.r:
+	if mq_rpath is not None:
 		ret = messaging.publish_command(args.p,args.c,response_path=RETURN_PATH)
 	else:
 		ret = messaging.publish_command(args.p,args.c,params)
