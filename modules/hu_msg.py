@@ -256,6 +256,15 @@ class MqPubSubFwdController(object):
 				msg_resp = self.reply_subscriber.recv()
 				msg_prsd = parse_message(msg_resp)
 				data = msg_prsd['data']
+				
+				print "--------- DEBUG ------"
+				print msg_resp
+				print "---------"
+				print msg_prsd
+				print "---------"
+				print data
+				print "---------"
+				
 				#data = create_data(msg_prsd['data'],200)
 				"""
 				print "------------"

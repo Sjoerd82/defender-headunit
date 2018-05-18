@@ -395,7 +395,7 @@ def parse_args():
 			if mq_cmd == 'GET':
 				mq_rpath = RETURN_PATH
 			
-		if mq_args == [{}]:
+		if mq_args == "{}":
 			mq_args = None
 		
 	print "excuting command! {0} {1} with params {2}".format(mq_cmd,mq_path,mq_args)
@@ -420,12 +420,14 @@ def main():
 	else:
 		ret = messaging.publish_command(mq_path,mq_cmd,mq_args)
 	
+	print ret
+	
 	if ret == True:
 		print "Response: [OK]"
 	elif ret == False or ret is None:
 		print "Response: [FAIL]"
 	else:
-		if 'retval' in ret:  print "Return code: {0}".format(ret['retval'])
+		if 'retval' in ret: print "Return code: {0}".format(ret['retval'])
 		if 'payload' in ret:
 			print "Return data:"
 			print_dict(ret['payload'])
