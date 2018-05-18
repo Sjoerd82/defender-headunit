@@ -65,12 +65,10 @@ def parse_message(message):
 		#param = raw_cmd_par[1]
 		# extract data or arguments
 		if command == 'data':
-			#data = raw_cmd_par[1]
 			data = json.loads(raw_cmd_par[1])
-			print "DATA: {0}".format(data)
+			#print "DATA: {0}".format(data)
 		else:
-			print "LOADING: {0} ({1})".format(raw_cmd_par[1],type(raw_cmd_par[1]))
-			
+			#print "LOADING: {0} ({1})".format(raw_cmd_par[1],type(raw_cmd_par[1]))		
 			param = json.loads(raw_cmd_par[1])
 
 			if command == 'data':
@@ -205,19 +203,19 @@ class MqPubSubFwdController(object):
 		# append arguments
 		if arguments:
 			if type(arguments) == 'list':
-				print "DEBUG MSG: LIST"
+				#print "DEBUG MSG: LIST"
 				message = "{0}:{1}".format(message, ",".join(arguments))
 			elif type(arguments) == 'dict':
-				print "DEBUG MSG: DICT"
+				#print "DEBUG MSG: DICT"
 				jsonified_args = json.dumps(arguments)
 				message = "{0}:{1}".format(message, jsonified_args)				
 			else:
-				print "DEBUG MSG: OTHER"
+				#print "DEBUG MSG: OTHER"
 				jsonified_args = json.dumps(arguments)
 				message = "{0}:{1}".format(message, jsonified_args)
 		
 		if wait_for_reply:
-			print "DEBUG: SETUP WAIT_FOR_REPLY; TOPIC={0}".format(response_path)
+			#print "DEBUG: SETUP WAIT_FOR_REPLY; TOPIC={0}".format(response_path)
 			# create a subscription socket, listening to the response path
 	#		reply_subscriber = self.context.socket (zmq.SUB)
 	#		reply_subscriber.connect("tcp://{0}:{1}".format(self.address, self.port_sub))
@@ -237,7 +235,7 @@ class MqPubSubFwdController(object):
 		else:
 			# poll for a reply
 			#try:
-			print "DEBUG: POLLING !"
+			#print "DEBUG: POLLING !"
 			response = None
 			parsed_response = None
 	#		events = dict(reply_poller.poll()) #timeout
@@ -248,30 +246,16 @@ class MqPubSubFwdController(object):
 			#	return None
 	#		if self.subscriber in events:
 			if self.reply_subscriber in events:
-				print "OHYEAHBABY! AGAIN"
+				#print "OHYEAHBABY! AGAIN"
+				pass
 			
 			if events:
-				print "DEBUG: YES!"
+				#print "DEBUG: YES!"
 				# todo: have a look at what's returned?
 				# read response from the server
 				msg_resp = self.reply_subscriber.recv()
 				msg_prsd = parse_message(msg_resp)
 				data = msg_prsd['data']
-				
-				print "--------- DEBUG ------"
-				print type(data)
-				print data
-				print "---------"
-				
-				#data = create_data(msg_prsd['data'],200)
-				"""
-				print "------------"
-				print "RAW:"
-				print response
-				print "PARSED:"
-				parsed_response = parse_message(response)
-				print parsed_response
-				"""
 				
 				#? this ok? clean-up?
 				# check response?
