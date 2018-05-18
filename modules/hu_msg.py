@@ -63,28 +63,27 @@ def parse_message(message):
 	elif len(raw_cmd_par) == 2:
 		command = raw_cmd_par[0].lower()
 		#param = raw_cmd_par[1]
+		# extract data or arguments
+		if command == 'data':
+			data = raw_cmd_par[1]
+			print "DATA: {0}".format(data)
+		else:
+			print "LOADING: {0} ({1})".format(raw_cmd_par[1],type(raw_cmd_par[1]))
+			
+			param = json.loads(raw_cmd_par[1])
+
+			if command == 'data':
+				#expect a json/dict
+				params.append(param)
+			else:
+				#,-delimited parameters
+				for parpart in param.split(","):
+					if parpart:
+						params.append(parpart)
+		
 	else:
 		printer("Malformed message!",level=LL_ERROR)
 		return False
-
-	# extract data or arguments
-	if command == 'data':
-		data = raw_cmd_par[1]
-		print "DATA: {0}".format(data)
-	else:
-		print "LOADING: {0} ({1})".format(raw_cmd_par[1],type(raw_cmd_par[1]))
-		
-		param = json.loads(raw_cmd_par[1])
-
-		if command == 'data':
-			#expect a json/dict
-			params.append(param)
-		else:
-			#,-delimited parameters
-			for parpart in param.split(","):
-				if parpart:
-					params.append(parpart)
-		
 	
 	# debugging
 	#print("[MQ] Received Path: {0}; Command: {1}; Parameters: {2}; Response path: {3}".format(path,command,params,resp_path))
