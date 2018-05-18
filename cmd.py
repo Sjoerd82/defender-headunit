@@ -395,7 +395,7 @@ def parse_args():
 			if mq_cmd == 'GET':
 				mq_rpath = RETURN_PATH
 			
-		if mq_args == {}:
+		if mq_args == [{}]:
 			mq_args = None
 		
 	print "excuting command! {0} {1} with params {2}".format(mq_cmd,mq_path,mq_args)
