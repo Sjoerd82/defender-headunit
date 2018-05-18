@@ -420,19 +420,17 @@ def main():
 	else:
 		ret = messaging.publish_command(mq_path,mq_cmd,mq_args)
 	
-	print ret
-	
 	if ret == True:
 		print "Response: [OK]"
 	elif ret == False or ret is None:
 		print "Response: [FAIL]"
 	else:
-		if ret == dict:
+		if type(ret) == dict:
 			if 'retval' in ret: print "Return code: {0}".format(ret['retval'])
 			if 'payload' in ret:
 				print "Return data:"
 				print_dict(ret['payload'])
-		elif ret == str:
+		elif type(ret) == str:
 			print ret
 					
 	"""
