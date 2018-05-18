@@ -319,8 +319,9 @@ def parse_args():
 		program = os.path.basename(__file__)
 		print "Headunit Command Interpreter"
 		print "{0} -h".format(program)
+		print "{0} [options] status".format(program)
 		print "{0} [options] [help] <command> [args]".format(program)
-		print "{0} [options] <mq> <-p path> <-c mq-command> [-a] [-r]".format(program)
+		print "{0} [options] mq <-p path> <-c mq-command> [-a] [-r]".format(program)
 		print 'Run "{0} -h" for a list of commands'.format(program)		
 		exit(0)
 
@@ -412,7 +413,7 @@ def main():
 
 	# todo: check, is it ok to include an empty mq_args?
 	if mq_rpath is not None:
-		ret = messaging.publish_command(mq_path,mq_cmd,mq_args,response_path=RETURN_PATH)
+		ret = messaging.publish_command(mq_path,mq_cmd,mq_args,wait_for_reply=True,response_path=RETURN_PATH)
 	else:
 		ret = messaging.publish_command(mq_path,mq_cmd,mq_args)
 	
