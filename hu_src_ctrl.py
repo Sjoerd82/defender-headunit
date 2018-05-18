@@ -898,6 +898,7 @@ def idle_message_receiver():
 		retval = dispatcher(parsed_msg['path'],parsed_msg['cmd'],parsed_msg['args'])
 
 		print "-- DEBUG -- 2"
+		print type(retval)
 		print retval
 		
 		if parsed_msg['resp_path']:

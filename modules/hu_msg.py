@@ -258,10 +258,7 @@ class MqPubSubFwdController(object):
 				data = msg_prsd['data']
 				
 				print "--------- DEBUG ------"
-				print msg_resp
-				print "---------"
-				print msg_prsd
-				print "---------"
+				print type(data)
 				print data
 				print "---------"
 				

@@ -427,10 +427,13 @@ def main():
 	elif ret == False or ret is None:
 		print "Response: [FAIL]"
 	else:
-		if 'retval' in ret: print "Return code: {0}".format(ret['retval'])
-		if 'payload' in ret:
-			print "Return data:"
-			print_dict(ret['payload'])
+		if ret == dict:
+			if 'retval' in ret: print "Return code: {0}".format(ret['retval'])
+			if 'payload' in ret:
+				print "Return data:"
+				print_dict(ret['payload'])
+		elif ret == str:
+			print ret
 					
 	"""
 	# FOR DEBUGGING PURPOSES
