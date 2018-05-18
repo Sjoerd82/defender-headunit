@@ -2,6 +2,7 @@
 
 import os
 import json
+import sys
 from time import sleep
 from modules.hu_msg import MqPubSubFwdController
 
@@ -216,7 +217,31 @@ app_commands =	[
 	}
 	]
 	
-
+def print_dict(obj, nested_level=0):
+	spacing = '   '
+	key_line = 20
+	if type(obj) == dict:
+		print '{0}{{'.format((nested_level) * spacing)
+		for k, v in obj.items():
+			uitlijnen = 20 - (nested_level*2) - len(k) - nested_level
+			uitlijn = ' ' * uitlijnen
+			if hasattr(v, '__iter__'):
+				print '{0}{1}:'.format((nested_level + 1) * spacing, k)
+				print_dict(v, nested_level + 1)
+			else:
+				print '{0}{1}{2}: "{3}"'.format((nested_level + 1) * spacing, k, uitlijn, v)
+		print '{0}}}'.format(nested_level * spacing)
+	elif type(obj) == list:
+		print '{0}['.format((nested_level) * spacing)
+		for v in obj:
+			if hasattr(v, '__iter__'):
+				print_dict(v, nested_level + 1)
+			else:
+				print '{0}"{1}"'.format((nested_level + 1) * spacing, v)
+		print '{0}]'.format((nested_level) * spacing)
+	else:
+		print '{0}{1}'.format(nested_level * spacing, obj)
+		
 def parse_args():
 
 	def msg(name=None):
@@ -371,9 +396,6 @@ def parse_args():
 		
 	print "excuting command! {0} {1} with params {2}".format(mq_cmd,mq_path,mq_args)
 
-#********************************************************************************
-# Setup
-#
 def setup():
 
 	#
@@ -386,7 +408,6 @@ def setup():
 	#messaging.create_subscriber(SUBSCRIPTIONS)
 	sleep(1)
 
-	
 def main():
 
 	# todo: check, is it ok to include an empty mq_args?
@@ -400,8 +421,10 @@ def main():
 	elif ret == False or ret is None:
 		print "Response: [FAIL]"
 	else:
-		
-	
+		if 'retval' in ret:  print "Return code: {0}".format(ret['retval'])
+		if 'payload' in ret:
+			print "Return data:"
+			print_dict(ret['payload'])
 					
 	"""
 	# FOR DEBUGGING PURPOSES

@@ -23,6 +23,7 @@ def printer( message, level=LL_INFO, tag="", logger_name=__name__):
 def parse_message(message):
 	""" Parses a MQ standardized message.
 	Format: <path>[+response_path] <command>[:arg1, argn]
+	Format: <path> DATA:<data>
 	                                                 ^ags may contain spaces, double quotes, all kinds of messed up shit
 	
 	Arguments:
@@ -41,6 +42,7 @@ def parse_message(message):
 	path = []
 	params = []
 	resp_path = []
+	data = {}
 	
 	raw_path_resp_cmd = message.split(" ",1) #maxsplit=1, seperating at the first space [0]=paths, [1]=cmd+params
 	raw_path_resp = raw_path_resp_cmd[0].split("+",1) # [0] = path, [1] = response path
@@ -61,23 +63,27 @@ def parse_message(message):
 	elif len(raw_cmd_par) == 2:
 		command = raw_cmd_par[0].lower()
 		#param = raw_cmd_par[1]
-		print "LOADING: {0} ({1})".format(raw_cmd_par[1],type(raw_cmd_par[1]))
 		
-		param = json.loads(raw_cmd_par[1])
-
-		if command == 'data':
-			#expect a json/dict
-			params.append(param)
+		if command == 'DATA':
+			data = raw_cmd_par[1]
+			print "DATA: {0}".format(data)
 		else:
-			#,-delimited parameters
-			for parpart in param.split(","):
-				if parpart:
-					params.append(parpart)
+			print "LOADING: {0} ({1})".format(raw_cmd_par[1],type(raw_cmd_par[1]))
+			
+			param = json.loads(raw_cmd_par[1])
+
+			if command == 'data':
+				#expect a json/dict
+				params.append(param)
+			else:
+				#,-delimited parameters
+				for parpart in param.split(","):
+					if parpart:
+						params.append(parpart)
 		
 	else:
 		printer("Malformed message!",level=LL_ERROR)
 		return False
-	
 	
 	# debugging
 	#print("[MQ] Received Path: {0}; Command: {1}; Parameters: {2}; Response path: {3}".format(path,command,params,resp_path))
@@ -91,6 +97,7 @@ def parse_message(message):
 	parsed_message['cmd'] = command
 	parsed_message['args'] = params
 	parsed_message['resp_path'] = resp_path
+	parsed_message['data'] = data
 	return parsed_message
 
 def create_data(payload, retval):
@@ -107,80 +114,6 @@ def create_data(payload, retval):
 	return data
 
 
-def parse_message_new(message):
-	""" Parses a MQ standardized message.
-	Format: <path>[+response_path] <command>[:arg1, argn]
-	                                                 ^ags may contain spaces, double quotes, all kinds of messed up shit
-	
-	Arguments:
-	 message		string, message
-	 
-	Returns:
-	 dictionary
-	 
-	{
-	 "retval": 200,
-	 "data": { payload* }
-	}
-	 
-	 Returns a tuple/dict (#tbd) + data?
-	"""
-	printer(colorize("{0}: {1}".format(__name__,'parse_message(message):'),'dark_gray'),level=LL_DEBUG)
-	
-	path = []
-	params = []
-	resp_path = []
-	
-	raw_path_resp_cmd = message.split(" ",1) #maxsplit=1, seperating at the first space [0]=paths, [1]=cmd+params
-	raw_path_resp = raw_path_resp_cmd[0].split("+",1) # [0] = path, [1] = response path
-	raw_cmd_par   = raw_path_resp_cmd[1].split(":",1)	#maxsplit=1,seperating at the first semicolon. [0]=cmd, [1]=param(s)
-	
-	# extract path
-	for pathpart in raw_path_resp[0].split("/"):
-		if pathpart:
-			path.append(pathpart.lower())
-	
-	# extract response path (if any), as a whole..
-	if len(raw_path_resp) > 1:
-		resp_path = raw_path_resp[1]
-	
-	# extract command and arguments
-	if len(raw_cmd_par) == 1:
-		command = raw_cmd_par[0].lower()
-	elif len(raw_cmd_par) == 2:
-		command = raw_cmd_par[0].lower()
-		#param = raw_cmd_par[1]
-		print "LOADING: {0} ({1})".format(raw_cmd_par[1],type(raw_cmd_par[1]))
-		
-		param = json.loads(raw_cmd_par[1])
-
-		if command == 'data':
-			#expect a json/dict
-			params.append(param)
-		else:
-			#,-delimited parameters
-			for parpart in param.split(","):
-				if parpart:
-					params.append(parpart)
-		
-	else:
-		printer("Malformed message!",level=LL_ERROR)
-		return False
-	
-	
-	# debugging
-	#print("[MQ] Received Path: {0}; Command: {1}; Parameters: {2}; Response path: {3}".format(path,command,params,resp_path))
-	
-	# return as a tuple:
-	#return path, command, params, resp_path
-	
-	# return as a dict:
-	parsed_message = {}
-	parsed_message['path'] = path
-	parsed_message['cmd'] = command
-	parsed_message['args'] = params
-	parsed_message['resp_path'] = resp_path
-	return parsed_message
 #********************************************************************************
 # ZeroMQ Wrapper for Pub-Sub Forwarder Device
 #
@@ -320,7 +253,10 @@ class MqPubSubFwdController(object):
 				print "DEBUG: YES!"
 				# todo: have a look at what's returned?
 				# read response from the server
-				response = self.reply_subscriber.recv()
+				msg_resp = self.reply_subscriber.recv()
+				msg_prsd = parse_message(msg_resp)
+				data = msg_prsd['data']
+				#data = create_data(msg_prsd['data'],200)
 				"""
 				print "------------"
 				print "RAW:"
@@ -332,8 +268,7 @@ class MqPubSubFwdController(object):
 				
 				#? this ok? clean-up?
 				# check response?
-				return parsed_response
-				create_data(
+				return data
 				
 			else:
 				print "DEBUG: NOPE"

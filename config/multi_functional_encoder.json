@@ -27,7 +27,7 @@
 			, "function": null
 			, "short_press": [ "multi_enc_sw" ]
 			, "mode_cycle": "modecycle1"
-			, "mode_select": [ "track", "volume", "bass", "treble", "menu" ]
+			, "mode_select": [ "volume", "track", "bass", "treble", "menu" ]
 		},
 		{
 			  "name":"track_select"
