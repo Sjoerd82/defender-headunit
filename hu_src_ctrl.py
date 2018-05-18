@@ -271,6 +271,8 @@ def handle_path_source(path,cmd,args):
 		if not valid:
 			return None
 
+		ret = None
+
 		if not args:
 			ret = sc_sources.subsource_all()
 		elif len(args) == 1:
