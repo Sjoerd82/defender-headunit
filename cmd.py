@@ -8,7 +8,7 @@ from modules.hu_msg import MqPubSubFwdController
 DESCRIPTION = "Send a MQ command"
 DEFAULT_PORT_SUB = 5560
 DEFAULT_PORT_PUB = 5559
-RETURN_PATH = '/bladiebla/'
+RETURN_PATH = '/cmdpy/'
 
 args = None
 messaging = None
@@ -80,23 +80,43 @@ app_commands =	[
 		'command': 'GET',
 		'path': '/source/subsource'
 	},
+	{	'name': 'source-update',
+		'params': [
+			{'name':'index','required':False, 'help':'Source index'},
+			{'name':'subindex','required':False, 'help':'Source subindex'}
+		],
+		'description': 'Update source (MPD: Source Database)',
+		'command': 'PUT',
+		'path': '/source/update'
+	},
+	{	'name': 'source-update-location',
+		'params': [
+			{'name':'location','required':True, 'help':'Relative location, as seen from MPD'}
+		],
+		'description': 'Update MPD database for given location',
+		'command': 'PUT',
+		'path': '/source/update-location'
+	},
 	{	'name': 'player-play',
 		'params': None,
 		'description': 'Start playback',
 		'command': 'PUT',
-		'path': '/player/state'
+		'path': '/player/state',
+		'params_override': '{"state":"play"}'
 	},
 	{	'name': 'player-pause',
 		'params': None,
 		'description': 'Pause playback',
 		'command': 'PUT',
-		'path': '/player/state'
+		'path': '/player/state',
+		'params_override': '{"state":"pause"}'
 	},
 	{	'name': 'player-stop',
 		'params': None,
 		'description': 'Stop playback',
 		'command': 'PUT',
-		'path': '/player/state'
+		'path': '/player/state',
+		'params_override': '{"state":"stop"}'
 	},
 	{	'name': 'player-state',
 		'params': None,
@@ -328,6 +348,7 @@ def parse_args():
 		mq_path = None
 		mq_args = None
 		mq_rpath = None
+		mq_param = None
 		exit(0)
 	
 	# Pre-defined command
@@ -336,16 +357,19 @@ def parse_args():
 
 		mq_cmd = app_commands[ix]['command']
 		mq_path = app_commands[ix]['path']
-		params = {}
-		for pix, command_arg in enumerate(args.command_args):
-			key = app_commands[ix]['params'][pix]['name']
-			params[key] = command_arg
+		if 'params_override' in app_commands[ix]:
+			mq_args = app_commands[ix]['params_override']
+		else:
+			params = {}
+			for pix, command_arg in enumerate(args.command_args):
+				key = app_commands[ix]['params'][pix]['name']
+				params[key] = command_arg
+			
+			mq_args = json.dumps(params)
+			if mq_cmd == 'GET':
+				mq_rpath = RETURN_PATH
 		
-		mq_param = json.dumps(params)
-		if mq_cmd == 'GET':
-			mq_rpath = RETURN_PATH
-		
-	print "excuting command! {0} {1} with params {2}".format(mq_cmd,mq_path,mq_param)
+	print "excuting command! {0} {1} with params {2}".format(mq_cmd,mq_path,mq_args)
 
 #********************************************************************************
 # Setup
@@ -365,87 +389,21 @@ def setup():
 	
 def main():
 
+	# todo: check, is it ok to include an empty mq_args?
 	if mq_rpath is not None:
-		#ret = messaging.publish_command(args.p,args.c,response_path=RETURN_PATH)
-		ret = messaging.publish_command(mq_path,mq_cmd,response_path=RETURN_PATH)
+		ret = messaging.publish_command(mq_path,mq_cmd,mq_args,response_path=RETURN_PATH)
 	else:
 		ret = messaging.publish_command(mq_path,mq_cmd,mq_args)
+	
+	if ret == True:
+		print "Response: [OK]"
+	elif ret == False or ret is None:
+		print "Response: [FAIL]"
+	else:
 		
-	print ret
-
 	
-	exit(0)
-	cmd = 'PUT'
-	params = None
-	
-	if args.command is not None:
-		for command in commands2:
-			if args.command == command[0]:
-				cmd = command[3]
-				path = command[4]
-				
-				#if cmd == 'source-details':
-				#	if args.command_arg is not None:
-				#		
-				if cmd == 'player-play':
-					params = '{"state":"play"}'
-				elif cmd == 'player-pause':
-					params = '{"state":"pause"}'
-				elif cmd == 'player-stop':
-					params = '{"state":"stop"}'
-				elif cmd == 'player-update':
-					if args.command_arg is None:
-						path = '/player/update_source'
-					else:
-						path = '/player/update_location'
-				
-				if args.command_arg is not None:
-					params = args.command_arg
 					
 	"""
-	if args.command == 'source-check':
-		path = '/source/check'
-	elif args.command == 'source-select':
-		path = '/source/subsource'
-		params = args.command_arg
-	elif args.command == 'source-next':
-		path = '/source/next'
-	elif args.command == 'source-prev':
-		path = '/source/prev'
-	elif args.command == 'player-play':
-		path = '/player/state'
-		params = '{"state":"play"}'
-	elif args.command == 'player-pause':
-		path = '/player/state'
-		params = '{"state":"pause"}'
-	elif args.command == 'player-stop':
-		path = '/player/state'
-		params = '{"state":"stop"}'
-	elif args.command == 'player-next':
-		path = '/player/next'
-	elif args.command == 'player-prev':
-		path = '/player/prev'
-	elif args.command == 'player-nextfolder':
-		path = '/player/nextfolder'
-	elif args.command == 'player-prevfolder':
-		path = '/player/prevfolder'
-	elif args.command == 'player-update':
-		path = '/player/update'
-	elif args.command == 'player-random':
-		path = '/player/random'
-		params = '{"mode":"toggle"}'
-	elif args.command == 'volume':
-		path = '/volume'
-		params = None	#todo
-	elif args.command == 'volume-att':
-		path = '/volume/att'
-	elif args.command == 'volume-mute':
-		path = '/volume/mute'
-	elif args.command == 'system-reboot':
-		path = '/system/reboot'
-	elif args.command == 'system-shutdown':
-		path = '/system/shutdown'
-
 	# FOR DEBUGGING PURPOSES
 	elif args.command == 'events-udisks-add':
 		cmd = 'DATA'
@@ -453,31 +411,12 @@ def main():
 		params = '{"device":"/dev/sda1", "mountpoint":"","uuid":"f9dc11d6-01","label":""}'
 	"""
 	
-	print path
-	print cmd
-	print params
-	
-	ret = messaging.publish_command(path,cmd,params)
-	print ret
-
-	exit(0)
-
 	#ret = messaging.publish_command('/source/primary','GET', None, True, 5000, RETURN_PATH)
 	#print ret
-	
-	params = args.a
-	#if args.j is True:
-	#params = u'{"state":"play"}'
-	
-	if args.r:
-		ret = messaging.publish_command(args.p,args.c,response_path=RETURN_PATH)
-	else:
-		ret = messaging.publish_command(args.p,args.c,params)
-		
-	print ret
-
+	exit(0)
 	
 if __name__ == '__main__':
 	parse_args()
 	setup()
 	main()
+
