@@ -65,7 +65,8 @@ def parse_message(message):
 		#param = raw_cmd_par[1]
 		# extract data or arguments
 		if command == 'data':
-			data = raw_cmd_par[1]
+			#data = raw_cmd_par[1]
+			data = json.loads(raw_cmd_par[1])
 			print "DATA: {0}".format(data)
 		else:
 			print "LOADING: {0} ({1})".format(raw_cmd_par[1],type(raw_cmd_par[1]))
