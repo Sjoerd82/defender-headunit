@@ -274,7 +274,11 @@ def handle_path_source(path,cmd,args):
 		if not args:
 			ret = sc_sources.subsource_all()
 		elif len(args) == 1:
-			ret = sc_sources.subsource_all(args[0])
+			if type(args[0]) == int:
+				ret = sc_sources.subsource_all(args[0])
+			#else:
+			#	invalid arg...
+			# todo
 		elif len(args) == 2:
 			ret = sc_sources.subsource(args[0],args[1])
 
