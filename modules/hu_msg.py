@@ -63,7 +63,11 @@ def parse_message(message):
 	elif len(raw_cmd_par) == 2:
 		command = raw_cmd_par[0].lower()
 		#param = raw_cmd_par[1]
-		
+	else:
+		printer("Malformed message!",level=LL_ERROR)
+		return False
+
+	# extract data or arguments
 	if command == 'data':
 		data = raw_cmd_par[1]
 		print "DATA: {0}".format(data)
@@ -81,9 +85,6 @@ def parse_message(message):
 				if parpart:
 					params.append(parpart)
 		
-	else:
-		printer("Malformed message!",level=LL_ERROR)
-		return False
 	
 	# debugging
 	#print("[MQ] Received Path: {0}; Command: {1}; Parameters: {2}; Response path: {3}".format(path,command,params,resp_path))
