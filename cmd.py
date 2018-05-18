@@ -254,7 +254,7 @@ def parse_args():
 	def epi(name=None):
 		epilog = "List of commands:\n"
 		epilog += list_of_commands_descr()
-		epilog += '\n"{0} help <command>" explains how to use the command\n'.format(os.path.basename(__file__))
+		epilog += '\nRun "{0} help <command>" explains how to use the command\n'.format(os.path.basename(__file__))
 		return epilog
 
 	def list_of_commands():
@@ -287,6 +287,7 @@ def parse_args():
 	
 	# options:
 	parser.add_argument('-v', action='store_true', help='Verbose')
+	parser.add_argument('--debug', action='store_true', help='Debug on')
 	parser.add_argument('--port_pub',  action='store')
 	parser.add_argument('--port_sub', action='store')
 	
@@ -397,8 +398,9 @@ def parse_args():
 			
 		if mq_args == "{}":
 			mq_args = None
-		
-	print "excuting command! {0} {1} with params {2}".format(mq_cmd,mq_path,mq_args)
+	
+	# debug
+	#print "excuting command! {0} {1} with params {2}".format(mq_cmd,mq_path,mq_args)
 
 def setup():
 

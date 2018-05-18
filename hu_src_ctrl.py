@@ -892,17 +892,11 @@ def idle_message_receiver():
 		printer("Received message: {0}".format(rawmsg))	#TODO: debug
 		parsed_msg = parse_message(rawmsg)
 
-		print "-- DEBUG -- 1"
-		print parsed_msg
 		# send message to dispatcher for handling	
 		retval = dispatcher(parsed_msg['path'],parsed_msg['cmd'],parsed_msg['args'])
 
-		print "-- DEBUG -- 2"
-		print type(retval)
-		print retval
-		
 		if parsed_msg['resp_path']:
-			print "DEBUG: Resp Path present.. returing message.. data={0}".format(retval)
+			#print "DEBUG: Resp Path present.. returing message.. data={0}".format(retval)
 			messaging.publish_command(parsed_msg['resp_path'],'DATA',retval)
 		
 	return True # Important! Returning true re-enables idle routine.
