@@ -30,6 +30,7 @@ DEFAULT_PORT_PUB = 5559
 RETURN_PATH = '/cmdpy/'
 
 args = None
+args1 = None
 messaging = None
 
 cfg_main = None		# main
@@ -330,6 +331,8 @@ def parse_args():
 
 	import argparse
 	global commands
+	global args1
+	global args
 	global mq_cmd
 	global mq_path
 	global mq_args
