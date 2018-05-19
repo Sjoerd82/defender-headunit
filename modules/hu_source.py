@@ -77,13 +77,16 @@ LOG_TAG = 'SOURCE'
 
 class SourceController(object):
 
-	def do_event(self,event,path,payload=None):	
+	def do_event(self,event,path,payload=None):
+		# executed by hu_src_ctrl, handle events path
+	
 		#for pluginInfo in self.source_manager.getPluginsOfCategory(category):
 		#	print "DEBUG: executing plugins on_category()"
 		#	pluginInfo.plugin_object.on_category(category,payload)
 		i = 0
 		for source in self.lSource:
 			if event in source['events']:
+				# any source could implement any event. in practice: 'udisks' is handled by media.py
 				self.source_manager.getPluginByName(self.lSource[i]['name']).plugin_object.on_event(event,path,payload)
 			i += 1
 		

@@ -1,5 +1,9 @@
 #!/usr/bin/python
 
+# TODO:
+# - add list of process status
+# - request list of registered USB devices
+
 import os
 import json
 import sys

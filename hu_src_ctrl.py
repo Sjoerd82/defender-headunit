@@ -849,7 +849,29 @@ def handle_path_events(path,cmd,args):
 	def data_system_reboot(args):
 		pass
 	def data_udisks_added(args):
-		payload = json.loads(args[0])
+		""" New media added
+			
+			Data object:
+			{
+				device
+				uuid
+				mountpoint
+				label
+			}
+			Return data:
+				?
+			Return codes:
+				?
+		"""
+		#valid = validate_args(args,1,3)
+		#if not valid:
+		#	return None
+
+		print "DEBUG!"
+		print args
+		payload = json.loads(args)
+		#payload = json.loads(args[0])
+		# do_event() executes the 'udisks' event
 		sc_sources.do_event('udisks',path,payload)
 		printSummary()
 		return None
