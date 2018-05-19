@@ -134,7 +134,7 @@ class MqPubSubFwdController(object):
 		self.port_pub = port_pub
 		self.port_sub = port_sub
 		
-		self.VALID_COMMANDS = ['GET','PUT','POST','DEL','DATA']
+		self.VALID_COMMANDS = ['GET','PUT','POST','DEL','DATA', 'INFO']
 
 	def __send(self, message):
 		#printer(colorize("Sending MQ message: {0}".format(message),'dark_gray'),level=LL_DEBUG)
@@ -188,7 +188,7 @@ class MqPubSubFwdController(object):
 		
 		"""		
 		if command not in self.VALID_COMMANDS:
-			print "invalid command"
+			printer("Invalid command: {0}".format(command),level=LL_ERROR)
 			return False
 			
 		if wait_for_reply and not response_path:

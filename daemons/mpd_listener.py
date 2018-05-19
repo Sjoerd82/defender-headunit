@@ -136,6 +136,7 @@ def mpd_handle_change(events):
 			state['random'] = "off"
 			state['repeat'] = "off"
 			messaging.publish_command('/events/player','INFO', state)
+			messaging.publish_command('/events/player','INF0', state)
 			# do not add code after here... (will not be executed)
 		
 		#elif e == "subscription":
@@ -253,7 +254,6 @@ def main():
 	oMpdClient.send_idle()
 		
 	while True:			
-		print "DEBUG: 1"
 		canRead = select([oMpdClient], [], [], 0)[0]
 		if canRead:
 			print "DEBUG: 2"
