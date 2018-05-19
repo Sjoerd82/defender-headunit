@@ -24,8 +24,8 @@ import gobject
 from dbus.mainloop.glib import DBusGMainLoop
 
 # ecasound
-from pyeca import *				# default implementation
-#from ecacontrol import *		# native Python implementation
+#from pyeca import *		# default implementation
+from ecacontrol import *	# native Python implementation
 from Queue import Queue		# queuing
 
 # Utils
@@ -797,6 +797,7 @@ def main():
 	eca_execute("start")
 	while True:
 		while not qVolume.empty():
+			print qVolume.qsize()
 			item = qVolume.get_nowait()
 			if item is not None:
 				handle_queue(item)

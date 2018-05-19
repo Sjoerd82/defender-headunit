@@ -112,7 +112,7 @@
 		, "port_subscriber": 5560
 	}
 	, "ecasound": {
-		  "chainsetup": "null"
+		  "chainsetup": "mpd_fifo"
 		, "chain_master_amp": "pre"
 		, "chain_mute": "pre"
 		, "chain_eq": "pre"
