@@ -176,6 +176,10 @@ def udisk_add( device ):
 	media_info['device'] = str(DeviceFile)
 	media_info['uuid'] = get_part_uuid(str(DeviceFile))
 	media_info['mountpoint'] = get_mountpoint(media_info['device'])
+	
+	print "DEBUG!"
+	print media_info
+	
 	media_info['label'] = os.path.basename(media_info['mountpoint']).rstrip('\n')
 	
 	attached_drives.append(media_info)
@@ -217,6 +221,7 @@ def udisk_rem( device ):
 	print partition
 	
 	# find our missing drive
+	ix_del = None
 	i=0
 	for devpart in attached_drives:
 		if devpart['device'] == partition:
@@ -233,7 +238,10 @@ def udisk_rem( device ):
 			break
 		i+=1
 	
-	del attached_drives[ix_del]
+	if ix_del is not None:
+		del attached_drives[ix_del]
+	else:
+		printer("An unregistered device was removed.")
 	
 	"""
 	ix = Sources.getIndex('name','media')
