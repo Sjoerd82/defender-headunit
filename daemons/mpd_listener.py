@@ -168,8 +168,8 @@ def mpd_handle_change(events):
 				if 'folder' in results1[0]: track['folder'] = results1[0]['folder']
 				if 'genre' in results1[0]: track['genre'] = results1[0]['genre']
 				if 'date' in results1[0]: track['date'] = results1[0]['date']
-				mq_args = json.dumps(track)
-				ret = messaging.publish_command('/events/track','INFO', mq_args)
+				#mq_args = json.dumps(track)
+				ret = messaging.publish_command('/events/track','INFO', track)
 				if ret == True:
 					printer(" > Sending MQ notification [OK]")
 				else:
