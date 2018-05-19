@@ -818,26 +818,37 @@ def handle_path_events(path,cmd,args,data):
 	del path[0]
 	
 	def data_source_active(data):
+		print "ACTIVE"
 		pass
 	def data_source_available(data):
+		print "AVAILABLE"
 		pass
 	def data_player_state(data):
+		print "STATE"
 		pass
 	def data_player_track(data):
+		print "TRACK"
 		pass
 	def data_player_elapsed(data):
+		print "ELAPSED"
 		pass
 	def data_player_updating(data):
+		print "UPDATING"
 		pass
 	def data_player_updated(data):
+		print "UPDATED"
 		pass
 	def data_volume_changed(data):
+		print "VOL_CHG"
 		pass
 	def data_volume_att(data):
+		print "ATT"
 		pass
 	def data_volume_mute(data):
+		print "MUTE"
 		pass
 	def data_network_up(data):
+		print "NET UP"
 		pass
 	def data_network_down(data):
 		payload = json.loads(data)
@@ -845,8 +856,10 @@ def handle_path_events(path,cmd,args,data):
 		printSummary()
 		return None
 	def data_system_shutdown(data):
+		print "SHUTDOWN"
 		pass
 	def data_system_reboot(data):
+		print "REBOOT"
 		pass
 	def data_udisks_added(data):
 		""" New media added
@@ -867,17 +880,13 @@ def handle_path_events(path,cmd,args,data):
 		#if not valid:
 		#	return None
 
-		print "DEBUG!"
-		print data
 		payload = json.loads(data)
-		print payload
-		#payload = json.loads(args[0])
-		# do_event() executes the 'udisks' event
-		sc_sources.do_event('udisks',path,payload)
+		sc_sources.do_event('udisks',path,payload)	# do_event() executes the 'udisks' event
 		printSummary()
 		return None
 		
 	def data_udisks_removed(data):
+		print "REMOVED"
 		pass
 
 	if path:

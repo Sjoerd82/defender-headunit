@@ -132,7 +132,7 @@ def mpd_handle_change(events):
 			state['state'] = "Bla1"
 			state['random'] = "off"
 			state['repeat'] = "off"
-			messaging.publish_event('/events/player', 'INFO', state)
+			messaging.publish_command('/events/player','INFO', state)
 			# do not add code after here... (will not be executed)
 		
 		#elif e == "subscription":
@@ -145,7 +145,8 @@ def mpd_handle_change(events):
 		elif e == "database":
 			#mpd_control('database')
 			#zmq_send('/event/mpd/update','SET')
-			messaging.publish_event('/events/update', 'INFO', None)
+			#messaging.publish_event('/events/update', 'INFO', None)
+			messaging.publish_command('/events/update','INFO', None)
 		elif e == "options":
 			print "OPTIONS! RANDOM??"
 		else:
