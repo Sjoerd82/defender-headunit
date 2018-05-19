@@ -143,7 +143,7 @@ def get_data(ret,returndata=False,eventpath=None):
 		
 	return data
 		
-def handle_path_source(path,cmd,args):
+def handle_path_source(path,cmd,args,data):
 
 	base_path = 'source'
 
@@ -506,7 +506,7 @@ def handle_path_source(path,cmd,args):
 		
 	return ret
 		
-def handle_path_player(path,cmd,args):
+def handle_path_player(path,cmd,args,data):
 
 	base_path = 'player'
 
@@ -811,7 +811,7 @@ def handle_path_player(path,cmd,args):
 
 	return ret
 
-def handle_path_events(path,cmd,args):
+def handle_path_events(path,cmd,args,data):
 
 	base_path = 'events'
 	# remove base path
@@ -848,7 +848,7 @@ def handle_path_events(path,cmd,args):
 		pass
 	def data_system_reboot(args):
 		pass
-	def data_udisks_added(args):
+	def data_udisks_added(data):
 		""" New media added
 			
 			Data object:
@@ -868,15 +868,16 @@ def handle_path_events(path,cmd,args):
 		#	return None
 
 		print "DEBUG!"
-		print args
-		payload = json.loads(args)
+		print data
+		payload = json.loads(data)
+		print payload
 		#payload = json.loads(args[0])
 		# do_event() executes the 'udisks' event
 		sc_sources.do_event('udisks',path,payload)
 		printSummary()
 		return None
 		
-	def data_udisks_removed(args):
+	def data_udisks_removed(data):
 		pass
 
 	if path:
@@ -900,10 +901,10 @@ def handle_path_events(path,cmd,args):
 def idle_message_receiver():
 	#print "DEBUG: idle_msg_receiver()"
 	
-	def dispatcher(path, command, arguments):
+	def dispatcher(path, command, arguments, data):
 		handler_function = 'handle_path_' + path[0]
 		if handler_function in globals():
-			ret = globals()[handler_function](path, command, arguments)
+			ret = globals()[handler_function](path, command, arguments, data)
 			return ret
 		else:
 			print("No handler for: {0}".format(handler_function))
@@ -915,7 +916,7 @@ def idle_message_receiver():
 		parsed_msg = parse_message(rawmsg)
 
 		# send message to dispatcher for handling	
-		retval = dispatcher(parsed_msg['path'],parsed_msg['cmd'],parsed_msg['args'])
+		retval = dispatcher(parsed_msg['path'],parsed_msg['cmd'],parsed_msg['args'],parsed_msg['data'])
 
 		if parsed_msg['resp_path']:
 			#print "DEBUG: Resp Path present.. returing message.. data={0}".format(retval)
