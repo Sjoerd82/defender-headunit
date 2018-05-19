@@ -410,7 +410,7 @@ def setup():
 	global logger
 	logger = logging.getLogger(LOGGER_NAME)
 	logger.setLevel(logging.DEBUG)
-	logger = log_create_console_loghandler(logger, args.loglevel, LOG_TAG) 	# output to console
+	logger = log_create_console_loghandler(logger, args1.loglevel, LOG_TAG) 	# output to console
 
 	#
 	# Configuration
@@ -424,19 +424,19 @@ def setup():
 		exit(1)
 
 	# zeromq
-	if not args.port_publisher and not args.port_subscriber:
+	if not args1.port_publisher and not args1.port_subscriber:
 		cfg_zmq = load_cfg_zmq()
 	else:
-		if args.port_publisher and args.port_subscriber:
+		if args1.port_publisher and args1.port_subscriber:
 			pass
 		else:
 			load_cfg_zmq()
 	
 		# Pub/Sub port override
-		if args.port_publisher:
-			configuration['zeromq']['port_publisher'] = args.port_publisher
-		if args.port_subscriber:
-			configuration['zeromq']['port_subscriber'] = args.port_subscriber
+		if args1.port_publisher:
+			configuration['zeromq']['port_publisher'] = args1.port_publisher
+		if args1.port_subscriber:
+			configuration['zeromq']['port_subscriber'] = args1.port_subscriber
 
 	if cfg_zmq is None:
 		printer("Error loading Zero MQ configuration.", level=LL_CRITICAL)
