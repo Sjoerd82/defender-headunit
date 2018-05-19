@@ -17,7 +17,7 @@
 	]
 	,"modes": [
 		{	  "name": "modecycle1"
-			, "mode_list": [ "track", "volume", "bass", "treble", "menu" ]
+			, "mode_list": [ "volume", "track", "bass", "treble", "menu" ]
 			, "reset": 5
 		}
 	]

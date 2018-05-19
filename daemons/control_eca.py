@@ -342,15 +342,15 @@ def cb_gpio_function(code):
 	print "Added to queue: EXECUTE: {0}".format(code)
 	qVolume.put(code)
 
-def handle_queue(code):
+def handle_queue(code,count):
 	global local_volume
-	print "EXECUTE: {0}".format(code)
+	print "EXECUTE: {0} ({1} times)".format(code,count)
 	if code in ('VOLUME_INC','VOLUME_DEC'):#function_map:
 		if code == 'VOLUME_INC':
-			local_volume += 5
+			local_volume += 5 * count
 			eca_set_effect_amplification(local_volume)
 		elif code == 'VOLUME_DEC':
-			local_volume -= 5
+			local_volume -= 5 * count
 			eca_set_effect_amplification(local_volume)
 	else:
 		print "function {0} not in function_map".format(code)
@@ -797,12 +797,14 @@ def main():
 	eca_execute("start")
 	while True:
 		while not qVolume.empty():
-			print qVolume.qsize()
+			queue_size = qVolume.qsize()
 			item = qVolume.get_nowait()
 			if item is not None:
-				handle_queue(item)
+				# assuming that all items in queue are identical (perhaps it won't have to much impact on latency to actually test this)
+				handle_queue(item,queue_size)
 				# sign off task
 				qVolume.task_done()
+				qVolume.clear()
 			time.sleep(0.1)
 	print "Stopping Ecasound"
 	eca_execute("stop")
