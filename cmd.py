@@ -479,7 +479,7 @@ def main():
 				else:
 					dmn_status = "Unknown"
 					dmn_pid = "?"
-				print "{0:20} {1:15} {3:4} {4}".format(daemon['name'],daemon['init.d'],dmn_pid,dmn_status)
+				print "{0:20} {1:15} {2:4} {3}".format(daemon['name'],daemon['init.d'],dmn_pid,dmn_status)
 				
 		exit(0)
 
