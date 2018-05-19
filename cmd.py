@@ -470,18 +470,19 @@ def main():
 			print "Daemon status:"
 			print "{0:18} {1:13} PID   Status".format("Service","init.d")
 			for daemon in cfg_main['daemons']:
+				dmn_status = "Unknown"
+				dmn_pid = ""
 				if 'pid_file' in daemon:
 					pid_file = os.path.join(cfg_main['directories']['pid'],daemon['pid_file'])
-					print pid_file
 					if os.path.exists(pid_file):
 						with open(pid_file,'r') as f_pid:
 							dmn_pid = int(f_pid.readline().strip())
-							print dmn_pid
-							print os.kill(dmn_pid,0)
-					dmn_status = "Uhm.."
-				else:
-					dmn_status = "Unknown"
-					dmn_pid = "?"
+							try:
+								dmn_status = "Running"
+								os.kill(dmn_pid,0)
+							except:
+								dmn_status = "Not running"
+								
 				print "{0:18} {1:13} {2:5} {3}".format(daemon['name'],daemon['init.d'],dmn_pid,dmn_status)
 				
 		exit(0)
