@@ -470,7 +470,7 @@ def main():
 			print "Daemon status:"
 			print "{0:20} {1:15} PID  Status".format("Service","init.d")
 			for daemon in cfg_main['daemons']:
-				if 'pid_file' in cfg_main['daemons']
+				if 'pid_file' in cfg_main['daemons']:
 					pid_file = cfg_main['daemons']['pid_file']
 					if os.path.exists(pid_file):
 						with open(pid_file,'r') as dmn_pid:
