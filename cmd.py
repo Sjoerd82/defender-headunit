@@ -8,7 +8,10 @@ import os
 import json
 import sys
 from time import sleep
-from modules.hu_msg import MqPubSubFwdController
+
+sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
+from hu_utils import *
+from hu_msg import MqPubSubFwdController
 
 # *******************************************************************************
 # Global variables and constants

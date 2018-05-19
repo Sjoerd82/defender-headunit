@@ -144,7 +144,7 @@ def mpd_handle_change(events):
 				else:
 					printer(" > Sending MQ notification [FAIL] {0}".format(ret))
 			
-			if state['id'] != results[0]['songid']:
+			if 'songid' in results[0] and state['id'] != results[0]['songid']:
 				printer(" > SongId changed")
 				state['id'] = results[0]['songid']
 
