@@ -22,7 +22,7 @@ LOG_TAG = 'NONE'
 LOGGER_NAME = "None"
 
 #DEFAULT_CONFIG_FILE = '/etc/configuration.json'
-#DEFAULT_LOG_LEVEL = LL_INFO
+DEFAULT_LOG_LEVEL = LL_INFO
 
 DESCRIPTION = "Send a MQ command"
 DEFAULT_PORT_SUB = 5560
@@ -346,7 +346,8 @@ def parse_args():
 	
 	# options:
 	parser.add_argument('-v', action='store_true', help='Verbose')
-	parser.add_argument('--debug', action='store_true', help='Debug on')
+	#parser.add_argument('--debug', action='store_true', help='Debug on')
+	parser.add_argument('--loglevel', action='store', default=DEFAULT_LOG_LEVEL, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)
 	parser.add_argument('--port_pub',  action='store')
 	parser.add_argument('--port_sub', action='store')
 	
