@@ -126,16 +126,14 @@ def mpd_handle_change(events):
 			results = oMpdClient.command_list_end()		
 			
 			print results
-			for r in results:
-				print(r)
 
 			# Output:
 			# {'songid': '180', 'playlistlength': '36', 'playlist': '18', 'repeat': '1', 'consume': '0', 'mixrampdb': '0.000000', 'random': '0', 'state': 'play', 'elapsed': '0.000', 'volume': '100', 'single': '0', 'nextsong': '31', 'time': '0:193', 'duration': '193.328', 'song': '30', 'audio': '44100:24:2', 'bitrate': '0', 'nextsongid': '181'}
 			
 			print "OLD STATE: {0}".format(state['state'])
-			print "NEW STATE: {0}".format(results['state'])
+			print "NEW STATE: {0}".format(results[0]['state'])
 			
-			if state['state'] != results['state']:
+			if state['state'] != results[0]['state']:
 				print " > State changed"
 				ret = messaging.publish_command('/events/player','INFO', state)
 				if ret == True:
@@ -143,7 +141,7 @@ def mpd_handle_change(events):
 				else:
 					printer(" > Sending MQ notification [FAIL] {0}".format(ret))
 			
-			if state['songid'] != results['songid']:
+			if state['songid'] != results[0]['songid']:
 				print " > SongId changed"
 				ret = messaging.publish_command('/events/track','INFO', state)
 				if ret == True:
@@ -282,7 +280,6 @@ def main():
 	while True:			
 		canRead = select([oMpdClient], [], [], 0)[0]
 		if canRead:
-			print "DEBUG: 2"
 		
 			# fetch change(s)
 			changes = oMpdClient.fetch_idle()
