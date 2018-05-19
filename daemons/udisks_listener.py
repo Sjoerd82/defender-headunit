@@ -229,10 +229,11 @@ def udisk_rem( device ):
 
 			param = '{{"device":"{0}", "mountpoint":"{1}","uuid":"{2}","label":"{3}"}}'.format(media_info['device'],media_info['mountpoint'],media_info['uuid'],media_info['label'])
 			messaging.publish_command(PATH_EVENT_REM,'DATA',param)
+			ix_del = i
 			break
 		i+=1
 	
-	del attached_drives[i-1]	#break doens't stop the i+1
+	del attached_drives[ix_del]
 	
 	"""
 	ix = Sources.getIndex('name','media')
