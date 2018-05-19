@@ -33,32 +33,38 @@
 	}
 	, "daemons": [
 		{
-		  "name":"ZMQ Forwarder"
-		, "init.d":"S30zmqfwd"
+			  "name":"ZMQ Forwarder"
+			, "init.d":"S30zmqfwd"
+			, "pid_file":"zmq_forwarder.pid"
 		} ,
 		{
-		  "name":"Source Controller"
-		, "init.d":"S40source"
-		, "port": 5555
+			  "name":"Source Controller"
+			, "init.d":"S40source"
+			, "pid_file":"source.pid"
+			, "port": 5555
 		},
 		{
-		  "name":"Flask HTTP server"
-		, "init.d":"S95flask"
+			  "name":"Flask HTTP server"
+			, "init.d":"S95flask"
+			, "pid_file":"flask.pid"
 		},
 		{
 			  "name": "Control: Ecasound"
 			, "script":"control_eca.py"
 			, "init.d":"S35ecasound"
+			, "pid_file":"ecactrl.pid"
 			, "config": "multi_functional_encoder.json"			
 		},
 		{
 			  "name":"Control: ADS1x15"
 			, "init.d":"S71ads1x15"
+			, "pid_file":"ctrl_ads1x15.pid"
 		},
 		{
 			  "name": "Control: GPIO"
 			, "script":"control_gpio.py"
 			, "init.d":"S72ctrlgpio"
+			, "pid_file":"ctrl_gpio.pid"
 			, "config": "multi_functional_encoder.json"
 		}
 	]
