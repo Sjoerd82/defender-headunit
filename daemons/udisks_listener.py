@@ -172,31 +172,40 @@ def udisk_add( device ):
 	# Please Note:
 	# DeviceFile = dbus.String(u'/dev/sda1', variant_level=1)
 
+	printer("Registering")
 	media_info = {}	
 	media_info['device'] = str(DeviceFile)
 	media_info['uuid'] = get_part_uuid(str(DeviceFile))
 	media_info['mountpoint'] = get_mountpoint(media_info['device'])
 	
 	if media_info['mountpoint'] is None:
-		printer("Device was inserted, but there is no mountpoint. Waiting 30 seconds...")
+		printer(" > Device was inserted, but there is no mountpoint. Waiting 30 seconds...")
 		for i in range(6):
 			sleep(5)
-			printer("Retrying...")
+			printer(" > Retrying...")
 			media_info['mountpoint'] = get_mountpoint(media_info['device'])
 			if media_info['mountpoint'] is not None:
-				printer("Mountpoint found!")
+				printer(" > Mountpoint found [OK]")
 				break
 	
 	if media_info['mountpoint'] is not None:		
 		media_info['label'] = os.path.basename(media_info['mountpoint']).rstrip('\n')
 		attached_drives.append(media_info)
+		printer(" > Registering [OK]")
 
 		# if we can't send a dict, then for the time being do this:
-		param = '{{"device":"{0}", "mountpoint":"{1}","uuid":"{2}","label":"{3}"}}'.format(str(DeviceFile),media_info['mountpoint'],media_info['uuid'],media_info['label'])
+		#param = '{{"device":"{0}", "mountpoint":"{1}","uuid":"{2}","label":"{3}"}}'.format(str(DeviceFile),media_info['mountpoint'],media_info['uuid'],media_info['label'])
 		
-		messaging.publish_command(PATH_EVENT_ADD,'DATA',param)
+		mq_args = json.dumps(media_info)
+		
+		#messaging.publish_command(PATH_EVENT_ADD,'DATA',param)
+		ret = messaging.publish_command(PATH_EVENT_ADD,'DATA',mq_args)
+		if ret == True:
+			printer(" > Sending MQ notification [OK]")
+		else:
+			printer(" > Sending MQ notification [FAIL] {0}".format(ret))
 	else:
-		printer("Device was inserted, but there was no mountpoint.")
+		printer(" > Device was inserted, but there was no mountpoint. [FAIL]")
 	
 	#IdLabel: SJOERD
 	#DriveSerial: 0014857749DCFD20C7F95F31
