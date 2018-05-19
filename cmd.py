@@ -247,7 +247,7 @@ app_commands =	[
 #
 def load_cfg_main():
 	""" load main configuration """
-	config = configuration_load(LOGGER_NAME,args.config)
+	config = configuration_load(LOGGER_NAME,args1.config)
 	return config
 
 def load_cfg_zmq():
