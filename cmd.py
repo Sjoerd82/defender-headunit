@@ -467,8 +467,8 @@ def main():
 			return
 		else:
 			print "Daemon status:"
-			print "{0:18} {1:13} PID   Status".format("Service","init.d")
-			print "------------------ ------------- ----- ------------"
+			print "{0:19} {1:15} PID   Status".format("Service","init.d")
+			print "------------------- --------------- ----- ------------"
 			for daemon in cfg_main['daemons']:
 				dmn_status = "Unknown"
 				dmn_pid = ""
@@ -483,7 +483,7 @@ def main():
 							except:
 								dmn_status = colorize("Not running",'light_red')
 								
-				print "{0:18} {1:13} {2:5} {3}".format(daemon['name'],daemon['init.d'],dmn_pid,dmn_status)
+				print "{0:19} {1:15} {2:<5} {3}".format(daemon['name'],daemon['init.d'],dmn_pid,dmn_status)
 				
 		exit(0)
 
