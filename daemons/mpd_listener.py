@@ -45,8 +45,13 @@ logger = None
 args = None
 messaging = None
 oMpdClient = None
-state = { "state":None, "songid":None, "random":None, "repeat":None }
 
+# todo get 'official' dict
+state = { "state":None, "id":None, "random":None, "repeat":None, "time":None, "filename":None }
+track = dict_track()
+
+#mpd_player_state = { "state":None, "songid":None, "random":None, "repeat":None }
+#mpd_player_track = { "state":None, "songid":None, "random":None, "repeat":None }
 
 # ********************************************************************************
 # Output wrapper
@@ -123,7 +128,7 @@ def mpd_handle_change(events):
 			#
 			oMpdClient.command_list_ok_begin()
 			oMpdClient.status()
-			results = oMpdClient.command_list_end()		
+			results = oMpdClient.command_list_end()
 			
 			print results
 
@@ -135,33 +140,46 @@ def mpd_handle_change(events):
 			
 			if state['state'] != results[0]['state']:
 				print " > State changed"
+				state['state'] = results[0]['state']
 				ret = messaging.publish_command('/events/player','INFO', state)
 				if ret == True:
 					printer(" > Sending MQ notification [OK]")
 				else:
 					printer(" > Sending MQ notification [FAIL] {0}".format(ret))
 			
-			if state['songid'] != results[0]['songid']:
+			if state['id'] != results[0]['id']:
 				print " > SongId changed"
-				ret = messaging.publish_command('/events/track','INFO', state)
+				state['id'] = results[0]['id']
+
+				oMpdClient.command_list_ok_begin()
+				oMpdClient.currentsong()
+				results1 = oMpdClient.command_list_end()
+				print results1
+				
+				
+				"""
+				track['']
+				track['artist'] = 
+	track['composer'] = composer
+	track['performer'] = performer
+	track['album'] = album
+	track['albumartist'] = albumartist
+	track['title'] = title
+	track['length'] = length
+	track['elapsed'] = elapsed
+	track['track'] = track
+	track['disc'] = disc
+	track['folder'] = folder
+	track['genre'] = genre
+	track['date'] = date
+				"""
+
+				ret = messaging.publish_command('/events/track','INFO', track)
 				if ret == True:
 					printer(" > Sending MQ notification [OK]")
 				else:
 					printer(" > Sending MQ notification [FAIL] {0}".format(ret))
-			
-			#mpd_control('player')
-			#zmq_send('/event/mpd/player','SET')
-			#state={}
-			#state['state'] = "Bla1"
-			#state['random'] = "off"
-			#state['repeat'] = "off"
-			if ret == True:
-				printer(" > Sending MQ notification [OK]")
-			else:
-				printer(" > Sending MQ notification [FAIL] {0}".format(ret))
-			
-			# do not add code after here... (will not be executed)
-		
+					
 		#elif e == "subscription":
 		#	oMpdClient.command_list_ok_begin()
 		#	oMpdClient.channels()

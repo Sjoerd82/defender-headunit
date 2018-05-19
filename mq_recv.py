@@ -24,7 +24,7 @@ def parse_args():
 	print "Displays all MQ messages."
 	
 	parser = argparse.ArgumentParser(description=DESCRIPTION)
-	parser.add_argument('-p','--parse', action='store_true')
+	parser.add_argument('-p','--parse', action='store_true', help='Parse MQ message')
 	parser.add_argument('--port_publisher', action='store')
 	parser.add_argument('--port_subscriber', action='store')
 	args = parser.parse_args()
@@ -45,16 +45,18 @@ def setup():
 	
 def main():
 
+	print args
+
 	while(True):
 		rawmsg = messaging.poll(timeout=None)				#None=Blocking
 		if rawmsg:
 			print "Message: {0}".format(rawmsg)
-			if args.p:
-				parsed_msg = parse_message(rawmsg)
-				print "Path:    {0}".format(parsed_msg['path'])
-				print "Command: {0}".format(parsed_msg['cmd'])
-				print "Args:    {0}".format(parsed_msg['args'])
-				print "Data:    {0}".format(parsed_msg['data'])
+#			if args.p:
+			parsed_msg = parse_message(rawmsg)
+			print "Path:    {0}".format(parsed_msg['path'])
+			print "Command: {0}".format(parsed_msg['cmd'])
+			print "Args:    {0}".format(parsed_msg['args'])
+			print "Data:    {0}".format(parsed_msg['data'])
 
 if __name__ == '__main__':
 	parse_args()
