@@ -79,6 +79,9 @@ def load_zeromq_configuration():
 	
 def mpd_handle_change(events):
 
+	print "DEBUG: 3"
+	print events
+
 	# loop over the available event(s)
 	for e in events:
 
@@ -250,9 +253,10 @@ def main():
 	oMpdClient.send_idle()
 		
 	while True:			
-
+		print "DEBUG: 1"
 		canRead = select([oMpdClient], [], [], 0)[0]
 		if canRead:
+			print "DEBUG: 2"
 		
 			# fetch change(s)
 			changes = oMpdClient.fetch_idle()
