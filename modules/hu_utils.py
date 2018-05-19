@@ -237,7 +237,7 @@ class RemAnsiFormatter(Formatter):
 		#colored_record.levelname = "blaa" #colored_record.levelname.lower()
 		return Formatter.format(self, record_copy)
 		
-def log_create_console_loghandler(logger, log_level, log_tag):
+def log_create_console_loghandler(logger, log_level, log_tag=None):
 	# Create log handler
 	ch = logging.StreamHandler()						# create console handler
 	ch.setLevel(log_level)								# set log level
@@ -248,7 +248,11 @@ def log_create_console_loghandler(logger, log_level, log_tag):
 
 	# Add handler
 	logger.addHandler(ch)								# add ch to logger
-	logger.info('Logging started: Console',extra={'tag':log_tag})
+	
+	# Feedback
+	if log_tag is not None:
+		logger.info('Logging started: Console',extra={'tag':log_tag})
+		
 	return logger
 	
 def log_create_syslog_loghandler(logger, log_level, log_tag, address=('localhost', SYSLOG_UDP_PORT), socktype=socket.SOCK_DGRAM ):

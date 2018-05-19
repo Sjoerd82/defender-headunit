@@ -455,7 +455,7 @@ def setup():
 	messaging = MqPubSubFwdController('localhost',DEFAULT_PORT_PUB,DEFAULT_PORT_SUB)
 	
 	printer("ZeroMQ: Creating Subscriber: {0}".format(DEFAULT_PORT_SUB))
-	messaging.create_subscriber(SUBSCRIPTIONS)
+	messaging.create_subscriber()
 
 	printer("ZeroMQ: Creating Publisher: {0}".format(DEFAULT_PORT_PUB))
 	messaging.create_publisher()
