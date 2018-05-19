@@ -45,6 +45,7 @@ logger = None
 args = None
 messaging = None
 oMpdClient = None
+state = { "state":None, "songid":None, "random":None, "repeat":None }
 
 
 # ********************************************************************************
@@ -79,14 +80,14 @@ def load_zeromq_configuration():
 	
 def mpd_handle_change(events):
 
-	print "DEBUG: 3"
-	print events
+	global state
 
 	# loop over the available event(s)
 	for e in events:
 
 		#print(' ...  EVENT: {0}'.format(e))
 		if e == "message":	
+			printer("Event: Message")
 			#oMpdClient.subscribe("media_ready")
 			#oMpdClient.command_list_ok_begin()
 			#oMpdClient.readmessages()
@@ -116,27 +117,51 @@ def mpd_handle_change(events):
 						print('ERROR: Channel not supported')
 			
 		elif e == "player":
+			printer("Event: Player")
 			#
 			# This works, but instead, it's more effective to handle this at the headunit.py side
 			#
-			#oMpdClient.command_list_ok_begin()
-			#oMpdClient.status()
-			#results = oMpdClient.command_list_end()		
-			#				
-			#for r in results:
-			#	print(r)
-			#
+			oMpdClient.command_list_ok_begin()
+			oMpdClient.status()
+			results = oMpdClient.command_list_end()		
+			
+			print results
+			for r in results:
+				print(r)
+
 			# Output:
 			# {'songid': '180', 'playlistlength': '36', 'playlist': '18', 'repeat': '1', 'consume': '0', 'mixrampdb': '0.000000', 'random': '0', 'state': 'play', 'elapsed': '0.000', 'volume': '100', 'single': '0', 'nextsong': '31', 'time': '0:193', 'duration': '193.328', 'song': '30', 'audio': '44100:24:2', 'bitrate': '0', 'nextsongid': '181'}
 			
+			print "OLD STATE: {0}".format(state['state'])
+			print "NEW STATE: {0}".format(results['state'])
+			
+			if state['state'] != results['state']:
+				print " > State changed"
+				ret = messaging.publish_command('/events/player','INFO', state)
+				if ret == True:
+					printer(" > Sending MQ notification [OK]")
+				else:
+					printer(" > Sending MQ notification [FAIL] {0}".format(ret))
+			
+			if state['songid'] != results['songid']:
+				print " > SongId changed"
+				ret = messaging.publish_command('/events/track','INFO', state)
+				if ret == True:
+					printer(" > Sending MQ notification [OK]")
+				else:
+					printer(" > Sending MQ notification [FAIL] {0}".format(ret))
+			
 			#mpd_control('player')
 			#zmq_send('/event/mpd/player','SET')
-			state={}
-			state['state'] = "Bla1"
-			state['random'] = "off"
-			state['repeat'] = "off"
-			messaging.publish_command('/events/player','INFO', state)
-			messaging.publish_command('/events/player','INF0', state)
+			#state={}
+			#state['state'] = "Bla1"
+			#state['random'] = "off"
+			#state['repeat'] = "off"
+			if ret == True:
+				printer(" > Sending MQ notification [OK]")
+			else:
+				printer(" > Sending MQ notification [FAIL] {0}".format(ret))
+			
 			# do not add code after here... (will not be executed)
 		
 		#elif e == "subscription":
@@ -147,6 +172,7 @@ def mpd_handle_change(events):
 		#	for r in results:
 		#		print(r)		
 		elif e == "database":
+			printer("Event: Database")
 			#mpd_control('database')
 			#zmq_send('/event/mpd/update','SET')
 			#messaging.publish_event('/events/update', 'INFO', None)
