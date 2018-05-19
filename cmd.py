@@ -475,7 +475,7 @@ def main():
 					print pid_file
 					if os.path.exists(pid_file):
 						with open(pid_file,'r') as f_pid:
-							dmn_pid = f_pid.readline().strip()
+							dmn_pid = int(f_pid.readline().strip())
 							print dmn_pid
 							print os.kill(dmn_pid,0)
 					dmn_status = "Uhm.."
