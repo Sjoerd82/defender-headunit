@@ -133,13 +133,11 @@ def mpd_handle_change(events):
 			print results
 
 			# Output:
-			# {'songid': '180', 'playlistlength': '36', 'playlist': '18', 'repeat': '1', 'consume': '0', 'mixrampdb': '0.000000', 'random': '0', 'state': 'play', 'elapsed': '0.000', 'volume': '100', 'single': '0', 'nextsong': '31', 'time': '0:193', 'duration': '193.328', 'song': '30', 'audio': '44100:24:2', 'bitrate': '0', 'nextsongid': '181'}
-			
-			print "OLD STATE: {0}".format(state['state'])
-			print "NEW STATE: {0}".format(results[0]['state'])
-			
+			# {'songid': '180', 'playlistlength': '36', 'playlist': '18', 'repeat': '1', 'consume': '0', 'mixrampdb': '0.000000', 'random': '0', 'state': 'play', 'elapsed': '0.000', 'volume': '100',
+			# 'single': '0', 'nextsong': '31', 'time': '0:193', 'duration': '193.328', 'song': '30', 'audio': '44100:24:2', 'bitrate': '0', 'nextsongid': '181'}
+					
 			if state['state'] != results[0]['state']:
-				print " > State changed"
+				print " > State changed from {0} to {1}".format(state['state'],results[0]['state'])
 				state['state'] = results[0]['state']
 				ret = messaging.publish_command('/events/player','INFO', state)
 				if ret == True:
@@ -147,9 +145,9 @@ def mpd_handle_change(events):
 				else:
 					printer(" > Sending MQ notification [FAIL] {0}".format(ret))
 			
-			if state['id'] != results[0]['id']:
+			if state['id'] != results[0]['songid']:
 				print " > SongId changed"
-				state['id'] = results[0]['id']
+				state['id'] = results[0]['songid']
 
 				oMpdClient.command_list_ok_begin()
 				oMpdClient.currentsong()
