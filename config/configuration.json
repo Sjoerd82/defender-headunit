@@ -14,6 +14,7 @@
 		, "config": "/mnt/PIHU_CONFIG"
 		, "log": "/mnt/PIHU_CONFIG/log"
 		, "sfx": "/mnt/PIHU_APP/defender-headunit/sfx"
+		, "pid": "/var/run"
 	}
 	, "preferences": {
 		  "start_source": "resume"
