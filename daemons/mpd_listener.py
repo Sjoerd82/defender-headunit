@@ -188,7 +188,7 @@ def mpd_handle_change(events):
 		elif e == "options":
 			print "OPTIONS! RANDOM??"
 		else:
-			print(' ...  unmanaged event')
+			printer('Unmanaged event: {0}'.format(e))
 	
 
 #********************************************************************************

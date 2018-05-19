@@ -18,7 +18,8 @@ from hu_msg import MqPubSubFwdController
 #
 DESCRIPTION = "Headunit CLI"
 #WELCOME = 
-#LOGGER_NAME =
+LOG_TAG = 'NONE'
+LOGGER_NAME = "None"
 
 #DEFAULT_CONFIG_FILE = '/etc/configuration.json'
 #DEFAULT_LOG_LEVEL = LL_INFO
@@ -245,8 +246,7 @@ app_commands =	[
 #
 def load_cfg_main():
 	""" load main configuration """
-	#config = configuration_load(LOGGER_NAME,args.config)
-	config = configuration_load(None,args.config)
+	config = configuration_load(LOGGER_NAME,args.config)
 	return config
 
 def load_cfg_zmq():
@@ -393,8 +393,6 @@ def parse_args():
 	
 
 def setup():
-
-	global messaging
 	
 	#
 	# ZMQ
@@ -407,6 +405,11 @@ def setup():
 	#messaging.create_subscriber(SUBSCRIPTIONS)
 	sleep(1)
 	"""
+
+	global logger
+	logger = logging.getLogger(LOGGER_NAME)
+	logger.setLevel(logging.DEBUG)
+	logger = log_create_console_loghandler(logger, args.loglevel, LOG_TAG) 	# output to console
 
 	#
 	# Configuration
@@ -441,6 +444,7 @@ def setup():
 	#
 	# ZMQ
 	#
+	global messaging
 	printer("ZeroMQ: Initializing")
 	messaging = MqPubSubFwdController('localhost',DEFAULT_PORT_PUB,DEFAULT_PORT_SUB)
 	
