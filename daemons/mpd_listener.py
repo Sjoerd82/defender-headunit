@@ -139,7 +139,7 @@ def mpd_handle_change(events):
 			if state['state'] != results[0]['state']:
 				print " > State changed from {0} to {1}".format(state['state'],results[0]['state'])
 				state['state'] = results[0]['state']
-				ret = messaging.publish_command('/events/player','INFO', state)
+				ret = messaging.publish_command('/events/state','INFO', state)
 				if ret == True:
 					printer(" > Sending MQ notification [OK]")
 				else:
@@ -155,29 +155,25 @@ def mpd_handle_change(events):
 				print results1
 				
 				if 'file' in results1[0]: track['file'] = results1[0]['file']
-				
-				"""
-				track['']
-				track['artist'] = 
-	track['composer'] = composer
-	track['performer'] = performer
-	track['album'] = album
-	track['albumartist'] = albumartist
-	track['title'] = title
-	track['length'] = length
-	track['elapsed'] = elapsed
-	track['track'] = track
-	track['disc'] = disc
-	track['folder'] = folder
-	track['genre'] = genre
-	track['date'] = date
-				"""
-
-#				ret = messaging.publish_command('/events/track','INFO', track)
-#				if ret == True:
-#					printer(" > Sending MQ notification [OK]")
-#				else:
-#					printer(" > Sending MQ notification [FAIL] {0}".format(ret))
+				if 'artist' in results1[0]: track['artist'] = results1[0]['artist']
+				if 'composer' in results1[0]: track['composer'] = results1[0]['composer']
+				if 'performer' in results1[0]: track['performer'] = results1[0]['performer']
+				if 'album' in results1[0]: track['album'] = results1[0]['album']
+				if 'albumartist' in results1[0]: track['albumartist'] = results1[0]['albumartist']
+				if 'title' in results1[0]: track['title'] = results1[0]['title']
+				if 'length' in results1[0]: track['length'] = results1[0]['length']
+				if 'elapsed' in results1[0]: track['elapsed'] = results1[0]['elapsed']
+				if 'track' in results1[0]: track['track'] = results1[0]['track']
+				if 'disc' in results1[0]: track['disc'] = results1[0]['disc']
+				if 'folder' in results1[0]: track['folder'] = results1[0]['folder']
+				if 'genre' in results1[0]: track['genre'] = results1[0]['genre']
+				if 'date' in results1[0]: track['date'] = results1[0]['date']
+				mq_args = json.dumps(track)
+				ret = messaging.publish_command('/events/track','INFO', mq_args)
+				if ret == True:
+					printer(" > Sending MQ notification [OK]")
+				else:
+					printer(" > Sending MQ notification [FAIL] {0}".format(ret))
 					
 		#elif e == "subscription":
 		#	oMpdClient.command_list_ok_begin()
