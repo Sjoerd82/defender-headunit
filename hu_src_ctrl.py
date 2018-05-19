@@ -817,36 +817,36 @@ def handle_path_events(path,cmd,args,data):
 	# remove base path
 	del path[0]
 	
-	def data_source_active(args):
+	def data_source_active(data):
 		pass
-	def data_source_available(args):
+	def data_source_available(data):
 		pass
-	def data_player_state(args):
+	def data_player_state(data):
 		pass
-	def data_player_track(args):
+	def data_player_track(data):
 		pass
-	def data_player_elapsed(args):
+	def data_player_elapsed(data):
 		pass
-	def data_player_updating(args):
+	def data_player_updating(data):
 		pass
-	def data_player_updated(args):
+	def data_player_updated(data):
 		pass
-	def data_volume_changed(args):
+	def data_volume_changed(data):
 		pass
-	def data_volume_att(args):
+	def data_volume_att(data):
 		pass
-	def data_volume_mute(args):
+	def data_volume_mute(data):
 		pass
-	def data_network_up(args):
+	def data_network_up(data):
 		pass
-	def data_network_down(args):
-		payload = json.loads(args[0])
+	def data_network_down(data):
+		payload = json.loads(data)
 		sc_sources.do_event('network',path,payload)
 		printSummary()
 		return None
-	def data_system_shutdown(args):
+	def data_system_shutdown(data):
 		pass
-	def data_system_reboot(args):
+	def data_system_reboot(data):
 		pass
 	def data_udisks_added(data):
 		""" New media added
@@ -888,7 +888,7 @@ def handle_path_events(path,cmd,args,data):
 
 	ret = None
 	if function_to_call in locals():
-		ret = locals()[function_to_call](args)
+		ret = locals()[function_to_call](data)
 		printer('Executed {0} function {1} with result status: {2}'.format(base_path,function_to_call,ret))
 	else:
 		printer('Function {0} does not exist'.format(function_to_call))
@@ -915,9 +915,6 @@ def idle_message_receiver():
 		printer("Received message: {0}".format(rawmsg))	#TODO: debug
 		parsed_msg = parse_message(rawmsg)
 		
-		print "debug:"
-		print parsed_msg
-
 		# send message to dispatcher for handling	
 		retval = dispatcher(parsed_msg['path'],parsed_msg['cmd'],parsed_msg['args'],parsed_msg['data'])
 
