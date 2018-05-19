@@ -45,8 +45,6 @@ def setup():
 	
 def main():
 
-	print args
-
 	while(True):
 		rawmsg = messaging.poll(timeout=None)				#None=Blocking
 		if rawmsg:

@@ -154,6 +154,7 @@ def mpd_handle_change(events):
 				results1 = oMpdClient.command_list_end()
 				print results1
 				
+				if 'file' in results1[0]: track['file'] = results1[0]['file']
 				
 				"""
 				track['']
@@ -172,11 +173,11 @@ def mpd_handle_change(events):
 	track['date'] = date
 				"""
 
-				ret = messaging.publish_command('/events/track','INFO', track)
-				if ret == True:
-					printer(" > Sending MQ notification [OK]")
-				else:
-					printer(" > Sending MQ notification [FAIL] {0}".format(ret))
+#				ret = messaging.publish_command('/events/track','INFO', track)
+#				if ret == True:
+#					printer(" > Sending MQ notification [OK]")
+#				else:
+#					printer(" > Sending MQ notification [FAIL] {0}".format(ret))
 					
 		#elif e == "subscription":
 		#	oMpdClient.command_list_ok_begin()
