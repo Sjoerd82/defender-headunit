@@ -45,6 +45,13 @@ stop() {
             rm -f $PID_FILE
         fi
 }
+status() {
+    if [ -e $PID_FILE ]; then
+        echo "Process is running? PID"
+    else
+        echo "Process is not running"
+    fi
+}
 
 case "$1" in
   start)
@@ -57,8 +64,12 @@ case "$1" in
         stop
         start
         ;;
+  status)
+        #status_of_proc "$DAEMON" "$NAME" && exit 0 || exit $?
+		status
+	    ;;
   *)
-        echo "Usage: $0 {start|stop|restart}"
+        echo "Usage: $0 {start|stop|restart|status}"
         exit 1
 esac
 
