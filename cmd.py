@@ -468,10 +468,10 @@ def main():
 			return
 		else:
 			print "Daemon status:"
-			print "{0:20} {1:15} PID  Status".format("Service","init.d")
+			print "{0:18} {1:13} PID   Status".format("Service","init.d")
 			for daemon in cfg_main['daemons']:
-				if 'pid_file' in cfg_main['daemons']:
-					pid_file = os.path.join(cfg_main['directories']['pid'],cfg_main['daemons']['pid_file'])
+				if 'pid_file' in daemon:
+					pid_file = os.path.join(cfg_main['directories']['pid'],daemon['pid_file'])
 					print pid_file
 					if os.path.exists(pid_file):
 						with open(pid_file,'r') as f_pid:
