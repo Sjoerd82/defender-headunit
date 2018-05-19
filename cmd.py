@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 # TODO:
-# - add list of process status
 # - request list of registered USB devices
 
 import os
@@ -482,9 +481,9 @@ def main():
 								dmn_status = colorize("Running",'light_green_2')
 								os.kill(dmn_pid,0)
 							except:
-								dmn_status = colorize("Not running",'red_3a')
+								dmn_status = colorize("Not running",'light_red')
 								
-				print "{0:18} {1:12} {2:5} {3}".format(daemon['name'],daemon['init.d'],dmn_pid,dmn_status)
+				print "{0:18} {1:13} {2:5} {3}".format(daemon['name'],daemon['init.d'],dmn_pid,dmn_status)
 				
 		exit(0)
 

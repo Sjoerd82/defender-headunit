@@ -45,6 +45,21 @@
 			, "port": 5555
 		},
 		{
+			  "name":"MPD events listener"
+			, "init.d":"S53mpdevent"
+			, "pid_file":"mpd_listener.pid"
+		} ,
+		{
+			  "name":"UDisks-Glue"
+			, "init.d":"S60udisks-glue"
+			, "pid_file":"udisks-glue.pid"
+		} ,
+		{
+			  "name":"UDisks ZMQ bridge"
+			, "init.d":"S70udisks"
+			, "pid_file":"udiskszmq.pid"
+		} ,
+		{
 			  "name":"Flask HTTP server"
 			, "init.d":"S95flask"
 			, "pid_file":"flask.pid"
