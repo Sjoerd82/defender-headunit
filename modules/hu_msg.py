@@ -188,7 +188,7 @@ class MqPubSubFwdController(object):
 		
 		"""		
 		if command not in self.VALID_COMMANDS:
-			printer("Invalid command: {0}".format(command),level=LL_ERROR)
+			print("Invalid command: {0}".format(command),level=LL_ERROR)
 			return False
 			
 		if wait_for_reply and not response_path:
