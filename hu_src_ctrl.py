@@ -914,6 +914,9 @@ def idle_message_receiver():
 	if rawmsg:
 		printer("Received message: {0}".format(rawmsg))	#TODO: debug
 		parsed_msg = parse_message(rawmsg)
+		
+		print "debug:"
+		print parsed_msg
 
 		# send message to dispatcher for handling	
 		retval = dispatcher(parsed_msg['path'],parsed_msg['cmd'],parsed_msg['args'],parsed_msg['data'])
