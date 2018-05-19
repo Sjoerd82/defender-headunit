@@ -469,6 +469,7 @@ def main():
 		else:
 			print "Daemon status:"
 			print "{0:18} {1:13} PID   Status".format("Service","init.d")
+			print "------------------ ------------- ----- ------------"
 			for daemon in cfg_main['daemons']:
 				dmn_status = "Unknown"
 				dmn_pid = ""
@@ -478,12 +479,12 @@ def main():
 						with open(pid_file,'r') as f_pid:
 							dmn_pid = int(f_pid.readline().strip())
 							try:
-								dmn_status = "Running"
+								dmn_status = colorize("Running",'light_green_2')
 								os.kill(dmn_pid,0)
 							except:
-								dmn_status = "Not running"
+								dmn_status = colorize("Not running",'red_3a')
 								
-				print "{0:18} {1:13} {2:5} {3}".format(daemon['name'],daemon['init.d'],dmn_pid,dmn_status)
+				print "{0:18} {1:12} {2:5} {3}".format(daemon['name'],daemon['init.d'],dmn_pid,dmn_status)
 				
 		exit(0)
 
