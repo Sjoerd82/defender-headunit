@@ -71,7 +71,11 @@ def parse_message(message):
 			#print "LOADING: {0} ({1})".format(raw_cmd_par[1],type(raw_cmd_par[1]))		
 			param = json.loads(raw_cmd_par[1])
 
+			# TODO perhaps better to do a check type() instead..
 			if command == 'data':
+				#expect a json/dict
+				params.append(param)
+			elif command == 'info':
 				#expect a json/dict
 				params.append(param)
 			else:

@@ -137,7 +137,7 @@ def mpd_handle_change(events):
 			# 'single': '0', 'nextsong': '31', 'time': '0:193', 'duration': '193.328', 'song': '30', 'audio': '44100:24:2', 'bitrate': '0', 'nextsongid': '181'}
 					
 			if state['state'] != results[0]['state']:
-				print " > State changed from {0} to {1}".format(state['state'],results[0]['state'])
+				printer(" > State changed from {0} to {1}".format(state['state'],results[0]['state']))
 				state['state'] = results[0]['state']
 				ret = messaging.publish_command('/events/state','INFO', state)
 				if ret == True:
@@ -146,13 +146,12 @@ def mpd_handle_change(events):
 					printer(" > Sending MQ notification [FAIL] {0}".format(ret))
 			
 			if state['id'] != results[0]['songid']:
-				print " > SongId changed"
+				printer(" > SongId changed")
 				state['id'] = results[0]['songid']
 
 				oMpdClient.command_list_ok_begin()
 				oMpdClient.currentsong()
 				results1 = oMpdClient.command_list_end()
-				print results1
 				
 				if 'file' in results1[0]: track['file'] = results1[0]['file']
 				if 'artist' in results1[0]: track['artist'] = results1[0]['artist']
@@ -168,7 +167,6 @@ def mpd_handle_change(events):
 				if 'folder' in results1[0]: track['folder'] = results1[0]['folder']
 				if 'genre' in results1[0]: track['genre'] = results1[0]['genre']
 				if 'date' in results1[0]: track['date'] = results1[0]['date']
-				#mq_args = json.dumps(track)
 				ret = messaging.publish_command('/events/track','INFO', track)
 				if ret == True:
 					printer(" > Sending MQ notification [OK]")
