@@ -473,13 +473,15 @@ def main():
 				if 'pid_file' in cfg_main['daemons']:
 					pid_file = os.path.join(cfg_main['directories']['pid'],cfg_main['daemons']['pid_file'])
 					if os.path.exists(pid_file):
-						with open(pid_file,'r') as dmn_pid:
+						with open(pid_file,'r') as f_pid:
+							dmn_pid = f_pid.readline().strip()
 							print dmn_pid
 					dmn_status = "Uhm.."
 				else:
 					dmn_status = "Unknown"
 					dmn_pid = "?"
 				print "{0:20} {1:15} {2:4} {3}".format(daemon['name'],daemon['init.d'],dmn_pid,dmn_status)
+				print os.kill(dmn_pid)
 				
 		exit(0)
 
