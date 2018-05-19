@@ -10,6 +10,16 @@ import sys
 from time import sleep
 from modules.hu_msg import MqPubSubFwdController
 
+# *******************************************************************************
+# Global variables and constants
+#
+DESCRIPTION = "Headunit CLI"
+#WELCOME = 
+#LOGGER_NAME =
+
+#DEFAULT_CONFIG_FILE = '/etc/configuration.json'
+#DEFAULT_LOG_LEVEL = LL_INFO
+
 DESCRIPTION = "Send a MQ command"
 DEFAULT_PORT_SUB = 5560
 DEFAULT_PORT_PUB = 5559
@@ -17,11 +27,17 @@ RETURN_PATH = '/cmdpy/'
 
 args = None
 messaging = None
+
+cfg_main = None		# main
+cfg_zmq = None		# Zero MQ
+
 commands = []
+
 mq_cmd = None
 mq_path = None
 mq_args = None
 mq_rpath = None
+
 
 app_commands =	[
 	{	'name': 'source-check',
@@ -221,6 +237,42 @@ app_commands =	[
 	}
 	]
 	
+# ********************************************************************************
+# Load configuration
+#
+def load_cfg_main():
+	""" load main configuration """
+	#config = configuration_load(LOGGER_NAME,args.config)
+	config = configuration_load(None,args.config)
+	return config
+
+def load_cfg_zmq():
+	""" load zeromq configuration """	
+	if not 'zeromq' in cfg_main:
+		printer('Error: Configuration not loaded or missing ZeroMQ, using defaults:')
+		printer('Publisher port: {0}'.format(args.port_publisher))
+		printer('Subscriber port: {0}'.format(args.port_subscriber))
+		#cfg_main["zeromq"] = { "port_publisher": DEFAULT_PORT_PUB, "port_subscriber":DEFAULT_PORT_SUB } }
+		config = { "port_publisher": DEFAULT_PORT_PUB, "port_subscriber":DEFAULT_PORT_SUB }
+		return config
+	else:
+		config = {}
+		# Get portnumbers from either the config, or default value
+		if 'port_publisher' in cfg_main['zeromq']:
+			config['port_publisher'] = cfg_main['zeromq']['port_publisher']
+		else:
+			config['port_publisher'] = DEFAULT_PORT_PUB
+		
+		if 'port_subscriber' in cfg_main['zeromq']:
+			config['port_subscriber'] = cfg_main['zeromq']['port_subscriber']		
+		else:
+			config['port_subscriber'] = DEFAULT_PORT_SUB
+			
+		return config
+				
+# ********************************************************************************
+# 
+#
 def print_dict(obj, nested_level=0):
 	spacing = '   '
 	key_line = 20
@@ -252,7 +304,7 @@ def parse_args():
 		return '''Headunit Command Interpreter
 	   %(prog)s -h
 	   %(prog)s [options] [help] <command> [args]
-	   %(prog)s [options] <mq> <-p path> <-c mq-command> [-a] [-r]
+	   %(prog)s [options] mq <-p path> <-c mq-command> [-a] [-r]
 	'''
 
 	def epi(name=None):
@@ -298,6 +350,10 @@ def parse_args():
 	p2 = argparse.ArgumentParser( parents = [ parser ], add_help=False )
 	subparsers = p2.add_subparsers()
 	
+	# status
+	parser_status = subparsers.add_parser('status')
+	parser_status.set_defaults(which='status')
+	
 	# command help
 	parser_help = subparsers.add_parser('help')
 	parser_help.add_argument('command', action='store', nargs='*')
@@ -331,6 +387,78 @@ def parse_args():
 		exit(0)
 
 	args = p2.parse_args()
+	
+
+def setup():
+
+	global messaging
+	
+	#
+	# ZMQ
+	#
+	"""
+	global messaging
+	messaging = MqPubSubFwdController('localhost',DEFAULT_PORT_PUB,DEFAULT_PORT_SUB)
+	messaging.create_publisher()
+	messaging.create_subscriber()
+	#messaging.create_subscriber(SUBSCRIPTIONS)
+	sleep(1)
+	"""
+
+	#
+	# Configuration
+	#
+	global cfg_main
+	#global cfg_zmq	#only used here(?)
+
+	cfg_main = load_cfg_main()
+	if cfg_main is None:
+		printer("Main configuration could not be loaded.", level=LL_CRITICAL)
+		exit(1)
+
+	# zeromq
+	if not args.port_publisher and not args.port_subscriber:
+		cfg_zmq = load_cfg_zmq()
+	else:
+		if args.port_publisher and args.port_subscriber:
+			pass
+		else:
+			load_cfg_zmq()
+	
+		# Pub/Sub port override
+		if args.port_publisher:
+			configuration['zeromq']['port_publisher'] = args.port_publisher
+		if args.port_subscriber:
+			configuration['zeromq']['port_subscriber'] = args.port_subscriber
+
+	if cfg_zmq is None:
+		printer("Error loading Zero MQ configuration.", level=LL_CRITICAL)
+		exit(1)
+		
+	#
+	# ZMQ
+	#
+	printer("ZeroMQ: Initializing")
+	messaging = MqPubSubFwdController('localhost',DEFAULT_PORT_PUB,DEFAULT_PORT_SUB)
+	
+	printer("ZeroMQ: Creating Subscriber: {0}".format(DEFAULT_PORT_SUB))
+	messaging.create_subscriber(SUBSCRIPTIONS)
+
+	printer("ZeroMQ: Creating Publisher: {0}".format(DEFAULT_PORT_PUB))
+	messaging.create_publisher()
+	
+def main():
+
+	if args.which == 'status':
+		if 'daemons' not in cfg_main:
+			return
+		else:
+			print "Daemon status:"
+			for daemon in cfg_main['daemons']:
+				print daemon
+				#if 'script' in daemon and daemon['script'] == os.path.basename(__file__):
+				#	return daemon
+
 	
 	if args.which == 'help':
 		if not args.command:
@@ -406,20 +534,9 @@ def parse_args():
 	# debug
 	#print "excuting command! {0} {1} with params {2}".format(mq_cmd,mq_path,mq_args)
 
-def setup():
-
-	#
-	# ZMQ
-	#
-	global messaging
-	messaging = MqPubSubFwdController('localhost',DEFAULT_PORT_PUB,DEFAULT_PORT_SUB)
-	messaging.create_publisher()
-	messaging.create_subscriber()
-	#messaging.create_subscriber(SUBSCRIPTIONS)
-	sleep(1)
-
-def main():
-
+	# ******************************************************************************************************************
+	
+	
 	# todo: check, is it ok to include an empty mq_args?
 	if mq_rpath is not None:
 		ret = messaging.publish_command(mq_path,mq_cmd,mq_args,wait_for_reply=True,response_path=RETURN_PATH)

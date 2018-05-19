@@ -50,16 +50,11 @@ def main():
 		if rawmsg:
 			print "Message: {0}".format(rawmsg)
 			if args.parse:
-			
-				# todo!
-			    #for parpart in param.split(","):
-				#	AttributeError: 'dict' object has no attribute 'split'
-			
 				parsed_msg = parse_message(rawmsg)
-				print "Path:    {0}".format(parsed_msg['path'])
-				print "Command: {0}".format(parsed_msg['cmd'])
-				print "Args:    {0}".format(parsed_msg['args'])
-				print "Data:    {0}".format(parsed_msg['data'])
+				print "Path    : {0}".format(parsed_msg['path'])
+				print "Command : {0}".format(parsed_msg['cmd'])
+				print "Args    : {0}".format(parsed_msg['args'])
+				print "Data    : {0}\n".format(parsed_msg['data'])
 
 if __name__ == '__main__':
 	parse_args()

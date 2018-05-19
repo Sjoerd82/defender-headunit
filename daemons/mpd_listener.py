@@ -130,8 +130,7 @@ def mpd_handle_change(events):
 			oMpdClient.status()
 			results = oMpdClient.command_list_end()
 			
-			print results
-
+			#print results
 			# Output:
 			# {'songid': '180', 'playlistlength': '36', 'playlist': '18', 'repeat': '1', 'consume': '0', 'mixrampdb': '0.000000', 'random': '0', 'state': 'play', 'elapsed': '0.000', 'volume': '100',
 			# 'single': '0', 'nextsong': '31', 'time': '0:193', 'duration': '193.328', 'song': '30', 'audio': '44100:24:2', 'bitrate': '0', 'nextsongid': '181'}
