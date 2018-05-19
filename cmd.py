@@ -330,10 +330,6 @@ def parse_args():
 	global commands
 	global args1
 	global args
-	global mq_cmd
-	global mq_path
-	global mq_args
-	global mq_rpath
 	DEFAULT_LOG_LEVEL = LL_INFO
 	DEFAULT_CONFIG_FILE = '/etc/configuration.json'
 
@@ -462,13 +458,20 @@ def setup():
 	
 def main():
 
+	global mq_cmd
+	global mq_path
+	global mq_args
+	global mq_rpath
+
 	if args.which == 'status':
 		if 'daemons' not in cfg_main:
 			return
 		else:
 			print "Daemon status:"
 			for daemon in cfg_main['daemons']:
-				print daemon
+				print "{0:20} {1:10} PID  Status".format("Service","init.d")
+				print "{0:20} {1:10} 4234 Running".format(daemon['name'],daemon['init.d'])
+				#print daemon
 				#if 'script' in daemon and daemon['script'] == os.path.basename(__file__):
 				#	return daemon
 
