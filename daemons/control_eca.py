@@ -61,6 +61,7 @@ ECA_CHAIN_EQ = None				# chain object that contains the equalizer
 eca_chain_op_master_amp = None
 att_level = 20		# TODO, get from configuration
 local_volume = 5	# TOOD, retrieve from resume!
+local_volume_chg = False
 eca_chain_selected = None
 volume_increment = 5
 
@@ -339,8 +340,19 @@ def eca_mute(state):
 # GPIO Callback
 #
 def cb_gpio_function(code):
+	global local_volume
+	global local_volume_chg
 	print "Added to queue: EXECUTE: {0}".format(code)
-	qVolume.put(code)
+	#qVolume.put(code)
+	if code in ('VOLUME_INC','VOLUME_DEC'):
+		if code == 'VOLUME_INC':
+			local_volume += 5
+			local_volume_chg = True
+			#eca_set_effect_amplification(local_volume)
+		elif code == 'VOLUME_DEC':
+			local_volume -= 5
+			local_volume_chg = True
+			#eca_set_effect_amplification(local_volume)
 
 def handle_queue(code,count):
 	global local_volume
@@ -791,11 +803,17 @@ def main():
 	# Initialize MQ message receiver
 	#gobject.idle_add(handle_mq_message)
 	
-	qVolume = Queue(maxsize=4)	# Short stuff that can run anytime:
+	#qVolume = Queue(maxsize=4)	# Short stuff that can run anytime:
+	qVolume = deque()
 
 
 	eca_execute("start")
 	while True:
+		
+		if local_volume_chg == True:
+			local_volume_chg = False
+			eca_set_effect_amplification(local_volume)
+		'''
 		while not qVolume.empty():
 			queue_size = qVolume.qsize()
 			item = qVolume.get_nowait()
@@ -806,6 +824,7 @@ def main():
 				qVolume.task_done()
 				qVolume.clear()
 			time.sleep(0.1)
+		'''
 	print "Stopping Ecasound"
 	eca_execute("stop")
 	eca_execute("cs-disconnect")

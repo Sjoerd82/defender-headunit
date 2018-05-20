@@ -82,7 +82,13 @@
 			, "init.d":"S72ctrlgpio"
 			, "pid_file":"ctrl_gpio.pid"
 			, "config": "multi_functional_encoder.json"
+		},
+		{
+			  "name":"MPD"
+			, "init.d":"S95mpd"
+			, "pid_file":"mpd.pid"
 		}
+
 	]
 	, "gpio": {
 		"todo": "todo"
