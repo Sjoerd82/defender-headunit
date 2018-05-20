@@ -804,7 +804,7 @@ def main():
 	#gobject.idle_add(handle_mq_message)
 	
 	#qVolume = Queue(maxsize=4)	# Short stuff that can run anytime:
-	qVolume = deque()
+	#qVolume = deque()	import ???
 
 
 	eca_execute("start")
