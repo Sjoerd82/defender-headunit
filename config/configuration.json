@@ -87,6 +87,11 @@
 			  "name":"MPD"
 			, "init.d":"S95mpd"
 			, "pid_file":"mpd.pid"
+		},
+		{
+			  "name":"Jack"
+			, "init.d":"S25jackd"
+			, "pid_file":"jack.pid"
 		}
 
 	]
@@ -118,7 +123,7 @@
 		, "port_subscriber": 5560
 	}
 	, "ecasound": {
-		  "chainsetup": "mpd_fifo"
+		  "chainsetup": "jack_alsa_mpd"
 		, "chain_master_amp": "pre"
 		, "chain_mute": "pre"
 		, "chain_eq": "pre"
@@ -451,6 +456,13 @@
 				  , "path": "/tmp/mpd.fifo"
 				  , "format":"44100:32:2"
 				  , "enabled":"yes"
+				},
+				{  "type":"pipe" 
+				     , "name":"Ecasound Simple"
+				     , "format":"44100:32:2"
+				     , "mixer_type":"software"
+					 , "command":"ecasound -q --server -z:nodb -z:mixmode,sum -f:s32_le,2,44100 -i:stdin -o:alsa"
+					 , "enabled":"no"
 				},
 				{  "type":"pipe" 
 				     , "name":"Alsa: DSP crossover/eq 2 channel mono"

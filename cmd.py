@@ -2,6 +2,7 @@
 
 # TODO:
 # - request list of registered USB devices
+# - change eca chain
 
 import os
 import json
