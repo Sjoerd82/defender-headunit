@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 # TODO:
+# - get list of sources
 # - request list of registered USB devices
 # - change eca chain
 
