@@ -33,11 +33,10 @@ from hu_msg import MqPubSubFwdController
 # Global variables and constants
 #
 DESCRIPTION = "MPD Listener"
+BANNER = "MPD events listener"
 LOG_TAG = 'MPDLST'
 LOGGER_NAME = 'mpdlst'
 
-DEFAULT_CONFIG_FILE = '/etc/configuration.json'
-DEFAULT_LOG_LEVEL = LL_INFO
 DEFAULT_PORT_SUB = 5560
 DEFAULT_PORT_PUB = 5559
 
@@ -196,17 +195,11 @@ def mpd_handle_change(events):
 #
 def parse_args():
 
-	import argparse
 	global args
-
-	parser = argparse.ArgumentParser(description=DESCRIPTION)
-	parser.add_argument('--loglevel', action='store', default=DEFAULT_LOG_LEVEL, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)
-	parser.add_argument('--config','-c', action='store', help='Configuration file', default=DEFAULT_CONFIG_FILE)
-	parser.add_argument('-b', action='store_true', default=False)
-	parser.add_argument('--port_publisher', action='store')
-	parser.add_argument('--port_subscriber', action='store')
+	import argparse
+	parser = default_parser(DESCRIPTION,BANNER)
+	# additional command line arguments mat be added here
 	args = parser.parse_args()
-
 
 def setup():
 

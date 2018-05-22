@@ -19,10 +19,6 @@ import sys
 import os
 import time
 
-# main loop
-import gobject
-from dbus.mainloop.glib import DBusGMainLoop
-
 # ecasound
 #from pyeca import *		# default implementation
 from ecacontrol import *	# native Python implementation
@@ -36,17 +32,14 @@ from hu_gpio import GpioController
 from hu_msg import MqPubSubFwdController
 from hu_msg import parse_message
 
-
 # *******************************************************************************
 # Global variables and constants
 #
 DESCRIPTION = "Ecasound Controller"
-WELCOME = "Ecasound Controller Daemon"
+BANNER = "Ecasound Controller Daemon"
 LOG_TAG = 'ECASND'
 LOGGER_NAME = 'ecasnd'
 
-#DEFAULT_CONFIG_FILE = '/etc/configuration.json'
-#DEFAULT_LOG_LEVEL = LL_INFO
 DEFAULT_PORT_PUB = 5559
 DEFAULT_PORT_SUB = 5560
 SUBSCRIPTIONS = ['/volume/','/equalizer/','/events/source/']
@@ -642,7 +635,7 @@ def parse_args():
 
 	global args
 	import argparse
-	parser = default_parser(DESCRIPTION,WELCOME)
+	parser = default_parser(DESCRIPTION,BANNER)
 	# additional command line arguments mat be added here
 	args = parser.parse_args()
 
