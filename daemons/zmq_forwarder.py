@@ -119,10 +119,6 @@ def setup():
 	else:
 		logger = log_create_console_loghandler(logger, args.loglevel, LOG_TAG) 						# output to console
 
-	debug_file = '/root/DEBUG_MODE'
-	if os.path.exists(debug_file):
-		printer('DEBUG MODE!!!!')
-
 	#
 	# Load configuration
 	#

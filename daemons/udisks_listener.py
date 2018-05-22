@@ -78,6 +78,70 @@ def load_zeromq_configuration():
 			
 	return configuration
 
+	
+# ********************************************************************************
+# On Idle
+#
+def idle_message_receiver():
+	#print "DEBUG: idle_msg_receiver()"
+	
+	def dispatcher(path, command, arguments, data):
+		handler_function = 'handle_path_' + path[0]
+		if handler_function in globals():
+			ret = globals()[handler_function](path, command, arguments, data)
+			return ret
+		else:
+			print("No handler for: {0}".format(handler_function))
+			return None
+			
+	def handle_path_events(path,cmd,args,data):
+
+		base_path = 'udisks'
+		# remove base path
+		del path[0]
+
+		# -------------------------------------------------------------------------
+		# Sub Functions must return None (invalid params) or a {data} object.
+		def get_devices(args):
+			"""	Retrieve List of Registered Devices
+			"""
+			valid = validate_args(args,0,0)
+			if not valid:
+				return None
+						
+			data = get_data(attached_drives,True)
+			return data
+		# -------------------------------------------------------------------------
+		if path:
+			function_to_call = cmd + '_' + '_'.join(path)
+		else:
+			# called without sub-paths
+			function_to_call = cmd + '_' + base_path
+
+		ret = None
+		if function_to_call in locals():
+			ret = locals()[function_to_call](args)
+			printer('Executed {0} function {1} with result status: {2}'.format(base_path,function_to_call,ret)) # TODO: LL_DEBUG
+		else:
+			printer('Function {0} does not exist'.format(function_to_call))
+			
+		return ret
+
+		
+	rawmsg = messaging.poll(timeout=None)				#None=Blocking
+	if rawmsg:
+		printer("Received message: {0}".format(rawmsg))	#TODO: debug
+		parsed_msg = parse_message(rawmsg)
+		
+		# send message to dispatcher for handling	
+		retval = dispatcher(parsed_msg['path'],parsed_msg['cmd'],parsed_msg['args'],parsed_msg['data'])
+
+		if parsed_msg['resp_path']:
+			#print "DEBUG: Resp Path present.. returing message.. data={0}".format(retval)
+			messaging.publish_command(parsed_msg['resp_path'],'DATA',retval)
+		
+	return True # Important! Returning true re-enables idle routine.
+	
 #********************************************************************************
 # Parse command line arguments
 #
@@ -381,6 +445,7 @@ def main():
 
 	bus.add_signal_receiver(cb_udisk_dev_add, signal_name='DeviceAdded', dbus_interface="org.freedesktop.UDisks")
 	bus.add_signal_receiver(cb_udisk_dev_rem, signal_name='DeviceRemoved', dbus_interface="org.freedesktop.UDisks")
+	gobject.idle_add(idle_message_receiver)
 
 	try:
 		mainloop.run()
