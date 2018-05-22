@@ -17,8 +17,9 @@ from hu_utils import *
 
 
 def printer( message, level=LL_INFO, tag="", logger_name=__name__):
-	logger = logging.getLogger(logger_name)
-	logger.log(level, message, extra={'tag': tag})
+	#logger = logging.getLogger(logger_name)
+	#logger.log(level, message, extra={'tag': tag})
+	print message
 
 def parse_message(message):
 	""" Parses a MQ standardized message.

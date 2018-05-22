@@ -386,7 +386,7 @@ def parse_args():
 		program = os.path.basename(__file__)
 		print "Headunit Command Interpreter"
 		print "{0} -h".format(program)
-		print "{0} [options] status".format(program)
+		print "{0} [options] status [daemons|udisks]".format(program)
 		print "{0} [options] [help] <command> [args]".format(program)
 		print "{0} [options] mq <-p path> <-c mq-command> [-a] [-r]".format(program)
 		print 'Run "{0} -h" for a list of commands'.format(program)		
@@ -531,6 +531,13 @@ def main():
 			print "error: argument -c is required"
 		elif args.c == 'None':
 			print "error: argument -c syntax: -c command; example: GET, PUT, DATA"
+		
+		mq_path = args.p
+		mq_cmd = args.c
+		print "DEBUG --  DOING MQ! {0} {1} {2}".format(mq_path,mq_cmd,mq_args)
+		ret = messaging.publish_command(mq_path,mq_cmd)
+		#ret = messaging.publish_command('/udisks/devices','GET',[])
+		print ret
 		
 		#TODO
 		mq_cmd = None
