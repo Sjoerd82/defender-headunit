@@ -106,10 +106,6 @@ def parse_args():
 		
 def setup():
 
-	debug_file = '/root/DEBUG_MODE'
-	if os.path.exists(debug_file):
-		printer('DEBUG MODE!!!!')
-
 	#
 	# Logging
 	# -> Output will be logged to the syslog, if -b specified, otherwise output will be printed to console
@@ -122,6 +118,10 @@ def setup():
 		logger = log_create_syslog_loghandler(logger, args.loglevel, LOG_TAG, address='/dev/log') 	# output to syslog
 	else:
 		logger = log_create_console_loghandler(logger, args.loglevel, LOG_TAG) 						# output to console
+
+	debug_file = '/root/DEBUG_MODE'
+	if os.path.exists(debug_file):
+		printer('DEBUG MODE!!!!')
 
 	#
 	# Load configuration
