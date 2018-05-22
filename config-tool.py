@@ -220,6 +220,7 @@ def parse_args():
 	parser.add_argument('--ecs',  required=False, action='store_true', help='Generate ecasound chainsetup files')
 	parser.add_argument('--ecp',  required=False, action='store_true', help='Generate ecasound effects preset file')
 	parser.add_argument('--wifi', required=False, action='store_true', help='Set WiFi mode')
+	parser.add_argument('--debug', required=False, action='store_true', help='Set Debug mode')
 
 	args = parser.parse_args()
 
@@ -318,7 +319,7 @@ def main():
 			printer('ecs: Invalid Config')
 
 	if  args.all or args.wifi:
-		if 'wifi' not in configuration:
+		if 'wifi' not in configuration or 'mode' not in configuration['wifi']:
 			printer('Cannot set WiFi mode, not configured (section: wifi, attribute: mode)')
 		else:
 			mode = configuration['wifi']['mode']
@@ -332,7 +333,22 @@ def main():
 				touch_file('/root/WLAN-AP')
 			else:
 				printer('Unkown mode: {0}'.format(mode))
-		
+
+	if  args.all or args.debug:
+		if 'preferences' not in configuration or 'debug' not in configuration['preferences']:
+			printer('Cannot set debug mode, not configured (section: preferences, attribute: debug, boolean value)')
+		else:
+			mode_debug = configuration['preferences']['debug']
+			debug_file = '/root/DEBUG_MODE'
+			if mode_debug in [True,1,'true','1','on','yes']:
+				touch_file(debug_file)
+			elif mode_debug in [False,0,'false','off','no']:
+				if os.path.exists(debug_file):
+					os.remove(debug_file)
+			else:
+				printer('Unkown mode: {0}'.format(mode_debug))				
+	
+				
 if __name__ == '__main__':
 	parse_args()
 	setup()

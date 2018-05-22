@@ -106,6 +106,10 @@ def parse_args():
 		
 def setup():
 
+	debug_file = '/root/DEBUG_MODE'
+	if os.path.exists(debug_file):
+		printer('DEBUG MODE!!!!')
+
 	#
 	# Logging
 	# -> Output will be logged to the syslog, if -b specified, otherwise output will be printed to console

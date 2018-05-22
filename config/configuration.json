@@ -25,6 +25,7 @@
 		, "threshold_total_sec": 30
 		, "resume_position_update": 0
 		, "mpd_output": "Jack"
+		, "debug": true
 	}
 	, "default_settings": {
 		  "volume": 20

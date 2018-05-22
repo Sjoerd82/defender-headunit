@@ -158,6 +158,14 @@ Operational state. May be kept on a ramdrive (no need for persistance).
 May be used to read from to quickly get state information. Will see a lot of R/W.
 
 
+### Global Flag files
+
+Set in /root
+`DEBUG_MODE` Sets default log level to debug (can still be overridden on the command line)
+`WLAN-WPA`	Sets the network to client (WPA) mode
+`WLAN-AP`	Set the network to AP (access point) mode
+
+
 # Tools
 
 ## config-tool
