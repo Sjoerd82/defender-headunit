@@ -528,18 +528,18 @@ def main():
 			print "{0:10} {1:20} {2:11} {3:30}".format("Device","UUID","Label","Mountpoint")
 			print "{0:-<10} {1:-<20} {2:-<11} {3:-<30}".format("-","-","-","-")
 			ret = messaging.publish_command('/udisks/devices','GET',wait_for_reply=True) #,response_path='/cmdpy/udisks')
-			print ret
+			#print ret
 			if ret == False or ret is None:
 				print "[FAIL]"
 			else:
 				if type(ret) == dict:
-					if 'retval' in ret: print "Return code: {0}".format(ret['retval'])
+					#if 'retval' in ret: print "Return code: {0}".format(ret['retval'])
 					if 'payload' in ret:
-						print "Return data:"
-						print_dict(ret['payload'])
+						#print "Return data:"
+						#print_dict(ret['payload'])
 						for device in ret['payload']:
 							#print "{0:10} {1:20} {2:11} {3:30}".format(ret['payload']['device'],ret['payload']['UUID'],ret['payload']['Label'],ret['payload']['Mountpoint'])
-							print "{0:10} {1:20} {2:11} {3:30}".format(device['device'],device['UUID'],device['Label'],device['Mountpoint'])
+							print "{0:10} {1:20} {2:11} {3:30}".format(device['device'],device['uuid'],device['label'],device['mountpoint'])
 						
 				elif type(ret) == str:
 					print "weird.. a string?!"
