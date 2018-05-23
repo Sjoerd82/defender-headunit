@@ -399,7 +399,7 @@ class GpioController(object):
 			if 'type' in device and device['type'] == 'led':
 				# Normal led
 				pin = device['pin']
-				printer("Setting up pin: {0}".format(pin)
+				printer("Setting up pin: {0}".format(pin))
 				GPIO.setup(pin, GPIO.OUT)
 				
 			if 'type' in device and device['type'] == 'rgb':
