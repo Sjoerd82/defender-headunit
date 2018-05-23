@@ -126,7 +126,7 @@ def idle_message_receiver():
 			print("No handler for: {0}".format(handler_function))
 			return None
 					
-	rawmsg = messaging.poll(timeout=None)				#None=Blocking
+	rawmsg = messaging.poll(timeout=1000)				#None=Blocking, 1000 = 1sec
 	if rawmsg:
 		printer("Received message: {0}".format(rawmsg))	#TODO: debug
 		parsed_msg = parse_message(rawmsg)

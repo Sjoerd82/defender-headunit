@@ -145,7 +145,7 @@ class MqPubSubFwdController(object):
 		#printer(colorize("Sending MQ message: {0}".format(message),'dark_gray'),level=LL_DEBUG)
 	#	printer("Sending MQ message: {0}".format(message), level=LL_DEBUG, tag='MQ')
 	#	printer("Sending MQ message: {0}".format(message))
-		print("Sending MQ message: {0}".format(message))
+	#	print("Sending MQ message: {0}".format(message))
 		self.publisher.send(message)
 		#time.sleep(1)	# required??? don't think so.. TODO: Remove, once we seen everything works..
 		return True
@@ -288,11 +288,14 @@ class MqPubSubFwdController(object):
 		
 	def poll(self, timeout=None):
 		"""
-		Blocking call, if no timeout specified.
+		Blocking call, if no timeout (ms) specified.
 		Returns raw message, or None if no data.
 		"""
 		print "DEBUG: poll()"
-		socks = dict(self.poller.poll())
+		if timeout is not None:
+			socks = dict(self.poller.poll(timeout))
+		else:
+			socks = dict(self.poller.poll())
 		message = None
 		if self.subscriber in socks:
 			message = self.__recv()
