@@ -470,7 +470,7 @@ def handle_path_ecasound(path,cmd,args,data):
 		function_to_call = cmd + '_' + base_path
 
 	ret = None
-	if function_to_call in locals(args):
+	if function_to_call in locals():
 		ret = locals()[function_to_call](args)
 		printer('Executed {0} function {1} with result status: {2}'.format(base_path,function_to_call,ret)) # TODO: LL_DEBUG
 	else:
