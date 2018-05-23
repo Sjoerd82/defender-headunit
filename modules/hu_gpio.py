@@ -396,13 +396,13 @@ class GpioController(object):
 		# initialize all pins in configuration
 		pins_monitor = []
 		for device in self.cfg_gpio['devices']:
-			if 'type' in device and device['type'] = 'led':
+			if 'type' in device and device['type'] == 'led':
 				# Normal led
 				pin = device['pin']
 				printer("Setting up pin: {0}".format(pin)
 				GPIO.setup(pin, GPIO.OUT)
 				
-			if 'type' in device and device['type'] = 'rgb':
+			if 'type' in device and device['type'] == 'rgb':
 				# RGB led
 				pin_r = device['r']
 				pin_g = device['g']
