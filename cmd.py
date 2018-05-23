@@ -490,10 +490,12 @@ def main():
 
 	if args.which == 'status':
 	
-		print args.status_of_what
 		if not args.status_of_what:
-			print "NOT"
-			
+			print "Valid options for status are:"
+			print " status daemons    Display daemon status"
+			print " status udisks     Display removable drives"
+			exit(0)
+
 		if args.status_of_what[0] == 'daemons':
 			if 'daemons' not in cfg_main:
 				return
@@ -518,7 +520,8 @@ def main():
 					print "{0:19} {1:15} {2:<5} {3}".format(daemon['name'],daemon['init.d'],dmn_pid,dmn_status)
 					
 			exit(0)
-		elif args.status_of_what == 'udisks':
+			
+		elif args.status_of_what[0] == 'udisks':
 			print "UDisks status:"
 			print "{0:10} {1:20} {2:11} {3:30}".format("Device","UUID","Label","Mountpoint")
 			print "{-<0:10} {-<1:20} {-<2:11} {-<3:30}".format("-","-","-","-")
@@ -540,11 +543,6 @@ def main():
 					print "weird.. a string?!"
 					print ret
 
-			exit(0)
-		else:
-			print "Valid options for status are:"
-			print " status daemons    Display daemon status"
-			print " status udisks     Display removable drives"
 			exit(0)
 
 	
