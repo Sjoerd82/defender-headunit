@@ -445,7 +445,7 @@ def handle_mq_message():
 			print("No handler for: {0}".format(handler_function))
 			return None
 		
-	rawmsg = messaging.poll(timeout=None)				#None=Blocking
+	rawmsg = messaging.poll(timeout=500)				#None=Blocking
 	if rawmsg:
 		printer("Received message: {0}".format(rawmsg),level=LL_DEBUG)
 		parsed_msg = parse_message(rawmsg)
@@ -887,6 +887,8 @@ def main():
 				qVolume.clear()
 			time.sleep(0.1)
 		'''
+		handle_mq_message()	# do this less often TODO! not critical, but takes up precious response time
+		
 	print "Stopping Ecasound"
 	eca_execute("stop")
 	eca_execute("cs-disconnect")
