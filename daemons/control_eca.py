@@ -42,7 +42,7 @@ LOGGER_NAME = 'ecasnd'
 
 DEFAULT_PORT_PUB = 5559
 DEFAULT_PORT_SUB = 5560
-SUBSCRIPTIONS = ['/volume/','/equalizer/','/events/source/']
+SUBSCRIPTIONS = ['/volume/','/equalizer/','/events/source/','/ecasound/']
 
 PATH_VOLUME = '/volume'
 PATH_VOLUME_EVENT = '/events/volume'
@@ -887,7 +887,8 @@ def main():
 				qVolume.clear()
 			time.sleep(0.1)
 		'''
-		handle_mq_message()	# do this less often TODO! not critical, but takes up precious response time
+		idle_message_receiver() # do this less often TODO! not critical, but takes up precious response time
+		#handle_mq_message()	# do this less often TODO! not critical, but takes up precious response time
 		
 	print "Stopping Ecasound"
 	eca_execute("stop")
