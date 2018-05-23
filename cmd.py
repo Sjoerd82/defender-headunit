@@ -480,7 +480,7 @@ def setup():
 
 	printer("ZeroMQ: Creating Publisher: {0}".format(DEFAULT_PORT_PUB))
 	messaging.create_publisher()
-	sleep(1)
+	sleep(1)	#very much needed, TODO: add to messaging module
 
 	
 def main():

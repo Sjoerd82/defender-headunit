@@ -84,11 +84,43 @@ def load_zeromq_configuration():
 # ********************************************************************************
 # On Idle
 #
+
+def handle_path_udisks(path,cmd,args,data):
+
+	base_path = 'udisks'
+	# remove base path
+	del path[0]
+
+	# -------------------------------------------------------------------------
+	# Sub Functions must return None (invalid params) or a {data} object.
+	def get_devices():
+		"""	Retrieve List of Registered Devices """						
+		data = struct_data(attached_drives)
+		return data	# this will be returned using the response path
+	# -------------------------------------------------------------------------
+	if path:
+		function_to_call = cmd + '_' + '_'.join(path)
+	else:
+		# called without sub-paths
+		function_to_call = cmd + '_' + base_path
+
+	ret = None
+	if function_to_call in locals():
+		ret = locals()[function_to_call]()
+		printer('Executed {0} function {1} with result status: {2}'.format(base_path,function_to_call,ret)) # TODO: LL_DEBUG
+	else:
+		printer('Function {0} does not exist'.format(function_to_call))
+		
+	return ret
+		
 def idle_message_receiver():
 	#print "DEBUG: idle_msg_receiver()"
 	
 	def dispatcher(path, command, arguments, data):
 		handler_function = 'handle_path_' + path[0]
+		if handler_function in locals():
+			print "Oh local!"
+			
 		if handler_function in globals():
 			ret = globals()[handler_function](path, command, arguments, data)
 			return ret
@@ -97,7 +129,7 @@ def idle_message_receiver():
 			return None
 			
 	def handle_path_udisks(path,cmd,args,data):
-
+		print "LOCAL!!"
 		base_path = 'udisks'
 		# remove base path
 		del path[0]
