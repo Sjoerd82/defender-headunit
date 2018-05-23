@@ -536,9 +536,12 @@ def main():
 					if 'payload' in ret:
 						#print "Return data:"
 						#print_dict(ret['payload'])
-						for device in ret['payload']:
-							#print "{0:10} {1:20} {2:11} {3:30}".format(ret['payload']['device'],ret['payload']['UUID'],ret['payload']['Label'],ret['payload']['Mountpoint'])
-							print "{0:10} {1:20} {2:11} {3:30}".format(device['device'],device['uuid'],device['label'],device['mountpoint'])
+						if not ret['payload']:
+							print "No removable devices registered with udisks."
+						else:
+							for device in ret['payload']:
+								#print "{0:10} {1:20} {2:11} {3:30}".format(ret['payload']['device'],ret['payload']['UUID'],ret['payload']['Label'],ret['payload']['Mountpoint'])
+								print "{0:10} {1:20} {2:11} {3:30}".format(device['device'],device['uuid'],device['label'],device['mountpoint'])
 						
 				elif type(ret) == str:
 					print "weird.. a string?!"

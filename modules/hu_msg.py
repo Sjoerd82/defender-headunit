@@ -291,7 +291,7 @@ class MqPubSubFwdController(object):
 		Blocking call, if no timeout (ms) specified.
 		Returns raw message, or None if no data.
 		"""
-		print "DEBUG: poll()"
+		#print "DEBUG: poll()"
 		if timeout is not None:
 			socks = dict(self.poller.poll(timeout))
 		else:
