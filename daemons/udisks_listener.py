@@ -34,6 +34,7 @@ BANNER = "Udisks D-BUS listener"
 LOG_TAG = 'UDISKS'
 LOGGER_NAME = 'udisks'
 
+SUBSCRIPTIONS = '/udisks/'
 DEFAULT_PORT_SUB = 5560
 DEFAULT_PORT_PUB = 5559
 
@@ -83,7 +84,7 @@ def load_zeromq_configuration():
 # On Idle
 #
 def idle_message_receiver():
-	print "DEBUG: idle_msg_receiver()"
+	#print "DEBUG: idle_msg_receiver()"
 	
 	def dispatcher(path, command, arguments, data):
 		handler_function = 'handle_path_' + path[0]
@@ -125,6 +126,7 @@ def idle_message_receiver():
 		
 	rawmsg = messaging.poll(timeout=None)				#None=Blocking
 	if rawmsg:
+		print "Ow yah"
 		printer("Received message: {0}".format(rawmsg))	#TODO: debug
 		parsed_msg = parse_message(rawmsg)
 		
@@ -398,7 +400,10 @@ def setup():
 	#
 	printer("ZeroMQ: Initializing")
 	messaging = MqPubSubFwdController('localhost',DEFAULT_PORT_PUB,DEFAULT_PORT_SUB)
-	
+
+	printer("ZeroMQ: Creating Subscriber: {0}".format(DEFAULT_PORT_SUB))
+	messaging.create_subscriber(SUBSCRIPTIONS)
+
 	printer("ZeroMQ: Creating Publisher: {0}".format(DEFAULT_PORT_PUB))
 	messaging.create_publisher()
 

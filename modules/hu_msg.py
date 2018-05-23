@@ -145,7 +145,7 @@ class MqPubSubFwdController(object):
 		#printer(colorize("Sending MQ message: {0}".format(message),'dark_gray'),level=LL_DEBUG)
 	#	printer("Sending MQ message: {0}".format(message), level=LL_DEBUG, tag='MQ')
 	#	printer("Sending MQ message: {0}".format(message))
-		print("Sending MQ message: {0}".format(message))
+	#	print("Sending MQ message: {0}".format(message))
 		self.publisher.send(message)
 		#time.sleep(1)	# required??? don't think so.. TODO: Remove, once we seen everything works..
 		return True
