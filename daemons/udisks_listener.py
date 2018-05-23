@@ -35,7 +35,7 @@ BANNER = "Udisks D-BUS listener"
 LOG_TAG = 'UDISKS'
 LOGGER_NAME = 'udisks'
 
-SUBSCRIPTIONS = '/udisks/'
+SUBSCRIPTIONS = ['/udisks/']
 DEFAULT_PORT_SUB = 5560
 DEFAULT_PORT_PUB = 5559
 
