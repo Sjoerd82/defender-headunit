@@ -490,8 +490,8 @@ def main():
 
 	if args.which == 'status':
 	
-		print status_of_what
-		if not status_of_what:
+		print args.status_of_what
+		if not args.status_of_what:
 			print "NOT"
 			
 		if args.status_of_what[0] == 'daemons':
