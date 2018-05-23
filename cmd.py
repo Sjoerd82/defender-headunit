@@ -381,7 +381,7 @@ def parse_args():
 	
 	# status
 	parser_status = subparsers.add_parser('status')
-	parser_cmd.add_argument('status_of_what', action='store', nargs='*')
+	parser_status.add_argument('status_of_what', action='store', nargs='*')
 	parser_status.set_defaults(which='status')
 	
 	# command help
