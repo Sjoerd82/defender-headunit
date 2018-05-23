@@ -196,72 +196,7 @@ def load_cfg_gpio():
 		print "ERROR: not found: {0}".format(gpio_config_file)
 		return
 
-# ********************************************************************************
-def handle_path_ecasound(path,cmd,args,data):
-
-	base_path = 'ecasound'
-	# remove base path
-	del path[0]
-
-	# -------------------------------------------------------------------------
-	# Sub Functions must return None (invalid params) or a {data} object.
-	def get_chainsetup(args):
-		"""	Retrieve currently active chainsetup """
-		data = struct_data(chainsetup_filename)
-		return data	# this will be returned using the response path
-		
-	def set_chainsetup(args):
-		"""	Set the active chainsetup """
-		# TODO: validate input
-		print args[0]
-		if os.path.exists(args[0]):
-			ret = eca_load_chainsetup_file(args[0])
-		data = struct_data(ret) # True=OK, False=Not OK
-		return data
-	# -------------------------------------------------------------------------
-	if path:
-		function_to_call = cmd + '_' + '_'.join(path)
-	else:
-		# called without sub-paths
-		function_to_call = cmd + '_' + base_path
-
-	ret = None
-	if function_to_call in locals(args):
-		ret = locals()[function_to_call](args)
-		printer('Executed {0} function {1} with result status: {2}'.format(base_path,function_to_call,ret)) # TODO: LL_DEBUG
-	else:
-		printer('Function {0} does not exist'.format(function_to_call))
-		
-	return ret
-
-		
-def idle_message_receiver():
-	print "DEBUG: idle_msg_receiver()"
 	
-	def dispatcher(path, command, arguments, data):
-		handler_function = 'handle_path_' + path[0]
-		if handler_function in globals():
-			ret = globals()[handler_function](path, command, arguments, data)
-			return ret
-		else:
-			print("No handler for: {0}".format(handler_function))
-			return None
-			
-		
-	rawmsg = messaging.poll(timeout=500)				#None=Blocking
-	if rawmsg:
-		printer("Received message: {0}".format(rawmsg))	#TODO: debug
-		parsed_msg = parse_message(rawmsg)
-		
-		# send message to dispatcher for handling	
-		retval = dispatcher(parsed_msg['path'],parsed_msg['cmd'],parsed_msg['args'],parsed_msg['data'])
-
-		if parsed_msg['resp_path']:
-			#print "DEBUG: Resp Path present.. returing message.. data={0}".format(retval)
-			messaging.publish_command(parsed_msg['resp_path'],'DATA',retval)
-		
-	return True # Important! Returning true re-enables idle routine.
-		
 # ********************************************************************************
 # Ecasound
 #
@@ -434,28 +369,29 @@ def handle_queue(code,count):
 # ********************************************************************************
 # MQ handler
 #	
-def handle_mq_message():
-	#print "DEBUG: idle_msg_receiver()"
+def idle_message_receiver():
+	print "DEBUG: idle_msg_receiver()"
 	
-	def dispatcher(path, command, arguments):
+	def dispatcher(path, command, arguments, data):
 		handler_function = 'handle_path_' + path[0]
 		if handler_function in globals():
-			ret = globals()[handler_function](path, command, arguments)
+			ret = globals()[handler_function](path, command, arguments, data)
 			return ret
 		else:
 			print("No handler for: {0}".format(handler_function))
 			return None
+			
 		
 	rawmsg = messaging.poll(timeout=500)				#None=Blocking
 	if rawmsg:
-		printer("Received message: {0}".format(rawmsg),level=LL_DEBUG)
+		printer("Received message: {0}".format(rawmsg))	#TODO: debug
 		parsed_msg = parse_message(rawmsg)
-
-		# send message to dispatcher for handling	
-		retval = dispatcher(parsed_msg['path'],parsed_msg['cmd'],parsed_msg['args'])
 		
+		# send message to dispatcher for handling	
+		retval = dispatcher(parsed_msg['path'],parsed_msg['cmd'],parsed_msg['args'],parsed_msg['data'])
+
 		if parsed_msg['resp_path']:
-			#print "DEBUG: Resp Path present.. returing message.."
+			#print "DEBUG: Resp Path present.. returing message.. data={0}".format(retval)
 			messaging.publish_command(parsed_msg['resp_path'],'DATA',retval)
 		
 	return True # Important! Returning true re-enables idle routine.
@@ -505,7 +441,44 @@ def get_data(ret,returndata=False,eventpath=None):
 		
 	return data
 
-def handle_path_volume(path,cmd,params):
+def handle_path_ecasound(path,cmd,args,data):
+
+	base_path = 'ecasound'
+	# remove base path
+	del path[0]
+
+	# -------------------------------------------------------------------------
+	# Sub Functions must return None (invalid params) or a {data} object.
+	def get_chainsetup(args):
+		"""	Retrieve currently active chainsetup """
+		data = struct_data(chainsetup_filename)
+		return data	# this will be returned using the response path
+		
+	def set_chainsetup(args):
+		"""	Set the active chainsetup """
+		# TODO: validate input
+		print args[0]
+		if os.path.exists(args[0]):
+			ret = eca_load_chainsetup_file(args[0])
+		data = struct_data(ret) # True=OK, False=Not OK
+		return data
+	# -------------------------------------------------------------------------
+	if path:
+		function_to_call = cmd + '_' + '_'.join(path)
+	else:
+		# called without sub-paths
+		function_to_call = cmd + '_' + base_path
+
+	ret = None
+	if function_to_call in locals(args):
+		ret = locals()[function_to_call](args)
+		printer('Executed {0} function {1} with result status: {2}'.format(base_path,function_to_call,ret)) # TODO: LL_DEBUG
+	else:
+		printer('Function {0} does not exist'.format(function_to_call))
+		
+	return ret
+	
+def handle_path_volume(path,cmd,params,data):
 	""" This function implements /volume/-functions:
 		get /volume/master
 		put /volume/master
@@ -642,7 +615,7 @@ def handle_path_volume(path,cmd,params):
 
 	return ret
 	
-def handle_path_equalizer(path,cmd,args):
+def handle_path_equalizer(path,cmd,args,data):
 
 	base_path = 'equalizer'
 	# remove base path
@@ -672,7 +645,7 @@ def handle_path_equalizer(path,cmd,args):
 
 	return ret
 
-def handle_path_events(path,cmd,params):
+def handle_path_events(path,cmd,params,data):
 
 	base_path = 'events'
 	# remove base path
