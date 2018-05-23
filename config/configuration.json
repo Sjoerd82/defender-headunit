@@ -85,6 +85,13 @@
 			, "config": "multi_functional_encoder.json"
 		},
 		{
+			  "name": "Output: GPIO"
+			, "script":"output_gpio.py"
+			, "init.d":"Sxxoutgpio"
+			, "pid_file":"out_gpio.pid"
+			, "config": "cool_leds.json"
+		},
+		{
 			  "name":"MPD"
 			, "init.d":"S95mpd"
 			, "pid_file":"mpd.pid"

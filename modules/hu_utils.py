@@ -45,6 +45,11 @@ LL_DEBUG = 10
 LL_NOTSET = 0
 
 SYSLOG_UDP_PORT=514
+DEFAULT_PORT_PUB = 5559
+DEFAULT_PORT_SUB = 5560
+
+DEFAULT_LOG_LEVEL = LL_INFO
+DEFAULT_CONFIG_FILE = '/etc/configuration.json'
 
 
 #********************************************************************************
@@ -147,24 +152,142 @@ def dict_volume( system=None
 	volume['muted'] = muted
 	return volume
 
+
+def struct_data(payload,code=None):
+	"""
+	Return a {data} structure.
+	If payload is None or False, a 500 code will be created, and no payload.
+	"""
+
+	print "DEBUG: ret = {0}".format(payload)
+
+	data = {}
 	
+	if payload is None or payload is False:
+		data['retval'] = 500
+		data['payload'] = None
+	elif payload is True:
+		data['retval'] = 200
+		data['payload'] = None
+	else:
+		data['retval'] = 200
+		data['payload'] = payload
+		
+	if code is not None:
+		data['retval'] = code
+		
+	return data
+	
+
+"""	LOGGING
+	
+	printer
+		use instead of print()
+		
+	log_get_logger
+	
+	log_create_console_loghandler
+		Creates a log handler for Console output
+		
+	log_create_syslog_loghandler	
+		Creates a log handler for Syslog output
+		The address may be a tuple consisting of (host, port)
+		or a string such as '/dev/log'
+		
+	tag
+		Return an (ANSI) formatted tag
+		
+	ColoredFormatter
+		log formatter with ANSI formatting
+		
+	RemAnsiFormatter
+		log formatter which actively removes ANSI formatting
+	
+"""
 def printer( message, level=LL_INFO, tag="",logger_name=""):
 	logger = logging.getLogger(logger_name)
 	logger.log(level, message, extra={'tag': tag})
+	
+def log_getlogger( name, tag, level, address=None):
+	logger = logging.getLogger(name)
+	logger.setLevel(logging.DEBUG)
 
+	if address is not None:
+		# output to syslog
+		logger = log_create_syslog_loghandler(logger, level, tag, address='/dev/log')
+	else:
+		# output to console
+		logger = log_create_console_loghandler(logger, level, tag)
+		
+	return logger
+		
+def log_create_console_loghandler(logger, log_level, log_tag=None):
+	# Create log handler
+	ch = logging.StreamHandler()						# create console handler
+	ch.setLevel(log_level)								# set log level
+	
+	# Formatter
+	fmtr_ch = ColoredFormatter("%(tag)s%(message)s")	# create formatters
+	ch.setFormatter(fmtr_ch)							# add formatter to handlers
 
-# ********************************************************************************
-# Logging
-#
-# init_logging_c		Creates a log handler for Console output
-# init_logging_s		Creates a log handler for Syslog output
-#						The address may be a tuple consisting of (host, port)
-#						 or a string such as '/dev/log'
-#
+	# Add handler
+	logger.addHandler(ch)								# add ch to logger
+	
+	# Feedback
+	if log_tag is not None:
+		logger.info('Logging started: Console',extra={'tag':log_tag})
+		
+	return logger
+	
+def log_create_syslog_loghandler(logger, log_level, log_tag, address=('localhost', SYSLOG_UDP_PORT), socktype=socket.SOCK_DGRAM ):
+	# Create log handler
+	sh = logging.handlers.SysLogHandler(address=address, socktype=socktype)
+	sh.setLevel(log_level)
 
-# *******************************************************************************
-# Logging formatters
-#
+	# Formatter
+	fmtr_sh = RemAnsiFormatter("%(asctime)-9s [%(levelname)-8s] %(tag)s %(message)s")
+	sh.setFormatter(fmtr_sh)
+
+	# Add handler
+	logger.addHandler(sh)
+	logger.info('Logging started: Syslog',extra={'tag':log_tag})
+	return logger
+
+def tag ( tagname, format='ANSI', tagsize=6 ):
+	""" Return an (ANSI) formatted tag """
+	if tagname == '' or tagname == None:
+		return ''
+		
+	#If first character of the tag is a dot, it is a 'continuation'
+	if tagname[0] == '.':
+		bCont = True
+	else:
+		bCont = False
+
+	if bCont:
+		tagname = tagname[1:].upper()
+		ftag = str('.').rjust(len(tagname),'.')
+	else:
+		ftag = tagname.upper()
+
+	if format == 'ANSI':
+		# Get/Set Color
+		if tagname.lower() in tagcolors:
+			color = tagcolors[tagname.lower()]
+		else:
+			color = 'white'
+	
+		if bCont:
+			ctag = ' {0} '.format(colorize(ftag.center(tagsize),color))
+		else:
+			ctag = '[{0}]'.format(colorize(ftag.center(tagsize),color))
+	else:
+		if bCont:
+			ctag = ' {0} '.format(ftag.center(tagsize))
+		else:
+			ctag = '[{0}]'.format(ftag.center(tagsize))
+			
+	return ctag
 
 class ColoredFormatter(Formatter):
  
@@ -235,76 +358,7 @@ class RemAnsiFormatter(Formatter):
 		#colored_record.levelname = 'MyLevel' #colored_levelname
 		#colored_record.message = self.remansi(colored_record.message) #.upper()
 		#colored_record.levelname = "blaa" #colored_record.levelname.lower()
-		return Formatter.format(self, record_copy)
-		
-def log_create_console_loghandler(logger, log_level, log_tag=None):
-	# Create log handler
-	ch = logging.StreamHandler()						# create console handler
-	ch.setLevel(log_level)								# set log level
-	
-	# Formatter
-	fmtr_ch = ColoredFormatter("%(tag)s%(message)s")	# create formatters
-	ch.setFormatter(fmtr_ch)							# add formatter to handlers
-
-	# Add handler
-	logger.addHandler(ch)								# add ch to logger
-	
-	# Feedback
-	if log_tag is not None:
-		logger.info('Logging started: Console',extra={'tag':log_tag})
-		
-	return logger
-	
-def log_create_syslog_loghandler(logger, log_level, log_tag, address=('localhost', SYSLOG_UDP_PORT), socktype=socket.SOCK_DGRAM ):
-	# Create log handler
-	sh = logging.handlers.SysLogHandler(address=address, socktype=socktype)
-	sh.setLevel(log_level)
-
-	# Formatter
-	fmtr_sh = RemAnsiFormatter("%(asctime)-9s [%(levelname)-8s] %(tag)s %(message)s")
-	sh.setFormatter(fmtr_sh)
-
-	# Add handler
-	logger.addHandler(sh)
-	logger.info('Logging started: Syslog',extra={'tag':log_tag})
-	return logger
-
-# return an (ANSI) formatted tag
-def tag ( tagname, format='ANSI', tagsize=6 ):
-	if tagname == '' or tagname == None:
-		return ''
-		
-	#If first character of the tag is a dot, it is a 'continuation'
-	if tagname[0] == '.':
-		bCont = True
-	else:
-		bCont = False
-
-	if bCont:
-		tagname = tagname[1:].upper()
-		ftag = str('.').rjust(len(tagname),'.')
-	else:
-		ftag = tagname.upper()
-
-	if format == 'ANSI':
-		# Get/Set Color
-		if tagname.lower() in tagcolors:
-			color = tagcolors[tagname.lower()]
-		else:
-			color = 'white'
-	
-		if bCont:
-			ctag = ' {0} '.format(colorize(ftag.center(tagsize),color))
-		else:
-			ctag = '[{0}]'.format(colorize(ftag.center(tagsize),color))
-	else:
-		if bCont:
-			ctag = ' {0} '.format(ftag.center(tagsize))
-		else:
-			ctag = '[{0}]'.format(ftag.center(tagsize))
-			
-	return ctag
-	#return self.colorize(ftag.center(self.tag_size),color)
+		return Formatter.format(self, record_copy)	
 
 # *******************************************************************************
 # ArgParse
@@ -312,8 +366,11 @@ def tag ( tagname, format='ANSI', tagsize=6 ):
 def default_parser(description,banner=None):
 
 	import argparse
-	DEFAULT_LOG_LEVEL = LL_INFO
-	DEFAULT_CONFIG_FILE = '/etc/configuration.json'
+	
+	# use debug, if no overriding log level given, and debug flag is set
+	debug_file = '/root/DEBUG_MODE'
+	if os.path.exists(debug_file):
+		DEFAULT_LOG_LEVEL = LL_DEBUG
 	
 	if banner is not None:
 		print "************************************************************"
@@ -328,11 +385,15 @@ def default_parser(description,banner=None):
 	parser.add_argument('--port_subscriber', action='store')
 	return parser
 
-	
+
+# *******************************************************************************
+# Setup
+
+
 # ********************************************************************************
 # Load JSON configuration
 #
-def configuration_load( logger_name, configfile, defaultconfig=None ):
+def load_cfg_main(logger_name, configfile, defaultconfig=None):
 
 	# ********************************************************************************
 	# Restore default configuration
@@ -382,6 +443,98 @@ def configuration_load( logger_name, configfile, defaultconfig=None ):
 		
 	return config
 
+def load_cfg_zmq(cfg_main,override_pub,override_sub):
+	""" load zeromq configuration """
+	config = {}
+	
+	# in case both pub and sub supplied, uses these values
+	if override_pub and override_sub:
+		config['port_publisher'] = override_pub
+		config['port_subscriber'] = override_sub
+		return config
+
+	# set defaults
+	config['port_publisher'] = DEFAULT_PORT_PUB			
+	config['port_subscriber'] = DEFAULT_PORT_SUB
+		
+	if not 'zeromq' in cfg_main:
+		# use defaults if zeromq not in config and no values supplied
+		printer('Error: Configuration not loaded or missing ZeroMQ, using defaults:')
+		printer('Publisher port: {0}'.format(args.port_publisher))
+		printer('Subscriber port: {0}'.format(args.port_subscriber))
+	else:
+		# Get portnumbers from either the config, or default value
+		if 'port_publisher' in cfg_main['zeromq']:
+			config['port_publisher'] = cfg_main['zeromq']['port_publisher']
+		
+		if 'port_subscriber' in cfg_main['zeromq']:
+			config['port_subscriber'] = cfg_main['zeromq']['port_subscriber']		
+		
+	# override, if available
+	if override_pub: config['port_publisher'] = override_pub
+	if override_sub: config['port_subscriber'] = override_sub
+	return config
+
+def load_cfg_daemon(cfg_main,script):
+	""" load daemon configuration """
+	if 'daemons' not in cfg_main:
+		return None
+	else:
+		for daemon in cfg_main['daemons']:
+			if 'script' in daemon and daemon['script'] == script:
+				return daemon
+	return None
+
+def configuration_load( logger_name, configfile, defaultconfig=None ):
+
+	# ********************************************************************************
+	# Restore default configuration
+	#
+	def configuration_restore( configfile, defaultconfig ):
+		if os.path.exists(defaultconfig):
+			shutil.copy(defaultconfig,configfile)
+			return True
+
+	# keep track if we restored the config file
+	restored = False
+	
+	# use the default from the config dir, in case the configfile is not found (first run)
+	if not os.path.exists(configfile):
+		if defaultconfig and os.path.exists(defaultconfig):
+			printer('Configuration not present (first run?); loading default: {0}'.format( defaultconfig ), tag='CONFIG', logger_name=logger_name)
+			restored = configuration_restore( configfile, defaultconfig )
+			if not restored:
+				printer('Restoring configuration {0}: [FAIL]'.format(defaultconfig), LL_CRITICAL, tag='CONFIG', logger_name=logger_name)
+				return None
+		else:
+			printer('Configuration not present, and default missing')
+			return None
+
+	# open configuration file (restored or original) and Try to parse it
+	jsConfigFile = open(configfile)
+	try:
+		config=json.load(jsConfigFile)
+	except:
+		printer('Loading/parsing {0}: [FAIL]'.format(configfile) ,LL_CRITICAL, tag='CONFIG', logger_name=logger_name)
+		# if we had not previously restored it, try that and parse again
+		if not restored and defaultconfig:
+			printer('Restoring default configuration', tag='CONFIG', logger_name=logger_name)
+			configuration_restore( configfile, defaultconfig )
+			jsConfigFile = open(configfile)
+			config=json.load(jsConfigFile)
+			return config
+		else:
+			printer('Loading/parsing restored configuration failed!'.format(configfile) ,LL_CRITICAL, tag='CONFIG', logger_name=logger_name)
+			return None
+
+	# not sure if this is still possible, but let's check it..
+	if config == None:
+		printer('Loading configuration failed!'.format(configfile) ,LL_CRITICAL, tag='CONFIG', logger_name=logger_name)
+	else:
+		printer('Loading configuration [OK]'.format(configfile), tag='CONFIG', logger_name=logger_name)
+		
+	return config
+	
 # Add ANSI markup to a string
 def colorize ( string, foreground, background='black' ):
 	colorized = fg(foreground) + bg(background) + string + attr('reset')

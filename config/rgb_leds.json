@@ -1,0 +1,62 @@
+{
+	  "gpio_mode": "BCM"
+	, "devices": [
+		{ 	  "name": "rgb_1"
+			, "type": "rgb"
+			, "r": 13
+			, "g": 6
+			, "b": 26
+		},
+		{ 	  "name": "rgb_1"
+			, "type": "rgb_chain"
+			, "proto": "serial"
+			, "dt": 13
+			, "ck": 6
+		}
+
+	]
+	, "events": [
+		{
+			  "name": "feedback"
+			, "type": "gpio_in"
+			, "switch": [ "multi_enc_sw" ]
+			, "pattern": "on"
+			, "rgb": "#ff0000"
+		},
+		{
+			  "name": "mode_vol"
+			, "type": "mode_changed"
+			, "modes": [ "volume" ]
+			, "pattern": "on"
+			, "rgb": "#ff0000"
+		},
+		{
+			  "name": "mode_track"
+			, "type": "mode_changed"
+			, "modes": [ "track" ]
+			, "pattern": "on"
+			, "rgb": "#00ff00"
+		},
+		{
+			  "name": "mode_bass"
+			, "type": "mode_changed"
+			, "modes": [ "bass" ]
+			, "pattern": "on"
+			, "rgb": "#0000ff"
+		},
+		{
+			  "name": "mode_treble"
+			, "type": "mode_changed"
+			, "modes": [ "treble" ]
+			, "pattern": "on"
+			, "rgb": "#ff00ff"
+		},
+		{
+			  "name": "mode_menu"
+			, "type": "mode_changed"
+			, "modes": [ "menu" ]
+			, "pattern": "blink_normal"
+			, "rgb": "#ffff00"
+		}
+	]
+}

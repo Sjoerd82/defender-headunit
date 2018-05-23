@@ -83,7 +83,7 @@ def load_zeromq_configuration():
 # On Idle
 #
 def idle_message_receiver():
-	#print "DEBUG: idle_msg_receiver()"
+	print "DEBUG: idle_msg_receiver()"
 	
 	def dispatcher(path, command, arguments, data):
 		handler_function = 'handle_path_' + path[0]
@@ -94,7 +94,7 @@ def idle_message_receiver():
 			print("No handler for: {0}".format(handler_function))
 			return None
 			
-	def handle_path_events(path,cmd,args,data):
+	def handle_path_udisks(path,cmd,args,data):
 
 		base_path = 'udisks'
 		# remove base path
@@ -102,15 +102,10 @@ def idle_message_receiver():
 
 		# -------------------------------------------------------------------------
 		# Sub Functions must return None (invalid params) or a {data} object.
-		def get_devices(args):
-			"""	Retrieve List of Registered Devices
-			"""
-			valid = validate_args(args,0,0)
-			if not valid:
-				return None
-						
-			data = get_data(attached_drives,True)
-			return data
+		def get_devices():
+			"""	Retrieve List of Registered Devices """						
+			data = struct_data(attached_drives)
+			return data	# this will be returned using the response path
 		# -------------------------------------------------------------------------
 		if path:
 			function_to_call = cmd + '_' + '_'.join(path)
@@ -120,7 +115,7 @@ def idle_message_receiver():
 
 		ret = None
 		if function_to_call in locals():
-			ret = locals()[function_to_call](args)
+			ret = locals()[function_to_call]()
 			printer('Executed {0} function {1} with result status: {2}'.format(base_path,function_to_call,ret)) # TODO: LL_DEBUG
 		else:
 			printer('Function {0} does not exist'.format(function_to_call))

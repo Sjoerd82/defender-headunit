@@ -1,9 +1,14 @@
 #!/usr/bin/python
 
+# cmd.py, the swiss army knife for the headunit 
+#
+
 # TODO:
-# - get list of sources
-# - request list of registered USB devices
-# - change eca chain
+# commands specific to daemons, microservices or plugins should not be hardcoded here.
+# currently these are:
+# - status udisks
+# - ecasound chain setup
+#
 
 import os
 import json
@@ -43,6 +48,12 @@ mq_rpath = None
 
 
 app_commands =	[
+	{	'name': 'source-list',
+		'params': None,
+		'description': 'List primary sources',
+		'command': 'GET',
+		'path': '/source/primary'
+	},
 	{	'name': 'source-check',
 		'params': [
 			{'name':'index','required':False, 'help':''},
@@ -226,6 +237,18 @@ app_commands =	[
 		'command': 'PUT',
 		'path': '/volume/mute'
 	},
+	{	'name': 'ecasound-chainsetup-get',
+		'params': None,
+		'description': 'Get current ecasound chainsetup',
+		'command': 'GET',
+		'path': '/ecasound/chainsetup'
+	},
+	{	'name': 'ecasound-chainsetup-set',
+		'params': [ {'name':'chainsetup', 'required':True, 'help':'Name of chain setup'} ],
+		'description': 'Select ecasound chainsetup',
+		'command': 'PUT',
+		'path': '/ecasound/chainsetup'
+	},
 	{	'name': 'system-reboot',
 		'params': [ {'name':'timer', 'required':False, 'help':'Time in seconds to shutdown. Default: 0'} ],
 		'description': 'Reboot system',
@@ -358,6 +381,7 @@ def parse_args():
 	
 	# status
 	parser_status = subparsers.add_parser('status')
+	parser_cmd.add_argument('status_of_what', action='store', nargs='*')
 	parser_status.set_defaults(which='status')
 	
 	# command help
@@ -465,29 +489,59 @@ def main():
 	global mq_rpath
 
 	if args.which == 'status':
-		if 'daemons' not in cfg_main:
-			return
+	
+		if args.status_of_what == 'daemons':
+			if 'daemons' not in cfg_main:
+				return
+			else:
+				print "Daemon status:"
+				print "{0:19} {1:15} PID   Status".format("Service","init.d")
+				print "------------------- --------------- ----- ------------"
+				for daemon in cfg_main['daemons']:
+					dmn_status = "Unknown"
+					dmn_pid = ""
+					if 'pid_file' in daemon:
+						pid_file = os.path.join(cfg_main['directories']['pid'],daemon['pid_file'])
+						if os.path.exists(pid_file):
+							with open(pid_file,'r') as f_pid:
+								dmn_pid = int(f_pid.readline().strip())
+								try:
+									dmn_status = colorize("Running",'light_green_2')
+									os.kill(dmn_pid,0)
+								except:
+									dmn_status = colorize("Not running",'light_red')
+									
+					print "{0:19} {1:15} {2:<5} {3}".format(daemon['name'],daemon['init.d'],dmn_pid,dmn_status)
+					
+			exit(0)
+		elif args.status_of_what == 'udisks':
+			print "UDisks status:"
+			print "{0:10} {1:20} {2:11} {3:30}".format("Device","UUID","Label","Mountpoint")
+			print "{-<0:10} {-<1:20} {-<2:11} {-<3:30}".format("-","-","-","-")
+			ret = messaging.publish_command('/udisks/devices','GET')
+			print ret
+			if ret == False or ret is None:
+				print "[FAIL]"
+			else:
+				if type(ret) == dict:
+					if 'retval' in ret: print "Return code: {0}".format(ret['retval'])
+					if 'payload' in ret:
+						print "Return data:"
+						print_dict(ret['payload'])
+						for device in ret['payload']:
+							#print "{0:10} {1:20} {2:11} {3:30}".format(ret['payload']['device'],ret['payload']['UUID'],ret['payload']['Label'],ret['payload']['Mountpoint'])
+							print "{0:10} {1:20} {2:11} {3:30}".format(device['device'],device['UUID'],device['Label'],device['Mountpoint'])
+						
+				elif type(ret) == str:
+					print "weird.. a string?!"
+					print ret
+
+			exit(0)
 		else:
-			print "Daemon status:"
-			print "{0:19} {1:15} PID   Status".format("Service","init.d")
-			print "------------------- --------------- ----- ------------"
-			for daemon in cfg_main['daemons']:
-				dmn_status = "Unknown"
-				dmn_pid = ""
-				if 'pid_file' in daemon:
-					pid_file = os.path.join(cfg_main['directories']['pid'],daemon['pid_file'])
-					if os.path.exists(pid_file):
-						with open(pid_file,'r') as f_pid:
-							dmn_pid = int(f_pid.readline().strip())
-							try:
-								dmn_status = colorize("Running",'light_green_2')
-								os.kill(dmn_pid,0)
-							except:
-								dmn_status = colorize("Not running",'light_red')
-								
-				print "{0:19} {1:15} {2:<5} {3}".format(daemon['name'],daemon['init.d'],dmn_pid,dmn_status)
-				
-		exit(0)
+			print 'Valid options for status are: "status daemons" and "status udisks"'
+			print " status daemons \t Display daemon status"
+			print " status udisks \t Display removable drives"
+			exit(0)
 
 	
 	if args.which == 'help':

@@ -43,7 +43,10 @@ class GpioController(object):
 		self.long_press_ms = 800
 		self.timer_mode = None		# timer object
 
-		self.gpio_setup(self.int_handle_switch,self.int_handle_encoder)
+		if cb_function is None:
+			self.gpio_setup()
+		else:
+			self.gpio_setup(self.int_handle_switch,self.int_handle_encoder)
 	
 	
 	# ********************************************************************************
@@ -349,7 +352,7 @@ class GpioController(object):
 	# ********************************************************************************
 	# GPIO setup
 	# 
-	def gpio_setup(self,int_switch,int_encoder):
+	def gpio_setup(self,int_switch=None,int_encoder=None):
 		
 		# gpio mode: BCM or board
 		if 'gpio_mode' in self.cfg_gpio:
@@ -393,6 +396,23 @@ class GpioController(object):
 		# initialize all pins in configuration
 		pins_monitor = []
 		for device in self.cfg_gpio['devices']:
+			if 'type' in device and device['type'] = 'led':
+				# Normal led
+				pin = device['pin']
+				printer("Setting up pin: {0}".format(pin)
+				GPIO.setup(pin, GPIO.OUT)
+				
+			if 'type' in device and device['type'] = 'rgb':
+				# RGB led
+				pin_r = device['r']
+				pin_g = device['g']
+				pin_b = device['b']
+				printer("Setting up pins: {0}, {1} and {2}".format(pin_r, pin_g, pin_b))
+				GPIO.setup(pin_r, GPIO.OUT)
+				GPIO.setup(pin_g, GPIO.OUT)
+				GPIO.setup(pin_b, GPIO.OUT)
+				
+				
 			if 'sw' in device and int_switch is not None:
 				#pin = self.cfg_gpio['devices'][ix]['sw']
 				pin = device['sw']
