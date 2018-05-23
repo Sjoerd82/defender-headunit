@@ -490,7 +490,11 @@ def main():
 
 	if args.which == 'status':
 	
-		if args.status_of_what == 'daemons':
+		print status_of_what
+		if not status_of_what:
+			print "NOT"
+			
+		if args.status_of_what[0] == 'daemons':
 			if 'daemons' not in cfg_main:
 				return
 			else:
@@ -538,9 +542,9 @@ def main():
 
 			exit(0)
 		else:
-			print 'Valid options for status are: "status daemons" and "status udisks"'
-			print " status daemons \t Display daemon status"
-			print " status udisks \t Display removable drives"
+			print "Valid options for status are:"
+			print " status daemons    Display daemon status"
+			print " status udisks     Display removable drives"
 			exit(0)
 
 	
