@@ -28,8 +28,8 @@ LOG_TAG = None
 LOGGER_NAME = "None"
 
 DESCRIPTION = "Send a MQ command"
-DEFAULT_PORT_SUB = 5560
 DEFAULT_PORT_PUB = 5559
+DEFAULT_PORT_SUB = 5560
 RETURN_PATH = '/cmdpy/'
 
 args = None
@@ -480,6 +480,8 @@ def setup():
 
 	printer("ZeroMQ: Creating Publisher: {0}".format(DEFAULT_PORT_PUB))
 	messaging.create_publisher()
+	sleep(1)
+
 	
 def main():
 
