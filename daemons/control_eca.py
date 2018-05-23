@@ -292,6 +292,7 @@ def eca_load_chainsetup_file(ecs_file):
 		printer("EQ chain: {0}".format(cfg_ecasound['chain_eq']))
 	'''
 	# all good!
+	global chainsetup_filename
 	chainsetup_filename = ecs_file
 	
 	# TODO TODO TODO -- GET FROM RESUME -- !!! !!!
