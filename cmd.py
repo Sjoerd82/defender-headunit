@@ -527,7 +527,7 @@ def main():
 			print "UDisks status:"
 			print "{0:10} {1:20} {2:11} {3:30}".format("Device","UUID","Label","Mountpoint")
 			print "{0:-<10} {1:-<20} {2:-<11} {3:-<30}".format("-","-","-","-")
-			ret = messaging.publish_command('/udisks/devices','GET')
+			ret = messaging.publish_command('/udisks/devices','GET',wait_for_reply=True) #,response_path='/cmdpy/udisks')
 			print ret
 			if ret == False or ret is None:
 				print "[FAIL]"
