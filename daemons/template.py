@@ -84,7 +84,7 @@ def setup():
 	#
 	global logger
 	log_address = None
-	if args.b: log_address='/dev/log') 	# output to syslog
+	if args.b: log_address='/dev/log' 	# output to syslog
 	logger = log_getlogger(LOGGER_NAME,args.loglevel,LOG_TAG,log_address)
 		
 	#
