@@ -86,6 +86,9 @@ def handle_path_mode(path,cmd,args,data):
 		if not 'mode' in args:
 			return
 		
+		#print args['mode']
+		#print args['mode']
+		
 		# new mode?
 		if args['name'] not in modes:
 			try:
