@@ -208,7 +208,7 @@ def printer( message, level=LL_INFO, tag="",logger_name=""):
 	logger = logging.getLogger(logger_name)
 	logger.log(level, message, extra={'tag': tag})
 	
-def log_getlogger( name, tag, level, address=None):
+def log_getlogger( name, level, tag, address=None):
 	logger = logging.getLogger(name)
 	logger.setLevel(logging.DEBUG)
 
