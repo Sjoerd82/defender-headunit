@@ -17,21 +17,26 @@ sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
 from hu_msg import MqPubSubFwdController
 from hu_gpio import GpioController
+from hu_datastruct import Modes
 
 # *******************************************************************************
 # Global variables and constants
 #
 DESCRIPTION = "Description, shown when using the help (-h) switch"
-BANNER = "Startup banner"
-LOG_TAG = 'TMPTAG'
-LOGGER_NAME = 'template'
-SUBSCRIPTIONS = ['/path/']
+BANNER = "GPIO Output"
+LOG_TAG = 'GPIOOUTP'
+LOGGER_NAME = 'output_gpio'
+SUBSCRIPTIONS = ['/events/']
+SLEEP_INTERVAL = 0.1
 
 # global variables
 logger = None
 args = None
 messaging = None
 gpio = None
+
+# global datastructures
+modes = Modes()
 
 # configuration
 cfg_main = None		# main
@@ -68,6 +73,146 @@ def load_cfg_gpio():
 		print "ERROR: not found: {0}".format(gpio_config_file)
 		return
 
+
+def handle_path_events(path,cmd,args,data):
+
+	base_path = 'events'
+	# remove base path
+	del path[0]
+	
+	def data_mode_changed(data):
+		print "MODE CHANGE!"
+		print data
+		if not 'payload' in data:
+			return
+		
+		# new mode?
+		if data['payload']['name'] not in modes:
+			try:
+				modes.append(data)
+			except:
+				print "Could not add mode"
+		else:
+			#check if changed
+			current_state = modes.
+			if data['payload']['state'] != 
+		
+	
+	def data_source_active(data):
+		print "ACTIVE"
+		pass
+	def data_source_available(data):
+		print "AVAILABLE"
+		pass
+	def data_player_state(data):
+		print "STATE"
+		pass
+	def data_player_track(data):
+		print "TRACK"
+		pass
+	def data_player_elapsed(data):
+		print "ELAPSED"
+		pass
+	def data_player_updating(data):
+		print "UPDATING"
+		pass
+	def data_player_updated(data):
+		print "UPDATED"
+		pass
+	def data_volume_changed(data):
+		print "VOL_CHG"
+		pass
+	def data_volume_att(data):
+		print "ATT"
+		pass
+	def data_volume_mute(data):
+		print "MUTE"
+		pass
+	def data_network_up(data):
+		print "NET UP"
+		pass
+	def data_network_down(data):
+		payload = json.loads(data)
+		sc_sources.do_event('network',path,payload)
+		printSummary()
+		return None
+	def data_system_shutdown(data):
+		print "SHUTDOWN"
+		pass
+	def data_system_reboot(data):
+		print "REBOOT"
+		pass
+	def data_udisks_added(data):
+		""" New media added
+			
+			Data object:
+			{
+				device
+				uuid
+				mountpoint
+				label
+			}
+			Return data:
+				?
+			Return codes:
+				?
+		"""
+		#valid = validate_args(args,1,3)
+		#if not valid:
+		#	return None
+
+		payload = json.loads(data)
+		sc_sources.do_event('udisks',path,payload)	# do_event() executes the 'udisks' event
+		printSummary()
+		return None
+		
+	def data_udisks_removed(data):
+		print "REMOVED"
+		pass
+
+	if path:
+		function_to_call = cmd + '_' + '_'.join(path)
+	else:
+		# called without sub-paths
+		function_to_call = cmd + '_' + base_path
+
+	ret = None
+	if function_to_call in locals():
+		ret = locals()[function_to_call](data)
+		printer('Executed {0} function {1} with result status: {2}'.format(base_path,function_to_call,ret))
+	else:
+		printer('Function {0} does not exist'.format(function_to_call))
+
+	return ret
+
+	
+def idle_message_receiver():
+	#print "DEBUG: idle_msg_receiver()"
+	
+	def dispatcher(path, command, arguments, data):
+		handler_function = 'handle_path_' + path[0]
+			
+		if handler_function in globals():
+			ret = globals()[handler_function](path, command, arguments, data)
+			return ret
+		else:
+			print("No handler for: {0}".format(handler_function))
+			return None
+					
+	rawmsg = messaging.poll(timeout=1000)				#None=Blocking, 1000 = 1sec
+	if rawmsg:
+		printer("Received message: {0}".format(rawmsg))	#TODO: debug
+		parsed_msg = parse_message(rawmsg)
+		
+		# send message to dispatcher for handling	
+		retval = dispatcher(parsed_msg['path'],parsed_msg['cmd'],parsed_msg['args'],parsed_msg['data'])
+
+		if parsed_msg['resp_path']:
+			#print "DEBUG: Resp Path present.. returing message.. data={0}".format(retval)
+			messaging.publish_command(parsed_msg['resp_path'],'DATA',retval)
+		
+	return True # Important! Returning true re-enables idle routine.
+	
 #********************************************************************************
 # Parse command line arguments
 #
@@ -122,9 +267,13 @@ def setup():
 	printer("ZeroMQ: Initializing")
 	messaging = MqPubSubFwdController('localhost',config['port_publisher'],config['port_subscriber'])
 	
-	printer("ZeroMQ: Creating Publisher: {0}".format(config['port_publisher']))
-	messaging.create_publisher()
+	#printer("ZeroMQ: Creating Publisher: {0}".format(config['port_publisher']))
+	#messaging.create_publisher()
 
+	printer("ZeroMQ: Creating Subscriber: {0}".format(config['port_subscriber']))
+	messaging.create_subscriber(SUBSCRIPTIONS)
+
+	
 	#
 	# GPIO
 	#
@@ -136,7 +285,8 @@ def setup():
 def main():		
 
 	while True:
-		sleep(0.1)
+		idle_message_receiver()
+		sleep(SLEEP_INTERVAL)
 
 
 if __name__ == "__main__":
