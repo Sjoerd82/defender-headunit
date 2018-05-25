@@ -26,7 +26,7 @@ DESCRIPTION = "Description, shown when using the help (-h) switch"
 BANNER = "GPIO Output"
 LOG_TAG = 'GPIOOUTP'
 LOGGER_NAME = 'output_gpio'
-SUBSCRIPTIONS = ['/events/']
+SUBSCRIPTIONS = ['/events/','/mode/']
 SLEEP_INTERVAL = 0.1
 
 # global variables
@@ -73,7 +73,46 @@ def load_cfg_gpio():
 		print "ERROR: not found: {0}".format(gpio_config_file)
 		return
 
+def handle_path_mode(path,cmd,args,data):
 
+	base_path = 'mode'
+	# remove base path
+	del path[0]
+	
+	def put_set(data):
+		print "MODE Set!"
+		print data
+		if not 'payload' in data:
+			return
+		
+		# new mode?
+		if data['payload']['name'] not in modes:
+			try:
+				modes.append(data)
+			except:
+				print "Could not add mode"
+		else:
+			print "Check if changed"
+			#check if changed
+			#current_state = modes.
+			#if data['payload']['state'] != 
+			
+	if path:
+		function_to_call = cmd + '_' + '_'.join(path)
+	else:
+		# called without sub-paths
+		function_to_call = cmd + '_' + base_path
+
+	ret = None
+	if function_to_call in locals():
+		ret = locals()[function_to_call](data)
+		printer('Executed {0} function {1} with result status: {2}'.format(base_path,function_to_call,ret))
+	else:
+		printer('Function {0} does not exist'.format(function_to_call))
+
+	return ret
+
+	
 def handle_path_events(path,cmd,args,data):
 
 	base_path = 'events'
@@ -93,9 +132,10 @@ def handle_path_events(path,cmd,args,data):
 			except:
 				print "Could not add mode"
 		else:
+			print "Check if changed"
 			#check if changed
-			current_state = modes.
-			if data['payload']['state'] != 
+			#current_state = modes.
+			#if data['payload']['state'] != 
 		
 	
 	def data_source_active(data):

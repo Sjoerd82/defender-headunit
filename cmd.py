@@ -237,17 +237,23 @@ app_commands =	[
 		'command': 'PUT',
 		'path': '/volume/mute'
 	},
-	{	'name': 'ecasound-chainsetup-get',
+	{	'name': 'eca-chainsetup-get',
 		'params': None,
 		'description': 'Get current ecasound chainsetup',
 		'command': 'GET',
 		'path': '/ecasound/chainsetup'
 	},
-	{	'name': 'ecasound-chainsetup-set',
+	{	'name': 'eca-chainsetup-set',
 		'params': [ {'name':'chainsetup', 'required':True, 'help':'Name of chain setup'} ],
 		'description': 'Select ecasound chainsetup',
 		'command': 'PUT',
 		'path': '/ecasound/chainsetup'
+	},
+	{	'name': 'mode-set',
+		'params': [ {'name':'mode', 'required':True, 'help':'Mode to set'} ],
+		'description': 'Set a mode',
+		'command': 'PUT',
+		'path': '/mode/set'
 	},
 	{	'name': 'system-reboot',
 		'params': [ {'name':'timer', 'required':False, 'help':'Time in seconds to shutdown. Default: 0'} ],
