@@ -393,7 +393,7 @@ def default_parser(description,banner=None):
 # ********************************************************************************
 # Load JSON configuration
 #
-def load_cfg_main(logger_name, configfile, defaultconfig=None):
+def load_cfg_main(logger_name, configfile=None, defaultconfig=None):
 
 	# ********************************************************************************
 	# Restore default configuration
@@ -403,6 +403,9 @@ def load_cfg_main(logger_name, configfile, defaultconfig=None):
 			shutil.copy(defaultconfig,configfile)
 			return True
 
+	if configfile is None:
+		configfile = DEFAULT_CONFIG_FILE
+	
 	# keep track if we restored the config file
 	restored = False
 	
