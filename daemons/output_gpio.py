@@ -80,16 +80,16 @@ def handle_path_mode(path,cmd,args,data):
 	# remove base path
 	del path[0]
 	
-	def put_set(data):
+	def put_set(args):
 		print "MODE Set!"
-		print data
-		if not 'payload' in data:
+		print args
+		if not 'mode' in args:
 			return
 		
 		# new mode?
-		if data['payload']['name'] not in modes:
+		if args['name'] not in modes:
 			try:
-				modes.append(data)
+				modes.append(args)
 			except:
 				print "Could not add mode"
 		else:
@@ -106,7 +106,7 @@ def handle_path_mode(path,cmd,args,data):
 
 	ret = None
 	if function_to_call in locals():
-		ret = locals()[function_to_call](data)
+		ret = locals()[function_to_call](args)
 		printer('Executed {0} function {1} with result status: {2}'.format(base_path,function_to_call,ret))
 	else:
 		printer('Function {0} does not exist'.format(function_to_call))
