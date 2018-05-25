@@ -117,9 +117,9 @@ def setup():
 	#
 	global messaging
 	printer("ZeroMQ: Initializing")
-	messaging = MqPubSubFwdController('localhost',config['port_publisher'],config['port_subscriber'])
+	messaging = MqPubSubFwdController('localhost',cfg_zmq['port_publisher'],cfg_zmq['port_subscriber'])
 	
-	printer("ZeroMQ: Creating Publisher: {0}".format(config['port_publisher']))
+	printer("ZeroMQ: Creating Publisher: {0}".format(cfg_zmq['port_publisher']))
 	messaging.create_publisher()
 
 	printer('Initialized [OK]')
