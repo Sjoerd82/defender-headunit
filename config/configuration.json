@@ -89,7 +89,7 @@
 			, "script":"output_gpio.py"
 			, "init.d":"Sxxoutgpio"
 			, "pid_file":"out_gpio.pid"
-			, "config": "cool_leds.json"
+			, "config": "rgb_leds.json"
 		},
 		{
 			  "name":"MPD"
