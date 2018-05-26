@@ -81,8 +81,7 @@ def handle_path_mode(path,cmd,args,data):
 	# remove base path
 	del path[0]
 	
-	def put_set(args):
-		
+	def put_set(args):	
 		# args[0] = mode
 		# args[1] = True|False (optional, default=True)
 		
@@ -100,20 +99,25 @@ def handle_path_mode(path,cmd,args,data):
 		new_mode = { "name": mode_set, "state": mode_state }
 		# new mode?
 		if mode_set not in modes.unique_list():
-			print "Setting mode {0} to {1}".format(mode_set,mode_state)
+			print "Setting new mode {0} to {1}".format(mode_set,mode_state)
 			modes.append(new_mode)
 		else:
 			print "Existing Mode. Check if changed"
 			mode_curr = modes.get_by_unique(mode_set)
-			print "Current   : {0}".format(mode_curr['state'])
-			print "Requested : {0}".format(mode_state)
+			#print "Current   : {0}".format(mode_curr['state'])
+			#print "Requested : {0}".format(mode_state)
 			if mode_curr['state'] != mode_state:
 				print "Updating mode to {0}".format(mode_state)
 				modes.set_by_unique(mode_set,new_mode)
 				
-		print "--- MODES ---"
-		print modes
+		#print "--- MODES ---"
+		#print modes
+		return True
 			
+	def get_get(args):
+		return modes
+
+	
 	if path:
 		function_to_call = cmd + '_' + '_'.join(path)
 	else:
