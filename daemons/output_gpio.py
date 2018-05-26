@@ -100,16 +100,15 @@ def handle_path_mode(path,cmd,args,data):
 		print "Setting mode {0} to {1}".format(mode_set,mode_state)
 		new_mode = { "name": mode_set, "state": mode_state }
 	
-		print modes.unique_list()
-	
 		# new mode?
-		if mode_set not in modes:
+		if mode_set not in modes.unique_list():
 			modes.append(new_mode)
 		else:
 			print "Existing Mode. Check if changed"
 			#check if changed
 			#current_state = modes.
 			#if data['payload']['state'] != 
+		print "--- MODES ---"
 		print modes
 			
 	if path:

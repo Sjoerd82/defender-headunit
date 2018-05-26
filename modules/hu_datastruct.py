@@ -17,11 +17,13 @@ class ListDataStruct(list):
 			return False
 	
 	def unique_list(self):
-		""" returns a list of the unique key values """ 
+		""" returns a list of the unique key values """
+		if self.unique_key is None:
+			return None
+		
 		ret = []
-		for x in self:
-			print x
-			ret.append(x[self.unique_key])
+		for dict_item in self:
+			ret.append(dict_item[self.unique_key])
 		return ret
 	
 	def append(self, item):
