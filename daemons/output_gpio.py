@@ -38,6 +38,7 @@ gpio = None
 
 # global datastructures
 modes = Modes()
+list_modes = []
 
 # configuration
 cfg_main = None		# main
@@ -98,6 +99,8 @@ def handle_path_mode(path,cmd,args,data):
 		
 		print "Setting mode {0} to {1}".format(mode_set,mode_state)
 		new_mode = { "name": mode_set, "state": mode_state }
+	
+		print modes.unique_list()
 	
 		# new mode?
 		if mode_set not in modes:

@@ -1,7 +1,12 @@
+
+# TODO: add feature to check for a unique key
+
 class ListDataStruct(list):
 	
-	def __init__(self, mandatory_keys):
+	def __init__(self, unique_key, mandatory_keys):
 		self.mandatory_keys = mandatory_keys
+		self.unique_key = unique_key
+
 	
 	def __check_dict(self, dictionary):
 		# returns True if all required fields are present, else returns False
@@ -10,7 +15,15 @@ class ListDataStruct(list):
 			return True
 		else:
 			return False
-		
+	
+	def unique_list(self):
+		""" returns a list of the unique key values """ 
+		ret = []
+		for x in self:
+			print x
+			ret.append(x[self.unique_key])
+		return ret
+	
 	def append(self, item):
 		if not isinstance(item, dict):
 			raise TypeError, 'item is not of type dict'
@@ -39,8 +52,8 @@ class Modes(ListDataStruct):
 			mijnmodes4 = ModeList(name='track',test=True)	# OK (default state, test is added, but ignored (?)
 			mijnmodesX = ModeList(X='track')				# FAIL, missing name
 		"""
-		super(Modes, self).__init__({'name'})
-		
+		super(Modes, self).__init__('name',{'name'})
+				
 		empty = {}
 		empty['state'] = False
 
@@ -77,7 +90,7 @@ class Tracks(ListDataStruct):
 	"""
 	
 	def __init__(self, *args, **kwargs):
-		super(Tracks, self).__init__({})	# No mandatory fields
+		super(Tracks, self).__init__(None,{})	# No mandatory fields
 		empty = {}
 		empty['display'] = None
 		empty['source'] = None
