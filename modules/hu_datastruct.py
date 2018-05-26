@@ -32,6 +32,15 @@ class ListDataStruct(list):
 			if dict_item[self.unique_key] == key:
 				return dict_item
 	
+	def set_by_unique(self,key,updated_dict):
+		for ix, dict_item in enumerate(self):
+			if dict_item[self.unique_key] == key:
+					self[ix] = updated_dict
+				return True
+				
+		return False
+		
+	
 	def append(self, item):
 		if not isinstance(item, dict):
 			raise TypeError, 'item is not of type dict'
