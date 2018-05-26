@@ -97,13 +97,11 @@ def handle_path_mode(path,cmd,args,data):
 			mode_state = True
 		
 		print "Setting mode {0} to {1}".format(mode_set,mode_state)
+		new_mode = { "name": mode_set, "state": mode_state }
 	
 		# new mode?
 		if mode_set not in modes:
-			#try:
-			modes.append(name=mode_set,state=mode_state)
-			#except:
-			#	print "Could not add mode"
+			modes.append(new_mode)
 		else:
 			print "Existing Mode. Check if changed"
 			#check if changed
