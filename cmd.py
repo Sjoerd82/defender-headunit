@@ -657,6 +657,7 @@ def main():
 	
 	# todo: check, is it ok to include an empty mq_args?
 	if mq_rpath is not None:
+		print "testje"
 		ret = messaging.publish_command(mq_path,mq_cmd,mq_args,wait_for_reply=True,response_path=RETURN_PATH)
 	else:
 		ret = messaging.publish_command(mq_path,mq_cmd,mq_args)
@@ -672,6 +673,9 @@ def main():
 				print "Return data:"
 				print_dict(ret['payload'])
 		elif type(ret) == str:
+			print ret
+		else:
+			print type(ret)
 			print ret
 					
 	"""
