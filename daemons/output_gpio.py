@@ -100,10 +100,10 @@ def handle_path_mode(path,cmd,args,data):
 	
 		# new mode?
 		if mode_set not in modes:
-			try:
-				modes.append(name=mode_set,state=mode_state)
-			except:
-				print "Could not add mode"
+			#try:
+			modes.append(name=mode_set,state=mode_state)
+			#except:
+			#	print "Could not add mode"
 		else:
 			print "Existing Mode. Check if changed"
 			#check if changed
