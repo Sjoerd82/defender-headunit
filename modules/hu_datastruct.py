@@ -25,6 +25,12 @@ class ListDataStruct(list):
 		for dict_item in self:
 			ret.append(dict_item[self.unique_key])
 		return ret
+		
+	#terrible naming!
+	def get_by_unique(self,key):
+		for dict_item in self:
+			if dict_item[self.unique_key] == key:
+				return dict_item
 	
 	def append(self, item):
 		if not isinstance(item, dict):
