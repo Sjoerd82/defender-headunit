@@ -624,12 +624,19 @@ def main():
 		if 'params_override' in app_commands[ix]:
 			mq_args = app_commands[ix]['params_override']
 		else:
+		
+			""" JSON
 			params = {}
 			for pix, command_arg in enumerate(args.command_args):
 				key = app_commands[ix]['params'][pix]['name']
 				params[key] = command_arg
 			
 			mq_args = json.dumps(params)
+			"""
+			
+			""" PLAIN """
+			mq_args = ",".join(args.command_args)
+			
 			if mq_cmd == 'GET':
 				mq_rpath = RETURN_PATH
 			

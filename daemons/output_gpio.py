@@ -81,25 +81,35 @@ def handle_path_mode(path,cmd,args,data):
 	del path[0]
 	
 	def put_set(args):
-		print "MODE Set!"
-		print args[0]
-		if not 'mode' in args:
-			return
 		
-		#print args['mode']
-		#print args['mode']
+		# args[0] = mode
+		# args[1] = True|False (optional, default=True)
 		
+		mode_set = args[0]
+		if len(args) > 1:
+			if args[1].lower() in ['true','1','yes']:
+				mode_state = True
+			elif args[1].lower() in ['false','0','no']:
+				mode_state = False
+			else:
+				mode_state = True
+		else:
+			mode_state = True
+		
+		print "Setting mode {0} to {1}".format(mode_set,mode_state)
+	
 		# new mode?
-		if args['name'] not in modes:
+		if mode_set not in modes:
 			try:
-				modes.append(args)
+				modes.append(name=mode_set,state=mode_state)
 			except:
 				print "Could not add mode"
 		else:
-			print "Check if changed"
+			print "Existing Mode. Check if changed"
 			#check if changed
 			#current_state = modes.
 			#if data['payload']['state'] != 
+		print modes
 			
 	if path:
 		function_to_call = cmd + '_' + '_'.join(path)
