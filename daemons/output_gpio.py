@@ -334,8 +334,8 @@ def setup():
 	printer("ZeroMQ: Initializing")
 	messaging = MqPubSubFwdController('localhost',cfg_zmq['port_publisher'],cfg_zmq['port_subscriber'])
 	
-	#printer("ZeroMQ: Creating Publisher: {0}".format(cfg_zmq['port_publisher']))
-	#messaging.create_publisher()
+	printer("ZeroMQ: Creating Publisher: {0}".format(cfg_zmq['port_publisher']))
+	messaging.create_publisher()
 
 	printer("ZeroMQ: Creating Subscriber: {0}".format(cfg_zmq['port_subscriber']))
 	messaging.create_subscriber(SUBSCRIPTIONS)
