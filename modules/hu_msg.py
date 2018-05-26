@@ -214,7 +214,11 @@ class MqPubSubFwdController(object):
 			elif type(arguments) == 'dict':
 				#print "DEBUG MSG: DICT"
 				jsonified_args = json.dumps(arguments)
-				message = "{0}:{1}".format(message, jsonified_args)				
+				message = "{0}:{1}".format(message, jsonified_args)
+			elif isinstance(arguments, dict):
+				#print "DEBUG MSG: DICT"
+				jsonified_args = json.dumps(arguments)
+				message = "{0}:{1}".format(message, jsonified_args)
 			else:
 				#print "DEBUG MSG: OTHER"
 				jsonified_args = json.dumps(arguments)
@@ -233,6 +237,8 @@ class MqPubSubFwdController(object):
 			self.reply_subscriber.setsockopt (zmq.SUBSCRIBE, response_path)
 	#		reply_subscriber.setsockopt(zmq.SUBSCRIBE,response_path)
 
+		print "message = {0}".format(message)
+		print type(arguments)
 		retval = self.__send(message)
 		if not retval:
 			return False
