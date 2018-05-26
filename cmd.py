@@ -672,6 +672,8 @@ def main():
 			if 'payload' in ret:
 				print "Return data:"
 				print_dict(ret['payload'])
+		elif type(ret) == list:
+			print_dict(ret)
 		elif type(ret) == str:
 			print ret
 		else:

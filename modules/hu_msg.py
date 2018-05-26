@@ -237,8 +237,8 @@ class MqPubSubFwdController(object):
 			self.reply_subscriber.setsockopt (zmq.SUBSCRIBE, response_path)
 	#		reply_subscriber.setsockopt(zmq.SUBSCRIBE,response_path)
 
-		print "message = {0}".format(message)
-		print type(arguments)
+		#print "message = {0}".format(message)
+		#print type(arguments)	# <class 'hu_datastruct.Modes'>
 		retval = self.__send(message)
 		if not retval:
 			return False
