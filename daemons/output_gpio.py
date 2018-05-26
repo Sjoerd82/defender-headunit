@@ -82,7 +82,7 @@ def handle_path_mode(path,cmd,args,data):
 	
 	def put_set(args):
 		print "MODE Set!"
-		print args
+		print args[0]
 		if not 'mode' in args:
 			return
 		
