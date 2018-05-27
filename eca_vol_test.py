@@ -210,6 +210,23 @@ def eca_execute(command,tries=3):
 			printer(colorize("Executed: {0:30}; [OK] Response type: {1}".format(command,type(reteca)),'light_magenta'),level=LL_INFO)	#change to LL_DEBUG
 			return reteca
 
+def eca_execute_nooutput(command,tries=3):
+	""" executes an IAM command and examines the output, retries if neccessary """
+	for i in range(tries):
+		reteca = eca.command(command)
+		#if type(reteca) is StringType:
+		if isinstance(reteca, str):
+			if reteca[0:21] == "Response length error":
+				time.sleep(1)
+				printer("Executed: {0:30}; [FAIL] {1}".format(command,reteca),level=LL_ERROR)
+			elif reteca == "":
+				return reteca		
+			else:
+				return reteca
+		else:
+			printer(colorize("Executed: {0:30}; [OK] Response type: {1}".format(command,type(reteca)),'light_magenta'),level=LL_INFO)	#change to LL_DEBUG
+			return reteca
+
 def eca_load_chainsetup_file(ecs_file):
 	""" Load, Test and Connect chainsetup file
 		Returns:
@@ -845,7 +862,7 @@ def main():
 				print "--------------------------------------------------------------------------------"
 				print "test_mode = 1"
 				print "vol 1 to 4 in 0.1 steps; no delay"
-				time_start = time.clock()
+				time_start = datetime.now() #time.clock()
 
 			print "test mode: {0}, vol: {0} increase + 0.1".format(test_mode,local_volume)
 			local_volume += test_incr
@@ -853,7 +870,7 @@ def main():
 			counter += 1
 
 			if local_volume >= 4:
-				time_stop = time.clock()
+				time_stop = datetime.now() #time.clock()
 				print "Counts: {0} Time: {0}".format(counter, time_stop-time_start)
 				counter = 0
 				test_mode = 2
@@ -866,7 +883,7 @@ def main():
 				print "vol 1 to 4 in 0.1 steps; no delay"
 				local_volume = 1
 				eca_set_effect_amplification(local_volume)
-				time_start = time.clock()
+				time_start = datetime.now() #time.clock()
 			
 			print "test mode: {0}, vol: {0} increase + 0.1".format(test_mode,local_volume)
 			local_volume += test_incr
@@ -874,7 +891,7 @@ def main():
 			counter += 1
 
 			if local_volume >= 4:
-				time_stop = time.clock()
+				time_stop = datetime.now() #time.clock()
 				print "Counts: {0} Time: {0}".format(counter, time_stop-time_start)
 				counter = 0
 				test_mode = 3
@@ -886,15 +903,15 @@ def main():
 				print "vol 1 to 4 in 0.1 steps; no delay"
 				local_volume = 1
 				eca_set_effect_amplification(local_volume)
-				time_start = time.clock()
+				time_start = datetime.now() #time.clock()
 			
 			print "test mode: {0}, vol: {0} increase + 0.1".format(test_mode,local_volume)
 			local_volume += test_incr
-			eca_execute("copp-set {0}".format(local_volume),tries=1)
+			eca_execute_nooutput("copp-set {0}".format(local_volume),tries=1)
 			counter += 1
 
 			if local_volume >= 4:
-				time_stop = time.clock()
+				time_stop = datetime.now() #time.clock()
 				print "Counts: {0} Time: {0}".format(counter, time_stop-time_start)
 				counter = 0
 				test_mode = 999
