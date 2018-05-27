@@ -910,6 +910,7 @@ def main():
 			local_volume += test_incr
 			eca_execute_nooutput("copp-set {0}".format(local_volume),tries=1)
 			counter += 1
+			time.sleep(3)
 
 			if local_volume >= 4:
 				time_stop = datetime.now() #time.clock()
