@@ -343,10 +343,9 @@ class GpioController(object):
 			
 				this_chg = datetime.now()
 				delta = this_chg - self.encoder_last_chg
-				print "diff: {0}".format(delta)
 				print "diff: {0}".format(delta.total_seconds())
-				print type(delta)
-				if delta < 1:
+				print type(delta.total_seconds())
+				if delta.total_seconds() < 1:
 					print "FAST"
 			
 				if self.active_modes:
