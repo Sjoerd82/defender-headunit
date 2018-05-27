@@ -47,6 +47,8 @@ class GpioController(object):
 
 		# experimental -- detect speed
 		self.encoder_last_chg = datetime.now()
+		self.encoder_last_speed = None
+		self.encoder_fast_count = 0
 		
 		if cb_function is None:
 			self.gpio_setup()
@@ -344,9 +346,15 @@ class GpioController(object):
 				this_chg = datetime.now()
 				delta = this_chg - self.encoder_last_chg
 				print "diff: {0}".format(delta.total_seconds())
-				print type(delta.total_seconds())
-				if delta.total_seconds() < 1:
-					print "FAST"
+				#print type(delta.total_seconds())	#float
+				if delta.total_seconds() < 0.1:
+					self.encoder_fast_count += 1
+					if self.encoder_fast_count > 3:
+						print "FAST {0}".format(self.encoder_fast_count)
+					else:
+						print "Maybe....."
+				else:
+					self.encoder_fast_count = 0
 			
 				if self.active_modes:
 					self.reset_mode_timer(self.modes[0]['reset'])
