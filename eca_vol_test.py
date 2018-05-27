@@ -852,7 +852,7 @@ def main():
 	#qVolume = deque()	import ???
 
 	test_mode = 1
-	test_incr = 0.1
+	test_incr = 0.05
 	counter = 0
 
 	eca_execute("start")
@@ -865,14 +865,14 @@ def main():
 				print "vol 1 to 4 in 0.1 steps; no delay"
 				time_start = datetime.now() #time.clock()
 
-			print "test mode: {0}, vol: {0} increase + 0.1".format(test_mode,local_volume)
+			print "test mode: {0}, vol: {1} increase + {3}".format(test_mode,local_volume,test_incr)
 			local_volume += test_incr
 			eca_set_effect_amplification(local_volume)
 			counter += 1
 
 			if local_volume >= 4:
 				time_stop = datetime.now() #time.clock()
-				print "Counts: {0} Time: {0}".format(counter, time_stop-time_start)
+				print "Counts: {0} Time: {1}".format(counter, time_stop-time_start)
 				counter = 0
 				test_mode = 2
 
@@ -886,14 +886,14 @@ def main():
 				eca_set_effect_amplification(local_volume)
 				time_start = datetime.now() #time.clock()
 			
-			print "test mode: {0}, vol: {0} increase + 0.1".format(test_mode,local_volume)
+			print "test mode: {0}, vol: {1} increase + {3}".format(test_mode,local_volume,test_incr)
 			local_volume += test_incr
 			eca_set_effect_amplification_nooutput(local_volume)
 			counter += 1
 
 			if local_volume >= 4:
 				time_stop = datetime.now() #time.clock()
-				print "Counts: {0} Time: {0}".format(counter, time_stop-time_start)
+				print "Counts: {0} Time: {1}".format(counter, time_stop-time_start)
 				counter = 0
 				test_mode = 3
 				
@@ -906,14 +906,14 @@ def main():
 				eca_set_effect_amplification(local_volume)
 				time_start = datetime.now() #time.clock()
 			
-			print "test mode: {0}, vol: {0} increase + 0.1".format(test_mode,local_volume)
+			print "test mode: {0}, vol: {1} increase + {3}".format(test_mode,local_volume,test_incr)
 			local_volume += test_incr
 			eca_execute_nooutput("copp-set {0}".format(local_volume),tries=1)
 			counter += 1
 			
 			if local_volume >= 4:
 				time_stop = datetime.now() #time.clock()
-				print "Counts: {0} Time: {0}".format(counter, time_stop-time_start)
+				print "Counts: {0} Time: {1}".format(counter, time_stop-time_start)
 				time.sleep(5)
 				counter = 0
 				test_mode = 999
