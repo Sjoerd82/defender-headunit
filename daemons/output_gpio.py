@@ -25,7 +25,7 @@ from hu_datastruct import Modes
 #
 DESCRIPTION = "Description, shown when using the help (-h) switch"
 BANNER = "GPIO Output"
-LOG_TAG = 'GPIOOUTP'
+LOG_TAG = 'GPIOUT'
 LOGGER_NAME = 'output_gpio'
 SUBSCRIPTIONS = ['/events/','/mode/']
 SLEEP_INTERVAL = 0.1
