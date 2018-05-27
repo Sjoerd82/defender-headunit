@@ -57,7 +57,7 @@ att_level = 20		# TODO, get from configuration
 local_volume = 1	# TOOD, retrieve from resume!
 local_volume_chg = False
 eca_chain_selected = None
-volume_increment = 0.1
+volume_increment = 0.15
 chainsetup_filename = None
 
 logger = None
@@ -355,7 +355,7 @@ def eca_mute(state):
 def cb_gpio_function(code):
 	global local_volume
 	global local_volume_chg
-	print "Added to queue: EXECUTE: {0}".format(code)
+	#print "Added to queue: EXECUTE: {0}".format(code)
 	#qVolume.put(code)
 	if code in ('VOLUME_INC','VOLUME_DEC'):
 		if code == 'VOLUME_INC':

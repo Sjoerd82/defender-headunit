@@ -341,11 +341,11 @@ class GpioController(object):
 
 				if pin == encoder_pinB:							# Turning direction depends on 
 					#counter clockwise
-					print "[Encoder] {0}: DECREASE/CCW".format(function['function_ccw'])			
+					#print "[Encoder] {0}: DECREASE/CCW".format(function['function_ccw'])			
 					self.exec_function_by_code(function['function_ccw'],'ccw')
 				else:
 					#clockwise
-					print "[Encoder] {0}: INCREASE/CW".format(function['function_cw'])
+					#print "[Encoder] {0}: INCREASE/CW".format(function['function_cw'])
 					self.exec_function_by_code(function['function_cw'],'cw')
 
 
