@@ -323,12 +323,12 @@
 				{
 					  "n":		"alsa_loopback"
 					, "b":      "4096"
+					, "f": 		"s32_le,2,44100"
 					, "chains": [
 						{
 							  "a":		"pre"
 							, "i":		"alsa,\"hw:CARD=Loopback,DEV=0\""
 							, "o":		"alsa,\"hw:0,0\""
-							, "f":		"s32_le,2,44100"
 							, "ea":		"5"
 						}
 					]

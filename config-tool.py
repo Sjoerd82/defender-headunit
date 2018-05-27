@@ -157,7 +157,9 @@ def write_config_ecs( config ):
 		ecs_file = os.path.join(config['location'],chainsetup['n']+'.ecs')
 		verbose_before(ecs_file)
 		with open(ecs_file, 'w' ) as outfile:
-			outfile.write('-n:{0}\n'.format(chainsetup['n']))
+			for key, value in chainsetup.iteritems():
+				if key != 'chains':
+					outfile.write('-{0}:{1}\n'.format(key,value))
 			for chain in chainsetup['chains']:
 				outfile.write('\n')
 				for key,value in chain.iteritems():
