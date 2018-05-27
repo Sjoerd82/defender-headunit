@@ -366,6 +366,7 @@ class RemAnsiFormatter(Formatter):
 def default_parser(description,banner=None):
 
 	import argparse
+	global DEFAULT_LOG_LEVEL
 	
 	# use debug, if no overriding log level given, and debug flag is set
 	debug_file = '/root/DEBUG_MODE'

@@ -315,10 +315,13 @@ def eca_get_effect_amplification():
 	
 def eca_set_effect_amplification(level):
 
+	global local_volume
+	
 	if level < 0:
+		local_volume = 0
 		level = 0
 		
-	eca_chain_op_master_amp = 'Amplify'
+	#eca_chain_op_master_amp = 'Amplify'
 	#eca_chain_selected
 	# todo, keep local track of selected cs, c, etc.
 	#eca_execute("c-select {0}".format(ECA_CHAIN_MASTER_AMP))	# redundant, for now... #todo
@@ -854,6 +857,7 @@ def main():
 
 
 	eca_execute("start")
+	counter = 0
 	while True:
 		
 		if local_volume_chg == True:
@@ -871,8 +875,13 @@ def main():
 				qVolume.clear()
 			time.sleep(0.1)
 		'''
-		idle_message_receiver() # do this less often TODO! not critical, but takes up precious response time
-		#handle_mq_message()	# do this less often TODO! not critical, but takes up precious response time
+		if counter > 9:
+			# only every 10th iteration
+			idle_message_receiver() # do this less often TODO! not critical, but takes up precious response time
+			#handle_mq_message()	# do this less often TODO! not critical, but takes up precious response time
+			counter = 0
+		
+		counter += 1
 		
 	print "Stopping Ecasound"
 	eca_execute("stop")
