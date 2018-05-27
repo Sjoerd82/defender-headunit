@@ -66,7 +66,6 @@ gpio = None
 eca = None
 
 cfg_main = None		# main
-cfg_daemon = None	# daemon
 cfg_zmq = None		# Zero MQ
 cfg_ecasound = None
 cfg_gpio = None		# GPIO setup
@@ -111,15 +110,6 @@ def load_cfg_zmq():
 			config['port_subscriber'] = DEFAULT_PORT_SUB
 			
 		return config
-
-def load_cfg_daemon():
-	""" load daemon configuration """
-	if 'daemons' not in cfg_main:
-		return
-	else:
-		for daemon in cfg_main['daemons']:
-			if 'script' in daemon and daemon['script'] == os.path.basename(__file__):
-				return daemon
 
 def load_cfg_ecasound():
 	""" Load ecasound configuration
@@ -744,8 +734,6 @@ def setup():
 	# Configuration
 	#
 	global cfg_main
-	global cfg_daemon
-	#global cfg_zmq	#only used here(?)
 	global cfg_ecasound
 	cfg_main = load_cfg_main()
 	if cfg_main is None:
@@ -770,13 +758,7 @@ def setup():
 	if cfg_zmq is None:
 		printer("Error loading Zero MQ configuration.", level=LL_CRITICAL)
 		exit(1)
-			
-	# daemon
-	cfg_daemon = load_cfg_daemon()
-	if cfg_daemon is None:
-		printer("Daemon configuration could not be loaded.", level=LL_CRITICAL)
-		exit(1)
-	
+		
 	# eca
 	cfg_ecasound = load_cfg_ecasound()
 	if cfg_ecasound is None:
