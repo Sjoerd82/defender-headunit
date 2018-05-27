@@ -131,7 +131,7 @@
 		, "port_subscriber": 5560
 	}
 	, "ecasound": {
-		  "chainsetup": "mpd_fifo"
+		  "chainsetup": "alsa_loopback"
 		, "chain_master_amp": "pre"
 		, "chain_mute": "pre"
 		, "chain_eq": "pre"
@@ -321,6 +321,19 @@
 					]
 				},
 				{
+					  "n":		"alsa_loopback"
+					, "b":      "4096"
+					, "chains": [
+						{
+							  "a":		"pre"
+							, "i":		"alsa,\"hw:CARD=Loopback,DEV=0\""
+							, "o":		"alsa,\"hw:0,0\""
+							, "f":		"s32_le,2,44100"
+							, "ea":		"5"
+						}
+					]
+				},
+				{
 					  "n":		"mpd_fifo"
 					, "z":		"nodb"
 					, "chains": [
@@ -456,8 +469,15 @@
 			, "audio_output": [
 				{
 					  "type":"alsa" 
-					, "name":"HiFiberry DAC"
+					, "name":"Alsa: HiFiberry DAC"
 					, "device":"hw:0,0"
+					, "enabled":"yes"
+				},
+				{
+					  "type":"alsa" 
+					, "name":"Alsa: Loopback"
+					, "device":"hw:CARD=Loopback,DEV=1"
+					, "format":"44100:32:2"
 					, "enabled":"yes"
 				},
 				{
