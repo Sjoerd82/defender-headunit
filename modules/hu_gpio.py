@@ -43,6 +43,9 @@ class GpioController(object):
 		self.long_press_ms = 800
 		self.timer_mode = None		# timer object
 
+		# experimental -- detect speed
+		self.encoder_last_chg = None
+		
 		if cb_function is None:
 			self.gpio_setup()
 		else:
@@ -336,6 +339,11 @@ class GpioController(object):
 
 			if (Switch_A and Switch_B):						# Both one active? Yes -> end of sequence
 			
+				this_chg = datetime.now()
+				delta = this_chg - self.encoder_last_chg
+				print "diff: {0}".format(delta)
+				print "diff: {0}".format(int(delta.total_seconds())
+			
 				if self.active_modes:
 					self.reset_mode_timer(self.modes[0]['reset'])
 
@@ -347,6 +355,8 @@ class GpioController(object):
 					#clockwise
 					#print "[Encoder] {0}: INCREASE/CW".format(function['function_cw'])
 					self.exec_function_by_code(function['function_cw'],'cw')
+					
+				self.encoder_last_chg = this_chg
 
 
 	# ********************************************************************************
