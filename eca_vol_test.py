@@ -832,12 +832,14 @@ def main():
 	test_incr = 0.1
 
 	eca_execute("start")
+	time_start = time.clock()
 	while True:
 		
 		if test_mode == 1:
 			print "test mode: 1, vol: {0} increase + 0.1".format(local_volume)
 			local_volume += test_incr
-			if local_volume == 4:
+			if local_volume >= 4:
+				test_mode = 0
 				exit(0)
 			eca_set_effect_amplification(local_volume)
 			
@@ -854,7 +856,8 @@ def main():
 			time.sleep(0.1)
 		'''
 		#idle_message_receiver() # do this less often TODO! not critical, but takes up precious response time
-		
+	time_stop = time.clock()
+	print "Time: {0}".format(time_stop-time_start)
 	print "Stopping Ecasound"
 	eca_execute("stop")
 	eca_execute("cs-disconnect")
