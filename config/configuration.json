@@ -131,7 +131,7 @@
 		, "port_subscriber": 5560
 	}
 	, "ecasound": {
-		  "chainsetup": "jack_alsa_mpd"
+		  "chainsetup": "mpd_fifo"
 		, "chain_master_amp": "pre"
 		, "chain_mute": "pre"
 		, "chain_eq": "pre"
@@ -454,52 +454,61 @@
 			, "follow_outside_symlinks":"yes"
 			, "follow_inside_symlinks": "yes"
 			, "audio_output": [
-				{   "type":"alsa" 
-				     , "name":"HiFiberry DAC"
-					 , "device":"hw:0,0"
-					 , "enabled":"no"
+				{
+					  "type":"alsa" 
+					, "name":"HiFiberry DAC"
+					, "device":"hw:0,0"
+					, "enabled":"yes"
 				},
-				{	"type":"fifo" 
-				  , "name":"tmp_mpd_fifo"
-				  , "path": "/tmp/mpd.fifo"
-				  , "format":"44100:32:2"
-				  , "enabled":"yes"
+				{
+					  "type":"fifo" 
+					, "name":"Fifo: tmp_mpd"
+					, "path": "/tmp/mpd.fifo"
+					, "format":"44100:32:2"
+					, "enabled":"yes"
+					, "always_on":"yes"
 				},
-				{  "type":"pipe" 
-				     , "name":"Ecasound Simple"
-				     , "format":"44100:32:2"
-				     , "mixer_type":"software"
-					 , "command":"ecasound -q --server -z:nodb -z:mixmode,sum -f:s32_le,2,44100 -i:stdin -o:alsa"
-					 , "enabled":"no"
+				{
+					  "type":"pipe" 
+					, "name":"Pipe Ecasound: Alsa: Simple"
+					, "format":"44100:32:2"
+					, "mixer_type":"software"
+					, "command":"ecasound -q --server -z:nodb -z:mixmode,sum -f:s32_le,2,44100 -i:stdin -o:alsa"
+					, "enabled":"yes"
 				},
-				{  "type":"pipe" 
-				     , "name":"Alsa: DSP crossover/eq 2 channel mono"
-				     , "format":"44100:32:2"
-				     , "mixer_type":"software"
-					 , "command":"ecasound -q --server -z:nodb -z:mixmode,sum -a:pre -f:s32_le,2,44100 -i:stdin -pf:/etc/pre.ecp -o:loop,1 -a:woofer,tweeter -i:loop,1 -a:woofer -pf:/etc/woofer.ecp -chorder:1,0 -a:tweeter -pf:/etc/tweeter.ecp -chorder:0,2 -a:woofer,tweeter -f:16,4,44100 -o:alsa"
-					 , "enabled":"no"
+				{
+					  "type":"pipe" 
+					, "name":"Pipe Ecasound: Alsa: DSP crossover/eq 2 channel mono"
+					, "format":"44100:32:2"
+					, "mixer_type":"software"
+					, "command":"ecasound -q --server -z:nodb -z:mixmode,sum -a:pre -f:s32_le,2,44100 -i:stdin -pf:/etc/pre.ecp -o:loop,1 -a:woofer,tweeter -i:loop,1 -a:woofer -pf:/etc/woofer.ecp -chorder:1,0 -a:tweeter -pf:/etc/tweeter.ecp -chorder:0,2 -a:woofer,tweeter -f:16,4,44100 -o:alsa"
+					, "enabled":"yes"
 				},
-				{  "type":"pipe" 
-				     , "name":"Jack: DSP crossover/eq 2 channel mono"
-				     , "format":"44100:32:2"
-				     , "mixer_type":"software"
-					 , "command":"ecasound -q --server -z:nodb -z:mixmode,sum -a:pre -f:s32_le,2,44100 -i:stdin -pf:/etc/pre.ecp -o:loop,1 -a:woofer,tweeter -i:loop,1 -a:woofer -pf:/etc/woofer.ecp -chorder:1,0 -a:tweeter -pf:/etc/tweeter.ecp -chorder:0,2 -a:woofer,tweeter -f:16,4,44100 -o:jack"
-					 , "enabled":"no"
+				{
+					  "type":"pipe" 
+					, "name":"Pipe Ecasound: Jack: DSP crossover/eq 2 channel mono"
+					, "format":"44100:32:2"
+					, "mixer_type":"software"
+					, "command":"ecasound -q --server -z:nodb -z:mixmode,sum -a:pre -f:s32_le,2,44100 -i:stdin -pf:/etc/pre.ecp -o:loop,1 -a:woofer,tweeter -i:loop,1 -a:woofer -pf:/etc/woofer.ecp -chorder:1,0 -a:tweeter -pf:/etc/tweeter.ecp -chorder:0,2 -a:woofer,tweeter -f:16,4,44100 -o:jack"
+					, "enabled":"yes"
 				},
-				{  "type":"pipe" 
-				     , "name":"Alsa: DSP crossover/eq 4 channel stereo"
-				     , "format":"44100:32:2"
-				     , "mixer_type":"software"
-					 , "command":"ecasound -q --server -z:nodb -z:mixmode,sum -a:pre -f:s32_le,2,44100 -i:stdin -pf:/etc/pre.ecp -o:loop,1 -a:woofer,tweeter -i:loop,1 -a:woofer -pf:/etc/woofer.ecp -chorder:1,2,0,0 -a:tweeter -pf:/etc/tweeter.ecp -chorder:0,0,1,2 -a:woofer,tweeter -f:16,4,44100 -o:alsa"
-					 , "enabled":"no"
+				{
+					  "type":"pipe" 
+					, "name":"Pipe: Ecasound: Alsa: DSP crossover/eq 4 channel stereo"
+					, "format":"44100:32:2"
+					, "mixer_type":"software"
+					, "command":"ecasound -q --server -z:nodb -z:mixmode,sum -a:pre -f:s32_le,2,44100 -i:stdin -pf:/etc/pre.ecp -o:loop,1 -a:woofer,tweeter -i:loop,1 -a:woofer -pf:/etc/woofer.ecp -chorder:1,2,0,0 -a:tweeter -pf:/etc/tweeter.ecp -chorder:0,0,1,2 -a:woofer,tweeter -f:16,4,44100 -o:alsa"
+					, "enabled":"yes"
 				},
-				{  "type": "jack"
-				    , "name": "Jack System"
+				{
+					  "type": "jack"
+					, "name": "Jack: Port: System playback"
 					, "destination_ports": "system:playback_1,system:playback_2"
-					, "enabled": "no"
+					, "enabled": "yes"
 				},
-				{  "type": "jack"
-				    , "name": "Jack Ecasound"
+				{
+					  "type": "jack"
+					, "name": "Jack: Port: Ecasound"
 					, "destination_ports": "ecasound:in_1,ecasound:in_2"
 					, "enabled": "yes"
 				}

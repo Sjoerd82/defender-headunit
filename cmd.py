@@ -509,6 +509,8 @@ def main():
 		if not args.status_of_what:
 			print "Valid options for status are:"
 			print " status daemons    Display daemon status"
+			print " status mpd        Display mpd status"
+			print " status eca        Display ecasound status"
 			print " status udisks     Display removable drives"
 			exit(0)
 
@@ -537,6 +539,16 @@ def main():
 					
 			exit(0)
 			
+		elif args.status_of_what[0] == 'mpd':
+			print "MPD status:"
+			print "Outputs"
+			
+		elif args.status_of_what[0] == 'eca':
+			print "Ecasound status:"
+			print "Chainsetup: ?"
+			print 'Run "ecamonitor" for more details'
+			
+
 		elif args.status_of_what[0] == 'udisks':
 			print "UDisks status:"
 			print "{0:10} {1:20} {2:11} {3:30}".format("Device","UUID","Label","Mountpoint")
@@ -657,7 +669,6 @@ def main():
 	
 	# todo: check, is it ok to include an empty mq_args?
 	if mq_rpath is not None:
-		print "testje"
 		ret = messaging.publish_command(mq_path,mq_cmd,mq_args,wait_for_reply=True,response_path=RETURN_PATH)
 	else:
 		ret = messaging.publish_command(mq_path,mq_cmd,mq_args)
