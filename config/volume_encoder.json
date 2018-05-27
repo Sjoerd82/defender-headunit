@@ -1,0 +1,24 @@
+{
+	  "gpio_mode": "BCM"
+	, "long_press_ms": 800
+	, "devices": [
+		{ 	  "name": "multi_encoder"
+			, "type": "rotenc"
+			, "clk": 13
+			, "dt": 6
+		},
+		{ 	  "name": "multi_enc_sw"
+			, "sw": 26
+			, "gpio_on": "low"
+			, "debounce": 10
+		}
+	]
+	,"functions": [
+		{
+			  "name":"volume"
+			, "function_cw":"VOLUME_INC"
+			, "function_ccw":"VOLUME_DEC"
+			, "encoder":"multi_encoder"
+		}
+	]
+}

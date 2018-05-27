@@ -344,11 +344,11 @@ def cb_gpio_function(code):
 	#qVolume.put(code)
 	if code in ('VOLUME_INC','VOLUME_DEC'):
 		if code == 'VOLUME_INC':
-			local_volume += 5
+			local_volume += volume_increment
 			local_volume_chg = True
 			#eca_set_effect_amplification(local_volume)
 		elif code == 'VOLUME_DEC':
-			local_volume -= 5
+			local_volume -= volume_increment
 			local_volume_chg = True
 			#eca_set_effect_amplification(local_volume)
 
@@ -357,10 +357,10 @@ def handle_queue(code,count):
 	print "EXECUTE: {0} ({1} times)".format(code,count)
 	if code in ('VOLUME_INC','VOLUME_DEC'):#function_map:
 		if code == 'VOLUME_INC':
-			local_volume += 5 * count
+			local_volume += volume_increment * count
 			eca_set_effect_amplification(local_volume)
 		elif code == 'VOLUME_DEC':
-			local_volume -= 5 * count
+			local_volume -= volume_increment * count
 			eca_set_effect_amplification(local_volume)
 	else:
 		print "function {0} not in function_map".format(code)

@@ -175,7 +175,7 @@ def load_cfg_gpio():
 		config_dir = cfg_main['directories']['daemon-config']
 		# TODO
 		config_dir = "/mnt/PIHU_CONFIG/"	# fix!
-		config_file = "multi_functional_encoder.json"
+		config_file = "volume_encoder.json"
 		
 		gpio_config_file = os.path.join(config_dir,config_file)
 	
@@ -359,11 +359,11 @@ def cb_gpio_function(code):
 	#qVolume.put(code)
 	if code in ('VOLUME_INC','VOLUME_DEC'):
 		if code == 'VOLUME_INC':
-			local_volume += 5
+			local_volume += volume_increment
 			local_volume_chg = True
 			#eca_set_effect_amplification(local_volume)
 		elif code == 'VOLUME_DEC':
-			local_volume -= 5
+			local_volume -= volume_increment
 			local_volume_chg = True
 			#eca_set_effect_amplification(local_volume)
 
@@ -372,10 +372,10 @@ def handle_queue(code,count):
 	print "EXECUTE: {0} ({1} times)".format(code,count)
 	if code in ('VOLUME_INC','VOLUME_DEC'):#function_map:
 		if code == 'VOLUME_INC':
-			local_volume += 5 * count
+			local_volume += volume_increment * count
 			eca_set_effect_amplification(local_volume)
 		elif code == 'VOLUME_DEC':
-			local_volume -= 5 * count
+			local_volume -= volume_increment * count
 			eca_set_effect_amplification(local_volume)
 	else:
 		print "function {0} not in function_map".format(code)
