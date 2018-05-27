@@ -842,11 +842,12 @@ def main():
 		
 		if test_mode == 1:
 			if counter == 0:
+				print "--------------------------------------------------------------------------------"
 				print "test_mode = 1"
 				print "vol 1 to 4 in 0.1 steps; no delay"
 				time_start = time.clock()
 
-			print "test mode: 1, vol: {0} increase + 0.1".format(local_volume)
+			print "test mode: {0}, vol: {0} increase + 0.1".format(test_mode,local_volume)
 			local_volume += test_incr
 			eca_set_effect_amplification(local_volume)
 			counter += 1
@@ -857,16 +858,17 @@ def main():
 				counter = 0
 				test_mode = 2
 
-			
+		
 		if test_mode == 2:
 			if counter == 0:
+				print "--------------------------------------------------------------------------------"
 				print "test_mode = 2"
 				print "vol 1 to 4 in 0.1 steps; no delay"
 				local_volume = 1
 				eca_set_effect_amplification(local_volume)
 				time_start = time.clock()
 			
-			print "test mode: 1, vol: {0} increase + 0.1".format(local_volume)
+			print "test mode: {0}, vol: {0} increase + 0.1".format(test_mode,local_volume)
 			local_volume += test_incr
 			eca_set_effect_amplification_nooutput(local_volume)
 			counter += 1
@@ -877,15 +879,16 @@ def main():
 				counter = 0
 				test_mode = 3
 				
-		if test_mode == 2:
+		if test_mode == 3:
 			if counter == 0:
-				print "test_mode = 2"
+				print "--------------------------------------------------------------------------------"
+				print "test_mode = 3"
 				print "vol 1 to 4 in 0.1 steps; no delay"
 				local_volume = 1
 				eca_set_effect_amplification(local_volume)
 				time_start = time.clock()
 			
-			print "test mode: 1, vol: {0} increase + 0.1".format(local_volume)
+			print "test mode: {0}, vol: {0} increase + 0.1".format(test_mode,local_volume)
 			local_volume += test_incr
 			eca_execute("copp-set {0}".format(local_volume),tries=1)
 			counter += 1
@@ -899,7 +902,6 @@ def main():
 		
 		if test_mode == 999:
 			break
-			exit(0)
 
 			
 		'''
