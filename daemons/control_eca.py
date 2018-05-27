@@ -53,7 +53,7 @@ ECA_CHAIN_EQ = None				# chain object that contains the equalizer
 
 eca_chain_op_master_amp = None
 att_level = 20		# TODO, get from configuration
-local_volume = 5	# TOOD, retrieve from resume!
+local_volume = 1	# TOOD, retrieve from resume!
 local_volume_chg = False
 eca_chain_selected = None
 volume_increment = 5

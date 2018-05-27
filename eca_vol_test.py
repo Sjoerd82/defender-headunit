@@ -27,10 +27,10 @@ from Queue import Queue		# queuing
 # Utils
 #sys.path.append('../modules')
 #sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
-from hu_utils import *
-from hu_gpio import GpioController
-from hu_msg import MqPubSubFwdController
-from hu_msg import parse_message
+from modules.hu_utils import *
+from modules.hu_gpio import GpioController
+from modules.hu_msg import MqPubSubFwdController
+from modules.hu_msg import parse_message
 
 # *******************************************************************************
 # Global variables and constants

@@ -329,7 +329,7 @@
 							  "a":		"pre"
 							, "i":		"alsa,\"hw:CARD=Loopback,DEV=0\""
 							, "o":		"alsa,\"hw:0,0\""
-							, "ea":		"5"
+							, "ea":		"1"
 						}
 					]
 				},
