@@ -174,7 +174,7 @@ def load_cfg_gpio():
 		config_dir = cfg_main['directories']['daemon-config']
 		# TODO
 		config_dir = "/mnt/PIHU_CONFIG/"	# fix!
-		config_file = cfg_daemon['config']
+		config_file = "multi_functional_encoder.json"
 		
 		gpio_config_file = os.path.join(config_dir,config_file)
 	
