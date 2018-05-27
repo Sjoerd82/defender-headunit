@@ -12,6 +12,8 @@ import os						#
 from time import sleep
 #from time import clock			# cpu time, not easily relateable to ms.
 from datetime import datetime
+from datetime import timedelta
+
 from logging import getLogger	# logger
 from RPi import GPIO			# GPIO
 from threading import Timer		# timer to reset mode change
@@ -342,7 +344,10 @@ class GpioController(object):
 				this_chg = datetime.now()
 				delta = this_chg - self.encoder_last_chg
 				print "diff: {0}".format(delta)
-				print "diff: {0}".format(int(delta.total_seconds()))
+				print "diff: {0}".format(delta.total_seconds())
+				print type(delta)
+				if delta < 1:
+					print "FAST"
 			
 				if self.active_modes:
 					self.reset_mode_timer(self.modes[0]['reset'])
