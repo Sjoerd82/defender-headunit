@@ -56,7 +56,8 @@ att_level = 20		# TODO, get from configuration
 local_volume = 1	# TOOD, retrieve from resume!
 local_volume_chg = False
 eca_chain_selected = None
-volume_increment = 5
+volume_increment = 0.15
+volume_increment_fast = 0.5
 chainsetup_filename = None
 
 logger = None
