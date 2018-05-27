@@ -814,6 +814,7 @@ def main():
 	global bus
 	global qVolume
 	global local_volume_chg
+	global local_volume
 	
 	# Initialize the mainloop
 	#DBusGMainLoop(set_as_default=True)
