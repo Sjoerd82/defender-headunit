@@ -362,16 +362,16 @@ class GpioController(object):
 				if pin == encoder_pinB:							# Turning direction depends on 
 					#counter clockwise
 					#print "[Encoder] {0}: DECREASE/CCW".format(function['function_ccw'])
-					if self.encoder_fast_count > 3:
+					if self.encoder_fast_count > 3 and 'function_fast_ccw' in function:
 						self.exec_function_by_code(function['function_fast_ccw'],'ccw')
-					else:
+					elif 'function_ccw' in function:
 						self.exec_function_by_code(function['function_ccw'],'ccw')
 				else:
 					#clockwise
 					#print "[Encoder] {0}: INCREASE/CW".format(function['function_cw'])
-					if self.encoder_fast_count > 3:
+					if self.encoder_fast_count > 3 and 'function_fast_cw' in function:
 						self.exec_function_by_code(function['function_fast_cw'],'cw')
-					else:
+					elif 'function_cw' in function:
 						self.exec_function_by_code(function['function_cw'],'cw')
 					
 				self.encoder_last_chg = this_chg
