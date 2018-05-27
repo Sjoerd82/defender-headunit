@@ -44,7 +44,7 @@ class GpioController(object):
 		self.timer_mode = None		# timer object
 
 		# experimental -- detect speed
-		self.encoder_last_chg = None
+		self.encoder_last_chg = datetime.now()
 		
 		if cb_function is None:
 			self.gpio_setup()
