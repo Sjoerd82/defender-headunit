@@ -210,10 +210,10 @@ def eca_execute(command,tries=3):
 				time.sleep(1)
 				printer("Executed: {0:30}; [FAIL] {1}".format(command,reteca),level=LL_ERROR)
 			elif reteca == "":
-				printer(colorize("Executed: {0:30}; [OK]".format(command,type(reteca)),'light_magenta'),level=LL_INFO)	#change to LL_DEBUG
+				printer(colorize("Executed: {0:30}; [OK]".format(command,type(reteca)),'light_magenta'),level=LL_DEBUG)
 				return reteca		
 			else:
-				printer(colorize("Executed: {0:30}; [OK] Response: {1}".format(command,reteca),'light_magenta'),level=LL_INFO)	#change to LL_DEBUG
+				printer(colorize("Executed: {0:30}; [OK] Response: {1}".format(command,reteca),'light_magenta'),level=LL_DEBUG)
 				return reteca
 		#elif reteca is None:
 		else:
@@ -313,15 +313,18 @@ def eca_get_effect_amplification():
 	return ea_value
 	
 def eca_set_effect_amplification(level):
+
+	if level < 0:
+		level = 0
+		
 	eca_chain_op_master_amp = 'Amplify'
 	#eca_chain_selected
-	
 	# todo, keep local track of selected cs, c, etc.
-	
 	#eca_execute("c-select {0}".format(ECA_CHAIN_MASTER_AMP))	# redundant, for now... #todo
-	eca_execute("cop-select {0}".format(eca_chain_op_master_amp))
-	eca_execute("copp-index-select 1")
-	print eca_execute("copp-set {0}".format(level),tries=1)
+	#eca_execute("cop-select {0}".format(eca_chain_op_master_amp))
+	#eca_execute("copp-index-select 1")
+	#print
+	eca_execute("copp-set {0}".format(level),tries=1)
 	return level
 	
 def eca_mute(state):
@@ -340,22 +343,27 @@ def eca_mute(state):
 def cb_gpio_function(code):
 	global local_volume
 	global local_volume_chg
-	print "Added to queue: EXECUTE: {0}".format(code)
+	#print "Added to queue: EXECUTE: {0}".format(code)
 	#qVolume.put(code)
-	if code in ('VOLUME_INC','VOLUME_DEC'):
+	if code in ('VOLUME_INC','VOLUME_DEC','VOLUME_INC_FAST','VOLUME_DEC_FAST'):
 		if code == 'VOLUME_INC':
 			local_volume += volume_increment
 			local_volume_chg = True
-			#eca_set_effect_amplification(local_volume)
 		elif code == 'VOLUME_DEC':
 			local_volume -= volume_increment
 			local_volume_chg = True
-			#eca_set_effect_amplification(local_volume)
+		elif code == 'VOLUME_INC_FAST':
+			local_volume += volume_increment_fast
+			local_volume_chg = True
+		elif code == 'VOLUME_DEC_FAST':
+			local_volume -= volume_increment_fast
+			local_volume_chg = True
 
+"""
 def handle_queue(code,count):
 	global local_volume
 	print "EXECUTE: {0} ({1} times)".format(code,count)
-	if code in ('VOLUME_INC','VOLUME_DEC'):#function_map:
+	if code in ('VOLUME_INC','VOLUME_DEC','VOLUME_INC_FAST','VOLUME_DEC_FAST'):#function_map:
 		if code == 'VOLUME_INC':
 			local_volume += volume_increment * count
 			eca_set_effect_amplification(local_volume)
@@ -364,7 +372,7 @@ def handle_queue(code,count):
 			eca_set_effect_amplification(local_volume)
 	else:
 		print "function {0} not in function_map".format(code)
-
+"""
 
 
 # ********************************************************************************

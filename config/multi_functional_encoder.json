@@ -1,7 +1,7 @@
 {
 	  "gpio_mode": "BCM"
 	, "long_press_ms": 800
-	, "start_mode": "track"
+	, "start_mode": "volume"
 	, "mode_timeout": 5
 	, "devices": [
 		{ 	  "name": "multi_encoder"
@@ -38,8 +38,10 @@
 		},
 		{
 			  "name":"volume"
-			, "function_cw":"VOLUME_INC"
+			, "function_cw" :"VOLUME_INC"
 			, "function_ccw":"VOLUME_DEC"
+			, "function_fast_cw" :"VOLUME_INC_FAST"
+			, "function_fast_ccw":"VOLUME_DEC_FAST"
 			, "encoder":"multi_encoder"
 			, "mode":"volume"
 		},
