@@ -345,14 +345,14 @@ class GpioController(object):
 			
 				this_chg = datetime.now()
 				delta = this_chg - self.encoder_last_chg
-				print "diff: {0}".format(delta.total_seconds())
+				#print "diff: {0}".format(delta.total_seconds())
 				#print type(delta.total_seconds())	#float
 				if delta.total_seconds() < 0.1:
 					self.encoder_fast_count += 1
-					if self.encoder_fast_count > 3:
-						print "FAST {0}".format(self.encoder_fast_count)
-					else:
-						print "Maybe....."
+					#if self.encoder_fast_count > 3:
+					#	print "FAST {0}".format(self.encoder_fast_count)
+					#else:
+					#	print "Maybe....."
 				else:
 					self.encoder_fast_count = 0
 			
@@ -361,12 +361,18 @@ class GpioController(object):
 
 				if pin == encoder_pinB:							# Turning direction depends on 
 					#counter clockwise
-					#print "[Encoder] {0}: DECREASE/CCW".format(function['function_ccw'])			
-					self.exec_function_by_code(function['function_ccw'],'ccw')
+					#print "[Encoder] {0}: DECREASE/CCW".format(function['function_ccw'])
+					if self.encoder_fast_count > 3:
+						self.exec_function_by_code(function['function_fast_ccw'],'ccw')
+					else:
+						self.exec_function_by_code(function['function_ccw'],'ccw')
 				else:
 					#clockwise
 					#print "[Encoder] {0}: INCREASE/CW".format(function['function_cw'])
-					self.exec_function_by_code(function['function_cw'],'cw')
+					if self.encoder_fast_count > 3:
+						self.exec_function_by_code(function['function_fast_cw'],'cw')
+					else:
+						self.exec_function_by_code(function['function_cw'],'cw')
 					
 				self.encoder_last_chg = this_chg
 

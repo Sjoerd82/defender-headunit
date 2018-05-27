@@ -58,6 +58,7 @@ local_volume = 1	# TOOD, retrieve from resume!
 local_volume_chg = False
 eca_chain_selected = None
 volume_increment = 0.15
+volume_increment_fast = 0.5
 chainsetup_filename = None
 
 logger = None
@@ -357,7 +358,7 @@ def cb_gpio_function(code):
 	global local_volume_chg
 	#print "Added to queue: EXECUTE: {0}".format(code)
 	#qVolume.put(code)
-	if code in ('VOLUME_INC','VOLUME_DEC'):
+	if code in ('VOLUME_INC','VOLUME_DEC','VOLUME_INC_FAST','VOLUME_DEC_FAST'):
 		if code == 'VOLUME_INC':
 			local_volume += volume_increment
 			local_volume_chg = True
@@ -366,11 +367,17 @@ def cb_gpio_function(code):
 			local_volume -= volume_increment
 			local_volume_chg = True
 			#eca_set_effect_amplification(local_volume)
+		elif code == 'VOLUME_INC_FAST':
+			local_volume += volume_increment_fast
+			local_volume_chg = True
+		elif code == 'VOLUME_DEC_FAST':
+			local_volume -= volume_increment_fast
+			local_volume_chg = True
 
 def handle_queue(code,count):
 	global local_volume
 	print "EXECUTE: {0} ({1} times)".format(code,count)
-	if code in ('VOLUME_INC','VOLUME_DEC'):#function_map:
+	if code in ('VOLUME_INC','VOLUME_DEC','VOLUME_INC_FAST','VOLUME_DEC_FAST'):#function_map:
 		if code == 'VOLUME_INC':
 			local_volume += volume_increment * count
 			eca_set_effect_amplification(local_volume)
