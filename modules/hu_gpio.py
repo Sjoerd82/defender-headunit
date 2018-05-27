@@ -342,7 +342,7 @@ class GpioController(object):
 				this_chg = datetime.now()
 				delta = this_chg - self.encoder_last_chg
 				print "diff: {0}".format(delta)
-				print "diff: {0}".format(int(delta.total_seconds())
+				print "diff: {0}".format(int(delta.total_seconds()))
 			
 				if self.active_modes:
 					self.reset_mode_timer(self.modes[0]['reset'])
