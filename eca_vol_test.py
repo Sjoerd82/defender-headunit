@@ -168,7 +168,7 @@ def load_cfg_ecasound():
 
 def load_cfg_gpio():		
 	""" load specified GPIO configuration """	
-	if 'directories' not in cfg_main or 'daemon-config' not in cfg_main['directories'] or 'config' not in cfg_daemon:
+	if 'directories' not in cfg_main or 'daemon-config' not in cfg_main['directories']: #or 'config' not in cfg_daemon:
 		return
 	else:		
 		config_dir = cfg_main['directories']['daemon-config']
@@ -826,7 +826,7 @@ def main():
 	#qVolume = deque()	import ???
 
 	print "test_mode = 1"
-	print "vol 1 to 5 in 0.1 steps; no delay"
+	print "vol 1 to 4 in 0.1 steps; no delay"
 	test_mode = 1
 	test_incr = 0.1
 
@@ -836,6 +836,8 @@ def main():
 		if test_mode == 1:
 			print "test mode: 1, vol: {0} increase + 0.1".format(local_volume)
 			local_volume += test_incr
+			if local_volume == 4:
+				exit(0)
 			eca_set_effect_amplification(local_volume)
 			
 		'''
