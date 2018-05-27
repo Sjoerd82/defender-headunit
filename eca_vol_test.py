@@ -313,7 +313,14 @@ def eca_set_effect_amplification(level):
 	eca_execute("copp-index-select 1")
 	print eca_execute("copp-set {0}".format(level),tries=1)
 	return level
-	
+
+def eca_set_effect_amplification_nooutput(level):
+	eca_chain_op_master_amp = 'Amplify'
+	eca_execute("cop-select {0}".format(eca_chain_op_master_amp))
+	eca_execute("copp-index-select 1")
+	eca_execute("copp-set {0}".format(level),tries=1)
+	return level
+
 def eca_mute(state):
 	""" state can be: 'on', 'off' or 'toggle' """
 	if state in ['on','off','mute']:
@@ -826,22 +833,74 @@ def main():
 	#qVolume = Queue(maxsize=4)	# Short stuff that can run anytime:
 	#qVolume = deque()	import ???
 
-	print "test_mode = 1"
-	print "vol 1 to 4 in 0.1 steps; no delay"
 	test_mode = 1
 	test_incr = 0.1
+	counter = 0
 
 	eca_execute("start")
-	time_start = time.clock()
 	while True:
 		
 		if test_mode == 1:
+			if counter == 0:
+				print "test_mode = 1"
+				print "vol 1 to 4 in 0.1 steps; no delay"
+				time_start = time.clock()
+
 			print "test mode: 1, vol: {0} increase + 0.1".format(local_volume)
 			local_volume += test_incr
-			if local_volume >= 4:
-				test_mode = 0
-				exit(0)
 			eca_set_effect_amplification(local_volume)
+			counter += 1
+
+			if local_volume >= 4:
+				time_stop = time.clock()
+				print "Counts: {0} Time: {0}".format(counter, time_stop-time_start)
+				counter = 0
+				test_mode = 2
+
+			
+		if test_mode == 2:
+			if counter == 0:
+				print "test_mode = 2"
+				print "vol 1 to 4 in 0.1 steps; no delay"
+				local_volume = 1
+				eca_set_effect_amplification(local_volume)
+				time_start = time.clock()
+			
+			print "test mode: 1, vol: {0} increase + 0.1".format(local_volume)
+			local_volume += test_incr
+			eca_set_effect_amplification_nooutput(local_volume)
+			counter += 1
+
+			if local_volume >= 4:
+				time_stop = time.clock()
+				print "Counts: {0} Time: {0}".format(counter, time_stop-time_start)
+				counter = 0
+				test_mode = 3
+				
+		if test_mode == 2:
+			if counter == 0:
+				print "test_mode = 2"
+				print "vol 1 to 4 in 0.1 steps; no delay"
+				local_volume = 1
+				eca_set_effect_amplification(local_volume)
+				time_start = time.clock()
+			
+			print "test mode: 1, vol: {0} increase + 0.1".format(local_volume)
+			local_volume += test_incr
+			eca_execute("copp-set {0}".format(local_volume),tries=1)
+			counter += 1
+
+			if local_volume >= 4:
+				time_stop = time.clock()
+				print "Counts: {0} Time: {0}".format(counter, time_stop-time_start)
+				counter = 0
+				test_mode = 999
+		
+		
+		if test_mode == 999:
+			break
+			exit(0)
+
 			
 		'''
 		while not qVolume.empty():
@@ -856,8 +915,6 @@ def main():
 			time.sleep(0.1)
 		'''
 		#idle_message_receiver() # do this less often TODO! not critical, but takes up precious response time
-	time_stop = time.clock()
-	print "Time: {0}".format(time_stop-time_start)
 	print "Stopping Ecasound"
 	eca_execute("stop")
 	eca_execute("cs-disconnect")
