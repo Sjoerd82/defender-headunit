@@ -57,7 +57,7 @@ att_level = 20		# TODO, get from configuration
 local_volume = 1	# TOOD, retrieve from resume!
 local_volume_chg = False
 eca_chain_selected = None
-volume_increment = 5
+volume_increment = 0.1
 chainsetup_filename = None
 
 logger = None
@@ -851,7 +851,7 @@ def main():
 	#qVolume = Queue(maxsize=4)	# Short stuff that can run anytime:
 	#qVolume = deque()	import ???
 
-	test_mode = 1
+	test_mode = 0
 	test_incr = 0.05
 	counter = 0
 
@@ -917,12 +917,19 @@ def main():
 				time.sleep(5)
 				counter = 0
 				test_mode = 999
-		
+			
 		
 		if test_mode == 999:
 			break
 
-			
+		
+		if test_mode == 0:
+			if local_volume_chg == True:
+				local_volume_chg = False
+				#eca_set_effect_amplification(local_volume)
+				eca_execute_nooutput("copp-set {0}".format(local_volume),tries=1)
+
+		
 		'''
 		while not qVolume.empty():
 			queue_size = qVolume.qsize()
