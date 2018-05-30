@@ -262,7 +262,7 @@
 		  "SYSLOGD_ARGS":"-n -O /var/log/messages"
 		, "KLOGD_ARGS":"-n"
 		, "modules": {
-			  "location":"/etc/sysconfig"
+			  "location":"/etc/sysconfig/modules"
 			, "modules": [ "i2-dev", "snd-aloop" ]
 		}
 		, "dbus": {
