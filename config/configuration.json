@@ -473,35 +473,38 @@
 			, "audio_output": [
 				{
 					  "type":"alsa" 
-					, "name":"Alsa: HiFiberry DAC"
-					, "device":"hw:0,0"
-					, "enabled":"yes"
-				},
-				{
-					  "type":"alsa" 
-					, "name":"Alsa: HiFiberry DAC X"
+					, "name":"Alsa: HiFiberry DAC 32-bit"
 					, "device":"hw:CARD=sndrpihifiberry,0"
+					, "format":"44100:32:2"
+					, "enabled":"no"
+				},
+				{
+					  "type":"alsa" 
+					, "name":"Alsa: Behringer UCA202 16-bit"
+					, "device":"hw:CARD=CODEC,0"
+					, "format":"44100:16:2"
+					, "enabled":"no"
+				},
+				{
+					  "type":"alsa" 
+					, "name":"Alsa: Loopback 16-bit"
+					, "device":"hw:CARD=Loopback,DEV=1"
+					, "format":"44100:16:2"
 					, "enabled":"yes"
 				},
 				{
 					  "type":"alsa" 
-					, "name":"Alsa: Behringer UCA202"
-					, "device":"hw:1,0"
-					, "enabled":"yes"
-				},
-				{
-					  "type":"alsa" 
-					, "name":"Alsa: Loopback"
+					, "name":"Alsa: Loopback 32-bit"
 					, "device":"hw:CARD=Loopback,DEV=1"
 					, "format":"44100:32:2"
-					, "enabled":"yes"
+					, "enabled":"no"
 				},
 				{
 					  "type":"fifo" 
 					, "name":"Fifo: tmp_mpd"
 					, "path": "/tmp/mpd.fifo"
 					, "format":"44100:32:2"
-					, "enabled":"yes"
+					, "enabled":"no"
 					, "always_on":"yes"
 				},
 				{
@@ -510,7 +513,7 @@
 					, "format":"44100:32:2"
 					, "mixer_type":"software"
 					, "command":"ecasound -q --server -z:nodb -z:mixmode,sum -f:s32_le,2,44100 -i:stdin -o:alsa"
-					, "enabled":"yes"
+					, "enabled":"no"
 				},
 				{
 					  "type":"pipe" 
@@ -518,7 +521,7 @@
 					, "format":"44100:32:2"
 					, "mixer_type":"software"
 					, "command":"ecasound -q --server -z:nodb -z:mixmode,sum -a:pre -f:s32_le,2,44100 -i:stdin -pf:/etc/pre.ecp -o:loop,1 -a:woofer,tweeter -i:loop,1 -a:woofer -pf:/etc/woofer.ecp -chorder:1,0 -a:tweeter -pf:/etc/tweeter.ecp -chorder:0,2 -a:woofer,tweeter -f:16,4,44100 -o:alsa"
-					, "enabled":"yes"
+					, "enabled":"no"
 				},
 				{
 					  "type":"pipe" 
@@ -534,19 +537,19 @@
 					, "format":"44100:32:2"
 					, "mixer_type":"software"
 					, "command":"ecasound -q --server -z:nodb -z:mixmode,sum -a:pre -f:s32_le,2,44100 -i:stdin -pf:/etc/pre.ecp -o:loop,1 -a:woofer,tweeter -i:loop,1 -a:woofer -pf:/etc/woofer.ecp -chorder:1,2,0,0 -a:tweeter -pf:/etc/tweeter.ecp -chorder:0,0,1,2 -a:woofer,tweeter -f:16,4,44100 -o:alsa"
-					, "enabled":"yes"
+					, "enabled":"no"
 				},
 				{
 					  "type": "jack"
 					, "name": "Jack: Port: System playback"
 					, "destination_ports": "system:playback_1,system:playback_2"
-					, "enabled": "yes"
+					, "enabled": "no"
 				},
 				{
 					  "type": "jack"
 					, "name": "Jack: Port: Ecasound"
 					, "destination_ports": "ecasound:in_1,ecasound:in_2"
-					, "enabled": "yes"
+					, "enabled": "no"
 				}
 			   ]
 		}
