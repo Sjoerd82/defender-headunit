@@ -280,7 +280,7 @@ def main():
 	
 	if args.all or args.mod:
 		if validate_config( 'modules', ['location','modules'] ):				
-			write_config_modules( configuration['system_configuration']['mod'] )
+			write_config_modules( configuration['system_configuration']['modules'] )
 		else:
 			printer('Modules: Invalid Config')
 
