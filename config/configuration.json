@@ -261,6 +261,10 @@
 	, "system_configuration": {
 		  "SYSLOGD_ARGS":"-n -O /var/log/messages"
 		, "KLOGD_ARGS":"-n"
+		, "modules": {
+			  "location":"/etc/sysconfig"
+			, "modules": [ "i2-dev", "snd-aloop" ]
+		}
 		, "dbus": {
 			  "location":"/usr/share/dbus-1/system.d/hu.conf"
 			, "services": [
@@ -321,7 +325,7 @@
 					]
 				},
 				{
-					  "n":		"alsa_loopback"
+					  "n":		"alsa_loopback_to_hw0_0"
 					, "b":      "4096"
 					, "f": 		"s32_le,2,44100"
 					, "chains": [
@@ -471,6 +475,18 @@
 					  "type":"alsa" 
 					, "name":"Alsa: HiFiberry DAC"
 					, "device":"hw:0,0"
+					, "enabled":"yes"
+				},
+				{
+					  "type":"alsa" 
+					, "name":"Alsa: HiFiberry DAC X"
+					, "device":"hw:CARD=sndrpihifiberry,0"
+					, "enabled":"yes"
+				},
+				{
+					  "type":"alsa" 
+					, "name":"Alsa: Behringer UCA202"
+					, "device":"hw:1,0"
 					, "enabled":"yes"
 				},
 				{

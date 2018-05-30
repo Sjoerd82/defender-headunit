@@ -87,8 +87,28 @@ def verbose_after(filename):
 # ********************************************************************************
 # Config writers
 #
-def write_config_dbus( config ):
 
+def write_config_modules( config ):
+
+	#snd_soc_pcm512x
+	#snd_soc_wm8804
+	#snd_soc_pcm5102a
+	#snd_soc_hifiberry_dac
+
+	#Bluetooth
+	#btbcm
+	#bluetooth
+	#bnep           #ethernet
+	#hci_uart       #uart
+
+	verbose_before(config['location'])
+	with open( config['location'], 'w' ) as outfile:
+		for module in config['modules']:
+			outfile.write('{0}\n'.format(module))
+	verbose_after(config['location'])
+	
+
+def write_config_dbus( config ):
 	verbose_before(config['location'])
 	with open( config['location'], 'w' ) as outfile:
 		outfile.write('<!DOCTYPE busconfig PUBLIC "-//freedesktop//DTD D-Bus Bus Configuration 1.0//EN"\n')
@@ -213,6 +233,7 @@ def parse_args():
 	parser.add_argument('--config','-c', action='store', help='Configuration file', default=DEFAULT_CONFIG_FILE)
 	parser.add_argument('-v',  required=False, action='store_true', help='Verbose')
 	parser.add_argument('--all',  required=False, action='store_true', help='Generate all files')
+	parser.add_argument('--mod',  required=False, action='store_true', help='Generate modules to load at boot config file')
 	parser.add_argument('--dbus', required=False, action='store_true', help='Generate dbus configuration')
 	parser.add_argument('--wpa',  required=False, action='store_true', help='Generate wpa_supplicant.conf file')
 	parser.add_argument('--hapd', required=False, action='store_true', help='Generate hostapd.conf file')
@@ -222,7 +243,7 @@ def parse_args():
 	parser.add_argument('--ecs',  required=False, action='store_true', help='Generate ecasound chainsetup files')
 	parser.add_argument('--ecp',  required=False, action='store_true', help='Generate ecasound effects preset file')
 	parser.add_argument('--wifi', required=False, action='store_true', help='Set WiFi mode')
-	parser.add_argument('--debug', required=False, action='store_true', help='Set Debug mode')
+	parser.add_argument('--debug',required=False, action='store_true', help='Set Debug mode')
 
 	args = parser.parse_args()
 
@@ -257,6 +278,12 @@ def main():
 			
 		return True
 	
+	if args.all or args.mod:
+		if validate_config( 'mod', ['location','modules'] ):				
+			write_config_modules( configuration['system_configuration']['mod'] )
+		else:
+			printer('Modules: Invalid Config')
+
 	if args.all or args.dbus:
 		if validate_config( 'dbus', ['location','services'] ):				
 			write_config_dbus( configuration['system_configuration']['dbus'] )
