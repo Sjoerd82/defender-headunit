@@ -279,7 +279,7 @@ def main():
 		return True
 	
 	if args.all or args.mod:
-		if validate_config( 'mod', ['location','modules'] ):				
+		if validate_config( 'modules', ['location','modules'] ):				
 			write_config_modules( configuration['system_configuration']['mod'] )
 		else:
 			printer('Modules: Invalid Config')
