@@ -16,6 +16,9 @@ import sys
 import os
 import time
 
+import errorno								# so why exactly?
+from socket import error as socket_error	#
+
 # ZeroMQ
 import zmq
 
@@ -44,6 +47,8 @@ logger = None
 args = None
 messaging = None
 oMpdClient = None
+
+connected_mpd = False
 
 # todo get 'official' dict
 state = { "state":None, "id":None, "random":None, "repeat":None, "time":None, "filename":None }
@@ -256,50 +261,62 @@ def main():
 
 	oMpdClient.timeout = None              # network timeout in seconds (floats allowed), default: None
 	oMpdClient.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
-	oMpdClient.connect("localhost", 6600)  # connect to localhost:6600
-	print(oMpdClient.mpd_version)          # print the MPD version
-
-	#Now handled via udisks dbus:
-	#print('[MPD-DBUS] Subscribing to channel: media_ready')
-	#oMpdClient.subscribe("media_ready")
-
-	#Now handled via udisks dbus:
-	#print('[MPD-DBUS] Subscribing to channel: media_removed')
-	#oMpdClient.subscribe("media_removed")
-
-	#Workaround for not having NetworkManager:
-	# post-up script defined in /etc/network/interface
-	print('[MPD] Subscribing to channel: ifup')
-	oMpdClient.subscribe("ifup")
-
-	#Workaround for not having NetworkManager:
-	# post-down script defined in /etc/network/interface
-	print('[MPD] Subscribing to channel: ifdown')
-	oMpdClient.subscribe("ifdown")
+	try:
+		oMpdClient.connect("localhost", 6600)  # connect to localhost:6600
+		connected_mpd = True
+	except socket_error as serr:
+		printer("Could not connect to server: {0}:{1}".format("localhost","6600"),level=LL_ERROR)
+		connected_mpd = False
 	
-	print('[MPD] send_idle()')
-	oMpdClient.send_idle()
+	if connected_mpd:
+		print(oMpdClient.mpd_version)          # print the MPD version
+	
+		#Now handled via udisks dbus:
+		#print('[MPD-DBUS] Subscribing to channel: media_ready')
+		#oMpdClient.subscribe("media_ready")
+
+		#Now handled via udisks dbus:
+		#print('[MPD-DBUS] Subscribing to channel: media_removed')
+		#oMpdClient.subscribe("media_removed")
+
+		#Workaround for not having NetworkManager:
+		# post-up script defined in /etc/network/interface
+		print('[MPD] Subscribing to channel: ifup')
+		oMpdClient.subscribe("ifup")
+
+		#Workaround for not having NetworkManager:
+		# post-down script defined in /etc/network/interface
+		print('[MPD] Subscribing to channel: ifdown')
+		oMpdClient.subscribe("ifdown")
 		
-	while True:			
-		canRead = select([oMpdClient], [], [], 0)[0]
-		if canRead:
+		print('[MPD] send_idle()')
+		oMpdClient.send_idle()
 		
-			# fetch change(s)
-			try:
-				changes = oMpdClient.fetch_idle()
-				# handle/parse the change(s)
-				mpd_handle_change(changes)
-				
-				# don't pass on the changes (datatype seems too complicated for dbus)
-				#mpd_control(changes)
-				
-				# continue idling
-				oMpdClient.send_idle()
-			except:
-				print "whoopsie"
-				print "No connection??"
-				
+	while True:
+	
+		if connected_mpd:
+	
+			canRead = select([oMpdClient], [], [], 0)[0]
+			if canRead:
 			
+				# fetch change(s)
+				try:
+					changes = oMpdClient.fetch_idle()
+					# handle/parse the change(s)
+					mpd_handle_change(changes)
+					
+					# don't pass on the changes (datatype seems too complicated for dbus)
+					#mpd_control(changes)
+					
+					# continue idling
+					oMpdClient.send_idle()
+				except:
+					print "whoopsie"
+					print "No connection??"
+					connected_mpd = False
+					
+		else:
+			print "Not connected :'(... shld retry..."
 		
 		# required?????
 		time.sleep(0.1)
