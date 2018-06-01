@@ -306,6 +306,7 @@ def mpd_connect():
 def main():
 
 	global oMpdClient
+	global connected_mpd
 
 	printer('Initializing MPD client')
 	oMpdClient = MPDClient() 
