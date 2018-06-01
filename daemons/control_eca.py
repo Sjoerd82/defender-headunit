@@ -362,6 +362,18 @@ def cb_gpio_function(code):
 		elif code == 'VOLUME_DEC_FAST':
 			local_volume -= volume_increment_fast
 			local_volume_chg = True
+			
+	elif code == 'PLAYER_NEXT':
+		mq_path = '/player/next'
+		mq_cmd = 'PUT'
+		ret = messaging.publish_command(mq_path,mq_cmd)
+		if ret == True:
+			print "Response: [OK]"
+		elif ret == False or ret is None:
+			print "Response: [FAIL]"
+		
+	elif code == 'PLAYER_PREV':
+		pass
 
 """
 def handle_queue(code,count):

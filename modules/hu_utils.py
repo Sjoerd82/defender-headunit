@@ -178,7 +178,37 @@ def struct_data(payload,code=None):
 		
 	return data
 	
+# ********************************************************************************
+# MQ
+#def validate_args(**args):
+def validate_args(arg_defs,args):
+	for i, arg in enumerate(args):
+		"""
+		print "--------------------------------------------"
+		print "Processing argument {0}: {1}".format(i,arg)
+		print "Definition: {0}".format(arg_defs[i])
+		print "--------"
+		"""
+		# datatype
+		if isinstance(arg, arg_defs[i]['datatype']):
+			#print "Datatype: PASS"
+			pass
+		else:
+			if arg_defs[i]['datatype'] == bool and strint_to_bool(arg) is not None:
+				#print "Datatype: PASS (converted to bool)"
+				args[i] = strint_to_bool(arg)
+			else:
+				print "Datatype: FAIL"
+				return None
+				
+	if len(arg_defs)-len(args) > 0:
+		for arg_def in arg_defs[len(args):len(arg_defs)]:
+			args.append(arg_def['default'])
 
+	# everything OK
+	return args
+
+# ********************************************************************************
 """	LOGGING
 	
 	printer
@@ -617,6 +647,19 @@ def pa_sfx( sfx ):
 	
 	return True
 
+
+def strint_to_bool(value):
+	if isinstance(value, str) and value.lower() in ['true','on','1','t']:
+		return True
+	elif  isinstance(value, str) and value.lower() in ['false','off','0','f']:
+		return False
+	elif  isinstance(value, int) and value in [1]:
+		return True
+	elif  isinstance(value, int) and value in [0]:
+		return False
+	else:
+		return None
+	
 def str2bool( string ):
 	if string.lower() in ("true","1"):
 		return True

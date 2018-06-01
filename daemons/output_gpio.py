@@ -85,6 +85,28 @@ def handle_path_mode(path,cmd,args,data):
 		# args[0] = mode
 		# args[1] = True|False (optional, default=True)
 		
+		arg_defs = []
+		arg0 = {
+					'name': 'mode',
+					'datatype': 'str',
+					'required': True		
+		}
+		arg1 = {
+					'name': 'state',
+					'datatype': 'bool',		# will auto-convert str and int, if it makes sense
+					'required': False,
+					'default': False
+					'choices': ['true','false','on','off','1','0',1,0,True,False],
+					'convert_to' : 'bool'
+		}
+		arg_defs.append(arg0)
+		arg_defs.append(arg1)
+		ret = validate_args(arg_defs,args)
+		if ret is not None and ret is not False:
+			print "Arguments: [OK]"
+		else:
+			print "Arguments: [FAIL]"
+
 		mode_set = args[0]
 		if len(args) > 1:
 			if args[1].lower() in ['true','1','yes']:
