@@ -285,16 +285,21 @@ def main():
 		if canRead:
 		
 			# fetch change(s)
-			changes = oMpdClient.fetch_idle()
+			try:
+				changes = oMpdClient.fetch_idle()
+				# handle/parse the change(s)
+				mpd_handle_change(changes)
+				
+				# don't pass on the changes (datatype seems too complicated for dbus)
+				#mpd_control(changes)
+				
+				# continue idling
+				oMpdClient.send_idle()
+			except:
+				print "whoopsie"
+				print "No connection??"
+				
 			
-			# handle/parse the change(s)
-			mpd_handle_change(changes)
-			
-			# don't pass on the changes (datatype seems too complicated for dbus)
-			#mpd_control(changes)
-			
-			# continue idling
-			oMpdClient.send_idle()
 		
 		# required?????
 		time.sleep(0.1)
