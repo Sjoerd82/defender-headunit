@@ -373,7 +373,22 @@ def cb_gpio_function(code):
 			print "Response: [FAIL]"
 		
 	elif code == 'PLAYER_PREV':
-		pass
+		mq_path = '/player/prev'
+		mq_cmd = 'PUT'
+		ret = messaging.publish_command(mq_path,mq_cmd)
+		if ret == True:
+			print "Response: [OK]"
+		elif ret == False or ret is None:
+			print "Response: [FAIL]"
+
+	elif code == 'SOURCE_NEXT':
+		mq_path = '/source/next'
+		mq_cmd = 'PUT'
+		ret = messaging.publish_command(mq_path,mq_cmd)
+		if ret == True:
+			print "Response: [OK]"
+		elif ret == False or ret is None:
+			print "Response: [FAIL]"
 
 """
 def handle_queue(code,count):
