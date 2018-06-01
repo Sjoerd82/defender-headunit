@@ -1,7 +1,7 @@
 {
 	  "gpio_mode": "BCM"
 	, "long_press_ms": 800
-	, "start_mode": "volume"
+	, "base_modes": [ "volume" ]
 	, "mode_timeout": 5
 	, "devices": [
 		{ 	  "name": "multi_encoder"

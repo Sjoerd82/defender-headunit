@@ -41,6 +41,7 @@ class GpioController(object):
 		self.pins_config = {}		# consolidated config, key=pin
 
 		self.modes = []
+		self.base_modes = []
 		self.active_modes = []
 		self.long_press_ms = 800
 		self.timer_mode = None		# timer object
@@ -106,7 +107,7 @@ class GpioController(object):
 		
 
 	def cb_mode_reset(self): #(pin,function_ix):
-		self.active_modes = [ 'track' ]	# FIX THIS!!!!
+		self.active_modes = self.base_modes
 
 	def check_mode(self,pin,function_ix):
 
@@ -405,10 +406,13 @@ class GpioController(object):
 			self.long_press_ms = self.cfg_gpio['self.long_press_ms']
 			
 		# set mode, if configured
-		if 'start_mode' in self.cfg_gpio:
-			self.active_modes.append(self.cfg_gpio['start_mode'])
-		else:
-			self.active_modes.append(None)
+		#if 'start_mode' in self.cfg_gpio:
+		#	self.active_modes.append(self.cfg_gpio['start_mode'])
+		#else:
+		#	self.active_modes.append(None)
+			
+		if 'base_modes' in self.cfg_gpio:
+			self.base_modes = self.cfg_gpio['base_modes'])
 		
 		# modes
 		if 'modes' in self.cfg_gpio:

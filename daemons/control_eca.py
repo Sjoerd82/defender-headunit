@@ -692,6 +692,7 @@ def parse_args():
 	import argparse
 	parser = default_parser(DESCRIPTION,BANNER)
 	# additional command line arguments mat be added here
+	parser.add_argument('--server',  required=False, action='store_true', help='Enable ECA server')		# todo, implement
 	args = parser.parse_args()
 
 """
