@@ -318,11 +318,10 @@ def main():
 					
 		else:
 			resillience_time = 5 * connect_retry
-			connect_retry += 1
 			if resillience_time > 30:
 				resillience_time = 30
 			print "Not connected [{0}]... Retrying in {1} sec.".format(connect_retry,resillience_time)
-			time.slee(resillience_time)
+			time.sleep(resillience_time)
 			try:
 				oMpdClient.connect("localhost", 6600)  # connect to localhost:6600
 				connected_mpd = True
@@ -330,6 +329,7 @@ def main():
 			except socket_error as serr:
 				printer("Could not connect to server: {0}:{1}".format("localhost","6600"),level=LL_ERROR)
 				connected_mpd = False
+				connect_retry += 1
 
 		
 		# required?????
