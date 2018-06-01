@@ -87,7 +87,61 @@ def load_zeromq_configuration():
 			configuration['zeromq']['port_subscriber'] = DEFAULT_PORT_SUB
 			
 	return configuration
+
+def mpd_connect():
+	""" Blocking """
+
+	global oMpdClient
+	global connected_mpd
+
+	connect_retry = 0
+	oMpdClient.timeout = None              # network timeout in seconds (floats allowed), default: None
+	oMpdClient.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
 	
+	while not connected_mpd:
+	
+		resillience_time = 5 * connect_retry
+		if resillience_time > MAX_RESILIENCE_WAIT:
+			resillience_time = MAX_RESILIENCE_WAIT
+
+		if connect_retry == 0:
+			printer("Connecting to MPD at {0}:{1}".format("localhost","6600"),level=LL_INFO)
+		else:
+			printer("Not connected [{0}]... Retrying in {1} sec.".format(connect_retry,resillience_time),level=LL_INFO)
+			time.sleep(resillience_time)
+		try:
+			oMpdClient.connect("localhost", 6600)  # connect to localhost:6600
+			connected_mpd = True
+			connect_retry = 0
+		except socket_error as serr:
+			printer("Could not connect to server.",level=LL_ERROR)
+			connected_mpd = False
+			connect_retry += 1
+			
+	if connected_mpd:
+		print(oMpdClient.mpd_version)          # print the MPD version
+	
+		#Now handled via udisks dbus:
+		#print('[MPD-DBUS] Subscribing to channel: media_ready')
+		#oMpdClient.subscribe("media_ready")
+
+		#Now handled via udisks dbus:
+		#print('[MPD-DBUS] Subscribing to channel: media_removed')
+		#oMpdClient.subscribe("media_removed")
+
+		#Workaround for not having NetworkManager:
+		# post-up script defined in /etc/network/interface
+		printer('Subscribing to channel: ifup')
+		oMpdClient.subscribe("ifup")
+
+		#Workaround for not having NetworkManager:
+		# post-down script defined in /etc/network/interface
+		printer('Subscribing to channel: ifdown')
+		oMpdClient.subscribe("ifdown")
+		
+		printer('send_idle()')
+		oMpdClient.send_idle()
+		
 def mpd_handle_change(events):
 
 	global state
@@ -251,78 +305,24 @@ def setup():
 	printer("ZeroMQ: Creating Publisher: {0}".format(DEFAULT_PORT_PUB))
 	messaging.create_publisher()
 
-	printer('Initialized [OK]')
-
-	
-def mpd_connect():
-	""" Blocking """
-
+	#
+	# MPD
+	#
 	global oMpdClient
-	global connected_mpd
-
-	connect_retry = 0
+	printer('MPD: Initializing')
+	oMpdClient = MPDClient() 
+	mpd_connect()
 	
-	while not connected_mpd:
-	
-		resillience_time = 5 * connect_retry
-		if resillience_time > MAX_RESILIENCE_WAIT:
-			resillience_time = MAX_RESILIENCE_WAIT
 
-		if connect_retry == 0:
-			printer("Connecting to MPD at {0}:{1}".format("localhost","6600"),level=LL_INFO)
-		else:
-			printer("Not connected [{0}]... Retrying in {1} sec.".format(connect_retry,resillience_time),level=LL_INFO)
-			time.sleep(resillience_time)
-		try:
-			oMpdClient.connect("localhost", 6600)  # connect to localhost:6600
-			connected_mpd = True
-			connect_retry = 0
-		except socket_error as serr:
-			printer("Could not connect to server.",level=LL_ERROR)
-			connected_mpd = False
-			connect_retry += 1
-			
-	if connected_mpd:
-		print(oMpdClient.mpd_version)          # print the MPD version
-	
-		#Now handled via udisks dbus:
-		#print('[MPD-DBUS] Subscribing to channel: media_ready')
-		#oMpdClient.subscribe("media_ready")
-
-		#Now handled via udisks dbus:
-		#print('[MPD-DBUS] Subscribing to channel: media_removed')
-		#oMpdClient.subscribe("media_removed")
-
-		#Workaround for not having NetworkManager:
-		# post-up script defined in /etc/network/interface
-		printer('Subscribing to channel: ifup')
-		oMpdClient.subscribe("ifup")
-
-		#Workaround for not having NetworkManager:
-		# post-down script defined in /etc/network/interface
-		printer('Subscribing to channel: ifdown')
-		oMpdClient.subscribe("ifdown")
-		
-		printer('send_idle()')
-		oMpdClient.send_idle()
+	printer('Initialized [OK]')
 	
 def main():
 
 	global oMpdClient
 	global connected_mpd
-
-	printer('Initializing MPD client')
-	oMpdClient = MPDClient() 
-
-	oMpdClient.timeout = None              # network timeout in seconds (floats allowed), default: None
-	oMpdClient.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
-	
-	mpd_connect()
 		
 	while True:
-	
 		if connected_mpd:
-	
 			canRead = select([oMpdClient], [], [], 0)[0]
 			if canRead:
 			
@@ -338,13 +338,10 @@ def main():
 					# continue idling
 					oMpdClient.send_idle()
 				except:
-					print "whoopsie"
-					print "No connection??"
 					connected_mpd = False
 					
 		else:
 			mpd_connect()
-
 		
 		# required?????
 		time.sleep(0.1)

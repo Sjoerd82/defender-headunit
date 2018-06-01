@@ -466,7 +466,7 @@
 			, "user":                   "root"
 			, "bind_to_address":        "0.0.0.0"
 			, "port":                   "6600"
-			, "max_playlist_length":    "32000"
+			, "max_playlist_length":    "64000"
 			, "connection_timeout":     "2000000"
 			, "follow_outside_symlinks":"yes"
 			, "follow_inside_symlinks": "yes"
