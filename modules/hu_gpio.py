@@ -58,7 +58,7 @@ class GpioController(object):
 		else:
 			self.gpio_setup(self.int_handle_switch,self.int_handle_encoder)
 	
-	def set_cb_mode_change(cb_function):
+	def set_cb_mode_change(self,cb_function):
 		self.callback_mode_change = cb_function
 		staticmethod(self.callback_mode_change)
 	
