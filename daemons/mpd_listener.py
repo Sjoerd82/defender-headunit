@@ -48,7 +48,6 @@ args = None
 messaging = None
 oMpdClient = None
 
-connect_retry = 0
 connected_mpd = False
 
 # todo get 'official' dict
@@ -262,6 +261,7 @@ def main():
 
 	oMpdClient.timeout = None              # network timeout in seconds (floats allowed), default: None
 	oMpdClient.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
+	connect_retry = 0
 	try:
 		oMpdClient.connect("localhost", 6600)  # connect to localhost:6600
 		connected_mpd = True
@@ -326,6 +326,7 @@ def main():
 			try:
 				oMpdClient.connect("localhost", 6600)  # connect to localhost:6600
 				connected_mpd = True
+				connect_retry = 0
 			except socket_error as serr:
 				printer("Could not connect to server: {0}:{1}".format("localhost","6600"),level=LL_ERROR)
 				connected_mpd = False
