@@ -189,6 +189,11 @@ def cb_gpio_function(code):
 	else:
 		print "function {0} not in function_map".format(code)	
 			
+def cb_mode_change(active_modes):
+	print "Hi, I'm control_gpio.py, and this is a mode change.."
+	print active_modes
+	
+	
 #********************************************************************************
 # Parse command line arguments
 #
@@ -279,6 +284,7 @@ def setup():
 #		exit(1)
 
 	gpio = GpioController(cfg_gpio,cb_gpio_function)
+	gpio.set_cb_mode_change(cb_mode_change)
 	
 	printer('Initialized [OK]')
 		
