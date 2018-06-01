@@ -412,7 +412,7 @@ class GpioController(object):
 		#	self.active_modes.append(None)
 			
 		if 'base_modes' in self.cfg_gpio:
-			self.base_modes = self.cfg_gpio['base_modes'])
+			self.base_modes = self.cfg_gpio['base_modes']
 		
 		# modes
 		if 'modes' in self.cfg_gpio:
