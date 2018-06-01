@@ -38,15 +38,6 @@
 			, "mode": "track"
 		},
 		{
-			  "name":"volume"
-			, "function_cw" :"VOLUME_INC"
-			, "function_ccw":"VOLUME_DEC"
-			, "function_fast_cw" :"VOLUME_INC_FAST"
-			, "function_fast_ccw":"VOLUME_DEC_FAST"
-			, "encoder":"multi_encoder"
-			, "mode":"volume"
-		},
-		{
 			  "name":"bass"
 			, "function_cw":"BASS_INC"
 			, "function_ccw":"BASS_DEC"

@@ -72,6 +72,10 @@ cfg_zmq = None		# Zero MQ
 cfg_ecasound = None
 cfg_gpio = None		# GPIO setup
 
+# global datastructures
+modes = Modes()
+list_modes = []
+
 qVolume = None
 
 
@@ -697,6 +701,9 @@ def handle_path_events(path,cmd,params,data):
 			print payload
 		else:
 			print "HUH??"
+			
+	def data_mode_set(params):
+		print "A MODE WAS SET"
 
 	if path:
 		function_to_call = cmd + '_' + '_'.join(path)

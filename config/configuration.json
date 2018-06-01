@@ -70,7 +70,7 @@
 			, "script":"control_eca.py"
 			, "init.d":"S35ecasound"
 			, "pid_file":"ecactrl.pid"
-			, "config": "multi_functional_encoder.json"
+			, "config": "volume_encoder.json"
 		},
 		{
 			  "name":"Control: ADS1x15"

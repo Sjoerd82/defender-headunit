@@ -6,11 +6,6 @@
 			, "type": "rotenc"
 			, "clk": 13
 			, "dt": 6
-		},
-		{ 	  "name": "multi_enc_sw"
-			, "sw": 26
-			, "gpio_on": "low"
-			, "debounce": 10
 		}
 	]
 	,"functions": [
