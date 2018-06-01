@@ -470,6 +470,8 @@
 			, "connection_timeout":     "2000000"
 			, "follow_outside_symlinks":"yes"
 			, "follow_inside_symlinks": "yes"
+			, "filesystem_charset":	"UTF-8"
+			, "id3v1_encoding":		"UTF-8"
 			, "audio_output": [
 				{
 					  "type":"alsa" 
