@@ -48,6 +48,7 @@ args = None
 messaging = None
 oMpdClient = None
 
+MAX_RESILIENCE_WAIT = 20	# max wait 20sec. before retrying connection
 connected_mpd = False
 
 # todo get 'official' dict
@@ -252,23 +253,32 @@ def setup():
 
 	printer('Initialized [OK]')
 
-def main():
+	
+def mpd_connect():
+	""" Blocking """
 
 	global oMpdClient
+	global connected_mpd
 
-	print('[MPD] Initializing MPD client')
-	oMpdClient = MPDClient() 
-
-	oMpdClient.timeout = None              # network timeout in seconds (floats allowed), default: None
-	oMpdClient.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
 	connect_retry = 0
-	try:
-		oMpdClient.connect("localhost", 6600)  # connect to localhost:6600
-		connected_mpd = True
-	except socket_error as serr:
-		printer("Could not connect to server: {0}:{1}".format("localhost","6600"),level=LL_ERROR)
-		connected_mpd = False
 	
+	while not connected_mpd:
+	
+		resillience_time = 5 * connect_retry
+		if resillience_time > MAX_RESILIENCE_WAIT:
+			resillience_time = MAX_RESILIENCE_WAIT
+		
+		printer("Not connected [{0}]... Retrying in {1} sec.".format(connect_retry,resillience_time),level=LL_INFO)
+		time.sleep(resillience_time)
+		try:
+			oMpdClient.connect("localhost", 6600)  # connect to localhost:6600
+			connected_mpd = True
+			connect_retry = 0
+		except socket_error as serr:
+			printer("Could not connect to server: {0}:{1}".format("localhost","6600"),level=LL_ERROR)
+			connected_mpd = False
+			connect_retry += 1
+			
 	if connected_mpd:
 		print(oMpdClient.mpd_version)          # print the MPD version
 	
@@ -282,16 +292,28 @@ def main():
 
 		#Workaround for not having NetworkManager:
 		# post-up script defined in /etc/network/interface
-		print('[MPD] Subscribing to channel: ifup')
+		printer('Subscribing to channel: ifup')
 		oMpdClient.subscribe("ifup")
 
 		#Workaround for not having NetworkManager:
 		# post-down script defined in /etc/network/interface
-		print('[MPD] Subscribing to channel: ifdown')
+		printer('Subscribing to channel: ifdown')
 		oMpdClient.subscribe("ifdown")
 		
-		print('[MPD] send_idle()')
+		printer('send_idle()')
 		oMpdClient.send_idle()
+	
+def main():
+
+	global oMpdClient
+
+	printer('Initializing MPD client')
+	oMpdClient = MPDClient() 
+
+	oMpdClient.timeout = None              # network timeout in seconds (floats allowed), default: None
+	oMpdClient.idletimeout = None          # timeout for fetching the result of the idle command is handled seperately, default: None
+	
+	mpd_connect()
 		
 	while True:
 	
@@ -317,19 +339,7 @@ def main():
 					connected_mpd = False
 					
 		else:
-			resillience_time = 5 * connect_retry
-			if resillience_time > 30:
-				resillience_time = 30
-			print "Not connected [{0}]... Retrying in {1} sec.".format(connect_retry,resillience_time)
-			time.sleep(resillience_time)
-			try:
-				oMpdClient.connect("localhost", 6600)  # connect to localhost:6600
-				connected_mpd = True
-				connect_retry = 0
-			except socket_error as serr:
-				printer("Could not connect to server: {0}:{1}".format("localhost","6600"),level=LL_ERROR)
-				connected_mpd = False
-				connect_retry += 1
+			mpd_connect()
 
 		
 		# required?????
