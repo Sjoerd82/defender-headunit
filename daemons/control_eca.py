@@ -692,8 +692,11 @@ def handle_path_events(path,cmd,params,data):
 	del path[0]
 	
 	def data_source_active(params):
-		payload = json.loads(params[0])
-		print payload
+		if len(params) >= 1:
+			payload = json.loads(params[0])
+			print payload
+		else:
+			print "HUH??"
 
 	if path:
 		function_to_call = cmd + '_' + '_'.join(path)
