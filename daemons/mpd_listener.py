@@ -16,7 +16,7 @@ import sys
 import os
 import time
 
-import errorno								# so why exactly?
+import errno								# so why exactly?
 from socket import error as socket_error	#
 
 # ZeroMQ
