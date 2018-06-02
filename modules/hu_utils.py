@@ -184,6 +184,7 @@ def struct_data(payload,code=None):
 
 def validate_args(arg_defs,args,repeat=False):
 
+	defs = arg_defs[:]
 	if not isinstance(args, list):
 		print "second argument must be a list"
 		return None
@@ -192,32 +193,32 @@ def validate_args(arg_defs,args,repeat=False):
 	if repeat:
 		print "repeat!"
 		for i in range(len(args)/len(arg_defs)-1):
-			arg_defs.extend(arg_defs)
-			print arg_defs
+			defs.extend(arg_defs)
+			print defs
 	
-	print len(arg_defs)
+	print len(defs)
 	
 	for i, arg in enumerate(args):
 		"""
 		print "--------------------------------------------"
 		print "Processing argument {0}: {1}".format(i,arg)
-		print "Definition: {0}".format(arg_defs[i])
+		print "Definition: {0}".format(defs[i])
 		print "--------"
 		"""
 		# datatype	
-		if isinstance(arg, arg_defs[i]['datatype']):
+		if isinstance(arg, defs[i]['datatype']):
 			#print "Datatype: PASS"
 			pass
 		else:
-			if arg_defs[i]['datatype'] == bool and strint_to_bool(arg) is not None:
+			if defs[i]['datatype'] == bool and strint_to_bool(arg) is not None:
 				#print "Datatype: PASS (converted to bool)"
 				args[i] = strint_to_bool(arg)
 			else:
 				print "Datatype: FAIL"
 				return None
 				
-	if len(arg_defs)-len(args) > 0:
-		for arg_def in arg_defs[len(args):len(arg_defs)]:
+	if len(defs)-len(args) > 0:
+		for arg_def in defs[len(args):len(defs)]:
 			args.append(arg_def['default'])
 
 	# everything OK
