@@ -182,7 +182,6 @@ def struct_data(payload,code=None):
 # MQ
 #def validate_args(**args):
 def validate_args(arg_defs,args):
-
 	if not isinstance(args, list):
 		print "second argument must be a list"
 		return None
@@ -195,6 +194,10 @@ def validate_args(arg_defs,args):
 		print "--------"
 		"""
 		# datatype
+		print arg
+		print arg_defs[i]['datatype']
+		print type(arg)
+		print isinstance(arg, arg_defs[i]['datatype']):
 		if isinstance(arg, arg_defs[i]['datatype']):
 			#print "Datatype: PASS"
 			pass
