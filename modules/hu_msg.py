@@ -209,10 +209,9 @@ class MqPubSubFwdController(object):
 		# append arguments
 		if arguments:
 			if isinstance(arguments, list):
-				#print "DEBUG MSG: LIST"
 				#message = "{0}:{1}".format(message, ",".join(arguments))
 				args_lijstje_als_tekst = ",".join(arguments)
-				jsonified_args = json.dumps(arguments)
+				jsonified_args = json.dumps(args_lijstje_als_tekst)
 				message = "{0}:{1}".format(message, jsonified_args)
 			elif type(arguments) == 'dict':
 				#print "DEBUG MSG: DICT"
