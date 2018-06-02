@@ -758,7 +758,7 @@ def handle_path_mode(path,cmd,params,data):
 			print "Received Mode: {0} State: {1}".format(ret[i],ret[i+1])
 			if ret[i+1] == True and ret[i] not in active_modes:
 				print "New, adding.."
-				active_modes.append()
+				active_modes.append(ret[i])
 			elif ret[i+1] == False and ret[i] in active_modes:
 				print "Removing.."
 				active_modes.remove(ret[i])
