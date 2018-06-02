@@ -81,7 +81,7 @@ qVolume = None
 
 app_commands =	[
 	{	'name': 'mode-change',
-		'params': [ {'name':'mode', 'required':True, 'datatype': str, 'help':'Mode to set'},
+		'params': [ {'name':'mode', 'required':True, 'datatype': (str,unicode), 'help':'Mode to set'},
 					{'name':'state', 'required':True, 'datatype': bool, 'default': False, 'help':'True or False'}
 		],
 		'params_repeat': True,
