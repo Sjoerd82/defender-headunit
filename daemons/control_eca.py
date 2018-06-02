@@ -754,7 +754,7 @@ def handle_path_mode(path,cmd,params,data):
 				elif ret[i+1] == False and ret[i] in active_modes:
 					active_modes.remove(ret[i])
 					
-			printer("Active Modes: {0}".format(active_modes)")
+			printer("Active Modes: {0}".format(active_modes))
 
 		else:
 			printer("put_change: Arguments: [FAIL]",level=LL_ERROR)
