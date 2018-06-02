@@ -760,8 +760,8 @@ def handle_path_mode(path,cmd,params,data):
 		#arg_defs.append(arg1)
 		#ret = validate_args(arg_defs,args)
 							
-		arg_defs.append[ app_commands[0]['params'][0] ]
-		arg_defs.append[ app_commands[0]['params'][1] ]
+		arg_defs.append(app_commands[0]['params'][0])
+		arg_defs.append(app_commands[0]['params'][1])
 		ret = validate_args(arg_defs,args)
 		
 		if ret is not None and ret is not False:
