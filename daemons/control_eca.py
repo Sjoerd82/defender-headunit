@@ -452,7 +452,7 @@ def idle_message_receiver():
 		
 	return True # Important! Returning true re-enables idle routine.
 
-def validate_args(args, min_args, max_args):
+def validate_args2(args, min_args, max_args):
 
 	if len(args) < min_args:
 		printer('Function arguments missing', level=LL_ERROR)
@@ -549,7 +549,7 @@ def handle_path_volume(path,cmd,params,data):
 
 	def get_master(params):
 		""" get master volume """
-		validate_args(params,0,0)	# no args
+		validate_args2(params,0,0)	# no args
 		level = eca_get_effect_amplification()
 		data = get_data(dict_volume(system='ecasound', simple_vol=level),returndata=True)
 		print "DEBUG data:"
@@ -559,7 +559,7 @@ def handle_path_volume(path,cmd,params,data):
 	def put_master(params):
 		""" set master volume """
 		global local_volume
-		validate_args(params,1,1)	# arg can be: <str:up|down|+n|-n|att>
+		validate_args2(params,1,1)	# arg can be: <str:up|down|+n|-n|att>
 		old_volume = local_volume
 		if params[0] == 'up':
 			local_volume += volume_increment
@@ -595,7 +595,7 @@ def handle_path_volume(path,cmd,params,data):
 			Return data:	Nothing
 		"""
 		global local_volume
-		validate_args(params,0,1)	# [percentage]
+		validate_args2(params,0,1)	# [percentage]
 		
 		if not params:
 			local_volume += volume_increment
@@ -611,7 +611,7 @@ def handle_path_volume(path,cmd,params,data):
 		
 	def put_master_decrease(params):
 		global local_volume
-		validate_args(params,0,1)	# [percentage]
+		validate_args2(params,0,1)	# [percentage]
 		
 		if not params:
 			local_volume -= volume_increment
@@ -627,7 +627,7 @@ def handle_path_volume(path,cmd,params,data):
 			
 	def put_att(params):
 		global local_volume
-		validate_args(params,0,2)	# [str:on|off|toggle],[int:Volume, in %]
+		validate_args2(params,0,2)	# [str:on|off|toggle],[int:Volume, in %]
 
 		if not params:
 			local_volume = att_level
@@ -648,7 +648,7 @@ def handle_path_volume(path,cmd,params,data):
 		get_data(None,eventpath='/events/volume/att')
 
 	def put_mute(params):
-		validate_args(params,0,1)	# arg can be [str:on|off|toggle]
+		validate_args2(params,0,1)	# arg can be [str:on|off|toggle]
 		if not params:
 			eca_mute('toggle')
 		else:
