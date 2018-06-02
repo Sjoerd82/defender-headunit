@@ -751,7 +751,7 @@ def handle_path_mode(path,cmd,params,data):
 					'name': 'state',
 					'datatype': 'bool',		# will auto-convert str and int, if it makes sense
 					'required': False,
-					'default': False
+					'default': False,
 					'choices': ['true','false','on','off','1','0',1,0,True,False],
 					'convert_to' : 'bool'
 		}
