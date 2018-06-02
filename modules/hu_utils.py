@@ -183,7 +183,7 @@ def struct_data(payload,code=None):
 #def validate_args(**args):
 def validate_args(arg_defs,args):
 
-	if not isinstance(args, list):
+	if not isinstance(args, 'list'):
 		print "second argument must be a list"
 		return None
 	
