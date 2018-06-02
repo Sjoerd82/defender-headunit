@@ -190,8 +190,12 @@ def validate_args(arg_defs,args,repeat=False):
 
 	# generate definitions
 	if repeat:
+		print "repeat!"
 		for i in range(len(args)/len(arg_defs)-1):
 			arg_defs.extend(arg_defs)
+			print arg_defs
+	
+	print len(arg_defs)
 	
 	for i, arg in enumerate(args):
 		"""
