@@ -202,12 +202,12 @@ def cb_mode_change(active_modes):
 	for mode in active_modes:
 		if mode in modes.unique_list():
 			if modes.get_by_unique(mode)['state'] == False:
-				modes.set_by_unique(mode, {"mode":mode,"state":True})
+				modes.set_by_unique(mode, {"name":mode,"state":True})
 				zmq_arguments.append(mode)
 				zmq_arguments.append("true")
 				
 		else:
-			modes.append({"mode":mode,"state":True})
+			modes.append({"name":mode,"state":True})
 			zmq_arguments.append(mode)
 			zmq_arguments.append("true")
 			
