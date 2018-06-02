@@ -16,6 +16,7 @@ class ListDataStruct(list):
 		else:
 			return False
 	
+	# def index(self)
 	def unique_list(self):
 		""" returns a list of the unique key values """
 		if self.unique_key is None:

@@ -36,6 +36,7 @@ sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
 from hu_msg import MqPubSubFwdController
 from hu_gpio import GpioController
+from hu_datastruct import Modes
 
 # *******************************************************************************
 # Global variables and constants
@@ -65,6 +66,8 @@ cfg_main = None		# main
 cfg_daemon = None	# daemon
 cfg_zmq = None		# Zero MQ
 cfg_gpio = None		# GPIO setup
+
+modes = Modes()
 
 function_map = {}
 function_map['SOURCE_NEXT'] = { 'zmq_path':'/source/next', 'zmq_command':'PUT' }
@@ -190,8 +193,28 @@ def cb_gpio_function(code):
 		print "function {0} not in function_map".format(code)	
 			
 def cb_mode_change(active_modes):
-	print "Hi, I'm control_gpio.py, and this is a mode change.."
+
+	global modes
+	zmq_path = '/mode/change'
+	zmq_command = 'PUT'
+	zmq_arguments = []
+
+	for mode in active_modes:
+		if mode in modes.unique_list():
+			if modes.get_by_unique(mode)['state'] == False:
+				modes.set_by_unique(mode, {"mode":mode,"state":True})
+				zmq_arguments.append(mode)
+				zmq_arguments.append("true")
+				
+		else:
+			modes.append({"mode":mode,"state":True})
+			zmq_arguments.append(mode)
+			zmq_arguments.append("true")
+			
 	print active_modes
+	print "sending MQ"
+	messaging.publish_command(zmq_path,zmq_command,zmq_arguments)
+				
 	
 	
 #********************************************************************************
