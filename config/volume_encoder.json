@@ -16,6 +16,7 @@
 			, "function_fast_cw" :"VOLUME_INC_FAST"
 			, "function_fast_ccw":"VOLUME_DEC_FAST"
 			, "encoder":"multi_encoder"
+			, "mode":"volume"
 		}
 	]
 }

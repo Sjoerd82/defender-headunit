@@ -113,7 +113,7 @@ class GpioController(object):
 
 	def cb_mode_reset(self): #(pin,function_ix):
 		self.active_modes = self.base_modes
-		self.set_cb_mode_change(self.active_modes)
+		self.callback_mode_change(self.active_modes)
 
 	def check_mode(self,pin,function_ix):
 
@@ -148,7 +148,7 @@ class GpioController(object):
 					mode_new = mode_list[mode_ix]
 					print "Mode change {0} -> {1}".format(mode_old,mode_new)
 					self.active_modes.append(mode_new)
-					self.set_cb_mode_change(self.active_modes)
+					self.callback_mode_change(self.active_modes)
 					
 					if 'reset' in self.modes[0]:
 						print "Starting mode reset timer, seconds: {0}".format(self.modes[0]['reset'])

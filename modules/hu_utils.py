@@ -184,34 +184,23 @@ def struct_data(payload,code=None):
 
 def validate_args(arg_defs,args,repeat=False):
 
-	defs = arg_defs[:]
+	defs = arg_defs[:]	# cuz we might manipulate it, and python is stupid
 	if not isinstance(args, list):
 		print "second argument must be a list"
 		return None
 
 	# generate definitions
 	if repeat:
-		print "repeat!"
 		for i in range(len(args)/len(arg_defs)-1):
 			defs.extend(arg_defs)
-			print defs
-	
-	print len(defs)
 	
 	for i, arg in enumerate(args):
-		"""
-		print "--------------------------------------------"
-		print "Processing argument {0}: {1}".format(i,arg)
-		print "Definition: {0}".format(defs[i])
-		print "--------"
-		"""
 		# datatype	
 		if isinstance(arg, defs[i]['datatype']):
 			#print "Datatype: PASS"
 			pass
 		else:
 			if defs[i]['datatype'] == bool and strint_to_bool(arg) is not None:
-				#print "Datatype: PASS (converted to bool)"
 				args[i] = strint_to_bool(arg)
 			else:
 				print "Datatype: FAIL"
