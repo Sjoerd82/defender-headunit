@@ -745,7 +745,7 @@ def handle_path_mode(path,cmd,params,data):
 		#arg_defs.append(app_commands[0]['params'][0])
 		#arg_defs.append(app_commands[0]['params'][1])
 		arg_defs = app_commands[0]['params']
-		ret = validate_args(arg_defs,params)
+		ret = validate_args(arg_defs,params,app_commands['params_repeat'])
 		
 		if ret is not None and ret is not False:
 			print "Arguments: [OK]"

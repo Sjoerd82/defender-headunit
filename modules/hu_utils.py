@@ -181,11 +181,17 @@ def struct_data(payload,code=None):
 # ********************************************************************************
 # MQ
 #def validate_args(**args):
-def validate_args(arg_defs,args):
+
+def validate_args(arg_defs,args,repeat=False):
 
 	if not isinstance(args, list):
 		print "second argument must be a list"
 		return None
+
+	# generate definitions
+	if repeat:
+		for i in range(len(args)/len(arg_defs)-1):
+			arg_defs.extend(arg_defs)
 	
 	for i, arg in enumerate(args):
 		"""
