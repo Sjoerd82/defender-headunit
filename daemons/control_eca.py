@@ -79,6 +79,17 @@ list_modes = []
 
 qVolume = None
 
+app_commands =	[
+	{	'name': 'mode-change',
+		'params': [ {'name':'mode', 'required':True, 'datatype': 'str', 'help':'Mode to set'},
+					{'name':'state', 'required':True, 'datatype': 'bool', 'default': False, 'help':'True or False'}
+		],
+		'params_repeat': True,
+		'description': 'Set a number of modes at once',
+		'command': 'PUT',
+		'path': '/mode/change'
+	}
+]
 
 # ********************************************************************************
 # Output wrapper
@@ -727,10 +738,44 @@ def handle_path_mode(path,cmd,params,data):
 	# remove base path
 	del path[0]
 
-	def put_mode_set(params):
+	def put_change(params):
+		print "CHANGE MODES"
+
+		arg_defs = []
+		arg0 = {
+					'name': 'mode',
+					'datatype': 'str',
+					'required': True		
+		}
+		arg1 = {
+					'name': 'state',
+					'datatype': 'bool',		# will auto-convert str and int, if it makes sense
+					'required': False,
+					'default': False
+					'choices': ['true','false','on','off','1','0',1,0,True,False],
+					'convert_to' : 'bool'
+		}
+		
+		#arg_defs.append(arg0)
+		#arg_defs.append(arg1)
+		#ret = validate_args(arg_defs,args)
+							
+		arg_defs.append[ app_commands[0]['params'][0] ]
+		arg_defs.append[ app_commands[0]['params'][1] ]
+		ret = validate_args(arg_defs,args)
+		
+		if ret is not None and ret is not False:
+			print "Arguments: [OK]"
+			print ret
+		else:
+			print "Arguments: [FAIL]"
+		
+		
+		
+	def put_set(params):
 		print "A MODE WAS SET"
 
-	def put_mode_unset(params):
+	def put_unset(params):
 		print "A MODE WAS UNSET"
 
 	if path:

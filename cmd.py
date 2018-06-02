@@ -249,6 +249,15 @@ app_commands =	[
 		'command': 'PUT',
 		'path': '/ecasound/chainsetup'
 	},
+	{	'name': 'mode-change',
+		'params': [ {'name':'mode', 'required':True, 'datatype': 'str', 'help':'Mode to set'},
+					{'name':'state', 'required':True, 'datatype': 'bool', 'default': False, 'help':'True or False'}
+		],
+		'params_repeat': True,
+		'description': 'Set a number of modes at once',
+		'command': 'PUT',
+		'path': '/mode/change'
+	},
 	{	'name': 'mode-set',
 		'params': [ {'name':'mode', 'required':True, 'help':'Mode to set'},
 					{'name':'state', 'required':False, 'help':'True or False'}
