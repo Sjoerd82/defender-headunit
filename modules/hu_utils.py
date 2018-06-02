@@ -194,12 +194,7 @@ def validate_args(arg_defs,args):
 		print "Definition: {0}".format(arg_defs[i])
 		print "--------"
 		"""
-		# datatype
-		print arg
-		print arg_defs[i]['datatype']
-		print type(arg)
-		print isinstance(arg, arg_defs[i]['datatype'])
-		
+		# datatype	
 		if isinstance(arg, arg_defs[i]['datatype']):
 			#print "Datatype: PASS"
 			pass

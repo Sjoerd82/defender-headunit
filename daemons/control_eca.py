@@ -74,8 +74,8 @@ cfg_ecasound = None
 cfg_gpio = None		# GPIO setup
 
 # global datastructures
-modes = Modes()
-list_modes = []
+#modes = Modes()
+active_modes = []
 
 qVolume = None
 
@@ -739,29 +739,12 @@ def handle_path_mode(path,cmd,params,data):
 	del path[0]
 
 	def put_change(params):
-		print "CHANGE MODES"
-
-		arg_defs = []
-		arg0 = {
-					'name': 'mode',
-					'datatype': 'str',
-					'required': True		
-		}
-		arg1 = {
-					'name': 'state',
-					'datatype': 'bool',		# will auto-convert str and int, if it makes sense
-					'required': False,
-					'default': False,
-					'choices': ['true','false','on','off','1','0',1,0,True,False],
-					'convert_to' : 'bool'
-		}
 		
-		#arg_defs.append(arg0)
-		#arg_defs.append(arg1)
-		#ret = validate_args(arg_defs,args)
-							
-		arg_defs.append(app_commands[0]['params'][0])
-		arg_defs.append(app_commands[0]['params'][1])
+		global active_modes
+		
+		#arg_defs.append(app_commands[0]['params'][0])
+		#arg_defs.append(app_commands[0]['params'][1])
+		arg_defs = app_commands[0]['params']
 		ret = validate_args(arg_defs,params)
 		
 		if ret is not None and ret is not False:
@@ -770,6 +753,17 @@ def handle_path_mode(path,cmd,params,data):
 		else:
 			print "Arguments: [FAIL]"
 		
+		# arguments are mode-state pairs
+		for i in range(0,len(ret),2):
+			print "Received Mode: {0} State: {1}".format(ret[i],ret[i+1])
+			if ret[i+1] == True and ret[i] not in active_modes:
+				print "New, adding.."
+				active_modes.append()
+			elif ret[i+1] == False and ret[i] in active_modes:
+				print "Removing.."
+				active_modes.remove(ret[i])
+				
+		print active_modes
 		
 		
 	def put_set(params):
