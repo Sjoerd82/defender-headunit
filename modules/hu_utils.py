@@ -659,9 +659,9 @@ def pa_sfx( sfx ):
 
 
 def strint_to_bool(value):
-	if isinstance(value, str) and value.lower() in ['true','on','1','t']:
+	if isinstance(value, (str,unicode)) and value.lower() in ['true','on','1','t']:
 		return True
-	elif  isinstance(value, str) and value.lower() in ['false','off','0','f']:
+	elif  isinstance(value, (str,unicode)) and value.lower() in ['false','off','0','f']:
 		return False
 	elif  isinstance(value, int) and value in [1]:
 		return True
