@@ -742,28 +742,27 @@ def handle_path_mode(path,cmd,params,data):
 		
 		global active_modes
 		
-		#arg_defs.append(app_commands[0]['params'][0])
-		#arg_defs.append(app_commands[0]['params'][1])
 		arg_defs = app_commands[0]['params']
-		ret = validate_args(arg_defs,params,app_commands['params_repeat'])
+		ret = validate_args(arg_defs,params,app_commands[0]['params_repeat'])
 		
 		if ret is not None and ret is not False:
 			print "Arguments: [OK]"
 			print ret
+		
+			# arguments are mode-state pairs
+			for i in range(0,len(ret),2):
+				print "Received Mode: {0} State: {1}".format(ret[i],ret[i+1])
+				if ret[i+1] == True and ret[i] not in active_modes:
+					print "New, adding.."
+					active_modes.append(ret[i])
+				elif ret[i+1] == False and ret[i] in active_modes:
+					print "Removing.."
+					active_modes.remove(ret[i])
+					
+			print active_modes
+
 		else:
 			print "Arguments: [FAIL]"
-		
-		# arguments are mode-state pairs
-		for i in range(0,len(ret),2):
-			print "Received Mode: {0} State: {1}".format(ret[i],ret[i+1])
-			if ret[i+1] == True and ret[i] not in active_modes:
-				print "New, adding.."
-				active_modes.append(ret[i])
-			elif ret[i+1] == False and ret[i] in active_modes:
-				print "Removing.."
-				active_modes.remove(ret[i])
-				
-		print active_modes
 		
 		
 	def put_set(params):
