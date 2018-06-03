@@ -50,6 +50,7 @@ LOGGER_NAME = 'gpio'
 
 DEFAULT_CONFIG_FILE = '/etc/configuration.json'
 DEFAULT_LOG_LEVEL = LL_INFO
+SUBSCRIPTIONS = ['/mode/']
 DEFAULT_PORT_PUB = 5559
 DEFAULT_PORT_SUB = 5560
 
@@ -182,7 +183,7 @@ def load_cfg_gpio():
 
 
 def idle_message_receiver():
-	print "DEBUG: idle_msg_receiver()"
+	#print "DEBUG: idle_msg_receiver()"
 	
 	def dispatcher(path, command, arguments, data):
 		handler_function = 'handle_path_' + path[0]
@@ -413,10 +414,12 @@ def setup():
 	#
 	# ZMQ
 	#
-	global messaging
 	printer("ZeroMQ: Initializing")
 	messaging = MqPubSubFwdController('localhost',DEFAULT_PORT_PUB,DEFAULT_PORT_SUB)
 	
+	printer("ZeroMQ: Creating Subscriber: {0}".format(DEFAULT_PORT_SUB))
+	messaging.create_subscriber(SUBSCRIPTIONS)
+
 	printer("ZeroMQ: Creating Publisher: {0}".format(DEFAULT_PORT_PUB))
 	messaging.create_publisher()
 
