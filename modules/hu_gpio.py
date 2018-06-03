@@ -452,7 +452,7 @@ class GpioController(object):
 						new_mode['state'] = True
 					else:
 						new_mode['state'] = False
-					new_mode_set.append(new_mode)
+					new_mode_set['mode_list'].append(new_mode)
 					
 				self.mode_sets[mode_set['id']] = new_mode_set
 				
