@@ -933,7 +933,14 @@ def setup():
 	#
 	# GPIO
 	#
+	global gpio
+	global active_modes
+	printer("GPIO: Initializing")
 	gpio = GpioController(cfg_gpio,cb_gpio_function)
+	modes = gpio.get_modes()
+	active_modes = modes.get_active_modes()
+	print "Active modes: {0}".format(active_modes)
+	gpio.set_cb_mode_change(cb_mode_change)
 	#todo: GPIO cleanup
 	
 	printer('Initialized [OK]')

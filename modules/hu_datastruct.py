@@ -109,9 +109,17 @@ class Modes(ListDataStruct):
 			self[modes_list.index(mode)]['state'] = True
 		'''
 	def get_active_mode(self):
+		# THIS IS BROKEN, THERE CAN BE MORE THAN ONE ACTIVE MODE (just not in a mode-set)
 		for mode in self:
 			if mode['state']:
 				return mode['name']
+				
+	def get_active_modes(self):
+		active_modes = []
+		for mode in self:
+			if mode['state']:
+				active_modes.append(mode['name'])
+		return active_modes
 
 class Tracks(ListDataStruct):
 	"""	Field | Value

@@ -20,7 +20,7 @@
 		{	  "id": "modecycle1"
 			, "mode_list": [ "volume", "track", "bass", "treble", "menu" ]
 			, "base_mode": "volume"
-			, "reset": 5
+			, "reset": 8
 		}
 	]
 	,"functions": [
