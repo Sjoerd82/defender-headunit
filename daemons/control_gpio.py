@@ -180,6 +180,73 @@ def load_cfg_gpio():
 		print "ERROR: not found: {0}".format(gpio_config_file)
 		return
 
+
+def idle_message_receiver():
+	#print "DEBUG: idle_msg_receiver()"
+	
+	def dispatcher(path, command, arguments, data):
+		handler_function = 'handle_path_' + path[0]
+		if handler_function in globals():
+			ret = globals()[handler_function](path, command, arguments, data)
+			return ret
+		else:
+			print("No handler for: {0}".format(handler_function))
+			return None
+			
+		
+	rawmsg = messaging.poll(timeout=500)				#None=Blocking
+	if rawmsg:
+		printer("Received message: {0}".format(rawmsg))	#TODO: debug
+		parsed_msg = parse_message(rawmsg)
+		
+		# send message to dispatcher for handling	
+		retval = dispatcher(parsed_msg['path'],parsed_msg['cmd'],parsed_msg['args'],parsed_msg['data'])
+
+		if parsed_msg['resp_path']:
+			#print "DEBUG: Resp Path present.. returing message.. data={0}".format(retval)
+			messaging.publish_command(parsed_msg['resp_path'],'DATA',retval)
+		
+	return True # Important! Returning true re-enables idle routine.
+
+def handle_path_mode(path,cmd,params,data):
+
+	base_path = 'mode'
+	# remove base path
+	del path[0]
+
+	def get_active(params):
+		
+		global modes
+		
+		# NO PARAMS
+		
+		#arg_defs = app_commands[0]['params']
+		#ret = validate_args(arg_defs,params,app_commands[0]['params_repeat'])		
+		#if ret is not None and ret is not False:	
+
+		printer("Active Modes: {0}".format(modes.active_modes()))
+		
+	def put_set(params):
+		print "A MODE WAS SET"
+
+	def put_unset(params):
+		print "A MODE WAS UNSET"
+
+	if path:
+		function_to_call = cmd + '_' + '_'.join(path)
+	else:
+		# called without sub-paths
+		function_to_call = cmd + '_' + base_path
+
+	ret = None
+	if function_to_call in locals():
+		ret = locals()[function_to_call](params)
+		printer('Executed {0} function {1} with result status: {2}'.format(base_path,function_to_call,ret),level=LL_DEBUG)
+	else:
+		printer('Function {0} does not exist'.format(function_to_call))
+
+	return ret
+	
 # ********************************************************************************
 # GPIO Callback
 #
@@ -363,6 +430,8 @@ def setup():
 	modes = gpio.get_modes()
 	gpio.set_cb_mode_change(cb_mode_change)
 	
+	# if we're responisble for modes, then send out a MQ message ? *(or have clients pull?)
+	
 	printer('Initialized [OK]')
 		
 def main():		
@@ -376,7 +445,17 @@ def main():
 	#finally:
 	#	mainloop.quit()
 	
+	counter = 0
 	while True:
+
+		if counter > 9:
+			# only every 10th iteration
+			idle_message_receiver() # do this less often TODO! not critical, but takes up precious response time
+			#handle_mq_message()	# do this less often TODO! not critical, but takes up precious response time
+			counter = 0
+		
+		counter += 1
+
 		sleep(0.1)
 
 
