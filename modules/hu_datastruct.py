@@ -86,6 +86,29 @@ class Modes(ListDataStruct):
 			new = empty.copy()
 			new.update(kwargs)
 			self.append(new)
+			
+	def set_active_modes(self, modes, only=True):
+		for mode in self:
+			if mode['name'] in modes:
+				mode['state'] = True
+			else:
+				mode['state'] = False
+			
+		'''
+		modes_list = self.unique_list()
+		for mode in modes:
+			# todo: check if mode exists
+			self[modes_list.index(mode)]['state'] = True
+		'''
+	
+	def get_active_modes(self):
+		# never used
+		active_modes = []
+		for mode in self:
+			if mode['state']:
+				active_modes.append(mode)
+				
+		return active_modes
 
 class Tracks(ListDataStruct):
 	"""	Field | Value

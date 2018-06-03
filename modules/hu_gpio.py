@@ -7,6 +7,9 @@
 # 
 #
 
+# BUGS:
+# printer() doesn't work! WTF?
+
 import sys						# path
 import os						# 
 from time import sleep
@@ -66,7 +69,7 @@ class GpioController(object):
 		staticmethod(self.callback_mode_change)
 	
 	def get_modes(self):
-		return modes_new
+		return self.modes_sets
 	
 	# ********************************************************************************
 	# GPIO helpers
@@ -117,7 +120,10 @@ class GpioController(object):
 		"""
 		
 
-	def cb_mode_reset(self): #(pin,function_ix):
+	def cb_mode_reset(self,mode_set_id): #(pin,function_ix):
+		print self.mode_sets[mode_set_id]['mode_list']
+		self.mode_sets[mode_set_id]['mode_list'].set_active_modes(['volume'])
+		print self.mode_sets[mode_set_id]['mode_list']
 		self.active_modes = self.base_modes
 		self.callback_mode_change(self.active_modes)
 
@@ -169,21 +175,17 @@ class GpioController(object):
 						#	self.timer_mode.cancel()
 						#self.timer_mode = Timer(float(self.modes_old[0]['reset']), self.cb_mode_reset)
 						#self.timer_mode.start()
-						self.reset_mode_timer(reset_time)
+						self.reset_mode_timer(reset_time,function['mode_cycle'])
 					break
-				else:
-					print "XDEBUG: {0}".format(mode_ix)
-					print mode_list.unique_list()
-					print mode
 				
 
-	def reset_mode_timer(self,seconds):
+	def reset_mode_timer(self,seconds,mode_set_id):
 		""" reset the mode time-out if there is still activity in current mode """
 		#mode_timer = 0
 		#gobject.timeout_add_seconds(function['mode_reset'],self.cb_mode_reset,pin,function_ix)
 		if self.timer_mode is not None:
 			self.timer_mode.cancel()
-		self.timer_mode = Timer(seconds, self.cb_mode_reset)
+		self.timer_mode = Timer(seconds, self.cb_mode_reset,mode_set_id)
 		self.timer_mode.start()
 					
 	# ********************************************************************************
