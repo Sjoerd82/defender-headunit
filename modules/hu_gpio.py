@@ -175,7 +175,7 @@ class GpioController(object):
 						#	self.timer_mode.cancel()
 						#self.timer_mode = Timer(float(self.modes_old[0]['reset']), self.cb_mode_reset)
 						#self.timer_mode.start()
-						self.reset_mode_timer(reset_time,function['mode_cycle'])
+						self.reset_mode_timer(reset_time,function['mode_cycle']['id'])
 					break
 				
 
