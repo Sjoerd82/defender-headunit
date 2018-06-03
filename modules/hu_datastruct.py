@@ -100,15 +100,10 @@ class Modes(ListDataStruct):
 			# todo: check if mode exists
 			self[modes_list.index(mode)]['state'] = True
 		'''
-	
-	def get_active_modes(self):
-		# never used
-		active_modes = []
+	def get_active_mode(self):
 		for mode in self:
 			if mode['state']:
-				active_modes.append(mode)
-				
-		return active_modes
+				return mode['name']
 
 class Tracks(ListDataStruct):
 	"""	Field | Value

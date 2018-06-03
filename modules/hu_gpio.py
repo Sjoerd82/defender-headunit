@@ -49,7 +49,6 @@ class GpioController(object):
 		self.mode_sets = {}
 		self.modes = Modes()
 		
-		self.base_modes = []		# todo, remove/fix/change
 		self.active_modes = []
 		self.long_press_ms = 800
 		self.timer_mode = None		# timer object
@@ -125,30 +124,44 @@ class GpioController(object):
 		print self.mode_sets[mode_set_id]['mode_list']
 		self.mode_sets[mode_set_id]['mode_list'].set_active_modes(['volume'])
 		print self.mode_sets[mode_set_id]['mode_list']
-		self.active_modes = self.base_modes
+		#self.active_modes = self.base_modes
 		self.callback_mode_change(self.active_modes)
 
 	def handle_mode(self,pin,function_ix):
 		""" If function has a mode_cycle attribute, then handle that.
 			Called by interrupt handlers.
 		"""
-
 		function = self.pins_config[pin]['functions'][function_ix]
-		print function
-		
-		"""
-		if 'mode_cycle' in function: # and 'mode' in self.pins_config[pin]:
-			print "DEBUG: Toggeling Mode"
-			if function['mode_toggle'] in self.active_modes:
-				self.active_modes.remove(function['mode_toggle'])
-				print "DEBUG: Active Mode(s): {0}".format(self.active_modes)
-			else:
-				self.active_modes.append(function['mode_toggle'])
-				print "DEBUG: Active Mode(s): {0}".format(self.active_modes)
-				
-		el
-		"""
+
 		if 'mode_cycle' in function: # and 'mode' in self.pins_config[pin]:		
+			print "DEBUG: handle_mode()"
+			
+			# new
+			mode_list = self.mode_sets[function['mode_cycle']]['mode_list']
+			current_active_mode = mode_list.get_active_mode()
+			mode_ix = mode_list.unique_list().index(current_active_mode)
+			mode_old = mode_list[mode_ix]['name']
+					
+			if mode_ix >= len(mode_list)-1:
+				mode_ix = 0
+			else:
+				mode_ix += 1
+			mode_new = mode_list[mode_ix]['name']
+			
+			#printer("Mode changed from {0} to: {1}".format(mode_old,mode_new)) # LL_DEBUG
+			print("Mode changed from {0} to: {1}".format(mode_old,mode_new)) # LL_DEBUG
+			mode_list.set_active_modes(mode_new)
+			self.callback_mode_change(mode_list)
+			
+			if 'reset' in self.mode_sets[function['mode_cycle']]:
+				reset_time = self.mode_sets[function['mode_cycle']]['reset']
+				print "Starting mode reset timer, seconds: {0}".format(reset_time)
+				self.reset_mode_timer(reset_time,function['mode_cycle'])
+			break
+			
+			"""
+			
+			# old
 			for mode in self.active_modes:
 					
 				mode_list = self.mode_sets[function['mode_cycle']]['mode_list']
@@ -180,6 +193,8 @@ class GpioController(object):
 						#self.timer_mode.start()
 						self.reset_mode_timer(reset_time,function['mode_cycle'])
 					break
+					
+			"""
 				
 
 	def reset_mode_timer(self,seconds,mode_set_id):
@@ -451,14 +466,7 @@ class GpioController(object):
 		#	self.active_modes.append(self.cfg_gpio['start_mode'])
 		#else:
 		#	self.active_modes.append(None)
-		
-		# DEPRECATED:: PLEASE FIX: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		if 'base_modes' in self.cfg_gpio:
-			self.base_modes = self.cfg_gpio['base_modes']
-			self.active_modes = self.base_modes				# activate base mode(s)
-		else:
-			self.active_modes.append(None)
-		
+				
 		# modes
 		if 'mode_sets' in self.cfg_gpio:
 			if len(self.cfg_gpio['mode_sets']) > 1:
@@ -475,7 +483,7 @@ class GpioController(object):
 				for mode in mode_set['mode_list']:
 					new_mode = {}
 					new_mode['name'] = mode
-					if mode in mode_set['base_modes']:
+					if mode == mode_set['base_mode']:
 						new_mode['state'] = True
 					else:
 						new_mode['state'] = False
