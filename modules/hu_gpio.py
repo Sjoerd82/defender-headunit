@@ -121,6 +121,7 @@ class GpioController(object):
 		
 
 	def cb_mode_reset(self,mode_set_id): #(pin,function_ix):
+	
 		print self.mode_sets[mode_set_id]['mode_list']
 		self.mode_sets[mode_set_id]['mode_list'].set_active_modes(['volume'])
 		print self.mode_sets[mode_set_id]['mode_list']
@@ -175,8 +176,6 @@ class GpioController(object):
 						#	self.timer_mode.cancel()
 						#self.timer_mode = Timer(float(self.modes_old[0]['reset']), self.cb_mode_reset)
 						#self.timer_mode.start()
-						print "XXXXX"
-						print function['mode_cycle']
 						self.reset_mode_timer(reset_time,function['mode_cycle'])
 					break
 				
@@ -187,7 +186,7 @@ class GpioController(object):
 		#gobject.timeout_add_seconds(function['mode_reset'],self.cb_mode_reset,pin,function_ix)
 		if self.timer_mode is not None:
 			self.timer_mode.cancel()
-		self.timer_mode = Timer(seconds, self.cb_mode_reset,mode_set_id)
+		self.timer_mode = Timer(seconds, self.cb_mode_reset, [mode_set_id])
 		self.timer_mode.start()
 					
 	# ********************************************************************************
