@@ -32,7 +32,7 @@ class ListDataStruct(list):
 		for dict_item in self:
 			if dict_item[self.unique_key] == key:
 				return dict_item
-	
+		
 	def set_by_unique(self,key,updated_dict):
 		for ix, dict_item in enumerate(self):
 			if dict_item[self.unique_key] == key:

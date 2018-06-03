@@ -150,13 +150,13 @@ class GpioController(object):
 				mode_ix = mode_list.unique_list().index(mode)			# get index of mode in mode_list
 				
 				if mode_ix is not None:
-					mode_old = mode_list[mode_ix]
+					mode_old = mode_list[mode_ix]['name']
 					self.active_modes.remove(mode_old)
 					if mode_ix >= len(mode_list)-1:
 						mode_ix = 0
 					else:
 						mode_ix += 1
-					mode_new = mode_list[mode_ix]
+					mode_new = mode_list[mode_ix]['name']
 					printer("Mode changed from {0} to: {1}".format(mode_old,mode_new)) # LL_DEBUG
 					self.active_modes.append(mode_new)
 					self.callback_mode_change(self.active_modes)
