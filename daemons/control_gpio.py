@@ -182,7 +182,7 @@ def load_cfg_gpio():
 
 
 def idle_message_receiver():
-	#print "DEBUG: idle_msg_receiver()"
+	print "DEBUG: idle_msg_receiver()"
 	
 	def dispatcher(path, command, arguments, data):
 		handler_function = 'handle_path_' + path[0]
