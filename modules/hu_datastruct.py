@@ -49,6 +49,10 @@ class ListDataStruct(list):
 			raise NameError, 'mandatory key(s) missing'
 		super(ListDataStruct, self).append(item)
 		
+	def extend(self,item):
+		# todo
+		super(ListDataStruct, self).extend(item)
+		
 	def __getslice__(self, i, j):
 		return self.__getitem__(slice(i, j))
 	def __setslice__(self, i, j, seq):
