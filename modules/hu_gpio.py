@@ -70,7 +70,8 @@ class GpioController(object):
 	def get_modes(self):
 		master_modes_list = Modes()
 		for mode_set in self.mode_sets:
-			print mode_set['mode_list']
+			print mode_set #['mode_list']
+			print type(mode_set)
 			master_modes_list.extend(mode_set['mode_list'])
 		return master_modes_list
 	
