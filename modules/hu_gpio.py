@@ -73,6 +73,9 @@ class GpioController(object):
 		for mode_set_id,mode_set in self.mode_sets.iteritems():
 			print mode_set['mode_list']
 			master_modes_list.extend(mode_set['mode_list'])
+			
+		print type(master_modes_list)
+		print type(copy.deepcopy(master_modes_list))
 		return copy.deepcopy(master_modes_list)		# list of dicts, requires deepcopy() instead of copy()
 	
 	# ********************************************************************************
