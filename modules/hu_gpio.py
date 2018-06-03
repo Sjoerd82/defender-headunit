@@ -119,13 +119,9 @@ class GpioController(object):
 		"""
 		
 
-	def cb_mode_reset(self,mode_set_id): #(pin,function_ix):
-	
-		print self.mode_sets[mode_set_id]['mode_list']
+	def cb_mode_reset(self,mode_set_id):
 		self.mode_sets[mode_set_id]['mode_list'].set_active_modes(['volume'])
-		print self.mode_sets[mode_set_id]['mode_list']
-		#self.active_modes = self.base_modes
-		self.callback_mode_change(self.active_modes)
+		self.callback_mode_change(self.mode_sets[mode_set_id]['mode_list'])
 
 	def handle_mode(self,pin,function_ix):
 		""" If function has a mode_cycle attribute, then handle that.
@@ -156,45 +152,7 @@ class GpioController(object):
 			if 'reset' in self.mode_sets[function['mode_cycle']]:
 				reset_time = self.mode_sets[function['mode_cycle']]['reset']
 				print "Starting mode reset timer, seconds: {0}".format(reset_time)
-				self.reset_mode_timer(reset_time,function['mode_cycle'])
-			
-			"""
-			
-			# old
-			for mode in self.active_modes:
-					
-				mode_list = self.mode_sets[function['mode_cycle']]['mode_list']
-
-				#mode_ix = mode_list.index(mode)			# get index of mode in mode_list
-				mode_ix = mode_list.unique_list().index(mode)			# get index of mode in mode_list
-				
-				if mode_ix is not None:
-					mode_old = mode_list[mode_ix]['name']
-					self.active_modes.remove(mode_old)
-					if mode_ix >= len(mode_list)-1:
-						mode_ix = 0
-					else:
-						mode_ix += 1
-					mode_new = mode_list[mode_ix]['name']
-					#printer("Mode changed from {0} to: {1}".format(mode_old,mode_new)) # LL_DEBUG
-					print("Mode changed from {0} to: {1}".format(mode_old,mode_new)) # LL_DEBUG
-					mode_list.set_active_modes(mode_new)
-					#self.active_modes.append(mode_new)
-					#self.callback_mode_change(self.active_modes)
-					self.callback_mode_change(mode_list)
-					
-					if 'reset' in self.mode_sets[function['mode_cycle']]:
-						reset_time = self.mode_sets[function['mode_cycle']]['reset']
-						print "Starting mode reset timer, seconds: {0}".format(reset_time)
-						#if self.timer_mode is not None:
-						#	self.timer_mode.cancel()
-						#self.timer_mode = Timer(float(self.modes_old[0]['reset']), self.cb_mode_reset)
-						#self.timer_mode.start()
-						self.reset_mode_timer(reset_time,function['mode_cycle'])
-					break
-					
-			"""
-				
+				self.reset_mode_timer(reset_time,function['mode_cycle']
 
 	def reset_mode_timer(self,seconds,mode_set_id):
 		""" reset the mode time-out if there is still activity in current mode """

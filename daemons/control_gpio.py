@@ -202,16 +202,23 @@ def cb_mode_change(active_modes):
 	print "COMPARE THIS TO OUR CURRENT modes list"
 	print modes
 	print "COMPARISON:"
-	pairs = zip(active_modes, modes)
-	print [(x, y) for x, y in pairs if x != y]
+	r = list(itertools.ifilterfalse(lambda x: x in active_modes, modes)) + list(itertools.ifilterfalse(lambda x: x in data2, data1))
+	if r:
+		print "FOUND CHANGES"
+		print r
+		
+	else:
+		print "No Changes"
+		return
+	#pairs = zip(active_modes, modes)
+	#print [(x, y) for x, y in pairs if x != y]
 	#print "MQ changes"
-	return
 	
 	zmq_path = '/mode/change'
 	zmq_command = 'PUT'
 	zmq_arguments = []
 
-	for mode in active_modes:
+	for mode in r:
 		if mode in modes.unique_list():
 			if modes.get_by_unique(mode)['state'] == False:
 				modes.set_by_unique(mode, {"name":mode,"state":True})
@@ -228,7 +235,6 @@ def cb_mode_change(active_modes):
 #
 # 	uhm?			.........
 			
-	print active_modes
 	print "sending MQ"
 	messaging.publish_command(zmq_path,zmq_command,zmq_arguments)
 				
