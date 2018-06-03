@@ -222,7 +222,7 @@ def cb_mode_change(active_modes):
 
 	for mode in r:
 		zmq_arguments.append(mode['name'])
-		zmq_arguments.append(mode['state'])
+		zmq_arguments.append(str(mode['state']))
 		
 	'''
 	for mode in r:
