@@ -127,8 +127,8 @@ class GpioController(object):
 		self.mode_sets[mode_set_id]['mode_list'].set_active_modes(['volume'])
 		
 		master_modes_list = Modes()
-		for set in self.modes_sets:
-			master_modes_list.extend(set['mode_list'])
+		for mode_set_id,mode_set in self.mode_sets.iteritems():
+			master_modes_list.extend(mode_set['mode_list'])
 		
 		#self.callback_mode_change(self.mode_sets[mode_set_id]['mode_list'][:])	# return a copy
 		self.callback_mode_change(master_modes_list)
@@ -155,7 +155,7 @@ class GpioController(object):
 			mode_new = mode_list[mode_ix]['name']
 			
 			#printer("Mode changed from {0} to: {1}".format(mode_old,mode_new)) # LL_DEBUG
-			print("Mode changed from {0} to: {1}".format(mode_old,mode_new)) # LL_DEBUG
+			print("Mode changed from: '{0}' to: '{1}'".format(mode_old,mode_new)) # LL_DEBUG
 			mode_list.set_active_modes(mode_new)
 			self.callback_mode_change(mode_list)
 			

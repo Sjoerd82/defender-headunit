@@ -212,9 +212,10 @@ def cb_mode_change(active_modes):
 	print "COMPARE THIS TO OUR CURRENT modes list"
 	# sort lists
 	modes, active_modes = [sorted(l, key=itemgetter('name')) for l in (modes, active_modes)]	
-	print modes
 	
 	print "COMPARISON:"
+	print active_modes
+	print modes
 	pairs = zip(modes,active_modes)
 	changes = [(x) for x, y in pairs if x != y]
 
