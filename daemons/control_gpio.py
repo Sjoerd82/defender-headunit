@@ -161,7 +161,7 @@ def load_cfg_daemon():
 			if 'script' in daemon and daemon['script'] == os.path.basename(__file__):
 				return daemon
 
-def load_cfg_gpio():		
+def load_cfg_gpio():
 	""" load specified GPIO configuration """	
 	if 'directories' not in cfg_main or 'daemon-config' not in cfg_main['directories'] or 'config' not in cfg_daemon:
 		return
@@ -450,7 +450,7 @@ def main():
 	
 	counter = 0
 	while True:
-
+		
 		if counter > 9:
 			# only every 10th iteration
 			idle_message_receiver() # do this less often TODO! not critical, but takes up precious response time
@@ -458,15 +458,16 @@ def main():
 			counter = 0
 		
 		counter += 1
-
+		
 		sleep(0.1)
 
 
 if __name__ == "__main__":
 	parse_args()
 	setup()
-	try:
-		main()
-	finally:
-		GPIO.cleanup()
+	#try:
+	main()
+	#finally:
+	#	pass
+		#GPIO.cleanup()
 	
