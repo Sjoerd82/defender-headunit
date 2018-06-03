@@ -207,8 +207,10 @@ def cb_mode_change(active_modes):
 		modes.append( {'name':mode['name'],'state':mode['state']} )
 	"""
 
+	print type(modes)
 	# sort lists
 	modes, active_modes = [sorted(l, key=itemgetter('name')) for l in (modes, active_modes)]	
+	print type(modes)
 	
 	print "COMPARISON (sorted):"
 	print active_modes
@@ -262,6 +264,7 @@ def cb_mode_change(active_modes):
 	messaging.publish_command(zmq_path,zmq_command,zmq_arguments)
 	
 	print "Updating local modes"
+	print type(modes)
 	modes.set_active_modes(modes_update_active)
 				
 	
