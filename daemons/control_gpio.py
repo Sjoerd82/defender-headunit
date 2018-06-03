@@ -209,7 +209,10 @@ def cb_mode_change(active_modes):
 
 	print type(modes)
 	# sort lists
-	modes, active_modes = [sorted(l, key=itemgetter('name')) for l in (modes, active_modes)]	
+	#modes, active_modes = [sorted(l, key=itemgetter('name')) for l in (modes, active_modes)]
+	#active_modes = [sorted(l, key=itemgetter('name')) for l in (active_modes)]
+	active_modes.sort()
+	modes.sort()
 	print type(modes)
 	
 	print "COMPARISON (sorted):"
