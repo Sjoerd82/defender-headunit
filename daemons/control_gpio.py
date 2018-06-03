@@ -24,7 +24,7 @@
 import sys						# path
 import os						# 
 from time import sleep
-#from operator import itemgetter
+from operator import itemgetter
 
 #from time import clock			# cpu time, not easily relateable to ms.
 from datetime import datetime
@@ -211,8 +211,8 @@ def cb_mode_change(active_modes):
 	# sort lists
 	#modes, active_modes = [sorted(l, key=itemgetter('name')) for l in (modes, active_modes)]
 	#active_modes = [sorted(l, key=itemgetter('name')) for l in (active_modes)]
-	active_modes.sort()
-	modes.sort()
+	active_modes.sort(key=operator.itemgetter('name'))
+	modes.sort(key=operator.itemgetter('name'))
 	print type(modes)
 	
 	print "COMPARISON (sorted):"

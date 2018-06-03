@@ -1,6 +1,4 @@
 
-from operator import itemgetter
-
 # TODO: add feature to check for a unique key
 
 class ListDataStruct(list):
@@ -93,9 +91,9 @@ class Modes(ListDataStruct):
 			new.update(kwargs)
 			self.append(new)
 			
-	def sort(self):
-		""" Careful, some modes need to be in a certain sequence! """
-		self = [sorted(l, key=itemgetter('name')) for l in (self)]
+	#def sort(self):
+	#	""" Careful, some modes need to be in a certain sequence! """
+	#	self = [sorted(l, key=itemgetter('name')) for l in (self)]
 	
 	def set_active_modes(self, modes, only=True):
 		for mode in self:
