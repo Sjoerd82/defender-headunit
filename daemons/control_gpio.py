@@ -203,17 +203,21 @@ def cb_mode_change(active_modes):
 	print "CB_MODE_CHANGE, now got a Modes() list:"
 	print active_modes
 	
+	""" cannot be
 	print "Any new modes?"
 	new_modes = [x for x in active_modes if x not in modes]
 	for mode in new_modes:
 		# will not cause a MQ state change to be sent out
 		modes.append( {'name':mode['name'],'state':mode['state']} )
+	"""
 
 	print "COMPARE THIS TO OUR CURRENT modes list"
+	print modes
+	
 	# sort lists
 	modes, active_modes = [sorted(l, key=itemgetter('name')) for l in (modes, active_modes)]	
 	
-	print "COMPARISON:"
+	print "COMPARISON (sorted):"
 	print active_modes
 	print modes
 	pairs = zip(modes,active_modes)
