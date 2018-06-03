@@ -234,7 +234,7 @@ def cb_mode_change(active_modes):
 	zmq_command = 'PUT'
 	zmq_arguments = []
 
-	for mode in r:
+	for mode in changes:
 		zmq_arguments.append(mode['name'])
 		zmq_arguments.append(str(mode['state']))
 		
@@ -346,11 +346,8 @@ def setup():
 	#
 	# GPIO
 	#
-#	retval = gpio_setup()
-#	if retval == False:
-#		printer("GPIO: Error setting up")
-#		exit(1)
-
+	global gpio
+	global modes
 	gpio = GpioController(cfg_gpio,cb_gpio_function)
 	modes = gpio.get_modes()
 	gpio.set_cb_mode_change(cb_mode_change)
