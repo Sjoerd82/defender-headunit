@@ -146,7 +146,9 @@ class GpioController(object):
 					
 				mode_list = self.mode_sets[function['mode_cycle']]
 
-				mode_ix = mode_list.index(mode)			# get index of mode in mode_list
+				#mode_ix = mode_list.index(mode)			# get index of mode in mode_list
+				mode_ix = mode_list.unique_list().index(mode)			# get index of mode in mode_list
+				
 				if mode_ix is not None:
 					mode_old = mode_list[mode_ix]
 					self.active_modes.remove(mode_old)
