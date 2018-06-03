@@ -157,7 +157,8 @@ class GpioController(object):
 					else:
 						mode_ix += 1
 					mode_new = mode_list[mode_ix]['name']
-					printer("Mode changed from {0} to: {1}".format(mode_old,mode_new)) # LL_DEBUG
+					#printer("Mode changed from {0} to: {1}".format(mode_old,mode_new)) # LL_DEBUG
+					print("Mode changed from {0} to: {1}".format(mode_old,mode_new)) # LL_DEBUG
 					self.active_modes.append(mode_new)
 					self.callback_mode_change(self.active_modes)
 					
@@ -171,7 +172,7 @@ class GpioController(object):
 						self.reset_mode_timer(reset_time)
 					break
 				else:
-					print "DEBUG: {0}".format(mode_ix)
+					print "XDEBUG: {0}".format(mode_ix)
 					print mode_list.unique_list()
 					print mode
 				
