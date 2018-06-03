@@ -144,7 +144,7 @@ class GpioController(object):
 		if 'mode_cycle' in function: # and 'mode' in self.pins_config[pin]:		
 			for mode in self.active_modes:
 					
-				mode_list = self.mode_sets[function['mode_cycle']]
+				mode_list = self.mode_sets[function['mode_cycle']]['mode_list']
 
 				#mode_ix = mode_list.index(mode)			# get index of mode in mode_list
 				mode_ix = mode_list.unique_list().index(mode)			# get index of mode in mode_list
