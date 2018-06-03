@@ -228,6 +228,8 @@ def handle_path_mode(path,cmd,params,data):
 
 		printer("Active Modes: {0}".format(modes.active_modes()))
 		
+		return struct_data(modes.active_modes())
+		
 	def put_set(params):
 		print "A MODE WAS SET"
 
@@ -284,9 +286,6 @@ def cb_mode_change(active_modes):
 	modes.sort(key=itemgetter('name'))
 	print type(modes)
 	
-	print "COMPARISON (sorted):"
-	print active_modes
-	print modes
 	pairs = zip(modes,active_modes)
 	changes = [(y) for x, y in pairs if x != y]
 
