@@ -204,7 +204,7 @@ def cb_mode_change(active_modes):
 	print "COMPARE THIS TO OUR CURRENT modes list"
 	print modes
 	print "COMPARISON:"
-	r = list(itertools.ifilterfalse(lambda x: x in active_modes, modes)) + list(itertools.ifilterfalse(lambda x: x in active_modes, modes))
+	r = list(itertools.ifilterfalse(lambda x: x in modes, active_modes)) + list(itertools.ifilterfalse(lambda x: x in modes, active_modes))
 	if r:
 		print "FOUND CHANGES"
 		print r
