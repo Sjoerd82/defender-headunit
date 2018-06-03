@@ -24,6 +24,8 @@
 import sys						# path
 import os						# 
 from time import sleep
+import itertools
+
 #from time import clock			# cpu time, not easily relateable to ms.
 from datetime import datetime
 from logging import getLogger	# logger
