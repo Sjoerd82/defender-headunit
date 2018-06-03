@@ -354,7 +354,7 @@ def setup():
 	global modes
 	gpio = GpioController(cfg_gpio,cb_gpio_function)
 	ret = gpio.get_modes()
-	modes = ret.copy()
+	modes = copy.copy(ret)
 	gpio.set_cb_mode_change(cb_mode_change)
 	
 	printer('Initialized [OK]')
