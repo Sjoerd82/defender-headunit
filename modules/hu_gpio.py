@@ -21,6 +21,7 @@ from threading import Timer		# timer to reset mode change
 #sys.path.append('../modules')
 sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
+from hu_datastruct import Modes
 
 #********************************************************************************
 # GPIO stuff
@@ -42,7 +43,10 @@ class GpioController(object):
 		self.pins_function = {}		# pin function(s)
 		self.pins_config = {}		# consolidated config, key=pin
 
-		self.modes = []
+		self.mode_sets = {}
+		self.modes = Modes()
+		
+		self.modes_old = []
 		self.base_modes = []
 		self.active_modes = []
 		self.long_press_ms = 800
@@ -61,6 +65,9 @@ class GpioController(object):
 	def set_cb_mode_change(self,cb_function):
 		self.callback_mode_change = cb_function
 		staticmethod(self.callback_mode_change)
+	
+	def get_modes(self):
+		return modes_new
 	
 	# ********************************************************************************
 	# GPIO helpers
@@ -136,7 +143,9 @@ class GpioController(object):
 			for mode in self.active_modes:
 					
 				#mode_ix = function['mode_select'].index(mode)
-				mode_list = self.modes[0]['mode_list']
+				mode_list = self.modes_old[0]['mode_list']
+				mode_list = self.mode_sets[function['mode_cycle']]
+
 				mode_ix = mode_list.index(mode)			# get index of mode in mode_list
 				if mode_ix is not None:
 					mode_old = mode_list[mode_ix]
@@ -150,13 +159,13 @@ class GpioController(object):
 					self.active_modes.append(mode_new)
 					self.callback_mode_change(self.active_modes)
 					
-					if 'reset' in self.modes[0]:
-						print "Starting mode reset timer, seconds: {0}".format(self.modes[0]['reset'])
+					if 'reset' in self.modes_old[0]:
+						print "Starting mode reset timer, seconds: {0}".format(self.modes_old[0]['reset'])
 						#if self.timer_mode is not None:
 						#	self.timer_mode.cancel()
-						#self.timer_mode = Timer(float(self.modes[0]['reset']), self.cb_mode_reset)
+						#self.timer_mode = Timer(float(self.modes_old[0]['reset']), self.cb_mode_reset)
 						#self.timer_mode.start()
-						self.reset_mode_timer(self.modes[0]['reset'])
+						self.reset_mode_timer(self.modes_old[0]['reset'])
 					break
 
 	def reset_mode_timer(self,seconds):
@@ -193,7 +202,7 @@ class GpioController(object):
 		print "DEBUG THIS!!"
 		# if active_modes is empty then we don't need to check the mode
 		if self.active_modes:
-			self.reset_mode_timer(self.modes[0]['reset'])
+			self.reset_mode_timer(self.modes_old[0]['reset'])
 
 		# check wheather we have short and/or long press functions and multi-press functions
 		if self.pins_config[pin]['has_short'] and not self.pins_config[pin]['has_long'] and not self.pins_config[pin]['has_multi']:
@@ -365,7 +374,7 @@ class GpioController(object):
 					self.encoder_fast_count = 0
 			
 				if self.active_modes:
-					self.reset_mode_timer(self.modes[0]['reset'])
+					self.reset_mode_timer(self.modes_old[0]['reset'])
 
 				if pin == encoder_pinB:							# Turning direction depends on 
 					#counter clockwise
@@ -425,14 +434,40 @@ class GpioController(object):
 			self.active_modes.append(None)
 		
 		# modes
-		if 'modes' in self.cfg_gpio:
-			if len(self.cfg_gpio['modes']) > 1:
+		if 'mode_sets' in self.cfg_gpio:
+			if len(self.cfg_gpio['mode_sets']) > 1:
 				printer("WARNING: Multiple modes specified, but currently one one set is supported (only loading the first).", level=LL_WARNING)
-			self.modes.append(self.cfg_gpio['modes'][0])
+			
+			# deprecated:
+			#self.modes_old.append(self.cfg_gpio['mode_sets'][0])
+			
+			for mode_set in self.cfg_gpio['mode_sets']:
+				new_mode_set = {}
+				new_mode_set['id'] = mode_set['id']
+				new_mode_set['mode_list'] = Modes()
+				for mode in mode_set['mode_list']:
+					new_mode = {}
+					new_mode['name'] = mode
+					if mode in self.cfg_gpio['base_modes']:
+						new_mode['state'] = True
+					else:
+						new_mode['state'] = False
+					new_mode_set.append(new_mode)
+					
+				self.mode_sets[mode_set['id']] = new_mode_set
+				
+				#.append(new_mode_set)
+				print "DEBUG; Sets:"
+				print self.mode_sets
+
+				print "DEBUG; Set modecycle1:"
+				print self.mode_sets['modecycle1']
+				print exit(0)
+				
 		else:
 			# don't deal with modes at all
 			if len(self.active_modes) > 0:
-				printer("WARNING: No 'modes'-section, modes will not be available.", level=LL_WARNING)
+				printer("WARNING: No 'mode_sets'-section, modes will not be available.", level=LL_WARNING)
 			self.active_modes = []
 		
 		# initialize all pins in configuration

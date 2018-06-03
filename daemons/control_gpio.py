@@ -210,6 +210,10 @@ def cb_mode_change(active_modes):
 			modes.append({"name":mode,"state":True})
 			zmq_arguments.append(mode)
 			zmq_arguments.append("true")
+	
+	for mode in modes:
+		if any(active_modes) == mode:
+			.........
 			
 	print active_modes
 	print "sending MQ"
