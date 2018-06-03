@@ -196,6 +196,17 @@ def cb_mode_change(active_modes):
 	# active_modes is a Modes() struct
 
 	global modes
+
+	print "CB_MODE_CHANGE, now got a Modes() list:"
+	print active_modes
+	print "COMPARE THIS TO OUR CURRENT modes list"
+	print modes
+	print "COMPARISON:"
+	pairs = zip(active_modes, modes)
+	print [(x, y) for x, y in pairs if x != y]
+	#print "MQ changes"
+	return
+	
 	zmq_path = '/mode/change'
 	zmq_command = 'PUT'
 	zmq_arguments = []
