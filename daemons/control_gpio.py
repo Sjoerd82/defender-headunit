@@ -414,6 +414,7 @@ def setup():
 	#
 	# ZMQ
 	#
+	global messaging
 	printer("ZeroMQ: Initializing")
 	messaging = MqPubSubFwdController('localhost',DEFAULT_PORT_PUB,DEFAULT_PORT_SUB)
 	

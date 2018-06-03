@@ -836,8 +836,6 @@ pavh = pa_volume_handler('alsa_output.platform-soc_sound.analog-stereo')
 #********************************************************************************	
 def setup():
 
-	global messaging
-
 	#
 	# Logging
 	# -> Output will be logged to the syslog, if -b specified, otherwise output will be printed to console
@@ -921,6 +919,7 @@ def setup():
 	#
 	# ZMQ
 	#
+	global messaging
 	printer("ZeroMQ: Initializing")
 	messaging = MqPubSubFwdController('localhost',DEFAULT_PORT_PUB,DEFAULT_PORT_SUB)
 	
