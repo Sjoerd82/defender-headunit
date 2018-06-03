@@ -510,7 +510,7 @@ def handle_path_ecasound(path,cmd,args,data):
 		data = struct_data(chainsetup_filename)
 		return data	# this will be returned using the response path
 		
-	def set_chainsetup(args):
+	def put_chainsetup(args):
 		"""	Set the active chainsetup """
 		# TODO: validate input
 		print args[0]
@@ -518,6 +518,10 @@ def handle_path_ecasound(path,cmd,args,data):
 			ret = eca_load_chainsetup_file(args[0])
 		data = struct_data(ret) # True=OK, False=Not OK
 		return data
+		
+	def put_mode_active(args):
+		print "RECEIVED LIST OF ACTIVE MODES..."
+		print args
 	# -------------------------------------------------------------------------
 	if path:
 		function_to_call = cmd + '_' + '_'.join(path)
@@ -940,6 +944,11 @@ def setup():
 	active_modes = modes.get_active_modes()
 	print "Active modes: {0}".format(active_modes)
 	#todo: GPIO cleanup
+	
+	print "EXPERIMENTAL, requesting active modes.."
+	messaging.publish_command('/mode/active','GET',response_path='/ecasound/mode/active')
+	
+	
 	
 	printer('Initialized [OK]')
 
