@@ -192,7 +192,7 @@ def cb_gpio_function(code):
 	else:
 		print "function {0} not in function_map".format(code)	
 			
-def cb_mode_change(active_modes):
+def cb_mode_change(modes):
 
 	global modes
 	zmq_path = '/mode/change'

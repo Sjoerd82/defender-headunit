@@ -166,8 +166,10 @@ class GpioController(object):
 					mode_new = mode_list[mode_ix]['name']
 					#printer("Mode changed from {0} to: {1}".format(mode_old,mode_new)) # LL_DEBUG
 					print("Mode changed from {0} to: {1}".format(mode_old,mode_new)) # LL_DEBUG
-					self.active_modes.append(mode_new)
-					self.callback_mode_change(self.active_modes)
+					mode_list.set_active_modes(mode_new)
+					#self.active_modes.append(mode_new)
+					#self.callback_mode_change(self.active_modes)
+					self.callback_mode_change(mode_list)
 					
 					if 'reset' in self.mode_sets[function['mode_cycle']]:
 						reset_time = self.mode_sets[function['mode_cycle']]['reset']
