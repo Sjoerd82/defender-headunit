@@ -351,6 +351,7 @@ def setup():
 #		exit(1)
 
 	gpio = GpioController(cfg_gpio,cb_gpio_function)
+	modes = gpio.get_modes()
 	gpio.set_cb_mode_change(cb_mode_change)
 	
 	printer('Initialized [OK]')
