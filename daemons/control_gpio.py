@@ -37,6 +37,7 @@ from dbus.mainloop.glib import DBusGMainLoop
 sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
 from hu_msg import MqPubSubFwdController
+from hu_msg import parse_message
 from hu_gpio import GpioController
 from hu_datastruct import Modes
 
