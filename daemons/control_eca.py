@@ -519,9 +519,10 @@ def handle_path_ecasound(path,cmd,args,data):
 		data = struct_data(ret) # True=OK, False=Not OK
 		return data
 		
-	def put_mode_active(args):
+	def data_mode_active(args):
 		print "RECEIVED LIST OF ACTIVE MODES..."
 		print args
+
 	# -------------------------------------------------------------------------
 	if path:
 		function_to_call = cmd + '_' + '_'.join(path)
