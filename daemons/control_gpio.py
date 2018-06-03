@@ -24,7 +24,7 @@
 import sys						# path
 import os						# 
 from time import sleep
-from operator import itemgetter
+#from operator import itemgetter
 
 #from time import clock			# cpu time, not easily relateable to ms.
 from datetime import datetime

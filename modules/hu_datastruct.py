@@ -1,4 +1,6 @@
 
+from operator import itemgetter
+
 # TODO: add feature to check for a unique key
 
 class ListDataStruct(list):
