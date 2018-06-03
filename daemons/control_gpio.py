@@ -230,8 +230,12 @@ def cb_mode_change(active_modes):
 	zmq_path = '/mode/change'
 	zmq_command = 'PUT'
 	zmq_arguments = []
-
+	modes_update_active = []
+	
 	for mode in changes:
+		if mode['state'] == True:
+			modes_update_active.append(mode['name'])
+			
 		zmq_arguments.append(mode['name'])
 		zmq_arguments.append(str(mode['state']))
 		
@@ -256,6 +260,9 @@ def cb_mode_change(active_modes):
 			
 	print "sending MQ"
 	messaging.publish_command(zmq_path,zmq_command,zmq_arguments)
+	
+	print "Updating local modes"
+	modes.set_active_modes(modes_update_active)
 				
 	
 	
