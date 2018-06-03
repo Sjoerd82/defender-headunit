@@ -941,7 +941,7 @@ def setup():
 	printer("GPIO: Initializing")
 	gpio = GpioController(cfg_gpio,cb_gpio_function)
 	modes = gpio.get_modes()
-	active_modes = modes.get_active_modes()
+	active_modes = modes.active_modes()	# None
 	print "Active modes: {0}".format(active_modes)
 	#todo: GPIO cleanup
 	
