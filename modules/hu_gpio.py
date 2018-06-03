@@ -170,6 +170,11 @@ class GpioController(object):
 						#self.timer_mode.start()
 						self.reset_mode_timer(reset_time)
 					break
+				else:
+					print "DEBUG: {0}".format(mode_ix)
+					print mode_list.unique_list()
+					print mode
+				
 
 	def reset_mode_timer(self,seconds):
 		""" reset the mode time-out if there is still activity in current mode """
