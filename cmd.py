@@ -266,11 +266,11 @@ app_commands =	[
 		'command': 'PUT',
 		'path': '/mode/set'
 	},
-	{	'name': 'mode-get',
+	{	'name': 'mode-active',
 		'params': None,
-		'description': 'Get list of currently registered modes and status',
+		'description': 'Get list of currently active modes',
 		'command': 'GET',
-		'path': '/mode/get'
+		'path': '/mode/active'
 	},
 	{	'name': 'system-reboot',
 		'params': [ {'name':'timer', 'required':False, 'help':'Time in seconds to shutdown. Default: 0'} ],
