@@ -220,7 +220,7 @@ def cb_mode_change(active_modes):
 
 	if changes:
 		print "FOUND CHANGES"
-		print r
+		print changes
 		
 	else:
 		print "No Changes"
