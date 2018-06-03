@@ -152,7 +152,7 @@ class GpioController(object):
 			if 'reset' in self.mode_sets[function['mode_cycle']]:
 				reset_time = self.mode_sets[function['mode_cycle']]['reset']
 				print "Starting mode reset timer, seconds: {0}".format(reset_time)
-				self.reset_mode_timer(reset_time,function['mode_cycle']
+				self.reset_mode_timer(reset_time,function['mode_cycle'])
 
 	def reset_mode_timer(self,seconds,mode_set_id):
 		""" reset the mode time-out if there is still activity in current mode """
