@@ -24,7 +24,7 @@
 import sys						# path
 import os						# 
 from time import sleep
-import itertools
+from operator import itemgetter
 
 #from time import clock			# cpu time, not easily relateable to ms.
 from datetime import datetime
@@ -198,14 +198,27 @@ def cb_mode_change(active_modes):
 	# active_modes is a Modes() struct
 
 	global modes
-
+	
+	
 	print "CB_MODE_CHANGE, now got a Modes() list:"
 	print active_modes
+	
+	print "Any new modes?"
+	new_modes = [x for x in active_modes if x not in modes]
+	for mode in new_modes:
+		# will not cause a MQ state change to be sent out
+		modes.append( {'name':mode['name'],'state':mode['state']} )
+
 	print "COMPARE THIS TO OUR CURRENT modes list"
+	# sort lists
+	modes, active_modes = [sorted(l, key=itemgetter('name')) for l in (modes, active_modes)]	
 	print modes
+	
 	print "COMPARISON:"
-	r = list(itertools.ifilterfalse(lambda x: x in modes, active_modes)) + list(itertools.ifilterfalse(lambda x: x in modes, active_modes))
-	if r:
+	pairs = zip(modes,active_modes)
+	changes = [(x) for x, y in pairs if x != y]
+
+	if changes:
 		print "FOUND CHANGES"
 		print r
 		

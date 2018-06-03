@@ -121,7 +121,7 @@ class GpioController(object):
 
 	def cb_mode_reset(self,mode_set_id):
 		self.mode_sets[mode_set_id]['mode_list'].set_active_modes(['volume'])
-		self.callback_mode_change(self.mode_sets[mode_set_id]['mode_list'])
+		self.callback_mode_change(self.mode_sets[mode_set_id]['mode_list'][:])	# return a copy
 
 	def handle_mode(self,pin,function_ix):
 		""" If function has a mode_cycle attribute, then handle that.
