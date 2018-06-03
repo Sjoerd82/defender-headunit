@@ -157,7 +157,6 @@ class GpioController(object):
 				reset_time = self.mode_sets[function['mode_cycle']]['reset']
 				print "Starting mode reset timer, seconds: {0}".format(reset_time)
 				self.reset_mode_timer(reset_time,function['mode_cycle'])
-			break
 			
 			"""
 			
