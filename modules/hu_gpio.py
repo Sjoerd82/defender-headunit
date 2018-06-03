@@ -200,6 +200,7 @@ class GpioController(object):
 		print "DEBUG: self.int_handle_switch! for pin: {0}".format(pin)
 
 		# try-except?
+		""" why do we do this?
 		print "DEBUG THIS!!"
 		# if active_modes is empty then we don't need to check the mode
 		if self.active_modes:
@@ -209,7 +210,7 @@ class GpioController(object):
 			
 			if 'reset' in self.mode_sets[function['mode_cycle']]:
 				self.reset_mode_timer(self.mode_sets[function['mode_cycle']]['reset'])
-
+		"""
 
 		# check wheather we have short and/or long press functions and multi-press functions
 		if self.pins_config[pin]['has_short'] and not self.pins_config[pin]['has_long'] and not self.pins_config[pin]['has_multi']:
@@ -380,10 +381,12 @@ class GpioController(object):
 				else:
 					self.encoder_fast_count = 0
 			
+				""" why do we do this?
 				if self.active_modes:
 					#self.reset_mode_timer(self.modes_old[0]['reset'])
 					if 'reset' in self.mode_sets[function['mode_cycle']]:
 						self.reset_mode_timer(self.mode_sets[function['mode_cycle']]['reset'])
+				"""
 
 				if pin == encoder_pinB:							# Turning direction depends on 
 					#counter clockwise
