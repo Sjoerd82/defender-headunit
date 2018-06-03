@@ -12,6 +12,7 @@
 
 import sys						# path
 import os						# 
+import copy						# deepcopy
 from time import sleep
 #from time import clock			# cpu time, not easily relateable to ms.
 from datetime import datetime
@@ -71,8 +72,8 @@ class GpioController(object):
 		master_modes_list = Modes()
 		for mode_set_id,mode_set in self.mode_sets.iteritems():
 			print mode_set['mode_list']
-			master_modes_list.extend(mode_set['mode_list'][:])
-		return master_modes_list[:]
+			master_modes_list.extend(mode_set['mode_list'])
+		return copy.deepcopy(master_modes_list)		# list of dicts, requires deepcopy() instead of copy()
 	
 	# ********************************************************************************
 	# GPIO helpers
@@ -131,7 +132,7 @@ class GpioController(object):
 			master_modes_list.extend(mode_set['mode_list'])
 		
 		#self.callback_mode_change(self.mode_sets[mode_set_id]['mode_list'][:])	# return a copy
-		self.callback_mode_change(master_modes_list[:])
+		self.callback_mode_change(copy.deepcopy(master_modes_list))
 
 	def handle_mode(self,pin,function_ix):
 		""" If function has a mode_cycle attribute, then handle that.
