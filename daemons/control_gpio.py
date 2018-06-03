@@ -221,7 +221,12 @@ def cb_mode_change(active_modes):
 	zmq_arguments = []
 
 	for mode in r:
-		if mode in modes.unique_list():
+		zmq_arguments.append(mode['name'])
+		zmq_arguments.append(mode['state'])
+		
+	'''
+	for mode in r:
+		if mode['name'] in modes.unique_list():
 			if modes.get_by_unique(mode)['state'] == False:
 				modes.set_by_unique(mode, {"name":mode,"state":True})
 				zmq_arguments.append(mode)
@@ -236,6 +241,7 @@ def cb_mode_change(active_modes):
 #		if any(active_modes) == mode:
 #
 # 	uhm?			.........
+	'''
 			
 	print "sending MQ"
 	messaging.publish_command(zmq_path,zmq_command,zmq_arguments)
