@@ -71,7 +71,7 @@ class GpioController(object):
 		master_modes_list = Modes()
 		for mode_set_id,mode_set in self.mode_sets.iteritems():
 			print mode_set['mode_list']
-			master_modes_list.extend(mode_set['mode_list'])
+			master_modes_list.extend(mode_set['mode_list'][:])
 		return master_modes_list[:]
 	
 	# ********************************************************************************
