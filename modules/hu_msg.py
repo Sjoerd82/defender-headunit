@@ -17,6 +17,7 @@ from hu_utils import *
 
 # MQ paths
 mq_path_list = []
+mq_disp_keys = []
 mq_path_func = {}
 
 
@@ -128,8 +129,13 @@ def handle_mq(path, for_command="*"):
 	def decorator(fn):
 		global mq_path_list
 		global mq_path_func
+		global mq_disp_keys
 		mq_path_list.append(path)
-		mq_path_func[path] = fn
+		if command is None:
+			key = path
+		else:
+			key = command+path
+		mq_path_func[key] = fn
 		def decorated(*args,**kwargs):
 			#print "Hello from handl_mq decorator, your path is: {0}".format(path)
 			return fn(*args,**kwargs)

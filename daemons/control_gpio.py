@@ -39,7 +39,7 @@ from hu_utils import *
 from hu_msg import MqPubSubFwdController
 from hu_msg import parse_message
 from hu_msg import handle_mq
-from hu_msg import mq_path_list, mq_path_func
+from hu_msg import mq_disp_keys, mq_path_func
 from hu_gpio import GpioController
 from hu_datastruct import Modes
 
@@ -205,7 +205,7 @@ def handle_mq(path):
 		return decorated
 	return decorator
 '''
-@handle_mq('/mode/list')
+@handle_mq('/mode/list', cmd='PUT')
 def testje_get_list(command, args=None, data=None):
 	""" Return all modes. No parameters """	
 	global modes
@@ -235,7 +235,9 @@ def idle_message_receiver():
 		parsed_msg = parse_message(rawmsg)
 				
 		mq_path = "/" + "/".join(parsed_msg['path'])
-		if mq_path in mq_path_list:
+		if parsed_msg['cmd'] + mq_path in mq_disp_keys:
+			ret = mq_path_func[parsed_msg['cmd'] + mq_path]( command=parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
+		elif mq_path in mq_disp_keys:
 			ret = mq_path_func[mq_path]( command=parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
 			if parsed_msg['resp_path']:
 				#print "DEBUG: Resp Path present.. returning message.. data={0}".format(ret)
