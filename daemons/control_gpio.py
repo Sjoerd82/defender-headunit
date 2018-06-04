@@ -72,8 +72,8 @@ cfg_zmq = None		# Zero MQ
 cfg_gpio = None		# GPIO setup
 
 # MQ paths
-mq_path_list = []
-mq_path_func = {}
+#mq_path_list = []
+#mq_path_func = {}
 
 modes = Modes()
 
@@ -207,7 +207,7 @@ def handle_mq(path):
 		return decorated
 	return decorator
 '''
-@messaging.handle_mq('/mode/list')
+@handle_mq('/mode/list')
 def testje_get_list(command, args=None, data=None):
 	
 	global modes
@@ -226,8 +226,8 @@ def idle_message_receiver():
 				
 		mq_path = "/" + "/".join(parsed_msg['path'])
 		#if mq_path in mq_path_list:
-		if mq_path in messaging.mq_path_list:
-			ret = messaging.mq_path_func[mq_path]( command=parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
+		if mq_path in hu_msg.mq_path_list:
+			ret = hu_msg.mq_path_func[mq_path]( command=parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
 			if parsed_msg['resp_path']:
 				#print "DEBUG: Resp Path present.. returning message.. data={0}".format(ret)
 				messaging.publish_command(parsed_msg['resp_path'],'DATA',ret)

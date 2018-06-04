@@ -15,6 +15,10 @@ from logging import getLogger	# logger
 sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
 
+# MQ paths
+mq_path_list = []
+mq_path_func = {}
+
 
 def printer( message, level=LL_INFO, tag="", logger_name=__name__):
 	#logger = logging.getLogger(logger_name)
@@ -117,7 +121,21 @@ def create_data(payload, retval):
 	data['payload'] = payload
 	return data
 
-
+def handle_mq(path):
+	""" tbd.
+		can we move this to hu_msg ?
+	"""
+	def decorator(fn):
+		global mq_path_list
+		global mq_path_func
+		mq_path_list.append(path)
+		mq_path_func[path] = fn
+		def decorated(*args,**kwargs):
+			print "Hello from handl_mq decorator, your path is: {0}".format(path)
+			return fn(*args,**kwargs)
+		return decorated
+	return decorator
+	
 #********************************************************************************
 # ZeroMQ Wrapper for Pub-Sub Forwarder Device
 #
@@ -181,7 +199,8 @@ class MqPubSubFwdController(object):
 		self.reply_subscriber.connect("tcp://{0}:{1}".format(self.address, self.port_sub))
 		#self.poller.register(self.reply_subscriber, zmq.POLLIN)
 		#self.reply_subscriber.setsockopt (zmq.SUBSCRIBE, '/bladiebla')
-		
+
+	'''
 	def handle_mq(self, path):
 		""" tbd.
 			can we move this to hu_msg ?
@@ -194,6 +213,7 @@ class MqPubSubFwdController(object):
 				return fn(*args,**kwargs)
 			return decorated
 		return decorator
+	'''
 		
 	def publish_command(self, path, command, arguments=None, wait_for_reply=False, timeout=5000, response_path=None):
 		"""
