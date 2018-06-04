@@ -230,7 +230,7 @@ def idle_message_receiver():
 
 		if parsed_msg['resp_path']:
 			print "DEBUG: Resp Path present.. returing message.. data={0}".format(ret)
-			print "NOT!" #messaging.publish_command(parsed_msg['resp_path'],'DATA',ret)
+			messaging.publish_command(parsed_msg['resp_path'],'DATA',ret)
 		
 	return True # Important! Returning true re-enables idle routine.
 	
