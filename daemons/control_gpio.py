@@ -73,10 +73,6 @@ cfg_daemon = None	# daemon
 cfg_zmq = None		# Zero MQ
 cfg_gpio = None		# GPIO setup
 
-# MQ paths
-#mq_path_list = []
-#mq_path_func = {}
-
 modes = Modes()
 
 function_map = {}
@@ -211,14 +207,26 @@ def handle_mq(path):
 '''
 @handle_mq('/mode/list')
 def testje_get_list(command, args=None, data=None):
-	
+	""" Return all modes. No parameters """	
 	global modes
-	
-	# NO PARAMS
-	#printer("All Modes: {0}".format(modes.active_modes()))
-	print "Doing /mode/list..."
-	#return struct_data(modes.active_modes())
-	return struct_data("Useful data")
+	print "Doing /mode/list... {0}".format(modes)
+	return struct_data(modes)
+
+@handle_mq('/mode/active')
+def testje_get_active(command, args=None, data=None):
+	""" Return active modes. No parameters """
+	printer("Active Modes: {0}".format(modes.active_modes()))
+	return struct_data(modes.active_modes())
+
+@handle_mq('/mode/set','PUT')
+def mq_mode_set(command, args=None, data=None):
+	""" Set mode """
+	print "A MODE WAS SET"
+
+@handle_mq('/mode/unset','PUT')
+def mq_mode_set(command, args=None, data=None):
+	""" Unset mode """
+	print "A MODE WAS UNSET"
 
 def idle_message_receiver():
 	rawmsg = messaging.poll(timeout=500)				#None=Blocking
@@ -227,7 +235,6 @@ def idle_message_receiver():
 		parsed_msg = parse_message(rawmsg)
 				
 		mq_path = "/" + "/".join(parsed_msg['path'])
-		#if mq_path in mq_path_list:
 		if mq_path in mq_path_list:
 			ret = mq_path_func[mq_path]( command=parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
 			if parsed_msg['resp_path']:
@@ -235,75 +242,6 @@ def idle_message_receiver():
 				messaging.publish_command(parsed_msg['resp_path'],'DATA',ret)
 		
 	return True # Important! Returning true re-enables idle routine.
-	
-		
-def idle_message_receiver0():
-	#print "DEBUG: idle_msg_receiver()"
-	
-	def dispatcher(path, command, arguments, data):
-		handler_function = 'handle_path_' + path[0]
-		if handler_function in globals():
-			ret = globals()[handler_function](path, command, arguments, data)
-			return ret
-		else:
-			print("No handler for: {0}".format(handler_function))
-			return None
-			
-		
-	rawmsg = messaging.poll(timeout=500)				#None=Blocking
-	if rawmsg:
-		printer("Received message: {0}".format(rawmsg))	#TODO: debug
-		parsed_msg = parse_message(rawmsg)
-		
-		# send message to dispatcher for handling	
-		retval = dispatcher(parsed_msg['path'],parsed_msg['cmd'],parsed_msg['args'],parsed_msg['data'])
-
-		if parsed_msg['resp_path']:
-			#print "DEBUG: Resp Path present.. returing message.. data={0}".format(retval)
-			messaging.publish_command(parsed_msg['resp_path'],'DATA',retval)
-		
-	return True # Important! Returning true re-enables idle routine.
-
-def handle_path_mode(path,cmd,params,data):
-
-	base_path = 'mode'
-	# remove base path
-	del path[0]
-
-	def get_active(params):
-		
-		global modes
-		
-		# NO PARAMS
-		
-		#arg_defs = app_commands[0]['params']
-		#ret = validate_args(arg_defs,params,app_commands[0]['params_repeat'])		
-		#if ret is not None and ret is not False:	
-
-		printer("Active Modes: {0}".format(modes.active_modes()))
-		
-		return struct_data(modes.active_modes())
-		
-	def put_set(params):
-		print "A MODE WAS SET"
-
-	def put_unset(params):
-		print "A MODE WAS UNSET"
-
-	if path:
-		function_to_call = cmd + '_' + '_'.join(path)
-	else:
-		# called without sub-paths
-		function_to_call = cmd + '_' + base_path
-
-	ret = None
-	if function_to_call in locals():
-		ret = locals()[function_to_call](params)
-		printer('Executed {0} function {1} with result status: {2}'.format(base_path,function_to_call,ret),level=LL_DEBUG)
-	else:
-		printer('Function {0} does not exist'.format(function_to_call))
-
-	return ret
 	
 # ********************************************************************************
 # GPIO Callback
