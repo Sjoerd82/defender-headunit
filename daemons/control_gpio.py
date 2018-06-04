@@ -227,7 +227,7 @@ def idle_message_receiver():
 		printer("Received message: {0}".format(rawmsg))	#TODO: debug
 		parsed_msg = parse_message(rawmsg)
 				
-		mq_path = "/" + "/".join(path)
+		mq_path = "/" + "/".join(parsed_msg['path'])
 		if mq_path in mq_path_list:
 			ret = mq_path_func[mq_path]( command=parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
 
