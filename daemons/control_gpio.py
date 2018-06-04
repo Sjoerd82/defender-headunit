@@ -195,16 +195,16 @@ def handle_mq(path):
 	""" tbd.
 		can we move this to hu_msg ?
 	"""
-    def decorator(fn):
+	def decorator(fn):
 		global mq_path_list
 		global mq_path_func
 		mq_path_list.append(path)
 		mq_path_func[path] = fn
-        def decorated(*args,**kwargs):
-            print "Hello from handl_mq decorator, your path is: {0}".format(path)
-            return fn(*args,**kwargs)
-        return decorated
-    return decorator
+		def decorated(*args,**kwargs):
+			print "Hello from handl_mq decorator, your path is: {0}".format(path)
+			return fn(*args,**kwargs)
+		return decorated
+	return decorator
 
 
 @handle_mq('/mode/list')
