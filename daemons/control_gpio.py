@@ -218,10 +218,7 @@ def testje_get_list(command, args=None, data=None):
 	#return struct_data(modes.active_modes())
 	return struct_data("Useful data")
 
-def idle_message_receiver():		
-	
-	print "DEBUG: idle_msg_receiver() -- New Style"
-
+def idle_message_receiver():
 	rawmsg = messaging.poll(timeout=500)				#None=Blocking
 	if rawmsg:
 		printer("Received message: {0}".format(rawmsg))	#TODO: debug
@@ -232,7 +229,7 @@ def idle_message_receiver():
 			ret = mq_path_func[mq_path]( command=parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
 
 		if parsed_msg['resp_path']:
-			#print "DEBUG: Resp Path present.. returing message.. data={0}".format(retval)
+			print "DEBUG: Resp Path present.. returing message.. data={0}".format(retval)
 			messaging.publish_command(parsed_msg['resp_path'],'DATA',ret)
 		
 	return True # Important! Returning true re-enables idle routine.
