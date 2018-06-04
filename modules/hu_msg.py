@@ -140,6 +140,9 @@ class MqPubSubFwdController(object):
 		self.port_sub = port_sub
 		
 		self.VALID_COMMANDS = ['GET','PUT','POST','DEL','DATA', 'INFO']
+		
+		self.mq_path_list = []
+		self.mq_path_func = {}
 
 	def __send(self, message):
 		#printer(colorize("Sending MQ message: {0}".format(message),'dark_gray'),level=LL_DEBUG)
@@ -178,6 +181,19 @@ class MqPubSubFwdController(object):
 		self.reply_subscriber.connect("tcp://{0}:{1}".format(self.address, self.port_sub))
 		#self.poller.register(self.reply_subscriber, zmq.POLLIN)
 		#self.reply_subscriber.setsockopt (zmq.SUBSCRIBE, '/bladiebla')
+		
+	def handle_mq(self, path):
+		""" tbd.
+			can we move this to hu_msg ?
+		"""
+		def decorator(fn):
+			self.mq_path_list.append(path)
+			self.mq_path_func[path] = fn
+			def decorated(*args,**kwargs):
+				print "Hello from handl_mq decorator, your path is: {0}".format(path)
+				return fn(*args,**kwargs)
+			return decorated
+		return decorator
 		
 	def publish_command(self, path, command, arguments=None, wait_for_reply=False, timeout=5000, response_path=None):
 		"""

@@ -191,6 +191,7 @@ def load_cfg_gpio():
 # MQ functions
 #
 
+'''
 def handle_mq(path):
 	""" tbd.
 		can we move this to hu_msg ?
@@ -205,9 +206,8 @@ def handle_mq(path):
 			return fn(*args,**kwargs)
 		return decorated
 	return decorator
-
-
-@handle_mq('/mode/list')
+'''
+@messaging.handle_mq('/mode/list')
 def testje_get_list(command, args=None, data=None):
 	
 	global modes
@@ -225,12 +225,12 @@ def idle_message_receiver():
 		parsed_msg = parse_message(rawmsg)
 				
 		mq_path = "/" + "/".join(parsed_msg['path'])
-		if mq_path in mq_path_list:
-			ret = mq_path_func[mq_path]( command=parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
-
-		if parsed_msg['resp_path']:
-			print "DEBUG: Resp Path present.. returing message.. data={0}".format(ret)
-			messaging.publish_command(parsed_msg['resp_path'],'DATA',ret)
+		#if mq_path in mq_path_list:
+		if mq_path in messaging.mq_path_list:
+			ret = messaging.mq_path_func[mq_path]( command=parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
+			if parsed_msg['resp_path']:
+				#print "DEBUG: Resp Path present.. returning message.. data={0}".format(ret)
+				messaging.publish_command(parsed_msg['resp_path'],'DATA',ret)
 		
 	return True # Important! Returning true re-enables idle routine.
 	
