@@ -208,7 +208,7 @@ def handle_mq(path):
 		return decorated
 	return decorator
 '''
-@handle_mq('/mode/list')
+@hu_msg.handle_mq('/mode/list')
 def testje_get_list(command, args=None, data=None):
 	
 	global modes
