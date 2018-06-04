@@ -266,6 +266,12 @@ app_commands =	[
 		'command': 'PUT',
 		'path': '/mode/set'
 	},
+	{	'name': 'modes',
+		'params': None,
+		'description': 'Get list of registered modes',
+		'command': 'GET',
+		'path': '/mode/list'
+	},
 	{	'name': 'mode-active',
 		'params': None,
 		'description': 'Get list of currently active modes',
