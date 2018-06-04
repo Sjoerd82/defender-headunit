@@ -229,8 +229,8 @@ def idle_message_receiver():
 			ret = mq_path_func[mq_path]( command=parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
 
 		if parsed_msg['resp_path']:
-			print "DEBUG: Resp Path present.. returing message.. data={0}".format(retval)
-			messaging.publish_command(parsed_msg['resp_path'],'DATA',ret)
+			print "DEBUG: Resp Path present.. returing message.. data={0}".format(ret)
+			print "NOT!" #messaging.publish_command(parsed_msg['resp_path'],'DATA',ret)
 		
 	return True # Important! Returning true re-enables idle routine.
 	
