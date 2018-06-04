@@ -71,6 +71,10 @@ cfg_daemon = None	# daemon
 cfg_zmq = None		# Zero MQ
 cfg_gpio = None		# GPIO setup
 
+# MQ paths
+mq_path_list = []
+mq_path_func = {}
+
 modes = Modes()
 
 function_map = {}
@@ -183,7 +187,58 @@ def load_cfg_gpio():
 		return
 
 
-def idle_message_receiver():
+# ********************************************************************************
+# MQ functions
+#
+
+def handle_mq(path):
+	""" tbd.
+		can we move this to hu_msg ?
+	"""
+    def decorator(fn):
+		global mq_path_list
+		global mq_path_func
+		mq_path_list.append(path)
+		mq_path_func[path] = fn
+        def decorated(*args,**kwargs):
+            print "Hello from handl_mq decorator, your path is: {0}".format(path)
+            return fn(*args,**kwargs)
+        return decorated
+    return decorator
+
+
+@handle_mq('/mode/list')
+def testje_get_list(command, args=None, data=None):
+	
+	global modes
+	
+	# NO PARAMS
+	#printer("All Modes: {0}".format(modes.active_modes()))
+	print "Doing /mode/list..."
+	#return struct_data(modes.active_modes())
+	return struct_data("Useful data")
+
+def idle_message_receiver():		
+	
+	print "DEBUG: idle_msg_receiver() -- New Style"
+
+	rawmsg = messaging.poll(timeout=500)				#None=Blocking
+	if rawmsg:
+		printer("Received message: {0}".format(rawmsg))	#TODO: debug
+		parsed_msg = parse_message(rawmsg)
+				
+		mq_path = "/" + "/".join(path)
+		if mq_path in mq_path_list:
+			ret = mq_path_func[mq_path]( command=parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
+
+		if parsed_msg['resp_path']:
+			#print "DEBUG: Resp Path present.. returing message.. data={0}".format(retval)
+			messaging.publish_command(parsed_msg['resp_path'],'DATA',ret)
+		
+	return True # Important! Returning true re-enables idle routine.
+	
+		
+def idle_message_receiver0():
 	#print "DEBUG: idle_msg_receiver()"
 	
 	def dispatcher(path, command, arguments, data):
@@ -270,35 +325,14 @@ def cb_mode_change(active_modes):
 
 	global modes
 	
-	""" cannot be
-	print "Any new modes?"
-	new_modes = [x for x in active_modes if x not in modes]
-	for mode in new_modes:
-		# will not cause a MQ state change to be sent out
-		modes.append( {'name':mode['name'],'state':mode['state']} )
-	"""
-
-	print type(modes)
-	# sort lists
-	#modes, active_modes = [sorted(l, key=itemgetter('name')) for l in (modes, active_modes)]
-	#active_modes = [sorted(l, key=itemgetter('name')) for l in (active_modes)]
 	active_modes.sort(key=itemgetter('name'))
 	modes.sort(key=itemgetter('name'))
-	print type(modes)
 	
 	pairs = zip(modes,active_modes)
 	changes = [(y) for x, y in pairs if x != y]
 
-	if changes:
-		print "FOUND CHANGES"
-		print changes
-		
-	else:
-		print "No Changes"
+	if not changes:
 		return
-	#pairs = zip(active_modes, modes)
-	#print [(x, y) for x, y in pairs if x != y]
-	#print "MQ changes"
 	
 	zmq_path = '/mode/change'
 	zmq_command = 'PUT'
@@ -311,31 +345,11 @@ def cb_mode_change(active_modes):
 			
 		zmq_arguments.append(mode['name'])
 		zmq_arguments.append(str(mode['state']))
-		
-	'''
-	for mode in r:
-		if mode['name'] in modes.unique_list():
-			if modes.get_by_unique(mode)['state'] == False:
-				modes.set_by_unique(mode, {"name":mode,"state":True})
-				zmq_arguments.append(mode)
-				zmq_arguments.append("true")
 				
-		else:
-			modes.append({"name":mode,"state":True})
-			zmq_arguments.append(mode)
-			zmq_arguments.append("true")
-	
-#	for mode in modes:
-#		if any(active_modes) == mode:
-#
-# 	uhm?			.........
-	'''
-			
-	print "sending MQ"
+	#print "sending MQ"
 	messaging.publish_command(zmq_path,zmq_command,zmq_arguments)
 	
-	print "Updating local modes"
-	print type(modes)
+	#print "Updating local modes"
 	modes.set_active_modes(modes_update_active)
 				
 	
