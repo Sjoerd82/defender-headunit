@@ -126,46 +126,25 @@ def handle_mq(path, cmd=None):
 	""" Decorator function.
 		Registers the MQ path (nothing more at the moment..)
 	"""
-    def decorator(fn):
-		global mq_path_list
-		global mq_path_func
-		global mq_disp_keys
-
-        mq_path = prepostfix(path)
-
-        if cmd is None:
-            key = mq_path
-        else:
-            key = cmd+mq_path
-
-        mq_path_list.append(mq_path)
-        #list_of_keys.append(key)
-        mq_path_func[key] = fn
-        def decorated(*args,**kwargs):
-            return fn(*args,**kwargs)
-        return decorated
-    return decorator
-	
-def handle_mq(path, for_command="*"):
-	""" Decorator function.
-		Registers the MQ path (nothing more at the moment..)
-	"""
 	def decorator(fn):
 		global mq_path_list
 		global mq_path_func
 		global mq_disp_keys
-		mq_path_list.append(path)
-		if command is None:
-			key = path
+
+		mq_path = prepostfix(path)
+
+		if cmd is None:
+			key = mq_path
 		else:
-			key = command+path
+			key = cmd+mq_path
+
+		mq_path_list.append(mq_path)
+		#list_of_keys.append(key)
 		mq_path_func[key] = fn
 		def decorated(*args,**kwargs):
-			#print "Hello from handl_mq decorator, your path is: {0}".format(path)
 			return fn(*args,**kwargs)
 		return decorated
 	return decorator
-	
 	
 def special_disp(path_dispatch):
     path_dispatch = prepostfix(path_dispatch)
