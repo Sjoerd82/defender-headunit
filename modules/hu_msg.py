@@ -147,6 +147,9 @@ def handle_mq(path, cmd=None):
 	return decorator
 	
 def special_disp(path_dispatch):
+
+	# TODO: handle commands
+
     path_dispatch = prepostfix(path_dispatch)
     # if there's an exact match, always handle that
     if path_dispatch in mq_path_list:

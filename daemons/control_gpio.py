@@ -206,25 +206,25 @@ def handle_mq(path):
 	return decorator
 '''
 @handle_mq('/mode/list', cmd='PUT')
-def testje_get_list(command, args=None, data=None):
+def testje_get_list(path=None, cmd=None, args=None, data=None):
 	""" Return all modes. No parameters """	
 	global modes
 	print "Doing /mode/list... {0}".format(modes)
 	return struct_data(modes)
 
 @handle_mq('/mode/active')
-def testje_get_active(command, args=None, data=None):
+def testje_get_active(path=None, cmd=None, args=None, data=None):
 	""" Return active modes. No parameters """
 	printer("Active Modes: {0}".format(modes.active_modes()))
 	return struct_data(modes.active_modes())
 
 @handle_mq('/mode/set','PUT')
-def mq_mode_set(command, args=None, data=None):
+def mq_mode_set(path=None, cmd=None, args=None, data=None):
 	""" Set mode """
 	print "A MODE WAS SET"
 
 @handle_mq('/mode/unset','PUT')
-def mq_mode_set(command, args=None, data=None):
+def mq_mode_set(path=None, cmd=None, args=None, data=None):
 	""" Unset mode """
 	print "A MODE WAS UNSET"
 
@@ -238,12 +238,14 @@ def idle_message_receiver():
 		if parsed_msg['cmd'] + mq_path in mq_disp_keys:
 		
 			func_to_be_called = special_disp(mq_path)
-			ret = func_to_be_called[parsed_msg['cmd'] + mq_path]( command=parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
+			print "func={0}".format(func_to_be_called)
+			ret = func_to_be_called[parsed_msg['cmd'] + mq_path]( cmd=parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
 			
 		elif mq_path in mq_disp_keys:
 		
 			func_to_be_called = special_disp(mq_path)
-			ret = func_to_be_called( command=parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
+			print "func={0}".format(func_to_be_called)
+			ret = func_to_be_called( cmd=parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
 			
 			if parsed_msg['resp_path']:
 				#print "DEBUG: Resp Path present.. returning message.. data={0}".format(ret)
