@@ -152,6 +152,8 @@ def special_disp(path_dispatch, command_dispatch):
 	print "SPECIAL DISP"
 	
 	owww... handle the command too... two-dim lookup with regexp horrror
+
+	k in d
 { "/all/X/": "function", "method": ["GET"] }
 { "/all/X/": "function", "method": ["GET,PUT"] }
 { "/all/X/": "function", "method": [] }
