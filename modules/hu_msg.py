@@ -139,7 +139,7 @@ def handle_mq(path, cmd=None):
 			key = cmd+mq_path
 
 		mq_path_list.append(mq_path)
-		#list_of_keys.append(key)
+		mq_disp_keys.append(key)		# used by idle-thingy
 		mq_path_func[key] = fn
 		def decorated(*args,**kwargs):
 			return fn(*args,**kwargs)

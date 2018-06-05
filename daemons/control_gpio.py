@@ -235,6 +235,8 @@ def idle_message_receiver():
 		parsed_msg = parse_message(rawmsg)
 				
 		mq_path = "/" + "/".join(parsed_msg['path'])
+		
+		# move this if-else to the special_disp()-function
 		if parsed_msg['cmd'] + mq_path in mq_disp_keys:
 		
 			func_to_be_called = special_disp(mq_path)
