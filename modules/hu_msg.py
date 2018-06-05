@@ -142,6 +142,22 @@ def handle_mq(path, for_command="*"):
 		return decorated
 	return decorator
 	
+	
+def special_disp(path_dispatch, cmd=None, args=None):
+    path_dispatch = prepostfix(path_dispatch)
+    # if there's an exact match, always handle that
+    if path_dispatch in list_of_paths:
+        return mq_path_func[path_dispatch]
+    else:
+        for path,function in mq_path_func.iteritems():
+           wildpath = re.sub(r'\*',r'.*',path)
+           if wildpath != path:
+               res = re.search(wildpath,path_dispatch)
+               if res is not None:
+                   return mq_path_func[path]
+    return None
+
+	
 #********************************************************************************
 # ZeroMQ Wrapper for Pub-Sub Forwarder Device
 #

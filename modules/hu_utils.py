@@ -673,6 +673,16 @@ def str2bool( string ):
 	else:
 		return None
 
+
+def prepostfix(path):
+    #prefix
+    if not path.startswith("/"):
+        path = "/"+path
+    #postfix
+    if not path.endswith("/"):
+        path += "/"
+    return path
+
 # Return dictionary with mounts
 # optionally apply a filter on device and/or fs and/or a list of mountpoints to exclude
 def get_mounts( dev=None, fs=None, mp_exclude=[], fs_exclude=[] ):

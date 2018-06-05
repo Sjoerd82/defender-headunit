@@ -236,9 +236,15 @@ def idle_message_receiver():
 				
 		mq_path = "/" + "/".join(parsed_msg['path'])
 		if parsed_msg['cmd'] + mq_path in mq_disp_keys:
-			ret = mq_path_func[parsed_msg['cmd'] + mq_path]( command=parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
+		
+			func_to_be_called = special_disp(mq_path)
+			ret = func_to_be_called[parsed_msg['cmd'] + mq_path]( command=parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
+			
 		elif mq_path in mq_disp_keys:
-			ret = mq_path_func[mq_path]( command=parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
+		
+			func_to_be_called = special_disp(mq_path)
+			ret = func_to_be_called( command=parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
+			
 			if parsed_msg['resp_path']:
 				#print "DEBUG: Resp Path present.. returning message.. data={0}".format(ret)
 				messaging.publish_command(parsed_msg['resp_path'],'DATA',ret)
