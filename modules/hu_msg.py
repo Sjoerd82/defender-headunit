@@ -122,6 +122,30 @@ def create_data(payload, retval):
 	data['payload'] = payload
 	return data
 
+def handle_mq(path, cmd=None):
+	""" Decorator function.
+		Registers the MQ path (nothing more at the moment..)
+	"""
+    def decorator(fn):
+		global mq_path_list
+		global mq_path_func
+		global mq_disp_keys
+
+        mq_path = prepostfix(path)
+
+        if cmd is None:
+            key = mq_path
+        else:
+            key = cmd+mq_path
+
+        mq_path_list.append(mq_path)
+        #list_of_keys.append(key)
+        mq_path_func[key] = fn
+        def decorated(*args,**kwargs):
+            return fn(*args,**kwargs)
+        return decorated
+    return decorator
+	
 def handle_mq(path, for_command="*"):
 	""" Decorator function.
 		Registers the MQ path (nothing more at the moment..)
@@ -143,10 +167,10 @@ def handle_mq(path, for_command="*"):
 	return decorator
 	
 	
-def special_disp(path_dispatch, cmd=None, args=None):
+def special_disp(path_dispatch):
     path_dispatch = prepostfix(path_dispatch)
     # if there's an exact match, always handle that
-    if path_dispatch in list_of_paths:
+    if path_dispatch in mq_path_list:
         return mq_path_func[path_dispatch]
     else:
         for path,function in mq_path_func.iteritems():
