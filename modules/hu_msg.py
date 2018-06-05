@@ -146,9 +146,15 @@ def handle_mq(path, cmd=None):
 		return decorated
 	return decorator
 	
-def special_disp(path_dispatch):
+def special_disp(path_dispatch, command_dispatch):
 
 	# TODO: handle commands
+	print "SPECIAL DISP"
+	
+	owww... handle the command too... two-dim lookup with regexp horrror
+{ "/all/X/": "function", "method": ["GET"] }
+{ "/all/X/": "function", "method": ["GET,PUT"] }
+{ "/all/X/": "function", "method": [] }
 
     path_dispatch = prepostfix(path_dispatch)
     # if there's an exact match, always handle that
