@@ -191,7 +191,7 @@ def load_cfg_gpio():
 # MQ functions
 #
 
-@messaging.handle_mq('/mode/list', cmd='GET')
+@handle_mqX('/mode/list', cmd='GET')
 def testje_get_list(path=None, cmd=None, args=None, data=None):
 	""" Return all modes. No parameters """	
 	global modes

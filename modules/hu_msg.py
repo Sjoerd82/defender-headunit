@@ -466,7 +466,7 @@ class MqPubSubFwdController(object):
 			message = self.__recv()
 		return message
 
-	def handle_mq(self, mq_path, cmd=None):
+	def handle_mqX(self, mq_path, cmd=None):
 		""" Decorator function.
 			Registers the MQ path (nothing more at the moment..)
 		"""
