@@ -232,7 +232,8 @@ def idle_message_receiver():
 		mq_path = "/".join(parsed_msg['path'])
 		func_to_be_called = special_disp(mq_path,parsed_msg['cmd'])
 		print "func={0}".format(func_to_be_called)
-		ret = func_to_be_called( cmd=parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
+		if func_to_be_called is not None:
+			ret = func_to_be_called( cmd=parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
 		
 		
 		# move this if-else to the special_disp()-function
