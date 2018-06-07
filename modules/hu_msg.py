@@ -231,7 +231,7 @@ def super_disp(path_dispatch, cmd=None, args=None, data=None):
 	# if there's an exact match, always handle that
 	# else, try wildcards
 	if key in mq_path_func:
-		return mq_path_func[key]
+		return mq_path_func[key](path=path_dispatch, cmd=cmd, args=args, data=data)
 
 	else:	
 		if cmd is None:
@@ -375,7 +375,6 @@ class MqPubSubFwdController(object):
 				message = "{0}:{1}".format(message, jsonified_args)
 			else:
 				#print "DEBUG MSG: OTHER"
-				print type(arguments)
 				jsonified_args = json.dumps(arguments)
 				message = "{0}:{1}".format(message, jsonified_args)
 		
