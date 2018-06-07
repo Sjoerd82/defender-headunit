@@ -191,13 +191,18 @@ def special_disp(path_dispatch, cmd=None, args=None):
 		print mq_path_func[key]
 
 	else:
+		print "trying wildcards"
 		if cmd is None:
-			cmd = "#"
+			key = dispatcher_key(path_dispatch,'#')
+			print "A {0}".format(key)
 			
 		for full_path,function in mq_path_func.iteritems():
+			print "B {0}".format(full_path)
 			wildpath = re.sub(r'\*',r'.*',full_path)
+			print "C {0}".format(wild_path)
 			if wildpath != full_path:
-				res = re.search(wildpath,cmd+path_dispatch)
+				print "D"
+				res = re.search(wildpath,key)
 				if res is not None:
 					key =  res.group()
 					path = "X"
