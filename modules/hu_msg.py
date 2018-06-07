@@ -170,8 +170,8 @@ def special_disp(path_dispatch, command_dispatch):
 """
 
 def dispatcher_key(path_dispatch,cmd):
-	xstr = lambda s: s.lower() or ""
-	key_cmd_path = xstr(cmd)+prepostfix(path_dispatch).lower()
+	xstr = lambda s: s or "#"
+	key_cmd_path = xstr(cmd).lower()+prepostfix(path_dispatch).lower()
 
 	'''
 	if cmd is None:
