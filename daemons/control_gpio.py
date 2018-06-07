@@ -252,9 +252,9 @@ def idle_message_receiver():
 			
 		"""
 			
-		if parsed_msg['resp_path']:
-			#print "DEBUG: Resp Path present.. returning message.. data={0}".format(ret)
-			messaging.publish_command(parsed_msg['resp_path'],'DATA',ret)
+			if parsed_msg['resp_path']:
+				#print "DEBUG: Resp Path present.. returning message.. data={0}".format(ret)
+				messaging.publish_command(parsed_msg['resp_path'],'DATA',ret)
 		
 	return True # Important! Returning true re-enables idle routine.
 	
@@ -403,10 +403,7 @@ def setup():
 	# if we're responisble for modes, then send out a MQ message ? *(or have clients pull?)
 	
 	printer('Initialized [OK]')
-	
-	print mq_disp_keys
-	print mq_path_func
-		
+			
 def main():		
 
 	# Initialize the mainloop
