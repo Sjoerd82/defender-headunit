@@ -41,6 +41,7 @@ from hu_msg import parse_message
 from hu_msg import handle_mq
 from hu_msg import mq_disp_keys, mq_path_func
 from hu_msg import special_disp
+from hu_msg import super_disp
 from hu_gpio import GpioController
 from hu_datastruct import Modes
 
@@ -195,33 +196,39 @@ def testje_get_list(path=None, cmd=None, args=None, data=None):
 	""" Return all modes. No parameters """	
 	global modes
 	print "Doing /mode/list... {0}".format(modes)
-	return struct_data(modes)
+	#return struct_data(modes)
+	return modes
 
 @handle_mq('/mode/active')
 def testje_get_active(path=None, cmd=None, args=None, data=None):
 	""" Return active modes. No parameters """
 	printer("Active Modes: {0}".format(modes.active_modes()))
-	return struct_data(modes.active_modes())
+	#return struct_data(modes.active_modes())
+	return modes.active_modes()
 
 @handle_mq('/mode/set','PUT')
 def mq_mode_set(path=None, cmd=None, args=None, data=None):
 	""" Set mode """
 	print "A MODE WAS SET"
+	return "A MODE WAS SET"
 
 @handle_mq('/mode/unset','PUT')
 def mq_mode_set(path=None, cmd=None, args=None, data=None):
 	""" Unset mode """
 	print "A MODE WAS UNSET"
+	return "A MODE WAS UNSET"
 
 @handle_mq('/mode/*','GET')
 def mq_mode_test(path=None, cmd=None, args=None, data=None):
 	""" Unset mode """
 	print "TEST MODE! GET"
+	return "TEST MODE! GET"
 
 @handle_mq('/mode/*')
 def mq_mode_test(path=None, cmd=None, args=None, data=None):
 	""" Unset mode """
 	print "TEST MODE! Anything but Get"
+	return "TEST MODE! Anything but Get"
 
 def idle_message_receiver():
 	rawmsg = messaging.poll(timeout=500)				#None=Blocking
@@ -230,11 +237,14 @@ def idle_message_receiver():
 		parsed_msg = parse_message(rawmsg)
 				
 		mq_path = "/".join(parsed_msg['path'])
-		func_to_be_called = special_disp(mq_path,parsed_msg['cmd'])
-		print "func={0}".format(func_to_be_called)
-		if func_to_be_called is not None:
-			ret = func_to_be_called( cmd=parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
-			print ret
+		#func_to_be_called = special_disp(mq_path,parsed_msg['cmd'])
+		ret = super_disp(mq_path,parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
+		print ret
+		
+		#print "func={0}".format(func_to_be_called)
+		#if func_to_be_called is not None:
+		#	ret = func_to_be_called( cmd=parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
+		#	print ret
 		
 		
 			# move this if-else to the special_disp()-function
@@ -253,9 +263,9 @@ def idle_message_receiver():
 				
 			"""
 			
-			if parsed_msg['resp_path']:
-				#print "DEBUG: Resp Path present.. returning message.. data={0}".format(ret)
-				messaging.publish_command(parsed_msg['resp_path'],'DATA',ret)
+		if parsed_msg['resp_path']:
+			#print "DEBUG: Resp Path present.. returning message.. data={0}".format(ret)
+			messaging.publish_command(parsed_msg['resp_path'],'DATA',ret)
 		
 	return True # Important! Returning true re-enables idle routine.
 	

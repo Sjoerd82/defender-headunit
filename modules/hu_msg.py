@@ -170,47 +170,87 @@ def special_disp(path_dispatch, command_dispatch):
 """
 
 def dispatcher_key(path_dispatch,cmd):
-	xstr = lambda s: s or "#"
-	key_cmd_path = xstr(cmd).lower()+prepostfix(path_dispatch).lower()
 
-	'''
-	if cmd is None:
-		key = mq_path
-	else:
-		key = cmd+mq_path
-	'''
+	#lower case
+	path_dispatch = path_dispatch.lower()
+	
+    #prefix
+    if not path_dispatch.startswith("/"):
+        path_dispatch = "/"+path_dispatch
+
+	#postfix
+    if not path_dispatch.endswith("/"):
+        path_dispatch += "/"
+
+	#cmd
+	xstr = lambda s: s or "#"
+	
+	#build key
+	key_cmd_path = xstr(cmd).lower()+path_dispatch
 	
 	return key_cmd_path
 
-def special_disp(path_dispatch, cmd=None, args=None):
+def special_disp(path_dispatch, cmd=None): #, args=None):
+	"""	Return function for given path and command.
+	
+		Will try an exact match first, if that fails a wildcard match will be
+		attempted.
+	"""
 	key = dispatcher_key(path_dispatch,cmd)
-	#print "key: {0}".format(key)
+
 	# if there's an exact match, always handle that
+	# else, try wildcards
 	if key in mq_path_func:
-		#mq_path_func[path_dispatch](path=path_dispatch,cmd=cmd,args=args)
-		#print mq_path_func[key]
 		return mq_path_func[key]
 
-	else:
-		print "trying wildcards"
+	else:	
 		if cmd is None:
 			key = dispatcher_key(path_dispatch,'#')
-			print "A {0}".format(key)
 			
 		for full_path,function in mq_path_func.iteritems():
-			print "B {0}".format(full_path)
 			wildpath = re.sub(r'\*',r'.*',full_path)
 			wildpath = re.sub(r'\#',r'.*',wildpath)
 			print "C {0}".format(wildpath)
 			if wildpath != full_path:
-				print "D"
 				res = re.search(wildpath,key)
 				if res is not None:
 					key =  res.group()
-					print key
-					print full_path
-					print mq_path_func[full_path]
+					# we could execute the function, but let's just return it...
 					return mq_path_func[full_path]#(path=path_dispatch, cmd=cmd, args=args)
+
+def super_disp(path_dispatch, cmd=None, args=None, data=None):
+	"""	Execute function for given path and command.
+	
+		Will try an exact match first, if that fails a wildcard match will be
+		attempted.
+		
+		Returns a payload struct.
+	"""
+	key = dispatcher_key(path_dispatch,cmd)
+
+	# if there's an exact match, always handle that
+	# else, try wildcards
+	if key in mq_path_func:
+		return mq_path_func[key]
+
+	else:	
+		if cmd is None:
+			key = dispatcher_key(path_dispatch,'#')
+			
+		for full_path,function in mq_path_func.iteritems():
+			wildpath = re.sub(r'\*',r'.*',full_path)
+			wildpath = re.sub(r'\#',r'.*',wildpath)
+			print "C {0}".format(wildpath)
+			if wildpath != full_path:
+				res = re.search(wildpath,key)
+				if res is not None:
+					key =  res.group()
+					# we could execute the function, but let's just return it...
+					ret = mq_path_func[full_path](path=path_dispatch, cmd=cmd, args=args, data=data)
+					return struct_data(ret)
+	
+	return struct_data(None,500)
+
 	
 #********************************************************************************
 # ZeroMQ Wrapper for Pub-Sub Forwarder Device
