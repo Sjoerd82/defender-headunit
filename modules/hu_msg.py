@@ -174,20 +174,20 @@ def dispatcher_key(path_dispatch,cmd):
 	#lower case
 	path_dispatch = path_dispatch.lower()
 	
-    #prefix
-    if not path_dispatch.startswith("/"):
-        path_dispatch = "/"+path_dispatch
+	#prefix
+	if not path_dispatch.startswith("/"):
+		path_dispatch = "/"+path_dispatch
 
 	#postfix
-    if not path_dispatch.endswith("/"):
-        path_dispatch += "/"
+	if not path_dispatch.endswith("/"):
+		path_dispatch += "/"
 
 	#cmd
 	xstr = lambda s: s or "#"
-	
+
 	#build key
 	key_cmd_path = xstr(cmd).lower()+path_dispatch
-	
+
 	return key_cmd_path
 
 def special_disp(path_dispatch, cmd=None): #, args=None):
