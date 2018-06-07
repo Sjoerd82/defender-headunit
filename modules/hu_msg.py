@@ -375,6 +375,7 @@ class MqPubSubFwdController(object):
 				message = "{0}:{1}".format(message, jsonified_args)
 			else:
 				#print "DEBUG MSG: OTHER"
+				print type(arguments)
 				jsonified_args = json.dumps(arguments)
 				message = "{0}:{1}".format(message, jsonified_args)
 		
