@@ -122,7 +122,7 @@ def create_data(payload, retval):
 	data['payload'] = payload
 	return data
 
-def handle_mq(path, cmd=None):
+def handle_mq(mq_path, cmd=None):
 	""" Decorator function.
 		Registers the MQ path (nothing more at the moment..)
 	"""
@@ -132,16 +132,11 @@ def handle_mq(path, cmd=None):
 		global mq_disp_keys
 		global mq_path_disp
 
-		mq_path = prepostfix(path)
-
-		if cmd is None:
-			key = mq_path
-		else:
-			key = cmd+mq_path
-
-		mq_path_list.append(mq_path)
+		key = dispatcher_key(mq_path,cmd)		
+		mq_path_list.append(prepostfix(mq_path))
 		mq_disp_keys.append(key)		# used by idle-thingy
 		mq_path_func[key] = fn
+		
 		def decorated(*args,**kwargs):
 			return fn(*args,**kwargs)
 		return decorated
@@ -173,11 +168,24 @@ def special_disp(path_dispatch, command_dispatch):
                    return mq_path_func[path]
     return None
 """
-def special_disp(path_dispatch, cmd=None, args=None):
-	# if there's an exact match, always handle that
+
+def dispatcher_key(path_dispatch,cmd):
 	xstr = lambda s: s or ""
-	key_cmd_path = xstr(cmd)+path_dispatch
+	key_cmd_path = xstr(cmd)+prepostfix(path_dispatch)
+
+	'''
+	if cmd is None:
+		key = mq_path
+	else:
+		key = cmd+mq_path
+	'''
+	
+	return key_cmd_path
+
+def special_disp(path_dispatch, cmd=None, args=None):
+	key_cmd = dispatcher_key(cmd,path_dispatch)
 	print "key: {0}".format(key_cmd_path)
+	# if there's an exact match, always handle that
 	if key_cmd_path in mq_path_func:
 		#mq_path_func[path_dispatch](path=path_dispatch,cmd=cmd,args=args)
 		print mq_path_func[key_cmd_path]
