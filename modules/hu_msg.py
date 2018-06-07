@@ -184,11 +184,12 @@ def dispatcher_key(path_dispatch,cmd):
 
 def special_disp(path_dispatch, cmd=None, args=None):
 	key = dispatcher_key(path_dispatch,cmd)
-	print "key: {0}".format(key)
+	#print "key: {0}".format(key)
 	# if there's an exact match, always handle that
 	if key in mq_path_func:
 		#mq_path_func[path_dispatch](path=path_dispatch,cmd=cmd,args=args)
-		print mq_path_func[key]
+		#print mq_path_func[key]
+		return mq_path_func[key]
 
 	else:
 		print "trying wildcards"
@@ -206,12 +207,11 @@ def special_disp(path_dispatch, cmd=None, args=None):
 				res = re.search(wildpath,key)
 				if res is not None:
 					key =  res.group()
-					path = "X"
 					print key
 					print full_path
 					print path
 					print mq_path_func[full_path]
-					return mq_path_func[full_path](path=path_dispatch, cmd=cmd, args=args)
+					return mq_path_func[full_path]#(path=path_dispatch, cmd=cmd, args=args)
 	
 #********************************************************************************
 # ZeroMQ Wrapper for Pub-Sub Forwarder Device
