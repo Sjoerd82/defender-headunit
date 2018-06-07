@@ -210,7 +210,6 @@ def special_disp(path_dispatch, cmd=None): #, args=None):
 		for full_path,function in mq_path_func.iteritems():
 			wildpath = re.sub(r'\*',r'.*',full_path)
 			wildpath = re.sub(r'\#',r'.*',wildpath)
-			print "C {0}".format(wildpath)
 			if wildpath != full_path:
 				res = re.search(wildpath,key)
 				if res is not None:
@@ -232,8 +231,6 @@ def super_disp(path_dispatch, cmd=None, args=None, data=None):
 	# else, try wildcards
 	if key in mq_path_func:
 		ret = mq_path_func[key](path=path_dispatch, cmd=cmd, args=args, data=data)
-		test = struct_data(ret)
-		print type(test)
 		return struct_data(ret)
 
 	else:	
@@ -243,15 +240,12 @@ def super_disp(path_dispatch, cmd=None, args=None, data=None):
 		for full_path,function in mq_path_func.iteritems():
 			wildpath = re.sub(r'\*',r'.*',full_path)
 			wildpath = re.sub(r'\#',r'.*',wildpath)
-			print "C {0}".format(wildpath)
 			if wildpath != full_path:
 				res = re.search(wildpath,key)
 				if res is not None:
 					key =  res.group()
 					# we could execute the function, but let's just return it...
 					ret = mq_path_func[full_path](path=path_dispatch, cmd=cmd, args=args, data=data)
-					test = struct_data(ret)
-					print type(test)
 					return struct_data(ret)
 	
 	return struct_data(None,500)
@@ -282,7 +276,10 @@ class MqPubSubFwdController(object):
 		
 		self.mq_path_list = []
 		self.mq_path_func = {}
+		self.mq_disp_keys = []
+		self.mq_path_disp = {}
 
+		
 	def __send(self, message):
 		#printer(colorize("Sending MQ message: {0}".format(message),'dark_gray'),level=LL_DEBUG)
 	#	printer("Sending MQ message: {0}".format(message), level=LL_DEBUG, tag='MQ')
@@ -468,3 +465,24 @@ class MqPubSubFwdController(object):
 		if self.subscriber in socks:
 			message = self.__recv()
 		return message
+
+	def handle_mq(self, mq_path, cmd=None):
+		""" Decorator function.
+			Registers the MQ path (nothing more at the moment..)
+		"""
+		def decorator(fn):
+			self.mq_path_list
+			self.mq_path_func
+			self.mq_disp_keys
+			self.mq_path_disp
+
+			key = dispatcher_key(mq_path,cmd)		
+			mq_path_list.append(prepostfix(mq_path).lower())
+			mq_disp_keys.append(key)		# used by idle-thingy
+			mq_path_func[key] = fn
+			
+			def decorated(*args,**kwargs):
+				return fn(*args,**kwargs)
+			return decorated
+		return decorator
+		

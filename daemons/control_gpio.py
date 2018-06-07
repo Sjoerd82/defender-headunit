@@ -191,7 +191,7 @@ def load_cfg_gpio():
 # MQ functions
 #
 
-@handle_mq('/mode/list', cmd='GET')
+@messaging.handle_mq('/mode/list', cmd='GET')
 def testje_get_list(path=None, cmd=None, args=None, data=None):
 	""" Return all modes. No parameters """	
 	global modes
@@ -237,31 +237,7 @@ def idle_message_receiver():
 		parsed_msg = parse_message(rawmsg)
 				
 		mq_path = "/".join(parsed_msg['path'])
-		#func_to_be_called = special_disp(mq_path,parsed_msg['cmd'])
 		ret = super_disp(mq_path,parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
-		print ret
-		
-		#print "func={0}".format(func_to_be_called)
-		#if func_to_be_called is not None:
-		#	ret = func_to_be_called( cmd=parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
-		#	print ret
-		
-		
-		# move this if-else to the special_disp()-function
-		"""
-		if parsed_msg['cmd'] + mq_path in mq_disp_keys:
-		
-			func_to_be_called = special_disp(mq_path)
-			print "func={0}".format(func_to_be_called)
-			ret = func_to_be_called[parsed_msg['cmd'] + mq_path]( cmd=parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
-			
-		elif mq_path in mq_disp_keys:
-		
-			func_to_be_called = special_disp(mq_path)
-			print "func={0}".format(func_to_be_called)
-			ret = func_to_be_called( cmd=parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
-			
-		"""
 			
 		if parsed_msg['resp_path']:
 			#print "DEBUG: Resp Path present.. returning message.. data={0}".format(ret)
