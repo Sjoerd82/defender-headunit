@@ -183,7 +183,7 @@ def dispatcher_key(path_dispatch,cmd):
 	return key_cmd_path
 
 def special_disp(path_dispatch, cmd=None, args=None):
-	key = dispatcher_key(cmd,path_dispatch)
+	key = dispatcher_key(path_dispatch,cmd)
 	print "key: {0}".format(key)
 	# if there's an exact match, always handle that
 	if key in mq_path_func:
