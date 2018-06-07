@@ -199,7 +199,7 @@ def special_disp(path_dispatch, cmd=None, args=None):
 		for full_path,function in mq_path_func.iteritems():
 			print "B {0}".format(full_path)
 			wildpath = re.sub(r'\*',r'.*',full_path)
-			print "C {0}".format(wild_path)
+			print "C {0}".format(wildpath)
 			if wildpath != full_path:
 				print "D"
 				res = re.search(wildpath,key)
