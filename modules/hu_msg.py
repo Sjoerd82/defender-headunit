@@ -198,7 +198,8 @@ def special_disp(path_dispatch, cmd=None, args=None):
 			
 		for full_path,function in mq_path_func.iteritems():
 			print "B {0}".format(full_path)
-			wildpath = re.sub(r'\*',r'.*',full_path)
+			wildpath_tmp = re.sub(r'\*',r'.*',full_path)
+			wildpath = re.sub(r'\#',r'.*',wildpath_tmp)
 			print "C {0}".format(wildpath)
 			if wildpath != full_path:
 				print "D"
