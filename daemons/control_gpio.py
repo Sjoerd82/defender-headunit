@@ -189,22 +189,6 @@ def load_cfg_gpio():
 # MQ functions
 #
 
-'''
-def handle_mq(path):
-	""" tbd.
-		can we move this to hu_msg ?
-	"""
-	def decorator(fn):
-		global mq_path_list
-		global mq_path_func
-		mq_path_list.append(path)
-		mq_path_func[path] = fn
-		def decorated(*args,**kwargs):
-			print "Hello from handl_mq decorator, your path is: {0}".format(path)
-			return fn(*args,**kwargs)
-		return decorated
-	return decorator
-'''
 @handle_mq('/mode/list', cmd='PUT')
 def testje_get_list(path=None, cmd=None, args=None, data=None):
 	""" Return all modes. No parameters """	
@@ -227,6 +211,16 @@ def mq_mode_set(path=None, cmd=None, args=None, data=None):
 def mq_mode_set(path=None, cmd=None, args=None, data=None):
 	""" Unset mode """
 	print "A MODE WAS UNSET"
+
+@handle_mq('/mode/*','GET')
+def mq_mode_test(path=None, cmd=None, args=None, data=None):
+	""" Unset mode """
+	print "TEST MODE! GET"
+
+@handle_mq('/mode/*')
+def mq_mode_test(path=None, cmd=None, args=None, data=None):
+	""" Unset mode """
+	print "TEST MODE! Anything but Get"
 
 def idle_message_receiver():
 	rawmsg = messaging.poll(timeout=500)				#None=Blocking

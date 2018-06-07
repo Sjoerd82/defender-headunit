@@ -278,6 +278,18 @@ app_commands =	[
 		'command': 'GET',
 		'path': '/mode/active'
 	},
+	{	'name': 'mode-test1',
+		'params': None,
+		'description': 'TEST PUT',
+		'command': 'PUT',
+		'path': '/mode/test'
+	},
+	{	'name': 'mode-test2',
+		'params': None,
+		'description': 'TEST GET',
+		'command': 'GET',
+		'path': '/mode/test'
+	},
 	{	'name': 'system-reboot',
 		'params': [ {'name':'timer', 'required':False, 'help':'Time in seconds to shutdown. Default: 0'} ],
 		'description': 'Reboot system',

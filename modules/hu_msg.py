@@ -18,7 +18,7 @@ from hu_utils import *
 # MQ paths
 mq_path_list = []
 mq_disp_keys = []
-mq_path_func = {}
+mq_path_func = {}	# "CMD/path/path/": function
 
 
 def printer( message, level=LL_INFO, tag="", logger_name=__name__):
@@ -130,6 +130,7 @@ def handle_mq(path, cmd=None):
 		global mq_path_list
 		global mq_path_func
 		global mq_disp_keys
+		global mq_path_disp
 
 		mq_path = prepostfix(path)
 
@@ -146,6 +147,7 @@ def handle_mq(path, cmd=None):
 		return decorated
 	return decorator
 	
+"""
 def special_disp(path_dispatch, command_dispatch):
 
 	# TODO: handle commands
@@ -170,7 +172,33 @@ def special_disp(path_dispatch, command_dispatch):
                if res is not None:
                    return mq_path_func[path]
     return None
+"""
+def special_disp(path_dispatch, cmd=None, args=None):
+	# if there's an exact match, always handle that
+	xstr = lambda s: s or ""
+	key_cmd_path = xstr(cmd)+path_dispatch
+	print "key: {0}".format(key_cmd_path)
+	if key_cmd_path in mq_path_func:
+		#mq_path_func[path_dispatch](path=path_dispatch,cmd=cmd,args=args)
+		print mq_path_func[key_cmd_path]
 
+	else:
+		if cmd is None:
+			cmd = "#"
+			
+		for full_path,function in mq_path_func.iteritems():
+			wildpath = re.sub(r'\*',r'.*',full_path)
+			if wildpath != full_path:
+				res = re.search(wildpath,cmd+path_dispatch)
+				if res is not None:
+					key_cmd_path =  res.group()
+					path = "X"
+					print full_path
+					print path
+					print mq_path_func[full_path]
+					#mq_path_func[full_path](path=path_dispatch, cmd=cmd, args=args)
+					return True
+	return False
 	
 #********************************************************************************
 # ZeroMQ Wrapper for Pub-Sub Forwarder Device
