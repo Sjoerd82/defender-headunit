@@ -40,6 +40,7 @@ from hu_msg import MqPubSubFwdController
 from hu_msg import parse_message
 from hu_msg import handle_mq
 from hu_msg import mq_disp_keys, mq_path_func
+from hu_msg import special_disp
 from hu_gpio import GpioController
 from hu_datastruct import Modes
 
