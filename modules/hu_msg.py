@@ -231,7 +231,10 @@ def super_disp(path_dispatch, cmd=None, args=None, data=None):
 	# if there's an exact match, always handle that
 	# else, try wildcards
 	if key in mq_path_func:
-		return mq_path_func[key](path=path_dispatch, cmd=cmd, args=args, data=data)
+		ret = mq_path_func[key](path=path_dispatch, cmd=cmd, args=args, data=data)
+		test = struct_data(ret)
+		print type(test)
+		return struct_data(ret)
 
 	else:	
 		if cmd is None:
@@ -247,6 +250,8 @@ def super_disp(path_dispatch, cmd=None, args=None, data=None):
 					key =  res.group()
 					# we could execute the function, but let's just return it...
 					ret = mq_path_func[full_path](path=path_dispatch, cmd=cmd, args=args, data=data)
+					test = struct_data(ret)
+					print type(test)
 					return struct_data(ret)
 	
 	return struct_data(None,500)
