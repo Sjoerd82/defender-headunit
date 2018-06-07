@@ -133,7 +133,7 @@ def handle_mq(mq_path, cmd=None):
 		global mq_path_disp
 
 		key = dispatcher_key(mq_path,cmd)		
-		mq_path_list.append(prepostfix(mq_path))
+		mq_path_list.append(prepostfix(mq_path).lower())
 		mq_disp_keys.append(key)		# used by idle-thingy
 		mq_path_func[key] = fn
 		
@@ -170,8 +170,8 @@ def special_disp(path_dispatch, command_dispatch):
 """
 
 def dispatcher_key(path_dispatch,cmd):
-	xstr = lambda s: s or ""
-	key_cmd_path = xstr(cmd)+prepostfix(path_dispatch)
+	xstr = lambda s: s.lower() or ""
+	key_cmd_path = xstr(cmd)+prepostfix(path_dispatch).lower()
 
 	'''
 	if cmd is None:

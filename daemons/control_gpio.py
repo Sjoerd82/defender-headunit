@@ -403,6 +403,9 @@ def setup():
 	# if we're responisble for modes, then send out a MQ message ? *(or have clients pull?)
 	
 	printer('Initialized [OK]')
+	
+	print mq_disp_keys
+	print mq_path_func
 		
 def main():		
 
