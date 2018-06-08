@@ -45,7 +45,7 @@ DEFAULT_PORT_PUB = 5559
 
 logger = None
 args = None
-messaging = None
+messaging = MqPubSubFwdController()
 oMpdClient = None
 
 MAX_RESILIENCE_WAIT = 20	# max wait 20sec. before retrying connection
@@ -300,9 +300,9 @@ def setup():
 	# ZMQ
 	#
 	printer("ZeroMQ: Initializing")
-	messaging = MqPubSubFwdController('localhost',DEFAULT_PORT_PUB,DEFAULT_PORT_SUB)
+	messaging.set_address('localhost',cfg_zmq['port_publisher'],cfg_zmq['port_subscriber'])
 	
-	printer("ZeroMQ: Creating Publisher: {0}".format(DEFAULT_PORT_PUB))
+	printer("ZeroMQ: Creating Publisher: {0}".format(cfg_zmq['port_publisher']))
 	messaging.create_publisher()
 
 	#

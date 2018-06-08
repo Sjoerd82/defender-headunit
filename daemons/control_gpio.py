@@ -17,9 +17,6 @@
 # printer -> syslog adds considerable latency!  ?
 # (and?) Or.. is it the MQ send() ?
 
-# TODO:
-# 
-# 
 
 import sys						# path
 import os						# 
@@ -38,8 +35,8 @@ sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
 from hu_msg import MqPubSubFwdController
 from hu_msg import parse_message
-from hu_msg import handle_mq
-from hu_msg import mq_disp_keys, mq_path_func
+#from hu_msg import handle_mq
+#from hu_msg import mq_disp_keys, mq_path_func
 from hu_msg import special_disp
 from hu_msg import super_disp
 from hu_gpio import GpioController
@@ -66,7 +63,7 @@ DELAY = 0.01
 # global variables
 logger = None
 args = None
-messaging = None
+messaging = MqPubSubFwdController()
 gpio = None
 
 # configuration
@@ -75,6 +72,7 @@ cfg_daemon = None	# daemon
 cfg_zmq = None		# Zero MQ
 cfg_gpio = None		# GPIO setup
 
+# data structures
 modes = Modes()
 
 function_map = {}
@@ -191,7 +189,7 @@ def load_cfg_gpio():
 # MQ functions
 #
 
-@handle_mqX('/mode/list', cmd='GET')
+@messaging.handle_mq('/mode/list', cmd='GET')
 def testje_get_list(path=None, cmd=None, args=None, data=None):
 	""" Return all modes. No parameters """	
 	global modes
@@ -199,47 +197,44 @@ def testje_get_list(path=None, cmd=None, args=None, data=None):
 	#return struct_data(modes)
 	return modes
 
-@handle_mq('/mode/active')
+@messaging.handle_mq('/mode/active')
 def testje_get_active(path=None, cmd=None, args=None, data=None):
 	""" Return active modes. No parameters """
 	printer("Active Modes: {0}".format(modes.active_modes()))
 	#return struct_data(modes.active_modes())
 	return modes.active_modes()
 
-@handle_mq('/mode/set','PUT')
+@messaging.handle_mq('/mode/set','PUT')
 def mq_mode_set(path=None, cmd=None, args=None, data=None):
 	""" Set mode """
 	print "A MODE WAS SET"
 	return "A MODE WAS SET"
 
-@handle_mq('/mode/unset','PUT')
+@messaging.handle_mq('/mode/unset','PUT')
 def mq_mode_set(path=None, cmd=None, args=None, data=None):
 	""" Unset mode """
 	print "A MODE WAS UNSET"
 	return "A MODE WAS UNSET"
 
-@handle_mq('/mode/*','GET')
+@messaging.handle_mq('/mode/*','GET')
 def mq_mode_test(path=None, cmd=None, args=None, data=None):
 	""" Unset mode """
 	print "TEST MODE! GET"
 	return "TEST MODE! GET"
 
-@handle_mq('/mode/*')
+@messaging.handle_mq('/mode/*')
 def mq_mode_test(path=None, cmd=None, args=None, data=None):
 	""" Unset mode """
 	print "TEST MODE! Anything but Get"
 	return "TEST MODE! Anything but Get"
 
 def idle_message_receiver():
-	rawmsg = messaging.poll(timeout=500)				#None=Blocking
-	if rawmsg:
-		printer("Received message: {0}".format(rawmsg))	#TODO: debug
-		parsed_msg = parse_message(rawmsg)
-				
-		mq_path = "/".join(parsed_msg['path'])
-		ret = super_disp(mq_path,parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
+	parsed_msg = messaging.poll(timeout=500, parse=True)	#Timeout: None=Blocking
+	if parsed_msg:
+		#printer("Received message: {0}".format(parsed_msg))	#TODO: debug
+		ret = messaging.execute_mq(mq_path, parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
 			
-		if parsed_msg['resp_path']:
+		if parsed_msg['resp_path'] and ret is not False:
 			#print "DEBUG: Resp Path present.. returning message.. data={0}".format(ret)
 			messaging.publish_command(parsed_msg['resp_path'],'DATA',ret)
 		
@@ -368,8 +363,8 @@ def setup():
 	# ZMQ
 	#
 	global messaging
-	printer("ZeroMQ: Initializing")
-	messaging = MqPubSubFwdController('localhost',DEFAULT_PORT_PUB,DEFAULT_PORT_SUB)
+	printer("ZeroMQ: Initializing")	
+	messaging.set_address('localhost',DEFAULT_PORT_PUB,DEFAULT_PORT_SUB)
 	
 	printer("ZeroMQ: Creating Subscriber: {0}".format(DEFAULT_PORT_SUB))
 	messaging.create_subscriber(SUBSCRIPTIONS)

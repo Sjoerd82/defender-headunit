@@ -39,7 +39,7 @@ LOGGER_NAME = 'ad1x15'
 
 logger = None
 args = None
-messaging = None
+messaging = MqPubSubFwdController()
 adc = None
 
 # ********************************************************************************
@@ -123,9 +123,9 @@ def setup():
 	#
 	global messaging
 	printer("ZeroMQ: Initializing")
-	messaging = MqPubSubFwdController('localhost',DEFAULT_PORT_PUB,DEFAULT_PORT_SUB)
+	messaging.set_address('localhost',cfg_zmq['port_publisher'],cfg_zmq['port_subscriber'])
 	
-	printer("ZeroMQ: Creating Publisher: {0}".format(DEFAULT_PORT_PUB))
+	printer("ZeroMQ: Creating Publisher: {0}".format(cfg_zmq['port_publisher']))
 	messaging.create_publisher()
 
 	#

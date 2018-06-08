@@ -63,7 +63,7 @@ chainsetup_filename = None
 
 logger = None
 args = None
-messaging = None
+messaging = MqPubSubFwdController()
 gpio = None
 eca = None
 
@@ -426,29 +426,12 @@ def handle_queue(code,count):
 # MQ handler
 #	
 def idle_message_receiver():
-	#print "DEBUG: idle_msg_receiver()"
-	
-	def dispatcher(path, command, arguments, data):
-		handler_function = 'handle_path_' + path[0]
-		if handler_function in globals():
-			ret = globals()[handler_function](path, command, arguments, data)
-			return ret
-		else:
-			print("No handler for: {0}".format(handler_function))
-			return None
+	parsed_msg = messaging.poll(timeout=500, parse=True)	#Timeout: None=Blocking
+	if parsed_msg:
+		ret = messaging.execute_mq(mq_path, parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
 			
-		
-	rawmsg = messaging.poll(timeout=500)				#None=Blocking
-	if rawmsg:
-		printer("Received message: {0}".format(rawmsg))	#TODO: debug
-		parsed_msg = parse_message(rawmsg)
-		
-		# send message to dispatcher for handling	
-		retval = dispatcher(parsed_msg['path'],parsed_msg['cmd'],parsed_msg['args'],parsed_msg['data'])
-
-		if parsed_msg['resp_path']:
-			#print "DEBUG: Resp Path present.. returing message.. data={0}".format(retval)
-			messaging.publish_command(parsed_msg['resp_path'],'DATA',retval)
+		if parsed_msg['resp_path'] and ret is not False:
+			messaging.publish_command(parsed_msg['resp_path'],'DATA',ret)
 		
 	return True # Important! Returning true re-enables idle routine.
 
@@ -497,293 +480,211 @@ def get_data(ret,returndata=False,eventpath=None):
 		
 	return data
 
-def handle_path_ecasound(path,cmd,args,data):
-
-	base_path = 'ecasound'
-	# remove base path
-	del path[0]
-
-	# -------------------------------------------------------------------------
-	# Sub Functions must return None (invalid params) or a {data} object.
-	def get_chainsetup(args):
-		"""	Retrieve currently active chainsetup """
-		data = struct_data(chainsetup_filename)
-		return data	# this will be returned using the response path
-		
-	def put_chainsetup(args):
-		"""	Set the active chainsetup """
-		# TODO: validate input
-		print args[0]
-		if os.path.exists(args[0]):
-			ret = eca_load_chainsetup_file(args[0])
-		data = struct_data(ret) # True=OK, False=Not OK
-		return data
-		
-	def data_mode_active(args):
-		print "RECEIVED LIST OF ACTIVE MODES..."
-		print args
-
-	# -------------------------------------------------------------------------
-	if path:
-		function_to_call = cmd + '_' + '_'.join(path)
-	else:
-		# called without sub-paths
-		function_to_call = cmd + '_' + base_path
-
-	ret = None
-	if function_to_call in locals():
-		ret = locals()[function_to_call](args)
-		printer('Executed {0} function {1} with result status: {2}'.format(base_path,function_to_call,ret)) # TODO: LL_DEBUG
-	else:
-		printer('Function {0} does not exist'.format(function_to_call))
-		
-	return ret
+# ********************************************************************************
+# MQ: /ecasound
+#	
+@messaging.handle_mq('/ecasound/chainsetup', cmd='GET')
+def mq_eca_cs_get(path=None, cmd=None, args=None, data=None):
+	"""	Retrieve currently active chainsetup """
+	data = struct_data(chainsetup_filename)
+	return data	# this will be returned using the response path
 	
-def handle_path_volume(path,cmd,params,data):
-	""" This function implements /volume/-functions:
-		get /volume/master
-		put /volume/master
-		put /volume/master/increase
-		put /volume/master/decrease
-		put /volume/att
-		put /volume/mute
-	"""	
-	base_path = 'volume'
-	# remove base path
-	del path[0]
+@messaging.handle_mq('/ecasound/chainsetup', cmd='PUT')
+def mq_eca_cs_put(path=None, cmd=None, args=None, data=None):
+	"""	Set the active chainsetup """
+	# TODO: validate input
+	print args[0]
+	if os.path.exists(args[0]):
+		ret = eca_load_chainsetup_file(args[0])
+	data = struct_data(ret) # True=OK, False=Not OK
+	return data
+	
+@messaging.handle_mq('/ecasound/mode/active', cmd='DATA')
+def mq_eca_mode_active(path=None, cmd=None, args=None, data=None):
+	print "RECEIVED LIST OF ACTIVE MODES..."
+	print args
 
-	def get_master(params):
-		""" get master volume """
-		validate_args2(params,0,0)	# no args
-		level = eca_get_effect_amplification()
-		data = get_data(dict_volume(system='ecasound', simple_vol=level),returndata=True)
-		print "DEBUG data:"
-		print data
-		return data
+# ********************************************************************************
+# MQ: /volume
+#
 
-	def put_master(params):
-		""" set master volume """
-		global local_volume
-		validate_args2(params,1,1)	# arg can be: <str:up|down|+n|-n|att>
-		old_volume = local_volume
-		if params[0] == 'up':
-			local_volume += volume_increment
-			
-		elif params[0] == 'down':
-			local_volume -= volume_increment
-			
-		elif params[0][0] == '+':
-			try:
-				change = int(params[0][1:])
-				local_volume += change
-				print "DEBUG: LEVEL = + {0}".format(change)
-			except:
-				print "ERROR converting volume level to integer"
-			
-		elif params[0][0] == '-':
-			try:
-				change = int(params[0][1:])
-				local_volume += change
-				print "DEBUG: LEVEL = - {0}".format(change)
-			except:
-				print "ERROR converting volume level to integer"
-
-		elif params[0] == 'att':
-			local_volume = att_level
-			
-		eca_set_effect_amplification(local_volume)
-		get_data(None,eventpath='/events/volume/changed')
-
-	def put_master_increase(params):
-		"""	Increase Volume
-			Arguments:		[percentage]
-			Return data:	Nothing
-		"""
-		global local_volume
-		validate_args2(params,0,1)	# [percentage]
+@messaging.handle_mq('/volume/master', cmd='GET')
+def mq_master_get(path=None, cmd=None, args=None, data=None):
+	""" get master volume """
+	validate_args2(params,0,0)	# no args
+	level = eca_get_effect_amplification()
+	data = get_data(dict_volume(system='ecasound', simple_vol=level),returndata=True)
+	print "DEBUG data:"
+	print data
+	return data
+	
+@messaging.handle_mq('/volume/master', cmd='PUT')
+def mq_master_put(path=None, cmd=None, args=None, data=None):
+	""" set master volume """
+	global local_volume
+	validate_args2(params,1,1)	# arg can be: <str:up|down|+n|-n|att>
+	old_volume = local_volume
+	if params[0] == 'up':
+		local_volume += volume_increment
 		
-		if not params:
-			local_volume += volume_increment
-		else:
-			change = int(params[0][1])
+	elif params[0] == 'down':
+		local_volume -= volume_increment
+		
+	elif params[0][0] == '+':
+		try:
+			change = int(params[0][1:])
 			local_volume += change
-
-		eca_set_effect_amplification(local_volume)	
-		if not args.b:
-			printer("Amp level: {0}%".format(local_volume))
-
-		get_data(None,eventpath='/events/volume/changed')
+			print "DEBUG: LEVEL = + {0}".format(change)
+		except:
+			print "ERROR converting volume level to integer"
 		
-	def put_master_decrease(params):
-		global local_volume
-		validate_args2(params,0,1)	# [percentage]
+	elif params[0][0] == '-':
+		try:
+			change = int(params[0][1:])
+			local_volume += change
+			print "DEBUG: LEVEL = - {0}".format(change)
+		except:
+			print "ERROR converting volume level to integer"
+
+	elif params[0] == 'att':
+		local_volume = att_level
 		
-		if not params:
-			local_volume -= volume_increment
-		else:
-			change = int(params[0][1])
-			local_volume -= change
+	eca_set_effect_amplification(local_volume)
+	get_data(None,eventpath='/events/volume/changed')
 
-		eca_set_effect_amplification(local_volume)	
-		if not args.b:
-			printer("Amp level: {0}%".format(local_volume))
-			
-		get_data(None,eventpath='/events/volume/changed')
-			
-	def put_att(params):
-		global local_volume
-		validate_args2(params,0,2)	# [str:on|off|toggle],[int:Volume, in %]
-
-		if not params:
-			local_volume = att_level
-			
-		if len(params) == 2:
-			tmp_att_level = params[1]
-		else:
-			tmp_att_level = att_level
-			
-		if len(params) == 1:
-			if params[0] == "on":
-				local_volume = tmp_att_level
-			#elif params[0] == "off":
-			#	local_volume = ?
-			#elif params[0] == "toggle":
-			#	pass
-		eca_set_effect_amplification(local_volume)
-		get_data(None,eventpath='/events/volume/att')
-
-	def put_mute(params):
-		validate_args2(params,0,1)	# arg can be [str:on|off|toggle]
-		if not params:
-			eca_mute('toggle')
-		else:
-			eca_mute(params[0])
-			
-		get_data(None,eventpath='/events/volume/mute')
+@messaging.handle_mq('/volume/master/increase', cmd='PUT')
+def mq_master_increase_put(path=None, cmd=None, args=None, data=None):
+	"""	Increase Volume
+		Arguments:		[percentage]
+		Return data:	Nothing
+	"""
+	global local_volume
+	validate_args2(params,0,1)	# [percentage]
 	
-	if path:
-		function_to_call = cmd + '_' + '_'.join(path)
+	if not params:
+		local_volume += volume_increment
 	else:
-		# called without sub-paths
-		function_to_call = cmd + '_' + base_path
+		change = int(params[0][1])
+		local_volume += change
 
-	ret = None
-	if function_to_call in locals():
-		ret = locals()[function_to_call](params)
-		printer('Executed {0} function {1} with result status: {2}'.format(base_path,function_to_call,ret),level=LL_DEBUG)
-	else:
-		printer('Function {0} does not exist'.format(function_to_call))
+	eca_set_effect_amplification(local_volume)	
+	if not args.b:
+		printer("Amp level: {0}%".format(local_volume))
 
-	return ret
+	get_data(None,eventpath='/events/volume/changed')
 	
-def handle_path_equalizer(path,cmd,args,data):
-
-	base_path = 'equalizer'
-	# remove base path
-	del path[0]
-
-	def get_eq(args):
-		pass
-		
-	def put_eq(args):
-		pass
-		
-	def put_band(args):
-		pass
-
-	if path:
-		function_to_call = cmd + '_' + '_'.join(path)
-	else:
-		# called without sub-paths
-		function_to_call = cmd + '_' + base_path
-
-	ret = None
-	if function_to_call in locals():
-		ret = locals()[function_to_call](args)
-		printer('Executed {0} function {1} with result status: {2}'.format(base_path,function_to_call,ret),level=LL_DEBUG)
-	else:
-		printer('Function {0} does not exist'.format(function_to_call))
-
-	return ret
-
-def handle_path_events(path,cmd,params,data):
-
-	base_path = 'events'
-	# remove base path
-	del path[0]
+@messaging.handle_mq('/volume/master/decrease', cmd='PUT')
+def mq_master_decrease_put(path=None, cmd=None, args=None, data=None):
+	global local_volume
+	validate_args2(params,0,1)	# [percentage]
 	
-	def data_source_active(params):
-		if len(params) >= 1:
-			payload = json.loads(params[0])
-			print payload
-		else:
-			print "HUH??"
-			
-	def data_mode_set(params):
-		print "A MODE WAS SET"
-
-	if path:
-		function_to_call = cmd + '_' + '_'.join(path)
+	if not params:
+		local_volume -= volume_increment
 	else:
-		# called without sub-paths
-		function_to_call = cmd + '_' + base_path
+		change = int(params[0][1])
+		local_volume -= change
 
-	ret = None
-	if function_to_call in locals():
-		ret = locals()[function_to_call](params)
-		printer('Executed {0} function {1} with result status: {2}'.format(base_path,function_to_call,ret),level=LL_DEBUG)
+	eca_set_effect_amplification(local_volume)	
+	if not args.b:
+		printer("Amp level: {0}%".format(local_volume))
+		
+	get_data(None,eventpath='/events/volume/changed')
+	
+@messaging.handle_mq('/volume/master/att', cmd='PUT')
+def mq_att_put(path=None, cmd=None, args=None, data=None):
+	global local_volume
+	validate_args2(params,0,2)	# [str:on|off|toggle],[int:Volume, in %]
+
+	if not params:
+		local_volume = att_level
+		
+	if len(params) == 2:
+		tmp_att_level = params[1]
 	else:
-		printer('Function {0} does not exist'.format(function_to_call))
-
-	return ret
-
-def handle_path_mode(path,cmd,params,data):
-
-	base_path = 'mode'
-	# remove base path
-	del path[0]
-
-	def put_change(params):
+		tmp_att_level = att_level
 		
-		global active_modes
-		
-		arg_defs = app_commands[0]['params']
-		ret = validate_args(arg_defs,params,app_commands[0]['params_repeat'])
-		
-		if ret is not None and ret is not False:	
-			# arguments are mode-state pairs
-			for i in range(0,len(ret),2):
-				printer("Received Mode: {0} State: {1}".format(ret[i],ret[i+1]), level=LL_DEBUG)
-				if ret[i+1] == True and ret[i] not in active_modes:
-					active_modes.append(ret[i])
-				elif ret[i+1] == False and ret[i] in active_modes:
-					active_modes.remove(ret[i])
-					
-			printer("Active Modes: {0}".format(active_modes))
-
-		else:
-			printer("put_change: Arguments: [FAIL]",level=LL_ERROR)
-		
-	def put_set(params):
-		print "A MODE WAS SET"
-
-	def put_unset(params):
-		print "A MODE WAS UNSET"
-
-	if path:
-		function_to_call = cmd + '_' + '_'.join(path)
+	if len(params) == 1:
+		if params[0] == "on":
+			local_volume = tmp_att_level
+		#elif params[0] == "off":
+		#	local_volume = ?
+		#elif params[0] == "toggle":
+		#	pass
+	eca_set_effect_amplification(local_volume)
+	get_data(None,eventpath='/events/volume/att')
+	
+@messaging.handle_mq('/volume/master/mute', cmd='PUT')
+def mq_mute_put(path=None, cmd=None, args=None, data=None):
+	validate_args2(params,0,1)	# arg can be [str:on|off|toggle]
+	if not params:
+		eca_mute('toggle')
 	else:
-		# called without sub-paths
-		function_to_call = cmd + '_' + base_path
+		eca_mute(params[0])
+		
+	get_data(None,eventpath='/events/volume/mute')
+	
+# ********************************************************************************
+# MQ: /equalizer
+#
+@messaging.handle_mq('/equalizer/eq')
+def get_eq(path=None, cmd=None, args=None, data=None):
+	pass	
 
-	ret = None
-	if function_to_call in locals():
-		ret = locals()[function_to_call](params)
-		printer('Executed {0} function {1} with result status: {2}'.format(base_path,function_to_call,ret),level=LL_DEBUG)
+@messaging.handle_mq('/equalizer/band', cmd='PUT')
+def put_band(path=None, cmd=None, args=None, data=None):
+	pass
+
+# ********************************************************************************
+# MQ: /events
+#
+@messaging.handle_mq('/events/source/active', cmd='DATA')
+def mq_source_active_data(path=None, cmd=None, args=None, data=None):
+	if len(params) >= 1:
+		payload = json.loads(params[0])
+		print payload
 	else:
-		printer('Function {0} does not exist'.format(function_to_call))
+		print "HUH??"
+		
+@messaging.handle_mq('/events/mode/set', cmd='DATA')
+def mq_mode_set_data(path=None, cmd=None, args=None, data=None):
+	print "A MODE WAS SET"
 
-	return ret
+
+# ********************************************************************************
+# MQ: /mode
+#
+@messaging.handle_mq('/mode/change', cmd='PUT')
+def mq_mode_change_put(path=None, cmd=None, args=None, data=None):
+	
+	global active_modes
+	
+	arg_defs = app_commands[0]['params']
+	ret = validate_args(arg_defs,params,app_commands[0]['params_repeat'])
+	
+	if ret is not None and ret is not False:	
+		# arguments are mode-state pairs
+		for i in range(0,len(ret),2):
+			printer("Received Mode: {0} State: {1}".format(ret[i],ret[i+1]), level=LL_DEBUG)
+			if ret[i+1] == True and ret[i] not in active_modes:
+				active_modes.append(ret[i])
+			elif ret[i+1] == False and ret[i] in active_modes:
+				active_modes.remove(ret[i])
+				
+		printer("Active Modes: {0}".format(active_modes))
+
+	else:
+		printer("put_change: Arguments: [FAIL]",level=LL_ERROR)
+	return False	# never reply to this message
+	
+@messaging.handle_mq('/mode/set', cmd='PUT')
+def mq_mode_set(path=None, cmd=None, args=None, data=None):
+	print "A MODE WAS SET"
+	return False	# never reply to this message
+
+@messaging.handle_mq('/mode/unset', cmd='PUT')
+def mq_unset_put(path=None, cmd=None, args=None, data=None):
+	print "A MODE WAS UNSET"
+	return False	# never reply to this message
 
 	
 #********************************************************************************
@@ -926,13 +827,13 @@ def setup():
 	#
 	global messaging
 	printer("ZeroMQ: Initializing")
-	messaging = MqPubSubFwdController('localhost',DEFAULT_PORT_PUB,DEFAULT_PORT_SUB)
+	messaging.set_address('localhost',cfg_zmq['port_publisher'],cfg_zmq['port_subscriber'])
 	
-	printer("ZeroMQ: Creating Subscriber: {0}".format(DEFAULT_PORT_SUB))
-	messaging.create_subscriber(SUBSCRIPTIONS)
-
-	printer("ZeroMQ: Creating Publisher: {0}".format(DEFAULT_PORT_PUB))
+	printer("ZeroMQ: Creating Publisher: {0}".format(cfg_zmq['port_publisher']))
 	messaging.create_publisher()
+
+	printer("ZeroMQ: Creating Subscriber: {0}".format(cfg_zmq['port_subscriber']))
+	messaging.create_subscriber(SUBSCRIPTIONS)
 
 	#
 	# GPIO

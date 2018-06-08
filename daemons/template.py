@@ -29,7 +29,7 @@ SUBSCRIPTIONS = ['/path/']
 # global variables
 logger = None
 args = None
-messaging = None
+messaging = MqPubSubFwdController()
 
 # configuration
 cfg_main = None		# main
@@ -73,7 +73,8 @@ def parse_args():
 	global args
 	import argparse
 	parser = default_parser(DESCRIPTION,BANNER)
-	# additional command line arguments mat be added here
+	# --loglevel, --config/-c, -b, --port_publisher, --port_subscriber
+	# additional command line arguments mat be added here:
 	args = parser.parse_args()
 
 def setup():
@@ -117,7 +118,7 @@ def setup():
 	#
 	global messaging
 	printer("ZeroMQ: Initializing")
-	messaging = MqPubSubFwdController('localhost',cfg_zmq['port_publisher'],cfg_zmq['port_subscriber'])
+	messaging.set_address('localhost',cfg_zmq['port_publisher'],cfg_zmq['port_subscriber'])
 	
 	printer("ZeroMQ: Creating Publisher: {0}".format(cfg_zmq['port_publisher']))
 	messaging.create_publisher()

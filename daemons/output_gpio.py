@@ -33,7 +33,7 @@ SLEEP_INTERVAL = 0.1
 # global variables
 logger = None
 args = None
-messaging = None
+messaging = MqPubSubFwdController()
 gpio = None
 
 # global datastructures
@@ -75,224 +75,190 @@ def load_cfg_gpio():
 		print "ERROR: not found: {0}".format(gpio_config_file)
 		return
 
-def handle_path_mode(path,cmd,args,data):
-
-	base_path = 'mode'
-	# remove base path
-	del path[0]
+@messaging.handle_mq('/mode/set', cmd='PUT')
+def mq_mode_set_put(path=None, cmd=None, args=None, data=None):
+	# args[0] = mode
+	# args[1] = True|False (optional, default=True)
 	
-	def put_set(args):	
-		# args[0] = mode
-		# args[1] = True|False (optional, default=True)
-		
-		arg_defs = []
-		arg0 = {
-					'name': 'mode',
-					'datatype': 'str',
-					'required': True		
-		}
-		arg1 = {
-					'name': 'state',
-					'datatype': 'bool',		# will auto-convert str and int, if it makes sense
-					'required': False,
-					'default': False
-					'choices': ['true','false','on','off','1','0',1,0,True,False],
-					'convert_to' : 'bool'
-		}
-		arg_defs.append(arg0)
-		arg_defs.append(arg1)
-		ret = validate_args(arg_defs,args)
-		if ret is not None and ret is not False:
-			print "Arguments: [OK]"
-		else:
-			print "Arguments: [FAIL]"
+	arg_defs = []
+	arg0 = {
+				'name': 'mode',
+				'datatype': 'str',
+				'required': True		
+	}
+	arg1 = {
+				'name': 'state',
+				'datatype': 'bool',		# will auto-convert str and int, if it makes sense
+				'required': False,
+				'default': False
+				'choices': ['true','false','on','off','1','0',1,0,True,False],
+				'convert_to' : 'bool'
+	}
+	arg_defs.append(arg0)
+	arg_defs.append(arg1)
+	ret = validate_args(arg_defs,args)
+	if ret is not None and ret is not False:
+		print "Arguments: [OK]"
+	else:
+		print "Arguments: [FAIL]"
 
-		mode_set = args[0]
-		if len(args) > 1:
-			if args[1].lower() in ['true','1','yes']:
-				mode_state = True
-			elif args[1].lower() in ['false','0','no']:
-				mode_state = False
-			else:
-				mode_state = True
+	mode_set = args[0]
+	if len(args) > 1:
+		if args[1].lower() in ['true','1','yes']:
+			mode_state = True
+		elif args[1].lower() in ['false','0','no']:
+			mode_state = False
 		else:
 			mode_state = True
-			
-		new_mode = { "name": mode_set, "state": mode_state }
-		# new mode?
-		if mode_set not in modes.unique_list():
-			print "Setting new mode {0} to {1}".format(mode_set,mode_state)
-			modes.append(new_mode)
-		else:
-			print "Existing Mode. Check if changed"
-			mode_curr = modes.get_by_unique(mode_set)
-			#print "Current   : {0}".format(mode_curr['state'])
-			#print "Requested : {0}".format(mode_state)
-			if mode_curr['state'] != mode_state:
-				print "Updating mode to {0}".format(mode_state)
-				modes.set_by_unique(mode_set,new_mode)
-				
-		#print "--- MODES ---"
-		#print modes
-		return True
-			
-	def get_get(args):
-		return modes
-
-	
-	if path:
-		function_to_call = cmd + '_' + '_'.join(path)
 	else:
-		# called without sub-paths
-		function_to_call = cmd + '_' + base_path
-
-	ret = None
-	if function_to_call in locals():
-		ret = locals()[function_to_call](args)
-		printer('Executed {0} function {1} with result status: {2}'.format(base_path,function_to_call,ret))
-	else:
-		printer('Function {0} does not exist'.format(function_to_call))
-
-	return ret
-
-	
-def handle_path_events(path,cmd,args,data):
-
-	base_path = 'events'
-	# remove base path
-	del path[0]
-	
-	def data_mode_changed(data):
-		print "MODE CHANGE!"
-		print data
-		if not 'payload' in data:
-			return
+		mode_state = True
 		
-		# new mode?
-		if data['payload']['name'] not in modes:
-			try:
-				modes.append(data)
-			except:
-				print "Could not add mode"
-		else:
-			print "Check if changed"
-			#check if changed
-			#current_state = modes.
-			#if data['payload']['state'] != 
-		
-	
-	def data_source_active(data):
-		print "ACTIVE"
-		pass
-	def data_source_available(data):
-		print "AVAILABLE"
-		pass
-	def data_player_state(data):
-		print "STATE"
-		pass
-	def data_player_track(data):
-		print "TRACK"
-		pass
-	def data_player_elapsed(data):
-		print "ELAPSED"
-		pass
-	def data_player_updating(data):
-		print "UPDATING"
-		pass
-	def data_player_updated(data):
-		print "UPDATED"
-		pass
-	def data_volume_changed(data):
-		print "VOL_CHG"
-		pass
-	def data_volume_att(data):
-		print "ATT"
-		pass
-	def data_volume_mute(data):
-		print "MUTE"
-		pass
-	def data_network_up(data):
-		print "NET UP"
-		pass
-	def data_network_down(data):
-		payload = json.loads(data)
-		sc_sources.do_event('network',path,payload)
-		printSummary()
-		return None
-	def data_system_shutdown(data):
-		print "SHUTDOWN"
-		pass
-	def data_system_reboot(data):
-		print "REBOOT"
-		pass
-	def data_udisks_added(data):
-		""" New media added
+	new_mode = { "name": mode_set, "state": mode_state }
+	# new mode?
+	if mode_set not in modes.unique_list():
+		print "Setting new mode {0} to {1}".format(mode_set,mode_state)
+		modes.append(new_mode)
+	else:
+		print "Existing Mode. Check if changed"
+		mode_curr = modes.get_by_unique(mode_set)
+		#print "Current   : {0}".format(mode_curr['state'])
+		#print "Requested : {0}".format(mode_state)
+		if mode_curr['state'] != mode_state:
+			print "Updating mode to {0}".format(mode_state)
+			modes.set_by_unique(mode_set,new_mode)
 			
-			Data object:
-			{
-				device
-				uuid
-				mountpoint
-				label
-			}
-			Return data:
-				?
-			Return codes:
-				?
-		"""
-		#valid = validate_args(args,1,3)
-		#if not valid:
-		#	return None
-
-		payload = json.loads(data)
-		sc_sources.do_event('udisks',path,payload)	# do_event() executes the 'udisks' event
-		printSummary()
-		return None
+	#print "--- MODES ---"
+	#print modes
+	return True
+			
+@messaging.handle_mq('/events/mode/changed', cmd='DATA')
+def data_mode_changed(path=None, cmd=None, args=None, data=None):
+	print "MODE CHANGE!"
+	print data
+	if not 'payload' in data:
+		return
+	
+	# new mode?
+	if data['payload']['name'] not in modes:
+		try:
+			modes.append(data)
+		except:
+			print "Could not add mode"
+	else:
+		print "Check if changed"
+		#check if changed
+		#current_state = modes.
+		#if data['payload']['state'] != 
+	
+@messaging.handle_mq('/events/source/active', cmd='DATA')
+def data_source_active(path=None, cmd=None, args=None, data=None):
+	print "ACTIVE"
+	pass
+	
+@messaging.handle_mq('/events/source/available', cmd='DATA')
+def data_source_available(path=None, cmd=None, args=None, data=None):
+	print "AVAILABLE"
+	pass
+	
+@messaging.handle_mq('/events/source/state', cmd='DATA')
+def data_player_state(path=None, cmd=None, args=None, data=None):
+	print "STATE"
+	pass
+	
+@messaging.handle_mq('/events/player/track', cmd='DATA')
+def data_player_track(path=None, cmd=None, args=None, data=None):
+	print "TRACK"
+	pass
+	
+@messaging.handle_mq('/events/player/elapsed', cmd='DATA')
+def data_player_elapsed(path=None, cmd=None, args=None, data=None):
+	print "ELAPSED"
+	pass
+	
+@messaging.handle_mq('/events/player/updating', cmd='DATA')
+def data_player_updating(path=None, cmd=None, args=None, data=None):
+	print "UPDATING"
+	pass
+	
+@messaging.handle_mq('/events/player/updated', cmd='DATA')
+def data_player_updated(path=None, cmd=None, args=None, data=None):
+	print "UPDATED"
+	pass
+	
+@messaging.handle_mq('/events/volume/changed', cmd='DATA')
+def data_volume_changed(path=None, cmd=None, args=None, data=None):
+	print "VOL_CHG"
+	pass
+	
+@messaging.handle_mq('/events/volume/att', cmd='DATA')
+def data_volume_att(path=None, cmd=None, args=None, data=None):
+	print "ATT"
+	pass
+	
+@messaging.handle_mq('/events/volume/mute', cmd='DATA')
+def data_volume_mute(path=None, cmd=None, args=None, data=None):
+	print "MUTE"
+	pass
+	
+@messaging.handle_mq('/events/network/up', cmd='DATA')
+def data_network_up(path=None, cmd=None, args=None, data=None):
+	print "NET UP"
+	pass
+	
+@messaging.handle_mq('/events/network/down', cmd='DATA')
+def data_network_down(path=None, cmd=None, args=None, data=None):
+	payload = json.loads(data)
+	sc_sources.do_event('network',path,payload)
+	printSummary()
+	return None
+	
+@messaging.handle_mq('/events/system/shutdown', cmd='DATA')
+def data_system_shutdown(path=None, cmd=None, args=None, data=None):
+	print "SHUTDOWN"
+	pass
+	
+@messaging.handle_mq('/events/system/reboot', cmd='DATA')
+def data_system_reboot(path=None, cmd=None, args=None, data=None):
+	print "REBOOT"
+	pass
+	
+@messaging.handle_mq('/events/udisks/added', cmd='DATA')
+def data_udisks_added(path=None, cmd=None, args=None, data=None):
+	""" New media added
 		
-	def data_udisks_removed(data):
-		print "REMOVED"
-		pass
+		Data object:
+		{
+			device
+			uuid
+			mountpoint
+			label
+		}
+		Return data:
+			?
+		Return codes:
+			?
+	"""
+	#valid = validate_args(args,1,3)
+	#if not valid:
+	#	return None
 
-	if path:
-		function_to_call = cmd + '_' + '_'.join(path)
-	else:
-		# called without sub-paths
-		function_to_call = cmd + '_' + base_path
-
-	ret = None
-	if function_to_call in locals():
-		ret = locals()[function_to_call](data)
-		printer('Executed {0} function {1} with result status: {2}'.format(base_path,function_to_call,ret))
-	else:
-		printer('Function {0} does not exist'.format(function_to_call))
-
-	return ret
-
+	payload = json.loads(data)
+	sc_sources.do_event('udisks',path,payload)	# do_event() executes the 'udisks' event
+	printSummary()
+	return None
+	
+@messaging.handle_mq('/events/udisks/removed', cmd='DATA')
+def data_udisks_removed(path=None, cmd=None, args=None, data=None):
+	print "REMOVED"
+	pass
 	
 def idle_message_receiver():
-	#print "DEBUG: idle_msg_receiver()"
-	
-	def dispatcher(path, command, arguments, data):
-		handler_function = 'handle_path_' + path[0]
+	parsed_msg = messaging.poll(timeout=1000, parse=True)	#Timeout: None=Blocking
+	if parsed_msg:
+		ret = messaging.execute_mq(mq_path, parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
 			
-		if handler_function in globals():
-			ret = globals()[handler_function](path, command, arguments, data)
-			return ret
-		else:
-			print("No handler for: {0}".format(handler_function))
-			return None
-					
-	rawmsg = messaging.poll(timeout=1000)				#None=Blocking, 1000 = 1sec
-	if rawmsg:
-		printer("Received message: {0}".format(rawmsg))	#TODO: debug
-		parsed_msg = parse_message(rawmsg)
-		
-		# send message to dispatcher for handling	
-		retval = dispatcher(parsed_msg['path'],parsed_msg['cmd'],parsed_msg['args'],parsed_msg['data'])
-
-		if parsed_msg['resp_path']:
-			#print "DEBUG: Resp Path present.. returing message.. data={0}".format(retval)
-			messaging.publish_command(parsed_msg['resp_path'],'DATA',retval)
+		if parsed_msg['resp_path'] and ret is not False:
+			messaging.publish_command(parsed_msg['resp_path'],'DATA',ret)
 		
 	return True # Important! Returning true re-enables idle routine.
 	
@@ -354,7 +320,7 @@ def setup():
 	#
 	global messaging
 	printer("ZeroMQ: Initializing")
-	messaging = MqPubSubFwdController('localhost',cfg_zmq['port_publisher'],cfg_zmq['port_subscriber'])
+	messaging.set_address('localhost',cfg_zmq['port_publisher'],cfg_zmq['port_subscriber'])
 	
 	printer("ZeroMQ: Creating Publisher: {0}".format(cfg_zmq['port_publisher']))
 	messaging.create_publisher()

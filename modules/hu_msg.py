@@ -10,6 +10,7 @@
 import zmq
 import time
 import sys
+import json
 from logging import getLogger	# logger
 
 sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
@@ -122,6 +123,7 @@ def create_data(payload, retval):
 	data['payload'] = payload
 	return data
 
+'''
 def handle_mq(mq_path, cmd=None):
 	""" Decorator function.
 		Registers the MQ path (nothing more at the moment..)
@@ -141,6 +143,7 @@ def handle_mq(mq_path, cmd=None):
 			return fn(*args,**kwargs)
 		return decorated
 	return decorator
+'''
 	
 """
 def special_disp(path_dispatch, command_dispatch):
@@ -168,27 +171,6 @@ def special_disp(path_dispatch, command_dispatch):
                    return mq_path_func[path]
     return None
 """
-
-def dispatcher_key(path_dispatch,cmd):
-
-	#lower case
-	path_dispatch = path_dispatch.lower()
-	
-	#prefix
-	if not path_dispatch.startswith("/"):
-		path_dispatch = "/"+path_dispatch
-
-	#postfix
-	if not path_dispatch.endswith("/"):
-		path_dispatch += "/"
-
-	#cmd
-	xstr = lambda s: s or "#"
-
-	#build key
-	key_cmd_path = xstr(cmd).lower()+path_dispatch
-
-	return key_cmd_path
 
 def special_disp(path_dispatch, cmd=None): #, args=None):
 	"""	Return function for given path and command.
@@ -231,7 +213,10 @@ def super_disp(path_dispatch, cmd=None, args=None, data=None):
 	# else, try wildcards
 	if key in mq_path_func:
 		ret = mq_path_func[key](path=path_dispatch, cmd=cmd, args=args, data=data)
-		return struct_data(ret)
+		if ret is False:
+			return False
+		else:
+			return struct_data(ret)
 
 	else:	
 		if cmd is None:
@@ -246,9 +231,12 @@ def super_disp(path_dispatch, cmd=None, args=None, data=None):
 					key =  res.group()
 					# we could execute the function, but let's just return it...
 					ret = mq_path_func[full_path](path=path_dispatch, cmd=cmd, args=args, data=data)
-					return struct_data(ret)
+					if ret is False:
+						return False
+					else:
+						return struct_data(ret)
 	
-	return struct_data(None,500)
+	return False
 
 	
 #********************************************************************************
@@ -292,7 +280,31 @@ class MqPubSubFwdController(object):
 	def __recv(self):
 		message = self.subscriber.recv()
 		return message
+
+	def __dispatcher_key(self, path_dispatch, cmd):		
+		#lower case
+		path_dispatch = path_dispatch.lower()
 		
+		#prefix
+		if not path_dispatch.startswith("/"):
+			path_dispatch = "/"+path_dispatch
+
+		#postfix
+		if not path_dispatch.endswith("/"):
+			path_dispatch += "/"
+
+		#cmd
+		xstr = lambda s: s or "#"
+
+		#build key
+		key_cmd_path = xstr(cmd).lower()+path_dispatch
+		return key_cmd_path
+	
+	def set_address(self, address=None, port_pub=None, port_sub=None):
+		if address is not None: self.address = address
+		if port_pub is not None: self.port_pub = port_pub
+		if port_sub is not None: self.port_sub = port_sub		
+	
 	def create_publisher(self):
 		"""
 		Setup and connect a publisher. Does not bind (uses the forwarder).
@@ -451,7 +463,7 @@ class MqPubSubFwdController(object):
 		self.publisher.send(message)
 		time.sleep(1)	# required?
 		
-	def poll(self, timeout=None):
+	def poll(self, timeout=None, parse=False):
 		"""
 		Blocking call, if no timeout (ms) specified.
 		Returns raw message, or None if no data.
@@ -464,7 +476,94 @@ class MqPubSubFwdController(object):
 		message = None
 		if self.subscriber in socks:
 			message = self.__recv()
+			if parse:
+				return self.parse_message(message)
+			
 		return message
+		
+	def parse_message(self, message):
+		""" Parses a MQ standardized message.
+		Format: <path>[+response_path] <command>[:arg1, argn]
+		Format: <path> DATA:<data>
+														 ^ags may contain spaces, double quotes, all kinds of messed up shit
+		
+		Arguments:
+		 message		string, message
+		 
+		Returns:
+		{
+			'path'     : path
+			'cmd'      : command (PUT, GET or DATA)
+			'args'     : params
+			'resp_path': resp_path
+		}
+		"""
+		
+		path = []
+		params = []
+		resp_path = []
+		data = {}
+		
+		raw_path_resp_cmd = message.split(" ",1) #maxsplit=1, seperating at the first space [0]=paths, [1]=cmd+params
+		raw_path_resp = raw_path_resp_cmd[0].split("+",1) # [0] = path, [1] = response path
+		raw_cmd_par   = raw_path_resp_cmd[1].split(":",1)	#maxsplit=1,seperating at the first semicolon. [0]=cmd, [1]=param(s)
+		
+		# extract path
+		for pathpart in raw_path_resp[0].split("/"):
+			if pathpart:
+				path.append(pathpart.lower())
+		
+		# extract response path (if any), as a whole..
+		if len(raw_path_resp) > 1:
+			resp_path = raw_path_resp[1]
+		
+		# extract command and arguments
+		if len(raw_cmd_par) == 1:
+			command = raw_cmd_par[0].lower()
+		elif len(raw_cmd_par) == 2:
+			command = raw_cmd_par[0].lower()
+			#param = raw_cmd_par[1]
+			# extract data or arguments
+			if command == 'data':
+				data = json.loads(raw_cmd_par[1])
+				#print "DATA: {0}".format(data)
+			else:
+				#print "LOADING: {0} ({1})".format(raw_cmd_par[1],type(raw_cmd_par[1]))		
+				param = json.loads(raw_cmd_par[1])
+
+				# TODO perhaps better to do a check type() instead..
+				if command == 'data':
+					#expect a json/dict
+					params.append(param)
+				elif command == 'info':
+					#expect a json/dict
+					params.append(param)
+				else:
+					#,-delimited parameters
+					for parpart in param.split(","):
+						if parpart:
+							params.append(parpart)
+			
+		else:
+			printer("Malformed message!",level=LL_ERROR)
+			return False
+		
+		# debugging
+		#print("[MQ] Received Path: {0}; Command: {1}; Parameters: {2}; Response path: {3}".format(path,command,params,resp_path))
+		
+		# return as a tuple:
+		#return path, command, params, resp_path
+		
+		# return as a dict:
+		parsed_message = {}
+		parsed_message['path'] = path
+		parsed_message['cmd'] = command
+		parsed_message['args'] = params
+		parsed_message['resp_path'] = resp_path
+		parsed_message['data'] = data
+		return parsed_message
+	
+	#********************************************************************************
 
 	def handle_mq(self, mq_path, cmd=None):
 		""" Decorator function.
@@ -474,12 +573,58 @@ class MqPubSubFwdController(object):
 			self.mq_path_list
 			self.mq_path_func
 
-			key = dispatcher_key(mq_path,cmd)		
+			key = self.__dispatcher_key(mq_path,cmd)		
 			self.mq_path_list.append(prepostfix(mq_path).lower())
 			self.mq_path_func[key] = fn
+			
+			# TODO, add topic to subscriptions
 			
 			def decorated(*args,**kwargs):
 				return fn(*args,**kwargs)
 			return decorated
 		return decorator
+	
+	def execute_mq(path_dispatch, cmd=None, args=None, data=None):
+		"""	Execute function for given path and command.
 		
+			Will try an exact match first, if that fails a wildcard match will be
+			attempted.
+			
+			Returns a payload struct.
+		"""
+		
+		# path_dispatch may be a string or a list
+		if isinstance(path_dispatch, list):
+			# convert to string
+			path_dispatch = "/".join(path_dispatch)
+		
+		key = self.__dispatcher_key(path_dispatch,cmd)
+
+		# if there's an exact match, always handle that
+		# else, try wildcards
+		if key in self.mq_path_func:
+			ret = self.mq_path_func[key](path=path_dispatch, cmd=cmd, args=args, data=data)
+			if ret is False:
+				return False
+			else:
+				return struct_data(ret)
+
+		else:	
+			if cmd is None:
+				key = self.__dispatcher_key(path_dispatch,'#')
+				
+			for full_path,function in self.mq_path_func.iteritems():
+				wildpath = re.sub(r'\*',r'.*',full_path)
+				wildpath = re.sub(r'\#',r'.*',wildpath)
+				if wildpath != full_path:
+					res = re.search(wildpath,key)
+					if res is not None:
+						key =  res.group()
+						# we could execute the function, but let's just return it...
+						ret = self.mq_path_func[full_path](path=path_dispatch, cmd=cmd, args=args, data=data)
+						if ret is False:
+							return False
+						else:
+							return struct_data(ret)
+		
+		return False
