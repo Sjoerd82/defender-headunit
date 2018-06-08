@@ -466,20 +466,17 @@ class MqPubSubFwdController(object):
 			message = self.__recv()
 		return message
 
-	def handle_mqX(self, mq_path, cmd=None):
+	def handle_mq(self, mq_path, cmd=None):
 		""" Decorator function.
 			Registers the MQ path (nothing more at the moment..)
 		"""
 		def decorator(fn):
 			self.mq_path_list
 			self.mq_path_func
-			self.mq_disp_keys
-			self.mq_path_disp
 
 			key = dispatcher_key(mq_path,cmd)		
-			mq_path_list.append(prepostfix(mq_path).lower())
-			mq_disp_keys.append(key)		# used by idle-thingy
-			mq_path_func[key] = fn
+			self.mq_path_list.append(prepostfix(mq_path).lower())
+			self.mq_path_func[key] = fn
 			
 			def decorated(*args,**kwargs):
 				return fn(*args,**kwargs)
