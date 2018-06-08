@@ -579,7 +579,7 @@ class MqPubSubFwdController(object):
 		path_stripped = prepostfix(topic[path_start:path_end].lower())
 		print "Stripped: {0} -> {1}".format(topic,path_stripped)
 
-		if path_stripped not in self.mq_path_list:
+		if path_stripped not in self.topics: #self.mq_path_list:
 			print "Not Found :)"
 			return None
 		else:
@@ -600,7 +600,7 @@ class MqPubSubFwdController(object):
 			
 			# add topic to subscriptions, if not already there
 			if self.test_path(mq_path) is None:
-				self.topics.append(mq_path)			
+				self.topics.append(mq_path)
 			
 			def decorated(*args,**kwargs):
 				return fn(*args,**kwargs)
