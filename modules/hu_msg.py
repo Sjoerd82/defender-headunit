@@ -584,7 +584,7 @@ class MqPubSubFwdController(object):
 			return decorated
 		return decorator
 	
-	def execute_mq(path_dispatch, cmd=None, args=None, data=None):
+	def execute_mq(self, path_dispatch, cmd=None, args=None, data=None):
 		"""	Execute function for given path and command.
 		
 			Will try an exact match first, if that fails a wildcard match will be
