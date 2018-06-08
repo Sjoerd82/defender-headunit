@@ -314,7 +314,7 @@ class MqPubSubFwdController(object):
 		self.publisher = self.context.socket(zmq.PUB)
 		self.publisher.connect("tcp://{0}:{1}".format(self.address, self.port_pub))
 
-	def create_subscriber(self, subscriptions=['/']):
+	def create_subscriber(self, subscriptions=[]):
 		"""	Setup and connect a subscriber for the given topic(s).
 			This function also registers the subscription with the poller.
 		"""
@@ -338,8 +338,12 @@ class MqPubSubFwdController(object):
 		#self.poller.register(self.reply_subscriber, zmq.POLLIN)
 		#self.reply_subscriber.setsockopt (zmq.SUBSCRIBE, '/bladiebla')
 
+	def add_subscription(subscription):
+		if subscription not in self.topics:
+			self.topics.append(subscription)
+		
 	def subscriptions(self):
-		return self.topics
+		return self.topics		
 	
 	def publish_command(self, path, command, arguments=None, wait_for_reply=False, timeout=5000, response_path=None):
 		"""
@@ -590,7 +594,7 @@ class MqPubSubFwdController(object):
 			self.mq_path_func[key] = fn
 			
 			# add topic to subscriptions, if not already there
-			if test_path(mq_path) is None:
+			if self.test_path(mq_path) is None:
 				self.topics.append(mq_path)			
 			
 			def decorated(*args,**kwargs):
