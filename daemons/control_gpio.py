@@ -387,7 +387,7 @@ def setup():
 	printer('Initialized [OK]')
 	printer('MQ subscriptions:')
 	for topic in messaging.subscriptions():
-		print topic
+		printer(" > {0}".format(topic))
 	
 			
 def main():		

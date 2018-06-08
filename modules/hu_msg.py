@@ -568,18 +568,23 @@ class MqPubSubFwdController(object):
 	# EXPERIMENTAL
 	def test_path(self,topic):
 	
-		key = self.__dispatcher_key(topic,"#")
-	
-		if key in self.mq_path_func:
-			return self.mq_path_func[key]
+		path_start = topic.find('/')
+		if path_start == -1:
+			return -1 # invalid path
+			
+		path_end = topic.find('*')
+		if path_end == -1:
+			path_end = len(topic)
+		
+		path_stripped = prepostfix(topic[path_start:path_end].lower())
+		print "Stripped: {0} -> {1}".format(topic,path_stripped)
 
-		for full_path,function in self.mq_path_func.iteritems():
-			wildpath = re.sub(r'\*',r'.*',full_path)
-			wildpath = re.sub(r'\#',r'.*',wildpath)
-			if wildpath != full_path:
-				res = re.search(wildpath,key)
-				if res is not None:
-					return self.mq_path_func[full_path]
+		if path_stripped not in self.mq_path_list:
+			print "Not Found :)"
+			return None
+		else:
+			return path_stripped
+	
 		
 	def handle_mq(self, mq_path, cmd=None):
 		""" Decorator function.
