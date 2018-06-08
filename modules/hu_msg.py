@@ -244,7 +244,7 @@ def super_disp(path_dispatch, cmd=None, args=None, data=None):
 #
 class MqPubSubFwdController(object):
 
-	def __init__(self, address, port_pub, port_sub):
+	def __init__(self, address=None, port_pub=None, port_sub=None):
 
 		# Context
 		self.context = zmq.Context()
