@@ -255,7 +255,7 @@ def data_udisks_removed(path=None, cmd=None, args=None, data=None):
 def idle_message_receiver():
 	parsed_msg = messaging.poll(timeout=1000, parse=True)	#Timeout: None=Blocking
 	if parsed_msg:
-		ret = messaging.execute_mq(mq_path, parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
+		ret = messaging.execute_mq(parsed_msg['path'], parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
 			
 		if parsed_msg['resp_path'] and ret is not False:
 			messaging.publish_command(parsed_msg['resp_path'],'DATA',ret)

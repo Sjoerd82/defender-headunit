@@ -232,7 +232,7 @@ def idle_message_receiver():
 	parsed_msg = messaging.poll(timeout=500, parse=True)	#Timeout: None=Blocking
 	if parsed_msg:
 		#printer("Received message: {0}".format(parsed_msg))	#TODO: debug
-		ret = messaging.execute_mq(mq_path, parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
+		ret = messaging.execute_mq(parsed_msg['path'], parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
 			
 		if parsed_msg['resp_path'] and ret is not False:
 			#print "DEBUG: Resp Path present.. returning message.. data={0}".format(ret)
