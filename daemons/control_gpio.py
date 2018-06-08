@@ -385,6 +385,10 @@ def setup():
 	# if we're responisble for modes, then send out a MQ message ? *(or have clients pull?)
 	
 	printer('Initialized [OK]')
+	printer('MQ subscriptions:')
+	for topic in messaging.subscriptions():
+		print topic
+	
 			
 def main():		
 

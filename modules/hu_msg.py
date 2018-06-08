@@ -266,6 +266,8 @@ class MqPubSubFwdController(object):
 		self.mq_path_func = {}
 		self.mq_disp_keys = []
 		self.mq_path_disp = {}
+		
+		self.topics = []
 
 		
 	def __send(self, message):
@@ -312,15 +314,21 @@ class MqPubSubFwdController(object):
 		self.publisher = self.context.socket(zmq.PUB)
 		self.publisher.connect("tcp://{0}:{1}".format(self.address, self.port_pub))
 
-	def create_subscriber(self, topics=['/']):
+	def create_subscriber(self, subscriptions=['/']):
+		"""	Setup and connect a subscriber for the given topic(s).
+			This function also registers the subscription with the poller.
 		"""
-		Setup and connect a subscriber for the given topic(s).
-		This function also registers the subscription with the poller.
-		"""
+		if not self.topics:
+			self.topics.extend(subscriptions)
+		else:
+			for subscription in subscriptions:
+				if subscription not in self.topics:
+					self.topics.append(subscription)
+		
 		self.subscriber = self.context.socket (zmq.SUB)
 		self.subscriber.connect("tcp://{0}:{1}".format(self.address, self.port_sub))
 		self.poller.register(self.subscriber, zmq.POLLIN)
-		for topic in topics:
+		for topic in self.topics:
 			self.subscriber.setsockopt (zmq.SUBSCRIBE, topic)
 		
 		# TODO; FOR SOME REASON WE NEED TO DEFINE IT HERE..
@@ -330,21 +338,9 @@ class MqPubSubFwdController(object):
 		#self.poller.register(self.reply_subscriber, zmq.POLLIN)
 		#self.reply_subscriber.setsockopt (zmq.SUBSCRIBE, '/bladiebla')
 
-	'''
-	def handle_mq(self, path):
-		""" tbd.
-			can we move this to hu_msg ?
-		"""
-		def decorator(fn):
-			self.mq_path_list.append(path)
-			self.mq_path_func[path] = fn
-			def decorated(*args,**kwargs):
-				print "Hello from handl_mq decorator, your path is: {0}".format(path)
-				return fn(*args,**kwargs)
-			return decorated
-		return decorator
-	'''
-		
+	def subscriptions(self):
+		return self.topics
+	
 	def publish_command(self, path, command, arguments=None, wait_for_reply=False, timeout=5000, response_path=None):
 		"""
 		Publish a message. If wait_for_reply, then block until a reply is received.
@@ -565,6 +561,22 @@ class MqPubSubFwdController(object):
 	
 	#********************************************************************************
 
+	# EXPERIMENTAL
+	def test_path(self,topic):
+	
+		key = self.__dispatcher_key(topic,"#")
+	
+		if key in self.mq_path_func:
+			return self.mq_path_func[key]
+
+		for full_path,function in self.mq_path_func.iteritems():
+			wildpath = re.sub(r'\*',r'.*',full_path)
+			wildpath = re.sub(r'\#',r'.*',wildpath)
+			if wildpath != full_path:
+				res = re.search(wildpath,key)
+				if res is not None:
+					return self.mq_path_func[full_path]
+		
 	def handle_mq(self, mq_path, cmd=None):
 		""" Decorator function.
 			Registers the MQ path (nothing more at the moment..)
@@ -573,11 +585,13 @@ class MqPubSubFwdController(object):
 			self.mq_path_list
 			self.mq_path_func
 
-			key = self.__dispatcher_key(mq_path,cmd)		
+			key = self.__dispatcher_key(mq_path,cmd)
 			self.mq_path_list.append(prepostfix(mq_path).lower())
 			self.mq_path_func[key] = fn
 			
-			# TODO, add topic to subscriptions
+			# add topic to subscriptions, if not already there
+			if test_path(mq_path) is None:
+				self.topics.append(mq_path)			
 			
 			def decorated(*args,**kwargs):
 				return fn(*args,**kwargs)
