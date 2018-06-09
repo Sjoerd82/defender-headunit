@@ -48,7 +48,7 @@ from slugify import slugify
 #********************************************************************************
 # Version
 #
-from version import __version__
+#from version import __version__
 
 # *******************************************************************************
 # Global variables and constants

@@ -58,6 +58,7 @@
 		} ,
 		{
 			  "name":"UDisks ZMQ bridge"
+			, "script":"udisks_listener.py"
 			, "init.d":"S70udisks"
 			, "pid_file":"udiskszmq.pid"
 		} ,
