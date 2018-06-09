@@ -1283,6 +1283,9 @@ def setup():
 	printer("ZeroMQ: Creating Subscriber: {0}".format(cfg_zmq['port_subscriber']))
 	messaging.create_subscriber(SUBSCRIPTIONS)
 
+	printer('ZeroMQ subscriptions:')
+	for topic in messaging.subscriptions():
+		printer("> {0}".format(topic))
 
 	#
 	# "Splash Screen": Display version

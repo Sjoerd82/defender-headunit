@@ -11,8 +11,10 @@
 #
 
 from yapsy.IPlugin import IPlugin
-from modules.hu_utils import *
-from modules.source_plugin import SourcePlugin
+
+sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
+from hu_utils import *
+from source_plugin import SourcePlugin
 
 class MySource(SourcePlugin,IPlugin):
 
