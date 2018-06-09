@@ -233,14 +233,15 @@ def mq_mode_test(path=None, cmd=None, args=None, data=None):
 	print "TEST MODE! Anything but Get"
 	return False
 
+"""
 def idle_message_receiver():
 	parsed_msg = messaging.poll(timeout=500, parse=True)	#Timeout: None=Blocking
 	if parsed_msg:
 		ret = messaging.execute_mq(parsed_msg['path'], parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
 		if parsed_msg['resp_path'] and ret is not None:
-			messaging.publish_command(parsed_msg['resp_path'],'DATA',ret)
-		
+			messaging.publish_command(parsed_msg['resp_path'],'DATA',ret)	
 	return True # Important! Returning true re-enables idle routine.
+"""
 	
 # ********************************************************************************
 # GPIO Callback
@@ -408,8 +409,7 @@ def main():
 		
 		if counter > 9:
 			# only every 10th iteration
-			idle_message_receiver() # do this less often TODO! not critical, but takes up precious response time
-			#handle_mq_message()	# do this less often TODO! not critical, but takes up precious response time
+			messaging.poll_and_execute(500) # do this less often TODO! not critical, but takes up precious response time
 			counter = 0
 		
 		counter += 1

@@ -557,6 +557,14 @@ class MqPubSubFwdController(object):
 	#********************************************************************************
 
 	# EXPERIMENTAL
+	def poll_and_execute(self,timeout):
+		parsed_msg = self.poll(timeout=500, parse=True)	#Timeout: None=Blocking
+		if parsed_msg:
+			ret = self.execute_mq(parsed_msg['path'], parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
+			if parsed_msg['resp_path'] and ret is not None:
+				self.publish_command(parsed_msg['resp_path'],'DATA',ret)
+	
+	# EXPERIMENTAL
 	def test_path(self,full_path):
 	
 		if not full_path.startswith("/"):
@@ -647,3 +655,5 @@ class MqPubSubFwdController(object):
 							return struct_data(ret)
 		
 		return None
+		
+	def 
