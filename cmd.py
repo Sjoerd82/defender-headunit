@@ -688,8 +688,8 @@ def main():
 			""" PLAIN """
 			mq_args = ",".join(args.command_args)
 			
-			if mq_cmd == 'GET':
-				mq_rpath = RETURN_PATH
+			#if mq_cmd == 'GET':
+			mq_rpath = RETURN_PATH
 			
 		if mq_args == "{}":
 			mq_args = None
