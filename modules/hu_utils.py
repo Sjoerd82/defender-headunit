@@ -163,10 +163,10 @@ def struct_data(payload,code=None):
 
 	data = {}
 	
-	if payload is None or payload is False:
+	if payload is False:
 		data['retval'] = 500
 		data['payload'] = None
-	elif payload is True:
+	elif payload is True or payload is None:
 		data['retval'] = 200
 		data['payload'] = None
 	else:
