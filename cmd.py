@@ -266,13 +266,19 @@ app_commands =	[
 		'command': 'PUT',
 		'path': '/mode/set'
 	},
-	{	'name': 'modes',
+	{	'name': 'mode-unset',
+		'params': [ {'name':'mode', 'required':True, 'help':'Mode to unset'} ],
+		'description': 'Unset a mode',
+		'command': 'PUT',
+		'path': '/mode/unset'
+	},	
+	{	'name': 'modes-list',
 		'params': None,
 		'description': 'Get list of registered modes',
 		'command': 'GET',
 		'path': '/mode/list'
 	},
-	{	'name': 'mode-active',
+	{	'name': 'modes-active',
 		'params': None,
 		'description': 'Get list of currently active modes',
 		'command': 'GET',

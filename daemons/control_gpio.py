@@ -224,14 +224,12 @@ def mq_mode_set(path=None, cmd=None, args=None, data=None):
 def mq_mode_test(path=None, cmd=None, args=None, data=None):
 	""" Unset mode """
 	print "TEST MODE! GET"
-	return "TEST MODE! GET"
 	return None
 
 @messaging.handle_mq('/mode/*')
 def mq_mode_test(path=None, cmd=None, args=None, data=None):
 	""" Unset mode """
 	print "TEST MODE! Anything but Get"
-	return "TEST MODE! Anything but Get"
 	return False
 
 def idle_message_receiver():
