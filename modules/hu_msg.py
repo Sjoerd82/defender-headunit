@@ -559,11 +559,11 @@ class MqPubSubFwdController(object):
 	# EXPERIMENTAL
 	def test_path(self,full_path):
 	
-		if not path.startswith("/"):
-			path = "/"+path
+		if not full_path.startswith("/"):
+			full_path = "/"+full_path
 		#postfix
-		if not path.endswith("*"):
-			path += "*"
+		if not full_path.endswith("*"):
+			full_path += "*"
 
 		wildpath = re.sub(r'\*',r'.*',full_path)
 	
