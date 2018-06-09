@@ -122,6 +122,13 @@ def setup():
 	
 	printer("ZeroMQ: Creating Publisher: {0}".format(cfg_zmq['port_publisher']))
 	messaging.create_publisher()
+	
+	printer("ZeroMQ: Creating Subscriber: {0}".format(DEFAULT_PORT_SUB))
+	messaging.create_subscriber(SUBSCRIPTIONS)
+
+	printer('ZeroMQ subscriptions:')
+	for topic in messaging.subscriptions():
+		printer("> {0}".format(topic))
 
 	printer('Initialized [OK]')
 		

@@ -31,7 +31,6 @@ from hu_utils import *
 from hu_datastruct import Modes
 from hu_gpio import GpioController
 from hu_msg import MqPubSubFwdController
-from hu_msg import parse_message
 
 # *******************************************************************************
 # Global variables and constants
@@ -76,6 +75,7 @@ cfg_gpio = None		# GPIO setup
 # global datastructures
 #modes = Modes()
 active_modes = []
+mode_controller = False		# ToDo
 
 qVolume = None
 
@@ -669,17 +669,28 @@ def mq_mode_change_put(path=None, cmd=None, args=None, data=None):
 
 	else:
 		printer("put_change: Arguments: [FAIL]",level=LL_ERROR)
-	return None	# never reply to this message
+		
+	if mode_controller:
+		return True
+	else:
+		return None
 	
 @messaging.handle_mq('/mode/set', cmd='PUT')
 def mq_mode_set(path=None, cmd=None, args=None, data=None):
 	print "A MODE WAS SET"
-	return None	# never reply to this message
+	if mode_controller:
+		return True
+	else:
+		return None
 
 @messaging.handle_mq('/mode/unset', cmd='PUT')
 def mq_unset_put(path=None, cmd=None, args=None, data=None):
 	print "A MODE WAS UNSET"
-	return None	# never reply to this message
+	
+	if mode_controller:
+		return True
+	else:
+		return None
 
 	
 #********************************************************************************
@@ -830,6 +841,10 @@ def setup():
 	printer("ZeroMQ: Creating Subscriber: {0}".format(cfg_zmq['port_subscriber']))
 	messaging.create_subscriber(SUBSCRIPTIONS)
 
+	printer('ZeroMQ subscriptions:')
+	for topic in messaging.subscriptions():
+		printer("> {0}".format(topic))
+
 	#
 	# GPIO
 	#
@@ -844,8 +859,6 @@ def setup():
 	
 	print "EXPERIMENTAL, requesting active modes.."
 	messaging.publish_command('/mode/active','GET',response_path='/ecasound/mode/active')
-	
-	
 	
 	printer('Initialized [OK]')
 

@@ -92,6 +92,7 @@ def get_devices(path=None, cmd=None, args=None, data=None):
 	data = struct_data(attached_drives)
 	return data	# this will be returned using the response path
 	
+"""
 def idle_message_receiver():
 	parsed_msg = messaging.poll(timeout=1000, parse=True)	#Timeout: None=Blocking
 	if parsed_msg:
@@ -101,7 +102,8 @@ def idle_message_receiver():
 			messaging.publish_command(parsed_msg['resp_path'],'DATA',ret)
 		
 	return True # Important! Returning true re-enables idle routine.
-	
+"""
+
 #********************************************************************************
 # Parse command line arguments
 #
@@ -370,6 +372,10 @@ def setup():
 	printer("ZeroMQ: Creating Subscriber: {0}".format(cfg_zmq['port_subscriber']))
 	messaging.create_subscriber(SUBSCRIPTIONS)
 
+	printer('ZeroMQ subscriptions:')
+	for topic in messaging.subscriptions():
+		printer("> {0}".format(topic))
+
 	#
 	# See if anything already attached
 	#
@@ -408,7 +414,7 @@ def main():
 
 	bus.add_signal_receiver(cb_udisk_dev_add, signal_name='DeviceAdded', dbus_interface="org.freedesktop.UDisks")
 	bus.add_signal_receiver(cb_udisk_dev_rem, signal_name='DeviceRemoved', dbus_interface="org.freedesktop.UDisks")
-	gobject.idle_add(idle_message_receiver)
+	gobject.idle_add(messaging.poll_and_execute(1000))
 
 	try:
 		mainloop.run()

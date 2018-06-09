@@ -34,9 +34,6 @@ from dbus.mainloop.glib import DBusGMainLoop
 sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
 from hu_msg import MqPubSubFwdController
-from hu_msg import parse_message
-from hu_msg import special_disp
-from hu_msg import super_disp
 from hu_gpio import GpioController
 from hu_datastruct import Modes
 
@@ -74,7 +71,7 @@ cfg_gpio = None		# GPIO setup
 modes = Modes()
 
 # other stuff
-respond_to_mq_mode = True		# ToDo
+mode_controller = True
 
 function_map = {}
 function_map['SOURCE_NEXT'] = { 'zmq_path':'/source/next', 'zmq_command':'PUT' }
@@ -215,11 +212,41 @@ def mq_mode_set(path=None, cmd=None, args=None, data=None):
 	except:
 		return False
 
+@messaging.handle_mq('/mode/change', cmd='PUT')
+def mq_mode_change_put(path=None, cmd=None, args=None, data=None):
+	
+	global active_modes
+	
+	arg_defs = app_commands[0]['params']
+	ret = validate_args(arg_defs,params,app_commands[0]['params_repeat'])
+	
+	if ret is not None and ret is not False:	
+		# arguments are mode-state pairs
+		for i in range(0,len(ret),2):
+			printer("Received Mode: {0} State: {1}".format(ret[i],ret[i+1]), level=LL_DEBUG)
+			if ret[i+1] == True and ret[i] not in active_modes:
+				active_modes.append(ret[i])
+			elif ret[i+1] == False and ret[i] in active_modes:
+				active_modes.remove(ret[i])
+				
+		printer("Active Modes: {0}".format(active_modes))
+
+	else:
+		printer("put_change: Arguments: [FAIL]",level=LL_ERROR)
+		
+	if mode_controller:
+		return True
+	else:
+		return None
+		
 @messaging.handle_mq('/mode/unset','PUT')
 def mq_mode_set(path=None, cmd=None, args=None, data=None):
 	""" Unset mode """
 	print "A MODE WAS UNSET"
-	return True
+	if mode_controller:
+		return True
+	else:
+		return None
 
 @messaging.handle_mq('/mode/*','GET')
 def mq_mode_test(path=None, cmd=None, args=None, data=None):
@@ -369,11 +396,15 @@ def setup():
 	printer("ZeroMQ: Initializing")	
 	messaging.set_address('localhost',DEFAULT_PORT_PUB,DEFAULT_PORT_SUB)
 	
-	printer("ZeroMQ: Creating Subscriber: {0}".format(DEFAULT_PORT_SUB))
-	messaging.create_subscriber(SUBSCRIPTIONS)
-
 	printer("ZeroMQ: Creating Publisher: {0}".format(DEFAULT_PORT_PUB))
 	messaging.create_publisher()
+
+	printer("ZeroMQ: Creating Subscriber: {0}".format(DEFAULT_PORT_SUB))
+	messaging.create_subscriber(SUBSCRIPTIONS)
+	
+	printer('ZeroMQ subscriptions:')
+	for topic in messaging.subscriptions():
+		printer("> {0}".format(topic))
 
 	#
 	# GPIO
@@ -388,9 +419,6 @@ def setup():
 	# if we're responisble for modes, then send out a MQ message ? *(or have clients pull?)
 	
 	printer('Initialized [OK]')
-	printer('MQ subscriptions:')
-	for topic in messaging.subscriptions():
-		printer("> {0}".format(topic))
 	
 			
 def main():		

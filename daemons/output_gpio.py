@@ -251,17 +251,7 @@ def data_udisks_added(path=None, cmd=None, args=None, data=None):
 def data_udisks_removed(path=None, cmd=None, args=None, data=None):
 	print "REMOVED"
 	pass
-	
-def idle_message_receiver():
-	parsed_msg = messaging.poll(timeout=1000, parse=True)	#Timeout: None=Blocking
-	if parsed_msg:
-		ret = messaging.execute_mq(parsed_msg['path'], parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
-			
-		if parsed_msg['resp_path'] and ret is not False:
-			messaging.publish_command(parsed_msg['resp_path'],'DATA',ret)
-		
-	return True # Important! Returning true re-enables idle routine.
-	
+
 #********************************************************************************
 # Parse command line arguments
 #
@@ -328,6 +318,9 @@ def setup():
 	printer("ZeroMQ: Creating Subscriber: {0}".format(cfg_zmq['port_subscriber']))
 	messaging.create_subscriber(SUBSCRIPTIONS)
 
+	printer('ZeroMQ subscriptions:')
+	for topic in messaging.subscriptions():
+		printer("> {0}".format(topic))
 	
 	#
 	# GPIO
@@ -340,7 +333,7 @@ def setup():
 def main():		
 
 	while True:
-		idle_message_receiver()
+		messaging.poll_and_execute(1000) # do this less often TODO! not critical, but takes up precious response time
 		sleep(SLEEP_INTERVAL)
 
 
