@@ -45,6 +45,7 @@
 			, "init.d":"S40source"
 			, "pid_file":"source.pid"
 			, "port": 5555
+			, "source_dir":"/mnt/PIHU_APP/defender-headunit/sources/"
 		},
 		{
 			  "name":"MPD events listener"
