@@ -47,6 +47,7 @@
 		},
 		{
 			  "name":"MPD events listener"
+			, "script":"mpd_listener.py"
 			, "init.d":"S53mpdevent"
 			, "pid_file":"mpd_listener.pid"
 		} ,
@@ -74,6 +75,7 @@
 		},
 		{
 			  "name":"Control: ADS1x15"
+			, "script":"control_ads1x15.py"
 			, "init.d":"S71ads1x15"
 			, "pid_file":"ctrl_ads1x15.pid"
 		},

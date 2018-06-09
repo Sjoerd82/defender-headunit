@@ -327,7 +327,6 @@ def setup():
 		logger = log_create_syslog_loghandler(logger, args.loglevel, LOG_TAG, address='/dev/log') 	# output to syslog
 	else:
 		logger = log_create_console_loghandler(logger, args.loglevel, LOG_TAG) 						# output to console
-	
 
 	#
 	# Configuration
@@ -376,11 +375,6 @@ def setup():
 	
 	printer("ZeroMQ: Creating Publisher: {0}".format(DEFAULT_PORT_PUB))
 	messaging.create_publisher()
-
-	printer('ZeroMQ subscriptions:')
-	for topic in messaging.subscriptions():
-		printer("> {0}".format(topic))
-
 
 	#
 	# MPD
