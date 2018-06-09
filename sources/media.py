@@ -19,9 +19,12 @@ import os
 import subprocess
 
 from yapsy.IPlugin import IPlugin
-from modules.hu_utils import *
-from modules.hu_settings import getSourceConfig
-from modules.source_plugin_mpd import MpdSourcePlugin
+
+import sys
+sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
+from hu_utils import *
+from hu_settings import getSourceConfig
+from source_plugin_mpd import MpdSourcePlugin
 
 class MySource(MpdSourcePlugin,IPlugin):
 

@@ -442,7 +442,6 @@ class MqPubSubFwdController(object):
 
 	# EXPERIMENTAL
 	def poll_and_execute(self,timeout):
-		print "DEBUG!!"
 		parsed_msg = self.poll(timeout=500, parse=True)	#Timeout: None=Blocking
 		if parsed_msg:
 			ret = self.execute_mq(parsed_msg['path'], parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )

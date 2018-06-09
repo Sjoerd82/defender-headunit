@@ -9,7 +9,9 @@
 
 DEFAULT_CONFIG_FILE = '/etc/configuration.json'
 
-from modules.hu_utils import *
+import sys
+sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
+from hu_utils import *
 
 class SourcePlugin(object):
 

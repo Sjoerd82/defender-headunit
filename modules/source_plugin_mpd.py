@@ -7,9 +7,12 @@
 #
 
 import os
-from modules.hu_utils import *
-from modules.source_plugin import SourcePlugin
-from modules.hu_mpd import MpdController
+
+import sys
+sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
+from hu_utils import *
+from source_plugin import SourcePlugin
+from hu_mpd import MpdController
 
 class MpdSourcePlugin(SourcePlugin):
 
