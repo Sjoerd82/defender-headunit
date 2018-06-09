@@ -38,7 +38,7 @@ def parse_message(message):
 		'resp_path': resp_path
 	}
 	"""
-	printer(colorize("{0}: {1}".format(__name__,'parse_message(message):'),'dark_gray'),level=LL_DEBUG)
+	#printer(colorize("{0}: {1}".format(__name__,'parse_message(message):'),'dark_gray'),level=LL_DEBUG)
 	
 	path = []
 	params = []

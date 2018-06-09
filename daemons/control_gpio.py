@@ -208,6 +208,7 @@ def testje_get_active(path=None, cmd=None, args=None, data=None):
 @messaging.handle_mq('/mode/set','PUT')
 def mq_mode_set(path=None, cmd=None, args=None, data=None):
 	""" Set mode """
+	printer("MQ: {0} {1}, setting active mode(s): {2} ".format(cmd,path,args))
 	try:
 		modes.set_active_modes(args)	# args is a list of modes
 		return True
@@ -238,7 +239,7 @@ def idle_message_receiver():
 		#printer("Received message: {0}".format(parsed_msg))	#TODO: debug
 		ret = messaging.execute_mq(parsed_msg['path'], parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
 			
-		if parsed_msg['resp_path'] and ret is not False:
+		if parsed_msg['resp_path'] and ret is not None:
 			#print "DEBUG: Resp Path present.. returning message.. data={0}".format(ret)
 			messaging.publish_command(parsed_msg['resp_path'],'DATA',ret)
 		
