@@ -227,7 +227,7 @@ def mq_mode_test(path=None, cmd=None, args=None, data=None):
 	print "TEST MODE! GET"
 	return None
 
-@messaging.handle_mq('/mode/*')
+@messaging.handle_mq('/mode/*','PUT')
 def mq_mode_test(path=None, cmd=None, args=None, data=None):
 	""" Unset mode """
 	print "TEST MODE! Anything but Get"
