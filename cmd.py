@@ -288,7 +288,8 @@ app_commands =	[
 		'params': None,
 		'description': 'TEST PUT',
 		'command': 'PUT',
-		'path': '/mode/test'
+		'path': '/mode/test',
+		'wait_for_reply': False
 	},
 	{	'name': 'mode-test2',
 		'params': None,
@@ -689,7 +690,11 @@ def main():
 			mq_args = ",".join(args.command_args)
 			
 			#if mq_cmd == 'GET':
-			mq_rpath = RETURN_PATH
+			#mq_rpath = RETURN_PATH
+			if 'wait_for_reply' in app_commands[ix] and app_commands[ix]['wait_for_reply'] = False:
+				pass
+			else:
+				mq_rpath = RETURN_PATH
 			
 		if mq_args == "{}":
 			mq_args = None

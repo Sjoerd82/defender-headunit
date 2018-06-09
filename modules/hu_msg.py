@@ -646,4 +646,4 @@ class MqPubSubFwdController(object):
 						if ret is not None:
 							return struct_data(ret)
 		
-		return False
+		return None
