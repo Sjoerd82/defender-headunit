@@ -197,6 +197,7 @@ def load_cfg_gpio():
 def testje_get_list(path=None, cmd=None, args=None, data=None):
 	""" Return all modes. No parameters """	
 	printer("MQ: {0} {1}, returning registered modes: {2} ".format(cmd,path,modes))
+	print type(path)
 	return modes
 
 @messaging.handle_mq('/mode/active')

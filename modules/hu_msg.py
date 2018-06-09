@@ -546,6 +546,9 @@ class MqPubSubFwdController(object):
 		#return path, command, params, resp_path
 		
 		# return as a dict:
+		print "dbug"
+		print path
+		print type(path)
 		parsed_message = {}
 		parsed_message['path'] = path
 		parsed_message['cmd'] = command
