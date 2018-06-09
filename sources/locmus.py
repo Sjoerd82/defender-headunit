@@ -15,6 +15,7 @@
 
 from yapsy.IPlugin import IPlugin
 
+import sys
 sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
 from hu_settings import getSourceConfig
