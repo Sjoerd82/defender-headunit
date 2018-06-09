@@ -16,12 +16,6 @@ from logging import getLogger	# logger
 sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
 
-# MQ paths
-mq_path_list = []
-mq_disp_keys = []
-mq_path_func = {}	# "CMD/path/path/": function
-
-
 def printer( message, level=LL_INFO, tag="", logger_name=__name__):
 	#logger = logging.getLogger(logger_name)
 	#logger.log(level, message, extra={'tag': tag})
@@ -262,12 +256,9 @@ class MqPubSubFwdController(object):
 		
 		self.VALID_COMMANDS = ['GET','PUT','POST','DEL','DATA', 'INFO']
 		
-		self.mq_path_list = []
-		self.mq_path_func = {}
-		self.mq_disp_keys = []
-		self.mq_path_disp = {}
-		
-		self.topics = []
+		self.mq_path_list = []	# /path/path/*/ list of paths, from decorators, may contain wildcards
+		self.topics = []		# list of MQ subscriptions, generated from above, or configured
+		self.mq_path_func = {}	# "CMD/path/path/": function
 
 		
 	def __send(self, message):
@@ -566,18 +557,26 @@ class MqPubSubFwdController(object):
 	#********************************************************************************
 
 	# EXPERIMENTAL
-	def test_path(self,topic):
+	def test_path(self,full_path):
 	
-		path_start = topic.find('/')
+		if not path.startswith("/"):
+			path = "/"+path
+		#postfix
+		if not path.endswith("*"):
+			path += "*"
+
+		wildpath = re.sub(r'\*',r'.*',full_path)
+	
+		path_start = full_path.find('/')
 		if path_start == -1:
 			return -1 # invalid path
 			
-		path_end = topic.find('*')
+		path_end = full_path.find('*')
 		if path_end == -1:
 			path_end = len(topic)
 		
-		path_stripped = prepostfix(topic[path_start:path_end].lower())
-		print "Stripped: {0} -> {1}".format(topic,path_stripped)
+		path_stripped = prepostfix(full_path[path_start:path_end].lower())
+		print "Stripped: {0} -> {1}".format(full_path,path_stripped)
 
 		if path_stripped not in self.topics: #self.mq_path_list:
 			print "Not Found :)"
@@ -591,16 +590,14 @@ class MqPubSubFwdController(object):
 			Registers the MQ path (nothing more at the moment..)
 		"""
 		def decorator(fn):
-			self.mq_path_list
-			self.mq_path_func
-
 			key = self.__dispatcher_key(mq_path,cmd)
 			self.mq_path_list.append(prepostfix(mq_path).lower())
 			self.mq_path_func[key] = fn
 			
 			# add topic to subscriptions, if not already there
-			if self.test_path(mq_path) is not None:
-				self.topics.append(mq_path)
+			stripped = self.test_path(mq_path)
+			if stripped is not None:
+				self.topics.append(stripped)
 			
 			def decorated(*args,**kwargs):
 				return fn(*args,**kwargs)

@@ -35,8 +35,6 @@ sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
 from hu_msg import MqPubSubFwdController
 from hu_msg import parse_message
-#from hu_msg import handle_mq
-#from hu_msg import mq_disp_keys, mq_path_func
 from hu_msg import special_disp
 from hu_msg import super_disp
 from hu_gpio import GpioController
