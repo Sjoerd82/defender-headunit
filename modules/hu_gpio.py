@@ -460,7 +460,7 @@ class GpioController(object):
 					
 				self.mode_sets[mode_set['id']] = new_mode_set
 				
-			print self.mode_sets
+			printer("Mode sets: {0}".format(self.mode_sets))
 				
 		else:
 			# don't deal with modes at all

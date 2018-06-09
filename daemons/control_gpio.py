@@ -50,7 +50,7 @@ LOGGER_NAME = 'gpio'
 
 DEFAULT_CONFIG_FILE = '/etc/configuration.json'
 DEFAULT_LOG_LEVEL = LL_INFO
-SUBSCRIPTIONS = ['/mode/']
+SUBSCRIPTIONS = []
 DEFAULT_PORT_PUB = 5559
 DEFAULT_PORT_SUB = 5560
 
@@ -72,6 +72,9 @@ cfg_gpio = None		# GPIO setup
 
 # data structures
 modes = Modes()
+
+# other stuff
+respond_to_mq_mode = True		# ToDo
 
 function_map = {}
 function_map['SOURCE_NEXT'] = { 'zmq_path':'/source/next', 'zmq_command':'PUT' }
@@ -190,21 +193,22 @@ def load_cfg_gpio():
 @messaging.handle_mq('/mode/list', cmd='GET')
 def testje_get_list(path=None, cmd=None, args=None, data=None):
 	""" Return all modes. No parameters """	
-	global modes
-	print "Doing /mode/list... {0}".format(modes)
-	#return struct_data(modes)
+	printer("MQ: {0} {1}, returning registered modes: {2} ".format(cmd,path,modes))
 	return modes
 
 @messaging.handle_mq('/mode/active')
 def testje_get_active(path=None, cmd=None, args=None, data=None):
 	""" Return active modes. No parameters """
-	printer("Active Modes: {0}".format(modes.active_modes()))
-	#return struct_data(modes.active_modes())
+	printer("MQ: {0} {1}, returning active mode(s): {2} ".format(cmd,path,modes.active_modes()))
 	return modes.active_modes()
 
 @messaging.handle_mq('/mode/set','PUT')
 def mq_mode_set(path=None, cmd=None, args=None, data=None):
 	""" Set mode """
+	print args
+	print type(args)
+	#modes.set_active_modes()
+	#modes.append()
 	print "A MODE WAS SET"
 	return "A MODE WAS SET"
 
@@ -385,7 +389,7 @@ def setup():
 	printer('Initialized [OK]')
 	printer('MQ subscriptions:')
 	for topic in messaging.subscriptions():
-		printer(" > {0}".format(topic))
+		printer("> {0}".format(topic))
 	
 			
 def main():		

@@ -62,6 +62,10 @@ class ListDataStruct(list):
 
 
 class Modes(ListDataStruct):
+	""" Modes is a list of dictionaries.
+		{ "name": <name>, "state": [bool] }
+		
+	"""
 	
 	def __init__(self, *args, **kwargs):
 		""" Possible arguments:
