@@ -1292,7 +1292,7 @@ def setup():
 	#
 	# "Splash Screen": Display version
 	#
-	printer('{0} version {1}'.format('Source Controller',__version__))
+	#printer('{0} version {1}'.format('Source Controller',__version__))
 
 	#
 	# Initialize Source Controller
@@ -1344,7 +1344,7 @@ def main():
 	# Queue handler
 	# NOTE: Remember, everything executed through the qBlock queue blocks, including qPrio!
 	# IDEALLY, WE'D PUT THIS BACK IN A THREAD, IF THAT WOULD PERFORM... (which for some reason it doesn't!)
-	gobject.idle_add(messaging.poll_and_execute(500))
+	gobject.idle_add(messaging.poll_and_execute,500)
 	queue_actions = Queue(maxsize=40)		# Blocking stuff that needs to run in sequence
 	gobject.idle_add(process_queue)
 
