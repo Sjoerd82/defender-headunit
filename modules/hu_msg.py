@@ -546,9 +546,6 @@ class MqPubSubFwdController(object):
 		#return path, command, params, resp_path
 		
 		# return as a dict:
-		print "dbug"
-		print path
-		print type(path)
 		parsed_message = {}
 		parsed_message['path'] = path
 		parsed_message['cmd'] = command
@@ -627,7 +624,7 @@ class MqPubSubFwdController(object):
 		# path_dispatch may be a string or a list
 		if isinstance(path_dispatch, list):
 			# convert to string
-			path_dispatch = "/".join(path_dispatch)
+			path_dispatch = "/" + "/".join(path_dispatch)
 		
 		key = self.__dispatcher_key(path_dispatch,cmd)
 
