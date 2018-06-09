@@ -41,6 +41,7 @@
 		} ,
 		{
 			  "name":"Source Controller"
+			, "script":"control_source.py"
 			, "init.d":"S40source"
 			, "pid_file":"source.pid"
 			, "port": 5555

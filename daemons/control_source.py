@@ -68,6 +68,7 @@ DEFAULT_PORT_SUB = 5560
 #
 # -------------
 
+# global variables
 logger = None						# logging
 args = None							# command line arguments
 messaging = MqPubSubFwdController()	# mq messaging
@@ -75,11 +76,58 @@ configuration = None				# configuration
 settings = None						# operational settings
 sc_sources = None					# source controller
 
+# configuration
+cfg_main = None		# main
+cfg_daemon = None	# daemon
+cfg_zmq = None		# Zero MQ
+cfg_gpio = None		# GPIO setup
+
 # ********************************************************************************
 # Output wrapper
 #
 def printer( message, level=LL_INFO, continuation=False, tag=LOG_TAG ):
 	logger.log(level, message, extra={'tag': tag})
+
+# ********************************************************************************
+# Load configuration
+#
+def load_cfg_main():
+	""" load main configuration """
+	config = configuration_load(LOGGER_NAME,args.config)
+	return config
+
+def load_cfg_zmq():
+	""" load zeromq configuration """	
+	if not 'zeromq' in cfg_main:
+		printer('Error: Configuration not loaded or missing ZeroMQ, using defaults:')
+		printer('Publisher port: {0}'.format(args.port_publisher))
+		printer('Subscriber port: {0}'.format(args.port_subscriber))
+		#cfg_main["zeromq"] = { "port_publisher": DEFAULT_PORT_PUB, "port_subscriber":DEFAULT_PORT_SUB } }
+		config = { "port_publisher": DEFAULT_PORT_PUB, "port_subscriber":DEFAULT_PORT_SUB }
+		return config
+	else:
+		config = {}
+		# Get portnumbers from either the config, or default value
+		if 'port_publisher' in cfg_main['zeromq']:
+			config['port_publisher'] = cfg_main['zeromq']['port_publisher']
+		else:
+			config['port_publisher'] = DEFAULT_PORT_PUB
+		
+		if 'port_subscriber' in cfg_main['zeromq']:
+			config['port_subscriber'] = cfg_main['zeromq']['port_subscriber']		
+		else:
+			config['port_subscriber'] = DEFAULT_PORT_SUB
+			
+		return config
+
+def load_cfg_daemon():
+	""" load daemon configuration """
+	if 'daemons' not in cfg_main:
+		return
+	else:
+		for daemon in cfg_main['daemons']:
+			if 'script' in daemon and daemon['script'] == os.path.basename(__file__):
+				return daemon
 
 # NOT USED AT THE MOMENT...
 def process_queue():
@@ -894,20 +942,6 @@ def data_udisks_removed(path=None, cmd=None, args=None, data=None):
 	print "REMOVED"
 	pass
 
-	
-# ********************************************************************************
-# On Idle
-#
-def idle_message_receiver():
-	parsed_msg = messaging.poll(timeout=500, parse=True)	#Timeout: None=Blocking
-	if parsed_msg:
-		ret = messaging.execute_mq(parsed_msg['path'], parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
-			
-		if parsed_msg['resp_path'] and ret is not False:
-			messaging.publish_command(parsed_msg['resp_path'],'DATA',ret)
-		
-	return True # Important! Returning true re-enables idle routine.
-
 # ********************************************************************************
 # Save resume file
 #
@@ -1189,10 +1223,52 @@ def setup():
 		logger = log_create_console_loghandler(logger, args.loglevel, LOG_TAG) 						# output to console
 
 	#
-	# Load main configuration
+	# Configuration
+	#
+	global cfg_main
+	global cfg_zmq
+	global cfg_daemon
+	global cfg_gpio
+
+	# main
+	cfg_main = load_cfg_main()
+	if cfg_main is None:
+		printer("Main configuration could not be loaded.", level=LL_CRITICAL)
+		exit(1)
+	
+	# zeromq
+	if not args.port_publisher and not args.port_subscriber:
+		cfg_zmq = load_cfg_zmq()
+	else:
+		if args.port_publisher and args.port_subscriber:
+			pass
+		else:
+			load_cfg_zmq()
+	
+		# Pub/Sub port override
+		if args.port_publisher:
+			configuration['zeromq']['port_publisher'] = args.port_publisher
+		if args.port_subscriber:
+			configuration['zeromq']['port_subscriber'] = args.port_subscriber
+
+	if cfg_zmq is None:
+		printer("Error loading Zero MQ configuration.", level=LL_CRITICAL)
+		exit(1)
+			
+	# daemon
+	cfg_daemon = load_cfg_daemon()
+	if cfg_daemon is None:
+		printer("Daemon configuration could not be loaded.", level=LL_CRITICAL)
+		exit(1)
+		
+	
+	#
+	# Load main configuration	#DEPRECATED
 	#
 	global configuration
 	configuration = load_configuration()
+	
+	
 	
 	#
 	# ZMQ
@@ -1268,7 +1344,7 @@ def main():
 	# Queue handler
 	# NOTE: Remember, everything executed through the qBlock queue blocks, including qPrio!
 	# IDEALLY, WE'D PUT THIS BACK IN A THREAD, IF THAT WOULD PERFORM... (which for some reason it doesn't!)
-	gobject.idle_add(idle_message_receiver)
+	gobject.idle_add(messaging.poll_and_execute(500))
 	queue_actions = Queue(maxsize=40)		# Blocking stuff that needs to run in sequence
 	gobject.idle_add(process_queue)
 
