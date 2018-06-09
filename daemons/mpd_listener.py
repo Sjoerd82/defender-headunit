@@ -43,10 +43,16 @@ LOGGER_NAME = 'mpdlst'
 DEFAULT_PORT_SUB = 5560
 DEFAULT_PORT_PUB = 5559
 
+# global variables
 logger = None
 args = None
 messaging = MqPubSubFwdController()
 oMpdClient = None
+
+# configuration
+cfg_main = None		# main
+cfg_daemon = None	# daemon
+cfg_zmq = None		# Zero MQ
 
 MAX_RESILIENCE_WAIT = 20	# max wait 20sec. before retrying connection
 connected_mpd = False
@@ -64,9 +70,52 @@ track = dict_track()
 def printer( message, level=LL_INFO, continuation=False, tag=LOG_TAG ):
 	logger.log(level, message, extra={'tag': tag})
 
+
 # ********************************************************************************
 # Load configuration
 #
+def load_cfg_main():
+	""" load main configuration """
+	config = configuration_load(LOGGER_NAME,args.config)
+	return config
+
+def load_cfg_zmq():
+	""" load zeromq configuration """	
+	if not 'zeromq' in cfg_main:
+		printer('Error: Configuration not loaded or missing ZeroMQ, using defaults:')
+		printer('Publisher port: {0}'.format(args.port_publisher))
+		printer('Subscriber port: {0}'.format(args.port_subscriber))
+		#cfg_main["zeromq"] = { "port_publisher": DEFAULT_PORT_PUB, "port_subscriber":DEFAULT_PORT_SUB } }
+		config = { "port_publisher": DEFAULT_PORT_PUB, "port_subscriber":DEFAULT_PORT_SUB }
+		return config
+	else:
+		config = {}
+		# Get portnumbers from either the config, or default value
+		if 'port_publisher' in cfg_main['zeromq']:
+			config['port_publisher'] = cfg_main['zeromq']['port_publisher']
+		else:
+			config['port_publisher'] = DEFAULT_PORT_PUB
+		
+		if 'port_subscriber' in cfg_main['zeromq']:
+			config['port_subscriber'] = cfg_main['zeromq']['port_subscriber']		
+		else:
+			config['port_subscriber'] = DEFAULT_PORT_SUB
+			
+		return config
+
+def load_cfg_daemon():
+	""" load daemon configuration """
+	if 'daemons' not in cfg_main:
+		return
+	else:
+		for daemon in cfg_main['daemons']:
+			if 'script' in daemon and daemon['script'] == os.path.basename(__file__):
+				return daemon
+	
+# ********************************************************************************
+# Load configuration
+#
+"""
 def load_zeromq_configuration():
 	
 	configuration = configuration_load(LOGGER_NAME,args.config)
@@ -87,6 +136,7 @@ def load_zeromq_configuration():
 			configuration['zeromq']['port_subscriber'] = DEFAULT_PORT_SUB
 			
 	return configuration
+"""
 
 def mpd_connect():
 	""" Blocking """
@@ -278,32 +328,59 @@ def setup():
 	else:
 		logger = log_create_console_loghandler(logger, args.loglevel, LOG_TAG) 						# output to console
 	
+
 	#
-	# Load configuration
+	# Configuration
 	#
-	global configuration
+	global cfg_main
+	global cfg_zmq
+	global cfg_daemon
+
+	# main
+	cfg_main = load_cfg_main()
+	if cfg_main is None:
+		printer("Main configuration could not be loaded.", level=LL_CRITICAL)
+		exit(1)
+	
+	# zeromq
 	if not args.port_publisher and not args.port_subscriber:
-		configuration = load_zeromq_configuration()
+		cfg_zmq = load_cfg_zmq()
 	else:
 		if args.port_publisher and args.port_subscriber:
 			pass
 		else:
-			configuration = load_zeromq_configuration()
+			load_cfg_zmq()
 	
 		# Pub/Sub port override
 		if args.port_publisher:
 			configuration['zeromq']['port_publisher'] = args.port_publisher
 		if args.port_subscriber:
 			configuration['zeromq']['port_subscriber'] = args.port_subscriber
+
+	if cfg_zmq is None:
+		printer("Error loading Zero MQ configuration.", level=LL_CRITICAL)
+		exit(1)
+			
+	# daemon
+	cfg_daemon = load_cfg_daemon()
+	if cfg_daemon is None:
+		printer("Daemon configuration could not be loaded.", level=LL_CRITICAL)
+		exit(1)
 			
 	#
 	# ZMQ
 	#
-	printer("ZeroMQ: Initializing")
-	messaging.set_address('localhost',cfg_zmq['port_publisher'],cfg_zmq['port_subscriber'])
+	global messaging
+	printer("ZeroMQ: Initializing")	
+	messaging.set_address('localhost',DEFAULT_PORT_PUB,DEFAULT_PORT_SUB)
 	
-	printer("ZeroMQ: Creating Publisher: {0}".format(cfg_zmq['port_publisher']))
+	printer("ZeroMQ: Creating Publisher: {0}".format(DEFAULT_PORT_PUB))
 	messaging.create_publisher()
+
+	printer('ZeroMQ subscriptions:')
+	for topic in messaging.subscriptions():
+		printer("> {0}".format(topic))
+
 
 	#
 	# MPD
