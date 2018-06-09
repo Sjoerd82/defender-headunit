@@ -295,7 +295,8 @@ app_commands =	[
 		'params': None,
 		'description': 'TEST GET',
 		'command': 'GET',
-		'path': '/mode/test'
+		'path': '/mode/test',
+		'wait_for_reply': False
 	},
 	{	'name': 'system-reboot',
 		'params': [ {'name':'timer', 'required':False, 'help':'Time in seconds to shutdown. Default: 0'} ],
@@ -689,12 +690,12 @@ def main():
 			""" PLAIN """
 			mq_args = ",".join(args.command_args)
 			
-			#if mq_cmd == 'GET':
-			#mq_rpath = RETURN_PATH
-			if 'wait_for_reply' in app_commands[ix] and app_commands[ix]['wait_for_reply'] == False:
-				pass
-			else:
-				mq_rpath = RETURN_PATH
+		#if mq_cmd == 'GET':
+		#mq_rpath = RETURN_PATH
+		if 'wait_for_reply' in app_commands[ix] and app_commands[ix]['wait_for_reply'] == False:
+			mq_rpath = None
+		else:
+			mq_rpath = RETURN_PATH
 			
 		if mq_args == "{}":
 			mq_args = None
@@ -708,8 +709,11 @@ def main():
 	# todo: check, is it ok to include an empty mq_args?
 	if mq_rpath is not None:
 		ret = messaging.publish_command(mq_path,mq_cmd,mq_args,wait_for_reply=True,response_path=RETURN_PATH)
+		print "1"
 	else:
-		ret = messaging.publish_command(mq_path,mq_cmd,mq_args)
+		ret = messaging.publish_command(mq_path,mq_cmd,mq_args,wait_for_reply=False)
+		print "2"
+		
 	print ret
 	if ret == True:
 		print "Response: [OK]"
