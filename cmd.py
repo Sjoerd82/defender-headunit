@@ -691,7 +691,7 @@ def main():
 			
 			#if mq_cmd == 'GET':
 			#mq_rpath = RETURN_PATH
-			if 'wait_for_reply' in app_commands[ix] and app_commands[ix]['wait_for_reply'] = False:
+			if 'wait_for_reply' in app_commands[ix] and app_commands[ix]['wait_for_reply'] == False:
 				pass
 			else:
 				mq_rpath = RETURN_PATH
