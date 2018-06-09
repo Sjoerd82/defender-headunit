@@ -656,4 +656,3 @@ class MqPubSubFwdController(object):
 		
 		return None
 		
-	def 
