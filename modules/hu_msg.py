@@ -624,9 +624,7 @@ class MqPubSubFwdController(object):
 		# else, try wildcards
 		if key in self.mq_path_func:
 			ret = self.mq_path_func[key](path=path_dispatch, cmd=cmd, args=args, data=data)
-			if ret is False:
-				return False
-			else:
+			if ret is not None:
 				return struct_data(ret)
 
 		else:	
@@ -642,9 +640,10 @@ class MqPubSubFwdController(object):
 						key =  res.group()
 						# we could execute the function, but let's just return it...
 						ret = self.mq_path_func[full_path](path=path_dispatch, cmd=cmd, args=args, data=data)
-						if ret is False:
-							return False
-						else:
+						#if ret is False:
+						#	return False
+						#else:
+						if ret is not None:
 							return struct_data(ret)
 		
 		return False

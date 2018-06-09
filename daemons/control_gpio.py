@@ -191,6 +191,7 @@ def load_cfg_gpio():
 #
 # args = list of arguments
 # return False to return a 500 error thingy
+# return None to not return anything
 
 @messaging.handle_mq('/mode/list', cmd='GET')
 def testje_get_list(path=None, cmd=None, args=None, data=None):
@@ -209,6 +210,7 @@ def mq_mode_set(path=None, cmd=None, args=None, data=None):
 	""" Set mode """
 	try:
 		modes.set_active_modes(args)	# args is a list of modes
+		return True
 	except:
 		return False
 
