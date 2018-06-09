@@ -1285,11 +1285,6 @@ def setup():
 
 
 	#
-	# Load PulseAudio SFX
-	#
-	#pa_sfx_load( configuration['directories']['sfx'] )
-
-	#
 	# "Splash Screen": Display version
 	#
 	#printer('{0} version {1}'.format('Source Controller',__version__))
@@ -1300,12 +1295,17 @@ def setup():
 	printer('Loading Source Plugins...')
 	global sc_sources
 	sc_sources = SourceController(logger)
-	sc_sources.load_source_plugins( os.path.join(os.path.dirname(os.path.abspath(__file__)),'sources') )
+	
+	dir_sources = os.path.join(os.path.dirname(os.path.abspath(__file__)),'sources')
+	print dir_sources
+	
+	dir_sources = cfg_daemon['source_dir']
+	print dir_sources
+	
+	sc_sources.load_source_plugins( "/mnt/PIHU_APP/defender-headunit/sources/" )
 		
 	#
 	# end of initialization
-	#
-	#********************************************************************************
 	printer('Initialized [OK]')		
 
 #********************************************************************************
