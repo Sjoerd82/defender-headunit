@@ -430,7 +430,7 @@ def idle_message_receiver():
 	if parsed_msg:
 		ret = messaging.execute_mq(parsed_msg['path'], parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
 			
-		if parsed_msg['resp_path'] and ret is not False:
+		if parsed_msg['resp_path'] and ret is not None:
 			messaging.publish_command(parsed_msg['resp_path'],'DATA',ret)
 		
 	return True # Important! Returning true re-enables idle routine.
