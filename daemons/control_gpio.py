@@ -210,7 +210,7 @@ def mq_mode_set(path=None, cmd=None, args=None, data=None):
 	""" Set mode """
 	printer("MQ: {0} {1}, setting active mode(s): {2} ".format(cmd,path,args))
 	try:
-		modes.set_active_modes(args)	# args is a list of modes
+		modes.set_active_modes(args)
 		return True
 	except:
 		return False
@@ -236,11 +236,8 @@ def mq_mode_test(path=None, cmd=None, args=None, data=None):
 def idle_message_receiver():
 	parsed_msg = messaging.poll(timeout=500, parse=True)	#Timeout: None=Blocking
 	if parsed_msg:
-		#printer("Received message: {0}".format(parsed_msg))	#TODO: debug
 		ret = messaging.execute_mq(parsed_msg['path'], parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
-		print ret
 		if parsed_msg['resp_path'] and ret is not None:
-			#print "DEBUG: Resp Path present.. returning message.. data={0}".format(ret)
 			messaging.publish_command(parsed_msg['resp_path'],'DATA',ret)
 		
 	return True # Important! Returning true re-enables idle routine.

@@ -709,16 +709,13 @@ def main():
 	# todo: check, is it ok to include an empty mq_args?
 	if mq_rpath is not None:
 		ret = messaging.publish_command(mq_path,mq_cmd,mq_args,wait_for_reply=True,response_path=RETURN_PATH)
-		print "1"
 	else:
 		ret = messaging.publish_command(mq_path,mq_cmd,mq_args,wait_for_reply=False)
-		print "2"
 		
-	print ret
 	if ret == True:
-		print "Response: [OK]"
+		print "Send: [OK]"
 	elif ret == False or ret is None:
-		print "Response: [FAIL]"
+		print "Send: [FAIL]"
 	else:
 		if type(ret) == dict:
 			if 'retval' in ret: print "Return code: {0}".format(ret['retval'])

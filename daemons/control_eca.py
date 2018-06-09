@@ -424,7 +424,7 @@ def handle_queue(code,count):
 
 # ********************************************************************************
 # MQ handler
-#	
+#
 def idle_message_receiver():
 	parsed_msg = messaging.poll(timeout=500, parse=True)	#Timeout: None=Blocking
 	if parsed_msg:
@@ -653,6 +653,10 @@ def mq_mode_set_data(path=None, cmd=None, args=None, data=None):
 # ********************************************************************************
 # MQ: /mode
 #
+# args = list of arguments
+# return False to return a 500 error thingy
+# return None to not return anything
+
 @messaging.handle_mq('/mode/change', cmd='PUT')
 def mq_mode_change_put(path=None, cmd=None, args=None, data=None):
 	
@@ -674,17 +678,17 @@ def mq_mode_change_put(path=None, cmd=None, args=None, data=None):
 
 	else:
 		printer("put_change: Arguments: [FAIL]",level=LL_ERROR)
-	return False	# never reply to this message
+	return None	# never reply to this message
 	
 @messaging.handle_mq('/mode/set', cmd='PUT')
 def mq_mode_set(path=None, cmd=None, args=None, data=None):
 	print "A MODE WAS SET"
-	return False	# never reply to this message
+	return None	# never reply to this message
 
 @messaging.handle_mq('/mode/unset', cmd='PUT')
 def mq_unset_put(path=None, cmd=None, args=None, data=None):
 	print "A MODE WAS UNSET"
-	return False	# never reply to this message
+	return None	# never reply to this message
 
 	
 #********************************************************************************
