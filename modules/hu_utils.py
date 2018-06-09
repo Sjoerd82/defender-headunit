@@ -159,7 +159,7 @@ def struct_data(payload,code=None):
 	If payload is None or False, a 500 code will be created, and no payload.
 	"""
 
-	#print "DEBUG: ret = {0}".format(payload)
+	print "DEBUG: ret = {0}, code = {1}".format(payload,code)
 
 	data = {}
 	
