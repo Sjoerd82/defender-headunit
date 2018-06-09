@@ -189,6 +189,8 @@ def load_cfg_gpio():
 # ********************************************************************************
 # MQ functions
 #
+# args = list of arguments
+# return False to return a 500 error thingy
 
 @messaging.handle_mq('/mode/list', cmd='GET')
 def testje_get_list(path=None, cmd=None, args=None, data=None):
@@ -205,30 +207,30 @@ def testje_get_active(path=None, cmd=None, args=None, data=None):
 @messaging.handle_mq('/mode/set','PUT')
 def mq_mode_set(path=None, cmd=None, args=None, data=None):
 	""" Set mode """
-	print args
-	print type(args)
-	#modes.set_active_modes()
-	#modes.append()
-	print "A MODE WAS SET"
-	return "A MODE WAS SET"
+	try:
+		modes.set_active_modes(args)	# args is a list of modes
+	except:
+		return False
 
 @messaging.handle_mq('/mode/unset','PUT')
 def mq_mode_set(path=None, cmd=None, args=None, data=None):
 	""" Unset mode """
 	print "A MODE WAS UNSET"
-	return "A MODE WAS UNSET"
+	return True
 
 @messaging.handle_mq('/mode/*','GET')
 def mq_mode_test(path=None, cmd=None, args=None, data=None):
 	""" Unset mode """
 	print "TEST MODE! GET"
 	return "TEST MODE! GET"
+	return None
 
 @messaging.handle_mq('/mode/*')
 def mq_mode_test(path=None, cmd=None, args=None, data=None):
 	""" Unset mode """
 	print "TEST MODE! Anything but Get"
 	return "TEST MODE! Anything but Get"
+	return False
 
 def idle_message_receiver():
 	parsed_msg = messaging.poll(timeout=500, parse=True)	#Timeout: None=Blocking

@@ -576,10 +576,10 @@ class MqPubSubFwdController(object):
 			path_end = len(topic)
 		
 		path_stripped = prepostfix(full_path[path_start:path_end].lower())
-		print "Stripped: {0} -> {1}".format(full_path,path_stripped)
+		#print "Stripped: {0} -> {1}".format(full_path,path_stripped)
 
 		if path_stripped not in self.topics: #self.mq_path_list:
-			print "Not Found :)"
+			#print "Not Found :)"
 			return path_stripped
 		else:
 			return None
