@@ -428,7 +428,7 @@ def default_parser(description,banner=None):
 # ********************************************************************************
 # Load Configurations
 #
-def load_cfg(config, configs, zmq_port_pub, zmq_port_sub, script):
+def load_cfg(config, configs, zmq_port_pub, zmq_port_sub, daemon_script=None, logger_name=None):
 
 
 	cfg_main = None
@@ -436,11 +436,11 @@ def load_cfg(config, configs, zmq_port_pub, zmq_port_sub, script):
 	cfg_daemon = None
 	cfg_gpio = None
 
-	printer("Hello from load_cfg")
+	printer("Hello from load_cfg",logger_name=logger_name)
 	
 	# main
 	LOGGER_NAME = 'gpio'	# TODO
-	cfg_main = configuration_load(LOGGER_NAME,config)
+	cfg_main = configuration_load(logger_name,config)
 
 	if cfg_main is None:
 		return cfg_main, cfg_zmq, cfg_daemon, cfg_gpio
@@ -472,16 +472,12 @@ def load_cfg(config, configs, zmq_port_pub, zmq_port_sub, script):
 		cfg_zmq['port_subscriber'] = args.port_subscriber
 			
 	# daemon
-	if 'daemons' in cfg_main:
+	if 'daemons' in cfg_main and daemon_script is not None:
 		for daemon in cfg_main['daemons']:
-			if 'script' in daemon and daemon['script'] == script: #os.path.basename(__file__):
+			if 'script' in daemon and daemon['script'] == daemon_script: #os.path.basename(__file__):
 				cfg_daemon = daemon
 				break #only one
-				
-	print "debug daemon config"
-	print os.path.basename(__file__)
-	print cfg_daemon
-	
+		
 	# gpio
 	if cfg_daemon is not None:
 		if 'directories' not in cfg_main or 'daemon-config' not in cfg_main['directories'] or 'config' not in cfg_daemon:
@@ -496,7 +492,7 @@ def load_cfg(config, configs, zmq_port_pub, zmq_port_sub, script):
 	
 		# load gpio configuration
 		if os.path.exists(gpio_config_file):
-			cfg_gpio = configuration_load(LOGGER_NAME,gpio_config_file)
+			cfg_gpio = configuration_load(logger_name,gpio_config_file)
 		else:
 			print "ERROR: not found: {0}".format(gpio_config_file)
 
