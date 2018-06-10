@@ -155,7 +155,7 @@ class GpioController(object):
 	def __update_active_modes(self):
 		self.mode_sets['active_modes'] = []	# required?
 		for mode_set in self.mode_sets:
-			self.mode_set['active_modes'].extend( mode_set['mode_list'].active_modes() )
+			self.mode_sets['active_modes'].extend( mode_set['mode_list'].active_modes() )
 	
 	def handle_mode(self,pin,function_ix):
 		""" If function has a mode_cycle attribute, then handle that.
