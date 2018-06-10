@@ -85,7 +85,7 @@ class GpioController(object):
 			print mode_set
 			if mode_set_id != 'active_modes':
 				#master_modes_list.extend(mode_set['mode_list'])
-				master_modes_list.extend( ['A','B'] )
+				print mode_set['mode_list']
 			
 		return copy.deepcopy(master_modes_list)		# list of dicts, requires deepcopy() instead of copy()
 	
