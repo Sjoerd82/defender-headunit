@@ -139,10 +139,11 @@ class GpioController(object):
 		"""
 		
 	def cb_mode_reset(self,mode_set_id):
-		self.mode_sets[mode_set_id]['mode_list'].set_active_modes(['volume'])
 		
-		self.__printer('[MODE] Reset; TODO!!! hardcoded volume!!! {0}'.format(self.mode_sets[mode_set_id]))
-		print self.mode_sets['base_mode']
+		self.__printer('[MODE] Reset to {0}'.format(self.mode_sets[mode_set_id]['base_mode']))
+		print list(self.mode_sets[mode_set_id]['base_mode'])
+		self.mode_sets[mode_set_id]['mode_list'].set_active_modes(list(self.mode_sets[mode_set_id]['base_mode']))
+
 		
 		master_modes_list = Modes()
 		for mode_set_id,mode_set in self.mode_sets.iteritems():
@@ -467,7 +468,7 @@ class GpioController(object):
 					new_mode_set['base_mode'] = mode_set['mode_list'][0]
 					
 				self.__printer("> {0}; resets after {1} seconds".format(new_mode_set['id'],new_mode_set['reset'])) # LL_DEBUG TODO
-				for mode in mode_set['mode_list']:
+				for i, mode in enumerate(mode_set['mode_list']):
 					new_mode = {}
 					new_mode['name'] = mode
 					if mode == mode_set['base_mode']:
@@ -479,9 +480,9 @@ class GpioController(object):
 					# debug feedback
 					dbg_base = ""
 					dbg_state = ""
-					if new_mode['name'] == new_mode_set['base_mode']: dbg_base = "(base) "
+					if new_mode['name'] == new_mode_set['base_mode']: dbg_base = "(base)"
 					if new_mode['state'] : dbg_state = "(active) "
-					self.__printer("  - {0} {1}{2}".format(new_mode['name'],dbg_base,dbg_state)) # LL_DEBUG TODO
+					self.__printer("  {0} {1} {2}{3}".format(i,new_mode['name'],dbg_base,dbg_state)) # LL_DEBUG TODO
 					
 				self.mode_sets[mode_set['id']] = new_mode_set
 				
