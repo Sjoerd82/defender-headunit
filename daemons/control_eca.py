@@ -62,7 +62,7 @@ chainsetup_filename = None
 
 logger = None
 args = None
-messaging = MqPubSubFwdController()
+messaging = MqPubSubFwdController(origin=LOGGER_NAME)
 gpio = None
 eca = None
 
@@ -851,7 +851,7 @@ def setup():
 	global gpio
 	global active_modes
 	printer("GPIO: Initializing")
-	gpio = GpioController(cfg_gpio,cb_gpio_function)
+	gpio = GpioController(cfg_gpio,cb_gpio_function,logger=logger)
 	modes = gpio.get_modes()
 	active_modes = modes.active_modes()	# None
 	print "Active modes: {0}".format(active_modes)
@@ -859,6 +859,7 @@ def setup():
 	
 	print "EXPERIMENTAL, requesting active modes.."
 	messaging.publish_command('/mode/active','GET',response_path='/ecasound/mode/active')
+	# TODO, keep asking, if no answer received -- resilience
 	
 	printer('Initialized [OK]')
 

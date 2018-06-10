@@ -59,10 +59,9 @@ class MqPubSubFwdController(object):
 
 		# Origin ## ? Isn't there a build-in variable to know the creating script name?
 		self.origin = origin
-		print(__name__)		
-		print(__file__)
-		#print(__loader__)
-		print(__package__)
+		#print(__name__)		#nope
+		#print(__file__)		#nope
+		#print(__package__)		#nope
 		
 		# Poller
 		self.poller = zmq.Poller()
