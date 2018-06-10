@@ -65,6 +65,8 @@ class MySource(MpdSourcePlugin,IPlugin):
 					self.check_availability()
 			else:
 				print "DEBUG: event implemented, but not this path ({0})".format(event_path)
+				print type(event_path)
+				x path is probably a string..
 		else:
 			print "DEBUG: event not implemented"
 	
