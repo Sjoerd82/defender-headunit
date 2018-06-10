@@ -79,16 +79,13 @@ class GpioController(object):
 	
 	def get_modes(self):
 		""" Returns Mode-structure containing all modes and states of all sets. """
-		if self.mode_sets is not None:
-			master_modes_list = Modes()
-			for mode_set_id,mode_set in self.mode_sets.iteritems():
-				#print mode_set_id
-				#print mode_set
-				if mode_set_id != 'active_modes':
-					master_modes_list.extend(mode_set['mode_list'])
-					#print mode_set['mode_list']
-				
-			return copy.deepcopy(master_modes_list)		# list of dicts, requires deepcopy() instead of copy()
+		master_modes_list = Modes()
+		for mode_set_id,mode_set in self.mode_sets.iteritems():
+			if mode_set_id != 'active_modes':
+				master_modes_list.extend(mode_set['mode_list'])
+			
+		return copy.deepcopy(master_modes_list)		# list of dicts, requires deepcopy() instead of copy()
+		
 	
 	# ********************************************************************************
 	# GPIO helpers
@@ -374,8 +371,7 @@ class GpioController(object):
 	def int_handle_encoder(self,pin):
 		""" Called for either inputs from rotary switch (A and B) """
 		
-		#print "DEBUG: self.int_handle_encoder! for pin: {0}".format(pin)
-		#self.__printer("yahoor")
+		print "DEBUG: self.int_handle_encoder! for pin: {0}".format(pin)
 			
 		device = self.get_device_config_by_pin(pin)
 		
