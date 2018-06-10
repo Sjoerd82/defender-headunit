@@ -38,6 +38,7 @@ class GpioController(object):
 		self.cfg_gpio = cfg_gpio
 		
 		# (optional) logger
+		LOG_TAG = 'GPIO'
 		self.logger = logger
 
 		# (optional) callbacks
