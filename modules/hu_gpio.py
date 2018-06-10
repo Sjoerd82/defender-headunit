@@ -33,12 +33,14 @@ from hu_datastruct import Modes
 class GpioController(object):
 
 	def __init__(self, cfg_gpio, cb_function=None, logger=None):
-
+		""" Provide a logger if you want feedback.
+		"""
+	
 		# configuration
 		self.cfg_gpio = cfg_gpio
 		
 		# (optional) logger
-		LOG_TAG = 'GPIO'
+		self.LOG_TAG = 'GPIO'
 		self.logger = logger
 
 		# (optional) callbacks
@@ -70,7 +72,8 @@ class GpioController(object):
 		else:
 			self.gpio_setup(self.int_handle_switch,self.int_handle_encoder)
 	
-	def __printer( self, message, level=LL_INFO, tag=LOG_TAG):
+	def __printer( self, message, level=LL_INFO, tag=None):
+		if tag is None: tag = self.LOG_TAG
 		self.logger.log(level, message, extra={'tag': tag})
 
 	def set_cb_mode_change(self,cb_function):
