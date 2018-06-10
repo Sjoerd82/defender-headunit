@@ -555,6 +555,7 @@ def load_cfg_main(logger_name, configfile=None, defaultconfig=None):
 		
 	return config
 
+'''
 def load_cfg_zmq(cfg_main,override_pub,override_sub):
 	""" load zeromq configuration """
 	config = {}
@@ -596,7 +597,7 @@ def load_cfg_daemon(cfg_main,script):
 			if 'script' in daemon and daemon['script'] == script:
 				return daemon
 	return None
-
+'''
 def configuration_load( logger_name, configfile, defaultconfig=None ):
 
 	# ********************************************************************************
@@ -647,6 +648,7 @@ def configuration_load( logger_name, configfile, defaultconfig=None ):
 		
 	return config
 	
+
 # Add ANSI markup to a string
 def colorize ( string, foreground, background='black' ):
 	colorized = fg(foreground) + bg(background) + string + attr('reset')

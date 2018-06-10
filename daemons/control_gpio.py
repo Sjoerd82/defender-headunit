@@ -394,13 +394,13 @@ def setup():
 		exit(1)
 			
 	# daemon
-	cfg_daemon = load_cfg_daemon()
+	#cfg_daemon = load_cfg_daemon()
 	if cfg_daemon is None:
 		printer("Daemon configuration could not be loaded.", level=LL_CRITICAL)
 		exit(1)
 	
 	# gpio
-	cfg_gpio = load_cfg_gpio()
+	#cfg_gpio = load_cfg_gpio()
 	if cfg_gpio is None:
 		printer("GPIO configuration could not be loaded.", level=LL_CRITICAL)
 		exit(1)
