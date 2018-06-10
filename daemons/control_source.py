@@ -224,10 +224,12 @@ def get_primary(path=None, cmd=None, args=None, data=None):
 	elif len(args) == 1:
 		ret = sc_sources.source(args[0])
 	
-	data = get_data(ret,True)
-	return data
+	#data = get_data(ret,True)
+	#return data
+	return ret
 
-@messaging.handle_mq('/source/primary', cmd='PUT')
+# the event will only be executed on a 200 return code
+@messaging.handle_mq('/source/primary', cmd='PUT', event='/events/source/active')
 def put_primary(path=None, cmd=None, args=None, data=None):
 	""" Set active (sub)source to <id> (<subid>). If "P" then also start playing.
 
@@ -254,8 +256,22 @@ def put_primary(path=None, cmd=None, args=None, data=None):
 		ret = sc_sources.select(args[0],args[1])
 		#TODO: not implemented
 
-	data = get_data(ret,False,'/events/source/active')
-	return data
+	#data = get_data(ret,False,'/events/source/active')
+	#return data
+
+	""" '/events/source/active'
+	curr_source = sc_sources.source()
+	data['payload'] = curr_source
+	messaging.publish_command(eventpath,'DATA',data)
+			
+	#	settings['source'] = curr_source['name']
+	#	save_settings()
+	"""
+	
+	save_resume()
+	return ret
+
+	
 
 @messaging.handle_mq('/source/primary', cmd='POST')
 def post_primary(path=None, cmd=None, args=None, data=None):
@@ -563,8 +579,7 @@ def get_track(path=None, cmd=None, args=None, data=None):
 	if ret is not None and 'track' in ret:
 		ret = ret['track']
 		
-	data = get_data(ret,True)
-	return data
+	return ret
 	
 @messaging.handle_mq('/player/track', cmd='PUT')
 def put_track(path=None, cmd=None, args=None, data=None):
@@ -579,8 +594,7 @@ def put_track(path=None, cmd=None, args=None, data=None):
 	if len(args) == 1:
 		ret = sc_sources.source_play(position=args[0])
 
-	data = get_data(ret,True)
-	return data
+	return ret
 
 '''
 TODO
@@ -615,8 +629,7 @@ def put_pause(path=None, cmd=None, args=None, data=None):
 
 	# Set pause: on|off|toggle
 	
-	data = get_data(ret,True)
-	return data
+	return ret
 
 @messaging.handle_mq('/player/state', cmd='GET')
 def get_state(path=None, cmd=None, args=None, data=None):
@@ -632,8 +645,7 @@ def get_state(path=None, cmd=None, args=None, data=None):
 		ret = sc_sources.source_get_state()
 		
 	# Get state: play|pause|stop, toggle random
-	data = get_data(ret,True)
-	return data
+	return ret
 
 
 @messaging.handle_mq('/player/state', cmd='PUT')
@@ -666,8 +678,7 @@ def put_state(path=None, cmd=None, args=None, data=None):
 			return None #?
 		
 	# Set state: play|pause|stop, toggle random
-	data = get_data(ret,True)
-	return data
+	return ret
 
 
 @messaging.handle_mq('/player/random', cmd='PUT')
@@ -685,8 +696,7 @@ def put_random(path=None, cmd=None, args=None, data=None):
 	if len(args) == 1:
 		ret = sc_sources.source_random(args[0])
 
-	data = get_data(ret,True)
-	return data
+	return ret
 
 
 '''
@@ -727,8 +737,7 @@ def put_next(path=None, cmd=None, args=None, data=None):
 		print "PUT NEXT 1 ARG"
 		ret = sc_sources.source_next(adv=args[0])
 
-	data = get_data(ret,True)
-	return data
+	return ret
 
 @messaging.handle_mq('/player/prev', cmd='PUT')
 def put_prev(path=None, cmd=None, args=None, data=None):
@@ -747,8 +756,7 @@ def put_prev(path=None, cmd=None, args=None, data=None):
 	elif len(args) == 1:
 		ret = sc_sources.source_prev(args[0])
 
-	data = get_data(ret,True)
-	return data
+	return ret
 
 """
 def put_nextfolder(args):
@@ -773,8 +781,7 @@ def put_seekfwd(path=None, cmd=None, args=None, data=None):
 	elif len(args) == 1:
 		ret = sc_sources.seekfwd(args[0])
 
-	data = get_data(ret,True)
-	return data
+	return ret
 
 @messaging.handle_mq('/player/seekrev', cmd='PUT')
 def put_seekrev(path=None, cmd=None, args=None, data=None):
@@ -791,8 +798,7 @@ def put_seekrev(path=None, cmd=None, args=None, data=None):
 	elif len(args) == 1:
 		ret = sc_sources.seekrev(args[0])
 
-	data = get_data(ret,True)
-	return data
+	return ret
 
 """
 def get_playlist(args):
@@ -837,8 +843,7 @@ def put_update_source(path=None, cmd=None, args=None, data=None):
 	elif len(args) == 1:
 		ret = sc_sources.source_update(args[0])
 
-	data = get_data(ret,True)
-	return data
+	return ret
 
 @messaging.handle_mq('/events/source/active', cmd='DATA')
 def data_source_active(path=None, cmd=None, args=None, data=None):

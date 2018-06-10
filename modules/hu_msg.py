@@ -143,6 +143,7 @@ class MqPubSubFwdController(object):
 		self.mq_path_list = []	# /path/path/*/ list of paths, from decorators, may contain wildcards
 		self.topics = []		# list of MQ subscriptions, generated from above, or configured
 		self.mq_path_func = {}	# "CMD/path/path/": function
+		# V2:					  "CMD/path/path/": { "function":fn, "event":"path" }
 
 		
 	def __send(self, message):
@@ -444,7 +445,7 @@ class MqPubSubFwdController(object):
 	def poll_and_execute(self,timeout):
 		parsed_msg = self.poll(timeout=500, parse=True)	#Timeout: None=Blocking
 		if parsed_msg:
-			ret = self.execute_mq(parsed_msg['path'], parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
+			ret = self.execute_mq(parsed_msg['path'], parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'])
 			if parsed_msg['resp_path'] and ret is not None:
 				self.publish_command(parsed_msg['resp_path'],'DATA',ret)
 				
@@ -479,14 +480,15 @@ class MqPubSubFwdController(object):
 			return None
 	
 		
-	def handle_mq(self, mq_path, cmd=None):
+	def handle_mq(self, mq_path, cmd=None, event=None):
 		""" Decorator function.
 			Registers the MQ path (nothing more at the moment..)
 		"""
 		def decorator(fn):
 			key = self.__dispatcher_key(mq_path,cmd)
 			self.mq_path_list.append(prepostfix(mq_path).lower())
-			self.mq_path_func[key] = fn
+			self.mq_path_func[key]['function'] = fn
+			self.mq_path_func[key]['event'] = event
 			
 			# add topic to subscriptions, if not already there
 			stripped = self.test_path(mq_path)
@@ -517,15 +519,19 @@ class MqPubSubFwdController(object):
 		# if there's an exact match, always handle that
 		# else, try wildcards
 		if key in self.mq_path_func:
-			ret = self.mq_path_func[key](path=path_dispatch, cmd=cmd, args=args, data=data)
+			ret = self.mq_path_func[key]['function'](path=path_dispatch, cmd=cmd, args=args, data=data)
 			if ret is not None:
-				return struct_data(ret)
+				ret_data = struct_data(ret)
+				if ret_data['code'] == 200 and mq_path_func[key]['event'] is not None:
+					# todo... send out data ??? same data ???
+					self.publish_command(self.mq_path_func[key]['event'], 'INFO', arguments=None, wait_for_reply=False, response_path=None)
+				return ret_data
 
 		else:	
 			if cmd is None:
 				key = self.__dispatcher_key(path_dispatch,'#')
 				
-			for full_path,function in self.mq_path_func.iteritems():
+			for full_path,attributes in self.mq_path_func.iteritems():
 				wildpath = re.sub(r'\*',r'.*',full_path)
 				wildpath = re.sub(r'\#',r'.*',wildpath)
 				if wildpath != full_path:
@@ -533,12 +539,12 @@ class MqPubSubFwdController(object):
 					if res is not None:
 						key =  res.group()
 						# we could execute the function, but let's just return it...
-						ret = self.mq_path_func[full_path](path=path_dispatch, cmd=cmd, args=args, data=data)
-						#if ret is False:
-						#	return False
-						#else:
-						if ret is not None:
-							return struct_data(ret)
+						ret = self.mq_path_func[full_path]['function'](path=path_dispatch, cmd=cmd, args=args, data=data)
+						ret_data = struct_data(ret)
+						if ret_data['code'] == 200 and mq_path_func[key]['event'] is not None:
+							# todo... send out data ??? same data ???
+							self.publish_command(self.mq_path_func[key]['event'], 'INFO', arguments=None, wait_for_reply=False, response_path=None)
+						return ret_data
 		
 		return None
 		
