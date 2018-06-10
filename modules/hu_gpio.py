@@ -125,7 +125,7 @@ class GpioController(object):
 
 	def exec_function_by_code(self,code,param=None):
 		print "exec_function_by_code() EXECUTE: {0} {1}".format(code,param)
-		self.callback_function(code)
+		self.callback_function(code)	# calls call-back function
 		"""
 		if code in function_map:
 			zmq_path = function_map[code]['zmq_path']
@@ -175,10 +175,10 @@ class GpioController(object):
 			
 			if 'reset' in self.mode_sets[function['mode_cycle']]:
 				reset_time = self.mode_sets[function['mode_cycle']]['reset']
-				self.__printer("Mode changed from: '{0}' to: '{1}'. Reset timer set to seconds: {2}".format(mode_old,mode_new,reset_time)) # LL_DEBUG TODO
+				self.__printer("[MODE] Changed from: '{0}' to: '{1}'. Reset timer set to seconds: {2}".format(mode_old,mode_new,reset_time)) # LL_DEBUG TODO
 				self.reset_mode_timer(reset_time,function['mode_cycle'])
 			else:
-				self.__printer("Mode changed from: '{0}' to: '{1}' without reset.".format(mode_old,mode_new)) # LL_DEBUG TODO
+				self.__printer("[MODE] Changed from: '{0}' to: '{1}' without reset.".format(mode_old,mode_new)) # LL_DEBUG TODO
 
 	def reset_mode_timer(self,seconds,mode_set_id):
 		""" reset the mode time-out if there is still activity in current mode """
@@ -260,7 +260,7 @@ class GpioController(object):
 				sleep(0.005)
 				
 			if press_time >= self.long_press_ms and self.pins_config[pin]['has_long']:
-				self.__printer("Button was pressed for {0}ms (threshold={1}). Executing long function".format(press_time,self.long_press_ms))	# TODO: LL_DEBUG
+				self.__printer("Button was pressed for {0}ms (threshold={1}). Executing long function.".format(press_time,self.long_press_ms))	# TODO: LL_DEBUG
 				
 				# execute, checking mode
 				for ix, fun in enumerate(self.pins_config[pin]['functions']):
@@ -276,10 +276,13 @@ class GpioController(object):
 							self.exec_function_by_code(fun['function'])			
 				
 			elif press_time < self.long_press_ms and self.pins_config[pin]['has_short']:
-				self.__printer("Button was pressed for {0}ms (threshold={1}. Executing short function".format(press_time,self.long_press_ms))	# TODO: LL_DEBUG
+				self.__printer("Button was pressed for {0}ms (threshold={1}. Executing short function.".format(press_time,self.long_press_ms))	# TODO: LL_DEBUG
 				
 				# execute, checking mode
 				for ix, fun in enumerate(self.pins_config[pin]['functions']):
+					print "YY-DEBUG-YY"
+					print fun
+					print fun['function']
 					if fun['press_type'] == 'short':
 						if 'mode' in fun:
 							if fun['mode'] in self.active_modes:
@@ -453,11 +456,13 @@ class GpioController(object):
 			# deprecated:
 			#self.modes_old.append(self.cfg_gpio['mode_sets'][0])
 			
+			self.__printer("Mode sets:")
 			for mode_set in self.cfg_gpio['mode_sets']:
 				new_mode_set = {}
 				new_mode_set['id'] = mode_set['id']
 				new_mode_set['mode_list'] = Modes()
 				new_mode_set['reset'] = mode_set['reset']
+				self.__printer("> {0}; reset=".format(new_mode_set['id'],new_mode_set['reset'])) # LL_DEBUG TODO
 				for mode in mode_set['mode_list']:
 					new_mode = {}
 					new_mode['name'] = mode
@@ -466,10 +471,10 @@ class GpioController(object):
 					else:
 						new_mode['state'] = False
 					new_mode_set['mode_list'].append(new_mode)
+					self.__printer("  - {0} ({1})".format(new_mode['name'],new_mode['state'])) # LL_DEBUG TODO
 					
 				self.mode_sets[mode_set['id']] = new_mode_set
 				
-			self.__printer("Mode sets: {0}".format(self.mode_sets))
 				
 		else:
 			# don't deal with modes at all
