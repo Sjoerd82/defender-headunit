@@ -529,15 +529,18 @@ class GpioController(object):
 				new_mode_set = {}
 				new_mode_set['id'] = mode_set['id']
 				new_mode_set['mode_list'] = Modes()
-				if 'reset' in mode_set:
-					new_mode_set['reset'] = mode_set['reset']	# optional
 				
 				if 'base_mode' in mode_set:
 					new_mode_set['base_mode'] = mode_set['base_mode']
 				else:
 					new_mode_set['base_mode'] = mode_set['mode_list'][0]
 					
-				self.__printer("> {0}; resets after {1} seconds".format(new_mode_set['id'],new_mode_set['reset'])) # LL_DEBUG TODO
+				if 'reset' in mode_set:
+					new_mode_set['reset'] = mode_set['reset']	# optional
+					self.__printer("> {0}; resets after {1} seconds".format(new_mode_set['id'],new_mode_set['reset'])) # LL_DEBUG TODO
+				else:
+					self.__printer("> {0} (no reset)".format(new_mode_set['id'])) # LL_DEBUG TODO
+					
 				for i, mode in enumerate(mode_set['mode_list']):
 					new_mode = {}
 					new_mode['name'] = mode
