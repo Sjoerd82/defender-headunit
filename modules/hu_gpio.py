@@ -165,7 +165,11 @@ class GpioController(object):
 	def cb_mode_reset(self,mode_set_id):
 		""" Reset Timer call back """
 		# set active mode
-		self.mode_sets[mode_set_id]['mode_list'].set_active_modes([self.mode_sets[mode_set_id]['base_mode']])
+		base_mode = self.mode_sets[mode_set_id]['base_mode']
+		if base_mode is None:
+			self.mode_sets[mode_set_id]['mode_list'].unset_active_modes([base_mode])
+		else:
+			self.mode_sets[mode_set_id]['mode_list'].set_active_modes([base_mode])
 		
 		# just printin'
 		self.__printer('[MODE] Reset to: "{0}"'.format(self.mode_sets[mode_set_id]['base_mode']))
@@ -404,7 +408,7 @@ class GpioController(object):
 	def int_handle_encoder(self,pin):
 		""" Called for either inputs from rotary switch (A and B) """
 		
-		print "DEBUG: self.int_handle_encoder! for pin: {0}".format(pin)
+		#print "DEBUG: self.int_handle_encoder! for pin: {0}".format(pin)
 			
 		device = self.get_device_config_by_pin(pin)
 		
@@ -428,8 +432,8 @@ class GpioController(object):
 		
 		# -------------------------------
 		
-		function = self.get_encoder_function_by_pin(pin)
-		print function
+		#function = self.get_encoder_function_by_pin(pin)
+		#print function
 		if function is not None:
 			if (Switch_A and Switch_B):						# Both one active? Yes -> end of sequence
 			
