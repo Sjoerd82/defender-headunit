@@ -154,7 +154,7 @@ class MqPubSubFwdController(object):
 	def subscriptions(self):
 		return self.topics		
 	
-	def create_message(self, path, command, arguments=None):
+	def create_message(self, path, command, arguments=None, response_path=None):
 			
 		# path[+response_path] and command
 		if response_path:
