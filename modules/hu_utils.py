@@ -440,6 +440,9 @@ def load_cfg(config, configs, zmq_port_pub, zmq_port_sub):
 	LOGGER_NAME = 'gpio'	# TODO
 	cfg_main = configuration_load(LOGGER_NAME,config)
 
+	if cfg_main is None:
+		return cfg_main, cfg_zmq, cfg_daemon, cfg_gpio
+	
 	# zeromq
 	if not 'zeromq' in cfg_main:
 		printer('Error: Configuration not loaded or missing ZeroMQ, using defaults:')
@@ -476,21 +479,22 @@ def load_cfg(config, configs, zmq_port_pub, zmq_port_sub):
 				break #only one
 	
 	# gpio
-	if 'directories' not in cfg_main or 'daemon-config' not in cfg_main['directories'] or 'config' not in cfg_daemon:
-		return
-	else:		
-		config_dir = cfg_main['directories']['daemon-config']
-		# TODO
-		config_dir = "/mnt/PIHU_CONFIG/"	# fix!
-		config_file = cfg_daemon['config']
-		
-		gpio_config_file = os.path.join(config_dir,config_file)
+	if cfg_daemon is not None:
+		if 'directories' not in cfg_main or 'daemon-config' not in cfg_main['directories'] or 'config' not in cfg_daemon:
+			return
+		else:		
+			config_dir = cfg_main['directories']['daemon-config']
+			# TODO
+			config_dir = "/mnt/PIHU_CONFIG/"	# fix!
+			config_file = cfg_daemon['config']
+			
+			gpio_config_file = os.path.join(config_dir,config_file)
 	
-	# load gpio configuration
-	if os.path.exists(gpio_config_file):
-		cfg_gpio = configuration_load(LOGGER_NAME,gpio_config_file)
-	else:
-		print "ERROR: not found: {0}".format(gpio_config_file)
+		# load gpio configuration
+		if os.path.exists(gpio_config_file):
+			cfg_gpio = configuration_load(LOGGER_NAME,gpio_config_file)
+		else:
+			print "ERROR: not found: {0}".format(gpio_config_file)
 
 	return cfg_main, cfg_zmq, cfg_daemon, cfg_gpio
 		
