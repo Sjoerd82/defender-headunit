@@ -73,8 +73,9 @@ class GpioController(object):
 			self.gpio_setup(self.int_handle_switch,self.int_handle_encoder)
 	
 	def __printer( self, message, level=LL_INFO, tag=None):
-		if tag is None: tag = self.LOG_TAG
-		self.logger.log(level, message, extra={'tag': tag})
+		if logger is not None:
+			if tag is None: tag = self.LOG_TAG
+			self.logger.log(level, message, extra={'tag': tag})
 
 	def set_cb_mode_change(self,cb_function):
 		self.callback_mode_change = cb_function

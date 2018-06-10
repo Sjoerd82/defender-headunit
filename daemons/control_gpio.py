@@ -42,8 +42,8 @@ from hu_datastruct import Modes
 #
 DESCRIPTION = "GPIO Remote Control"
 BANNER = "GPIO Controller Daemon"
-LOG_TAG = 'GPIO'
-LOGGER_NAME = 'gpio'
+LOG_TAG = 'CTGPIO'
+LOGGER_NAME = 'ctgpio'
 
 DEFAULT_CONFIG_FILE = '/etc/configuration.json'
 DEFAULT_LOG_LEVEL = LL_INFO
