@@ -140,10 +140,8 @@ class GpioController(object):
 		
 	def cb_mode_reset(self,mode_set_id):
 		
-		self.__printer('[MODE] Reset to: "{0}"'.format(self.mode_sets[mode_set_id]['base_mode']))
-		print [self.mode_sets[mode_set_id]['base_mode']]
 		self.mode_sets[mode_set_id]['mode_list'].set_active_modes([self.mode_sets[mode_set_id]['base_mode']])
-
+		self.__printer('[MODE] Reset to: "{0}"'.format(self.mode_sets[mode_set_id]['base_mode']))
 		
 		master_modes_list = Modes()
 		for mode_set_id,mode_set in self.mode_sets.iteritems():
