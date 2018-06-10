@@ -303,8 +303,6 @@ def cb_gpio_function(code):
 			
 def cb_mode_change(active_modes):
 	# active_modes is a Modes() struct
-
-	return
 	
 	global modes
 	

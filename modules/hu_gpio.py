@@ -200,12 +200,14 @@ class GpioController(object):
 			mode_new = mode_list[mode_ix]['name']
 			
 			mode_list.set_active_modes(mode_new)
-			self.callback_mode_change(mode_list)
+			self.callback_mode_change(copy.deepcopy(mode_list))
 			
+			# reset
 			if 'reset' in self.mode_sets[function['mode_cycle']]:
 			
 				if mode_new == mode_base:
 					self.__printer("[MODE] Changed from: '{0}' to: '{1}' (base mode; no reset timer)".format(mode_old,mode_new)) # LL_DEBUG TODO
+					self.timer_mode.cancel()
 				else:
 					reset_time = self.mode_sets[function['mode_cycle']]['reset']
 					self.__printer("[MODE] Changed from: '{0}' to: '{1}'. Reset timer set to seconds: {2}".format(mode_old,mode_new,reset_time)) # LL_DEBUG TODO
