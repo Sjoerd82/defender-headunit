@@ -140,7 +140,7 @@ class GpioController(object):
 		
 	def cb_mode_reset(self,mode_set_id):
 		
-		self.__printer('[MODE] Reset to {0}'.format(self.mode_sets[mode_set_id]['base_mode']))
+		self.__printer('[MODE] Reset to: "{0}"'.format(self.mode_sets[mode_set_id]['base_mode']))
 		print [self.mode_sets[mode_set_id]['base_mode']]
 		self.mode_sets[mode_set_id]['mode_list'].set_active_modes([self.mode_sets[mode_set_id]['base_mode']])
 
@@ -277,7 +277,7 @@ class GpioController(object):
 								self.handle_mode(pin,ix)
 							self.exec_function_by_code(fun['function'])			
 				
-			elif press_time < self.long_press_ms and self.pins_config[pin]['has_short']:
+			elif press_time > 0 and press_time < self.long_press_ms and self.pins_config[pin]['has_short']:
 				self.__printer("Button was pressed for {0}ms (threshold={1}). Executing short function.".format(press_time,self.long_press_ms))	# TODO: LL_DEBUG
 				
 				# execute, checking mode
