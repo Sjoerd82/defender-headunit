@@ -191,7 +191,7 @@ class GpioController(object):
 			print mode_list.unique_list()
 			
 			mode_old = mode_list[mode_ix]['name']
-			mode_base = self.mode_sets[function['mode_cycle']]['mode_base']
+			mode_base = self.mode_sets[function['mode_cycle']]['base_mode']
 					
 			if mode_ix >= len(mode_list)-1:
 				mode_ix = 0
