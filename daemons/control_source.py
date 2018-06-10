@@ -197,7 +197,7 @@ def get_data(ret,returndata=False,eventpath=None):
 		
 
 # Sub Functions must return None (invalid params) or a {data} object.
-@messaging.handle_mq('/source/primary', cmd='GET')
+@messaging.handle_mq('/source/primary', cmd='GET', event='/events/source/active')
 def get_primary(path=None, cmd=None, args=None, data=None):
 	"""	Retrieve Primary Sources
 
