@@ -48,14 +48,13 @@ class GpioController(object):
 		self.callback_mode_change = None
 		
 		# pins
-		self.pins_state = {}			# pin (previous) state
+		self.pins_state = {}		# pin (previous) state
 		self.pins_function = {}		# pin function(s)
 		self.pins_config = {}		# consolidated config, key=pin
-
-		self.mode_sets = {}
-		self.modes = Modes()
 		
-		#self.active_modes = []
+		# mode sets
+		self.mode_sets = {}			# contains set of modes()
+		
 		self.long_press_ms = 800
 		self.timer_mode = None		# timer object
 
@@ -110,10 +109,11 @@ class GpioController(object):
 		"""
 		# loop through all possible functions for given pin
 		# examine if func meets all requirements (only one check needed for encoders: mode)
-		print "X1 -- {0}".format(self.modes.active_modes())
+		self.__update_active_modes()
+		print "X1 -- {0}".format(self.mode_sets['active_modes'])
 		for func_cfg in self.pins_config[pin]['functions']:
 			# check mode #TODO!! TODO!! add mode here!!
-			if 'mode' in func_cfg and func_cfg['mode'] not in self.modes.active_modes():
+			if 'mode' in func_cfg and func_cfg['mode'] not in self.mode_sets['active_modes']:
 				print "X3"
 				pass # these are not the mode you're looking for
 			else:
@@ -142,7 +142,8 @@ class GpioController(object):
 		
 		self.mode_sets[mode_set_id]['mode_list'].set_active_modes([self.mode_sets[mode_set_id]['base_mode']])
 		self.__printer('[MODE] Reset to: "{0}"'.format(self.mode_sets[mode_set_id]['base_mode']))
-		print "X1 -- {0}".format(self.modes.active_modes())
+		self.__update_active_modes()
+		print "X1 -- {0}".format(self.mode_sets['active_modes'])
 		
 		master_modes_list = Modes()
 		for mode_set_id,mode_set in self.mode_sets.iteritems():
@@ -151,6 +152,11 @@ class GpioController(object):
 		#self.callback_mode_change(self.mode_sets[mode_set_id]['mode_list'][:])	# return a copy
 		self.callback_mode_change(copy.deepcopy(master_modes_list))
 
+	def __update_active_modes(self):
+		self.mode_set['active_modes'] = []	# required?
+		for mode_set in self.mode_sets:
+			self.mode_set['active_modes'].extend( mode_set['mode_list'].active_modes() )
+	
 	def handle_mode(self,pin,function_ix):
 		""" If function has a mode_cycle attribute, then handle that.
 			Called by interrupt handlers.
@@ -224,6 +230,8 @@ class GpioController(object):
 				self.reset_mode_timer(self.mode_sets[function['mode_cycle']]['reset'])
 		"""
 
+		self.__update_active_modes()
+		
 		# check wheather we have short and/or long press functions and multi-press functions
 		if self.pins_config[pin]['has_short'] and not self.pins_config[pin]['has_long'] and not self.pins_config[pin]['has_multi']:
 			""" Only a SHORT function, no long press functions, no multi-button, go ahead and execute """
@@ -232,7 +240,7 @@ class GpioController(object):
 			# execute, checking mode
 			for ix, fun in enumerate(self.pins_config[pin]['functions']):
 				if 'mode' in fun:
-					if fun['mode'] in self.modes.active_modes():
+					if fun['mode'] in self.mode_sets['active_modes']:
 						self.exec_function_by_code(fun['function'])
 					else:
 						print "DEBUG mode mismatch"
@@ -267,7 +275,7 @@ class GpioController(object):
 				for ix, fun in enumerate(self.pins_config[pin]['functions']):
 					if fun['press_type'] == 'long':
 						if 'mode' in fun:
-							if fun['mode'] in self.modes.active_modes():
+							if fun['mode'] in self.mode_sets['active_modes']:
 								self.exec_function_by_code(fun['function'])
 							else:
 								print "DEBUG mode mismatch"
@@ -283,7 +291,7 @@ class GpioController(object):
 				for ix, fun in enumerate(self.pins_config[pin]['functions']):
 					if fun['press_type'] == 'short':
 						if 'mode' in fun:
-							if fun['mode'] in self.modes.active_modes():
+							if fun['mode'] in self.mode_sets['active_modes']:
 								self.exec_function_by_code(fun['function'])
 							else:
 								print "DEBUG mode mismatch"
@@ -306,7 +314,7 @@ class GpioController(object):
 			matched_long_press_function_code = None
 			for function in self.pins_config[pin]['functions']:
 			
-				if 'mode' in function and function['mode'] in self.modes.active_modes():
+				if 'mode' in function and function['mode'] in self.mode_sets['active_modes']:
 			
 					multi_match = True
 					for multi_pin in function['multi']:
@@ -453,6 +461,18 @@ class GpioController(object):
 		#	self.active_modes.append(None)
 				
 		# modes
+		
+		"""
+		mode_sets = {
+			"active_modes": []
+			"<mode_set_name>":{
+				"id":
+				"mode_list": modes()
+				"reset"
+			}
+		}
+		"""
+		
 		if 'mode_sets' in self.cfg_gpio:
 			if len(self.cfg_gpio['mode_sets']) > 1:
 				self.__printer("WARNING: Multiple modes specified, but currently one one set is supported (only loading the first).", level=LL_WARNING)
@@ -490,13 +510,14 @@ class GpioController(object):
 					self.__printer("  {0} {1} {2}{3}".format(i,new_mode['name'],dbg_base,dbg_state)) # LL_DEBUG TODO
 					
 				self.mode_sets[mode_set['id']] = new_mode_set
-				
-				
+			
+			# gather active modes
+			self.__update_active_modes()
+			
 		else:
 			# don't deal with modes at all
-			if len(self.modes.active_modes()) > 0:
-				self.__printer("WARNING: No 'mode_sets'-section, modes will not be available.", level=LL_WARNING)
-			#self.active_modes = []
+			self.mode_sets = None
+			self.__printer("WARNING: No 'mode_sets'-section, modes will not be available.", level=LL_WARNING)
 		
 		# initialize all pins in configuration
 		pins_monitor = []

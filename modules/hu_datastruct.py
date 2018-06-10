@@ -82,7 +82,7 @@ class Modes(ListDataStruct):
 				
 		empty = {}
 		empty['state'] = False
-
+	
 		if args:
 			for arg in args:
 				# adding dict using empty defaults
@@ -130,7 +130,6 @@ class Modes(ListDataStruct):
 				print "Z3"
 				active_modes.append(mode['name'])
 		return active_modes
-
 
 
 class Tracks(ListDataStruct):
