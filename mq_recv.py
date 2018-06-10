@@ -46,15 +46,17 @@ def setup():
 def main():
 
 	while(True):
-		rawmsg = messaging.poll(timeout=None)				#None=Blocking
-		if rawmsg:
-			print "Message: {0}".format(rawmsg)
-			if args.parse:
-				parsed_msg = parse_message(rawmsg)
-				print "Path    : {0}".format(parsed_msg['path'])
-				print "Command : {0}".format(parsed_msg['cmd'])
-				print "Args    : {0}".format(parsed_msg['args'])
-				print "Data    : {0}\n".format(parsed_msg['data'])
+		if args.parse:
+			parsed_msg = messaging.poll(timeout=None, parse=True)	#None=Blocking
+			print "Path    : {0}".format(parsed_msg['path'])
+			print "Command : {0}".format(parsed_msg['cmd'])
+			print "Args    : {0}".format(parsed_msg['args'])
+			print "Data    : {0}\n".format(parsed_msg['data'])
+			print "Origin  : {0}\n".format(parsed_msg['origin'])
+		else:
+			rawmsg = messaging.poll(timeout=None, parse=False)		#None=Blocking
+			if rawmsg:
+				print "Message: {0}".format(rawmsg)
 
 if __name__ == '__main__':
 	parse_args()

@@ -16,93 +16,19 @@ from logging import getLogger	# logger
 sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
 
-def printer( message, level=LL_INFO, tag="", logger_name=__name__):
+#def printer( message, level=LL_INFO, tag="", logger_name=__name__):
 	#logger = logging.getLogger(logger_name)
 	#logger.log(level, message, extra={'tag': tag})
-	print message
+#	print message
 
-def parse_message(message):
-	""" Parses a MQ standardized message.
-	Format: <path>[+response_path] <command>[:arg1, argn]
-	Format: <path> DATA:<data>
-	                                                 ^ags may contain spaces, double quotes, all kinds of messed up shit
-	
-	Arguments:
-	 message		string, message
-	 
-	Returns:
-	{
-		'path'     : path
-		'cmd'      : command (PUT, GET or DATA)
-		'args'     : params
-		'resp_path': resp_path
-	}
-	"""
-	#printer(colorize("{0}: {1}".format(__name__,'parse_message(message):'),'dark_gray'),level=LL_DEBUG)
-	
-	path = []
-	params = []
-	resp_path = []
-	data = {}
-	
-	raw_path_resp_cmd = message.split(" ",1) #maxsplit=1, seperating at the first space [0]=paths, [1]=cmd+params
-	raw_path_resp = raw_path_resp_cmd[0].split("+",1) # [0] = path, [1] = response path
-	raw_cmd_par   = raw_path_resp_cmd[1].split(":",1)	#maxsplit=1,seperating at the first semicolon. [0]=cmd, [1]=param(s)
-	
-	# extract path
-	for pathpart in raw_path_resp[0].split("/"):
-		if pathpart:
-			path.append(pathpart.lower())
-	
-	# extract response path (if any), as a whole..
-	if len(raw_path_resp) > 1:
-		resp_path = raw_path_resp[1]
-	
-	# extract command and arguments
-	if len(raw_cmd_par) == 1:
-		command = raw_cmd_par[0].lower()
-	elif len(raw_cmd_par) == 2:
-		command = raw_cmd_par[0].lower()
-		#param = raw_cmd_par[1]
-		# extract data or arguments
-		if command == 'data':
-			data = json.loads(raw_cmd_par[1])
-			#print "DATA: {0}".format(data)
-		else:
-			#print "LOADING: {0} ({1})".format(raw_cmd_par[1],type(raw_cmd_par[1]))		
-			param = json.loads(raw_cmd_par[1])
 
-			# TODO perhaps better to do a check type() instead..
-			if command == 'data':
-				#expect a json/dict
-				params.append(param)
-			elif command == 'info':
-				#expect a json/dict
-				params.append(param)
-			else:
-				#,-delimited parameters
-				for parpart in param.split(","):
-					if parpart:
-						params.append(parpart)
-		
-	else:
-		printer("Malformed message!",level=LL_ERROR)
-		return False
-	
-	# debugging
-	#print("[MQ] Received Path: {0}; Command: {1}; Parameters: {2}; Response path: {3}".format(path,command,params,resp_path))
-	
-	# return as a tuple:
-	#return path, command, params, resp_path
-	
-	# return as a dict:
-	parsed_message = {}
-	parsed_message['path'] = path
-	parsed_message['cmd'] = command
-	parsed_message['args'] = params
-	parsed_message['resp_path'] = resp_path
-	parsed_message['data'] = data
-	return parsed_message
+# DEPRECATED
+# only still used by:
+#  eca_vol_test.py
+#  hu.py
+#  hu_src_ctrl.py
+# replace with parsed_msg = messaging.poll(timeout=None, parse=True)
+#def parse_message(message):
 
 def create_data(payload, retval):
 	""" Returns a standard data object.
@@ -122,7 +48,7 @@ def create_data(payload, retval):
 #
 class MqPubSubFwdController(object):
 
-	def __init__(self, address=None, port_pub=None, port_sub=None):
+	def __init__(self, address=None, port_pub=None, port_sub=None, origin=None):
 
 		# Context
 		self.context = zmq.Context()
@@ -131,6 +57,13 @@ class MqPubSubFwdController(object):
 		self.publisher = None
 		self.subscriber = None
 
+		# Origin ## ? Isn't there a build-in variable to know the creating script name?
+		self.origin = origin
+		print(__name__)		
+		print(__file__)
+		print(__loader__)
+		print(__package__)
+		
 		# Poller
 		self.poller = zmq.Poller()
 		
@@ -221,32 +154,13 @@ class MqPubSubFwdController(object):
 	def subscriptions(self):
 		return self.topics		
 	
-	def publish_command(self, path, command, arguments=None, wait_for_reply=False, timeout=5000, response_path=None):
-		"""
-		Publish a message. If wait_for_reply, then block until a reply is received.
-		Parameters:
-		 - path: (list) path or string
-		 - command: (string) command
-		 - arguments: list of words or anything, but a list
-		Returns:
-		 - None (invalid command, send unsuccesful)
-		 ? Raw return message
-		 ? Tuple/Dict (#tbd)
-		
-		"""		
-		if command not in self.VALID_COMMANDS:
-			#printer("Invalid command: {0}".format(command),level=LL_ERROR)
-			print("Invalid command: {0}".format(command))
-			return False
+	def create_message(self, path, command, arguments=None):
 			
-		if wait_for_reply and not response_path:
-			response_path = '/myuniquereplypath/'
-
 		# path[+response_path] and command
 		if response_path:
-			message = "{0}+{1} {2}".format(path,response_path,command)
+			message = "{0}+{1}|{2}|{3}".format(path,response_path,self.origin,command)
 		else:
-			message = "{0} {1}".format(path,command)
+			message = "{0}|{1}|{2}".format(path,self.origin,command)
 		
 		# append arguments
 		if arguments:
@@ -267,6 +181,35 @@ class MqPubSubFwdController(object):
 				#print "DEBUG MSG: OTHER"
 				jsonified_args = json.dumps(arguments)
 				message = "{0}:{1}".format(message, jsonified_args)
+				
+		return message
+	
+	def publish_command(self, path, command, arguments=None, wait_for_reply=False, timeout=5000, response_path=None):
+		"""
+		Publish a message. If wait_for_reply, then block until a reply is received.
+		Parameters:
+		 - path: (list) path or string
+		 - command: (string) command
+		 - arguments: list of words or anything, but a list
+		Returns:
+		 - None (invalid command, send unsuccesful)
+		 ? Raw return message
+		 ? Tuple/Dict (#tbd)
+		
+		"""
+		
+		# check command is valid
+		if command not in self.VALID_COMMANDS:
+			#printer("Invalid command: {0}".format(command),level=LL_ERROR)
+			print("Invalid command: {0}".format(command))
+			return False
+		
+		# generate response_path, if missing
+		if wait_for_reply and not response_path:
+			response_path = '/myuniquereplypath/'
+
+		# create message
+		message = self.create_message(path, command, arguments, response_path=None)
 		
 		if wait_for_reply:
 			#print "DEBUG: SETUP WAIT_FOR_REPLY; TOPIC={0}".format(response_path)
@@ -327,18 +270,7 @@ class MqPubSubFwdController(object):
 			#reply_subscriber.disconnect(self.address)
 			#return parsed_response
 			return response
-			
-	def publish_data(self, path, payload, retval='200'):
-		"""
-		Publish a "payload" message
-		"""
-		data={}
-		data['retval'] = retval
-		data['payload'] = payload
-		message = "{0} DATA {1}".format(path, data)
-		self.publisher.send(message)
-		time.sleep(1)	# required?
-		
+				
 	def poll(self, timeout=None, parse=False):
 		"""
 		Blocking call, if no timeout (ms) specified.
@@ -359,9 +291,10 @@ class MqPubSubFwdController(object):
 		
 	def parse_message(self, message):
 		""" Parses a MQ standardized message.
-		Format: <path>[+response_path] <command>[:arg1, argn]
-		Format: <path> DATA:<data>
-														 ^ags may contain spaces, double quotes, all kinds of messed up shit
+		Formats:
+			<path>[+response_path]|[origin]|<command>[:arg1, argn]
+			<path>|[origin]DATA:<data>
+														 ^args may contain spaces, double quotes, all kinds of messed up shit
 		
 		Arguments:
 		 message		string, message
@@ -374,15 +307,17 @@ class MqPubSubFwdController(object):
 			'resp_path': resp_path
 		}
 		"""
+		#printer(colorize("{0}: {1}".format(__name__,'parse_message(message):'),'dark_gray'),level=LL_DEBUG)
 		
 		path = []
 		params = []
 		resp_path = []
 		data = {}
 		
-		raw_path_resp_cmd = message.split(" ",1) #maxsplit=1, seperating at the first space [0]=paths, [1]=cmd+params
+		raw_path_resp_cmd = message.split("|",2) #maxsplit=2, seperating by two pipes [0]=paths, [1]=origin, [2]=cmd+params
 		raw_path_resp = raw_path_resp_cmd[0].split("+",1) # [0] = path, [1] = response path
-		raw_cmd_par   = raw_path_resp_cmd[1].split(":",1)	#maxsplit=1,seperating at the first semicolon. [0]=cmd, [1]=param(s)
+		origin        = raw_path_resp_cmd[1]
+		raw_cmd_par   = raw_path_resp_cmd[2].split(":",1)	#maxsplit=1,seperating at the first semicolon. [0]=cmd, [1]=param(s)
 		
 		# extract path
 		for pathpart in raw_path_resp[0].split("/"):
@@ -437,6 +372,7 @@ class MqPubSubFwdController(object):
 		parsed_message['args'] = params
 		parsed_message['resp_path'] = resp_path
 		parsed_message['data'] = data
+		parsed_message['origin'] = origin
 		return parsed_message
 	
 	#********************************************************************************

@@ -58,7 +58,7 @@ DELAY = 0.01
 # global variables
 logger = None
 args = None
-messaging = MqPubSubFwdController()
+messaging = MqPubSubFwdController(origin="XXX")
 gpio = None
 
 # configuration
