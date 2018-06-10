@@ -112,7 +112,6 @@ class GpioController(object):
 		# examine if func meets all requirements (only one check needed for encoders: mode)
 		print "X1 -- {0}".format(self.modes.active_modes())
 		for func_cfg in self.pins_config[pin]['functions']:
-			print "X2 -- {0}".format(func_cfg)
 			# check mode #TODO!! TODO!! add mode here!!
 			if 'mode' in func_cfg and func_cfg['mode'] not in self.modes.active_modes():
 				print "X3"

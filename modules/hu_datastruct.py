@@ -100,11 +100,14 @@ class Modes(ListDataStruct):
 	#	self = [sorted(l, key=itemgetter('name')) for l in (self)]
 	
 	def set_active_modes(self, modes, only=True):
+		print "Y"
 		for mode in self:
 			if mode['name'] in modes:
+				print "Y1 {0}".format(mode['name'])
 				mode['state'] = True
 			else:
 				mode['state'] = False
+				print "Y2 {0}".format(mode['name'])
 			
 		'''
 		modes_list = self.unique_list()
@@ -119,9 +122,12 @@ class Modes(ListDataStruct):
 				return mode['name']
 				
 	def active_modes(self):
+		print "Z"
 		active_modes = []
 		for mode in self:
+			print "Z1 {0}".format(mode)
 			if mode['state']:
+				print "Z3"
 				active_modes.append(mode['name'])
 		return active_modes
 
