@@ -292,14 +292,14 @@ def idle_message_receiver():
 #
 def cb_gpio_function(code):
 	#print "CALL: {0}".format(function)
-	print "EXECUTE: {0}".format(code)
 	if code in function_map:
+		print "CONTROL_GPIO: EXECUTE: {0}".format(code)
 		zmq_path = function_map[code]['zmq_path']
 		zmq_command = function_map[code]['zmq_command']
 		arguments = None
 		messaging.publish_command(zmq_path,zmq_command,arguments)
 	else:
-		print "function {0} not in function_map".format(code)	
+		print "CONTROL_GPIO: function {0} not in function_map".format(code)	
 			
 def cb_mode_change(active_modes):
 	# active_modes is a Modes() struct

@@ -124,8 +124,10 @@ class GpioController(object):
 		return None				
 
 	def exec_function_by_code(self,code,param=None):
-		print "exec_function_by_code() EXECUTE: {0} {1}".format(code,param)
-		self.callback_function(code)	# calls call-back function
+		if code is not None:
+			print "exec_function_by_code() EXECUTE: {0} {1}".format(code,param)
+			self.callback_function(code)	# calls call-back function
+			
 		"""
 		if code in function_map:
 			zmq_path = function_map[code]['zmq_path']
@@ -136,7 +138,6 @@ class GpioController(object):
 			print "function {0} not in function_map".format(code)
 		"""
 		
-
 	def cb_mode_reset(self,mode_set_id):
 		self.mode_sets[mode_set_id]['mode_list'].set_active_modes(['volume'])
 		
@@ -280,9 +281,6 @@ class GpioController(object):
 				
 				# execute, checking mode
 				for ix, fun in enumerate(self.pins_config[pin]['functions']):
-					print "YY-DEBUG-YY"
-					print fun
-					print fun['function']
 					if fun['press_type'] == 'short':
 						if 'mode' in fun:
 							if fun['mode'] in self.active_modes:
@@ -462,7 +460,7 @@ class GpioController(object):
 				new_mode_set['id'] = mode_set['id']
 				new_mode_set['mode_list'] = Modes()
 				new_mode_set['reset'] = mode_set['reset']
-				self.__printer("> {0}; reset=".format(new_mode_set['id'],new_mode_set['reset'])) # LL_DEBUG TODO
+				self.__printer("> {0}; resets after {1} seconds".format(new_mode_set['id'],new_mode_set['reset'])) # LL_DEBUG TODO
 				for mode in mode_set['mode_list']:
 					new_mode = {}
 					new_mode['name'] = mode
@@ -471,7 +469,12 @@ class GpioController(object):
 					else:
 						new_mode['state'] = False
 					new_mode_set['mode_list'].append(new_mode)
-					self.__printer("  - {0} ({1})".format(new_mode['name'],new_mode['state'])) # LL_DEBUG TODO
+					
+					# debug feedback
+					if new_mode['state']:
+						self.__printer("  - {0} (active)".format(new_mode['name'])) # LL_DEBUG TODO
+					else:
+						self.__printer("  - {0}".format(new_mode['name'])) # LL_DEBUG TODO
 					
 				self.mode_sets[mode_set['id']] = new_mode_set
 				
