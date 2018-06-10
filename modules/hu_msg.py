@@ -487,8 +487,7 @@ class MqPubSubFwdController(object):
 		def decorator(fn):
 			key = self.__dispatcher_key(mq_path,cmd)
 			self.mq_path_list.append(prepostfix(mq_path).lower())
-			self.mq_path_func[key]['function'] = fn
-			self.mq_path_func[key]['event'] = event
+			self.mq_path_func[key] = { 'function':fn, 'event':event }
 			
 			# add topic to subscriptions, if not already there
 			stripped = self.test_path(mq_path)
