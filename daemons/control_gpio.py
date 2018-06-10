@@ -124,6 +124,7 @@ def printer( message, level=LL_INFO, continuation=False, tag=LOG_TAG ):
 # ********************************************************************************
 # Load configuration
 #
+'''
 def load_cfg_main():
 	""" load main configuration """
 	config = configuration_load(LOGGER_NAME,args.config)
@@ -181,7 +182,7 @@ def load_cfg_gpio():
 	else:
 		print "ERROR: not found: {0}".format(gpio_config_file)
 		return
-
+'''
 
 # ********************************************************************************
 # MQ functions
@@ -353,12 +354,15 @@ def setup():
 	global cfg_gpio
 
 	# main
-	cfg_main = load_cfg_main()
+	cfg_main, cfg_zmq, cfg_daemon, cfg_gpio = load_cfg = load_cfg(args.config, ['main','zmq','daemon','gpio'], args.port_subscriber, args.port_subscriber)
+		
+	#cfg_main = load_cfg_main()
 	if cfg_main is None:
 		printer("Main configuration could not be loaded.", level=LL_CRITICAL)
 		exit(1)
 	
 	# zeromq
+	"""
 	if not args.port_publisher and not args.port_subscriber:
 		cfg_zmq = load_cfg_zmq()
 	else:
@@ -372,7 +376,7 @@ def setup():
 			configuration['zeromq']['port_publisher'] = args.port_publisher
 		if args.port_subscriber:
 			configuration['zeromq']['port_subscriber'] = args.port_subscriber
-
+	"""
 	if cfg_zmq is None:
 		printer("Error loading Zero MQ configuration.", level=LL_CRITICAL)
 		exit(1)
@@ -393,15 +397,15 @@ def setup():
 	# ZMQ
 	#
 	global messaging
-	printer("ZeroMQ: Initializing")	
-	messaging.set_address('localhost',DEFAULT_PORT_PUB,DEFAULT_PORT_SUB)
+	printer("ZeroMQ: Initializing")
+	messaging.set_address('localhost',cfg_zmq['port_publisher'],cfg_zmq['port_subscriber'])
 	
-	printer("ZeroMQ: Creating Publisher: {0}".format(DEFAULT_PORT_PUB))
+	printer("ZeroMQ: Creating Publisher: {0}".format(cfg_zmq['port_publisher']))
 	messaging.create_publisher()
-
-	printer("ZeroMQ: Creating Subscriber: {0}".format(DEFAULT_PORT_SUB))
-	messaging.create_subscriber(SUBSCRIPTIONS)
 	
+	printer("ZeroMQ: Creating Subscriber: {0}".format(cfg_zmq['port_subscriber']))
+	messaging.create_subscriber(SUBSCRIPTIONS)
+
 	printer('ZeroMQ subscriptions:')
 	for topic in messaging.subscriptions():
 		printer("> {0}".format(topic))

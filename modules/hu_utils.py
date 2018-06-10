@@ -425,6 +425,75 @@ def default_parser(description,banner=None):
 # *******************************************************************************
 # Setup
 
+# ********************************************************************************
+# Load Configurations
+#
+def load_cfg(config, configs, zmq_port_pub, zmq_port_sub):
+
+
+	cfg_main = None
+	cfg_zmq = None
+	cfg_daemon = None
+	cfg_gpio = None
+
+	# main
+	LOGGER_NAME = 'gpio'	# TODO
+	cfg_main = configuration_load(LOGGER_NAME,config)
+
+	# zeromq
+	if not 'zeromq' in cfg_main:
+		printer('Error: Configuration not loaded or missing ZeroMQ, using defaults:')
+		printer('Publisher port: {0}'.format(zmq_port_pub))
+		printer('Subscriber port: {0}'.format(zmq_port_sub))
+		cfg_zmq = { "port_publisher": DEFAULT_PORT_PUB, "port_subscriber":DEFAULT_PORT_SUB }
+	else:
+		cfg_zmq = {}
+		# Get portnumbers from either the main config, or default value
+		if 'port_publisher' in cfg_main['zeromq']:
+			cfg_zmq['port_publisher'] = cfg_main['zeromq']['port_publisher']
+		else:
+			cfg_zmq['port_publisher'] = DEFAULT_PORT_PUB
+		
+		if 'port_subscriber' in cfg_main['zeromq']:
+			cfg_zmq['port_subscriber'] = cfg_main['zeromq']['port_subscriber']		
+		else:
+			cfg_zmq['port_subscriber'] = DEFAULT_PORT_SUB
+
+	# TODO, integrate in above
+	# Pub/Sub port override
+	if zmq_port_pub:
+		cfg_zmq['port_publisher'] = args.port_publisher
+	if zmq_port_sub:
+		cfg_zmq['port_subscriber'] = args.port_subscriber
+			
+	# daemon
+	if 'daemons' not in cfg_main:
+		return
+	else:
+		for daemon in cfg_main['daemons']:
+			if 'script' in daemon and daemon['script'] == os.path.basename(__file__):
+				cfg_daemon = daemon
+				break #only one
+	
+	# gpio
+	if 'directories' not in cfg_main or 'daemon-config' not in cfg_main['directories'] or 'config' not in cfg_daemon:
+		return
+	else:		
+		config_dir = cfg_main['directories']['daemon-config']
+		# TODO
+		config_dir = "/mnt/PIHU_CONFIG/"	# fix!
+		config_file = cfg_daemon['config']
+		
+		gpio_config_file = os.path.join(config_dir,config_file)
+	
+	# load gpio configuration
+	if os.path.exists(gpio_config_file):
+		cfg_gpio = configuration_load(LOGGER_NAME,gpio_config_file)
+	else:
+		print "ERROR: not found: {0}".format(gpio_config_file)
+
+	return cfg_main, cfg_zmq, cfg_daemon, cfg_gpio
+		
 
 # ********************************************************************************
 # Load JSON configuration
