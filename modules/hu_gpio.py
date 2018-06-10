@@ -432,7 +432,7 @@ class GpioController(object):
 		
 		# -------------------------------
 		
-		#function = self.get_encoder_function_by_pin(pin)
+		function = self.get_encoder_function_by_pin(pin)
 		#print function
 		if function is not None:
 			if (Switch_A and Switch_B):						# Both one active? Yes -> end of sequence
