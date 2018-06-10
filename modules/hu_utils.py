@@ -436,6 +436,8 @@ def load_cfg(config, configs, zmq_port_pub, zmq_port_sub):
 	cfg_daemon = None
 	cfg_gpio = None
 
+	printer("Hello from load_cfg")
+	
 	# main
 	LOGGER_NAME = 'gpio'	# TODO
 	cfg_main = configuration_load(LOGGER_NAME,config)
@@ -470,13 +472,14 @@ def load_cfg(config, configs, zmq_port_pub, zmq_port_sub):
 		cfg_zmq['port_subscriber'] = args.port_subscriber
 			
 	# daemon
-	if 'daemons' not in cfg_main:
-		return
-	else:
+	if 'daemons' in cfg_main:
 		for daemon in cfg_main['daemons']:
 			if 'script' in daemon and daemon['script'] == os.path.basename(__file__):
 				cfg_daemon = daemon
 				break #only one
+				
+	print "debug daemon config"
+	print cfg_daemon
 	
 	# gpio
 	if cfg_daemon is not None:
