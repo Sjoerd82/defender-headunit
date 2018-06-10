@@ -163,7 +163,7 @@ class GpioController(object):
 			
 			if 'reset' in self.mode_sets[function['mode_cycle']]:
 				reset_time = self.mode_sets[function['mode_cycle']]['reset']
-				printer("Mode changed from: '{0}' to: '{1}'. Reset timer set to seconds: {3}".format(mode_old,mode_new,reset_time)) # LL_DEBUG TODO
+				printer("Mode changed from: '{0}' to: '{1}'. Reset timer set to seconds: {2}".format(mode_old,mode_new,reset_time)) # LL_DEBUG TODO
 				self.reset_mode_timer(reset_time,function['mode_cycle'])
 			else:
 				printer("Mode changed from: '{0}' to: '{1}' without reset.".format(mode_old,mode_new)) # LL_DEBUG TODO
