@@ -268,7 +268,7 @@
 		, "KLOGD_ARGS":"-n"
 		, "modules": {
 			  "location":"/etc/sysconfig/modules"
-			, "modules": [ "i2-dev", "snd-aloop" ]
+			, "modules": [ "i2c-dev", "snd-aloop" ]
 		}
 		, "dbus": {
 			  "location":"/usr/share/dbus-1/system.d/hu.conf"

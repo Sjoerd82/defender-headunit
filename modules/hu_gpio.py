@@ -82,7 +82,6 @@ class GpioController(object):
 			if mode_set_id != 'active_modes':
 				mode_set['mode_list'].set_active_modes([mode])
 		self.__update_active_modes()
-		print self.mode_sets['active_modes']
 		
 	def unset_active_mode(self,mode):
 		self.__update_active_modes()
@@ -94,7 +93,6 @@ class GpioController(object):
 					mode_set['mode_list'].unset_active_modes([mode])
 
 			self.__update_active_modes()
-			print self.mode_sets['active_modes']
 					
 		#else:
 		#	print "Mode {0} is not currently active, ignoring request..".format(mode)

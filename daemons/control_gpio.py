@@ -299,7 +299,7 @@ def cb_gpio_function(code):
 		arguments = None
 		messaging.publish_command(zmq_path,zmq_command,arguments)
 	else:
-		print "CONTROL_GPIO: function {0} not in function_map".format(code)	
+		printer("Function {0} not in function_map".format(code),level=LL_ERROR)
 			
 def cb_mode_change(active_modes):
 	# active_modes is a Modes() struct

@@ -366,6 +366,7 @@ def cb_gpio_function(code):
 	#print "Added to queue: EXECUTE: {0}".format(code)
 	#qVolume.put(code)
 	if code in ('VOLUME_INC','VOLUME_DEC','VOLUME_INC_FAST','VOLUME_DEC_FAST'):
+		printer("Executing: {0}".format(code))
 		if code == 'VOLUME_INC':
 			local_volume += volume_increment
 			local_volume_chg = True
@@ -405,6 +406,9 @@ def cb_gpio_function(code):
 			print "Response: [OK]"
 		elif ret == False or ret is None:
 			print "Response: [FAIL]"
+	else:
+		printer("Function {0} not in function_map".format(code),level=LL_ERROR)
+
 
 """
 def handle_queue(code,count):
