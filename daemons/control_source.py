@@ -72,7 +72,6 @@ DEFAULT_PORT_SUB = 5560
 logger = None						# logging
 args = None							# command line arguments
 messaging = MqPubSubFwdController()	# mq messaging
-configuration = None				# configuration
 settings = None						# operational settings
 sc_sources = None					# source controller
 
@@ -903,14 +902,14 @@ def save_resume():
 	# TODO: check if dir. present, create if not
 	
 	# Save System resume source indicator
-	resume_file = os.path.join(configuration['directories']['resume'],configuration['files']['resume'])
+	resume_file = os.path.join(cfg_main['directories']['resume'],cfg_main['files']['resume'])
 	printer('Saving resume file to: {0}'.format(resume_file))
 	with open(resume_file, 'wb') as f_resume_file:
 		f_resume_file.write('{0}\n'.format( cur_comp_subsource['name'] ))
 
 	# sub-source
 	
-	ss_resume_file = os.path.join(configuration['directories']['resume'], cur_comp_subsource['name']+"."+cur_comp_subsource['keyvalue']+".json")
+	ss_resume_file = os.path.join(cfg_main['directories']['resume'], cur_comp_subsource['name']+"."+cur_comp_subsource['keyvalue']+".json")
 	printer('Saving resume file to: {0}'.format(ss_resume_file))
 	state = sc_sources.source_get_state()
 	state = {}
@@ -928,22 +927,6 @@ def save_resume():
 		printer(' > ERROR saving resume file',level=LL_ERROR)
 		pa_sfx(LL_ERROR)
 		
-# ********************************************************************************
-# Load configuration
-#
-def load_configuration():
-
-	# utils # todo, present with logger
-	configuration = configuration_load(LOGGER_NAME,args.config)
-	
-	if not configuration or not 'zeromq' in configuration:
-		printer('Error: Configuration not loaded or missing ZeroMQ, using defaults:')
-		printer('Default Pub port: {0}'.format(DEFAULT_PORT_PUB))
-		printer('Default Sub port: {0}'.format(DEFAULT_PORT_SUB))
-		configuration = { "zeromq": { "port_subscriber": DEFAULT_PORT_SUB, "port_publisher":DEFAULT_PORT_PUB } }
-	
-	return configuration
-
 # ********************************************************************************
 # Execute a check_availability() on all sources
 #
@@ -1206,16 +1189,7 @@ def setup():
 	cfg_daemon = load_cfg_daemon()
 	if cfg_daemon is None:
 		printer("Daemon configuration could not be loaded.", level=LL_CRITICAL)
-		exit(1)
-		
-	
-	#
-	# Load main configuration	#DEPRECATED
-	#
-	global configuration
-	configuration = load_configuration()
-	
-	
+		exit(1)	
 	
 	#
 	# ZMQ
