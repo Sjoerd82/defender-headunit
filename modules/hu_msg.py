@@ -61,7 +61,7 @@ class MqPubSubFwdController(object):
 		self.origin = origin
 		print(__name__)		
 		print(__file__)
-		print(__loader__)
+		#print(__loader__)
 		print(__package__)
 		
 		# Poller

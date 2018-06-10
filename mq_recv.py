@@ -3,7 +3,6 @@
 from time import sleep
 
 from modules.hu_msg import MqPubSubFwdController
-from modules.hu_msg import parse_message
 
 DESCRIPTION = "Receive all MQ traffic"
 DEFAULT_PORT_PUB = 5559
