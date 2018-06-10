@@ -110,7 +110,7 @@ class GpioController(object):
 		"""
 		# loop through all possible functions for given pin
 		# examine if func meets all requirements (only one check needed for encoders: mode)
-		print "X1"
+		print "X1 -- {0}".format(self.modes.active_modes())
 		for func_cfg in self.pins_config[pin]['functions']:
 			print "X2 -- {0}".format(func_cfg)
 			# check mode #TODO!! TODO!! add mode here!!
@@ -143,6 +143,7 @@ class GpioController(object):
 		
 		self.mode_sets[mode_set_id]['mode_list'].set_active_modes([self.mode_sets[mode_set_id]['base_mode']])
 		self.__printer('[MODE] Reset to: "{0}"'.format(self.mode_sets[mode_set_id]['base_mode']))
+		print "X1 -- {0}".format(self.modes.active_modes())
 		
 		master_modes_list = Modes()
 		for mode_set_id,mode_set in self.mode_sets.iteritems():
