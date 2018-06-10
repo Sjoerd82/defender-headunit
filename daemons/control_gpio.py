@@ -91,17 +91,6 @@ function_map['VOLUME_ATT'] = { 'zmq_path':'/volume/att', 'zmq_command':'PUT' }
 function_map['VOLUME_MUTE'] = { 'zmq_path':'/volume/mute', 'zmq_command':'PUT' }
 function_map['SYSTEM_SHUTDOWN'] = { 'zmq_path':'/system/shutdown', 'zmq_command':'PUT' }
 
-app_commands =	[
-	{	'name': 'mode-change',
-		'params': [ {'name':'mode', 'required':True, 'datatype': (str,unicode), 'help':'Mode to set'},
-					{'name':'state', 'required':True, 'datatype': bool, 'default': False, 'help':'True or False'}
-		],
-		'params_repeat': True,
-		'description': 'Set a number of modes at once',
-		'command': 'PUT',
-		'path': '/mode/change'
-	}
-]
 
 '''
 pins_config = 
@@ -228,10 +217,24 @@ def mq_mode_set(path=None, cmd=None, args=None, data=None):
 @messaging.handle_mq('/mode/change', cmd='PUT')
 def mq_mode_change_put(path=None, cmd=None, args=None, data=None):
 	
+	# TODO.. ignore my own messages
+
+	app_commands =	[
+		{	'name': 'mode-change',
+			'params': [ {'name':'mode', 'required':True, 'datatype': (str,unicode), 'help':'Mode to set'},
+						{'name':'state', 'required':True, 'datatype': bool, 'default': False, 'help':'True or False'}
+			],
+			'params_repeat': True,
+			'description': 'Set a number of modes at once',
+			'command': 'PUT',
+			'path': '/mode/change'
+		}
+	]
+	
 	global active_modes
 	
 	arg_defs = app_commands[0]['params']
-	ret = validate_args(arg_defs,params,app_commands[0]['params_repeat'])
+	ret = validate_args(arg_defs,args,app_commands[0]['params_repeat'])
 	
 	if ret is not None and ret is not False:	
 		# arguments are mode-state pairs

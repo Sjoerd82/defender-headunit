@@ -244,7 +244,7 @@ class GpioController(object):
 
 		if (self.pins_config[pin]['has_long'] or self.pins_config[pin]['has_short']) and not self.pins_config[pin]['has_multi']:
 			""" LONG + possible short press functions, no multi-buttons, go ahead and execute, if pressed long enough """
-			self.__printer("Waiting for button to be released....")
+			self.__printer("Button pressed, pin {0}, waiting for button to be released....".format(pin))
 			pressed = True
 			while True: #pressed == True or press_time >= self.long_press_ms:
 				state = GPIO.input(pin)
@@ -260,7 +260,7 @@ class GpioController(object):
 				sleep(0.005)
 				
 			if press_time >= self.long_press_ms and self.pins_config[pin]['has_long']:
-				self.__printer("Button was pressed for {0} miliseconds, longer than threshold and long function available. Executing long function".format(press_time))	# TODO: LL_DEBUG
+				self.__printer("Button was pressed for {0}ms (threshold={1}). Executing long function".format(press_time,self.long_press_ms))	# TODO: LL_DEBUG
 				
 				# execute, checking mode
 				for ix, fun in enumerate(self.pins_config[pin]['functions']):
@@ -276,7 +276,7 @@ class GpioController(object):
 							self.exec_function_by_code(fun['function'])			
 				
 			elif press_time < self.long_press_ms and self.pins_config[pin]['has_short']:
-				self.__printer("Button was pressed for {0} miliseconds, shorter than threshold and short function available. Executing short function".format(press_time))	# TODO: LL_DEBUG
+				self.__printer("Button was pressed for {0}ms (threshold={1}. Executing short function".format(press_time,self.long_press_ms))	# TODO: LL_DEBUG
 				
 				# execute, checking mode
 				for ix, fun in enumerate(self.pins_config[pin]['functions']):
