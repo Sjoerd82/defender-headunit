@@ -412,7 +412,7 @@ def setup():
 	global gpio
 	global modes
 	printer("GPIO: Initializing")
-	gpio = GpioController(cfg_gpio,cb_gpio_function)
+	gpio = GpioController(cfg_gpio,cb_gpio_function,logger=logger)
 	modes = gpio.get_modes()
 	gpio.set_cb_mode_change(cb_mode_change)
 	

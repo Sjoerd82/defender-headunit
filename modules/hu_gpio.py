@@ -8,7 +8,7 @@
 #
 
 # BUGS:
-# printer() doesn't work! WTF?
+# self.__printer() doesn't work! WTF?
 
 import sys						# path
 import os						# 
@@ -32,10 +32,15 @@ from hu_datastruct import Modes
 #
 class GpioController(object):
 
-	def __init__(self, cfg_gpio, cb_function=None):
-		self.cfg_gpio = cfg_gpio
+	def __init__(self, cfg_gpio, cb_function=None, logger=None):
 
-		# callbacks
+		# configuration
+		self.cfg_gpio = cfg_gpio
+		
+		# (optional) logger
+		self.logger = logger
+
+		# (optional) callbacks
 		#staticmethod(int_switch)
 		self.callback_function = cb_function
 		staticmethod(self.callback_function)
@@ -64,6 +69,9 @@ class GpioController(object):
 		else:
 			self.gpio_setup(self.int_handle_switch,self.int_handle_encoder)
 	
+	def __printer( self, message, level=LL_INFO, tag=LOG_TAG):
+		self.logger.log(level, message, extra={'tag': tag})
+
 	def set_cb_mode_change(self,cb_function):
 		self.callback_mode_change = cb_function
 		staticmethod(self.callback_mode_change)
@@ -163,10 +171,10 @@ class GpioController(object):
 			
 			if 'reset' in self.mode_sets[function['mode_cycle']]:
 				reset_time = self.mode_sets[function['mode_cycle']]['reset']
-				printer("Mode changed from: '{0}' to: '{1}'. Reset timer set to seconds: {2}".format(mode_old,mode_new,reset_time)) # LL_DEBUG TODO
+				self.__printer("Mode changed from: '{0}' to: '{1}'. Reset timer set to seconds: {2}".format(mode_old,mode_new,reset_time)) # LL_DEBUG TODO
 				self.reset_mode_timer(reset_time,function['mode_cycle'])
 			else:
-				printer("Mode changed from: '{0}' to: '{1}' without reset.".format(mode_old,mode_new)) # LL_DEBUG TODO
+				self.__printer("Mode changed from: '{0}' to: '{1}' without reset.".format(mode_old,mode_new)) # LL_DEBUG TODO
 
 	def reset_mode_timer(self,seconds,mode_set_id):
 		""" reset the mode time-out if there is still activity in current mode """
@@ -214,7 +222,7 @@ class GpioController(object):
 		# check wheather we have short and/or long press functions and multi-press functions
 		if self.pins_config[pin]['has_short'] and not self.pins_config[pin]['has_long'] and not self.pins_config[pin]['has_multi']:
 			""" Only a SHORT function, no long press functions, no multi-button, go ahead and execute """
-			printer("Executing short function, as it is the only option") # LL_DEBUG #TODO
+			self.__printer("Executing short function, as it is the only option") # LL_DEBUG #TODO
 			
 			# execute, checking mode
 			for ix, fun in enumerate(self.pins_config[pin]['functions']):
@@ -232,7 +240,7 @@ class GpioController(object):
 
 		if (self.pins_config[pin]['has_long'] or self.pins_config[pin]['has_short']) and not self.pins_config[pin]['has_multi']:
 			""" LONG + possible short press functions, no multi-buttons, go ahead and execute, if pressed long enough """
-			printer("Waiting for button to be released....")
+			self.__printer("Waiting for button to be released....")
 			pressed = True
 			while True: #pressed == True or press_time >= self.long_press_ms:
 				state = GPIO.input(pin)
@@ -248,7 +256,7 @@ class GpioController(object):
 				sleep(0.005)
 				
 			if press_time >= self.long_press_ms and self.pins_config[pin]['has_long']:
-				printer("Button was pressed for {0} miliseconds, longer than threshold and long function available. Executing long function".format(press_time))	# TODO: LL_DEBUG
+				self.__printer("Button was pressed for {0} miliseconds, longer than threshold and long function available. Executing long function".format(press_time))	# TODO: LL_DEBUG
 				
 				# execute, checking mode
 				for ix, fun in enumerate(self.pins_config[pin]['functions']):
@@ -264,7 +272,7 @@ class GpioController(object):
 							self.exec_function_by_code(fun['function'])			
 				
 			elif press_time < self.long_press_ms and self.pins_config[pin]['has_short']:
-				printer("Button was pressed for {0} miliseconds, shorter than threshold and short function available. Executing short function".format(press_time))	# TODO: LL_DEBUG
+				self.__printer("Button was pressed for {0} miliseconds, shorter than threshold and short function available. Executing short function".format(press_time))	# TODO: LL_DEBUG
 				
 				# execute, checking mode
 				for ix, fun in enumerate(self.pins_config[pin]['functions']):
@@ -305,7 +313,7 @@ class GpioController(object):
 						elif function['press_type'] == 'long_press':
 							matched_long_press_function_code = function['function']
 					
-			printer("Waiting for button to be released....")
+			self.__printer("Waiting for button to be released....")
 			pressed = True
 			while pressed == True or press_time >= self.long_press_ms:
 				state = GPIO.input(pin)
@@ -416,11 +424,11 @@ class GpioController(object):
 
 		# check if mandatory sections present
 		if not 'devices' in self.cfg_gpio:
-			printer("Error: 'devices'-section missing in configuration.", level=LL_CRITICAL)
+			self.__printer("Error: 'devices'-section missing in configuration.", level=LL_CRITICAL)
 			return False
 			
 		if not 'functions' in self.cfg_gpio:
-			printer("Error: 'functions'-section missing in configuration.", level=LL_CRITICAL)
+			self.__printer("Error: 'functions'-section missing in configuration.", level=LL_CRITICAL)
 			return False
 
 		# get global settings (default already set)
@@ -436,7 +444,7 @@ class GpioController(object):
 		# modes
 		if 'mode_sets' in self.cfg_gpio:
 			if len(self.cfg_gpio['mode_sets']) > 1:
-				printer("WARNING: Multiple modes specified, but currently one one set is supported (only loading the first).", level=LL_WARNING)
+				self.__printer("WARNING: Multiple modes specified, but currently one one set is supported (only loading the first).", level=LL_WARNING)
 			
 			# deprecated:
 			#self.modes_old.append(self.cfg_gpio['mode_sets'][0])
@@ -457,12 +465,12 @@ class GpioController(object):
 					
 				self.mode_sets[mode_set['id']] = new_mode_set
 				
-			printer("Mode sets: {0}".format(self.mode_sets))
+			self.__printer("Mode sets: {0}".format(self.mode_sets))
 				
 		else:
 			# don't deal with modes at all
 			if len(self.active_modes) > 0:
-				printer("WARNING: No 'mode_sets'-section, modes will not be available.", level=LL_WARNING)
+				self.__printer("WARNING: No 'mode_sets'-section, modes will not be available.", level=LL_WARNING)
 			self.active_modes = []
 		
 		# initialize all pins in configuration
@@ -471,7 +479,7 @@ class GpioController(object):
 			if 'type' in device and device['type'] == 'led':
 				# Normal led
 				pin = device['pin']
-				printer("Setting up pin: {0}".format(pin))
+				self.__printer("Setting up pin: {0}".format(pin))
 				GPIO.setup(pin, GPIO.OUT)
 				
 			if 'type' in device and device['type'] == 'rgb':
@@ -479,7 +487,7 @@ class GpioController(object):
 				pin_r = device['r']
 				pin_g = device['g']
 				pin_b = device['b']
-				printer("Setting up pins: {0}, {1} and {2}".format(pin_r, pin_g, pin_b))
+				self.__printer("Setting up pins: {0}, {1} and {2}".format(pin_r, pin_g, pin_b))
 				GPIO.setup(pin_r, GPIO.OUT)
 				GPIO.setup(pin_g, GPIO.OUT)
 				GPIO.setup(pin_b, GPIO.OUT)
@@ -490,7 +498,7 @@ class GpioController(object):
 				pin = device['sw']
 				pins_monitor.append(pin)
 				
-				printer("Setting up pin: {0}".format(pin))
+				self.__printer("Setting up pin: {0}".format(pin))
 				GPIO.setup(pin, GPIO.IN)
 				
 				# convert high/1, low/0 to bool
@@ -508,23 +516,23 @@ class GpioController(object):
 						if gpio_on == GPIO.HIGH:
 							#GPIO.set_pullupdn(pin, pull_up_down=GPIO.PUD_DOWN)	#v0.10
 							GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-							printer("Pin {0}: Pull-down resistor enabled".format(pin))
+							self.__printer("Pin {0}: Pull-down resistor enabled".format(pin))
 						else:
 							#GPIO.set_pullupdn(pin, pull_up_down=GPIO.PUD_UP)	#v0.10
 							GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-							printer("Pin {0}: Pull-up resistor enabled".format(pin))
+							self.__printer("Pin {0}: Pull-up resistor enabled".format(pin))
 					elif device['gpio_pullupdown'] == False:
 						pass
 					elif device['gpio_pullupdown'] == 'up':
 						#GPIO.set_pullupdn(pin, pull_up_down=GPIO.PUD_UP)	#v0.10
 						GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
-						printer("Pin {0}: Pull-up resistor enabled".format(pin))
+						self.__printer("Pin {0}: Pull-up resistor enabled".format(pin))
 					elif device['gpio_pullupdown'] == 'down':
 						#GPIO.set_pullupdn(pin, pull_up_down=GPIO.PUD_DOWN)	#v0.10
 						GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-						printer("Pin {0}: Pull-down resistor enabled".format(pin))
+						self.__printer("Pin {0}: Pull-down resistor enabled".format(pin))
 					else:
-						printer("ERROR: invalid pull_up_down value. This attribute is optional. Valid values are: True, 'up' and 'down'.",level=LL_ERROR)
+						self.__printer("ERROR: invalid pull_up_down value. This attribute is optional. Valid values are: True, 'up' and 'down'.",level=LL_ERROR)
 
 				# edge detection trigger type
 				# valid settings are: "rising", "falling" or both
@@ -532,23 +540,23 @@ class GpioController(object):
 				if 'gpio_edgedetect' in device:				
 					if device['gpio_edgedetect'] == 'rising':
 						GPIO.add_event_detect(pin, GPIO.RISING, callback=int_switch) #
-						printer("Pin {0}: Added Rising Edge interrupt; bouncetime=600".format(pin))
+						self.__printer("Pin {0}: Added Rising Edge interrupt; bouncetime=600".format(pin))
 					elif device['gpio_edgedetect'] == 'falling':
 						GPIO.add_event_detect(pin, GPIO.FALLING, callback=int_switch) #
-						printer("Pin {0}: Added Falling Edge interrupt; bouncetime=600".format(pin))
+						self.__printer("Pin {0}: Added Falling Edge interrupt; bouncetime=600".format(pin))
 					elif device['gpio_edgedetect'] == 'both':
 						GPIO.add_event_detect(pin, GPIO.BOTH, callback=int_switch) #
-						printer("Pin {0}: Added Both Rising and Falling Edge interrupt; bouncetime=600".format(pin))
-						printer("Pin {0}: Warning: detection both high and low level will cause an event to trigger on both press and release.".format(pin),level=LL_WARNING)
+						self.__printer("Pin {0}: Added Both Rising and Falling Edge interrupt; bouncetime=600".format(pin))
+						self.__printer("Pin {0}: Warning: detection both high and low level will cause an event to trigger on both press and release.".format(pin),level=LL_WARNING)
 					else:
-						printer("Pin {0}: ERROR: invalid edge detection value.".format(pin),level=LL_ERROR)
+						self.__printer("Pin {0}: ERROR: invalid edge detection value.".format(pin),level=LL_ERROR)
 				else:
 					if gpio_on == GPIO.HIGH:
 						GPIO.add_event_detect(pin, GPIO.RISING, callback=int_switch) #
-						printer("Pin {0}: Added Rising Edge interrupt; bouncetime=600".format(pin))				
+						self.__printer("Pin {0}: Added Rising Edge interrupt; bouncetime=600".format(pin))				
 					else:
 						GPIO.add_event_detect(pin, GPIO.FALLING, callback=int_switch) #, bouncetime=600
-						printer("Pin {0}: Added Falling Edge interrupt; bouncetime=600".format(pin))
+						self.__printer("Pin {0}: Added Falling Edge interrupt; bouncetime=600".format(pin))
 
 				
 				self.pins_state[pin] = GPIO.input(pin)
@@ -560,7 +568,7 @@ class GpioController(object):
 				pin_clk = device['clk']
 				pin_dt = device['dt']
 				
-				printer("Setting up encoder on pins: {0} and {1}".format(pin_clk, pin_dt))
+				self.__printer("Setting up encoder on pins: {0} and {1}".format(pin_clk, pin_dt))
 				GPIO.setup((pin_clk,pin_dt), GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 				GPIO.add_event_detect(pin_clk, GPIO.RISING, callback=int_encoder) # NO bouncetime 
 				GPIO.add_event_detect(pin_dt, GPIO.RISING, callback=int_encoder) # NO bouncetime 
@@ -593,7 +601,7 @@ class GpioController(object):
 				if multicount == 1:
 					device = self.get_device_config(function['short_press'][0])
 					if device is None:
-						printer("ID not found in devices: {0}".format(function['short_press'][0]),level=LL_CRITICAL)
+						self.__printer("ID not found in devices: {0}".format(function['short_press'][0]),level=LL_CRITICAL)
 						exit(1)
 					pin_sw = device['sw']
 					self.pins_config[pin_sw]["has_short"] = True
@@ -638,7 +646,7 @@ class GpioController(object):
 				if multicount == 1:
 					device = self.get_device_config(function['long_press'][0])
 					if device is None:
-						printer("ID not found in devices: {0}".format(function['long_press'][0]),level=LL_CRITICAL)
+						self.__printer("ID not found in devices: {0}".format(function['long_press'][0]),level=LL_CRITICAL)
 						exit(1)
 					pin_sw = device['sw']
 					self.pins_config[pin_sw]["has_long"] = True
@@ -678,6 +686,6 @@ class GpioController(object):
 					
 		# check for any duplicates, but don't exit on it. (#todo: consider making this configurable)
 		if len(pins_monitor) != len(set(pins_monitor)):
-			printer("WARNING: Same pin used multiple times, this may lead to unpredictable results.",level=LL_WARNING)
+			self.__printer("WARNING: Same pin used multiple times, this may lead to unpredictable results.",level=LL_WARNING)
 			pins_monitor = set(pins_monitor) # no use in keeping duplicates
 
