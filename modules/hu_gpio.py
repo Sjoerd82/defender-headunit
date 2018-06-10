@@ -186,7 +186,12 @@ class GpioController(object):
 			mode_list = self.mode_sets[function['mode_cycle']]['mode_list']
 			current_active_mode = mode_list.get_active_mode()
 			mode_ix = mode_list.unique_list().index(current_active_mode)
+			
+			print "DEBUG list order"
+			print mode_list.unique_list()
+			
 			mode_old = mode_list[mode_ix]['name']
+			mode_base = self.mode_sets[function['mode_cycle']]['mode_base']
 					
 			if mode_ix >= len(mode_list)-1:
 				mode_ix = 0
@@ -198,9 +203,14 @@ class GpioController(object):
 			self.callback_mode_change(mode_list)
 			
 			if 'reset' in self.mode_sets[function['mode_cycle']]:
-				reset_time = self.mode_sets[function['mode_cycle']]['reset']
-				self.__printer("[MODE] Changed from: '{0}' to: '{1}'. Reset timer set to seconds: {2}".format(mode_old,mode_new,reset_time)) # LL_DEBUG TODO
-				self.reset_mode_timer(reset_time,function['mode_cycle'])
+			
+				if mode_new == mode_base:
+					self.__printer("[MODE] Changed from: '{0}' to: '{1}' (base mode; no reset timer)".format(mode_old,mode_new)) # LL_DEBUG TODO
+				else:
+					reset_time = self.mode_sets[function['mode_cycle']]['reset']
+					self.__printer("[MODE] Changed from: '{0}' to: '{1}'. Reset timer set to seconds: {2}".format(mode_old,mode_new,reset_time)) # LL_DEBUG TODO
+					self.reset_mode_timer(reset_time,function['mode_cycle'])		
+			
 			else:
 				self.__printer("[MODE] Changed from: '{0}' to: '{1}' without reset.".format(mode_old,mode_new)) # LL_DEBUG TODO
 
