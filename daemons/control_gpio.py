@@ -91,6 +91,18 @@ function_map['VOLUME_ATT'] = { 'zmq_path':'/volume/att', 'zmq_command':'PUT' }
 function_map['VOLUME_MUTE'] = { 'zmq_path':'/volume/mute', 'zmq_command':'PUT' }
 function_map['SYSTEM_SHUTDOWN'] = { 'zmq_path':'/system/shutdown', 'zmq_command':'PUT' }
 
+app_commands =	[
+	{	'name': 'mode-change',
+		'params': [ {'name':'mode', 'required':True, 'datatype': (str,unicode), 'help':'Mode to set'},
+					{'name':'state', 'required':True, 'datatype': bool, 'default': False, 'help':'True or False'}
+		],
+		'params_repeat': True,
+		'description': 'Set a number of modes at once',
+		'command': 'PUT',
+		'path': '/mode/change'
+	}
+]
+
 '''
 pins_config = 
 	{ "23": {
