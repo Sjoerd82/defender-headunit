@@ -7,9 +7,6 @@
 # 
 #
 
-# BUGS:
-# self.__printer() doesn't work! WTF?
-
 import sys						# path
 import os						# 
 import copy						# deepcopy
@@ -346,7 +343,8 @@ class GpioController(object):
 	def int_handle_encoder(self,pin):
 		""" Called for either inputs from rotary switch (A and B) """
 		
-		#print "DEBUG: self.int_handle_encoder! for pin: {0}".format(pin)
+		print "DEBUG: self.int_handle_encoder! for pin: {0}".format(pin)
+		self.__printer("yahoor")
 			
 		device = self.get_device_config_by_pin(pin)
 		
