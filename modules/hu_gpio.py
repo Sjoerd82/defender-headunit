@@ -371,10 +371,10 @@ class GpioController(object):
 		
 		# -------------------------------
 		
-		#function_cw_ccw = self.get_encoder_function_by_pin(pin)
-		#print "DEBUG encoder"
-		#print function
-		#if function is not None:
+		function = self.get_encoder_function_by_pin(pin)
+		print "DEBUG encoder"
+		print function
+		if function is not None:
 			print "A"
 			if (Switch_A and Switch_B):						# Both one active? Yes -> end of sequence
 				print "B"
