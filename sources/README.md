@@ -12,7 +12,8 @@ Source plugins are plugins that represent an audio (music) source.
 
 ## Concepts
 
-An audio signal source a.k.a. "Source" is a provider of music. Examples of these are FM radio, MPD or SoundCloud.
+### Sources
+An audio signal source a.k.a. "Source" is a provider of music, for example: FM radio, MPD or SoundCloud.
 Every source is defined by a Source Plugin. Source plugins are Python classes.
 
 ### Subsources
@@ -222,6 +223,17 @@ Return: Nothing (Currently not being checked)
 
 This is a good place to populate any subsources dynamically.
 sourceconfig contains the complete configuration, including the parts from the main configuration (configuration.json).
+
+#### on_activate()
+...
+
+#### on_event()
+
+The Source Controller may call do_event() when certain events take place.
+
+sc_sources.do_event('network',path,payload)
+sc_sources.do_event('udisks',path,payload)	# do_event() executes the 'udisks' event
+.... incomplete ....
 
 #### check_availability()
 
