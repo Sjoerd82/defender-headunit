@@ -544,7 +544,7 @@ class GpioController(object):
 				for i, mode in enumerate(mode_set['mode_list']):
 					new_mode = {}
 					new_mode['name'] = mode
-					if mode == mode_set['base_mode']:
+					if mode == new_mode_set['base_mode']:
 						new_mode['state'] = True
 					else:
 						new_mode['state'] = False
