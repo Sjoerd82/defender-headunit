@@ -151,7 +151,7 @@ class GpioController(object):
 		self.__printer('[MODE] Reset to: "{0}"'.format(self.mode_sets[mode_set_id]['base_mode']))
 		
 		self.__update_active_modes()
-		print "X1 -- {0}".format(self.mode_sets['active_modes'])	
+		print "X0 reset -- {0}".format(self.mode_sets['active_modes'])	
 		
 		# call that other callback
 		master_modes_list = self.get_modes()
@@ -162,7 +162,7 @@ class GpioController(object):
 		
 		for mode_set_id,mode_set in self.mode_sets.iteritems():
 			if mode_set_id != 'active_modes':
-				self.mode_sets['active_modes'].extend(mode_set['mode_list'])
+				self.mode_sets['active_modes'].extend(mode_set['mode_list'].active_modes())
 		
 		"""
 		for ix, mode_set in enumerate(self.mode_sets):
