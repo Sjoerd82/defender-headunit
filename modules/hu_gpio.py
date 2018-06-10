@@ -371,7 +371,7 @@ class GpioController(object):
 	def int_handle_encoder(self,pin):
 		""" Called for either inputs from rotary switch (A and B) """
 		
-		print "DEBUG: self.int_handle_encoder! for pin: {0}".format(pin)
+		#print "DEBUG: self.int_handle_encoder! for pin: {0}".format(pin)
 			
 		device = self.get_device_config_by_pin(pin)
 		
@@ -396,12 +396,8 @@ class GpioController(object):
 		# -------------------------------
 		
 		function = self.get_encoder_function_by_pin(pin)
-		print "DEBUG encoder"
-		print function
 		if function is not None:
-			print "A"
 			if (Switch_A and Switch_B):						# Both one active? Yes -> end of sequence
-				print "B"
 			
 				this_chg = datetime.now()
 				delta = this_chg - self.encoder_last_chg
@@ -424,7 +420,6 @@ class GpioController(object):
 				"""
 
 				if pin == encoder_pinB:							# Turning direction depends on 
-					print "C"
 					#counter clockwise
 					#print "[Encoder] {0}: DECREASE/CCW".format(function['function_ccw'])
 					if self.encoder_fast_count > 3 and 'function_fast_ccw' in function:
@@ -432,7 +427,6 @@ class GpioController(object):
 					elif 'function_ccw' in function:
 						self.exec_function_by_code(function['function_ccw'],'ccw')
 				else:
-					print "D"
 					#clockwise
 					#print "[Encoder] {0}: INCREASE/CW".format(function['function_cw'])
 					if self.encoder_fast_count > 3 and 'function_fast_cw' in function:
@@ -490,11 +484,11 @@ class GpioController(object):
 		}
 		"""
 		
+		self.mode_sets['active_modes'] = []
 		if 'mode_sets' in self.cfg_gpio:
 			if len(self.cfg_gpio['mode_sets']) > 1:
 				self.__printer("WARNING: Multiple modes specified, but currently one one set is supported (only loading the first).", level=LL_WARNING)
 			
-			self.mode_sets['active_modes'] = []
 			
 			self.__printer("Mode sets:")
 			for mode_set in self.cfg_gpio['mode_sets']:
@@ -531,9 +525,7 @@ class GpioController(object):
 			self.__update_active_modes()
 			
 		else:
-			# don't deal with modes at all
-			self.mode_sets = None
-			self.__printer("WARNING: No 'mode_sets'-section, modes will not be available.", level=LL_WARNING)
+			self.__printer("WARNING: No 'mode_sets'-section.", level=LL_WARNING)
 		
 		# initialize all pins in configuration
 		pins_monitor = []
