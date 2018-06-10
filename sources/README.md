@@ -230,10 +230,11 @@ sourceconfig contains the complete configuration, including the parts from the m
 #### on_event()
 
 The Source Controller may call do_event() when certain events take place.
-
+At this moment:
 sc_sources.do_event('network',path,payload)
 sc_sources.do_event('udisks',path,payload)	# do_event() executes the 'udisks' event
 .... incomplete ....
+to be changed to reflect MQ /events/-messages
 
 #### check_availability()
 
