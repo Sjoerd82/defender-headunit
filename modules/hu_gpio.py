@@ -77,6 +77,31 @@ class GpioController(object):
 		self.callback_mode_change = cb_function
 		staticmethod(self.callback_mode_change)
 	
+	def set_active_mode(self,mode):
+		for mode_set_id,mode_set in self.mode_sets.iteritems():
+			if mode_set_id != 'active_modes':
+				mode_set['mode_list'].set_active_modes([mode])
+		print "DONE, active modes are now:"
+		self.__update_active_modes()
+		print self.mode_sets['active_modes']
+		
+	def unset_active_mode(self,mode):
+		self.__update_active_modes()
+		print "Active modes now: {0}".format(self.mode_sets['active_modes'])
+		if mode in self.mode_sets['active_modes']:
+			
+			for mode_set_id,mode_set in self.mode_sets.iteritems():
+				if mode_set_id != 'active_modes':
+					mode_set['mode_list'].unset_active_modes([mode])
+
+		print "DONE, active modes are now:"
+		self.__update_active_modes()
+		print self.mode_sets['active_modes']
+					
+		else:
+			print "Mode {0} is not currently active, ignoring request..".format(mode)
+
+	
 	def get_modes(self):
 		""" Returns Mode-structure containing all modes and states of all sets. """
 		master_modes_list = Modes()
@@ -186,10 +211,6 @@ class GpioController(object):
 			mode_list = self.mode_sets[function['mode_cycle']]['mode_list']
 			current_active_mode = mode_list.get_active_mode()
 			mode_ix = mode_list.unique_list().index(current_active_mode)
-			
-			print "DEBUG list order"
-			print mode_list.unique_list()
-			
 			mode_old = mode_list[mode_ix]['name']
 			mode_base = self.mode_sets[function['mode_cycle']]['base_mode']
 					
@@ -383,7 +404,7 @@ class GpioController(object):
 	def int_handle_encoder(self,pin):
 		""" Called for either inputs from rotary switch (A and B) """
 		
-		#print "DEBUG: self.int_handle_encoder! for pin: {0}".format(pin)
+		print "DEBUG: self.int_handle_encoder! for pin: {0}".format(pin)
 			
 		device = self.get_device_config_by_pin(pin)
 		
@@ -408,6 +429,7 @@ class GpioController(object):
 		# -------------------------------
 		
 		function = self.get_encoder_function_by_pin(pin)
+		print function
 		if function is not None:
 			if (Switch_A and Switch_B):						# Both one active? Yes -> end of sequence
 			

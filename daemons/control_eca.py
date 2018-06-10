@@ -662,8 +662,10 @@ def mq_mode_change_put(path=None, cmd=None, args=None, data=None):
 			printer("Received Mode: {0} State: {1}".format(ret[i],ret[i+1]), level=LL_DEBUG)
 			if ret[i+1] == True and ret[i] not in active_modes:
 				active_modes.append(ret[i])
+				gpio.set_active_mode(ret[i])
 			elif ret[i+1] == False and ret[i] in active_modes:
 				active_modes.remove(ret[i])
+				gpio.unset_active_mode(ret[i])
 				
 		printer("Active Modes: {0}".format(active_modes))
 

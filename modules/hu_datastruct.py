@@ -99,6 +99,13 @@ class Modes(ListDataStruct):
 	#	""" Careful, some modes need to be in a certain sequence! """
 	#	self = [sorted(l, key=itemgetter('name')) for l in (self)]
 	
+	def unset_active_modes(self, modes):
+		for mode in self:
+			if mode['name'] in modes:
+				mode['state'] = False
+			else:
+				mode['state'] = True	
+	
 	def set_active_modes(self, modes, only=True):
 		for mode in self:
 			if mode['name'] in modes:
