@@ -720,7 +720,7 @@ def internet():
 		pass
 	return False
 
-def url_check( url ):
+def url_check(url, timeout=None):
 	# Using httplib2, supporting https (?):
 	#h = httplib2.Http()
 	#resp = h.request(url, 'HEAD')
@@ -728,7 +728,7 @@ def url_check( url ):
 	
 	# Using urllib2:
 	try:
-		urllib2.urlopen(url)
+		urllib2.urlopen(url,timeout)
 		return True
 	except:
 		return False
