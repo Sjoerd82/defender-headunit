@@ -174,7 +174,7 @@ def struct_data(payload,code=None):
 		data['payload'] = payload
 		
 	if code is not None:
-		data['retval'] = code
+		data['retval'] = int(code)
 	
 	return data
 	
