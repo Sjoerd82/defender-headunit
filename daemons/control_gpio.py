@@ -69,6 +69,7 @@ cfg_gpio = None		# GPIO setup
 
 # data structures
 modes = Modes()
+active_modes = []
 
 # other stuff
 mode_controller = True
