@@ -373,39 +373,18 @@ def setup():
 		daemon_script=os.path.basename(__file__),
 		logger_name=LOGGER_NAME	)
 	
-	#cfg_main = load_cfg_main()
 	if cfg_main is None:
 		printer("Main configuration could not be loaded.", level=LL_CRITICAL)
 		exit(1)
 	
-	# zeromq
-	"""
-	if not args.port_publisher and not args.port_subscriber:
-		cfg_zmq = load_cfg_zmq()
-	else:
-		if args.port_publisher and args.port_subscriber:
-			pass
-		else:
-			load_cfg_zmq()
-	
-		# Pub/Sub port override
-		if args.port_publisher:
-			configuration['zeromq']['port_publisher'] = args.port_publisher
-		if args.port_subscriber:
-			configuration['zeromq']['port_subscriber'] = args.port_subscriber
-	"""
 	if cfg_zmq is None:
 		printer("Error loading Zero MQ configuration.", level=LL_CRITICAL)
 		exit(1)
 			
-	# daemon
-	#cfg_daemon = load_cfg_daemon()
 	if cfg_daemon is None:
 		printer("Daemon configuration could not be loaded.", level=LL_CRITICAL)
 		exit(1)
 	
-	# gpio
-	#cfg_gpio = load_cfg_gpio()
 	if cfg_gpio is None:
 		printer("GPIO configuration could not be loaded.", level=LL_CRITICAL)
 		exit(1)

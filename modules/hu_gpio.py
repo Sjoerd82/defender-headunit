@@ -112,7 +112,7 @@ class GpioController(object):
 		return None				
 
 	def exec_function_by_code(self,code,param=None):
-		print "EXECUTE: {0} {1}".format(code,param)
+		print "exec_function_by_code() EXECUTE: {0} {1}".format(code,param)
 		self.callback_function(code)
 		"""
 		if code in function_map:
@@ -128,6 +128,9 @@ class GpioController(object):
 	def cb_mode_reset(self,mode_set_id):
 		self.mode_sets[mode_set_id]['mode_list'].set_active_modes(['volume'])
 		
+		print "XX-DEBUG-XX"
+		print  mode_set_id
+		
 		master_modes_list = Modes()
 		for mode_set_id,mode_set in self.mode_sets.iteritems():
 			master_modes_list.extend(mode_set['mode_list'])
@@ -142,8 +145,7 @@ class GpioController(object):
 		function = self.pins_config[pin]['functions'][function_ix]
 
 		if 'mode_cycle' in function: # and 'mode' in self.pins_config[pin]:		
-			print "DEBUG: handle_mode()"
-			
+		
 			# new
 			mode_list = self.mode_sets[function['mode_cycle']]['mode_list']
 			current_active_mode = mode_list.get_active_mode()
@@ -156,15 +158,15 @@ class GpioController(object):
 				mode_ix += 1
 			mode_new = mode_list[mode_ix]['name']
 			
-			#printer("Mode changed from {0} to: {1}".format(mode_old,mode_new)) # LL_DEBUG
-			print("Mode changed from: '{0}' to: '{1}'".format(mode_old,mode_new)) # LL_DEBUG
 			mode_list.set_active_modes(mode_new)
 			self.callback_mode_change(mode_list)
 			
 			if 'reset' in self.mode_sets[function['mode_cycle']]:
 				reset_time = self.mode_sets[function['mode_cycle']]['reset']
-				print "Starting mode reset timer, seconds: {0}".format(reset_time)
+				printer("Mode changed from: '{0}' to: '{1}'. Reset timer set to seconds: {3}".format(mode_old,mode_new,reset_time)) # LL_DEBUG TODO
 				self.reset_mode_timer(reset_time,function['mode_cycle'])
+			else:
+				printer("Mode changed from: '{0}' to: '{1}' without reset.".format(mode_old,mode_new)) # LL_DEBUG TODO
 
 	def reset_mode_timer(self,seconds,mode_set_id):
 		""" reset the mode time-out if there is still activity in current mode """
@@ -194,7 +196,7 @@ class GpioController(object):
 		if not GPIO.input(pin) == self.pins_config[pin]['gpio_on']:
 			return None
 		
-		print "DEBUG: self.int_handle_switch! for pin: {0}".format(pin)
+		#print "DEBUG: self.int_handle_switch! for pin: {0}".format(pin)
 
 		# try-except?
 		""" why do we do this?
@@ -212,7 +214,7 @@ class GpioController(object):
 		# check wheather we have short and/or long press functions and multi-press functions
 		if self.pins_config[pin]['has_short'] and not self.pins_config[pin]['has_long'] and not self.pins_config[pin]['has_multi']:
 			""" Only a SHORT function, no long press functions, no multi-button, go ahead and execute """
-			print "EXECUTING THE SHORT FUNCTION (only option)..."
+			printer("Executing short function, as it is the only option") # LL_DEBUG #TODO
 			
 			# execute, checking mode
 			for ix, fun in enumerate(self.pins_config[pin]['functions']):
@@ -230,14 +232,11 @@ class GpioController(object):
 
 		if (self.pins_config[pin]['has_long'] or self.pins_config[pin]['has_short']) and not self.pins_config[pin]['has_multi']:
 			""" LONG + possible short press functions, no multi-buttons, go ahead and execute, if pressed long enough """
-			print "EXECUTING THE LONG or SHORT FUNCTION, DEPENDING ON PRESS TIME."
-
 			printer("Waiting for button to be released....")
 			pressed = True
 			while True: #pressed == True or press_time >= self.long_press_ms:
 				state = GPIO.input(pin)
 				if state != self.pins_config[pin]['gpio_on']:
-					print "RELEASED!"
 					pressed = False
 					break
 				if press_time >= self.long_press_ms:
@@ -248,10 +247,8 @@ class GpioController(object):
 				press_time = int(delta.total_seconds() * 1000)
 				sleep(0.005)
 				
-			print "switch was pressed for {0} miliseconds".format(press_time) #,press_start,clock())
-
 			if press_time >= self.long_press_ms and self.pins_config[pin]['has_long']:
-				print "EXECUTING THE LONG FUNCTION (long enough pressed)"
+				printer("Button was pressed for {0} miliseconds, longer than threshold and long function available. Executing long function".format(press_time))	# TODO: LL_DEBUG
 				
 				# execute, checking mode
 				for ix, fun in enumerate(self.pins_config[pin]['functions']):
@@ -267,7 +264,7 @@ class GpioController(object):
 							self.exec_function_by_code(fun['function'])			
 				
 			elif press_time < self.long_press_ms and self.pins_config[pin]['has_short']:
-				print "EXECUTING THE SHORT FUNCTION (not long enough pressed)"
+				printer("Button was pressed for {0} miliseconds, shorter than threshold and short function available. Executing short function".format(press_time))	# TODO: LL_DEBUG
 				
 				# execute, checking mode
 				for ix, fun in enumerate(self.pins_config[pin]['functions']):
