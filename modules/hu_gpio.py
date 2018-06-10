@@ -73,7 +73,7 @@ class GpioController(object):
 			self.gpio_setup(self.int_handle_switch,self.int_handle_encoder)
 	
 	def __printer( self, message, level=LL_INFO, tag=None):
-		if logger is not None:
+		if self.logger is not None:
 			if tag is None: tag = self.LOG_TAG
 			self.logger.log(level, message, extra={'tag': tag})
 
