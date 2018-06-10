@@ -81,25 +81,23 @@ class GpioController(object):
 		for mode_set_id,mode_set in self.mode_sets.iteritems():
 			if mode_set_id != 'active_modes':
 				mode_set['mode_list'].set_active_modes([mode])
-		print "DONE, active modes are now:"
 		self.__update_active_modes()
 		print self.mode_sets['active_modes']
 		
 	def unset_active_mode(self,mode):
 		self.__update_active_modes()
-		print "Active modes now: {0}".format(self.mode_sets['active_modes'])
+		#print "Active modes now: {0}".format(self.mode_sets['active_modes'])
 		if mode in self.mode_sets['active_modes']:
 			
 			for mode_set_id,mode_set in self.mode_sets.iteritems():
 				if mode_set_id != 'active_modes':
 					mode_set['mode_list'].unset_active_modes([mode])
 
-			print "DONE, active modes are now:"
 			self.__update_active_modes()
 			print self.mode_sets['active_modes']
 					
-		else:
-			print "Mode {0} is not currently active, ignoring request..".format(mode)
+		#else:
+		#	print "Mode {0} is not currently active, ignoring request..".format(mode)
 
 	
 	def get_modes(self):
@@ -149,7 +147,7 @@ class GpioController(object):
 
 	def exec_function_by_code(self,code,param=None):
 		if code is not None:
-			print "exec_function_by_code() EXECUTE: {0} {1}".format(code,param)
+			#print "exec_function_by_code() EXECUTE: {0} {1}".format(code,param)
 			self.callback_function(code)	# calls call-back function
 			
 		"""

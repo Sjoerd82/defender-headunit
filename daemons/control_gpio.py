@@ -293,7 +293,7 @@ def idle_message_receiver():
 def cb_gpio_function(code):
 	#print "CALL: {0}".format(function)
 	if code in function_map:
-		print "CONTROL_GPIO: EXECUTE: {0}".format(code)
+		printer("Executing: {0}".format(code))
 		zmq_path = function_map[code]['zmq_path']
 		zmq_command = function_map[code]['zmq_command']
 		arguments = None
