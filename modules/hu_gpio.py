@@ -481,7 +481,7 @@ class GpioController(object):
 					dbg_state = ""
 					if new_mode['name'] == new_mode_set['base_mode']: dbg_base = "(base) "
 					if new_mode['state'] : dbg_state = "(active) "
-					self.__printer("  - {0} {1}{2}".format(new_mode['name'],dbg_base,dbg_active)) # LL_DEBUG TODO
+					self.__printer("  - {0} {1}{2}".format(new_mode['name'],dbg_base,dbg_state)) # LL_DEBUG TODO
 					
 				self.mode_sets[mode_set['id']] = new_mode_set
 				
