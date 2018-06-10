@@ -110,12 +110,15 @@ class GpioController(object):
 		"""
 		# loop through all possible functions for given pin
 		# examine if func meets all requirements (only one check needed for encoders: mode)
-		
+		print "X1"
 		for func_cfg in self.pins_config[pin]['functions']:
+			print "X2 -- {0}".format(func_cfg)
 			# check mode #TODO!! TODO!! add mode here!!
 			if 'mode' in func_cfg and func_cfg['mode'] not in self.active_modes:
+				print "X3"
 				pass # these are not the mode you're looking for
 			else:
+				print "X4"
 				#if 'encoder' in func_cfg:
 				return func_cfg
 				
@@ -368,10 +371,10 @@ class GpioController(object):
 		
 		# -------------------------------
 		
-		function = self.get_encoder_function_by_pin(pin)
-		print "DEBUG encoder"
-		print function
-		if function is not None:
+		#function_cw_ccw = self.get_encoder_function_by_pin(pin)
+		#print "DEBUG encoder"
+		#print function
+		#if function is not None:
 			print "A"
 			if (Switch_A and Switch_B):						# Both one active? Yes -> end of sequence
 				print "B"
