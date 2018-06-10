@@ -343,8 +343,8 @@ class GpioController(object):
 	def int_handle_encoder(self,pin):
 		""" Called for either inputs from rotary switch (A and B) """
 		
-		print "DEBUG: self.int_handle_encoder! for pin: {0}".format(pin)
-		self.__printer("yahoor")
+		#print "DEBUG: self.int_handle_encoder! for pin: {0}".format(pin)
+		#self.__printer("yahoor")
 			
 		device = self.get_device_config_by_pin(pin)
 		
@@ -369,9 +369,12 @@ class GpioController(object):
 		# -------------------------------
 		
 		function = self.get_encoder_function_by_pin(pin)
+		print "DEBUG encoder"
+		print function
 		if function is not None:
-
+			print "A"
 			if (Switch_A and Switch_B):						# Both one active? Yes -> end of sequence
+				print "B"
 			
 				this_chg = datetime.now()
 				delta = this_chg - self.encoder_last_chg
@@ -394,6 +397,7 @@ class GpioController(object):
 				"""
 
 				if pin == encoder_pinB:							# Turning direction depends on 
+					print "C"
 					#counter clockwise
 					#print "[Encoder] {0}: DECREASE/CCW".format(function['function_ccw'])
 					if self.encoder_fast_count > 3 and 'function_fast_ccw' in function:
@@ -401,6 +405,7 @@ class GpioController(object):
 					elif 'function_ccw' in function:
 						self.exec_function_by_code(function['function_ccw'],'ccw')
 				else:
+					print "D"
 					#clockwise
 					#print "[Encoder] {0}: INCREASE/CW".format(function['function_cw'])
 					if self.encoder_fast_count > 3 and 'function_fast_cw' in function:
