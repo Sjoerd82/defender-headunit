@@ -143,17 +143,18 @@ class GpioController(object):
 		"""
 		
 	def cb_mode_reset(self,mode_set_id):
-		
+		""" Reset Timer call back """
+		# set active mode
 		self.mode_sets[mode_set_id]['mode_list'].set_active_modes([self.mode_sets[mode_set_id]['base_mode']])
+		
+		# just printin'
 		self.__printer('[MODE] Reset to: "{0}"'.format(self.mode_sets[mode_set_id]['base_mode']))
+		
 		self.__update_active_modes()
-		print "X1 -- {0}".format(self.mode_sets['active_modes'])
+		print "X1 -- {0}".format(self.mode_sets['active_modes'])	
 		
-		master_modes_list = Modes()
-		for mode_set_id,mode_set in self.mode_sets.iteritems():
-			master_modes_list.extend(mode_set['mode_list'])
-		
-		#self.callback_mode_change(self.mode_sets[mode_set_id]['mode_list'][:])	# return a copy
+		# call that other callback
+		master_modes_list = self.get_modes()
 		self.callback_mode_change(copy.deepcopy(master_modes_list))
 
 	def __update_active_modes(self):
