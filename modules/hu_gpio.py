@@ -156,8 +156,17 @@ class GpioController(object):
 		self.mode_sets['active_modes'] = []	# required?
 		
 		for ix, mode_set in enumerate(self.mode_sets):
+			print "{0}: {1}".format(ix,mode_set)
 			if 'mode_list' in mode_set:
-				self.mode_sets['active_modes'].extend( mode_set[ix]['mode_list'].active_modes() )
+				print "Yup"
+			else:
+				print "Nope"
+
+		for ix, mode_set in enumerate(self.mode_sets):
+			print "{0}: {1}".format(ix,mode_set)
+			if 'mode_list' in mode_set:
+				self.mode_sets['active_modes'].extend( [] ) #mode_set[ix]['mode_list'].active_modes() )
+				#print mode_set[ix]['mode_list'].active_modes()
 	
 	def handle_mode(self,pin,function_ix):
 		""" If function has a mode_cycle attribute, then handle that.
@@ -471,7 +480,8 @@ class GpioController(object):
 				"id":
 				"mode_list": modes()
 				"reset"
-			}
+			},
+			{}
 		}
 		"""
 		
@@ -479,8 +489,7 @@ class GpioController(object):
 			if len(self.cfg_gpio['mode_sets']) > 1:
 				self.__printer("WARNING: Multiple modes specified, but currently one one set is supported (only loading the first).", level=LL_WARNING)
 			
-			# deprecated:
-			#self.modes_old.append(self.cfg_gpio['mode_sets'][0])
+			self.mode_sets['active_modes'] = []
 			
 			self.__printer("Mode sets:")
 			for mode_set in self.cfg_gpio['mode_sets']:
