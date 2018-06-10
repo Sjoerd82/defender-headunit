@@ -428,7 +428,7 @@ def default_parser(description,banner=None):
 # ********************************************************************************
 # Load Configurations
 #
-def load_cfg(config, configs, zmq_port_pub, zmq_port_sub):
+def load_cfg(config, configs, zmq_port_pub, zmq_port_sub, script):
 
 
 	cfg_main = None
@@ -474,11 +474,12 @@ def load_cfg(config, configs, zmq_port_pub, zmq_port_sub):
 	# daemon
 	if 'daemons' in cfg_main:
 		for daemon in cfg_main['daemons']:
-			if 'script' in daemon and daemon['script'] == os.path.basename(__file__):
+			if 'script' in daemon and daemon['script'] == script: #os.path.basename(__file__):
 				cfg_daemon = daemon
 				break #only one
 				
 	print "debug daemon config"
+	print os.path.basename(__file__)
 	print cfg_daemon
 	
 	# gpio
