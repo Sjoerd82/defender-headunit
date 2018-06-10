@@ -81,11 +81,11 @@ class GpioController(object):
 		""" Returns Mode-structure containing all modes and states of all sets. """
 		master_modes_list = Modes()
 		for mode_set_id,mode_set in self.mode_sets.iteritems():
-			print mode_set_id
-			print mode_set
+			#print mode_set_id
+			#print mode_set
 			if mode_set_id != 'active_modes':
-				#master_modes_list.extend(mode_set['mode_list'])
-				print mode_set['mode_list']
+				master_modes_list.extend(mode_set['mode_list'])
+				#print mode_set['mode_list']
 			
 		return copy.deepcopy(master_modes_list)		# list of dicts, requires deepcopy() instead of copy()
 	
@@ -159,6 +159,11 @@ class GpioController(object):
 	def __update_active_modes(self):
 		self.mode_sets['active_modes'] = []	# required?
 		
+		for mode_set_id,mode_set in self.mode_sets.iteritems():
+			if mode_set_id != 'active_modes':
+				self.mode_sets['active_modes'].extend(mode_set['mode_list'])
+		
+		"""
 		for ix, mode_set in enumerate(self.mode_sets):
 			print "{0}: {1}".format(ix,mode_set)
 			if 'mode_list' in mode_set:
@@ -171,6 +176,8 @@ class GpioController(object):
 			if 'mode_list' in mode_set:
 				self.mode_sets['active_modes'].extend( [] ) #mode_set[ix]['mode_list'].active_modes() )
 				#print mode_set[ix]['mode_list'].active_modes()
+				
+		"""
 	
 	def handle_mode(self,pin,function_ix):
 		""" If function has a mode_cycle attribute, then handle that.
