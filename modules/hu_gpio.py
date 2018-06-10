@@ -153,7 +153,7 @@ class GpioController(object):
 		self.callback_mode_change(copy.deepcopy(master_modes_list))
 
 	def __update_active_modes(self):
-		self.mode_set['active_modes'] = []	# required?
+		self.mode_sets['active_modes'] = []	# required?
 		for mode_set in self.mode_sets:
 			self.mode_set['active_modes'].extend( mode_set['mode_list'].active_modes() )
 	
