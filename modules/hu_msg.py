@@ -508,6 +508,8 @@ class MqPubSubFwdController(object):
 			Returns a payload struct.
 			
 			If return value is 2xx (?) and event present, will send out an event message.
+			Hmm, is this good practice? the decorated function can do a publish_command just as easily..
+			 .... let's see how this works out..
 		"""
 		
 		# path_dispatch may be a string or a list
@@ -523,11 +525,7 @@ class MqPubSubFwdController(object):
 			ret = self.mq_path_func[key]['function'](path=path_dispatch, cmd=cmd, args=args, data=data)
 			if ret is not None:
 				ret_data = struct_data(ret)
-				print "DEBUG"
-				print ret_data
-				print self.mq_path_func[key]['event']
 				if ret_data['retval'] == 200 and self.mq_path_func[key]['event'] is not None:
-					print "EVENT"
 					# todo... send out data ??? same data ???
 					self.publish_command(self.mq_path_func[key]['event'], 'INFO', arguments=None, wait_for_reply=False, response_path=None)
 				return ret_data
@@ -546,11 +544,7 @@ class MqPubSubFwdController(object):
 						# we could execute the function, but let's just return it...
 						ret = self.mq_path_func[full_path]['function'](path=path_dispatch, cmd=cmd, args=args, data=data)
 						ret_data = struct_data(ret)
-						print "DEBUG"
-						print ret_data
-						print self.mq_path_func[key]['event']
 						if ret_data['retval'] == 200 and self.mq_path_func[key]['event'] is not None:
-							print "EVENT"
 							# todo... send out data ??? same data ???
 							self.publish_command(self.mq_path_func[key]['event'], 'INFO', arguments=None, wait_for_reply=False, response_path=None)
 						return ret_data

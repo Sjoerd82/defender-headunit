@@ -151,53 +151,8 @@ def validate_args(args, min_args, max_args):
 		
 	return True
 
-def get_data(ret,returndata=False,eventpath=None):
-
-	print "DEBUG: ret = {0}".format(ret)
-
-	data = {}
-	
-	if ret is None:
-		data['retval'] = 500
-		data['payload'] = None
-		
-	elif ret is False:
-		data['retval'] = 500
-		data['payload'] = None
-		
-	elif ret is True:
-		data['retval'] = 200
-		data['payload'] = None
-
-	else:
-		data['retval'] = 200
-		data['payload'] = ret
-
-	if eventpath is not None:
-	
-		#TODO: AVAILABLE EVENTS FOR EVERY AVAILABLE SOURCE ON CHECK() !!! !!! !!!
-	
-		if eventpath == '/events/source/active': # or eventpath == '/events/source/available':
-			curr_source = sc_sources.source()
-			data['payload'] = curr_source
-			messaging.publish_command(eventpath,'DATA',data)
-			
-		#	settings['source'] = curr_source['name']
-		#	save_settings()
-			save_resume()
-			
-		#if eventpath == '/events/source/available':
-		#	now_available, now_unavailable = sc_sources.che
-		#	data['payload'] = None
-
-	if not returndata:
-		data['payload'] = None
-		
-	return data
-		
-
 # Sub Functions must return None (invalid params) or a {data} object.
-@messaging.handle_mq('/source/primary', cmd='GET', event='/events/source/active')
+@messaging.handle_mq('/source/primary', cmd='GET')
 def get_primary(path=None, cmd=None, args=None, data=None):
 	"""	Retrieve Primary Sources
 
@@ -224,8 +179,6 @@ def get_primary(path=None, cmd=None, args=None, data=None):
 	elif len(args) == 1:
 		ret = sc_sources.source(args[0])
 	
-	#data = get_data(ret,True)
-	#return data
 	return ret
 
 # the event will only be executed on a 200 return code
@@ -241,7 +194,7 @@ def put_primary(path=None, cmd=None, args=None, data=None):
 		Return data:
 			Nothing
 		Return codes:
-			200		OK
+			200		OK			=> sends /events/source/active message
 			500		Error
 	"""
 	valid = validate_args(args,0,3)
@@ -271,8 +224,6 @@ def put_primary(path=None, cmd=None, args=None, data=None):
 	save_resume()
 	return ret
 
-	
-
 @messaging.handle_mq('/source/primary', cmd='POST')
 def post_primary(path=None, cmd=None, args=None, data=None):
 	"""	Add a new source
@@ -287,8 +238,7 @@ def post_primary(path=None, cmd=None, args=None, data=None):
 	#TODO
 	return None
 	ret = sc_sources.add(args[0])	
-	data = get_data(ret)
-	return data
+	return ret
 
 @messaging.handle_mq('/source/primary', cmd='DEL')
 def del_primary(path=None, cmd=None, args=None, data=None):
@@ -315,8 +265,7 @@ def del_primary(path=None, cmd=None, args=None, data=None):
 	# LL_DEBUG:
 	printSummary()
 
-	data = get_data(ret)
-	return data
+	return ret
 
 @messaging.handle_mq('/source/subsource', cmd='GET')
 def get_subsource(path=None, cmd=None, args=None, data=None):
@@ -349,10 +298,9 @@ def get_subsource(path=None, cmd=None, args=None, data=None):
 	elif len(args) == 2:
 		ret = sc_sources.subsource(args[0],args[1])
 
-	data = get_data(ret,True)
-	return data
+	return ret
 
-@messaging.handle_mq('/source/subsource', cmd='PUT')
+@messaging.handle_mq('/source/subsource', cmd='PUT', event='/events/source/active')
 def put_subsource(path=None, cmd=None, args=None, data=None):
 	"""Set active subsource to <subid>. If "P" then also start playing.
 
@@ -377,8 +325,7 @@ def put_subsource(path=None, cmd=None, args=None, data=None):
 		ret = sc_sources.select(args[0],args[1])
 		#TODO: not implemented
 
-	data = get_data(ret,False,'/events/source/active')
-	return data
+	return ret
 
 @messaging.handle_mq('/source/subsource', cmd='POST')
 def post_subsource(path=None, cmd=None, args=None, data=None):
@@ -413,8 +360,7 @@ def del_subsource(path=None, cmd=None, args=None, data=None):
 	# LL_DEBUG:
 	printSummary()
 		
-	data = get_data(ret)
-	return data
+	return ret
 	
 @messaging.handle_mq('/source/available', cmd='PUT')
 def put_available(path=None, cmd=None, args=None, data=None):
@@ -440,8 +386,7 @@ def put_available(path=None, cmd=None, args=None, data=None):
 	# LL_DEBUG
 	printSummary()
 
-	data = get_data(ret,False,'/events/source/available')
-	return data
+	return ret
 
 @messaging.handle_mq('/source/next', cmd='PUT')
 def put_next(path=None, cmd=None, args=None, data=None):
@@ -467,13 +412,13 @@ def put_next(path=None, cmd=None, args=None, data=None):
 		# LL_DEBUG
 		printSummary()
 
-		data = get_data(ret,False,'/events/source/active')
-		print data
+		return ret
 	
 	# TODO, Should we return a 4xx or 5xx maybe?
 	#return data
+	return False
 
-@messaging.handle_mq('/source/prev', cmd='PUT')
+@messaging.handle_mq('/source/prev', cmd='PUT', event='/events/source/active')
 def put_prev(path=None, cmd=None, args=None, data=None):
 	"""	Change to prev available (sub)source and start playing
 		Arguments:
@@ -493,9 +438,7 @@ def put_prev(path=None, cmd=None, args=None, data=None):
 	# LL_DEBUG
 	printSummary()
 
-	data = get_data(ret,False,'/events/source/active')
-	return data
-	
+
 @messaging.handle_mq('/source/check', cmd='PUT')
 def put_check(path=None, cmd=None, args=None, data=None):
 	"""	Do an availability check on given or current source
@@ -559,8 +502,7 @@ def put_check(path=None, cmd=None, args=None, data=None):
 				
 		"""
 	
-	data = get_data(ret)
-	return data
+	return ret
 		
 @messaging.handle_mq('/player/track', cmd='GET')
 def get_track(path=None, cmd=None, args=None, data=None):
