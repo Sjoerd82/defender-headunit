@@ -247,7 +247,7 @@ class Commands(object):
 			
 			{	'name': 'MODE-CHANGE',
 				'params': [ {'name':'mode', 'required':True, 'datatype': (str,unicode), 'help':'Mode to set'},
-							{'name':'state', 'required':True, 'datatype': bool, 'default': False, 'help':'True or False'} ]
+							{'name':'state', 'required':True, 'datatype': bool, 'default': False, 'help':'True or False'} ],
 				'params_repeat': True,
 				'description': 'Set a number of modes at once',
 				'command': 'PUT',
