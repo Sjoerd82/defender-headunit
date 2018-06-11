@@ -203,6 +203,7 @@ def mq_mode_change_put(path=None, cmd=None, args=None, data=None):
 	
 	# TODO.. ignore my own messages
 
+	"""
 	app_commands =	[
 		{	'name': 'mode-change',
 			'params': [ {'name':'mode', 'required':True, 'datatype': (str,unicode), 'help':'Mode to set'},
@@ -214,11 +215,12 @@ def mq_mode_change_put(path=None, cmd=None, args=None, data=None):
 			'path': '/mode/change'
 		}
 	]
-	
+	"""
 	global active_modes
 	
-	arg_defs = app_commands[0]['params']
-	ret = validate_args(arg_defs,args,app_commands[0]['params_repeat'])
+	#arg_defs = app_commands[0]['params']
+	#ret = validate_args(arg_defs,args,app_commands[0]['params_repeat'])
+	ret = validate_args('MODE-CHANGE',args)
 	
 	if ret is not None and ret is not False:	
 		# arguments are mode-state pairs
@@ -276,7 +278,7 @@ def idle_message_receiver():
 def cb_gpio_function(code):
 	#print "CALL: {0}".format(function)
 	if code in commands.command_list:
-		cmd = commands.get_command(code)		
+		cmd = commands.get_command(code)
 		printer("Executing: {0}".format(code))
 		zmq_path = cmd['path']
 		zmq_command = cmd['command']

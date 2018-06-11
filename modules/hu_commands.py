@@ -246,9 +246,8 @@ class Commands(object):
 			},
 			
 			{	'name': 'MODE-CHANGE',
-				'params': [ {'name':'mode', 'required':True, 'datatype': 'str', 'help':'Mode to set'},
-							{'name':'state', 'required':True, 'datatype': 'bool', 'default': False, 'help':'True or False'}
-				],
+				'params': [ {'name':'mode', 'required':True, 'datatype': (str,unicode), 'help':'Mode to set'},
+							{'name':'state', 'required':True, 'datatype': bool, 'default': False, 'help':'True or False'} ]
 				'params_repeat': True,
 				'description': 'Set a number of modes at once',
 				'command': 'PUT',
@@ -318,4 +317,36 @@ class Commands(object):
 		if ix is not None:
 			return self.function_mq_map[ix]
 
-			
+	#def validate_args(**args):
+	def validate_args(self, command, args, repeat=False):
+
+		#defs = arg_defs[:]	# cuz we might manipulate it, and python is stupid
+		defs = self.get_command(command)['params']
+		if not isinstance(args, list):
+			print "second argument must be a list"
+			return None
+
+		# generate definitions
+		if repeat:
+			for i in range(len(args)/len(arg_defs)-1):
+				defs.extend(arg_defs)
+		
+		for i, arg in enumerate(args):
+			# datatype	
+			if isinstance(arg, defs[i]['datatype']):
+				#print "Datatype: PASS"
+				pass
+			else:
+				if defs[i]['datatype'] == bool and strint_to_bool(arg) is not None:
+					args[i] = strint_to_bool(arg)
+				else:
+					print "Datatype: FAIL"
+					return None
+					
+		if len(defs)-len(args) > 0:
+			for arg_def in defs[len(args):len(defs)]:
+				args.append(arg_def['default'])
+
+		# everything OK
+		return args
+

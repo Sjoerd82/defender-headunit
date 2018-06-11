@@ -57,7 +57,7 @@
 			, "function_cw":"PLAYER-RANDOM-NEXT"
 			, "function_ccw":"PLAYER-RANDOM-PREV"
 			, "encoder" :"multi_encoder"
-			, "mode":"treble"
+			, "mode":"random"
 		},
 		{
 			  "name":"browse_menu"
