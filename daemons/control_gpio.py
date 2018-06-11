@@ -275,7 +275,7 @@ def idle_message_receiver():
 #
 def cb_gpio_function(code):
 	#print "CALL: {0}".format(function)
-	
+	global commands
 	if code in commands.command_list:
 		cmd = commands.get_command(code)		
 		printer("Executing: {0}".format(code))
