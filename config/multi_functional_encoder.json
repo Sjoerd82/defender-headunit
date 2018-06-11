@@ -18,7 +18,7 @@
 	]
 	,"mode_sets": [
 		{	  "id": "modecycle1"
-			, "mode_list": [ "volume", "track", "bass", "treble", "menu" ]
+			, "mode_list": [ "volume", "track", "bass", "treble", "random", "menu" ]
 			, "base_mode": "volume"
 			, "reset": 8
 		}
@@ -29,7 +29,7 @@
 			, "function": null
 			, "short_press": [ "multi_enc_sw" ]
 			, "mode_cycle": "modecycle1"
-			, "mode_select": [ "volume", "track", "bass", "treble", "menu" ]
+			, "mode_select": [ "volume", "track", "bass", "treble", "random", "menu" ]
 		},
 		{
 			  "name":"track_select"
@@ -49,6 +49,13 @@
 			  "name":"treble"
 			, "function_cw":"TREBLE_INC"
 			, "function_ccw":"TREBLE_DEC"
+			, "encoder" :"multi_encoder"
+			, "mode":"treble"
+		},
+		{
+			  "name":"random"
+			, "function_cw":"RANDOM_MODE_NEXT"
+			, "function_ccw":"RANDOM_MODE_PREV"
 			, "encoder" :"multi_encoder"
 			, "mode":"treble"
 		},

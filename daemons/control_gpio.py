@@ -35,6 +35,7 @@ sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
 from hu_msg import MqPubSubFwdController
 from hu_gpio import GpioController
+from hu_commands import function_mq_map, commands
 from hu_datastruct import Modes
 
 # *******************************************************************************
@@ -292,6 +293,20 @@ def idle_message_receiver():
 #
 def cb_gpio_function(code):
 	#print "CALL: {0}".format(function)
+	if code in commands:
+	
+		ix = commands.index(code)
+		print "{0}".format(function_mq_map[ix]['description'])
+			
+		printer("Executing: {0}".format(code))
+		zmq_path = function_mq_map[ix]['path']
+		zmq_command = function_mq_map[ix]['command']
+		arguments = None
+		messaging.publish_command(zmq_path,zmq_command,arguments)
+	else:
+		printer("Function {0} not in function_mq_map".format(code),level=LL_ERROR)
+	return
+	
 	if code in function_map:
 		printer("Executing: {0}".format(code))
 		zmq_path = function_map[code]['zmq_path']
