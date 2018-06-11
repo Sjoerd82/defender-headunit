@@ -311,7 +311,7 @@ class Commands(object):
 			]
 
 		for command in self.function_mq_map:
-			commands.append(command['name'])
+			self.commands.append(command['name'])
 		
 	def get_command(self, command):
 		ix = self.command_list.index(code)
