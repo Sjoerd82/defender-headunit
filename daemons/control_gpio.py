@@ -75,25 +75,6 @@ active_modes = []
 # other stuff
 mode_controller = True
 
-function_map = {}
-function_map['SOURCE_NEXT'] = { 'zmq_path':'/source/next', 'zmq_command':'PUT' }
-function_map['SOURCE_PREV'] = { 'zmq_path':'/source/prev', 'zmq_command':'PUT' }
-function_map['SOURCE_PRI_NEXT'] = { 'zmq_path':'/source/next_primary', 'zmq_command':'PUT' }
-function_map['SOURCE_PRI_PREV'] = { 'zmq_path':'/source/prev_primary', 'zmq_command':'PUT' }
-function_map['SOURCE_CHECK'] = { 'zmq_path':'/source/check', 'zmq_command':'PUT' }
-function_map['PLAYER_PAUSE'] = { 'zmq_path':'/player/pause', 'zmq_command':'PUT' }
-function_map['PLAYER_RANDOM'] = { 'zmq_path':'/player/random', 'zmq_command':'PUT' }
-function_map['PLAYER_NEXT'] = { 'zmq_path':'/player/next', 'zmq_command':'PUT' }
-function_map['PLAYER_PREV'] = { 'zmq_path':'/player/prev', 'zmq_command':'PUT' }
-function_map['PLAYER_FOLDER_NEXT'] = { 'zmq_path':'/player/next_folder', 'zmq_command':'PUT' }
-function_map['PLAYER_FOLDER_PREV'] = { 'zmq_path':'/player/prev_folder', 'zmq_command':'PUT' }
-function_map['VOLUME_INC'] = { 'zmq_path':'/volume/master/increase', 'zmq_command':'PUT' }
-function_map['VOLUME_DEC'] = { 'zmq_path':'/volume/master/decrease', 'zmq_command':'PUT' }
-function_map['VOLUME_ATT'] = { 'zmq_path':'/volume/att', 'zmq_command':'PUT' }
-function_map['VOLUME_MUTE'] = { 'zmq_path':'/volume/mute', 'zmq_command':'PUT' }
-function_map['SYSTEM_SHUTDOWN'] = { 'zmq_path':'/system/shutdown', 'zmq_command':'PUT' }
-
-
 '''
 pins_config = 
 	{ "23": {
@@ -293,20 +274,19 @@ def idle_message_receiver():
 #
 def cb_gpio_function(code):
 	#print "CALL: {0}".format(function)
-	if code in commands:
 	
-		ix = commands.index(code)
-		print "{0}".format(function_mq_map[ix]['description'])
-			
+	if code in commands.command_list:
+		cmd = commands.get_command(code)		
 		printer("Executing: {0}".format(code))
-		zmq_path = function_mq_map[ix]['path']
-		zmq_command = function_mq_map[ix]['command']
+		zmq_path = cmd['path']
+		zmq_command = cmd['command']
 		arguments = None
 		messaging.publish_command(zmq_path,zmq_command,arguments)
 	else:
 		printer("Function {0} not in function_mq_map".format(code),level=LL_ERROR)
 	return
 	
+	""" The Old Function Mapper:
 	if code in function_map:
 		printer("Executing: {0}".format(code))
 		zmq_path = function_map[code]['zmq_path']
@@ -315,6 +295,7 @@ def cb_gpio_function(code):
 		messaging.publish_command(zmq_path,zmq_command,arguments)
 	else:
 		printer("Function {0} not in function_map".format(code),level=LL_ERROR)
+	"""
 			
 def cb_mode_change(active_modes):
 	# active_modes is a Modes() struct

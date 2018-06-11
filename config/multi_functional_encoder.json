@@ -33,29 +33,29 @@
 		},
 		{
 			  "name":"track_select"
-			, "function_cw":"PLAYER_NEXT"
-			, "function_ccw":"PLAYER_PREV"
+			, "function_cw":"PLAYER-NEXT"
+			, "function_ccw":"PLAYER-PREV"
 			, "encoder":"multi_encoder"
 			, "mode": "track"
 		},
 		{
 			  "name":"bass"
-			, "function_cw":"BASS_INC"
-			, "function_ccw":"BASS_DEC"
+			, "function_cw":"ECA-BASS-INC"
+			, "function_ccw":"ECA-BASS-DEC"
 			, "encoder" :"multi_encoder"
 			, "mode":"bass"
 		},
 		{
 			  "name":"treble"
-			, "function_cw":"TREBLE_INC"
-			, "function_ccw":"TREBLE_DEC"
+			, "function_cw":"ECA-TREBLE-INC"
+			, "function_ccw":"ECA-TREBLE-DEC"
 			, "encoder" :"multi_encoder"
 			, "mode":"treble"
 		},
 		{
 			  "name":"random"
-			, "function_cw":"RANDOM_MODE_NEXT"
-			, "function_ccw":"RANDOM_MODE_PREV"
+			, "function_cw":"PLAYER-RANDOM-NEXT"
+			, "function_ccw":"PLAYER-RANDOM-PREV"
 			, "encoder" :"multi_encoder"
 			, "mode":"treble"
 		},
@@ -68,7 +68,7 @@
 		},
 		{
 			  "name":"next_source"
-			, "function":"SOURCE_NEXT"
+			, "function":"SOURCE-NEXT"
 			, "long_press": [ "multi_enc_sw" ]
 			, "mode": "all"
 		}
