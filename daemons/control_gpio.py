@@ -218,7 +218,7 @@ def mq_mode_change_put(path=None, cmd=None, args=None, data=None):
 	"""
 	global active_modes
 	
-	arg_defs = commands.get_command(command)['params']
+	arg_defs = commands.get_command('MODE-CHANGE')['params']
 	defs = arg_defs[:]	# cuz we might manipulate it, and python is stupid
 	print defs
 	print defs[0]['datatype']
