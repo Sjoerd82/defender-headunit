@@ -320,9 +320,10 @@ class Commands(object):
 	#def validate_args(**args):
 	def validate_args(self, command, args, repeat=False):
 
-		#defs = arg_defs[:]	# cuz we might manipulate it, and python is stupid
-		defs = self.get_command(command)['params']
-		print defs
+		arg_defs = self.get_command(command)['params']
+		defs = arg_defs[:]	# cuz we might manipulate it, and python is stupid
+		if defs is None:
+			return None
 		
 		if not isinstance(args, list):
 			print "second argument must be a list"
