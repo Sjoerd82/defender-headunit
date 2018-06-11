@@ -314,7 +314,7 @@ class Commands(object):
 			self.command_list.append(command['name'])
 		
 	def get_command(self, command):
-		ix = self.command_list.index(code)
+		ix = self.command_list.index(command)
 		if ix is not None:
 			return self.function_mq_map[ix]
 
