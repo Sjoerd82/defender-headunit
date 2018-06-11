@@ -322,6 +322,8 @@ class Commands(object):
 
 		#defs = arg_defs[:]	# cuz we might manipulate it, and python is stupid
 		defs = self.get_command(command)['params']
+		print defs
+		
 		if not isinstance(args, list):
 			print "second argument must be a list"
 			return None
@@ -345,6 +347,7 @@ class Commands(object):
 					
 		if len(defs)-len(args) > 0:
 			for arg_def in defs[len(args):len(defs)]:
+				print arg_def
 				args.append(arg_def['default'])
 
 		# everything OK
