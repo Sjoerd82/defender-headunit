@@ -303,6 +303,8 @@ function_mq_map = [
 	}
 	
 	]
-	
+
+commands = []
+
 for command in function_mq_map:
 	commands.append(command['name'])
