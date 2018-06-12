@@ -412,7 +412,7 @@ def setup():
 	ms.append(modes,"setje")
 	print ms
 	print ms[0]
-	ms.activate('bass')
+	ms.activate('bass',"setje")
 	print ms
 	print ms[0]
 
