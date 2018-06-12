@@ -152,12 +152,14 @@ class Modeset(list):
 	"""
 	def __init__(self):
 		super(Modeset, self).__init__()
+		self.mode_set_id_list = []
 		
-	def append(self, item):
+	def append(self, item, mode_set_id):
 	
 		if not isinstance(item, Modes):
 			raise TypeError, 'item is not of type Modes'
 		else:
+			
 			super(Modeset, self).append(item)
 			
 	def activate(self, mode_activate, modeset=None):
@@ -166,6 +168,13 @@ class Modeset(list):
 			for modes in self:
 				if modes.key_exists(mode_activate):
 					modes.set_active_modes([mode_activate])
+					
+		else:
+			ix = mode_set_id_list.index(modeset)
+			if ix is not None:
+				if self[ix].key_exists(mode_activate):
+					self[ix].set_active_modes([mode_activate])
+			
 				
 	
 

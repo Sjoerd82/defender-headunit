@@ -409,7 +409,7 @@ def setup():
 	
 	
 	ms = Modeset()
-	ms.append(modes)
+	ms.append(modes,"setje")
 	print ms
 	print ms[0]
 	ms.activate('bass')
