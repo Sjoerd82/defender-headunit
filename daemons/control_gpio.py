@@ -403,11 +403,13 @@ def setup():
 	printer("GPIO: Initializing")
 	gpio = GpioController(cfg_gpio,cb_gpio_function,logger=logger)
 	modes = gpio.get_modes()
-	gpio.set_cb_mode_change(cb_mode_change)
+	#gpio.set_cb_mode_change(cb_mode_change)
 	
 	
 	ms = Modeset()
+	ms.set_cb_mode_change(cb_mode_change)
 	ms.append(modes,"setje")
+	
 	print ms
 	print ms[0]
 	ms.activate('bass',"setje")

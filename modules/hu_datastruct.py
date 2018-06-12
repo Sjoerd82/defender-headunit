@@ -157,6 +157,7 @@ class Modeset(list):
 		super(Modeset, self).__init__()
 		self.mode_set_id_list = []
 		self.timer_mode = None
+		self.callback_mode_change = None
 		
 	def append(self, item, mode_set_id):
 	
@@ -178,27 +179,31 @@ class Modeset(list):
 			if ix is not None:
 				if self[ix].key_exists(mode_activate):
 					self[ix].set_active_modes([mode_activate])
-			
-	def __cb_mode_reset(self, mode_set_id):
+
+	def set_cb_mode_change(self,cb_function):
+		self.callback_mode_change = cb_function
+		staticmethod(self.callback_mode_change)
+
+	def __cb_mode_reset(self, mode_set_id, base_mode):
 		""" Reset Timer call back """
 		print "Hello from cb_mode_reset() within Modeset"
 		# set active mode
-		"""
-		base_mode = self.mode_sets[mode_set_id]['base_mode']
-		if base_mode is None:
-			self.mode_sets[mode_set_id]['mode_list'].unset_active_modes([base_mode])
-		else:
-			self.mode_sets[mode_set_id]['mode_list'].set_active_modes([base_mode])
+		# ## base_mode = self.mode_sets[mode_set_id]['base_mode']
+		# ## if base_mode is None:
+		# ## 	self.mode_sets[mode_set_id]['mode_list'].unset_active_modes([base_mode])
+		# ## else:
+		# ## 	self.mode_sets[mode_set_id]['mode_list'].set_active_modes([base_mode])
+		self.__activate(base_mode,mode_set_id)
 		
 		# just printin'
-		self.__printer('[MODE] Reset to: "{0}"'.format(self.mode_sets[mode_set_id]['base_mode']))
+		# ## self.__printer('[MODE] Reset to: "{0}"'.format(self.mode_sets[mode_set_id]['base_mode']))
 		
-		self.__update_active_modes()
+		# ## self.__update_active_modes()
 		
-		# call that other callback
-		master_modes_list = self.get_modes()
-		self.callback_mode_change(copy.deepcopy(master_modes_list))
-		"""
+		# mode change callback
+		# ## master_modes_list = self.get_modes()
+		# ## self.callback_mode_change(copy.deepcopy(master_modes_list))
+		self.callback_mode_change(['aap','noot','mies'])
 		
 	def enable_reset(self,mode_set_id,base_mode,seconds):
 		self.timer_mode = Timer(seconds, self.__cb_mode_reset, [mode_set_id])
