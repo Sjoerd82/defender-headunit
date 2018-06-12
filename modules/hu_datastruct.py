@@ -193,7 +193,7 @@ class Modeset(list):
 		# ## 	self.mode_sets[mode_set_id]['mode_list'].unset_active_modes([base_mode])
 		# ## else:
 		# ## 	self.mode_sets[mode_set_id]['mode_list'].set_active_modes([base_mode])
-		self.__activate(base_mode,mode_set_id)
+		self.activate(base_mode,mode_set_id)
 		
 		# just printin'
 		# ## self.__printer('[MODE] Reset to: "{0}"'.format(self.mode_sets[mode_set_id]['base_mode']))
