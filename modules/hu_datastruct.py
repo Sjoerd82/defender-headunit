@@ -62,8 +62,12 @@ class ListDataStruct(list):
 
 
 class Modes(ListDataStruct):
-	""" Modes is a list of dictionaries.
+	""" Modes is a LIST of dictionaries containing modes and state pairs.
 		{ "name": <name>, "state": [bool] }
+		
+		modes.append( <dict> )
+		modes.extend( <list of dicts>|<list of Modes> )
+		modes.
 		
 	"""
 	
@@ -131,6 +135,27 @@ class Modes(ListDataStruct):
 			if mode['state']:
 				active_modes.append(mode['name'])
 		return active_modes
+
+class Modeset(list):
+	""" Modeset is a LIST of Modes.
+		Within a Modeset only one mode can be active per Modes-list.
+	
+		modeset.append( Modes )
+		modeset[ix].activate( mode-name )
+		modeset.active()
+	"""
+	def __init__(self):
+		super(Modeset, self).__init__()
+		
+	def append(self, item):
+		print type(item)
+		
+		if not isinstance(item, Modes):
+			raise TypeError, 'item is not of type Modes'
+		else:
+			print "It's OK"
+			
+		super(Modeset, self).append(item)
 
 
 class Tracks(ListDataStruct):

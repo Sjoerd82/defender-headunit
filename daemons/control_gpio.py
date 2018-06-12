@@ -37,6 +37,7 @@ from hu_msg import MqPubSubFwdController
 from hu_gpio import GpioController
 from hu_commands import Commands
 from hu_datastruct import Modes
+from hu_datastruct import Modeset
 
 # *******************************************************************************
 # Global variables and constants
@@ -191,6 +192,8 @@ def testje_get_active(path=None, cmd=None, args=None, data=None):
 @messaging.handle_mq('/mode/set','PUT')
 def mq_mode_set(path=None, cmd=None, args=None, data=None):
 	""" Set mode """
+	vargs = commands.validate_args('MODE-SET',args)
+	
 	printer("MQ: {0} {1}, setting active mode(s): {2} ".format(cmd,path,args))
 	try:
 		modes.set_active_modes(args)
@@ -201,38 +204,14 @@ def mq_mode_set(path=None, cmd=None, args=None, data=None):
 @messaging.handle_mq('/mode/change', cmd='PUT')
 def mq_mode_change_put(path=None, cmd=None, args=None, data=None):
 	
-	# TODO.. ignore my own messages
-
-	"""
-	app_commands =	[
-		{	'name': 'mode-change',
-			'params': [ {'name':'mode', 'required':True, 'datatype': (str,unicode), 'help':'Mode to set'},
-						{'name':'state', 'required':True, 'datatype': bool, 'default': False, 'help':'True or False'}
-			],
-			'params_repeat': True,
-			'description': 'Set a number of modes at once',
-			'command': 'PUT',
-			'path': '/mode/change'
-		}
-	]
-	"""
 	global active_modes
 	
-	#arg_defs = commands.get_command('MODE-CHANGE')['params']
-	#defs = arg_defs[:]	# cuz we might manipulate it, and python is stupid
-	#print defs
-	#print defs[0]['datatype']
-
-	
-	#arg_defs = app_commands[0]['params']
-	#ret = validate_args(arg_defs,args,app_commands[0]['params_repeat'])
 	ret = commands.validate_args('MODE-CHANGE',args)
-	print ret
 	
 	if ret is not None and ret is not False:	
 		# arguments are mode-state pairs
 		for i in range(0,len(ret),2):
-			printer("[MQ] Received Mode: {0} State: {1}".format(ret[i],ret[i+1]), level=LL_DEBUG)
+			printer("[MQ] Received Mode: "{0}", State: {1}".format(ret[i],ret[i+1]), level=LL_DEBUG)
 			if ret[i+1] == True and ret[i] not in active_modes:
 				active_modes.append(ret[i])
 			elif ret[i+1] == False and ret[i] in active_modes:
@@ -415,6 +394,17 @@ def setup():
 	for topic in messaging.subscriptions():
 		printer("> {0}".format(topic))
 
+	
+	print "DEBUGGING --- ----"
+	
+	ms = Modeset()
+	type(ms)
+	
+	ms.append(modes)
+	print ms
+	print ms[0]
+	
+		
 	#
 	# GPIO
 	#

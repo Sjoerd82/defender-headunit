@@ -4,13 +4,16 @@
 
 ### Sending messages:
 
-Format: `<path> <command> [return path]`
+Format: `<path>[+return path]|[origin]|<command>[:arg1,arg2,argn]`
 
 The [return path] is optional and can be used for filtering.
 Examples:
 
 `/source/subsource GET:0,4`
 `/source/subsource GET:0,4 /flask/582`
+
+The [origin] can optionally be used to identify the sending script.
+This is particularily useful to ignore ones own messages.
 
 ### Sending data:
 
@@ -24,6 +27,11 @@ Examples:
 
 In this example "flask" is the unique* application identifier.
 The flask application can setup a subscription for "/data/flask/", the number can be an iterator to route back the received data to it's intended target.
+
+# Modes
+
+Modes can be used as global boolean states, a mode can thus either be True or False.
+Modes may be grouped in mode sets. Per mode set only one mode may be True at a time.
 
 # Data
 

@@ -5,7 +5,7 @@
 # Venema, S.R.G.
 # 2018-06-11
 #
-# List of commands, mapped to MQ.
+# Commands, arguments and MQ-mapper.
 #
 
 class Commands(object):
