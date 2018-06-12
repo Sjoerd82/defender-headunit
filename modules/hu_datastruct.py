@@ -159,8 +159,8 @@ class Modeset(list):
 		if not isinstance(item, Modes):
 			raise TypeError, 'item is not of type: "Modes"'
 		else:
-			
 			super(Modeset, self).append(item)
+			self.mode_set_id_list.append(mode_set_id)
 			
 	def activate(self, mode_activate, modeset=None):
 	
