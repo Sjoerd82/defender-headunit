@@ -319,8 +319,19 @@ class Commands(object):
 
 	#def validate_args(**args):
 	def validate_args(self, command, args, repeat=False):
-		print "DEBUG! validate_args()"
-		
+
+		def strint_to_bool(value):
+			if isinstance(value, (str,unicode)) and value.lower() in ['true','on','1','t']:
+				return True
+			elif  isinstance(value, (str,unicode)) and value.lower() in ['false','off','0','f']:
+				return False
+			elif  isinstance(value, int) and value in [1]:
+				return True
+			elif  isinstance(value, int) and value in [0]:
+				return False
+			else:
+				return None
+				
 		arg_defs = self.get_command(command)['params']
 		defs = arg_defs[:]	# cuz we might manipulate it, and python is stupid
 		if defs is None:
