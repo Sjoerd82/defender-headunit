@@ -27,6 +27,12 @@ class ListDataStruct(list):
 			ret.append(dict_item[self.unique_key])
 		return ret
 		
+	def key_exists(self, key):
+		for dict_item in self:
+			if dict_item[self.unique_key] == key:
+				return True
+		return False
+				
 	#terrible naming!
 	def get_by_unique(self,key):
 		for dict_item in self:
@@ -140,22 +146,28 @@ class Modeset(list):
 	""" Modeset is a LIST of Modes.
 		Within a Modeset only one mode can be active per Modes-list.
 	
-		modeset.append( Modes )
-		modeset[ix].activate( mode-name )
+		modeset.append( <Modes> )
+		modeset[ix].activate( <mode-name> [mode-set] )
 		modeset.active()
 	"""
 	def __init__(self):
 		super(Modeset, self).__init__()
 		
 	def append(self, item):
-		print type(item)
-		
+	
 		if not isinstance(item, Modes):
 			raise TypeError, 'item is not of type Modes'
 		else:
-			print "It's OK"
+			super(Modeset, self).append(item)
 			
-		super(Modeset, self).append(item)
+	def activate(self, mode_activate, modeset=None):
+	
+		if modeset is None:
+			for modes in self:
+				if modes.key_exists(mode_activate):
+					modes.set_active_modes([mode_activate])
+				
+	
 
 
 class Tracks(ListDataStruct):

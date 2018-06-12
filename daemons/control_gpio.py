@@ -396,15 +396,7 @@ def setup():
 
 	
 	print "DEBUGGING --- ----"
-	
-	ms = Modeset()
-	type(ms)
-	
-	ms.append(modes)
-	print ms
-	print ms[0]
-	
-		
+			
 	#
 	# GPIO
 	#
@@ -414,6 +406,16 @@ def setup():
 	gpio = GpioController(cfg_gpio,cb_gpio_function,logger=logger)
 	modes = gpio.get_modes()
 	gpio.set_cb_mode_change(cb_mode_change)
+	
+	
+	ms = Modeset()
+	ms.append(modes)
+	print ms
+	print ms[0]
+	ms.activate('bass')
+	print ms
+	print ms[0]
+
 	
 	# if we're responisble for modes, then send out a MQ message ? *(or have clients pull?)
 	
