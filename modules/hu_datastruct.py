@@ -1,5 +1,6 @@
 
 from threading import Timer		# Modesets: timer to reset mode change
+import copy
 
 # TODO: add feature to check for a unique key
 
