@@ -201,7 +201,7 @@ class Modeset(list):
 		"""
 		
 	def enable_reset(self,mode_set_id,base_mode,seconds):
-		self.timer_mode = Timer(seconds, self.__cb_mode_reset, mode_set_id)
+		self.timer_mode = Timer(seconds, self.__cb_mode_reset, [mode_set_id])
 		self.timer_mode.start()
 
 
