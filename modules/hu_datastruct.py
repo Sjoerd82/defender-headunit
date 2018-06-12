@@ -203,7 +203,11 @@ class Modeset(list):
 		# mode change callback
 		# ## master_modes_list = self.get_modes()
 		# ## self.callback_mode_change(copy.deepcopy(master_modes_list))
-		self.callback_mode_change(['aap','noot','mies'])
+		
+		master_modes_list = Modes()
+		for modes in self:
+			master_modes_list.extend(modes)
+		self.callback_mode_change(copy.deepcopy(master_modes_list))
 		
 	def enable_reset(self,mode_set_id,base_mode,seconds):
 		self.timer_mode = Timer(seconds, self.__cb_mode_reset, [mode_set_id,base_mode])
