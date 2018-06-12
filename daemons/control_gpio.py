@@ -211,7 +211,7 @@ def mq_mode_change_put(path=None, cmd=None, args=None, data=None):
 	if ret is not None and ret is not False:	
 		# arguments are mode-state pairs
 		for i in range(0,len(ret),2):
-			printer("[MQ] Received Mode: "{0}", State: {1}".format(ret[i],ret[i+1]), level=LL_DEBUG)
+			printer('[MQ] Received Mode: "{0}", State: {1}'.format(ret[i],ret[i+1]), level=LL_DEBUG)
 			if ret[i+1] == True and ret[i] not in active_modes:
 				active_modes.append(ret[i])
 			elif ret[i+1] == False and ret[i] in active_modes:
