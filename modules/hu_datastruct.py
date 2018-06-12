@@ -1,4 +1,6 @@
 
+from threading import Timer		# Modesets: timer to reset mode change
+
 # TODO: add feature to check for a unique key
 
 class ListDataStruct(list):
@@ -149,10 +151,12 @@ class Modeset(list):
 		modeset.append( <Modes> )
 		modeset[ix].activate( <mode-name> [mode-set] )
 		modeset.active()
+		modeset.enable_reset( <mode-set>, <base-mode>, <seconds> )
 	"""
 	def __init__(self):
 		super(Modeset, self).__init__()
 		self.mode_set_id_list = []
+		self.timer_mode = None
 		
 	def append(self, item, mode_set_id):
 	
@@ -175,8 +179,30 @@ class Modeset(list):
 				if self[ix].key_exists(mode_activate):
 					self[ix].set_active_modes([mode_activate])
 			
-				
-	
+	def __cb_mode_reset(self, mode_set_id):
+		""" Reset Timer call back """
+		print "Hello from cb_mode_reset() within Modeset"
+		# set active mode
+		"""
+		base_mode = self.mode_sets[mode_set_id]['base_mode']
+		if base_mode is None:
+			self.mode_sets[mode_set_id]['mode_list'].unset_active_modes([base_mode])
+		else:
+			self.mode_sets[mode_set_id]['mode_list'].set_active_modes([base_mode])
+		
+		# just printin'
+		self.__printer('[MODE] Reset to: "{0}"'.format(self.mode_sets[mode_set_id]['base_mode']))
+		
+		self.__update_active_modes()
+		
+		# call that other callback
+		master_modes_list = self.get_modes()
+		self.callback_mode_change(copy.deepcopy(master_modes_list))
+		"""
+		
+	def enable_reset(self,mode_set_id,base_mode,seconds):
+		self.timer_mode = Timer(seconds, self.__cb_mode_reset, mode_set_id)
+		self.timer_mode.start()
 
 
 class Tracks(ListDataStruct):

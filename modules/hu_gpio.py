@@ -23,6 +23,7 @@ from threading import Timer		# timer to reset mode change
 sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
 from hu_datastruct import Modes
+from hu_datastruct import Modeset
 
 #********************************************************************************
 # GPIO stuff

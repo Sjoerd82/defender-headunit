@@ -394,8 +394,6 @@ def setup():
 	for topic in messaging.subscriptions():
 		printer("> {0}".format(topic))
 
-	
-	print "DEBUGGING --- ----"
 			
 	#
 	# GPIO
@@ -415,6 +413,14 @@ def setup():
 	ms.activate('bass',"setje")
 	print ms
 	print ms[0]
+	ms.enable_reset("setje","track",5)
+	sleep(1)
+	sleep(1)
+	sleep(1)
+	sleep(1)
+	sleep(1)
+	sleep(1)
+	sleep(1)
 
 	
 	# if we're responisble for modes, then send out a MQ message ? *(or have clients pull?)
