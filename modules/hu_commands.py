@@ -319,7 +319,8 @@ class Commands(object):
 
 	#def validate_args(**args):
 	def validate_args(self, command, args, repeat=False):
-
+		print "DEBUG! validate_args()"
+		
 		arg_defs = self.get_command(command)['params']
 		defs = arg_defs[:]	# cuz we might manipulate it, and python is stupid
 		if defs is None:

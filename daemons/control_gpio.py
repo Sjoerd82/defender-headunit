@@ -226,7 +226,7 @@ def mq_mode_change_put(path=None, cmd=None, args=None, data=None):
 	
 	#arg_defs = app_commands[0]['params']
 	#ret = validate_args(arg_defs,args,app_commands[0]['params_repeat'])
-	ret = validate_args('MODE-CHANGE',args)
+	ret = commands.validate_args('MODE-CHANGE',args)
 	
 	if ret is not None and ret is not False:	
 		# arguments are mode-state pairs
