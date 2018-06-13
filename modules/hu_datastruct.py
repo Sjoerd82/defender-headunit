@@ -169,7 +169,7 @@ class Modeset(list):
 			new_mode_set.append(modes)
 		return new_mode_set
 	
-	def append(self, mode_set_id, item):
+	def append(self, mode_set_id, item, base_mode=None):
 	
 		if not isinstance(item, Modes):
 			raise TypeError, 'item is not of type: "Modes"'
@@ -179,6 +179,8 @@ class Modeset(list):
 			#mode_set_properties = { "id":mode_set_id, "timer":None }
 			#self.mode_set_id_list.append(mode_set_properties)
 			self.mode_set_id_list.append(mode_set_id)
+			self.mode_set_id_list[-1].base_mode = base_mode
+			print self.mode_set_id_list[-1].base_mode
 			
 	def remove(self):
 		#todo
@@ -228,10 +230,16 @@ class Modeset(list):
 		if mode_set_id is None:
 			for modes in self:
 				active_modes.extend(modes.active_modes())
+			# resets
+			# TODO, for every modeset, if it has a timer...
 		else:
 			ix = self.mode_set_id_list.index(mode_set_id)
 			if ix is not None:
 				active_modes.extend(self[ix].active_modes())		
+			# reset
+			print self[ix].base_mode
+			if self[ix].base_mode not in active_modes:
+				reset_start(mode_set_id)
 		
 		return active_modes
 	
