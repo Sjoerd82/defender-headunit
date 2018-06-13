@@ -194,6 +194,9 @@ class Modeset(list):
 
 		ix = self.mode_set_id_list.index(mode_set_id)
 		current_active_mode = self.active(mode_set_id)
+		print current_active_mode
+		print ix
+		print self[ix].unique_list()
 		mode_ix = self[ix].unique_list().index(current_active_mode)
 		mode_base = self.mode_sets[function['mode_cycle']]['base_mode']
 		
@@ -203,6 +206,7 @@ class Modeset(list):
 			mode_ix += 1
 			
 		mode_new = self[ix][mode_ix]['name']
+		#print "Old: {0} New: {1}".format(current_active_mode,mode_new)
 		self[ix].set_active_modes(mode_new, True)
 		self.reset_start(mode_set_id)
 		# TODO self.callback_mode_change(copy.deepcopy(mode_list))
