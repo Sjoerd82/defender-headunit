@@ -554,7 +554,7 @@ class GpioController(object):
 					base_mode = mode_set['base_mode']
 				else:
 					new_mode_set['base_mode'] = mode_set['mode_list'][0]
-					base_mode = mode_set['base_mode'][0]
+					base_mode = mode_set['mode_list'][0]
 					
 				# RESET
 				if 'reset' in mode_set:
