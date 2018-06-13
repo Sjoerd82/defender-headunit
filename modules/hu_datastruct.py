@@ -202,11 +202,11 @@ class Modeset(list):
 				if self[ix].key_exists(mode_activate):
 					self[ix].set_active_modes([mode_activate])
 			# reset
+			# only reset if not already in base mode
 			print self[ix].base_mode
-			if self[ix].base_mode not in active_modes:
+			if self[ix].base_mode != mode_activate:
 				reset_start(mode_set_id)
 
-		#self.reset_start(mode_set_id)
 					
 	def activate_next(self, mode_set_id):
 
