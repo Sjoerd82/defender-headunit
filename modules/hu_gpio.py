@@ -105,7 +105,7 @@ class GpioController(object):
 	def get_modes(self):
 		""" Returns Mode-structure containing all modes and states of all sets. """
 		
-		return copy.deepcopy(self.ms)
+		return self.ms.get_modes()
 		
 		master_modes_list = Modes()
 		for mode_set_id,mode_set in self.mode_sets.iteritems():

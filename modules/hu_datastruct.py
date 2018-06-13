@@ -159,7 +159,15 @@ class Modeset(list):
 		self.mode_set_id_list = []
 		self.timer_mode = None	# convert to array/dict
 		self.callback_mode_change = None
-		
+	
+	#EXPERIMENTAL
+	def get_modes(self):
+		#return copy.deepcopy(self)	#not tried..
+		new_mode_set = []
+		for modes in self:
+			new_mode_set.append(modes)
+		return new_mode_set
+	
 	def append(self, mode_set_id, item):
 	
 		if not isinstance(item, Modes):
