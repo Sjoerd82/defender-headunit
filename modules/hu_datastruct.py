@@ -157,7 +157,8 @@ class Modeset(list):
 	def __init__(self):
 		super(Modeset, self).__init__()
 		self.mode_set_id_list = []
-		self.timer_mode = None	# convert to array/dict
+		#self.mode_set_properties = {}
+		self.timers = {}
 		self.callback_mode_change = None
 	
 	#EXPERIMENTAL
@@ -175,7 +176,13 @@ class Modeset(list):
 		else:
 			# if mode_set_id already exists??
 			super(Modeset, self).append(item)
+			#mode_set_properties = { "id":mode_set_id, "timer":None }
+			#self.mode_set_id_list.append(mode_set_properties)
 			self.mode_set_id_list.append(mode_set_id)
+			
+	def remove(self):
+		#todo
+		pass
 			
 	def activate(self, mode_activate, mode_set_id=None):
 	
@@ -208,7 +215,6 @@ class Modeset(list):
 		mode_new = self[ix][mode_ix]['name']
 		#print "Old: {0} New: {1}".format(current_active_mode,mode_new)
 		self[ix].set_active_modes(mode_new, True)
-		# ToDo, only if reset is enabled 
 		self.reset_start(mode_set_id)
 		# TODO self.callback_mode_change(copy.deepcopy(mode_list))
 	
@@ -256,19 +262,25 @@ class Modeset(list):
 		self.callback_mode_change(copy.deepcopy(master_modes_list))
 		
 	def reset_enable(self,mode_set_id,base_mode,seconds):
-		self.timer_mode = Timer(seconds, self.__cb_mode_reset, [mode_set_id,base_mode])
+		self.timers[mode_set_id] = Timer(seconds, self.__cb_mode_reset, [mode_set_id,base_mode])
+		#self.timer_mode = Timer(seconds, self.__cb_mode_reset, [mode_set_id,base_mode])
 		#self.timer_mode.start()
 		
 	def reset_start(self, mode_set_id):
 		# TODO: ignore this if mode == base-mode
-		if self.timer_mode is not None:
-			self.timer_mode.cancel()
-		#self.timer_mode = Timer(reset_seconds, self.cb_mode_reset, [mode_set_id])
-		self.timer_mode.start()
+		if mode_set_id not in self.timers:
+			return
+			
+		if self.timers[mode_set_id] is not None:
+			self.timers[mode_set_id].cancel()
+		else:
+			self.timers[mode_set_id].start()
 
 	def reset_cancel(self, mode_set_id):
-		# TODO: support multiple timers
-		self.timer_mode.cancel()
+		if mode_set_id not in self.timers:
+			return
+		else:
+			self.timers[mode_set_id].cancel()
 
 
 class Tracks(ListDataStruct):
