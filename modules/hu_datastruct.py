@@ -193,7 +193,7 @@ class Modeset(list):
 	def activate_next(self, mode_set_id):
 
 		ix = self.mode_set_id_list.index(mode_set_id)
-		current_active_mode = self.active(mode_set_id)
+		current_active_mode = self.active(mode_set_id)[0]	# Hmm, do we want lists??
 		print current_active_mode
 		print ix
 		print self[ix].unique_list()
