@@ -21,6 +21,10 @@
 			, "mode_list": [ "volume", "track", "bass", "treble", "random", "menu" ]
 			, "base_mode": "volume"
 			, "reset": 8
+		},
+		{
+			"id": "random"
+			, "mode_list": [ "off", "playlist", "folder", "artist", "genre"]
 		}
 	]
 	,"functions": [

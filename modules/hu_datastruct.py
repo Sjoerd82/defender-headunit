@@ -157,37 +157,69 @@ class Modeset(list):
 	def __init__(self):
 		super(Modeset, self).__init__()
 		self.mode_set_id_list = []
-		self.timer_mode = None
+		self.timer_mode = None	# convert to array/dict
 		self.callback_mode_change = None
 		
-	def append(self, item, mode_set_id):
+	def append(self, mode_set_id, item):
 	
 		if not isinstance(item, Modes):
 			raise TypeError, 'item is not of type: "Modes"'
 		else:
+			# if mode_set_id already exists??
 			super(Modeset, self).append(item)
 			self.mode_set_id_list.append(mode_set_id)
 			
-	def activate(self, mode_activate, modeset=None):
+	def activate(self, mode_activate, mode_set_id=None):
 	
-		if modeset is None:
+		if mode_set_id is None:
 			for modes in self:
 				if modes.key_exists(mode_activate):
 					modes.set_active_modes([mode_activate])
 					
 		else:
-			ix = self.mode_set_id_list.index(modeset)
+			ix = self.mode_set_id_list.index(mode_set_id)
 			if ix is not None:
 				if self[ix].key_exists(mode_activate):
 					self[ix].set_active_modes([mode_activate])
+					
+	def activate_next(self, mode_set_id):
 
+		ix = self.mode_set_id_list.index(mode_set_id)
+		current_active_mode = self.active(mode_set_id)
+		mode_ix = self[ix].unique_list().index(current_active_mode)
+		mode_base = self.mode_sets[function['mode_cycle']]['base_mode']
+		
+		if mode_ix >= len(self[ix])-1:
+			mode_ix = 0
+		else:
+			mode_ix += 1
+			
+		mode_new = self[ix][mode_ix]['name']
+		self[ix].set_active_modes(mode_new, True)
+		self.reset_start(mode_set_id)
+		# TODO self.callback_mode_change(copy.deepcopy(mode_list))
+	
+
+	def active(self,mode_set_id=None):
+		""" Return list with all active mode names of given/all modesets """
+		active_modes = []
+		
+		if mode_set_id is None:
+			for modes in self:
+				active_modes.extend(modes.active_modes())
+		else:
+			ix = self.mode_set_id_list.index(mode_set_id)
+			if ix is not None:
+				active_modes.extend(self[ix].active_modes())		
+		
+		return active_modes
+	
 	def set_cb_mode_change(self,cb_function):
 		self.callback_mode_change = cb_function
 		staticmethod(self.callback_mode_change)
 
 	def __cb_mode_reset(self, mode_set_id, base_mode):
 		""" Reset Timer call back """
-		print "Hello from cb_mode_reset() within Modeset"
 		# set active mode
 		# ## base_mode = self.mode_sets[mode_set_id]['base_mode']
 		# ## if base_mode is None:
@@ -210,9 +242,20 @@ class Modeset(list):
 			master_modes_list.extend(modes)
 		self.callback_mode_change(copy.deepcopy(master_modes_list))
 		
-	def enable_reset(self,mode_set_id,base_mode,seconds):
+	def reset_enable(self,mode_set_id,base_mode,seconds):
 		self.timer_mode = Timer(seconds, self.__cb_mode_reset, [mode_set_id,base_mode])
+		#self.timer_mode.start()
+		
+	def reset_start(self, mode_set_id):
+		# TODO: ignore this if mode == base-mode
+		if self.timer_mode is not None:
+			self.timer_mode.cancel()
+		#self.timer_mode = Timer(reset_seconds, self.cb_mode_reset, [mode_set_id])
 		self.timer_mode.start()
+
+	def reset_cancel(self, mode_set_id):
+		# TODO: support multiple timers
+		self.timer_mode.cancel()
 
 
 class Tracks(ListDataStruct):

@@ -410,14 +410,15 @@ def setup():
 	
 	ms = Modeset()
 	ms.set_cb_mode_change(cb_mode_change)
-	ms.append(modes,"setje")
+	ms.append("setje",modes)
 	
 	print ms
-	print ms[0]
 	ms.activate('bass',"setje")
-	print ms
-	print ms[0]
-	ms.enable_reset("setje","track",5)
+	print ms.active()
+	ms.activate_next("setje")
+	print ms.active()
+	
+	ms.reset_enable("setje","track",5)
 	sleep(1)
 	sleep(1)
 	sleep(1)
