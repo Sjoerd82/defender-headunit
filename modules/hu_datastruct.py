@@ -197,6 +197,8 @@ class Modeset(list):
 				if self[ix].key_exists(mode_activate):
 					self[ix].set_active_modes([mode_activate])
 					
+		self.reset_start(mode_set_id)
+					
 	def activate_next(self, mode_set_id):
 
 		ix = self.mode_set_id_list.index(mode_set_id)
@@ -265,9 +267,10 @@ class Modeset(list):
 	def reset_enable(self,mode_set_id,base_mode,seconds):
 		self.timers[mode_set_id] = Timer(seconds, self.__cb_mode_reset, [mode_set_id,base_mode])
 		#self.timer_mode = Timer(seconds, self.__cb_mode_reset, [mode_set_id,base_mode])
-		#self.timer_mode.start()
+		#self.timers[mode_set_id].start()
 		
 	def reset_start(self, mode_set_id):
+		print "reset_start"
 		# TODO: ignore this if mode == base-mode
 		if mode_set_id not in self.timers:
 			return
