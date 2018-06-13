@@ -181,7 +181,7 @@ class Modeset(list):
 			#self.mode_set_id_list.append(mode_set_properties)
 			self.mode_set_id_list.append(mode_set_id)
 			#self.mode_set_id_list[-1].base_mode = base_mode
-			print self.mode_set_id_list[-1].base_mode
+			print self[-1].base_mode
 			
 	def remove(self):
 		#todo
