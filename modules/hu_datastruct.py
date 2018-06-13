@@ -208,6 +208,7 @@ class Modeset(list):
 		mode_new = self[ix][mode_ix]['name']
 		#print "Old: {0} New: {1}".format(current_active_mode,mode_new)
 		self[ix].set_active_modes(mode_new, True)
+		# ToDo, only if reset is enabled 
 		self.reset_start(mode_set_id)
 		# TODO self.callback_mode_change(copy.deepcopy(mode_list))
 	

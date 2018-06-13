@@ -409,6 +409,7 @@ def setup():
 	
 	
 	ms = Modeset()
+	ms.reset_enable("setje","track",5)
 	ms.set_cb_mode_change(cb_mode_change)
 	ms.append("setje",modes[0])
 	
@@ -418,7 +419,6 @@ def setup():
 	ms.activate_next("setje")
 	print ms.active()
 	
-	ms.reset_enable("setje","track",5)
 	sleep(1)
 	sleep(1)
 	sleep(1)
