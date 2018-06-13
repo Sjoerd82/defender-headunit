@@ -193,14 +193,20 @@ class Modeset(list):
 			for modes in self:
 				if modes.key_exists(mode_activate):
 					modes.set_active_modes([mode_activate])
-					
+			# resets
+			# TODO, for every modeset, if it has a timer...
+		
 		else:
 			ix = self.mode_set_id_list.index(mode_set_id)
 			if ix is not None:
 				if self[ix].key_exists(mode_activate):
 					self[ix].set_active_modes([mode_activate])
-					
-		self.reset_start(mode_set_id)
+			# reset
+			print self[ix].base_mode
+			if self[ix].base_mode not in active_modes:
+				reset_start(mode_set_id)
+
+		#self.reset_start(mode_set_id)
 					
 	def activate_next(self, mode_set_id):
 
@@ -231,16 +237,10 @@ class Modeset(list):
 		if mode_set_id is None:
 			for modes in self:
 				active_modes.extend(modes.active_modes())
-			# resets
-			# TODO, for every modeset, if it has a timer...
 		else:
 			ix = self.mode_set_id_list.index(mode_set_id)
 			if ix is not None:
 				active_modes.extend(self[ix].active_modes())		
-			# reset
-			print self[ix].base_mode
-			if self[ix].base_mode not in active_modes:
-				reset_start(mode_set_id)
 		
 		return active_modes
 	
@@ -268,10 +268,12 @@ class Modeset(list):
 		# ## master_modes_list = self.get_modes()
 		# ## self.callback_mode_change(copy.deepcopy(master_modes_list))
 		
+		""" TODO!! !!
 		master_modes_list = Modes()
 		for modes in self:
 			master_modes_list.extend(modes)
 		self.callback_mode_change(copy.deepcopy(master_modes_list))
+		"""
 		
 	def reset_enable(self,mode_set_id,base_mode,seconds):
 		self.timers[mode_set_id] = Timer(seconds, self.__cb_mode_reset, [mode_set_id,base_mode])
