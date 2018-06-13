@@ -277,6 +277,7 @@ class Modeset(list):
 			
 		if self.timers[mode_set_id] is not None:
 			self.timers[mode_set_id].cancel()
+			self.timers[mode_set_id].start()
 		else:
 			self.timers[mode_set_id].start()
 
