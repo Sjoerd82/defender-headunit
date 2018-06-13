@@ -174,12 +174,13 @@ class Modeset(list):
 		if not isinstance(item, Modes):
 			raise TypeError, 'item is not of type: "Modes"'
 		else:
+			item.base_mode = base_mode
 			# if mode_set_id already exists??
 			super(Modeset, self).append(item)
 			#mode_set_properties = { "id":mode_set_id, "timer":None }
 			#self.mode_set_id_list.append(mode_set_properties)
 			self.mode_set_id_list.append(mode_set_id)
-			self.mode_set_id_list[-1].base_mode = base_mode
+			#self.mode_set_id_list[-1].base_mode = base_mode
 			print self.mode_set_id_list[-1].base_mode
 			
 	def remove(self):
