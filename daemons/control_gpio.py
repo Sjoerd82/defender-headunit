@@ -404,13 +404,13 @@ def setup():
 	global modes
 	printer("GPIO: Initializing")
 	gpio = GpioController(cfg_gpio,cb_gpio_function,logger=logger)
-	modes = gpio.get_modes()
+	modes = gpio.get_modes()	#NOW RETURNS MODESET!!
 	#gpio.set_cb_mode_change(cb_mode_change)
 	
 	
 	ms = Modeset()
 	ms.set_cb_mode_change(cb_mode_change)
-	ms.append("setje",modes)
+	ms.append("setje",modes[0])
 	
 	print ms
 	ms.activate('bass',"setje")
