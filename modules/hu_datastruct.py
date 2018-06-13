@@ -185,7 +185,7 @@ class Modeset(list):
 		pass
 			
 	def activate(self, mode_activate, mode_set_id=None):
-	
+		print "activate"
 		if mode_set_id is None:
 			for modes in self:
 				if modes.key_exists(mode_activate):
@@ -239,6 +239,7 @@ class Modeset(list):
 
 	def __cb_mode_reset(self, mode_set_id, base_mode):
 		""" Reset Timer call back """
+		print "__cb_mode_reset"
 		# set active mode
 		# ## base_mode = self.mode_sets[mode_set_id]['base_mode']
 		# ## if base_mode is None:
