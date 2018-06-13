@@ -274,12 +274,23 @@ class Modeset(list):
 		# TODO: ignore this if mode == base-mode
 		if mode_set_id not in self.timers:
 			return
+		
+		if self.timers[mode_set_id].is_alive():
+			self.timers[mode_set_id].cancel()
+			self.timers[mode_set_id] = Timer(5, self.__cb_mode_reset, [mode_set_id,'volume'])
+			self.timers[mode_set_id].start()
+		else:
+			self.timers[mode_set_id] = Timer(5, self.__cb_mode_reset, [mode_set_id,'volume'])
+			self.timers[mode_set_id].start()
 			
+		
+		"""
 		if self.timers[mode_set_id] is not None:
 			self.timers[mode_set_id].cancel()
 			self.timers[mode_set_id].start()
 		else:
 			self.timers[mode_set_id].start()
+		"""
 
 	def reset_cancel(self, mode_set_id):
 		if mode_set_id not in self.timers:
