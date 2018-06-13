@@ -426,6 +426,7 @@ def setup():
 	sleep(1)
 	sleep(1)
 	sleep(1)
+	print ms.active()
 
 	
 	# if we're responisble for modes, then send out a MQ message ? *(or have clients pull?)
