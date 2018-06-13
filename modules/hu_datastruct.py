@@ -198,7 +198,7 @@ class Modeset(list):
 		print ix
 		print self[ix].unique_list()
 		mode_ix = self[ix].unique_list().index(current_active_mode)
-		mode_base = self.mode_sets[function['mode_cycle']]['base_mode']
+		#mode_base = self.mode_sets[function['mode_cycle']]['base_mode']
 		
 		if mode_ix >= len(self[ix])-1:
 			mode_ix = 0
