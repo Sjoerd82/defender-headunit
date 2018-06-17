@@ -62,7 +62,7 @@ class Modeset(list):
 		#if len(self) > 0:
 		#print "-- __contains: -- {0} {1}".format(type(self[0]),self[0])
 		for key, value in self:
-			print key
+			print "self={0} key={1}".format(self,key)
 			if key == 'mode':
 				print "{0}, {1}".format(value,str(item))
 				if value == str(item):
