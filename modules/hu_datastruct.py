@@ -61,7 +61,7 @@ class Modeset(list):
 		# When using a dict
 		#if len(self) > 0:
 		#print "-- __contains: -- {0} {1}".format(type(self[0]),self[0])
-		for key, value in self:
+		for key, value in self.iteritems():
 			print "self={0} key={1} value={2} type={3}".format(self,key,value,type(value))
 			if key == 'mode':
 				print "{0}, {1}".format(value,str(item))
