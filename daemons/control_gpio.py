@@ -70,7 +70,7 @@ cfg_zmq = None		# Zero MQ
 cfg_gpio = None		# GPIO setup
 
 # data structures
-modes = Modes()
+modes = Modeset()
 active_modes = []
 
 # other stuff
@@ -403,9 +403,13 @@ def setup():
 	global modes
 	printer("GPIO: Initializing")
 	gpio = GpioController(cfg_gpio,cb_gpio_function,logger=logger)
-	modes = gpio.get_modes()	#NOW RETURNS MODESET!!
+	
+	#challenge: this must work
+	#modes = gpio.get_modes()	#NOW RETURNS MODESET!!
+	
 	#gpio.set_cb_mode_change(cb_mode_change)
 	
+	"""
 	
 	ms = Modeset()
 	ms.reset_enable("setje","track",5)
@@ -427,7 +431,7 @@ def setup():
 	sleep(1)
 	sleep(1)
 	print ms.active()
-
+	"""
 	
 	# if we're responisble for modes, then send out a MQ message ? *(or have clients pull?)
 	
