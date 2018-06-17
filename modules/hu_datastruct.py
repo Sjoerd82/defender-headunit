@@ -60,7 +60,7 @@ class Modeset(list):
 	def __contains__(self, item):
 		# When using a dict
 		#if len(self) > 0:
-		print "-- __contains: --"
+		print "-- __contains: -- {0} {1}".format(type(self[0]),self[0])
 		for key, value in self:
 			if key == 'mode':
 				print "{0}, {1}".format(value,str(item))
