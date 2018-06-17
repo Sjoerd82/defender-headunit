@@ -34,16 +34,10 @@ class Stateful(dict):
 			self.cb_state_change(self['mode'])
 
 	def activate(self):
-		"""
-		Set state to active state (True).
-		"""
-		self.state(True)
+		self.state = True
 		
 	def deactivate(self):
-		"""
-		Set state to inactive state (False).
-		"""
-		self.state(False)
+		self.state = False
 
 class Modeset(list):
 	"""
