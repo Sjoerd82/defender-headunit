@@ -97,8 +97,8 @@ class Modeset(list):
 	
 	def append(self,item):
 		stateful_item = Stateful(item, self.cb_check_state)	# add State operations + callback
-		if item not in self:								# only add if unique
-			super(Modeset, self).append(stateful_item)
+		#if item not in self:								# only add if unique
+		super(Modeset, self).append(stateful_item)
 		
 		print "Hi Im Append. Basemode={0} Item={1} Len={2}".format(self._basemode,item,len(self))
 		#print type(item)
