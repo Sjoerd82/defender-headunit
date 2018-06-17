@@ -90,6 +90,7 @@ class Modeset(list):
 		self.timer_enabled = True
 		
 	def reset_start(self):
+		pass
 		
 	def index(self,item):
 		for ix, listitem in enumerate(self):
