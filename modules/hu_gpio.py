@@ -533,7 +533,7 @@ class GpioController(object):
 				
 				# modeset category
 				# all GPIO modes are of type 'singular' (allowing only one active mode per set)
-				self.ms_all[mode_set['id']].singular()
+				self.ms_all[mode_set['id']].singular(True)
 
 				# basemode
 				if 'base_mode' in mode_set:
