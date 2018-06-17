@@ -224,7 +224,7 @@ class GpioController(object):
 		function = self.pins_config[pin]['functions'][function_ix]
 
 		if 'mode_cycle' in function: # and 'mode' in self.pins_config[pin]:	
-			ms.next()
+			self.ms.next()
 			'''
 			# new
 			mode_list = self.mode_sets[function['mode_cycle']]['mode_list']
