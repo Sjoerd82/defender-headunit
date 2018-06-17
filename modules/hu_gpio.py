@@ -543,16 +543,16 @@ class GpioController(object):
 		"""
 		self.mode_sets['active_modes'] = []
 		if 'mode_sets' in self.cfg_gpio:
-			global ms_all
+			global self.ms_all
 			
 			self.__printer("Mode sets:")
 			for mode_set in self.cfg_gpio['mode_sets']:
 			
-				ms_all[mode_set['id']] = Modeset()
+				self.ms_all[mode_set['id']] = Modeset()
 				
 				# basemode
 				if 'base_mode' in mode_set:
-					ms_all[mode_set['id']].basemode = mode_set['base_mode']
+					self.ms_all[mode_set['id']].basemode = mode_set['base_mode']
 					base_mode = mode_set['base_mode'] #	DEBUG print
 					
 				#	self.__printer("> {0}; resets after {1} seconds".format(new_mode_set['id'],new_mode_set['reset'])) # LL_DEBUG TODO
@@ -560,7 +560,7 @@ class GpioController(object):
 				#	self.__printer("> {0} (no reset)".format(new_mode_set['id'])) # LL_DEBUG TODO
 					
 				for i, mode in enumerate(mode_set['mode_list']):
-					ms_all[mode_set['id']].append(mode)
+					self.ms_all[mode_set['id']].append(mode)
 					
 					#if mode == new_mode_set['base_mode']:
 					#	new_mode['state'] = True
@@ -579,7 +579,7 @@ class GpioController(object):
 				#self.ms.append(mode_set['id'], new_mode_set['mode_list'])
 				
 				if 'reset' in mode_set:
-					ms_all[mode_set['id']].enable_reset(mode_set['reset'] )	# TODO add call-back function
+					self.ms_all[mode_set['id']].enable_reset(mode_set['reset'] )	# TODO add call-back function
 					self.__printer("> {0}; resets to {1} after {2} seconds".format(mode_set['id'],base_mode,mode_set['reset'])) # LL_DEBUG TODO
 				else:
 					self.__printer("> {0} (no reset)".format(mode_set['id'])) # LL_DEBUG TODO
