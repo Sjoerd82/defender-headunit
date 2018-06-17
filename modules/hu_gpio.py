@@ -543,7 +543,6 @@ class GpioController(object):
 		"""
 		self.mode_sets['active_modes'] = []
 		if 'mode_sets' in self.cfg_gpio:
-			global self.ms_all
 			
 			self.__printer("Mode sets:")
 			for mode_set in self.cfg_gpio['mode_sets']:
