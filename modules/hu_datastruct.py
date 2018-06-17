@@ -45,48 +45,6 @@ class Stateful(dict):
 		"""
 		self['state'] = False
 
-	"""
-	Simple class that adds state supports operations.
-	Callback may be added to act upon state changes.
-	"""
-
-	def __init__(self, mode, cb_state_change=None):
-		self.mode = mode
-		self._state = False
-		self.cb_state_change=cb_state_change
-		
-	def __repr__(self):
-		return self.mode
-
-	@property
-	def state(self):
-		"""
-		Get active state. True or False.
-		"""
-		return self._state
-
-	@state.setter
-	def state(self,state):
-		"""
-		Set active state. True or False.
-		Calls Callback function, if defined
-		"""
-		self._state = state		
-		if callable(self.cb_state_change):
-			self.cb_state_change(self.mode)
-
-	def activate(self):
-		"""
-		Set state to active state (True).
-		"""
-		self._state = True
-		
-	def deactivate(self):
-		"""
-		Set state to inactive state (False).
-		"""
-		self._state = False
-
 class Modeset(list):
 	"""
 	List of stateful modes. + Reset Timer
