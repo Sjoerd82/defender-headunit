@@ -95,10 +95,12 @@ class Modeset(list):
 		stateful_item = Stateful(item, self.cb_check_state)	# add State operations + callback
 		if item not in self:								# only add if unique
 			super(Modeset, self).append(stateful_item)
-			
+		
+		print "Hi Im Append. Basemode={0}. Item={1}".format(self._basemode,item)
 		#print type(item)
 		#print type(self._basemode)
 		if item == self._basemode and item in self:						# if item = basemode, activate it
+			print "Hi Again, setting Active"
 			self.ix_active = self.index(str(item))
 			self[self.ix_active].activate()
 	
