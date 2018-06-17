@@ -92,7 +92,7 @@ class Modeset(list):
 	List of stateful modes. + Reset Timer
 	"""
 	def __init__(self):
-		super(ModeSet, self).__init__()
+		super(Modeset, self).__init__()
 		self._singular = None
 		self._basemode = None
 		self.ix_active = None
@@ -134,7 +134,7 @@ class Modeset(list):
 	def append(self,item):
 		stateful_item = Stateful(item, self.cb_check_state)	# add State operations + callback
 		if item not in self:								# only add if unique
-			super(ModeSet, self).append(stateful_item)
+			super(Modeset, self).append(stateful_item)
 			
 		#print type(item)
 		#print type(self._basemode)
