@@ -522,25 +522,7 @@ class GpioController(object):
 		if 'self.long_press_ms' in self.cfg_gpio:
 			self.long_press_ms = self.cfg_gpio['self.long_press_ms']
 			
-		# set mode, if configured
-		#if 'start_mode' in self.cfg_gpio:
-		#	self.active_modes.append(self.cfg_gpio['start_mode'])
-		#else:
-		#	self.active_modes.append(None)
-				
 		# modes
-		
-		"""
-		mode_sets = {
-			"active_modes": []
-			"<mode_set_name>":{
-				"id":
-				"mode_list": modes()
-				"reset"
-			},
-			{}
-		}
-		"""
 		self.mode_sets['active_modes'] = []
 		if 'mode_sets' in self.cfg_gpio:
 			
