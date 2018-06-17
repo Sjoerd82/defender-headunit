@@ -215,7 +215,7 @@ class Modeset(list):
 			for ix,mode in enumerate(self):
 				if mode['state'] and mode['mode'] == activated:
 					self.ix_active = ix
-					print "active index is now: {0}".format(ix)
+					print "{1}; active index is now: {0}".format(ix,activated)
 					if self.timer_enabled and activated != self._basemode:
 						print "activating timer"
 						self.reset_start()
@@ -224,7 +224,7 @@ class Modeset(list):
 				elif mode['state'] and mode['mode'] != activated:
 					print mode['state']
 					print type(mode['state'])
-					print "deactivating mode {0}".format(mode['mode'])
+					print "{1}; deactivating mode {0}".format(mode['mode'],activated)
 					mode.deactivate()
 				
 		if callable(self.callback_mode_change):
