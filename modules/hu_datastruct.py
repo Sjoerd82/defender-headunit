@@ -59,11 +59,11 @@ class Modeset(list):
 
 	def __contains__(self, item):
 		# When using a dict
-		if len(self) > 0:
-			for key, value in self:
-				if key == 'mode':
-					if value == str(item):
-						return True
+		#if len(self) > 0:
+		for key, value in self:
+			if key == 'mode':
+				if value == str(item):
+					return True
 		return False
 		# When using attributes
 		#for mode in self:
@@ -96,9 +96,11 @@ class Modeset(list):
 		if item not in self:								# only add if unique
 			super(Modeset, self).append(stateful_item)
 		
-		print "Hi Im Append. Basemode={0}. Item={1}".format(self._basemode,item)
+		print "Hi Im Append. Basemode={0} Item={1}".format(self._basemode,item)
 		#print type(item)
 		#print type(self._basemode)
+		print item == self._basemode
+		print item in self
 		if item == self._basemode and item in self:						# if item = basemode, activate it
 			print "Hi Again, setting Active"
 			self.ix_active = self.index(str(item))
