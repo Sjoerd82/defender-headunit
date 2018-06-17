@@ -223,7 +223,7 @@ class Modeset(list):
 						print "not activating timer"
 				elif mode['state'] and mode['mode'] != activated:
 					mode.deactivate()
-					print "deactivating a mode"
+					print "deactivating mode {0}".format(mode['state'])
 				
 		if callable(self.callback_mode_change):
 			self.callback_mode_change()
