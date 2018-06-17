@@ -2,6 +2,236 @@
 from threading import Timer		# Modesets: timer to reset mode change
 import copy
 
+class Stateful(dict):
+	"""
+	Simple class that adds state supports operations.
+	Callback may be added to act upon state changes.
+	"""
+
+	def __init__(self, mode, cb_state_change=None):
+		self['mode'] = mode
+		self['state'] = False
+		self.cb_state_change=cb_state_change
+		
+	def __repr__(self):
+		return self['mode']
+	
+	@property
+	def state(self):
+		"""
+		Return active state. True or False.
+		"""
+		return self['state']
+
+	@state.setter
+	def state(self,state):
+		"""
+		Set active state. True or False.
+		Calls Callback function, if defined
+		"""
+		self['state']  = state
+		if callable(self.cb_state_change):
+			self.cb_state_change(self['mode'])
+
+	def activate(self):
+		"""
+		Set state to active state (True).
+		"""
+		self['state'] = True
+		
+	def deactivate(self):
+		"""
+		Set state to inactive state (False).
+		"""
+		self['state'] = False
+
+	"""
+	Simple class that adds state supports operations.
+	Callback may be added to act upon state changes.
+	"""
+
+	def __init__(self, mode, cb_state_change=None):
+		self.mode = mode
+		self._state = False
+		self.cb_state_change=cb_state_change
+		
+	def __repr__(self):
+		return self.mode
+
+	@property
+	def state(self):
+		"""
+		Get active state. True or False.
+		"""
+		return self._state
+
+	@state.setter
+	def state(self,state):
+		"""
+		Set active state. True or False.
+		Calls Callback function, if defined
+		"""
+		self._state = state		
+		if callable(self.cb_state_change):
+			self.cb_state_change(self.mode)
+
+	def activate(self):
+		"""
+		Set state to active state (True).
+		"""
+		self._state = True
+		
+	def deactivate(self):
+		"""
+		Set state to inactive state (False).
+		"""
+		self._state = False
+
+class Modeset(list):
+	"""
+	List of stateful modes. + Reset Timer
+	"""
+	def __init__(self):
+		super(ModeSet, self).__init__()
+		self._singular = None
+		self._basemode = None
+		self.ix_active = None
+		self.timer = None
+		self.callback_mode_change = None
+
+	def __contains__(self, item):
+		# When using a dict
+		for key, value in self:
+			if key == 'mode':
+				if value == str(item):
+					return True
+		return False
+		# When using attributes
+		for mode in self:
+			if mode.mode == str(item):
+				return True
+		return False
+
+	def __cb_mode_reset(self):
+		""" Reset Timer call back """
+		print "__cb_mode_reset"
+		self.callback_mode_change()
+
+	def reset_enable(self,seconds,cb_function=None):
+		print "enabling timer"
+		self.callback_mode_change = cb_function
+		staticmethod(self.callback_mode_change)
+		self.timer = Timer(seconds, self.__cb_mode_reset)
+		#self.timer_mode = Timer(seconds, self.__cb_mode_reset, [mode_set_id,base_mode])
+		#self.timers[mode_set_id].start()
+		self.timer.start()
+		
+	def index(self,item):
+		for ix, mode in enumerate(self):
+			if mode.mode == str(item):
+				return ix
+	
+	def append(self,item):
+		stateful_item = Stateful(item, self.cb_check_state)	# add State operations + callback
+		if item not in self:								# only add if unique
+			super(ModeSet, self).append(stateful_item)
+			
+		#print type(item)
+		#print type(self._basemode)
+		if item == self._basemode and item in self:						# if item = basemode, activate it
+			self.ix_active = self.index(str(item))
+			self[self.ix_active].activate()
+	
+	@property
+	def singular(self):
+		"""
+		Return singular state. True or False.
+		"""
+		return self._singular
+
+	@singular.setter
+	def singular(self, state):
+		"""
+		When enabled enforces only one mode to be active at all times.
+		"""
+		self._singular = state
+		if self.ix_active is not None:
+			self[self.ix_active].activate()
+	
+	@property
+	def basemode(self):
+		"""
+		Return base mode.
+		"""
+		return self._basemode
+		
+	@basemode.setter
+	def basemode(self,basemode):
+		"""
+		Set base mode, base mode is the mode to reset to and to initally set.
+		"""
+		self._basemode = basemode
+	
+	def active(self):
+		"""
+		Return list of only active modes
+		"""
+		ret_list = []
+		for mode in self:
+			if mode.state:
+				ret_list.append(mode)
+		return ret_list
+		
+	def category():
+		""" Return the type of modeset """
+		return self._singular
+
+	def next(self):
+		"""
+		Activate next. Only available for category "single".
+		"""
+		if self._singular and self.ix_active is None:
+			self.ix_active = 0
+			self[self.ix_active].activate()			
+		elif self._singular:
+			self[self.ix_active].deactivate()
+			self.ix_active = (self.ix_active + 1) % len(self)
+			self[self.ix_active].activate()
+
+	def prev(self):
+		"""
+		Activate previous. Only available for category "single".
+		"""
+		if self._singular and self.ix_active is None:
+			self.ix_active = len(self)-1
+			self[self.ix_active].activate()			
+		elif self._singular:
+			self[self.ix_active].deactivate()
+			self.ix_active = (self.ix_active - 1) % len(self)
+			self[self.ix_active].activate()
+	
+		
+	def set_cb_mode_change(self):
+		pass
+		
+	def cb_check_state(self, activated):
+		# Dict:
+		for ix,mode in enumerate(self):
+			if mode['state'] and mode['mode'] == activated:
+				self.ix_active = ix
+				print "active index = {0}".format(ix)
+			elif mode['state'] and mode['mode'] != activated:
+				mode.deactivate()
+		return
+		
+		# Attributes
+		for ix,mode in enumerate(self):
+			if mode.state and mode.mode == activated:
+				self.ix_active = ix
+				print "active index = {0}".format(ix)
+			elif mode.state and mode.mode != activated:
+				mode.deactivate()
+		
 # TODO: add feature to check for a unique key
 
 class ListDataStruct(list):
@@ -69,8 +299,7 @@ class ListDataStruct(list):
 	def __delslice__(self, i, j):
 		return self.__delitem__(slice(i, j))
 
-
-class Modes(ListDataStruct):
+class OldModes(ListDataStruct):
 	""" Modes is a LIST of dictionaries containing modes and state pairs.
 		{ "name": <name>, "state": [bool] }
 		
@@ -145,7 +374,7 @@ class Modes(ListDataStruct):
 				active_modes.append(mode['name'])
 		return active_modes
 
-class Modeset(list):
+class OldModeset(list):
 	""" Modeset is a LIST of Modes.
 		Within a Modeset only one mode can be active per Modes-list.
 	

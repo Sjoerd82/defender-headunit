@@ -22,7 +22,6 @@ from threading import Timer		# timer to reset mode change
 #sys.path.append('../modules')
 sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
-from hu_datastruct import Modes
 from hu_datastruct import Modeset
 
 #********************************************************************************
@@ -55,11 +54,10 @@ class GpioController(object):
 		
 		# mode sets
 		self.mode_sets = {}			# contains set of modes()
-		self.ms = Modeset()			# New and Improved...
+		self.ms_all = {}			# contains the different modesets, key=modeset name
 		#self.ms.set_cb_mode_change(cb_mode_change)
 		
 		self.long_press_ms = 800
-		self.timer_mode = None		# timer object
 
 		# experimental -- detect speed
 		self.encoder_last_chg = datetime.now()
@@ -76,6 +74,14 @@ class GpioController(object):
 			if tag is None: tag = self.LOG_TAG
 			self.logger.log(level, message, extra={'tag': tag})
 
+	
+	def __active_modes(self):
+		ret_active = []
+		for key,val in self.ms_all.iteritems():
+			ret_active.extend( val.active() )
+		print "Active (all): {0}".format(ret_active)
+		return ret_active
+	
 	def set_cb_mode_change(self,cb_function):
 		self.callback_mode_change = cb_function
 		staticmethod(self.callback_mode_change)
@@ -537,56 +543,49 @@ class GpioController(object):
 		"""
 		
 		self.mode_sets['active_modes'] = []
-		if 'mode_sets' in self.cfg_gpio:
-			if len(self.cfg_gpio['mode_sets']) > 1:
-				self.__printer("WARNING: Multiple modes specified, but currently one one set is supported (only loading the first).", level=LL_WARNING)
-			
+		if 'mode_sets' in self.cfg_gpio:		
 			
 			self.__printer("Mode sets:")
 			for mode_set in self.cfg_gpio['mode_sets']:
-				new_mode_set = {}
-				new_mode_set['id'] = mode_set['id']
-				new_mode_set['mode_list'] = Modes()
-
-				# NOT NEEDED ANYMORE?
+			
+				ms_all[mode_set['id']] = Modeset()
+				
+				# basemode
 				if 'base_mode' in mode_set:
-					new_mode_set['base_mode'] = mode_set['base_mode']
-					base_mode = mode_set['base_mode']
-				else:
-					new_mode_set['base_mode'] = mode_set['mode_list'][0]
-					base_mode = mode_set['mode_list'][0]
+					ms_all[mode_set['id']].basemode = mode_set['base_mode']
+					base_mode = mode_set['base_mode'] #	DEBUG print
 					
-				# RESET
-				if 'reset' in mode_set:
-					new_mode_set['reset'] = mode_set['reset']	# optional
-					self.__printer("> {0}; resets after {1} seconds".format(new_mode_set['id'],new_mode_set['reset'])) # LL_DEBUG TODO
-				else:
-					self.__printer("> {0} (no reset)".format(new_mode_set['id'])) # LL_DEBUG TODO
+				#	self.__printer("> {0}; resets after {1} seconds".format(new_mode_set['id'],new_mode_set['reset'])) # LL_DEBUG TODO
+				#else:
+				#	self.__printer("> {0} (no reset)".format(new_mode_set['id'])) # LL_DEBUG TODO
 					
 				for i, mode in enumerate(mode_set['mode_list']):
-					new_mode = {}
-					new_mode['name'] = mode
-					if mode == new_mode_set['base_mode']:
-						new_mode['state'] = True
-					else:
-						new_mode['state'] = False
-					new_mode_set['mode_list'].append(new_mode)
+					ms_all[mode_set['id']].append(mode)
+					
+					#if mode == new_mode_set['base_mode']:
+					#	new_mode['state'] = True
+					#else:
+					#	new_mode['state'] = False
+					#new_mode_set['mode_list'].append(new_mode)
 					
 					# debug feedback
 					dbg_base = ""
-					dbg_state = ""
-					if new_mode['name'] == new_mode_set['base_mode']: dbg_base = "(base)"
-					if new_mode['state'] : dbg_state = "(active) "
+					dbg_state = "?"
+					if mode == base_mode: dbg_base = "(base)"
+					#if new_mode['state'] : dbg_state = "(active) "
 					self.__printer("  {0} {1} {2}{3}".format(i,new_mode['name'],dbg_base,dbg_state)) # LL_DEBUG TODO
 					
-				self.mode_sets[mode_set['id']] = new_mode_set
-				self.ms.append(mode_set['id'], new_mode_set['mode_list'])
+				#self.mode_sets[mode_set['id']] = new_mode_set
+				#self.ms.append(mode_set['id'], new_mode_set['mode_list'])
 				
 				if 'reset' in mode_set:
-					self.ms.reset_enable(mode_set['id'],mode_set['reset'], base_mode)
+					ms_all[mode_set['id']].enable_reset(mode_set['reset'] )	# TODO add call-back function
 					self.__printer("> {0}; resets to {1} after {2} seconds".format(mode_set['id'],base_mode,mode_set['reset'])) # LL_DEBUG TODO
 				else:
 					self.__printer("> {0} (no reset)".format(mode_set['id'])) # LL_DEBUG TODO
+			
+			self.__active_modes()
+			exit(0)
 
 			# gather active modes
 			# > self.__update_active_modes()

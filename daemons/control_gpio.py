@@ -36,7 +36,6 @@ from hu_utils import *
 from hu_msg import MqPubSubFwdController
 from hu_gpio import GpioController
 from hu_commands import Commands
-from hu_datastruct import Modes
 from hu_datastruct import Modeset
 
 # *******************************************************************************
