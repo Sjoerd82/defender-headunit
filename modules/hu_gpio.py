@@ -24,6 +24,8 @@ sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
 from hu_datastruct import Modeset
 
+import json
+
 #********************************************************************************
 # GPIO stuff
 #
@@ -566,6 +568,7 @@ class GpioController(object):
 					self.__printer("> {0} (no reset)".format(mode_set['id'])) # LL_DEBUG TODO
 			
 			print self.ms_all['modecycle1']
+			print json.dumps(self.ms_all['modecycle1'])
 			self.__active_modes()
 			exit(0)
 
