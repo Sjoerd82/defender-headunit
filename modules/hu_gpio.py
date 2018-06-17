@@ -578,7 +578,7 @@ class GpioController(object):
 				#self.ms.append(mode_set['id'], new_mode_set['mode_list'])
 				
 				if 'reset' in mode_set:
-					self.ms_all[mode_set['id']].enable_reset(mode_set['reset'] )	# TODO add call-back function
+					self.ms_all[mode_set['id']].reset_enable(mode_set['reset'] )	# TODO add call-back function
 					self.__printer("> {0}; resets to {1} after {2} seconds".format(mode_set['id'],base_mode,mode_set['reset'])) # LL_DEBUG TODO
 				else:
 					self.__printer("> {0} (no reset)".format(mode_set['id'])) # LL_DEBUG TODO
