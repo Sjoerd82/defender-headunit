@@ -97,10 +97,12 @@ class Modeset(list):
 		
 		# check if already running
 		if self.timer.is_alive():
+			print "already alive"
 			self.timer.cancel()
 			self.timer = Timer(5, self.__cb_mode_reset)
 			self.timer.start()
 		else:
+			print "NOT already alive"
 			self.timer = Timer(5, self.__cb_mode_reset)
 			self.timer.start()
 			
