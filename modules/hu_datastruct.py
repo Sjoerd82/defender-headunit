@@ -101,16 +101,17 @@ class Modeset(list):
 
 	def __contains__(self, item):
 		# When using a dict
-		for key, value in self:
-			if key == 'mode':
-				if value == str(item):
-					return True
+		if len(self) > 0:
+			for key, value in self:
+				if key == 'mode':
+					if value == str(item):
+						return True
 		return False
 		# When using attributes
-		for mode in self:
-			if mode.mode == str(item):
-				return True
-		return False
+		#for mode in self:
+		#	if mode.mode == str(item):
+		#		return True
+		#return False
 
 	def __cb_mode_reset(self):
 		""" Reset Timer call back """
@@ -222,15 +223,15 @@ class Modeset(list):
 				print "active index = {0}".format(ix)
 			elif mode['state'] and mode['mode'] != activated:
 				mode.deactivate()
-		return
-		
+				
+		#return
 		# Attributes
-		for ix,mode in enumerate(self):
-			if mode.state and mode.mode == activated:
-				self.ix_active = ix
-				print "active index = {0}".format(ix)
-			elif mode.state and mode.mode != activated:
-				mode.deactivate()
+		#for ix,mode in enumerate(self):
+		#	if mode.state and mode.mode == activated:
+		#		self.ix_active = ix
+		#		print "active index = {0}".format(ix)
+		#	elif mode.state and mode.mode != activated:
+		#		mode.deactivate()
 		
 # TODO: add feature to check for a unique key
 
