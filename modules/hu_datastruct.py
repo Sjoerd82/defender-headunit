@@ -60,9 +60,12 @@ class Modeset(list):
 	def __contains__(self, item):
 		# When using a dict
 		#if len(self) > 0:
+		print "-- __contains: --"
 		for key, value in self:
 			if key == 'mode':
+				print "{0}, {1}".format(value,str(item))
 				if value == str(item):
+					print "Fuck yeah"
 					return True
 		return False
 		# When using attributes
@@ -99,7 +102,6 @@ class Modeset(list):
 		print "Hi Im Append. Basemode={0} Item={1}".format(self._basemode,item)
 		#print type(item)
 		#print type(self._basemode)
-		print item == self._basemode
 		print item in self
 		if item == self._basemode and item in self:						# if item = basemode, activate it
 			print "Hi Again, setting Active"
