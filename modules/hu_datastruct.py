@@ -74,7 +74,8 @@ class Modeset(list):
 	def __cb_mode_reset(self):
 		""" Reset Timer call back """
 		print "__cb_mode_reset"
-		self.callback_mode_change()
+		if callable(self.callback_mode_change):
+			self.callback_mode_change()
 
 	def reset_enable(self,seconds,cb_function=None):
 		print "enabling timer"
@@ -465,6 +466,7 @@ class OldModeset(list):
 		
 	def reset_enable(self,mode_set_id,base_mode,seconds):
 		self.timers[mode_set_id] = Timer(seconds, self.__cb_mode_reset, [mode_set_id,base_mode])
+			
 		#self.timer_mode = Timer(seconds, self.__cb_mode_reset, [mode_set_id,base_mode])
 		#self.timers[mode_set_id].start()
 		
