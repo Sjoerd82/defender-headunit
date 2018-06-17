@@ -43,11 +43,13 @@ class Modeset(list):
 	"""
 	List of stateful modes. + Reset Timer
 	Reset timer engages on state change (cb_check_state), no need to call explicitly
+	Todo: support delete, extend, etc.
 	"""
 	def __init__(self):
 		super(Modeset, self).__init__()
 		self._singular = None
 		self._basemode = None
+		self.ix_basemode = None
 		self.ix_active = None
 		self.timer = None
 		self.callback_mode_change = None
@@ -70,8 +72,10 @@ class Modeset(list):
 	def __cb_mode_reset(self):
 		""" Reset Timer call back """
 		print "__cb_mode_reset"
-		if callable(self.callback_mode_change):
-			self.callback_mode_change()
+		#if callable(self.callback_mode_change):
+		#	self.callback_mode_change()
+		if self.ix_basemode is not None:
+			self[ix_basemode].activate()
 
 	def reset_enable(self,seconds,cb_function=None):
 		print "enabling timer"
@@ -84,7 +88,29 @@ class Modeset(list):
 		self.timer_enabled = True
 		
 	def reset_start(self):
-		pass
+		
+		# check if we have a basemode to reset to
+		if self._basemode is None:
+			return
+		
+		# check if we have a basemode index yet
+		if self.ix_basemode is None:
+			self.ix_basemode = self.index(self._basemode)
+		
+		# check if already running
+		if self.timer.is_alive():
+			self.timer.cancel()
+			self.timer = Timer(5, self.__cb_mode_reset)
+			self.timer.start()
+		else:
+			self.timer = Timer(5, self.__cb_mode_reset)
+			self.timer.start()
+			
+	#def reset_cancel(self, mode_set_id):
+	#	if mode_set_id not in self.timers:
+	#		return
+	#	else:
+	#		self.timers[mode_set_id].cancel()
 		
 	def index(self,item):
 		for ix, listitem in enumerate(self):
@@ -191,7 +217,7 @@ class Modeset(list):
 					print "active index is now: {0}".format(ix)
 					if self.timer_enabled and activated != self._basemode:
 						print "activating timer"
-						self.timer.start()
+						self.reset_start()
 					else:
 						print "not activating timer"
 				elif mode['state'] and mode['mode'] != activated:
@@ -206,6 +232,8 @@ class Modeset(list):
 		#		print "active index = {0}".format(ix)
 		#	elif mode.state and mode.mode != activated:
 		#		mode.deactivate()
+		
+	#def cb_reset_state(self):
 		
 # TODO: add feature to check for a unique key
 
