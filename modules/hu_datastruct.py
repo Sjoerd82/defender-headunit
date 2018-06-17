@@ -101,7 +101,7 @@ class Modeset(list):
 		super(Modeset, self).append(stateful_item)
 		
 		print "Hi Im Append. Basemode={0} Item={1} Len={2} Type={3}".format(self._basemode,item,len(self), type(stateful_item))
-		#print type(item)
+		print type(self[0])
 		#print type(self._basemode)
 		print item in self
 		if item == self._basemode and item in self:		# if item = basemode, activate it
