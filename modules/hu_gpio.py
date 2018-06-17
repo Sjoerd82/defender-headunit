@@ -223,11 +223,9 @@ class GpioController(object):
 		"""
 		function = self.pins_config[pin]['functions'][function_ix]
 
-		if 'mode_cycle' in function: # and 'mode' in self.pins_config[pin]:		
-		
-			ms.active_next(function['mode_cycle'])
-			return
-			
+		if 'mode_cycle' in function: # and 'mode' in self.pins_config[pin]:	
+			ms.next()
+			'''
 			# new
 			mode_list = self.mode_sets[function['mode_cycle']]['mode_list']
 			current_active_mode = mode_list.get_active_mode()
@@ -256,10 +254,12 @@ class GpioController(object):
 					# > self.__printer("[MODE] Changed from: '{0}' to: '{1}'. Reset timer set to seconds: {2}".format(mode_old,mode_new,reset_time)) # LL_DEBUG TODO
 					# > self.reset_mode_timer(reset_time,function['mode_cycle'])
 					self.__printer("[MODE] Changed from: '{0}' to: '{1}'. Reset timer started.".format(mode_old,mode_new)) # LL_DEBUG TODO
-					self.ms.reset_start(function['mode_cycle'])
+					#self.ms.reset_start(function['mode_cycle'])
+					self.ms.reset_start()
 			
 			else:
 				self.__printer("[MODE] Changed from: '{0}' to: '{1}' without reset.".format(mode_old,mode_new)) # LL_DEBUG TODO
+			'''
 
 	'''
 	def reset_mode_timer(self,seconds,mode_set_id):
@@ -529,50 +529,30 @@ class GpioController(object):
 			
 			self.__printer("Mode sets:")
 			for mode_set in self.cfg_gpio['mode_sets']:
-			
 				self.ms_all[mode_set['id']] = Modeset()
 				
+				# modeset category
+				# all GPIO modes are of type 'singular' (allowing only one active mode per set)
+				self.ms_all[mode_set['id']].singular()
+
 				# basemode
 				if 'base_mode' in mode_set:
 					self.ms_all[mode_set['id']].basemode = mode_set['base_mode']
 					base_mode = mode_set['base_mode'] #	DEBUG print
-					
-				#	self.__printer("> {0}; resets after {1} seconds".format(new_mode_set['id'],new_mode_set['reset'])) # LL_DEBUG TODO
-				#else:
-				#	self.__printer("> {0} (no reset)".format(new_mode_set['id'])) # LL_DEBUG TODO
-					
-				for i, mode in enumerate(mode_set['mode_list']):
-					self.ms_all[mode_set['id']].append(mode)
-					
-					#if mode == new_mode_set['base_mode']:
-					#	new_mode['state'] = True
-					#else:
-					#	new_mode['state'] = False
-					#new_mode_set['mode_list'].append(new_mode)
-					
-					# debug feedback
-					dbg_base = ""
-					dbg_state = "?"
-					if mode == base_mode: dbg_base = "(base)"
-					#if new_mode['state'] : dbg_state = "(active) "
-					self.__printer("  {0} {1} {2}{3}".format(i,mode,dbg_base,dbg_state)) # LL_DEBUG TODO
-					
-				#self.mode_sets[mode_set['id']] = new_mode_set
-				#self.ms.append(mode_set['id'], new_mode_set['mode_list'])
-				
+								
 				if 'reset' in mode_set:
 					self.ms_all[mode_set['id']].reset_enable(mode_set['reset'] )	# TODO add call-back function
 					self.__printer("> {0}; resets to {1} after {2} seconds".format(mode_set['id'],base_mode,mode_set['reset'])) # LL_DEBUG TODO
 				else:
 					self.__printer("> {0} (no reset)".format(mode_set['id'])) # LL_DEBUG TODO
-			
-			#print self.ms_all['modecycle1']
-			#print json.dumps(self.ms_all['modecycle1'])
-			#self.__active_modes()
-			#exit(0)
-
-			# gather active modes
-			# > self.__update_active_modes()
+				
+				for i, mode in enumerate(mode_set['mode_list']):
+					self.ms_all[mode_set['id']].append(mode)
+					
+					# debug feedback
+					dbg_base = ""
+					if mode == base_mode: dbg_base = "(base)"
+					self.__printer("  {0} {1} {2}".format(i,mode,dbg_base)) # LL_DEBUG TODO
 			
 		else:
 			self.__printer("WARNING: No 'mode_sets'-section.", level=LL_WARNING)

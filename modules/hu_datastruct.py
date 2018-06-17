@@ -37,17 +37,18 @@ class Stateful(dict):
 		"""
 		Set state to active state (True).
 		"""
-		self['state'] = True
+		self.state(True)
 		
 	def deactivate(self):
 		"""
 		Set state to inactive state (False).
 		"""
-		self['state'] = False
+		self.state(False)
 
 class Modeset(list):
 	"""
 	List of stateful modes. + Reset Timer
+	Reset timer engages on state change (cb_check_state), no need to call explicitly
 	"""
 	def __init__(self):
 		super(Modeset, self).__init__()
@@ -56,6 +57,7 @@ class Modeset(list):
 		self.ix_active = None
 		self.timer = None
 		self.callback_mode_change = None
+		self.timer_enabled = False
 
 	def __contains__(self, item):
 		# When using a dict
@@ -85,6 +87,9 @@ class Modeset(list):
 		#self.timer_mode = Timer(seconds, self.__cb_mode_reset, [mode_set_id,base_mode])
 		#self.timers[mode_set_id].start()
 		self.timer.start()
+		self.timer_enabled = True
+		
+	def reset_start(self):
 		
 	def index(self,item):
 		for ix, listitem in enumerate(self):
@@ -145,9 +150,9 @@ class Modeset(list):
 				ret_list.append(mode)
 		return ret_list
 		
-	def category():
+	#def category():
 		""" Return the type of modeset """
-		return self._singular
+		#return self._singular
 
 	def next(self):
 		"""
@@ -178,13 +183,25 @@ class Modeset(list):
 		pass
 		
 	def cb_check_state(self, activated):
-		# Dict:
-		for ix,mode in enumerate(self):
-			if mode['state'] and mode['mode'] == activated:
-				self.ix_active = ix
-				print "active index = {0}".format(ix)
-			elif mode['state'] and mode['mode'] != activated:
-				mode.deactivate()
+		"""
+		Called via Mode callback when it changes state
+		- Enforces only one active mode rule
+		- Starts Reset
+		"""
+		if self._singular or self.timer_enabled:
+			# Dict:
+			for ix,mode in enumerate(self):
+				if mode['state'] and mode['mode'] == activated:
+					self.ix_active = ix
+					print "active index is now: {0}".format(ix)
+					if self.timer_enabled and activated != self._basemode:
+						print "activating timer"
+						self.timer.start()
+					else:
+						print "not activating timer"
+				elif mode['state'] and mode['mode'] != activated:
+					mode.deactivate()
+					print "deactivating a mode"
 				
 		#return
 		# Attributes
