@@ -92,14 +92,19 @@ class Modeset(list):
 		self.timer.start()
 		
 	def index(self,item):
-		for ix, mode in enumerate(self):
-			if mode.mode == str(item):
+		for ix, listitem in enumerate(self):
+			if listitem['mode'] == str(item):
 				return ix
+			
+		# When using attributes:
+		#for ix, mode in enumerate(self):
+		#	if mode.mode == str(item):
+		#		return ix
 	
 	def append(self,item):
 		stateful_item = Stateful(item, self.cb_check_state)	# add State operations + callback
-		#if item not in self:								# only add if unique
-		super(Modeset, self).append(stateful_item)
+		if item not in self:								# only add if unique
+			super(Modeset, self).append(stateful_item)
 		
 		print "Hi Im Append. Basemode={0} Item={1} Len={2} Type={3}".format(self._basemode,item,len(self), type(stateful_item))
 		print type(self[0])
