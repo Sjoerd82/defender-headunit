@@ -259,7 +259,7 @@ class GpioController(object):
 				else:
 					if 'mode_select' in fun and 'mode_cycle' in fun:
 						#self.handle_mode(pin,ix)
-						self.ms_all['mode_cycle'].next()
+						self.ms_all[fun['mode_cycle']].next()
 					self.exec_function_by_code(fun['function'])
 				
 			return
@@ -295,7 +295,7 @@ class GpioController(object):
 						else:
 							if 'mode_select' in fun and 'mode_cycle' in fun:
 								#self.handle_mode(pin,ix)
-								self.ms_all['mode_cycle'].next()
+								self.ms_all[fun['mode_cycle']].next()
 							self.exec_function_by_code(fun['function'])			
 				
 			elif press_time > 0 and press_time < self.long_press_ms and self.pins_config[pin]['has_short']:
@@ -312,7 +312,7 @@ class GpioController(object):
 						else:
 							if 'mode_select' in fun and 'mode_cycle' in fun:
 								#self.handle_mode(pin,ix)
-								self.ms_all['mode_cycle'].next()
+								self.ms_all[fun['mode_cycle']].next()
 							self.exec_function_by_code(fun['function'])
 
 			else:
