@@ -72,10 +72,8 @@ class Modeset(list):
 	def __cb_mode_reset(self):
 		""" Reset Timer call back """
 		print "__cb_mode_reset"
-		#if callable(self.callback_mode_change):
-		#	self.callback_mode_change()
 		if self.ix_basemode is not None:
-			self[ix_basemode].activate()
+			self[self.ix_basemode].activate()
 
 	def reset_enable(self,seconds,cb_function=None):
 		print "enabling timer"
@@ -208,6 +206,7 @@ class Modeset(list):
 		Called via Mode callback when it changes state
 		- Enforces only one active mode rule
 		- Starts Reset
+		- Calls callback
 		"""
 		if self._singular or self.timer_enabled:
 			# Dict:
@@ -224,6 +223,9 @@ class Modeset(list):
 					mode.deactivate()
 					print "deactivating a mode"
 				
+		if callable(self.callback_mode_change):
+			self.callback_mode_change()
+
 		#return
 		# Attributes
 		#for ix,mode in enumerate(self):
