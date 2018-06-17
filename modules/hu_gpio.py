@@ -565,7 +565,7 @@ class GpioController(object):
 				else:
 					self.__printer("> {0} (no reset)".format(mode_set['id'])) # LL_DEBUG TODO
 			
-			print self.ms_all[0]
+			print self.ms_all['modecycle1']
 			self.__active_modes()
 			exit(0)
 
