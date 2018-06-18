@@ -22,7 +22,7 @@ from threading import Timer		# timer to reset mode change
 #sys.path.append('../modules')
 sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
-from hu_datastruct import Modeset
+from hu_datastruct import CircularModeset
 
 import json
 
