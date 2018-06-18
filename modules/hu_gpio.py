@@ -468,11 +468,8 @@ class GpioController(object):
 			
 			self.__printer("Mode sets:")
 			for mode_set in self.cfg_gpio['mode_sets']:
-				self.ms_all[mode_set['id']] = Modeset()
-				
-				# modeset category
-				# all GPIO modes are of type 'singular' (allowing only one active mode per set)
-				self.ms_all[mode_set['id']].singular = True
+				self.ms_all[mode_set['id']] = CircularModeset()	# GPIO only uses circular modesets, meaning only one active mode per set.
+				#self.ms_all[mode_set['id']].set_cb_mode_change()	# TODO! add call-back function
 
 				# basemode
 				if 'base_mode' in mode_set:
@@ -480,7 +477,7 @@ class GpioController(object):
 					base_mode = mode_set['base_mode'] #	DEBUG print
 								
 				if 'reset' in mode_set:
-					self.ms_all[mode_set['id']].reset_enable(mode_set['reset'] )	# TODO add call-back function
+					self.ms_all[mode_set['id']].reset_enable(mode_set['reset'])
 					self.__printer("> {0}; resets to {1} after {2} seconds".format(mode_set['id'],base_mode,mode_set['reset'])) # LL_DEBUG TODO
 				else:
 					self.__printer("> {0} (no reset)".format(mode_set['id'])) # LL_DEBUG TODO
