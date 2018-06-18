@@ -187,6 +187,7 @@ class CircularModeset(Modeset):
 		"""
 		Activate next.
 		"""
+		print "Doing Next. Current IX={0}".format(self.ix_active)
 		if self.ix_active is None:
 			self.ix_active = 0
 			self[self.ix_active].activate()			
@@ -194,6 +195,7 @@ class CircularModeset(Modeset):
 			self[self.ix_active].deactivate()
 			self.ix_active = (self.ix_active + 1) % len(self)
 			self[self.ix_active].activate()
+		print "            New IX=    {0}".format(self.ix_active)
 
 	def prev(self):
 		"""
