@@ -36,7 +36,7 @@ from hu_utils import *
 from hu_msg import MqPubSubFwdController
 from hu_gpio import GpioController
 from hu_commands import Commands
-from hu_datastruct import Modeset
+from hu_datastruct import CircularModeset, Modeset
 
 # *******************************************************************************
 # Global variables and constants
@@ -409,29 +409,25 @@ def setup():
 	
 	#gpio.set_cb_mode_change(cb_mode_change)
 	
-	"""
+
+	def MyCallback( mymodes ):
+		print mymodes
 	
-	ms = Modeset()
-	ms.reset_enable("setje","track",5)
-	ms.set_cb_mode_change(cb_mode_change)
-	ms.append("setje",modes[0],"volume")
-	
-	print ms
-	print ms.active()
-	ms.activate('bass',"setje")
-	print ms.active()
-	ms.activate_next("setje")
-	print ms.active()
-	
-	sleep(2)
-	sleep(1)
-	sleep(1)
-	sleep(1)
-	sleep(1)
-	sleep(1)
-	sleep(1)
-	print ms.active()
-	"""
+	cms = CircularModeset()
+	cms.basemode = "volume"
+	cms.reset_enable(5)
+	cms.set_cb_mode_change(cb_mode_change)
+	print cms.active()
+	cms.append("volume")
+	print cms.active()
+	cms.append("bass")
+	cms.append("treble")
+	print cms.active()
+	cms.next()
+	print cms.active()	
+	sleep(6)
+	print cms.active()
+
 	
 	# if we're responisble for modes, then send out a MQ message ? *(or have clients pull?)
 	

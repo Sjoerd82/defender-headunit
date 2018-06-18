@@ -27,7 +27,7 @@ class Mode(dict):
 	def state(self,state):
 		"""
 		Set active state. True or False.
-		Calls Callback function, if defined
+		Calls Callback function, if defined and callable.
 		"""
 		self['state']  = state
 		if callable(self.cb_state_change):
@@ -41,18 +41,17 @@ class Mode(dict):
 
 class Modeset(list):
 	"""
-	List of stateful modes. + Reset Timer
-	Reset timer engages on state change (cb_check_state), no need to call explicitly
-	Todo: support delete, extend, etc.
+	List of stateful modes. (a list of dicts).
 	"""
+	
 	def __init__(self):
 		super(Modeset, self).__init__()
 		self.callback_mode_change = None
 
 	def cb_check_state(self, activated):
 		"""
-		Called via Mode callback when it changes state
-		- Calls callback
+		Called by the Mode callback when it changes state.
+		Calls callback, if provided and callable.
 		"""
 		if callable(self.callback_mode_change):
 			# return list of stateful modes
@@ -64,7 +63,11 @@ class Modeset(list):
 				self.callback_mode_change(ret_list_of_dicts)	#no need to (deep)copy?
 				
 	def __contains__(self, item):
-		# When using a dict
+		"""
+		Used when an "in"-check is made. However, regular list would need an
+		exact match on the complete Mode/dictionary. This function checks if
+		the key (mode name) exists and returns True if it does, else False.
+		"""
 		for listitem in self:
 			for key, value in listitem.iteritems():
 				if key == 'mode':
@@ -73,18 +76,26 @@ class Modeset(list):
 		return False
 		
 	def index(self,item):
+		"""
+		Provides an index based on the given key of the Mode/dictionary.
+		"""
 		for ix, listitem in enumerate(self):
 			if listitem['mode'] == str(item):
 				return ix
 	
 	def append(self,item):
-		stateful_item = Mode(item, self.cb_check_state)	# add State operations + callback
-		if item not in self:								# only add if unique
+		"""
+		Updates given string to a Mode/dictionary object and appends it.
+		Only appends if the mode name doesn't already exist.
+		Provides a callback to cb_check_state() to communicate mode changes.
+		"""
+		stateful_item = Mode(item, self.cb_check_state)
+		if item not in self:
 			super(Modeset, self).append(stateful_item)
 			
 	def active(self):
 		"""
-		Return list of only active modes
+		Return list of active modes
 		"""
 		ret_list = []
 		for mode in self:
@@ -93,13 +104,17 @@ class Modeset(list):
 		return ret_list
 	
 	def set_cb_mode_change(self, cb_function):
+		"""
+		Set callback function. This function is called when a mode changes
+		state and returns the modeset (as which type?).
+		"""
 		self.callback_mode_change = cb_function
 		staticmethod(self.callback_mode_change)
 		
 class CircularModeset(Modeset):
 	"""
 	Type of Modeset where only one mode is active at a time.
-	Possible to reset back to a given mode after a reset timer expires.
+	It adds an option to reset back to a given mode after a reset timer expires.
 	Reset timer engages on state change (cb_check_state), no need to call explicitly.
 	"""
 	def __init__(self):
@@ -113,28 +128,26 @@ class CircularModeset(Modeset):
 
 	def __cb_mode_reset(self):
 		"""
-		Called on reset timer timeout
+		Called on reset timer timeout.
 		"""
 		if self.ix_basemode is not None:
 			self[self.ix_basemode].activate()
 
 	def cb_check_state(self, activated):
 		"""
-		Called via Mode callback when it changes state
+		Called by the Mode callback when it changes state.
 		- Enforces only one active mode rule
 		- Update ix_active
 		- Starts Reset
-		- Calls callback
+		- Calls Modeset callback via super()
 		"""
 		cnt_active = len(self.active())
 		for ix,mode in enumerate(self):
 			if mode['state'] and mode['mode'] == activated:
-				# Update active_ix
 				self.ix_active = ix
 				super(CircularModeset, self).cb_check_state(activated)
 			elif mode['state'] and cnt_active > 1 and mode['mode'] != activated:
-				# Enforce only one active mode rule
-				mode.deactivate()
+				mode.deactivate()	# enforce only one active mode rule
 			
 		# Start reset
 		if self.timer_enabled and activated != self._basemode:
@@ -142,13 +155,17 @@ class CircularModeset(Modeset):
 
 	def append(self,item):
 		"""
-		Overwrites the append() function?
+		Updates given string to a Mode/dictionary object and appends it.
+		Only appends if the mode name doesn't already exist.
+		Provides a callback to cb_check_state() to communicate mode changes.
+		If appended mode is equal to the basemode, will activate it.
+		Strangly only works when doing a super(Modeset,... instead of CircularModeset
 		"""
-		stateful_item = Mode(item, self.cb_check_state)	# add State operations + callback
-		if item not in self:								# only add if unique
+		stateful_item = Mode(item, self.cb_check_state)
+		if item not in self:
 			super(Modeset, self).append(stateful_item)	# Modeset... but why?
 		
-		if item == self._basemode and item in self:		# if item = basemode, activate it
+		if item == self._basemode and item in self:
 			self.ix_active = self.index(str(item))
 			self[self.ix_active].activate()
 			
@@ -168,7 +185,7 @@ class CircularModeset(Modeset):
 	
 	def next(self):
 		"""
-		Activate next. Only available for category "single".
+		Activate next.
 		"""
 		if self.ix_active is None:
 			self.ix_active = 0
@@ -180,7 +197,7 @@ class CircularModeset(Modeset):
 
 	def prev(self):
 		"""
-		Activate previous. Only available for category "single".
+		Activate previous.
 		"""
 		if self.ix_active is None:
 			self.ix_active = len(self)-1
@@ -191,11 +208,17 @@ class CircularModeset(Modeset):
 			self[self.ix_active].activate()
 			
 	def reset_enable(self,seconds):
+		"""
+		Enable reset functionality.
+		"""
 		self.timer_seconds = seconds
 		self.timer_enabled = True
 
 	def __reset_start(self):
-	
+		"""
+		Start reset timer.
+		"""
+		
 		# check if we have a basemode to reset to (if not default to first item)
 		if self._basemode is None and len(self) > 1:
 			self.self._basemode = self[0]['mode']
@@ -210,14 +233,17 @@ class CircularModeset(Modeset):
 		if self.ix_active == self.ix_basemode:
 			return
 
-		# cancel already running timer
+		# cancel an already running timer
 		if self.timer is not None and self.timer.is_alive():
 			self.timer.cancel()
-			
+		
 		self.timer = Timer(self.timer_seconds, self.__cb_mode_reset)
 		self.timer.start()
 			
 	def __reset_cancel(self):
+		"""
+		Cancel the reset timer (not used at the moment)
+		"""
 		if self.timer is not None and self.timer.is_alive():
 			self.timer.cancel()
 
