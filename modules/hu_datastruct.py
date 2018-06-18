@@ -2,44 +2,6 @@
 from threading import Timer		# Modesets: timer to reset mode change
 import copy
 
-class Mode(dict):
-	"""
-	Simple class that implements a stateful Mode.
-	Callback may be added to act upon state changes.
-	"""
-
-	#def __init__(self, mode, cb_state_change=None):
-	def __init__(self, mode):
-		self['mode'] = mode
-		self['state'] = False
-		#self.cb_state_change=cb_state_change
-		
-	#def __repr__(self):
-	#	return self['mode']
-	
-	@property
-	def state(self):
-		"""
-		Return active state. True or False.
-		"""
-		return self['state']
-
-	@state.setter
-	def state(self,state):
-		"""
-		Set active state. True or False.
-		Calls Callback function, if defined and callable.
-		"""
-		self['state']  = state
-		#if callable(self.cb_state_change):
-		#	self.cb_state_change(self['mode'])
-
-	def activate(self):
-		self.state = True
-		
-	def deactivate(self):
-		self.state = False
-
 class Modeset(list):
 	"""
 	List of stateful modes. (a list of dicts).
@@ -56,12 +18,12 @@ class Modeset(list):
 		"""
 		if callable(self.callback_mode_change):
 			# return list of stateful modes
-			#self.callback_mode_change(self)
+			self.callback_mode_change(copy.deepcopy(self))
 			# return list of dicts:
-			ret_list_of_dicts = []
-			for mode in self:
-				ret_list_of_dicts.append(dict(mode))
-			self.callback_mode_change(ret_list_of_dicts)	#no need to (deep)copy?
+			#ret_list_of_dicts = []
+			#for mode in self:
+			#	ret_list_of_dicts.append(dict(mode))
+			#self.callback_mode_change(ret_list_of_dicts)	#no need to (deep)copy?
 				
 	def __contains__(self, item):
 		"""
@@ -89,7 +51,8 @@ class Modeset(list):
 		Updates given string to a Mode/dictionary object and appends it.
 		Only appends if the mode name doesn't already exist.
 		"""
-		stateful_item = Mode(item)
+		#stateful_item = Mode(item)
+		stateful_item = {"mode":item,"state":False}
 		if item not in self:
 			super(Modeset, self).append(stateful_item)
 	
@@ -97,14 +60,14 @@ class Modeset(list):
 		"""
 		"""
 		if ix < len(self):
-			self[ix].activate()
+			self[ix]['state'] = True
 			self.cb_state_change()
 			
 	def deactivate(self,ix):
 		"""
 		"""
 		if ix < len(self):
-			self[ix].deactivate()
+			self[ix]['state'] = False
 			self.cb_state_change()
 	
 	def active(self):
@@ -147,9 +110,9 @@ class CircularModeset(Modeset):
 		print "__cb_mode_reset"
 		if self.ix_basemode is not None:
 			# enforce only one active mode rule
-			self[self.ix_active].deactivate()	
+			self[self.ix_active]['state'] = False
 			self.ix_active = self.ix_basemode
-			self[self.ix_active].activate()
+			self[self.ix_active]['state'] = True
 			self.__check_state(self.ix_active)
 
 	def __check_state(self, ix_activated):
@@ -182,7 +145,7 @@ class CircularModeset(Modeset):
 		
 		if item == self._basemode and item in self:
 			self.ix_active = self.index(str(item))
-			self[self.ix_active].activate()
+			self[self.ix_active]['state'] = True
 			#self.__check_state()	#CB! -- hmm do we want this?		
 			
 	@property
@@ -204,9 +167,9 @@ class CircularModeset(Modeset):
 		Activate given index, deactivates previously activate index
 		"""
 		if ix < len(self) and ix <> self.ix_active:
-			self[self.ix_active].deactivate()
+			self[self.ix_active]['state'] = False
 			self.ix_active = ix
-			self[self.ix_active].activate()	
+			self[self.ix_active]['state'] = True
 			self.__check_state(self.ix_active)
 
 	def deactivate(self,ix):
@@ -215,7 +178,7 @@ class CircularModeset(Modeset):
 		"""
 		if ix < len(self) and ix > 0 and ix <> self.ix_active:
 			self.ix_active = 0
-			self[ix].deactivate()
+			self[ix]['state'] = False
 			self.__check_state(self.ix_active)
 	
 	def next(self):
@@ -224,11 +187,11 @@ class CircularModeset(Modeset):
 		"""
 		if self.ix_active is None:
 			self.ix_active = 0
-			self[self.ix_active].activate()			
+			self[self.ix_active]['state'] = True
 		else:
-			self[self.ix_active].deactivate()
+			self[self.ix_active]['state'] = False
 			self.ix_active = (self.ix_active + 1) % len(self)
-			self[self.ix_active].activate()
+			self[self.ix_active]['state'] = True
 		self.__check_state(self.ix_active)
 
 	def prev(self):
@@ -237,11 +200,11 @@ class CircularModeset(Modeset):
 		"""
 		if self.ix_active is None:
 			self.ix_active = len(self)-1
-			self[self.ix_active].activate()			
+			self[self.ix_active]['state'] = True
 		else:
-			self[self.ix_active].deactivate()
+			self[self.ix_active]['state'] = False
 			self.ix_active = (self.ix_active - 1) % len(self)
-			self[self.ix_active].activate()
+			self[self.ix_active]['state'] = True
 		self.__check_state(self.ix_active)
 			
 	def reset_enable(self,seconds):
@@ -255,35 +218,28 @@ class CircularModeset(Modeset):
 		"""
 		Start reset timer.
 		"""
-		print "Reset Start"
 		
 		# should have at least two modes
 		if len(self) <= 1:
-			print "1"
 			return
 		
 		# check if we have a basemode to reset to (if not default to first item)
 		if self._basemode is None:
-			print "2"
 			self.self._basemode = self[0]['mode']
 			self.ix_basemode = 0
 		
 		# check if we have a basemode index yet
 		if self.ix_basemode is None:
-			print "3"
 			self.ix_basemode = self.index(self._basemode)
 		
 		# check if reset is started for the basemode
 		if self.ix_active == self.ix_basemode:
-			print "4"
 			return
 
 		# cancel an already running timer
 		if self.timer is not None and self.timer.is_alive():
-			print "5"
 			self.timer.cancel()
 		
-		print "6"
 		self.timer = Timer(self.timer_seconds, self.__cb_mode_reset)
 		self.timer.start()
 			
