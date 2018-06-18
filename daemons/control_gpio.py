@@ -395,7 +395,28 @@ def setup():
 	for topic in messaging.subscriptions():
 		printer("> {0}".format(topic))
 
-			
+	
+
+	def MyCallback( mymodes ):
+		print "Callback.. Received: {0}".format(mymodes)
+	
+	cms = CircularModeset()
+	cms.basemode = "volume"
+	cms.reset_enable(5)
+	cms.set_cb_mode_change(MyCallback)
+	print cms.active()		# returns []
+	cms.append("volume")
+	print cms.active()		# returns volume
+	cms.append("bass")
+	cms.append("treble")
+	print cms.active()		# returns volume
+	cms.next()
+	print cms.active()		# returns bass
+	sleep(6)
+	print cms.active()		# returns volume
+	exit(0)
+
+	
 	#
 	# GPIO
 	#
@@ -409,30 +430,10 @@ def setup():
 	
 	#gpio.set_cb_mode_change(cb_mode_change)
 	
-
-	def MyCallback( mymodes ):
-		print mymodes
-	
-	cms = CircularModeset()
-	cms.basemode = "volume"
-	cms.reset_enable(5)
-	cms.set_cb_mode_change(MyCallback)
-	print cms.active()
-	cms.append("volume")
-	print cms.active()
-	cms.append("bass")
-	cms.append("treble")
-	print cms.active()
-	cms.next()
-	print cms.active()	
-	sleep(6)
-	print cms.active()
-
 	
 	# if we're responisble for modes, then send out a MQ message ? *(or have clients pull?)
 	
 	printer('Initialized [OK]')
-	exit(0)
 			
 def main():		
 
