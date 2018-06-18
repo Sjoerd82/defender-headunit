@@ -127,7 +127,7 @@ class Modeset(list):
 		
 class CircularModeset(Modeset):
 	"""
-	Type of Modeset where only one mode is active at a time.
+	Type of Modeset where exactly one mode is active at a time.
 	It adds an option to reset back to a given mode after a reset timer expires.
 	Reset timer engages on state change (__check_state), no need to call explicitly.
 	"""
@@ -199,14 +199,23 @@ class CircularModeset(Modeset):
 		self._basemode = basemode
 	
 	def activate(self,ix):
-		if ix < len(self):
-			self[ix].activate()
+		"""
+		Activate given index, deactivates previously activate index
+		"""
+		if ix < len(self) and ix <> self.ix_active:
+			self[self.ix_active].deactivate()
+			self.ix_active = ix
+			self[self.ix_active].activate()	
+			self.__check_state(self.ix_active)
 
 	def deactivate(self,ix):
 		"""
+		Deactivate given index, activates index 0
 		"""
-		if ix < len(self):
+		if ix < len(self) and ix > 0 and ix <> self.ix_active:
+			self.ix_active = 0
 			self[ix].deactivate()
+			self.__check_state(self.ix_active)
 	
 	def next(self):
 		"""
