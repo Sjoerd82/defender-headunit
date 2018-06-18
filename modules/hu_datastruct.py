@@ -49,12 +49,11 @@ class Modeset(list):
 		super(Modeset, self).__init__()
 		self.callback_mode_change = None
 
-	def cb_state_change(self, activated):
+	def cb_state_change(self):
 		"""
 		Called by the Mode callback when it changes state.
 		Calls callback, if provided and callable.
 		"""
-		print "cb state change: {0}".format(activated)
 		if callable(self.callback_mode_change):
 			# return list of stateful modes
 			#self.callback_mode_change(self)
@@ -62,7 +61,7 @@ class Modeset(list):
 			ret_list_of_dicts = []
 			for mode in self:
 				ret_list_of_dicts.append(dict(mode))
-				self.callback_mode_change(ret_list_of_dicts)	#no need to (deep)copy?
+			self.callback_mode_change(ret_list_of_dicts)	#no need to (deep)copy?
 				
 	def __contains__(self, item):
 		"""
@@ -89,9 +88,8 @@ class Modeset(list):
 		"""
 		Updates given string to a Mode/dictionary object and appends it.
 		Only appends if the mode name doesn't already exist.
-		Provides a callback to cb_check_state() to communicate mode changes.
 		"""
-		stateful_item = Mode(item) #, self.cb_check_state)
+		stateful_item = Mode(item)
 		if item not in self:
 			super(Modeset, self).append(stateful_item)
 	
@@ -99,9 +97,15 @@ class Modeset(list):
 		"""
 		"""
 		if ix < len(self):
-			print "activating: {0}".format(ix)
 			self[ix].activate()
-			self.cb_state_change("X")
+			self.cb_state_change()
+			
+	def deactivate(self,ix):
+		"""
+		"""
+		if ix < len(self):
+			self[ix].deactivate()
+			self.cb_state_change()
 	
 	def active(self):
 		"""
@@ -125,7 +129,7 @@ class CircularModeset(Modeset):
 	"""
 	Type of Modeset where only one mode is active at a time.
 	It adds an option to reset back to a given mode after a reset timer expires.
-	Reset timer engages on state change (cb_check_state), no need to call explicitly.
+	Reset timer engages on state change (__check_state), no need to call explicitly.
 	"""
 	def __init__(self):
 		super(CircularModeset, self).__init__()
@@ -141,25 +145,29 @@ class CircularModeset(Modeset):
 		Called on reset timer timeout.
 		"""
 		if self.ix_basemode is not None:
-			self[self.ix_basemode].activate()
-			self.cb_check_state()
+			# enforce only one active mode rule
+			self[self.ix_active].deactivate()	
+			self.ix_active = self.ix_basemode
+			self[self.ix_active].activate()
+			self.__check_state(self.ix_active)
 
-	def cb_check_state(self, activated):
+	def __check_state(self, ix_activated):
 		"""
-		Called by the Mode callback when it changes state.
 		- Enforces only one active mode rule
 		- Update ix_active
 		- Starts Reset
 		- Calls Modeset callback via super()
 		"""
-		cnt_active = len(self.active())
-		for ix,mode in enumerate(self):
-			if mode['state'] and mode['mode'] == activated:
-				self.ix_active = ix
-			elif mode['state'] and cnt_active > 1 and mode['mode'] != activated:
-				mode.deactivate()	# enforce only one active mode rule
-		#self.cb_check_state
-		super(Modeset, self).cb_state_change(activated)	# CB!
+		#cnt_active = len(self.active())
+		#for ix,mode in enumerate(self):
+			#if mode['state'] and mode['mode'] == activated:
+			#	self.ix_active = ix
+			#if mode['state'] and cnt_active > 1 and ix != ix_activated:
+			#	mode.deactivate()	# enforce only one active mode rule
+				
+		# communicate changes via callback
+		super(Modeset, self).cb_state_change(activated)
+		
 		# Start reset
 		if self.timer_enabled and activated != self._basemode:
 			self.__reset_start()
@@ -174,7 +182,7 @@ class CircularModeset(Modeset):
 			print "I'm CM append, and activating stuff"
 			self.ix_active = self.index(str(item))
 			self[self.ix_active].activate()
-			#self.cb_check_state()	#CB! -- hmm do we want this?		
+			#self.__check_state()	#CB! -- hmm do we want this?		
 			
 	@property
 	def basemode(self):
@@ -190,6 +198,16 @@ class CircularModeset(Modeset):
 		"""
 		self._basemode = basemode
 	
+	def activate(self,ix):
+		if ix < len(self):
+			self[ix].activate()
+
+	def deactivate(self,ix):
+		"""
+		"""
+		if ix < len(self):
+			self[ix].deactivate()
+	
 	def next(self):
 		"""
 		Activate next.
@@ -203,7 +221,7 @@ class CircularModeset(Modeset):
 			self.ix_active = (self.ix_active + 1) % len(self)
 			self[self.ix_active].activate()
 		print "            New IX=    {0}".format(self.ix_active)
-		self.cb_check_state()	# CB!
+		self.__check_state(self.ix_active)
 
 	def prev(self):
 		"""
@@ -216,7 +234,7 @@ class CircularModeset(Modeset):
 			self[self.ix_active].deactivate()
 			self.ix_active = (self.ix_active - 1) % len(self)
 			self[self.ix_active].activate()
-		self.cb_check_state()
+		self.__check_state(self.ix_active)
 			
 	def reset_enable(self,seconds):
 		"""
