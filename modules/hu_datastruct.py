@@ -54,6 +54,7 @@ class Modeset(list):
 		Called by the Mode callback when it changes state.
 		Calls callback, if provided and callable.
 		"""
+		print "cb state change: {0}".format(activated)
 		if callable(self.callback_mode_change):
 			# return list of stateful modes
 			#self.callback_mode_change(self)
@@ -98,8 +99,9 @@ class Modeset(list):
 		"""
 		"""
 		if ix < len(self):
+			print "activating: {0}".format(ix)
 			self[ix].activate()
-			self.cb_state_change(None)
+			self.cb_state_change("X")
 	
 	def active(self):
 		"""
@@ -164,24 +166,15 @@ class CircularModeset(Modeset):
 
 	def append(self,item):
 		"""
-		Updates given string to a Mode/dictionary object and appends it.
-		Only appends if the mode name doesn't already exist.
-		Provides a callback to cb_check_state() to communicate mode changes.
-		If appended mode is equal to the basemode, will activate it.
-		Strangly only works when doing a super(Modeset,... instead of CircularModeset
+		If appended mode is the basemode, will activate it.
 		"""
-		super(CircularModeset, self).append(item)	# Modeset... but why?
+		super(CircularModeset, self).append(item)
 		
 		if item == self._basemode and item in self:
 			print "I'm CM append, and activating stuff"
 			self.ix_active = self.index(str(item))
 			self[self.ix_active].activate()
-			#self.cb_check_state()	#CB! -- hmm do we want this?
-		
-		#stateful_item = Mode(item) #, self.cb_check_state)
-		#if item not in self:
-		#super(CircularModeset, self).append(item)	# Modeset... but why?
-		
+			#self.cb_check_state()	#CB! -- hmm do we want this?		
 			
 	@property
 	def basemode(self):
