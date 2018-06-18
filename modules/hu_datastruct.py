@@ -258,22 +258,28 @@ class CircularModeset(Modeset):
 		print "Reset Start"
 		# check if we have a basemode to reset to (if not default to first item)
 		if self._basemode is None and len(self) > 1:
+			print "1"
 			self.self._basemode = self[0]['mode']
 		else:
+			print "2"
 			return
 		
 		# check if we have a basemode index yet
 		if self.ix_basemode is None:
+			print "3"
 			self.ix_basemode = self.index(self._basemode)
 		
 		# check if reset is started for the basemode
 		if self.ix_active == self.ix_basemode:
+			print "4"
 			return
 
 		# cancel an already running timer
 		if self.timer is not None and self.timer.is_alive():
+			print "5"
 			self.timer.cancel()
 		
+		print "6"
 		self.timer = Timer(self.timer_seconds, self.__cb_mode_reset)
 		self.timer.start()
 			
