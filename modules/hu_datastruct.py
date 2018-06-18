@@ -76,7 +76,7 @@ class Modeset(list):
 		"""
 		ret_list = []
 		for mode in self:
-			if mode.state:
+			if mode['state']:
 				ret_list.append(mode)
 		return ret_list
 	
