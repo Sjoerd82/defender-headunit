@@ -18,12 +18,13 @@ class Modeset(list):
 		"""
 		if callable(self.callback_mode_change):
 			# return list of stateful modes
-			self.callback_mode_change(copy.deepcopy(self))
+			#self.callback_mode_change(copy.deepcopy(self))	# can't pickle the Timer thread
 			# return list of dicts:
-			#ret_list_of_dicts = []
-			#for mode in self:
-			#	ret_list_of_dicts.append(dict(mode))
-			#self.callback_mode_change(ret_list_of_dicts)	#no need to (deep)copy?
+			ret_list_of_dicts = []
+			for mode in self:
+				#ret_list_of_dicts.append(dict(mode))
+				ret_list_of_dicts.append(mode)
+			self.callback_mode_change(ret_list_of_dicts)	#no need to (deep)copy?
 				
 	def __contains__(self, item):
 		"""
