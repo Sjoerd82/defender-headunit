@@ -144,6 +144,7 @@ class CircularModeset(Modeset):
 		"""
 		Called on reset timer timeout.
 		"""
+		print "__cb_mode_reset"
 		if self.ix_basemode is not None:
 			# enforce only one active mode rule
 			self[self.ix_active].deactivate()	
@@ -254,7 +255,7 @@ class CircularModeset(Modeset):
 		"""
 		Start reset timer.
 		"""
-		
+		print "Reset Start"
 		# check if we have a basemode to reset to (if not default to first item)
 		if self._basemode is None and len(self) > 1:
 			self.self._basemode = self[0]['mode']
