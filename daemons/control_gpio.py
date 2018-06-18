@@ -399,7 +399,7 @@ def setup():
 
 	def MyCallback( mymodes ):
 		print "Callback.. Received: {0}".format(mymodes)
-	
+
 	cms = CircularModeset()
 	cms.basemode = "volume"
 	cms.reset_enable(5)
@@ -413,7 +413,7 @@ def setup():
 	#cms.next()				# callback shows: volume,False, bass,True, treble,False			#FAIL
 	#print cms.active()		# returns: bass, True
 	cms.activate( cms.index("treble") )
-	
+
 	sleep(6)
 	#print cms.active()		# returns volume
 	exit(0)
