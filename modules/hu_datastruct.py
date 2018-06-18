@@ -162,7 +162,7 @@ class CircularModeset(Modeset):
 		if self.timer_enabled and activated != self._basemode:
 			self.__reset_start()
 
-		#def append(self,item):
+	def append(self,item):
 		"""
 		Updates given string to a Mode/dictionary object and appends it.
 		Only appends if the mode name doesn't already exist.
@@ -170,9 +170,12 @@ class CircularModeset(Modeset):
 		If appended mode is equal to the basemode, will activate it.
 		Strangly only works when doing a super(Modeset,... instead of CircularModeset
 		"""
-		#if item == self._basemode and item in self:
-		#	self.ix_active = self.index(str(item))
-		#	self[self.ix_active].activate()
+		super(CircularModeset, self).append(item)	# Modeset... but why?
+		
+		if item == self._basemode and item in self:
+			print "I'm CM append, and activating stuff"
+			self.ix_active = self.index(str(item))
+			self[self.ix_active].activate()
 			#self.cb_check_state()	#CB! -- hmm do we want this?
 		
 		#stateful_item = Mode(item) #, self.cb_check_state)
