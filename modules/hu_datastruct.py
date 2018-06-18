@@ -99,7 +99,7 @@ class Modeset(list):
 		"""
 		if ix < len(self):
 			self[ix].activate()
-			self.cb_state_change()
+			self.cb_state_change(None)
 	
 	def active(self):
 		"""
