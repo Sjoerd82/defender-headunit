@@ -258,7 +258,7 @@ class CircularModeset(Modeset):
 		print "Reset Start"
 		
 		# should have at least two modes
-		if len(self) =< 1:
+		if len(self) <= 1:
 			print "1"
 			return
 		
