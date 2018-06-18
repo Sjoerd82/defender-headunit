@@ -416,7 +416,7 @@ def setup():
 	cms = CircularModeset()
 	cms.basemode = "volume"
 	cms.reset_enable(5)
-	cms.set_cb_mode_change(cb_mode_change)
+	cms.set_cb_mode_change(MyCallback)
 	print cms.active()
 	cms.append("volume")
 	print cms.active()
@@ -432,7 +432,7 @@ def setup():
 	# if we're responisble for modes, then send out a MQ message ? *(or have clients pull?)
 	
 	printer('Initialized [OK]')
-	
+	exit(0)
 			
 def main():		
 
