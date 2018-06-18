@@ -404,16 +404,18 @@ def setup():
 	cms.basemode = "volume"
 	cms.reset_enable(5)
 	cms.set_cb_mode_change(MyCallback)
-	print cms.active()		# returns [],
-	cms.append("volume")	# callback shows volume
-	print cms.active()		# returns volume
-	cms.append("bass")
+	print cms.active()		# returns: [],
+	cms.append("volume")	# callback shows: volume,True (activates volume because it's the basemode)
+	print cms.active()		# returns: volume,True
+	cms.append("bass")	
 	cms.append("treble")
-	print cms.active()		# returns volume
-	cms.next()
-	print cms.active()		# returns bass
+	print cms.active()		# returns: volume, True
+	#cms.next()				# callback shows: volume,False, bass,True, treble,False			#FAIL
+	#print cms.active()		# returns: bass, True
+	cms.activate( cms.index("treble") )
+	
 	sleep(6)
-	print cms.active()		# returns volume
+	#print cms.active()		# returns volume
 	exit(0)
 
 	

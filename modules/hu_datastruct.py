@@ -8,10 +8,11 @@ class Mode(dict):
 	Callback may be added to act upon state changes.
 	"""
 
-	def __init__(self, mode, cb_state_change=None):
+	#def __init__(self, mode, cb_state_change=None):
+	def __init__(self, mode):
 		self['mode'] = mode
 		self['state'] = False
-		self.cb_state_change=cb_state_change
+		#self.cb_state_change=cb_state_change
 		
 	#def __repr__(self):
 	#	return self['mode']
@@ -30,8 +31,8 @@ class Mode(dict):
 		Calls Callback function, if defined and callable.
 		"""
 		self['state']  = state
-		if callable(self.cb_state_change):
-			self.cb_state_change(self['mode'])
+		#if callable(self.cb_state_change):
+		#	self.cb_state_change(self['mode'])
 
 	def activate(self):
 		self.state = True
@@ -48,7 +49,7 @@ class Modeset(list):
 		super(Modeset, self).__init__()
 		self.callback_mode_change = None
 
-	def cb_check_state(self, activated):
+	def cb_state_change(self, activated):
 		"""
 		Called by the Mode callback when it changes state.
 		Calls callback, if provided and callable.
@@ -89,10 +90,17 @@ class Modeset(list):
 		Only appends if the mode name doesn't already exist.
 		Provides a callback to cb_check_state() to communicate mode changes.
 		"""
-		stateful_item = Mode(item, self.cb_check_state)
+		stateful_item = Mode(item) #, self.cb_check_state)
 		if item not in self:
 			super(Modeset, self).append(stateful_item)
-			
+	
+	def activate(self,ix):
+		"""
+		"""
+		if ix < len(self):
+			self[ix].activate()
+			self.cb_state_change()
+	
 	def active(self):
 		"""
 		Return list of active modes
@@ -132,6 +140,7 @@ class CircularModeset(Modeset):
 		"""
 		if self.ix_basemode is not None:
 			self[self.ix_basemode].activate()
+			self.cb_check_state()
 
 	def cb_check_state(self, activated):
 		"""
@@ -145,10 +154,10 @@ class CircularModeset(Modeset):
 		for ix,mode in enumerate(self):
 			if mode['state'] and mode['mode'] == activated:
 				self.ix_active = ix
-				super(CircularModeset, self).cb_check_state(activated)
 			elif mode['state'] and cnt_active > 1 and mode['mode'] != activated:
 				mode.deactivate()	# enforce only one active mode rule
-			
+		#self.cb_check_state
+		super(Modeset, self).cb_state_change(activated)	# CB!
 		# Start reset
 		if self.timer_enabled and activated != self._basemode:
 			self.__reset_start()
@@ -161,13 +170,15 @@ class CircularModeset(Modeset):
 		If appended mode is equal to the basemode, will activate it.
 		Strangly only works when doing a super(Modeset,... instead of CircularModeset
 		"""
-		stateful_item = Mode(item, self.cb_check_state)
-		if item not in self:
-			super(Modeset, self).append(stateful_item)	# Modeset... but why?
-		
 		if item == self._basemode and item in self:
 			self.ix_active = self.index(str(item))
 			self[self.ix_active].activate()
+			#self.cb_check_state()	#CB! -- hmm do we want this?
+		
+		#stateful_item = Mode(item) #, self.cb_check_state)
+		#if item not in self:
+		super(CircularModeset, self).append(item)	# Modeset... but why?
+		
 			
 	@property
 	def basemode(self):
@@ -196,6 +207,7 @@ class CircularModeset(Modeset):
 			self.ix_active = (self.ix_active + 1) % len(self)
 			self[self.ix_active].activate()
 		print "            New IX=    {0}".format(self.ix_active)
+		self.cb_check_state()	# CB!
 
 	def prev(self):
 		"""
@@ -208,6 +220,7 @@ class CircularModeset(Modeset):
 			self[self.ix_active].deactivate()
 			self.ix_active = (self.ix_active - 1) % len(self)
 			self[self.ix_active].activate()
+		self.cb_check_state()
 			
 	def reset_enable(self,seconds):
 		"""
