@@ -166,7 +166,8 @@ class CircularModeset(Modeset):
 			#	mode.deactivate()	# enforce only one active mode rule
 				
 		# communicate changes via callback
-		super(Modeset, self).cb_state_change(activated)
+		#super(Modeset, self).cb_state_change()
+		self.cb_state_change()
 		
 		# Start reset
 		if self.timer_enabled and activated != self._basemode:
