@@ -170,7 +170,7 @@ class CircularModeset(Modeset):
 		self.cb_state_change()
 		
 		# Start reset
-		if self.timer_enabled and activated != self._basemode:
+		if self.timer_enabled and self[ix_activated]['mode'] != self._basemode:
 			self.__reset_start()
 
 	def append(self,item):
@@ -180,7 +180,6 @@ class CircularModeset(Modeset):
 		super(CircularModeset, self).append(item)
 		
 		if item == self._basemode and item in self:
-			print "I'm CM append, and activating stuff"
 			self.ix_active = self.index(str(item))
 			self[self.ix_active].activate()
 			#self.__check_state()	#CB! -- hmm do we want this?		
@@ -213,7 +212,6 @@ class CircularModeset(Modeset):
 		"""
 		Activate next.
 		"""
-		print "Doing Next. Current IX={0}".format(self.ix_active)
 		if self.ix_active is None:
 			self.ix_active = 0
 			self[self.ix_active].activate()			
@@ -221,7 +219,6 @@ class CircularModeset(Modeset):
 			self[self.ix_active].deactivate()
 			self.ix_active = (self.ix_active + 1) % len(self)
 			self[self.ix_active].activate()
-		print "            New IX=    {0}".format(self.ix_active)
 		self.__check_state(self.ix_active)
 
 	def prev(self):
