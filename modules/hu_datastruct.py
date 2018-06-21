@@ -109,8 +109,6 @@ class CircularModeset(Modeset):
 		self.timer = None
 		self.timer_seconds = None
 		self.timer_enabled = False
-		print "Hello from CM -- print"
-		printer("hello from CM -- printer")
 
 	def __cb_mode_reset(self):
 		"""
@@ -213,21 +211,26 @@ class CircularModeset(Modeset):
 		"""
 		Enable reset functionality.
 		"""
+		print "Enabling."
 		self.timer_seconds = seconds
 		
 		# should have at least two modes
 		if len(self) <= 1:
 			return
+		print "1"
 		
 		# check if we have a basemode to reset to (if not default to first item)
 		if self._basemode is None:
 			self.self._basemode = self[0]['mode']
 			self.ix_basemode = 0
+			print "2"
 		
 		# check if we have a basemode index yet
 		if self.ix_basemode is None:
 			self.ix_basemode = self.index(self._basemode)
-		
+			print "3"
+			
+		print "4"
 		# all checks passed
 		self.timer_enabled = True
 		print "TIMER: Enabled."
