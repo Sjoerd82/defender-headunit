@@ -321,7 +321,7 @@ class Commands(object):
 	def validate_args(self, command, args): #, repeat=False):
 		"""
 		args must be a list of arguments
-		Returns list of args if valid
+		Returns list of args if valid (may return None if no params)
 		"""
 
 		def strint_to_bool(value):
@@ -342,7 +342,8 @@ class Commands(object):
 			repeat = True
 		else:
 			repeat = False
-			
+		
+		
 		defs = arg_defs[:]	# cuz we might manipulate it, and python is stupid
 		if defs is None:
 			return None

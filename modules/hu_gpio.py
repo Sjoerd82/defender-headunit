@@ -111,6 +111,7 @@ class GpioController(object):
 				param = [param]
 		
 		if param is not None:
+			print "__exec_function_by_code param is not none.. validating: {0}, command={1}".format(param,command)
 			#print "DEBUG: EXEC ding, command = {0}, param = {1}".format(command, param)
 			valid_params = cmd_exec.validate_args(command,param) #,repeat)
 		else:
@@ -125,7 +126,6 @@ class GpioController(object):
 		ret_active = []
 		for key,val in self.ms_all.iteritems():
 			ret_active.extend( val.active() )
-		print "Active (all): {0}".format(ret_active)	# ToDo clean-up
 		return ret_active
 		
 	def get_modes(self):
@@ -169,17 +169,9 @@ class GpioController(object):
 		# examine if func meets all requirements (only one check needed for encoders: mode)
 		active_modes = self.__active_modes()
 		for func_cfg in self.pins_config[pin]['functions']:
-			
-			# check mode #TODO!! TODO!! add mode here!!
-			print func_cfg['mode']
-			print active_modes
-			
 			if 'mode' in func_cfg and func_cfg['mode'] not in active_modes:
-				print "1"
 				pass # these are not the mode you're looking for
 			else:
-				print "2 {0}".format(func_cfg)
-				#if 'encoder' in func_cfg:
 				return func_cfg
 				
 		return None				
@@ -388,7 +380,7 @@ class GpioController(object):
 		Called for either inputs from rotary switch (A and B)
 		"""
 		
-		print "DEBUG: self.int_handle_encoder! for pin: {0}".format(pin)
+		#print "DEBUG: self.int_handle_encoder! for pin: {0}".format(pin)
 			
 		device = self.get_device_config_by_pin(pin)
 		
