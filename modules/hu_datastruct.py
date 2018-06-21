@@ -72,7 +72,7 @@ class Modeset(list):
 		ret_list = []
 		for mode in self:
 			if mode['state']:
-				ret_list.append(mode)
+				ret_list.append(mode['mode'])
 		return ret_list
 	
 	def set_cb_mode_change(self, cb_function):
