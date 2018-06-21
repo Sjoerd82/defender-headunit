@@ -117,11 +117,10 @@ class GpioController(object):
 		
 		if param is not None:
 			#print "DEBUG: EXEC ding, command = {0}, param = {1}".format(command, param)
-			valid_params = cmd_exec.validate_args(command,valid_params) #,repeat)
+			valid_params = cmd_exec.validate_args(command,param) #,repeat)
 		else:
 			valid_params = None
 			
-		#print "args = {0}".format(valid_params)
 		self.callback_function(command,valid_params)	# calls call-back function
 		
 	def __active_modes(self):
