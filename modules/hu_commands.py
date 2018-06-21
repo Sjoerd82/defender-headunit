@@ -318,7 +318,7 @@ class Commands(object):
 			return self.function_mq_map[ix]
 
 	#def validate_args(**args):
-	def validate_args(self, command, args) #, repeat=False):
+	def validate_args(self, command, args): #, repeat=False):
 		"""
 		args must be a list of arguments
 		Returns list of args if valid
