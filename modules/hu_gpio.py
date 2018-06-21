@@ -161,8 +161,10 @@ class GpioController(object):
 		return None
 
 	def get_encoder_function_by_pin(self,pin):
-		""" Returns function dictionary
 		"""
+		Returns function dictionary (?)
+		"""
+		print "get_encoder_function_by_pin. pins_config[pin]={0}".format(self.pins_config[pin])
 		# loop through all possible functions for given pin
 		# examine if func meets all requirements (only one check needed for encoders: mode)
 		for func_cfg in self.pins_config[pin]['functions']:
@@ -375,9 +377,11 @@ class GpioController(object):
 				print "No Match!"
 
 	def int_handle_encoder(self,pin):
-		""" Called for either inputs from rotary switch (A and B) """
+		"""
+		Called for either inputs from rotary switch (A and B)
+		"""
 		
-		#print "DEBUG: self.int_handle_encoder! for pin: {0}".format(pin)
+		print "DEBUG: self.int_handle_encoder! for pin: {0}".format(pin)
 			
 		device = self.get_device_config_by_pin(pin)
 		
@@ -402,7 +406,7 @@ class GpioController(object):
 		# -------------------------------
 		
 		function = self.get_encoder_function_by_pin(pin)
-		#print function
+		print "Function: {0}".format(function)
 		if function is not None:
 			if (Switch_A and Switch_B):						# Both one active? Yes -> end of sequence
 			
