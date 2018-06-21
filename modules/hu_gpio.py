@@ -116,7 +116,7 @@ class GpioController(object):
 		else:
 			repeat = False
 		
-		print "DEBUG: EXEC ding, command = {0}, param = {2}".format(code, param)
+		print "DEBUG: EXEC ding, command = {0}, param = {1}".format(code, param)
 		valid = cmd_exec.validate_args(code,param,repeat)
 		print "args = {0}".format(valid)
 		self.callback_function(code)	# calls call-back function
