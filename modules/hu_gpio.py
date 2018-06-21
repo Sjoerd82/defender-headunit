@@ -23,6 +23,7 @@ from threading import Timer		# timer to reset mode change
 sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
 from hu_datastruct import CircularModeset
+from hu_commands import Commands
 
 import json
 
@@ -31,23 +32,24 @@ import json
 #
 class GpioController(object):
 
-	def __init__(self, cfg_gpio, cb_function=None, logger=None):
-		""" Provide a logger if you want feedback.
+	def __init__(self, cfg_gpio, cb_function, logger=None):
+		"""
+		cfg_gpio is a configuration dictionary.
+		cb_function is the callback_function which is called whenever a function needs executing.
+		Optionally, provide a logger if you want feedback.
 		"""
 	
-		# configuration
+		# configuration (dictionary)
 		self.cfg_gpio = cfg_gpio
-		
+
+		# callbacks
+		self.callback_function = cb_function
+		staticmethod(self.callback_function)
+			
 		# (optional) logger
 		self.LOG_TAG = 'GPIO'
 		self.logger = logger
 
-		# (optional) callbacks
-		#staticmethod(int_switch)
-		self.callback_function = cb_function
-		staticmethod(self.callback_function)
-		
-		self.callback_mode_change = None
 		
 		# pins
 		self.pins_state = {}		# pin (previous) state
@@ -76,18 +78,23 @@ class GpioController(object):
 			if tag is None: tag = self.LOG_TAG
 			self.logger.log(level, message, extra={'tag': tag})
 
+	def __cb_mode_change(self, list_of_modes):
+		"""
+		Called by modeset whenever a new mode becomes active. List_of_modes is a list of mode-dictionaries.
+		Source: Modeset.state_change
+		"""
+		exec_function_by_code('MODE-CHANGE',list_of_modes)	
 	
 	def __active_modes(self):
+		"""
+		Returns a list of all active modes across all modesets.
+		"""
 		ret_active = []
 		for key,val in self.ms_all.iteritems():
 			ret_active.extend( val.active() )
-		print "Active (all): {0}".format(ret_active)
+		print "Active (all): {0}".format(ret_active)	# ToDo clean-up
 		return ret_active
-	
-	def set_cb_mode_change(self,cb_function):
-		self.callback_mode_change = cb_function
-		staticmethod(self.callback_mode_change)
-	
+		
 	def get_modes(self):
 		""" Returns Mode-structure containing all modes and states of all sets. """
 		
@@ -136,9 +143,33 @@ class GpioController(object):
 		return None				
 
 	def exec_function_by_code(self,code,param=None):
-		if code is not None:
-			#print "exec_function_by_code() EXECUTE: {0} {1}".format(code,param)
-			self.callback_function(code)	# calls call-back function
+		"""
+		Kind of like a pass-through function to execute a code.
+		Code are executed by passing them back to our owner for execution.
+		
+		The user can configure any command available in the commands class.
+		Consider making this a json file...
+		
+		We will already validate the command before passing it back.
+		"""		
+		
+		if code is None:
+			return
+			
+		cmd_exec = Commands()
+		if code not in cmd_exec.command_list:
+			return
+		
+		if param is not None:
+			if isinstance(param, (str, unicode)):
+				param = [param]
+		
+		valid = cmd_exec.validate_args(code,param)
+		print "DEBUG: EXEC ding, ret = {0}, param = {1}".format(valid, param)
+		self.callback_function(code)	# calls call-back function
+			
+			
+			
 			
 		"""
 		if code in function_map:
@@ -469,7 +500,7 @@ class GpioController(object):
 			self.__printer("Mode sets:")
 			for mode_set in self.cfg_gpio['mode_sets']:
 				self.ms_all[mode_set['id']] = CircularModeset()	# GPIO only uses circular modesets, meaning only one active mode per set.
-				#self.ms_all[mode_set['id']].set_cb_mode_change()	# TODO! add call-back function
+				self.ms_all[mode_set['id']].set_cb_mode_change(__cb_mode_change)	# calls __cb_mode_change when a mode changes (actually: when a new mode becomes active)
 
 				# basemode
 				if 'base_mode' in mode_set:
@@ -709,3 +740,8 @@ class GpioController(object):
 			self.__printer("WARNING: Same pin used multiple times, this may lead to unpredictable results.",level=LL_WARNING)
 			pins_monitor = set(pins_monitor) # no use in keeping duplicates
 
+	'''
+	def set_cb_mode_change(self,cb_function):
+		self.callback_mode_change = cb_function
+		staticmethod(self.callback_mode_change)
+	'''

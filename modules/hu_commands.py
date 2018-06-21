@@ -319,6 +319,9 @@ class Commands(object):
 
 	#def validate_args(**args):
 	def validate_args(self, command, args, repeat=False):
+		"""
+		args must be a list of arguments
+		"""
 
 		def strint_to_bool(value):
 			if isinstance(value, (str,unicode)) and value.lower() in ['true','on','1','t']:

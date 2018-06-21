@@ -287,6 +287,11 @@ def cb_gpio_function(code):
 def cb_mode_change(active_modes):
 	# active_modes is a Modes() struct
 	
+		# find modes that are no longer active.
+		# active modes
+		#mq_instruction = 
+		#exec_function_by_code('MODE-CHANGE', ...)
+	
 	print "Hello from cb_mode_change(): {0}".format(active_modes)
 	
 	global modes
@@ -394,30 +399,6 @@ def setup():
 	printer('ZeroMQ subscriptions:')
 	for topic in messaging.subscriptions():
 		printer("> {0}".format(topic))
-
-	
-
-	def MyCallback( mymodes ):
-		print "Callback.. Received: {0}".format(mymodes)
-
-	cms = CircularModeset()
-	cms.basemode = "volume"
-	cms.reset_enable(5)
-	cms.set_cb_mode_change(MyCallback)
-	print cms.active()		# returns: [],
-	cms.append("volume")	# callback shows: volume,True (activates volume because it's the basemode)
-	print cms.active()		# returns: volume,True
-	cms.append("bass")	
-	cms.append("treble")
-	print cms.active()		# returns: volume, True
-	#cms.next()				# callback shows: volume,False, bass,True, treble,False			#FAIL
-	#print cms.active()		# returns: bass, True
-	cms.activate( cms.index("treble") )
-
-	sleep(6)
-	#print cms.active()		# returns volume
-	exit(0)
-
 	
 	#
 	# GPIO
