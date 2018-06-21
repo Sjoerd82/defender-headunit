@@ -111,13 +111,14 @@ class GpioController(object):
 			if isinstance(param, (str, unicode)):
 				param = [param]
 		
-		if code == 'MODE_CHANGE':
+		if code == 'MODE-CHANGE':
 			repeat = True
 		else:
 			repeat = False
 		
+		print "DEBUG: EXEC ding, command = {0}, param = {2}".format(code, param)
 		valid = cmd_exec.validate_args(code,param,repeat)
-		print "DEBUG: EXEC ding, command = {0}, ret = {1}, param = {2}".format(code, valid, param)
+		print "args = {0}".format(valid)
 		self.callback_function(code)	# calls call-back function
 		
 	def __active_modes(self):

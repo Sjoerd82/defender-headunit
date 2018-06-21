@@ -349,6 +349,10 @@ class Commands(object):
 		if repeat:
 			for i in range(len(args)/len(arg_defs)-1):
 				defs.extend(arg_defs)
+		#else:
+		# check if argument count matches
+		# TODO -- also do this in case of repeat (?)
+		#if len(args)  uhm #TODO
 		
 		for i, arg in enumerate(args):
 			# datatype	
