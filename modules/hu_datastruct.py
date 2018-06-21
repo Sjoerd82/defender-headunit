@@ -211,38 +211,29 @@ class CircularModeset(Modeset):
 		"""
 		Enable reset functionality.
 		"""
-		print "Enabling."
 		self.timer_seconds = seconds
-		
-		# should have at least two modes
-		if len(self) <= 1:
-			return
-		print "1"
-		
-		# check if we have a basemode to reset to (if not default to first item)
-		if self._basemode is None:
-			self.self._basemode = self[0]['mode']
-			self.ix_basemode = 0
-			print "2"
-		
-		# check if we have a basemode index yet
-		if self.ix_basemode is None:
-			self.ix_basemode = self.index(self._basemode)
-			print "3"
-			
-		print "4"
-		# all checks passed
 		self.timer_enabled = True
-		print "TIMER: Enabled."
 		
 	def reset_start(self):
 		"""
 		Start reset timer.
 		"""
-		print "TIMER: Reset Start requested."
 		if not self.timer_enabled:
 			return
+
+		# should have at least two modes
+		if len(self) <= 1:
+			return
 		
+		# check if we have a basemode to reset to (if not default to first item)
+		if self._basemode is None:
+			self.self._basemode = self[0]['mode']
+			self.ix_basemode = 0
+		
+		# check if we have a basemode index yet
+		if self.ix_basemode is None:
+			self.ix_basemode = self.index(self._basemode)
+
 		# check if already in the basemode
 		if self.ix_active == self.ix_basemode:
 			return
@@ -253,20 +244,17 @@ class CircularModeset(Modeset):
 		
 		self.timer = Timer(self.timer_seconds, self.__cb_mode_reset)
 		self.timer.start()
-		print "TIMER: Reset Started."
 
 	def reset_restart(self):
 		"""
 		Start reset timer, only if running.
 		"""		
-		print "TIMER: Reset REStart requested."
 		if ( self.timer_enabled and
 		     self.timer is not None and
 			 self.timer.is_alive() ):
 			self.timer.cancel()
 			self.timer = Timer(self.timer_seconds, self.__cb_mode_reset)
 			self.timer.start()		
-			print "TIMER: Reset REStarted."
 		
 	def __reset_cancel(self):
 		"""
