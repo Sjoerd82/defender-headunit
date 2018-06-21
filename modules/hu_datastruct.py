@@ -109,6 +109,8 @@ class CircularModeset(Modeset):
 		self.timer = None
 		self.timer_seconds = None
 		self.timer_enabled = False
+		print "Hello from CM -- print"
+		printer("hello from CM -- printer")
 
 	def __cb_mode_reset(self):
 		"""
