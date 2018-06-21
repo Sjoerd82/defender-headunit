@@ -1,3 +1,11 @@
+#
+# GPIO
+# Venema, S.R.G.
+# 2018-06-21
+#
+# Data structures
+# 
+#
 
 from threading import Timer		# Modesets: timer to reset mode change
 import copy

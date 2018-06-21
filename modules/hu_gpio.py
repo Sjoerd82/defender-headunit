@@ -83,8 +83,34 @@ class GpioController(object):
 		Called by modeset whenever a new mode becomes active. List_of_modes is a list of mode-dictionaries.
 		Source: Modeset.state_change
 		"""
-		exec_function_by_code('MODE-CHANGE',list_of_modes)	
+		self.__exec_function_by_code('MODE-CHANGE',list_of_modes)	
 	
+	def __exec_function_by_code(self,code,param=None):
+		"""
+		Kind of like a pass-through function to execute a code.
+		Code are executed by passing them back to our owner for execution.
+		
+		The user can configure any command available in the commands class.
+		Consider making this a json file...
+		
+		We will already validate the command before passing it back.
+		"""		
+		
+		if code is None:
+			return
+			
+		cmd_exec = Commands()
+		if code not in cmd_exec.command_list:
+			return
+		
+		if param is not None:
+			if isinstance(param, (str, unicode)):
+				param = [param]
+		
+		valid = cmd_exec.validate_args(code,param)
+		print "DEBUG: EXEC ding, ret = {0}, param = {1}".format(valid, param)
+		self.callback_function(code)	# calls call-back function
+		
 	def __active_modes(self):
 		"""
 		Returns a list of all active modes across all modesets.
@@ -142,63 +168,7 @@ class GpioController(object):
 				
 		return None				
 
-	def exec_function_by_code(self,code,param=None):
-		"""
-		Kind of like a pass-through function to execute a code.
-		Code are executed by passing them back to our owner for execution.
-		
-		The user can configure any command available in the commands class.
-		Consider making this a json file...
-		
-		We will already validate the command before passing it back.
-		"""		
-		
-		if code is None:
-			return
 			
-		cmd_exec = Commands()
-		if code not in cmd_exec.command_list:
-			return
-		
-		if param is not None:
-			if isinstance(param, (str, unicode)):
-				param = [param]
-		
-		valid = cmd_exec.validate_args(code,param)
-		print "DEBUG: EXEC ding, ret = {0}, param = {1}".format(valid, param)
-		self.callback_function(code)	# calls call-back function
-			
-			
-			
-			
-		"""
-		if code in function_map:
-			zmq_path = function_map[code]['zmq_path']
-			zmq_command = function_map[code]['zmq_command']
-			arguments = None
-			messaging.publish_command(zmq_path,zmq_command,arguments)
-		else:
-			print "function {0} not in function_map".format(code)
-		"""
-	'''
-	def cb_mode_reset(self,mode_set_id):
-		""" Reset Timer call back """
-		# set active mode
-		base_mode = self.mode_sets[mode_set_id]['base_mode']
-		if base_mode is None:
-			self.mode_sets[mode_set_id]['mode_list'].unset_active_modes([base_mode])
-		else:
-			self.mode_sets[mode_set_id]['mode_list'].set_active_modes([base_mode])
-		
-		# just printin'
-		self.__printer('[MODE] Reset to: "{0}"'.format(self.mode_sets[mode_set_id]['base_mode']))
-		
-		
-		# call that other callback
-		master_modes_list = self.get_modes()
-		self.callback_mode_change(copy.deepcopy(master_modes_list))
-	'''
-
 	def handle_mode(self,pin,function_ix):
 		""" If function has a mode_cycle attribute, then handle that.
 			Called by interrupt handlers.
@@ -284,14 +254,14 @@ class GpioController(object):
 			for ix, fun in enumerate(self.pins_config[pin]['functions']):
 				if 'mode' in fun:
 					if fun['mode'] in self.__active_modes():
-						self.exec_function_by_code(fun['function'])
+						self.__exec_function_by_code(fun['function'])
 					else:
 						print "DEBUG mode mismatch"
 				else:
 					if 'mode_select' in fun and 'mode_cycle' in fun:
 						#self.handle_mode(pin,ix)
 						self.ms_all[fun['mode_cycle']].next()
-					self.exec_function_by_code(fun['function'])
+					self.__exec_function_by_code(fun['function'])
 				
 			return
 
@@ -320,14 +290,14 @@ class GpioController(object):
 					if fun['press_type'] == 'long':
 						if 'mode' in fun:
 							if fun['mode'] in self.__active_modes():
-								self.exec_function_by_code(fun['function'])
+								self.__exec_function_by_code(fun['function'])
 							else:
 								print "DEBUG mode mismatch"
 						else:
 							if 'mode_select' in fun and 'mode_cycle' in fun:
 								#self.handle_mode(pin,ix)
 								self.ms_all[fun['mode_cycle']].next()
-							self.exec_function_by_code(fun['function'])			
+							self.__exec_function_by_code(fun['function'])			
 				
 			elif press_time > 0 and press_time < self.long_press_ms and self.pins_config[pin]['has_short']:
 				self.__printer("Button was pressed for {0}ms (threshold={1}). Executing short function.".format(press_time,self.long_press_ms))	# TODO: LL_DEBUG
@@ -337,14 +307,14 @@ class GpioController(object):
 					if fun['press_type'] == 'short':
 						if 'mode' in fun:
 							if fun['mode'] in self.__active_modes():
-								self.exec_function_by_code(fun['function'])
+								self.__exec_function_by_code(fun['function'])
 							else:
 								print "DEBUG mode mismatch"
 						else:
 							if 'mode_select' in fun and 'mode_cycle' in fun:
 								#self.handle_mode(pin,ix)
 								self.ms_all[fun['mode_cycle']].next()
-							self.exec_function_by_code(fun['function'])
+							self.__exec_function_by_code(fun['function'])
 
 			else:
 				print "No Match!"
@@ -453,16 +423,16 @@ class GpioController(object):
 					#counter clockwise
 					#print "[Encoder] {0}: DECREASE/CCW".format(function['function_ccw'])
 					if self.encoder_fast_count > 3 and 'function_fast_ccw' in function:
-						self.exec_function_by_code(function['function_fast_ccw'],'ccw')
+						self.__exec_function_by_code(function['function_fast_ccw'],'ccw')
 					elif 'function_ccw' in function:
-						self.exec_function_by_code(function['function_ccw'],'ccw')
+						self.__exec_function_by_code(function['function_ccw'],'ccw')
 				else:
 					#clockwise
 					#print "[Encoder] {0}: INCREASE/CW".format(function['function_cw'])
 					if self.encoder_fast_count > 3 and 'function_fast_cw' in function:
-						self.exec_function_by_code(function['function_fast_cw'],'cw')
+						self.__exec_function_by_code(function['function_fast_cw'],'cw')
 					elif 'function_cw' in function:
-						self.exec_function_by_code(function['function_cw'],'cw')
+						self.__exec_function_by_code(function['function_cw'],'cw')
 					
 				self.encoder_last_chg = this_chg
 
