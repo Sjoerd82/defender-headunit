@@ -3,7 +3,7 @@
 # Venema, S.R.G.
 # 2018-05-13
 #
-# GPIO stuff
+# The GPIO CONTROLLER Class provides an interface to execute functions on actions.
 # 
 #
 
@@ -82,8 +82,12 @@ class GpioController(object):
 		"""
 		Called by modeset whenever a new mode becomes active. List_of_modes is a list of mode-dictionaries.
 		Source: Modeset.state_change
-		"""
-		self.__exec_function_by_code('MODE-CHANGE',list_of_modes)	
+		"""		
+		mode_change_params = []
+		for mode in list_of_modes:
+			mode_change_params.append(mode['mode'])
+			mode_change_params.append(mode['state'])
+		self.__exec_function_by_code('MODE-CHANGE',mode_change_params)	
 	
 	def __exec_function_by_code(self,code,param=None):
 		"""
@@ -107,8 +111,13 @@ class GpioController(object):
 			if isinstance(param, (str, unicode)):
 				param = [param]
 		
-		valid = cmd_exec.validate_args(code,param)
-		print "DEBUG: EXEC ding, ret = {0}, param = {1}".format(valid, param)
+		if code == 'MODE_CHANGE':
+			repeat = True
+		else:
+			repeat = False
+		
+		valid = cmd_exec.validate_args(code,param,repeat)
+		print "DEBUG: EXEC ding, command = {0}, ret = {1}, param = {2}".format(code, valid, param)
 		self.callback_function(code)	# calls call-back function
 		
 	def __active_modes(self):
