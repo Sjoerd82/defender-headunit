@@ -318,10 +318,10 @@ class Commands(object):
 			return self.function_mq_map[ix]
 
 	#def validate_args(**args):
-	def validate_args(self, command, args, repeat=False):
+	def validate_args(self, command, args) #, repeat=False):
 		"""
 		args must be a list of arguments
-		Returns args if valid
+		Returns list of args if valid
 		"""
 
 		def strint_to_bool(value):
@@ -336,7 +336,13 @@ class Commands(object):
 			else:
 				return None
 				
-		arg_defs = self.get_command(command)['params']
+		cmd_def = self.get_command(command)
+		arg_defs = cmd_def['params']
+		if 'params_repeat' in cmd_def and cmd_def['params_repeat']:
+			repeat = True
+		else:
+			repeat = False
+			
 		defs = arg_defs[:]	# cuz we might manipulate it, and python is stupid
 		if defs is None:
 			return None
@@ -346,6 +352,7 @@ class Commands(object):
 			return None
 
 		# generate definitions
+		
 		if repeat:
 			for i in range(len(args)/len(arg_defs)-1):
 				defs.extend(arg_defs)

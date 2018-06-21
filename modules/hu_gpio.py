@@ -89,37 +89,40 @@ class GpioController(object):
 			mode_change_params.append(mode['state'])
 		self.__exec_function_by_code('MODE-CHANGE',mode_change_params)	
 	
-	def __exec_function_by_code(self,code,param=None):
+	def __exec_function_by_code(self,command,param=None):
 		"""
-		Kind of like a pass-through function to execute a code.
-		Code are executed by passing them back to our owner for execution.
+		Kind of like a pass-through function to execute a command.
+		command are executed by passing them back to our owner for execution.
 		
 		The user can configure any command available in the commands class.
 		Consider making this a json file...
 		
 		We will already validate the command before passing it back.
-		"""		
-		
-		if code is None:
+		"""
+		if command is None:
 			return
 			
 		cmd_exec = Commands()
-		if code not in cmd_exec.command_list:
+		if command not in cmd_exec.command_list:
 			return
 		
 		if param is not None:
 			if isinstance(param, (str, unicode)):
 				param = [param]
 		
-		if code == 'MODE-CHANGE':
-			repeat = True
-		else:
-			repeat = False
+		#if command == 'MODE-CHANGE':
+		#	repeat = True
+		#else:
+		#	repeat = False
 		
-		print "DEBUG: EXEC ding, command = {0}, param = {1}".format(code, param)
-		valid = cmd_exec.validate_args(code,param,repeat)
-		print "args = {0}".format(valid)
-		self.callback_function(code)	# calls call-back function
+		if param is not None:
+			#print "DEBUG: EXEC ding, command = {0}, param = {1}".format(command, param)
+			valid_params = cmd_exec.validate_args(command,valid_params) #,repeat)
+		else:
+			valid_params is None
+			
+		#print "args = {0}".format(valid_params)
+		self.callback_function(command,valid_params)	# calls call-back function
 		
 	def __active_modes(self):
 		"""

@@ -260,14 +260,14 @@ def idle_message_receiver():
 # ********************************************************************************
 # GPIO Callback
 #
-def cb_gpio_function(code):
+def cb_gpio_function(code, arguments):
 	#print "CALL: {0}".format(function)
 	if code in commands.command_list:
 		cmd = commands.get_command(code)
 		printer("Executing: {0}".format(code))
 		zmq_path = cmd['path']
 		zmq_command = cmd['command']
-		arguments = None
+		#arguments = None
 		messaging.publish_command(zmq_path,zmq_command,arguments)
 	else:
 		printer("Function {0} not in function_mq_map".format(code),level=LL_ERROR)
