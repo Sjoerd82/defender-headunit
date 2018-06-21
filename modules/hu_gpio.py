@@ -111,9 +111,7 @@ class GpioController(object):
 				param = [param]
 		
 		if param is not None:
-			print "__exec_function_by_code param is not none.. validating: {0}, command={1}".format(param,command)
-			#print "DEBUG: EXEC ding, command = {0}, param = {1}".format(command, param)
-			valid_params = cmd_exec.validate_args(command,param) #,repeat)
+			valid_params = cmd_exec.validate_args(command,param)
 		else:
 			valid_params = None
 			
@@ -169,75 +167,30 @@ class GpioController(object):
 
 	def get_encoder_function_by_pin(self,pin):
 		"""
-		Returns function dictionary (?)
-		"""
-		#print "get_encoder_function_by_pin. pins_config[pin]={0}".format(self.pins_config[pin])
+		Returns function dictionary (?) whick looks like this, for a given pin index:
+		
+		{	  'dev_type': 'clk'
+			, 'dev_name': u'multi_encoder'
+			, 'functions': [
+				  {u'name': u'track_select', 'fnc_name': u'track_select', u'encoder': u'multi_encoder', u'mode': u'track', 'multicount': 0, u'function_ccw': u'PLAYER-PREV', u'function_cw': u'PLAYER-NEXT'}
+				, {u'name': u'bass', 'fnc_name': u'bass', u'encoder': u'multi_encoder', u'mode': u'bass', 'multicount': 0, u'function_ccw': u'ECA-BASS-DEC', u'function_cw': u'ECA-BASS-INC'}
+				, {u'name': u'treble', 'fnc_name': u'treble', u'encoder': u'multi_encoder', u'mode': u'treble', 'multicount': 0, u'function_ccw': u'ECA-TREBLE-DEC', u'function_cw': u'ECA-TREBLE-INC'}
+				, {u'name': u'random', 'fnc_name': u'random', u'encoder': u'multi_encoder', u'mode': u'random', 'multicount': 0, u'function_ccw': u'PLAYER-RANDOM-PREV', u'function_cw': u'PLAYER-RANDOM-NEXT'}
+				, {u'name': u'browse_menu', 'fnc_name': u'browse_menu', u'encoder': u'multi_encoder', u'mode': u'menu', 'multicount': 0, u'function_ccw': u'MENU_SCROLL_UP', u'function_cw': u'MENU_SCROLL_DOWN'}
+				]
+		}
+		
+		"""	
+		active_modes = self.__active_modes()
 		# loop through all possible functions for given pin
 		# examine if func meets all requirements (only one check needed for encoders: mode)
-		active_modes = self.__active_modes()
 		for func_cfg in self.pins_config[pin]['functions']:
 			if 'mode' in func_cfg and func_cfg['mode'] not in active_modes:
 				pass # these are not the mode you're looking for
 			else:
 				return func_cfg
 				
-		return None				
-
-			
-	def handle_mode(self,pin,function_ix):
-		""" If function has a mode_cycle attribute, then handle that.
-			Called by interrupt handlers.
-		"""
-		function = self.pins_config[pin]['functions'][function_ix]
-
-		if 'mode_cycle' in function: # and 'mode' in self.pins_config[pin]:	
-			self.ms.next()
-			'''
-			# new
-			mode_list = self.mode_sets[function['mode_cycle']]['mode_list']
-			current_active_mode = mode_list.get_active_mode()
-			mode_ix = mode_list.unique_list().index(current_active_mode)
-			mode_old = mode_list[mode_ix]['name']
-			mode_base = self.mode_sets[function['mode_cycle']]['base_mode']
-					
-			if mode_ix >= len(mode_list)-1:
-				mode_ix = 0
-			else:
-				mode_ix += 1
-			mode_new = mode_list[mode_ix]['name']
-			
-			mode_list.set_active_modes(mode_new)
-			self.callback_mode_change(copy.deepcopy(mode_list))
-			
-			# reset
-			if 'reset' in self.mode_sets[function['mode_cycle']]:
-			
-				if mode_new == mode_base:
-					self.__printer("[MODE] Changed from: '{0}' to: '{1}' (base mode; no reset timer)".format(mode_old,mode_new)) # LL_DEBUG TODO
-					# > self.timer_mode.cancel()
-					self.ms.reset_cancel(function['mode_cycle'])
-				else:
-					# > reset_time = self.mode_sets[function['mode_cycle']]['reset']
-					# > self.__printer("[MODE] Changed from: '{0}' to: '{1}'. Reset timer set to seconds: {2}".format(mode_old,mode_new,reset_time)) # LL_DEBUG TODO
-					# > self.reset_mode_timer(reset_time,function['mode_cycle'])
-					self.__printer("[MODE] Changed from: '{0}' to: '{1}'. Reset timer started.".format(mode_old,mode_new)) # LL_DEBUG TODO
-					#self.ms.reset_start(function['mode_cycle'])
-					self.ms.reset_start()
-			
-			else:
-				self.__printer("[MODE] Changed from: '{0}' to: '{1}' without reset.".format(mode_old,mode_new)) # LL_DEBUG TODO
-			'''
-
-	'''
-	def reset_mode_timer(self,seconds,mode_set_id):
-		""" reset the mode time-out if there is still activity in current mode """
-		#mode_timer = 0
-		#gobject.timeout_add_seconds(function['mode_reset'],self.cb_mode_reset,pin,function_ix)
-		if self.timer_mode is not None:
-			self.timer_mode.cancel()
-		self.timer_mode = Timer(seconds, self.cb_mode_reset, [mode_set_id])
-		self.timer_mode.start()
-	'''
+		return None
 					
 	# ********************************************************************************
 	# GPIO interrupt handlers
@@ -259,6 +212,8 @@ class GpioController(object):
 			return None
 		
 		#print "DEBUG: self.int_handle_switch! for pin: {0}".format(pin)
+		self.__mode_reset()									# Keep resetting as long as the mode is being used
+		# TODO, check if possible to only reset affected timer: self.ms_all[fun['mode_cycle']].
 		
 		# check wheather we have short and/or long press functions and multi-press functions
 		if self.pins_config[pin]['has_short'] and not self.pins_config[pin]['has_long'] and not self.pins_config[pin]['has_multi']:
@@ -274,7 +229,6 @@ class GpioController(object):
 						print "DEBUG mode mismatch"
 				else:
 					if 'mode_select' in fun and 'mode_cycle' in fun:
-						#self.handle_mode(pin,ix)
 						self.ms_all[fun['mode_cycle']].next()
 					self.__exec_function_by_code(fun['function'])
 				
@@ -310,7 +264,6 @@ class GpioController(object):
 								print "DEBUG mode mismatch"
 						else:
 							if 'mode_select' in fun and 'mode_cycle' in fun:
-								#self.handle_mode(pin,ix)
 								self.ms_all[fun['mode_cycle']].next()
 							self.__exec_function_by_code(fun['function'])			
 				
@@ -327,7 +280,6 @@ class GpioController(object):
 								print "DEBUG mode mismatch"
 						else:
 							if 'mode_select' in fun and 'mode_cycle' in fun:
-								#self.handle_mode(pin,ix)
 								self.ms_all[fun['mode_cycle']].next()
 							self.__exec_function_by_code(fun['function'])
 
@@ -393,9 +345,6 @@ class GpioController(object):
 		
 		encoder_pinA = device['clk']
 		encoder_pinB = device['dt']
-		#print "DEBUG! Found encoder pins:"
-		#print encoder_pinA
-		#print encoder_pinB
 
 		Switch_A = GPIO.input(encoder_pinA)
 		Switch_B = GPIO.input(encoder_pinB)
@@ -413,6 +362,7 @@ class GpioController(object):
 		
 		function = self.get_encoder_function_by_pin(pin)
 		self.__mode_reset()									# Keep resetting as long as the mode is being used
+		# TODO, check if possible to only reset affected timer: self.ms_all[fun['mode_cycle']].
 		if function is not None:
 			if (Switch_A and Switch_B):						# Both one active? Yes -> end of sequence
 			
