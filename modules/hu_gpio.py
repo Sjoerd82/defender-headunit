@@ -119,7 +119,7 @@ class GpioController(object):
 			#print "DEBUG: EXEC ding, command = {0}, param = {1}".format(command, param)
 			valid_params = cmd_exec.validate_args(command,valid_params) #,repeat)
 		else:
-			valid_params is None
+			valid_params = None
 			
 		#print "args = {0}".format(valid_params)
 		self.callback_function(command,valid_params)	# calls call-back function
