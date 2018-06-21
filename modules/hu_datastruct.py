@@ -129,7 +129,7 @@ class CircularModeset(Modeset):
 		self.state_change()
 	
 		if self.timer_enabled and self[ix_activated]['mode'] != self._basemode:
-			self.__reset_start()
+			self.reset_start()
 
 	def append(self,item):
 		"""
@@ -212,12 +212,6 @@ class CircularModeset(Modeset):
 		Enable reset functionality.
 		"""
 		self.timer_seconds = seconds
-		self.timer_enabled = True
-
-	def __reset_start(self):
-		"""
-		Start reset timer.
-		"""
 		
 		# should have at least two modes
 		if len(self) <= 1:
@@ -232,7 +226,17 @@ class CircularModeset(Modeset):
 		if self.ix_basemode is None:
 			self.ix_basemode = self.index(self._basemode)
 		
-		# check if reset is started for the basemode
+		# all checks passed
+		self.timer_enabled = True
+		
+	def reset_start(self):
+		"""
+		Start reset timer.
+		"""
+		if not self.timer_enabled:
+			return
+		
+		# check if already in the basemode
 		if self.ix_active == self.ix_basemode:
 			return
 
@@ -242,7 +246,18 @@ class CircularModeset(Modeset):
 		
 		self.timer = Timer(self.timer_seconds, self.__cb_mode_reset)
 		self.timer.start()
-			
+
+	def reset_restart(self):
+		"""
+		Start reset timer, only if running.
+		"""		
+		if ( self.timer_enabled and
+		     self.timer is not None and
+			 self.timer.is_alive() ):
+			self.timer.cancel()
+			self.timer = Timer(self.timer_seconds, self.__cb_mode_reset)
+			self.timer.start()		
+		
 	def __reset_cancel(self):
 		"""
 		Cancel the reset timer (not used at the moment)

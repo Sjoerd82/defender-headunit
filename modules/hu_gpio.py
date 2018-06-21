@@ -127,7 +127,14 @@ class GpioController(object):
 		for key,val in self.ms_all.iteritems():
 			ret_active.extend( val.active() )
 		return ret_active
-		
+	
+	def __mode_reset(self):
+		"""
+		Restart all running timers
+		"""
+		for key,val in self.ms_all.iteritems():
+			val.reset_restart()
+	
 	def get_modes(self):
 		""" Returns Mode-structure containing all modes and states of all sets. """
 		
@@ -405,7 +412,7 @@ class GpioController(object):
 		# -------------------------------
 		
 		function = self.get_encoder_function_by_pin(pin)
-		print "Function: {0}".format(function)
+		self.__mode_reset()									# Keep resetting as long as the mode is being used
 		if function is not None:
 			if (Switch_A and Switch_B):						# Both one active? Yes -> end of sequence
 			
