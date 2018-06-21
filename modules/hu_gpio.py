@@ -164,14 +164,21 @@ class GpioController(object):
 		"""
 		Returns function dictionary (?)
 		"""
-		print "get_encoder_function_by_pin. pins_config[pin]={0}".format(self.pins_config[pin])
+		#print "get_encoder_function_by_pin. pins_config[pin]={0}".format(self.pins_config[pin])
 		# loop through all possible functions for given pin
 		# examine if func meets all requirements (only one check needed for encoders: mode)
+		active_modes = self.__active_modes()
 		for func_cfg in self.pins_config[pin]['functions']:
+			
 			# check mode #TODO!! TODO!! add mode here!!
-			if 'mode' in func_cfg and func_cfg['mode'] not in self.__active_modes():
+			print func_cfg['mode']
+			print active_modes
+			
+			if 'mode' in func_cfg and func_cfg['mode'] not in active_modes:
+				print "1"
 				pass # these are not the mode you're looking for
 			else:
+				print "2 {0}".format(func_cfg)
 				#if 'encoder' in func_cfg:
 				return func_cfg
 				
