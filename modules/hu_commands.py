@@ -321,6 +321,7 @@ class Commands(object):
 	def validate_args(self, command, args, repeat=False):
 		"""
 		args must be a list of arguments
+		Returns args if valid
 		"""
 
 		def strint_to_bool(value):
@@ -358,7 +359,7 @@ class Commands(object):
 				if defs[i]['datatype'] == bool and strint_to_bool(arg) is not None:
 					args[i] = strint_to_bool(arg)
 				else:
-					print "Datatype: FAIL"
+					print "hu_commands.py: Validate: Datatype: FAIL"
 					return None
 					
 		if len(defs)-len(args) > 0:
