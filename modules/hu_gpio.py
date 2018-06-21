@@ -110,11 +110,6 @@ class GpioController(object):
 			if isinstance(param, (str, unicode)):
 				param = [param]
 		
-		#if command == 'MODE-CHANGE':
-		#	repeat = True
-		#else:
-		#	repeat = False
-		
 		if param is not None:
 			#print "DEBUG: EXEC ding, command = {0}, param = {1}".format(command, param)
 			valid_params = cmd_exec.validate_args(command,param) #,repeat)
