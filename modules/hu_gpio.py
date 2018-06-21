@@ -433,16 +433,16 @@ class GpioController(object):
 					#counter clockwise
 					#print "[Encoder] {0}: DECREASE/CCW".format(function['function_ccw'])
 					if self.encoder_fast_count > 3 and 'function_fast_ccw' in function:
-						self.__exec_function_by_code(function['function_fast_ccw'],'ccw')
+						self.__exec_function_by_code(function['function_fast_ccw'])
 					elif 'function_ccw' in function:
-						self.__exec_function_by_code(function['function_ccw'],'ccw')
+						self.__exec_function_by_code(function['function_ccw'])
 				else:
 					#clockwise
 					#print "[Encoder] {0}: INCREASE/CW".format(function['function_cw'])
 					if self.encoder_fast_count > 3 and 'function_fast_cw' in function:
-						self.__exec_function_by_code(function['function_fast_cw'],'cw')
+						self.__exec_function_by_code(function['function_fast_cw'])
 					elif 'function_cw' in function:
-						self.__exec_function_by_code(function['function_cw'],'cw')
+						self.__exec_function_by_code(function['function_cw'])
 					
 				self.encoder_last_chg = this_chg
 
