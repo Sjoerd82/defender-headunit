@@ -228,11 +228,13 @@ class CircularModeset(Modeset):
 		
 		# all checks passed
 		self.timer_enabled = True
+		print "TIMER: Enabled."
 		
 	def reset_start(self):
 		"""
 		Start reset timer.
 		"""
+		print "TIMER: Reset Start requested."
 		if not self.timer_enabled:
 			return
 		
@@ -246,17 +248,20 @@ class CircularModeset(Modeset):
 		
 		self.timer = Timer(self.timer_seconds, self.__cb_mode_reset)
 		self.timer.start()
+		print "TIMER: Reset Started."
 
 	def reset_restart(self):
 		"""
 		Start reset timer, only if running.
 		"""		
+		print "TIMER: Reset REStart requested."
 		if ( self.timer_enabled and
 		     self.timer is not None and
 			 self.timer.is_alive() ):
 			self.timer.cancel()
 			self.timer = Timer(self.timer_seconds, self.__cb_mode_reset)
 			self.timer.start()		
+			print "TIMER: Reset REStarted."
 		
 	def __reset_cancel(self):
 		"""
