@@ -500,7 +500,7 @@ class GpioController(object):
 			self.__printer("Mode sets:")
 			for mode_set in self.cfg_gpio['mode_sets']:
 				self.ms_all[mode_set['id']] = CircularModeset()	# GPIO only uses circular modesets, meaning only one active mode per set.
-				self.ms_all[mode_set['id']].set_cb_mode_change(__cb_mode_change)	# calls __cb_mode_change when a mode changes (actually: when a new mode becomes active)
+				self.ms_all[mode_set['id']].set_cb_mode_change(self.__cb_mode_change)	# calls __cb_mode_change when a mode changes (actually: when a new mode becomes active)
 
 				# basemode
 				if 'base_mode' in mode_set:
