@@ -35,6 +35,7 @@ class GpioController(object):
 	Public functions:
 	  modeset(mode_set_id)		Return mode set
 	  modesets()				Return all mode sets
+	  set_mode(mode)			Set mode to active
 	  activemodes()				Return list of all active modes
 	 
 	 Callbacks:
@@ -176,7 +177,18 @@ class GpioController(object):
 		for key,val in self.ms_all.iteritems():
 			ret_active.extend( val.active() )
 		return ret_active
-		
+	
+	def set_mode(self,mode):
+		"""
+		Set given mode to active.
+		"""
+		print "XX {0}".format(self.activemodes())
+		for key,val in self.ms_all.iteritems():
+			if val.index(mode) is not None:
+				val.activate( val.index(mode) )
+		print "XX {0}".format(self.activemodes())
+	
+	
 	def modeset(self,modesetid):
 		"""
 		Returns ModeSet-structure, converted to a simple list of dicts.

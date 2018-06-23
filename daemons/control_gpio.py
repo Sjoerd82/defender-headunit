@@ -410,6 +410,9 @@ def setup():
 	printer("GPIO: Initializing")
 	gpio = GpioController(cfg_gpio,cb_gpio_function,cb_mode_change,logger=logger)
 	
+	sleep(5)
+	gpio.set_mode('bass')
+	
 	# if we're responisble for modes, then send out a MQ message ? *(or have clients pull?)
 	
 	printer('Initialized [OK]')
