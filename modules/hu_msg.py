@@ -255,7 +255,7 @@ class MqPubSubFwdController(object):
 				# todo: have a look at what's returned?
 				# read response from the server
 				msg_resp = self.reply_subscriber.recv()
-				msg_prsd = parse_message(msg_resp)
+				msg_prsd = self.parse_message(msg_resp)
 				data = msg_prsd['data']
 				
 				#? this ok? clean-up?

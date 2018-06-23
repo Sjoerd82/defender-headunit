@@ -25,7 +25,7 @@
 		},
 		{
 			"id": "random"
-			, "mode_list": [ "off", "playlist", "folder", "artist", "genre"]
+			, "mode_list": [ "random_off", "random_playlist", "random_folder", "random_artist", "random_genre"]
 		}
 	]
 	,"functions": [
