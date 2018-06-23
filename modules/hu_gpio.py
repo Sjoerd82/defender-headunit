@@ -67,8 +67,8 @@ class GpioController(object):
 		if logger is not None:
 			self.LOG_TAG = 'GPIO'
 			self.logger = logger
-			printer("GpioController initializing.")
-			printer("GpioController initializing.",level=LL_DEBUG)
+			self.__printer("GpioController initializing.")
+			self.__printer("GpioController initializing.",level=LL_DEBUG)
 	
 		# pins
 		self.pins_state = {}		# pin (previous) state
@@ -105,8 +105,8 @@ class GpioController(object):
 			mode_change_params.append(mode['mode'])
 			mode_change_params.append(mode['state'])
 
-		printer("Mode change. {0}".format(mode_change_params))
-		printer("Mode change. {0}".format(mode_change_params),level=LL_DEBUG)
+		self.__printer("Mode change. {0}".format(mode_change_params))
+		self.__printer("Mode change. {0}".format(mode_change_params),level=LL_DEBUG)
 
 		self.__exec_function_by_code('MODE-CHANGE',mode_change_params)
 		
