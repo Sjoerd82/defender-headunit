@@ -362,7 +362,7 @@ def eca_mute(state):
 # ********************************************************************************
 # GPIO Callback
 #
-def cb_gpio_function(code):
+def cb_gpio_function(code, params):
 	global local_volume
 	global local_volume_chg
 	#print "Added to queue: EXECUTE: {0}".format(code)
