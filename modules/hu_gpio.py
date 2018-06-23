@@ -91,14 +91,13 @@ class GpioController(object):
 		else:
 			self.__gpio_setup()
 			
-		print "Authorative: {0}".format(self.ms_authorative)
 		if callable(self.callback_mode_change):
 			print "1"
 			mode_change_params = []
 		
 			for modesetid in self.ms_authorative:
 				print "2"
-				for activemode in ms_all[modesetid].active():
+				for activemode in self.ms_all[modesetid].active():
 					print "3"
 					mode_change_params.append(activemode)
 					mode_change_params.append(True)		
