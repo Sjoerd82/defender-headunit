@@ -924,9 +924,12 @@ def main():
 				qVolume.clear()
 			time.sleep(0.1)
 		'''
-		if counter > 9:
+		if counter % 9 == 0:
 			# only every 10th iteration
 			messaging.poll_and_execute(500) # do this less often TODO! not critical, but takes up precious response time
+			#counter = 0
+			
+		if counter % 100 == 0:
 			#if not resilience_modes_received:
 			print resilience_modes_received
 			if resilience_modes_received == False:

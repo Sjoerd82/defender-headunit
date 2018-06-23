@@ -98,75 +98,11 @@ pins_config =
 
 '''
 
-
 # ********************************************************************************
 # Output wrapper
 #
 def printer( message, level=LL_INFO, continuation=False, tag=LOG_TAG ):
 	logger.log(level, message, extra={'tag': tag})
-
-# ********************************************************************************
-# Load configuration
-#
-'''
-def load_cfg_main():
-	""" load main configuration """
-	config = configuration_load(LOGGER_NAME,args.config)
-	return config
-
-def load_cfg_zmq():
-	""" load zeromq configuration """	
-	if not 'zeromq' in cfg_main:
-		printer('Error: Configuration not loaded or missing ZeroMQ, using defaults:')
-		printer('Publisher port: {0}'.format(args.port_publisher))
-		printer('Subscriber port: {0}'.format(args.port_subscriber))
-		#cfg_main["zeromq"] = { "port_publisher": DEFAULT_PORT_PUB, "port_subscriber":DEFAULT_PORT_SUB } }
-		config = { "port_publisher": DEFAULT_PORT_PUB, "port_subscriber":DEFAULT_PORT_SUB }
-		return config
-	else:
-		config = {}
-		# Get portnumbers from either the config, or default value
-		if 'port_publisher' in cfg_main['zeromq']:
-			config['port_publisher'] = cfg_main['zeromq']['port_publisher']
-		else:
-			config['port_publisher'] = DEFAULT_PORT_PUB
-		
-		if 'port_subscriber' in cfg_main['zeromq']:
-			config['port_subscriber'] = cfg_main['zeromq']['port_subscriber']		
-		else:
-			config['port_subscriber'] = DEFAULT_PORT_SUB
-			
-		return config
-
-def load_cfg_daemon():
-	""" load daemon configuration """
-	if 'daemons' not in cfg_main:
-		return
-	else:
-		for daemon in cfg_main['daemons']:
-			if 'script' in daemon and daemon['script'] == os.path.basename(__file__):
-				return daemon
-
-def load_cfg_gpio():
-	""" load specified GPIO configuration """	
-	if 'directories' not in cfg_main or 'daemon-config' not in cfg_main['directories'] or 'config' not in cfg_daemon:
-		return
-	else:		
-		config_dir = cfg_main['directories']['daemon-config']
-		# TODO
-		config_dir = "/mnt/PIHU_CONFIG/"	# fix!
-		config_file = cfg_daemon['config']
-		
-		gpio_config_file = os.path.join(config_dir,config_file)
-	
-	# load gpio configuration
-	if os.path.exists(gpio_config_file):
-		config = configuration_load(LOGGER_NAME,gpio_config_file)
-		return config
-	else:
-		print "ERROR: not found: {0}".format(gpio_config_file)
-		return
-'''
 
 # ********************************************************************************
 # MQ functions
