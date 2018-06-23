@@ -413,6 +413,13 @@ def setup():
 	my_ms_all = gpio.modesets(deepcopy=False) #return a reference
 	print "activating bass"
 	my_ms_all['modecycle1'].activate(2)
+	print my_ms_all.active()
+
+	my_ms_all2 = gpio.modesets(deepcopy=True) #return a reference
+	print "Copy={0}".format(my_ms_all2)
+	my_ms_all2['modecycle1'].activate(3)
+	print my_ms_all.active()
+	
 	#print "activating folder random"
 	#my_ms_all['random'].activate(4)
 	
