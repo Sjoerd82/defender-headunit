@@ -42,7 +42,7 @@ class GpioController(object):
 	   callback_mode_change(?)	Whenever a mode changes
 	"""
 
-	def __init__(self, cfg_gpio, cb_function=None, cb_mode_change=None logger=None):
+	def __init__(self, cfg_gpio, cb_function=None, cb_mode_change=None, logger=None):
 		"""
 		cfg_gpio is a configuration dictionary.
 		cb_function is the callback_function which is called whenever a function needs executing.
