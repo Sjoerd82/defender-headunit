@@ -656,7 +656,9 @@ def mq_mode_set_data(path=None, cmd=None, args=None, data=None):
 
 @messaging.handle_mq('/mode/change', cmd='PUT')
 def mq_mode_change_put(path=None, cmd=None, args=None, data=None):
-		
+	
+	printer("Received MQ path={0}, cmd={1}, args={2}, data={3}".format(path,cmd,args,data))
+	
 	arg_defs = app_commands[0]['params']
 	ret = validate_args(arg_defs,args,app_commands[0]['params_repeat'])
 	

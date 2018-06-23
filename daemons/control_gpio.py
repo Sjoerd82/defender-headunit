@@ -185,9 +185,9 @@ def testje_get_list(path=None, cmd=None, args=None, data=None):
 @messaging.handle_mq('/mode/active')
 def testje_get_active(path=None, cmd=None, args=None, data=None):
 	""" Return active modes. No parameters """
-	return None
-	printer("MQ: {0} {1}, returning active mode(s): {2} ".format(cmd,path,modes.active_modes()))
-	return modes.active_modes()
+	ret = gpio.activemodes()
+	printer("MQ: {0} {1}, returning active mode(s): {2} ".format(cmd,path,ret))
+	return ret
 
 @messaging.handle_mq('/mode/set','PUT')
 def mq_mode_set(path=None, cmd=None, args=None, data=None):
