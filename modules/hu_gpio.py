@@ -34,7 +34,7 @@ class GpioController(object):
 	"""	
 	Public functions:
 	  modeset(mode_set_id)		Return mode set as list of dicts
-	  modesets()				Return all mode sets as list of dicts
+	  modesets()				Return all mode sets as dict[id] of list of modes
 	  set_mode(mode)			Set mode to active
 	  activemodes()				Return list of all active modes
 	 
