@@ -112,7 +112,7 @@ def testje_get_list(path=None, cmd=None, args=None, data=None):
 	"""	
 	modesets = gpio.modesets()
 	for modesetid in modesets:
-		for mode in modeset[modesetid]:
+		for mode in modesets[modesetid]:
 			ret.append(mode['mode'])
 	
 	printer("MQ: {0} {1}, returning all known modes: {2} ".format(cmd,path,ret))
