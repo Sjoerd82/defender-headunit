@@ -48,7 +48,8 @@ LOGGER_NAME = 'ctgpio'
 
 DEFAULT_CONFIG_FILE = '/etc/configuration.json'
 DEFAULT_LOG_LEVEL = LL_INFO
-SUBSCRIPTIONS = ['/mode/*']				# all required subscriptions provided via decorators -- HAS A BUG #TODO
+#SUBSCRIPTIONS = ['/mode/*']				# all required subscriptions provided via decorators -- HAS A BUG #TODO
+SUBSCRIPTIONS = []
 
 # global variables
 logger = None
@@ -171,19 +172,21 @@ def mq_mode_set(path=None, cmd=None, args=None, data=None):
 	printer("MQ: {0} {1}, unsetting mode: {2} ".format(cmd,path,valid_arg))
 	return None
 
-'''
+
+# TODO --  REMOVE -- REMOVING THIS STOPS OTHER MQ TO WORK
 @messaging.handle_mq('/mode/*','GET')
 def mq_mode_test(path=None, cmd=None, args=None, data=None):
 	""" Unset mode """
 	print "TEST MODE! GET"
 	return None
 
+# TODO --  REMOVE -- REMOVING THIS STOPS OTHER MQ TO WORK
 @messaging.handle_mq('/mode/*','PUT')
 def mq_mode_test(path=None, cmd=None, args=None, data=None):
 	""" Unset mode """
 	print "TEST MODE! Anything but Get"
 	return False
-'''
+
 	
 # ********************************************************************************
 # GPIO Callback
