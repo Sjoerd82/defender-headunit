@@ -96,6 +96,15 @@ class Modeset(list):
 			for mode in self:
 				ret_list_of_dicts.append(mode)
 			self.callback_mode_change(ret_list_of_dicts)	#no need to (deep)copy?
+			
+	def simple(self):
+		"""
+		Return a simple list of dicts
+		"""
+		simple = []
+		for i, item in enumerate(self):
+			simple.append(self[i])
+		return simple
 		
 class CircularModeset(Modeset):
 	"""
@@ -270,15 +279,6 @@ class CircularModeset(Modeset):
 		"""
 		if self.timer is not None and self.timer.is_alive():
 			self.timer.cancel()
-
-	def simple(self):
-		"""
-		Return a simple list of dicts
-		"""
-		simple = []
-		for i, item in enumerate(self):
-			simple.append(self[i])
-		return simple
 		
 class ListDataStruct(list):
 	

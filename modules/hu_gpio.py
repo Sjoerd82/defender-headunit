@@ -161,38 +161,23 @@ class GpioController(object):
 			ret_active.extend( val.active() )
 		return ret_active
 		
-	def modeset(self,modesetid,deepcopy=True):
+	def modeset(self,modesetid):
 		"""
-		Returns ModeSet-structure (a list of dictionaries)
-		"""		
+		Returns ModeSet-structure, converted to a simple list of dicts.
+		"""
 		if modesetid in self.ms_all:
-			if deepcopy:
-				return copy.deepcopy(self.ms_all[modesetid])
-			else:
-				return self.ms_all[modesetid]
+			return copy.deepcopy(self.ms_all[modesetid].simple())
 		else:
 			return
-			
-		master_modes_list = Modes()
-		for mode_set_id,mode_set in self.mode_sets.iteritems():
-			if mode_set_id != 'active_modes':
-				master_modes_list.extend(mode_set['mode_list'])
-			
-		return copy.deepcopy(master_modes_list)		# list of dicts, requires deepcopy() instead of copy()
 		
-	def modesets(self,deepcopy=True):
+	def modesets(self):
 		"""
-		Returns list of ModeSet-structures
+		Returns list of ModeSet-structures, converted to a simple list of dicts.
 		"""
-		if deepcopy:
-			# conver circular mode set to a regular one
-			copy_ms_all = {}
-			for mode_set_id,mode_set in self.ms_all.iteritems():
-				copy_ms_all[mode_set_id] = mode_set.simple()		
-			#return copy.deepcopy(self.ms_all)
-			return copy_ms_all
-		else:
-			return self.ms_all
+		copy_ms_all = {}
+		for mode_set_id,mode_set in self.ms_all.iteritems():
+			copy_ms_all[mode_set_id] = copy.deepcopy(mode_set.simple())
+		return copy_ms_all
 
 	# ********************************************************************************
 	# GPIO helpers

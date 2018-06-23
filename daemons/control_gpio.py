@@ -417,6 +417,8 @@ def setup():
 	print "activating bass"
 	my_ms_all['modecycle1'].activate(2)
 	print gpio.activemodes()
+	gpio.ms_all['modecycle1'].activate(2)
+	print gpio.activemodes()
 
 	#my_ms_all2 = gpio.modesets(deepcopy=True) #return a reference
 	#print "Copy={0}".format(my_ms_all2)
