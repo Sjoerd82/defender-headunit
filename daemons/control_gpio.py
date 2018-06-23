@@ -161,7 +161,7 @@ def mq_mode_change_put(path=None, cmd=None, args=None, data=None):
 	return None
 		
 @messaging.handle_mq('/mode/unset','PUT')
-def mq_mode_set(path=None, cmd=None, args=None, data=None):
+def mq_mode_unset(path=None, cmd=None, args=None, data=None):
 	"""
 	Unset mode
 	Arg: Mode

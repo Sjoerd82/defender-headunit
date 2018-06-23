@@ -666,38 +666,20 @@ def mq_mode_set_data(path=None, cmd=None, args=None, data=None):
 
 @messaging.handle_mq('/mode/change', cmd='PUT')
 def mq_mode_change_put(path=None, cmd=None, args=None, data=None):
-	
-	printer("Received MQ path={0}, cmd={1}, args={2}, data={3}".format(path,cmd,args,data))
-	
-	arg_defs = app_commands[0]['params']
-	ret = validate_args(arg_defs,args,app_commands[0]['params_repeat'])
-	
-	if ret is not None and ret is not False:	
-		# arguments are mode-state pairs
-		'''
-		for i in range(0,len(ret),2):
-			printer("Received Mode: {0} State: {1}".format(ret[i],ret[i+1]), level=LL_DEBUG)
-			if ret[i+1] == True and ret[i] not in active_modes:
-				active_modes.append(ret[i])
-				gpio.set_active_mode(ret[i])
-			elif ret[i+1] == False and ret[i] in active_modes:
-				active_modes.remove(ret[i])
-				gpio.unset_active_mode(ret[i])
-				
-		printer("Active Modes: {0}".format(active_modes))
-		'''
-		
-		# 	gpio.set_mode('bass')
-		
-		pass
-
+	"""
+	Change modes; MODE-CHANGE
+	Args:    Pairs of Mode-State
+	Returns: None
+	"""
+	valid_args = commands.validate_args('MODE-CHANGE',args)
+	if valid_args is not None and valid_args is not False:
+		print "DEBUG, before: {0}".format(gpio.activemodes())
+		gpio.change_modes(valid_args)
+		printer("Active Modes: {0}".format(gpio.activemodes()))
 	else:
 		printer("put_change: Arguments: [FAIL]",level=LL_ERROR)
-		
-	if mode_controller:
-		return True
-	else:
-		return None
+	
+	return None
 	
 @messaging.handle_mq('/mode/set', cmd='PUT')
 def mq_mode_set(path=None, cmd=None, args=None, data=None):
