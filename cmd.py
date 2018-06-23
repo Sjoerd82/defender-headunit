@@ -708,7 +708,7 @@ def main():
 	
 	# todo: check, is it ok to include an empty mq_args?
 	if mq_rpath is not None:
-		ret = messaging.publish_command(mq_path,mq_cmd,mq_args,wait_for_reply=True,response_path=RETURN_PATH)
+		ret = messaging.publish_command(mq_path,mq_cmd,mq_args,wait_for_reply=True,timeout=6000,response_path=RETURN_PATH)
 	else:
 		ret = messaging.publish_command(mq_path,mq_cmd,mq_args,wait_for_reply=False)
 		

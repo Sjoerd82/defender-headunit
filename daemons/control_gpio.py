@@ -110,6 +110,7 @@ def testje_get_list(path=None, cmd=None, args=None, data=None):
 	"""
 	Return all modes. No parameters
 	"""	
+	ret = []
 	modesets = gpio.modesets()
 	for modesetid in modesets:
 		for mode in modesets[modesetid]:
