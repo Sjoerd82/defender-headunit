@@ -505,6 +505,11 @@ def mq_eca_mode_active(path=None, cmd=None, args=None, data=None):
 	print "RECEIVED LIST OF ACTIVE MODES..."
 	print data
 	resilience_modes_received = True
+	if 'payload' in data:
+		active_modes = data['payload']
+		for mode in active_modes:
+			print "SETTING MODE ACTIVE: {0}".format(mode)
+			gpio.set_mod(mode)
 
 # ********************************************************************************
 # MQ: /volume
