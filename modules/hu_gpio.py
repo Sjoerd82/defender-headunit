@@ -164,7 +164,7 @@ class GpioController(object):
 		"""		
 		if modesetid in self.ms_all:
 			if deepcopy:
-				copy.deepcopy(self.ms_all[modesetid])
+				return copy.deepcopy(self.ms_all[modesetid])
 			else:
 				return self.ms_all[modesetid]
 		else:
@@ -182,7 +182,12 @@ class GpioController(object):
 		Returns list of ModeSet-structures
 		"""
 		if deepcopy:
-			copy.deepcopy(self.ms_all)
+			# conver circular mode set to a regular one
+			copy_ms_all = {}
+			for mode_set_id,mode_set in self.ms_all.iteritems():
+				copy_ms_all[mode_set_id] = mode_set.simple()		
+			#return copy.deepcopy(self.ms_all)
+			return copy_ms_all
 		else:
 			return self.ms_all
 

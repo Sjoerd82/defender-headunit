@@ -410,7 +410,7 @@ def setup():
 	printer("GPIO: Initializing")
 	gpio = GpioController(cfg_gpio,cb_gpio_function,cb_mode_change,logger=logger)
 	
-	my_ms_all = gpio.modesets(deepcopy=True)
+	my_ms_all = gpio.modesets(deepcopy=False) #return a reference
 	print "activating bass"
 	my_ms_all['modecycle1'].activate(2)
 	#print "activating folder random"
