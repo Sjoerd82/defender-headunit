@@ -76,6 +76,7 @@ class GpioController(object):
 		
 		# mode sets
 		self.ms_all = {}			# contains the different modesets, key=modeset name
+		self.ms_authorative = []	# list of modeset of which we have an authority
 		
 		# default long press time
 		self.long_press_ms = 800
@@ -85,16 +86,32 @@ class GpioController(object):
 		self.encoder_last_speed = None
 		self.encoder_fast_count = 0
 		
-		if cb_function is None:
-			self.__gpio_setup()
-		else:
+		if callable(self.callback_function):
 			self.__gpio_setup(self.int_handle_switch,self.int_handle_encoder)
+		else:
+			self.__gpio_setup()
+			
+		print "Authorative: {0}".format(self.ms_authorative)
+		if callable(self.callback_mode_change):
+			print "1"
+			mode_change_params = []
+		
+			for modesetid in self.ms_authorative:
+				print "2"
+				for activemode in ms_all[modesetid].active():
+					print "3"
+					mode_change_params.append(activemode)
+					mode_change_params.append(True)		
+			
+			if len(mode_change_params) > 0:
+				print "4"
+				self.callback_mode_change(mode_change_params,init=True)
 	
 	def __printer( self, message, level=LL_INFO, tag=None):
 		if self.logger is not None:
 			if tag is None: tag = self.LOG_TAG
 			self.logger.log(level, message, extra={'tag': tag})
-
+	
 	def __cb_mode_change(self, list_of_modes):
 		"""
 		Called by modeset whenever a new mode becomes active. List_of_modes is a list of mode-dictionaries.
@@ -498,6 +515,10 @@ class GpioController(object):
 					dbg_base = ""
 					if mode == base_mode: dbg_base = "(base)"
 					self.__printer("  {0} {1} {2}".format(i,mode,dbg_base)) # LL_DEBUG TODO
+					
+				# authorative
+				if 'authorative' in mode_set and mode_set['authorative']:
+					self.ms_authorative.append(mode_set['id'])
 			
 		else:
 			self.__printer("WARNING: No 'mode_sets'-section.", level=LL_WARNING)

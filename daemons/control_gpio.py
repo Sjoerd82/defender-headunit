@@ -286,7 +286,7 @@ def cb_gpio_function(code, arguments):
 		printer("Function {0} not in function_map".format(code),level=LL_ERROR)
 	"""
 			
-def cb_mode_change(mode_changes):
+def cb_mode_change(mode_changes,init=False):
 	# active_modes is a Modes() struct
 	
 		# find modes that are no longer active.
@@ -294,7 +294,7 @@ def cb_mode_change(mode_changes):
 		#mq_instruction = 
 		#exec_function_by_code('MODE-CHANGE', ...)
 	
-	print "Hello from cb_mode_change(): {0}".format(mode_changes)
+	print "Hello from cb_mode_change(): {0} Init={1}".format(mode_changes,init)
 	
 	'''
 	active_modes.sort(key=itemgetter('name'))
@@ -410,20 +410,6 @@ def setup():
 	printer("GPIO: Initializing")
 	gpio = GpioController(cfg_gpio,cb_gpio_function,cb_mode_change,logger=logger)
 	
-	my_ms_all = gpio.modesets(deepcopy=False) #return a reference
-	print "activating genre random"
-	my_ms_all['random'].activate(3)
-	my_ms_all['random'].activate(4)
-	print "activating bass"
-	my_ms_all['modecycle1'].activate(2)
-	print gpio.activemodes()
-	gpio.ms_all['modecycle1'].activate(2)
-	print gpio.activemodes()
-
-	#my_ms_all2 = gpio.modesets(deepcopy=True) #return a reference
-	#print "Copy={0}".format(my_ms_all2)
-	
-
 	# if we're responisble for modes, then send out a MQ message ? *(or have clients pull?)
 	
 	printer('Initialized [OK]')

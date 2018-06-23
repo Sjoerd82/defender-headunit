@@ -21,6 +21,7 @@
 			, "mode_list": [ "volume", "track", "bass", "treble", "random", "menu" ]
 			, "base_mode": "volume"
 			, "reset": 8
+			, "authorative": true
 		},
 		{
 			"id": "random"

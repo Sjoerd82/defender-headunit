@@ -862,8 +862,8 @@ def setup():
 	printer("GPIO: Initializing")
 	gpio = GpioController(cfg_gpio,cb_gpio_function,cb_mode_change,logger=logger)
 	
-	modes = gpio.modeset('volume')
-	print modes
+	#modes = gpio.modeset('volume')
+	#print modes
 	#active_modes = modes.active_modes()	# None
 	
 	#print "Active modes: {0}".format(active_modes)
