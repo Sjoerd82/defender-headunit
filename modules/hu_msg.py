@@ -208,7 +208,7 @@ class MqPubSubFwdController(object):
 			response_path = '/myuniquereplypath/'
 
 		# create message
-		message = self.create_message(path, command, arguments, response_path=None)
+		message = self.create_message(path, command, arguments, response_path)
 		
 		if wait_for_reply:
 			#print "DEBUG: SETUP WAIT_FOR_REPLY; TOPIC={0}".format(response_path)
