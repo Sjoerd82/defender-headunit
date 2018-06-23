@@ -67,7 +67,6 @@ class GpioController(object):
 		if logger is not None:
 			self.LOG_TAG = 'GPIO'
 			self.logger = logger
-			self.__printer("GpioController initializing.")
 			self.__printer("GpioController initializing.",level=LL_DEBUG)
 	
 		# pins
@@ -78,6 +77,7 @@ class GpioController(object):
 		# mode sets
 		self.ms_all = {}			# contains the different modesets, key=modeset name
 		
+		# default long press time
 		self.long_press_ms = 800
 
 		# experimental -- detect speed
@@ -105,9 +105,7 @@ class GpioController(object):
 			mode_change_params.append(mode['mode'])
 			mode_change_params.append(mode['state'])
 
-		self.__printer("Mode change. {0}".format(mode_change_params))
 		self.__printer("Mode change. {0}".format(mode_change_params),level=LL_DEBUG)
-
 		self.__exec_function_by_code('MODE-CHANGE',mode_change_params)
 		
 		if callable(self.callback_mode_change):
@@ -249,6 +247,7 @@ class GpioController(object):
 			return None
 		
 		#print "DEBUG: self.int_handle_switch! for pin: {0}".format(pin)
+		self.__printer("Switch. Pin: {0}".format(pin),level=LL_DEBUG)
 		self.__mode_reset()									# Keep resetting as long as the mode is being used
 		# TODO, check if possible to only reset affected timer: self.ms_all[fun['mode_cycle']].
 		
@@ -396,9 +395,10 @@ class GpioController(object):
 		self.pins_state[encoder_pinB] = Switch_B								# for next bouncing check
 		
 		# -------------------------------
-		
 		function = self.get_encoder_function_by_pin(pin)
 		self.__mode_reset()									# Keep resetting as long as the mode is being used
+		self.__printer("Encoder. Function: {0}".format(function['name']),level=LL_DEBUG)
+
 		# TODO, check if possible to only reset affected timer: self.ms_all[fun['mode_cycle']].
 		if function is not None:
 			if (Switch_A and Switch_B):						# Both one active? Yes -> end of sequence
