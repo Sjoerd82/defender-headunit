@@ -55,7 +55,7 @@ class Modeset(list):
 		"""
 		Set state to True for given index.
 		"""
-		if ix < len(self):
+		if ix is not None and ix < len(self):
 			self[ix]['state'] = True
 			self.state_change()
 			
@@ -168,20 +168,26 @@ class CircularModeset(Modeset):
 		"""
 		Activate given index, deactivates previously activate index
 		"""
-		if ix < len(self) and ix <> self.ix_active:
-			self[self.ix_active]['state'] = False
-			self.ix_active = ix
-			self[self.ix_active]['state'] = True
-			self.__check_state(self.ix_active)
+		if ix is not None and ix < len(self):	
+			if self.ix_active is not None and ix <> self.ix_active:
+				self[self.ix_active]['state'] = False
+			else:
+				self.ix_active = ix
+				self[self.ix_active]['state'] = True
+				self.__check_state(self.ix_active)
 
 	def deactivate(self,ix):
 		"""
 		Deactivate given index, activates index 0
 		"""
-		if ix < len(self) and ix > 0 and ix <> self.ix_active:
-			self.ix_active = 0
-			self[ix]['state'] = False
-			self.__check_state(self.ix_active)
+		if ( ix is not None and
+			 ix < len(self) and
+			 ix > 0 and
+			 self.ix_active is not None and
+			 ix <> self.ix_active ):
+				self.ix_active = 0
+				self[ix]['state'] = False
+				self.__check_state(self.ix_active)
 	
 	def next(self):
 		"""
