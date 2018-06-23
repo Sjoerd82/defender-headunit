@@ -72,8 +72,7 @@ cfg_ecasound = None
 cfg_gpio = None		# GPIO setup
 
 # global datastructures
-#modes = Modes()
-active_modes = []
+modes = Modeset()
 mode_controller = False		# ToDo
 
 qVolume = None
@@ -653,14 +652,13 @@ def mq_mode_set_data(path=None, cmd=None, args=None, data=None):
 
 @messaging.handle_mq('/mode/change', cmd='PUT')
 def mq_mode_change_put(path=None, cmd=None, args=None, data=None):
-	
-	global active_modes
-	
+		
 	arg_defs = app_commands[0]['params']
 	ret = validate_args(arg_defs,args,app_commands[0]['params_repeat'])
 	
 	if ret is not None and ret is not False:	
 		# arguments are mode-state pairs
+		'''
 		for i in range(0,len(ret),2):
 			printer("Received Mode: {0} State: {1}".format(ret[i],ret[i+1]), level=LL_DEBUG)
 			if ret[i+1] == True and ret[i] not in active_modes:
@@ -671,6 +669,8 @@ def mq_mode_change_put(path=None, cmd=None, args=None, data=None):
 				gpio.unset_active_mode(ret[i])
 				
 		printer("Active Modes: {0}".format(active_modes))
+		'''
+		pass
 
 	else:
 		printer("put_change: Arguments: [FAIL]",level=LL_ERROR)
@@ -854,12 +854,15 @@ def setup():
 	# GPIO
 	#
 	global gpio
-	global active_modes
+	global modes
 	printer("GPIO: Initializing")
 	gpio = GpioController(cfg_gpio,cb_gpio_function,logger=logger)
-	modes = gpio.get_modes()
-	active_modes = modes.active_modes()	# None
-	print "Active modes: {0}".format(active_modes)
+	
+	modes = gpio.modeset('volume')
+	print modes
+	#active_modes = modes.active_modes()	# None
+	
+	#print "Active modes: {0}".format(active_modes)
 	#todo: GPIO cleanup
 	
 	print "EXPERIMENTAL, requesting active modes.."

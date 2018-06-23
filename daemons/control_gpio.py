@@ -71,7 +71,6 @@ cfg_gpio = None		# GPIO setup
 
 # data structures
 modes = Modeset()
-active_modes = []
 
 # other stuff
 mode_controller = True
@@ -203,21 +202,23 @@ def mq_mode_set(path=None, cmd=None, args=None, data=None):
 @messaging.handle_mq('/mode/change', cmd='PUT')
 def mq_mode_change_put(path=None, cmd=None, args=None, data=None):
 	
-	global active_modes
-	
 	ret = commands.validate_args('MODE-CHANGE',args)
 	
 	if ret is not None and ret is not False:	
 		# arguments are mode-state pairs
+		'''
 		for i in range(0,len(ret),2):
 			printer('[MQ] Received Mode: "{0}", State: {1}'.format(ret[i],ret[i+1]), level=LL_DEBUG)
+			
+			#modes.active_modes()
 			if ret[i+1] == True and ret[i] not in active_modes:
 				active_modes.append(ret[i])
 			elif ret[i+1] == False and ret[i] in active_modes:
 				active_modes.remove(ret[i])
 				
 		printer("Active Modes: {0}".format(active_modes))
-
+		'''
+		pass
 	else:
 		printer("put_change: Arguments: [FAIL]",level=LL_ERROR)
 		
@@ -407,13 +408,14 @@ def setup():
 	global modes
 	printer("GPIO: Initializing")
 	gpio = GpioController(cfg_gpio,cb_gpio_function,logger=logger)
+	my_ms_all = gpio.modesets()
+	print my_ms_all
+	print "activating bass"
+	my_ms_all['modecycle1'].active(2)
+	print "activating folder random"
+	my_ms_all['random'].active(4)
 	
-	#challenge: this must work
-	#modes = gpio.get_modes()	#NOW RETURNS MODESET!!
-	
-	#gpio.set_cb_mode_change(cb_mode_change)
-	
-	
+
 	# if we're responisble for modes, then send out a MQ message ? *(or have clients pull?)
 	
 	printer('Initialized [OK]')

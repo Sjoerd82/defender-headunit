@@ -31,6 +31,10 @@ import json
 # GPIO stuff
 #
 class GpioController(object):
+	"""
+	Public functions:
+	get_modes()
+	"""
 
 	def __init__(self, cfg_gpio, cb_function, logger=None):
 		"""
@@ -50,6 +54,8 @@ class GpioController(object):
 		self.LOG_TAG = 'GPIO'
 		self.logger = logger
 
+		# setup
+		self.setup_done = False
 		
 		# pins
 		self.pins_state = {}		# pin (previous) state
@@ -69,9 +75,9 @@ class GpioController(object):
 		self.encoder_fast_count = 0
 		
 		if cb_function is None:
-			self.gpio_setup()
+			self.__gpio_setup()
 		else:
-			self.gpio_setup(self.int_handle_switch,self.int_handle_encoder)
+			self.__gpio_setup(self.int_handle_switch,self.int_handle_encoder)
 	
 	def __printer( self, message, level=LL_INFO, tag=None):
 		if self.logger is not None:
@@ -132,12 +138,17 @@ class GpioController(object):
 		"""
 		for key,val in self.ms_all.iteritems():
 			val.reset_restart()
-	
-	def get_modes(self):
-		""" Returns Mode-structure containing all modes and states of all sets. """
+
+	def modeset(self,modesetid,copy=True):
+		"""
+		Returns ModeSet-structure (a list of dictionaries)
+		"""
 		
-		return self.ms.get_modes()
-		
+		if modesetid in self.ms_all:
+			return self.ms_all[modesetid]
+		else:
+			return
+			
 		master_modes_list = Modes()
 		for mode_set_id,mode_set in self.mode_sets.iteritems():
 			if mode_set_id != 'active_modes':
@@ -145,7 +156,12 @@ class GpioController(object):
 			
 		return copy.deepcopy(master_modes_list)		# list of dicts, requires deepcopy() instead of copy()
 		
-	
+	def modesets(self,copy=True):
+		"""
+		Returns list of ModeSet-structures
+		"""
+		return self.ms_all
+		
 	# ********************************************************************************
 	# GPIO helpers
 	# 
@@ -406,8 +422,10 @@ class GpioController(object):
 
 	# ********************************************************************************
 	# GPIO setup
-	# 
-	def gpio_setup(self,int_switch=None,int_encoder=None):
+	def __gpio_setup(self,int_switch=None,int_encoder=None):
+		"""
+		Setup
+		"""
 		
 		# gpio mode: BCM or board
 		if 'gpio_mode' in self.cfg_gpio:

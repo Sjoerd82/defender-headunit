@@ -14,6 +14,8 @@ class Modeset(list):
 	"""
 	List of dictionaries.
 	{"mode":<string>, "state":bool}
+	Functions:
+	activate()
 	"""
 	def __init__(self):
 		super(Modeset, self).__init__()
