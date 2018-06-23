@@ -383,6 +383,7 @@ class MqPubSubFwdController(object):
 			if parsed_msg['origin'] == self.origin and ignore_own_message:
 				pass
 			else:
+				print "POLL & EXECUTE {0}".format(parsed_msg)
 				ret = self.execute_mq(parsed_msg['path'], parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'])
 				if parsed_msg['resp_path'] and ret is not None:
 					self.publish_command(parsed_msg['resp_path'],'DATA',ret)

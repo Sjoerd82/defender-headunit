@@ -76,6 +76,8 @@ cfg_gpio = None		# GPIO setup
 modes = Modeset()
 mode_controller = False		# ToDo
 
+resilience_modes_received = False
+
 qVolume = None
 
 app_commands =	[
@@ -500,6 +502,7 @@ def mq_eca_cs_put(path=None, cmd=None, args=None, data=None):
 def mq_eca_mode_active(path=None, cmd=None, args=None, data=None):
 	print "RECEIVED LIST OF ACTIVE MODES..."
 	print args
+	resilience_modes_received = True
 
 # ********************************************************************************
 # MQ: /volume
@@ -875,7 +878,8 @@ def setup():
 	#todo: GPIO cleanup
 	
 	print "EXPERIMENTAL, requesting active modes.."
-	messaging.publish_command('/mode/active','GET',response_path='/ecasound/mode/active')
+	ret = messaging.publish_command('/mode/active','GET', wait_for_reply=False, response_path='/ecasound/mode/active')
+	print ret
 	# TODO, keep asking, if no answer received -- resilience
 	
 	printer('Initialized [OK]')
@@ -919,6 +923,8 @@ def main():
 		if counter > 9:
 			# only every 10th iteration
 			messaging.poll_and_execute(500) # do this less often TODO! not critical, but takes up precious response time
+			if not resilience_modes_received:
+				messaging.publish_command('/mode/active','GET',wait_for_reply=False, response_path='/ecasound/mode/active')
 			counter = 0
 		
 		counter += 1
