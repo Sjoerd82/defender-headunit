@@ -65,6 +65,7 @@ logger = None
 args = None
 messaging = MqPubSubFwdController(origin=LOGGER_NAME)
 gpio = None
+commands = Commands()
 eca = None
 
 cfg_main = None		# main

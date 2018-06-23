@@ -48,7 +48,6 @@ LOGGER_NAME = 'ctgpio'
 
 DEFAULT_CONFIG_FILE = '/etc/configuration.json'
 DEFAULT_LOG_LEVEL = LL_INFO
-#SUBSCRIPTIONS = ['/mode/*']				# all required subscriptions provided via decorators -- HAS A BUG #TODO
 SUBSCRIPTIONS = []
 
 # global variables
