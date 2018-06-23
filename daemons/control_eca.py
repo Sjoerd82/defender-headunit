@@ -500,8 +500,9 @@ def mq_eca_cs_put(path=None, cmd=None, args=None, data=None):
 	
 @messaging.handle_mq('/ecasound/mode/active', cmd='DATA')
 def mq_eca_mode_active(path=None, cmd=None, args=None, data=None):
+	global resilience_modes_received
 	print "RECEIVED LIST OF ACTIVE MODES..."
-	print args
+	print data
 	resilience_modes_received = True
 
 # ********************************************************************************
@@ -889,6 +890,7 @@ def main():
 	global bus
 	global qVolume
 	global local_volume_chg
+	global resilience_modes_received
 	
 	# Initialize the mainloop
 	#DBusGMainLoop(set_as_default=True)
