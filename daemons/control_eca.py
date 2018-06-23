@@ -503,7 +503,9 @@ def mq_eca_mode_active(path=None, cmd=None, args=None, data=None):
 	global resilience_modes_received
 	print "RECEIVED LIST OF ACTIVE MODES..."
 	print data
+	print resilience_modes_received
 	resilience_modes_received = True
+	print resilience_modes_received
 
 # ********************************************************************************
 # MQ: /volume
@@ -879,9 +881,7 @@ def setup():
 	#todo: GPIO cleanup
 	
 	print "EXPERIMENTAL, requesting active modes.."
-	ret = messaging.publish_command('/mode/active','GET', wait_for_reply=False, response_path='/ecasound/mode/active')
-	print ret
-	# TODO, keep asking, if no answer received -- resilience
+	messaging.publish_command('/mode/active','GET', wait_for_reply=False, response_path='/ecasound/mode/active')
 	
 	printer('Initialized [OK]')
 
@@ -891,6 +891,8 @@ def main():
 	global qVolume
 	global local_volume_chg
 	global resilience_modes_received
+	
+	print resilience_modes_received
 	
 	# Initialize the mainloop
 	#DBusGMainLoop(set_as_default=True)
@@ -925,7 +927,9 @@ def main():
 		if counter > 9:
 			# only every 10th iteration
 			messaging.poll_and_execute(500) # do this less often TODO! not critical, but takes up precious response time
-			if not resilience_modes_received:
+			#if not resilience_modes_received:
+			print resilience_modes_received
+			if resilience_modes_received == False:
 				messaging.publish_command('/mode/active','GET',wait_for_reply=False, response_path='/ecasound/mode/active')
 			counter = 0
 		
