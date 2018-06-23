@@ -97,11 +97,14 @@ class GpioController(object):
 		
 			for modesetid in self.ms_authorative:
 				for modeset in self.ms_all[modesetid]:
+					#modeset = CircularModeset
+					print "modeset ({0}) = {1}".format(type(modeset),modeset)
 					for mode in modeset:
 						print mode
-						for m in mode:
-							mode_change_params.append(m['mode'])
-							mode_change_params.append(m['state'])
+						print type(mode)
+						#for m in mode:
+						#	mode_change_params.append(m['mode'])
+						#	mode_change_params.append(m['state'])
 						
 				#for activemode in self.ms_all[modesetid].active():
 				#	print "3"
