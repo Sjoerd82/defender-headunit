@@ -98,8 +98,10 @@ class GpioController(object):
 			for modesetid in self.ms_authorative:
 				for modeset in self.ms_all[modesetid]:
 					for mode in modeset:
-						mode_change_params.append(mode['mode'])
-						mode_change_params.append(mode['state'])
+						print mode
+						for m in mode:
+							mode_change_params.append(m['mode'])
+							mode_change_params.append(m['state'])
 						
 				#for activemode in self.ms_all[modesetid].active():
 				#	print "3"
