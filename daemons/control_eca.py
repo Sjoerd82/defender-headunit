@@ -503,9 +503,7 @@ def mq_eca_mode_active(path=None, cmd=None, args=None, data=None):
 	global resilience_modes_received
 	print "RECEIVED LIST OF ACTIVE MODES..."
 	print data
-	print resilience_modes_received
 	resilience_modes_received = True
-	print resilience_modes_received
 
 # ********************************************************************************
 # MQ: /volume

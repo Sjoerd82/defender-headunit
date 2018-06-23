@@ -110,12 +110,15 @@ def testje_get_list(path=None, cmd=None, args=None, data=None):
 	"""
 	Return all modes. No parameters
 	"""	
+	print gpio.modesets()
 	ret = []
 	for modeset in gpio.modesets():
-		ret.append(modeset['mode'])
+		print modeset
+		for mode in modeset:
+			ret.append(mode['mode'])
 	
 	printer("MQ: {0} {1}, returning all known modes: {2} ".format(cmd,path,ret))
-	return modes
+	return ret
 
 @messaging.handle_mq('/mode/active')
 def testje_get_active(path=None, cmd=None, args=None, data=None):
