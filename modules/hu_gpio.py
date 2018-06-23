@@ -92,37 +92,18 @@ class GpioController(object):
 		else:
 			self.__gpio_setup()
 			
-		if callable(self.callback_mode_change):
+		# inform our parent that we have an authorative modeset, so it can inform the world of its state
+		if callable(self.callback_function):
 			mode_change_params = []
 		
 			for modesetid in self.ms_authorative:
 				for modeset in self.ms_all[modesetid]:
-				
-					#modeset = CircularModeset
-					print "modeset ({0}) = {1}".format(type(modeset),modeset)
-					print modeset['mode']
-					print modeset['state']
-					
 					mode_change_params.append(modeset['mode'])
 					mode_change_params.append(modeset['state'])
 					
-					
-					for mode in modeset:
-						print mode
-						print type(mode)
-						#for m in mode:
-						#	mode_change_params.append(m['mode'])
-						#	mode_change_params.append(m['state'])
-						
-					
-						
-				#for activemode in self.ms_all[modesetid].active():
-				#	print "3"
-				#	mode_change_params.append(activemode)
-				#	mode_change_params.append(True)		
-			
 			if len(mode_change_params) > 0:
-				self.callback_mode_change(mode_change_params,init=True)
+				self.callback_function('MODE-CHANGE',mode_change_params)
+				#self.callback_mode_change(mode_change_params,init=True)
 	
 	def __printer( self, message, level=LL_INFO, tag=None):
 		if self.logger is not None:

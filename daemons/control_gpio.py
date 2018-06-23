@@ -178,18 +178,21 @@ def load_cfg_gpio():
 @messaging.handle_mq('/mode/list', cmd='GET')
 def testje_get_list(path=None, cmd=None, args=None, data=None):
 	""" Return all modes. No parameters """	
+	return None
 	printer("MQ: {0} {1}, returning registered modes: {2} ".format(cmd,path,modes))
 	return modes
 
 @messaging.handle_mq('/mode/active')
 def testje_get_active(path=None, cmd=None, args=None, data=None):
 	""" Return active modes. No parameters """
+	return None
 	printer("MQ: {0} {1}, returning active mode(s): {2} ".format(cmd,path,modes.active_modes()))
 	return modes.active_modes()
 
 @messaging.handle_mq('/mode/set','PUT')
 def mq_mode_set(path=None, cmd=None, args=None, data=None):
 	""" Set mode """
+	return None
 	vargs = commands.validate_args('MODE-SET',args)
 	
 	printer("MQ: {0} {1}, setting active mode(s): {2} ".format(cmd,path,args))
@@ -202,6 +205,8 @@ def mq_mode_set(path=None, cmd=None, args=None, data=None):
 @messaging.handle_mq('/mode/change', cmd='PUT')
 def mq_mode_change_put(path=None, cmd=None, args=None, data=None):
 	
+	return None
+
 	ret = commands.validate_args('MODE-CHANGE',args)
 	
 	if ret is not None and ret is not False:	
@@ -230,6 +235,7 @@ def mq_mode_change_put(path=None, cmd=None, args=None, data=None):
 @messaging.handle_mq('/mode/unset','PUT')
 def mq_mode_set(path=None, cmd=None, args=None, data=None):
 	""" Unset mode """
+	return None
 	print "A MODE WAS UNSET"
 	if mode_controller:
 		return True
@@ -239,12 +245,14 @@ def mq_mode_set(path=None, cmd=None, args=None, data=None):
 @messaging.handle_mq('/mode/*','GET')
 def mq_mode_test(path=None, cmd=None, args=None, data=None):
 	""" Unset mode """
+	return None
 	print "TEST MODE! GET"
 	return None
 
 @messaging.handle_mq('/mode/*','PUT')
 def mq_mode_test(path=None, cmd=None, args=None, data=None):
 	""" Unset mode """
+	return None
 	print "TEST MODE! Anything but Get"
 	return False
 
@@ -293,6 +301,8 @@ def cb_mode_change(mode_changes,init=False):
 		# active modes
 		#mq_instruction = 
 		#exec_function_by_code('MODE-CHANGE', ...)
+	
+	
 	
 	print "Hello from cb_mode_change(): {0} Init={1}".format(mode_changes,init)
 	print "Doing Nothing, but thanks for the update"
