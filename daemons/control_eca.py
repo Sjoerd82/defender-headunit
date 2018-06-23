@@ -40,9 +40,8 @@ BANNER = "Ecasound Controller Daemon"
 LOG_TAG = 'ECASND'
 LOGGER_NAME = 'ecasnd'
 
-DEFAULT_PORT_PUB = 5559
-DEFAULT_PORT_SUB = 5560
-SUBSCRIPTIONS = ['/volume/','/equalizer/','/events/source/','/ecasound/','/mode/']
+#SUBSCRIPTIONS = ['/volume/','/equalizer/','/events/source/','/ecasound/','/mode/']
+SUBSCRIPTIONS = ['/ecasound/']
 
 PATH_VOLUME = '/volume'
 PATH_VOLUME_EVENT = '/events/volume'
@@ -59,6 +58,7 @@ eca_chain_selected = None
 volume_increment = 0.15
 volume_increment_fast = 0.5
 chainsetup_filename = None
+resilience_modes_received = False
 
 logger = None
 args = None
@@ -74,9 +74,7 @@ cfg_gpio = None		# GPIO setup
 
 # global datastructures
 modes = Modeset()
-mode_controller = False		# ToDo
-
-resilience_modes_received = False
+mode_controller = False		# ToDo remove
 
 qVolume = None
 
@@ -101,6 +99,7 @@ def printer( message, level=LL_INFO, continuation=False, tag=LOG_TAG ):
 # ********************************************************************************
 # Load configuration
 #
+'''
 def load_cfg_main():
 	""" load main configuration """
 	config = configuration_load(LOGGER_NAME,args.config)
@@ -139,6 +138,29 @@ def load_cfg_daemon():
 			if 'script' in daemon and daemon['script'] == os.path.basename(__file__):
 				return daemon
 
+
+def load_cfg_gpio():		
+	""" load specified GPIO configuration """	
+	if 'directories' not in cfg_main or 'daemon-config' not in cfg_main['directories'] or 'config' not in cfg_daemon:
+		return
+	else:		
+		config_dir = cfg_main['directories']['daemon-config']
+		# TODO
+		config_dir = "/mnt/PIHU_CONFIG/"	# fix!
+		config_file = cfg_daemon['config']
+		
+		gpio_config_file = os.path.join(config_dir,config_file)
+	
+	# load gpio configuration
+	if os.path.exists(gpio_config_file):
+		config = configuration_load(LOGGER_NAME,gpio_config_file)
+		return config
+	else:
+		print "ERROR: not found: {0}".format(gpio_config_file)
+		return
+
+'''
+		
 def load_cfg_ecasound():
 	""" Load ecasound configuration
 		Returns:
@@ -193,28 +215,7 @@ def load_cfg_ecasound():
 		printer("No default volume increment specified, setting volume increment to 5%",level=LL_INFO)
 		
 	return config
-
-def load_cfg_gpio():		
-	""" load specified GPIO configuration """	
-	if 'directories' not in cfg_main or 'daemon-config' not in cfg_main['directories'] or 'config' not in cfg_daemon:
-		return
-	else:		
-		config_dir = cfg_main['directories']['daemon-config']
-		# TODO
-		config_dir = "/mnt/PIHU_CONFIG/"	# fix!
-		config_file = cfg_daemon['config']
 		
-		gpio_config_file = os.path.join(config_dir,config_file)
-	
-	# load gpio configuration
-	if os.path.exists(gpio_config_file):
-		config = configuration_load(LOGGER_NAME,gpio_config_file)
-		return config
-	else:
-		print "ERROR: not found: {0}".format(gpio_config_file)
-		return
-
-	
 # ********************************************************************************
 # Ecasound
 #
@@ -783,9 +784,41 @@ def setup():
 	# Configuration
 	#
 	global cfg_main
+	global cfg_zmq
 	global cfg_daemon
-	#global cfg_zmq	#only used here(?)
+	global cfg_gpio
 	global cfg_ecasound
+	
+	cfg_main, cfg_zmq, cfg_daemon, cfg_gpio = load_cfg(
+		args.config,
+		['main','zmq','daemon','gpio'],
+		args.port_subscriber, args.port_subscriber,
+		daemon_script=os.path.basename(__file__),
+		logger_name=LOGGER_NAME	)
+	
+	if cfg_main is None:
+		printer("Main configuration could not be loaded.", level=LL_CRITICAL)
+		exit(1)
+	
+	if cfg_zmq is None:
+		printer("Error loading Zero MQ configuration.", level=LL_CRITICAL)
+		exit(1)
+			
+	if cfg_daemon is None:
+		printer("Daemon configuration could not be loaded.", level=LL_CRITICAL)
+		exit(1)
+	
+	if cfg_gpio is None:
+		printer("GPIO configuration could not be loaded.", level=LL_CRITICAL)
+		exit(1)
+		
+	# eca
+	cfg_ecasound = load_cfg_ecasound()
+	if cfg_ecasound is None:
+		printer("Ecasound configuration could not be loaded.", level=LL_CRITICAL)
+		exit(1)
+
+	'''
 	cfg_main = load_cfg_main()
 	if cfg_main is None:
 		printer("Main configuration could not be loaded.", level=LL_CRITICAL)
@@ -826,6 +859,7 @@ def setup():
 	cfg_gpio = load_cfg_gpio()
 	if cfg_gpio is None:
 		printer("GPIO configuration could not be loaded. GPIO input will not be available", level=LL_WARNING)
+	'''
 
 	#
 	# ECA

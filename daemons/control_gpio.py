@@ -36,7 +36,7 @@ from hu_utils import *
 from hu_msg import MqPubSubFwdController
 from hu_gpio import GpioController
 from hu_commands import Commands
-from hu_datastruct import CircularModeset, Modeset
+from hu_datastruct import Modeset
 
 # *******************************************************************************
 # Global variables and constants
@@ -149,21 +149,10 @@ def mq_mode_change_put(path=None, cmd=None, args=None, data=None):
 	Args:    Pairs of Mode-State
 	Returns: None
 	"""
-
 	valid_args = commands.validate_args('MODE-CHANGE',args)
-	
-	if valid_args is not None and valid_args is not False:	
+	if valid_args is not None and valid_args is not False:
 		print "DEBUG, before: {0}".format(gpio.activemodes())
 		gpio.change_modes(valid_args)
-		# arguments are mode-state pairs
-		#for i in range(0,len(valid_args),2):
-		#printer('[MQ] Received Mode: "{0}", State: {1}'.format(valid_args[i],valid_args[i+1]), level=LL_DEBUG)
-		
-		#modes.active_modes()
-		#if ret[i+1] == True and ret[i] not in active_modes:
-		#	active_modes.append(ret[i])
-		#elif ret[i+1] == False and ret[i] in active_modes:
-		#	active_modes.remove(ret[i])				
 		printer("Active Modes: {0}".format(gpio.activemodes()))
 	else:
 		printer("put_change: Arguments: [FAIL]",level=LL_ERROR)
@@ -172,39 +161,38 @@ def mq_mode_change_put(path=None, cmd=None, args=None, data=None):
 		
 @messaging.handle_mq('/mode/unset','PUT')
 def mq_mode_set(path=None, cmd=None, args=None, data=None):
-	""" Unset mode """
-	return None
-	print "A MODE WAS UNSET"
+	"""
+	Unset mode
+	Arg: Mode
+	Returns: None
+	"""
+	valid_arg = commands.validate_args('MODE-UNSET',args)
+	gpio.set_mode(valid_arg,False)
+	printer("MQ: {0} {1}, unsetting mode: {2} ".format(cmd,path,valid_arg))
 	return None
 
+'''
+Testing
 @messaging.handle_mq('/mode/*','GET')
 def mq_mode_test(path=None, cmd=None, args=None, data=None):
 	""" Unset mode """
-	return None
 	print "TEST MODE! GET"
 	return None
 
 @messaging.handle_mq('/mode/*','PUT')
 def mq_mode_test(path=None, cmd=None, args=None, data=None):
 	""" Unset mode """
-	return None
 	print "TEST MODE! Anything but Get"
 	return False
-
-"""
-def idle_message_receiver():
-	parsed_msg = messaging.poll(timeout=500, parse=True)	#Timeout: None=Blocking
-	if parsed_msg:
-		ret = messaging.execute_mq(parsed_msg['path'], parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
-		if parsed_msg['resp_path'] and ret is not None:
-			messaging.publish_command(parsed_msg['resp_path'],'DATA',ret)	
-	return True # Important! Returning true re-enables idle routine.
-"""
+'''
 	
 # ********************************************************************************
 # GPIO Callback
 #
 def cb_gpio_function(code, arguments):
+	"""
+	Execute the function indicated by code.
+	"""
 	print "cb_gpio_function: code={0}, arguments={1}".format(code,arguments)
 	#print "CALL: {0}".format(function)
 	if code in commands.command_list:
@@ -230,6 +218,9 @@ def cb_gpio_function(code, arguments):
 	"""
 			
 def cb_mode_change(mode_changes,init=False):
+	"""
+	Mode change.
+	"""
 	# active_modes is a Modes() struct
 	
 		# find modes that are no longer active.
@@ -270,8 +261,6 @@ def cb_mode_change(mode_changes,init=False):
 	#print "Updating local modes"
 	modes.set_active_modes(modes_update_active)
 	'''
-				
-	
 	
 #********************************************************************************
 # Parse command line arguments

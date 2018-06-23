@@ -190,13 +190,16 @@ class GpioController(object):
 			ret_active.extend( val.active() )
 		return ret_active
 	
-	def set_mode(self,mode):
+	def set_mode(self,mode,state=True):
 		"""
-		Set given mode to active.
+		Set given mode to active, or deactivate if state is False.
 		"""
 		for key,val in self.ms_all.iteritems():
 			if val.index(mode) is not None:
-				val.activate( val.index(mode) )	
+				if state:
+					val.activate( val.index(mode) )
+				else:
+					val.deactivate( val.index(mode) )
 	
 	def change_modes(self, change_list):
 		"""
@@ -205,8 +208,6 @@ class GpioController(object):
 		for mode_ix in range(0,len(change_list),2):
 			set_and_index = self.__mode_modesetid(change_list[mode_ix])
 			if set_and_index is not None:
-				print set_and_index[0] #setid
-				print set_and_index[1] #ix
 				self.ms_all[set_and_index[0]].activate(set_and_index[1])
 	
 	def modeset(self,modesetid):
