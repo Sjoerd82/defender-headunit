@@ -66,9 +66,6 @@ cfg_gpio = None		# GPIO setup
 # data structures
 modes = Modeset()
 
-# other stuff
-mode_controller = True
-
 '''
 pins_config = 
 	{ "23": {
@@ -109,6 +106,8 @@ def printer( message, level=LL_INFO, continuation=False, tag=LOG_TAG ):
 def testje_get_list(path=None, cmd=None, args=None, data=None):
 	"""
 	Return all modes. No parameters
+	TODO: return only modes over which we are authorative
+	TODO: support multiple message returns in other parts of the system
 	"""	
 	ret = []
 	modesets = gpio.modesets()
@@ -121,63 +120,63 @@ def testje_get_list(path=None, cmd=None, args=None, data=None):
 
 @messaging.handle_mq('/mode/active')
 def testje_get_active(path=None, cmd=None, args=None, data=None):
-	""" Return active modes. No parameters """
+	"""
+	Return active modes. No parameters
+	"""
 	ret = gpio.activemodes()
 	printer("MQ: {0} {1}, returning active mode(s): {2} ".format(cmd,path,ret))
 	return ret
 
 @messaging.handle_mq('/mode/set','PUT')
 def mq_mode_set(path=None, cmd=None, args=None, data=None):
-	""" Set mode """
-	return None
-	vargs = commands.validate_args('MODE-SET',args)
-	
-	printer("MQ: {0} {1}, setting active mode(s): {2} ".format(cmd,path,args))
-	try:
-		modes.set_active_modes(args)
+	"""
+	Set mode. Param: Mode
+	Returns True if succeful, False if not
+	TODO: perhaps do more checking?
+	"""
+	valid_arg = commands.validate_args('MODE-SET',args)
+	if valid_arg is not None:
+		printer("MQ: {0} {1}, setting active mode(s): {2} ".format(cmd,path,valid_arg))
+		gpio.set_mode(valid_arg)
 		return True
-	except:
+	else:
 		return False
 
 @messaging.handle_mq('/mode/change', cmd='PUT')
 def mq_mode_change_put(path=None, cmd=None, args=None, data=None):
-	
-	return None
+	"""
+	Change modes; MODE-CHANGE
+	Args:    Pairs of Mode-State
+	Returns: None
+	"""
 
-	ret = commands.validate_args('MODE-CHANGE',args)
+	valid_args = commands.validate_args('MODE-CHANGE',args)
 	
-	if ret is not None and ret is not False:	
+	if valid_args is not None and valid_args is not False:	
+		print "DEBUG, before: {0}".format(gpio.activemodes())
+		gpio.change_modes(valid_args)
 		# arguments are mode-state pairs
-		'''
-		for i in range(0,len(ret),2):
-			printer('[MQ] Received Mode: "{0}", State: {1}'.format(ret[i],ret[i+1]), level=LL_DEBUG)
+		#for i in range(0,len(valid_args),2):
+			#printer('[MQ] Received Mode: "{0}", State: {1}'.format(valid_args[i],valid_args[i+1]), level=LL_DEBUG)
 			
 			#modes.active_modes()
-			if ret[i+1] == True and ret[i] not in active_modes:
-				active_modes.append(ret[i])
-			elif ret[i+1] == False and ret[i] in active_modes:
-				active_modes.remove(ret[i])
+			#if ret[i+1] == True and ret[i] not in active_modes:
+			#	active_modes.append(ret[i])
+			#elif ret[i+1] == False and ret[i] in active_modes:
+			#	active_modes.remove(ret[i])
 				
-		printer("Active Modes: {0}".format(active_modes))
-		'''
-		pass
+		printer("Active Modes: {0}".format(gpio.activemodes())
 	else:
 		printer("put_change: Arguments: [FAIL]",level=LL_ERROR)
 		
-	if mode_controller:
-		return True
-	else:
-		return None
+	return None
 		
 @messaging.handle_mq('/mode/unset','PUT')
 def mq_mode_set(path=None, cmd=None, args=None, data=None):
 	""" Unset mode """
 	return None
 	print "A MODE WAS UNSET"
-	if mode_controller:
-		return True
-	else:
-		return None
+	return None
 
 @messaging.handle_mq('/mode/*','GET')
 def mq_mode_test(path=None, cmd=None, args=None, data=None):

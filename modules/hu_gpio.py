@@ -36,6 +36,7 @@ class GpioController(object):
 	  modeset(mode_set_id)		Return mode set as list of dicts
 	  modesets()				Return all mode sets as dict[id] of list of modes
 	  set_mode(mode)			Set mode to active
+	  change_modes( ** )		Change list of modes
 	  activemodes()				Return list of all active modes
 	 
 	 Callbacks:
@@ -157,12 +158,25 @@ class GpioController(object):
 		if callable(self.callback_function):
 			self.callback_function(command,valid_params)
 		
+	# ********************************************************************************
+	# Mode helpers
+	# 
 	def __mode_reset(self):
 		"""
 		Restart all running timers
 		"""
 		for key,val in self.ms_all.iteritems():
 			val.reset_restart()
+			
+	def __mode_modesetid(self, mode):
+		"""
+		Return tuple of modesetid and index the first modesetid mode exists in
+		"""
+		for key,val in self.ms_all.iteritems():
+			ix = val.index(mode)
+			if ix is not None:
+				return key, ix
+
 
 	# ********************************************************************************
 	# Public functions
@@ -184,6 +198,17 @@ class GpioController(object):
 			if val.index(mode) is not None:
 				val.activate( val.index(mode) )	
 	
+	def change_modes(self, change_list):
+		"""
+		Change a list of modes
+		"""
+		for mode_ix in range(0,len(valid_args),2):
+			set_and_index = __mode_modesetid(change_list[mode_ix])
+			if set_and_index is not None:
+				print set_and_index[0] #setid
+				print set_and_index[1] #ix
+				self.ms_all[set_and_index[0]].activate(set_and_index[1])
+	
 	def modeset(self,modesetid):
 		"""
 		Returns ModeSet-structure, converted to a simple list of dicts.
@@ -201,6 +226,7 @@ class GpioController(object):
 		for mode_set_id,mode_set in self.ms_all.iteritems():
 			copy_ms_all[mode_set_id] = copy.deepcopy(mode_set.simple())
 		return copy_ms_all
+		
 
 	# ********************************************************************************
 	# GPIO helpers
