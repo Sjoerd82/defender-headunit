@@ -4,7 +4,7 @@
 # 2018-05-13
 #
 # The GPIO CONTROLLER Class provides an interface to execute functions on actions.
-# 
+# Supports Modesets.
 #
 
 import sys						# path
@@ -33,8 +33,8 @@ import json
 class GpioController(object):
 	"""	
 	Public functions:
-	  modeset(mode_set_id)		Return mode set
-	  modesets()				Return all mode sets
+	  modeset(mode_set_id)		Return mode set as list of dicts
+	  modesets()				Return all mode sets as list of dicts
 	  set_mode(mode)			Set mode to active
 	  activemodes()				Return list of all active modes
 	 
@@ -510,9 +510,9 @@ class GpioController(object):
 								
 				if 'reset' in mode_set:
 					self.ms_all[mode_set['id']].reset_enable(mode_set['reset'])
-					self.__printer("> {0}; resets to {1} after {2} seconds".format(mode_set['id'],base_mode,mode_set['reset'])) # LL_DEBUG TODO
+					self.__printer("> {0}; resets to {1} after {2} seconds".format(mode_set['id'],base_mode,mode_set['reset']),level=LL_DEBUG)
 				else:
-					self.__printer("> {0} (no reset)".format(mode_set['id'])) # LL_DEBUG TODO
+					self.__printer("> {0} (no reset)".format(mode_set['id']),level=LL_DEBUG)
 				
 				for i, mode in enumerate(mode_set['mode_list']):
 					self.ms_all[mode_set['id']].append(mode)
@@ -520,7 +520,7 @@ class GpioController(object):
 					# debug feedback
 					dbg_base = ""
 					if mode == base_mode: dbg_base = "(base)"
-					self.__printer("  {0} {1} {2}".format(i,mode,dbg_base)) # LL_DEBUG TODO
+					self.__printer("  {0} {1} {2}".format(i,mode,dbg_base),level=LL_DEBUG)
 					
 				# authorative
 				if 'authorative' in mode_set and mode_set['authorative']:
@@ -744,9 +744,3 @@ class GpioController(object):
 		if len(pins_monitor) != len(set(pins_monitor)):
 			self.__printer("WARNING: Same pin used multiple times, this may lead to unpredictable results.",level=LL_WARNING)
 			pins_monitor = set(pins_monitor) # no use in keeping duplicates
-
-	'''
-	def set_cb_mode_change(self,cb_function):
-		self.callback_mode_change = cb_function
-		staticmethod(self.callback_mode_change)
-	'''

@@ -48,13 +48,7 @@ LOGGER_NAME = 'ctgpio'
 
 DEFAULT_CONFIG_FILE = '/etc/configuration.json'
 DEFAULT_LOG_LEVEL = LL_INFO
-SUBSCRIPTIONS = []
-DEFAULT_PORT_PUB = 5559
-DEFAULT_PORT_SUB = 5560
-
-#DELAY = 0.005
-DELAY = 0.01
-#LONG_PRESS = 0.05
+SUBSCRIPTIONS = []				# all required subscriptions provided via decorators
 
 # global variables
 logger = None
@@ -113,9 +107,14 @@ def printer( message, level=LL_INFO, continuation=False, tag=LOG_TAG ):
 
 @messaging.handle_mq('/mode/list', cmd='GET')
 def testje_get_list(path=None, cmd=None, args=None, data=None):
-	""" Return all modes. No parameters """	
-	return None
-	printer("MQ: {0} {1}, returning registered modes: {2} ".format(cmd,path,modes))
+	"""
+	Return all modes. No parameters
+	"""	
+	ret = []
+	for modeset in gpio.modesets():
+		ret.append(modeset['mode'])
+	
+	printer("MQ: {0} {1}, returning all known modes: {2} ".format(cmd,path,ret))
 	return modes
 
 @messaging.handle_mq('/mode/active')

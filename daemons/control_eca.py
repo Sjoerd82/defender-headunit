@@ -929,10 +929,8 @@ def main():
 			messaging.poll_and_execute(500) # do this less often TODO! not critical, but takes up precious response time
 			#counter = 0
 			
-		if counter % 100 == 0:
-			#if not resilience_modes_received:
-			print resilience_modes_received
-			if resilience_modes_received == False:
+		if counter % 150 == 0:
+			if not resilience_modes_received:
 				messaging.publish_command('/mode/active','GET',wait_for_reply=False, response_path='/ecasound/mode/active')
 			counter = 0
 		
