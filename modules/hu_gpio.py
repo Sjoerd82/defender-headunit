@@ -203,7 +203,7 @@ class GpioController(object):
 		Change a list of modes
 		"""
 		for mode_ix in range(0,len(change_list),2):
-			set_and_index = __mode_modesetid(change_list[mode_ix])
+			set_and_index = self.__mode_modesetid(change_list[mode_ix])
 			if set_and_index is not None:
 				print set_and_index[0] #setid
 				print set_and_index[1] #ix
