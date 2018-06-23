@@ -121,6 +121,8 @@ class GpioController(object):
 		
 		We will already validate the command before passing it back.
 		"""
+		self.__printer("Preparing to execute function: {0}".format(command),level=LL_DEBUG)
+		
 		if command is None:
 			return
 			
@@ -247,7 +249,6 @@ class GpioController(object):
 			return None
 		
 		#print "DEBUG: self.int_handle_switch! for pin: {0}".format(pin)
-		self.__printer("Switch. Pin: {0}".format(pin),level=LL_DEBUG)
 		self.__mode_reset()									# Keep resetting as long as the mode is being used
 		# TODO, check if possible to only reset affected timer: self.ms_all[fun['mode_cycle']].
 		
@@ -369,6 +370,10 @@ class GpioController(object):
 				print "EXECUTING THE SHORT FUNCTION (not long enough pressed)"
 			else:
 				print "No Match!"
+				
+		# feedback in case of no attached function
+		self.__printer("Switch. Pin: {0}".format(pin),level=LL_DEBUG)
+
 
 	def int_handle_encoder(self,pin):
 		"""
@@ -397,7 +402,6 @@ class GpioController(object):
 		# -------------------------------
 		function = self.get_encoder_function_by_pin(pin)
 		self.__mode_reset()									# Keep resetting as long as the mode is being used
-		self.__printer("Encoder. Function: {0}".format(function['name']),level=LL_DEBUG)
 
 		# TODO, check if possible to only reset affected timer: self.ms_all[fun['mode_cycle']].
 		if function is not None:
@@ -439,6 +443,8 @@ class GpioController(object):
 						self.__exec_function_by_code(function['function_cw'])
 					
 				self.encoder_last_chg = this_chg
+		else:
+			self.__printer("Encoder, no function",level=LL_DEBUG)
 
 
 	# ********************************************************************************
