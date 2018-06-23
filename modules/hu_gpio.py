@@ -33,7 +33,8 @@ import json
 class GpioController(object):
 	"""
 	Public functions:
-	get_modes()
+	  modeset(mode_set_id)		Return mode set
+	  modesets()				Return all mode sets
 	"""
 
 	def __init__(self, cfg_gpio, cb_function, logger=None):

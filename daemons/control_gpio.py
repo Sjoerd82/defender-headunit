@@ -262,6 +262,7 @@ def idle_message_receiver():
 # GPIO Callback
 #
 def cb_gpio_function(code, arguments):
+	print "cb_gpio_function"
 	#print "CALL: {0}".format(function)
 	if code in commands.command_list:
 		cmd = commands.get_command(code)
@@ -411,9 +412,9 @@ def setup():
 	my_ms_all = gpio.modesets()
 	print my_ms_all
 	print "activating bass"
-	my_ms_all['modecycle1'].active(2)
+	my_ms_all['modecycle1'].activate(2)
 	print "activating folder random"
-	my_ms_all['random'].active(4)
+	my_ms_all['random'].activate(4)
 	
 
 	# if we're responisble for modes, then send out a MQ message ? *(or have clients pull?)

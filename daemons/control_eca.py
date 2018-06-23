@@ -30,6 +30,7 @@ sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
 from hu_gpio import GpioController
 from hu_msg import MqPubSubFwdController
+from hu_datastruct import Modeset
 
 # *******************************************************************************
 # Global variables and constants
