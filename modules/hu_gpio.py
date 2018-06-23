@@ -177,12 +177,15 @@ class GpioController(object):
 			
 		return copy.deepcopy(master_modes_list)		# list of dicts, requires deepcopy() instead of copy()
 		
-	def modesets(self,copy=True):
+	def modesets(self,deepcopy=True):
 		"""
 		Returns list of ModeSet-structures
 		"""
-		return self.ms_all
-		
+		if deepcopy:
+			copy.deepcopy(self.ms_all)
+		else:
+			return self.ms_all
+
 	# ********************************************************************************
 	# GPIO helpers
 	# 

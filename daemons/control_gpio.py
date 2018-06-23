@@ -409,12 +409,12 @@ def setup():
 	global modes
 	printer("GPIO: Initializing")
 	gpio = GpioController(cfg_gpio,cb_gpio_function,cb_mode_change,logger=logger)
-	my_ms_all = gpio.modesets()
-	print my_ms_all
+	
+	my_ms_all = gpio.modesets(deepcopy=True)
 	print "activating bass"
 	my_ms_all['modecycle1'].activate(2)
-	print "activating folder random"
-	my_ms_all['random'].activate(4)
+	#print "activating folder random"
+	#my_ms_all['random'].activate(4)
 	
 
 	# if we're responisble for modes, then send out a MQ message ? *(or have clients pull?)
