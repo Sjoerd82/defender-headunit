@@ -40,8 +40,8 @@ BANNER = "Ecasound Controller Daemon"
 LOG_TAG = 'ECASND'
 LOGGER_NAME = 'ecasnd'
 
-#SUBSCRIPTIONS = ['/volume/','/equalizer/','/events/source/','/ecasound/','/mode/']
-SUBSCRIPTIONS = ['/ecasound/']
+SUBSCRIPTIONS = ['/volume/','/equalizer/','/events/source/','/ecasound/','/mode/']
+#SUBSCRIPTIONS = ['/ecasound/']
 
 PATH_VOLUME = '/volume'
 PATH_VOLUME_EVENT = '/events/volume'
@@ -923,9 +923,7 @@ def main():
 	global qVolume
 	global local_volume_chg
 	global resilience_modes_received
-	
-	print resilience_modes_received
-	
+		
 	# Initialize the mainloop
 	#DBusGMainLoop(set_as_default=True)
 	#mainloop = gobject.MainLoop()

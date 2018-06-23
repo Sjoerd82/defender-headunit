@@ -171,8 +171,6 @@ def mq_mode_set(path=None, cmd=None, args=None, data=None):
 	printer("MQ: {0} {1}, unsetting mode: {2} ".format(cmd,path,valid_arg))
 	return None
 
-'''
-Testing
 @messaging.handle_mq('/mode/*','GET')
 def mq_mode_test(path=None, cmd=None, args=None, data=None):
 	""" Unset mode """
@@ -184,7 +182,6 @@ def mq_mode_test(path=None, cmd=None, args=None, data=None):
 	""" Unset mode """
 	print "TEST MODE! Anything but Get"
 	return False
-'''
 	
 # ********************************************************************************
 # GPIO Callback
