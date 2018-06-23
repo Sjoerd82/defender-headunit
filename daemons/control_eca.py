@@ -509,7 +509,7 @@ def mq_eca_mode_active(path=None, cmd=None, args=None, data=None):
 		active_modes = data['payload']
 		for mode in active_modes:
 			print "SETTING MODE ACTIVE: {0}".format(mode)
-			gpio.set_mod(mode)
+			gpio.set_mode(mode)
 
 # ********************************************************************************
 # MQ: /volume
