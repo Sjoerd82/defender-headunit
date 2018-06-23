@@ -409,6 +409,9 @@ def cb_gpio_function(code):
 		printer("Function {0} not in function_map".format(code),level=LL_ERROR)
 
 
+def cb_mode_change(mode_changes):
+	print "Hello from cb_mode_change(): {0}".format(mode_changes)
+	
 """
 def handle_queue(code,count):
 	global local_volume
@@ -857,7 +860,7 @@ def setup():
 	global gpio
 	global modes
 	printer("GPIO: Initializing")
-	gpio = GpioController(cfg_gpio,cb_gpio_function,logger=logger)
+	gpio = GpioController(cfg_gpio,cb_gpio_function,cb_mode_change,logger=logger)
 	
 	modes = gpio.modeset('volume')
 	print modes

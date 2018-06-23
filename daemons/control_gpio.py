@@ -262,7 +262,7 @@ def idle_message_receiver():
 # GPIO Callback
 #
 def cb_gpio_function(code, arguments):
-	print "cb_gpio_function"
+	print "cb_gpio_function: code={0}, arguments={1}".format(code,arguments)
 	#print "CALL: {0}".format(function)
 	if code in commands.command_list:
 		cmd = commands.get_command(code)
@@ -286,7 +286,7 @@ def cb_gpio_function(code, arguments):
 		printer("Function {0} not in function_map".format(code),level=LL_ERROR)
 	"""
 			
-def cb_mode_change(active_modes):
+def cb_mode_change(mode_changes):
 	# active_modes is a Modes() struct
 	
 		# find modes that are no longer active.
@@ -294,10 +294,9 @@ def cb_mode_change(active_modes):
 		#mq_instruction = 
 		#exec_function_by_code('MODE-CHANGE', ...)
 	
-	print "Hello from cb_mode_change(): {0}".format(active_modes)
+	print "Hello from cb_mode_change(): {0}".format(mode_changes)
 	
-	global modes
-	
+	'''
 	active_modes.sort(key=itemgetter('name'))
 	modes.sort(key=itemgetter('name'))
 	
@@ -324,6 +323,7 @@ def cb_mode_change(active_modes):
 	
 	#print "Updating local modes"
 	modes.set_active_modes(modes_update_active)
+	'''
 				
 	
 	
@@ -408,7 +408,7 @@ def setup():
 	global gpio
 	global modes
 	printer("GPIO: Initializing")
-	gpio = GpioController(cfg_gpio,cb_gpio_function,logger=logger)
+	gpio = GpioController(cfg_gpio,cb_gpio_function,cb_mode_change,logger=logger)
 	my_ms_all = gpio.modesets()
 	print my_ms_all
 	print "activating bass"

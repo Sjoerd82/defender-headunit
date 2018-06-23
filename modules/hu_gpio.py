@@ -35,9 +35,14 @@ class GpioController(object):
 	Public functions:
 	  modeset(mode_set_id)		Return mode set
 	  modesets()				Return all mode sets
+	 
+	 Callbacks:
+	   callback_function(		Whenever a function needs executing
+	       command, params )
+	   callback_mode_change(?)	Whenever a mode changes
 	"""
 
-	def __init__(self, cfg_gpio, cb_function, logger=None):
+	def __init__(self, cfg_gpio, cb_function=None, cb_mode_change=None logger=None):
 		"""
 		cfg_gpio is a configuration dictionary.
 		cb_function is the callback_function which is called whenever a function needs executing.
@@ -48,8 +53,13 @@ class GpioController(object):
 		self.cfg_gpio = cfg_gpio
 
 		# callbacks
-		self.callback_function = cb_function
-		staticmethod(self.callback_function)
+		if cb_function is not None:
+			self.callback_function = cb_function
+			staticmethod(self.callback_function)
+		
+		if cb_mode_change is not None:
+			self.callback_mode_change = cb_mode_change
+			staticmethod(self.callback_mode_change)
 			
 		# (optional) logger
 		self.LOG_TAG = 'GPIO'
@@ -94,7 +104,10 @@ class GpioController(object):
 		for mode in list_of_modes:
 			mode_change_params.append(mode['mode'])
 			mode_change_params.append(mode['state'])
-		self.__exec_function_by_code('MODE-CHANGE',mode_change_params)	
+		self.__exec_function_by_code('MODE-CHANGE',mode_change_params)
+		
+		if callable(self.callback_mode_change):
+			self.callback_mode_change(mode_change_params)
 	
 	def __exec_function_by_code(self,command,param=None):
 		"""
@@ -121,8 +134,9 @@ class GpioController(object):
 			valid_params = cmd_exec.validate_args(command,param)
 		else:
 			valid_params = None
-			
-		self.callback_function(command,valid_params)	# calls call-back function
+		
+		if callable(self.callback_function):
+			self.callback_function(command,valid_params)
 		
 	def __active_modes(self):
 		"""
