@@ -177,9 +177,7 @@ class CircularModeset(Modeset):
 		"""
 		Activate given index, deactivates previously activate index
 		"""
-		print "YY ix={0}".format(ix)
 		if ix is not None and ix < len(self):	
-			print "YY 1"
 			if self.ix_active is not None and ix <> self.ix_active:
 				self[self.ix_active]['state'] = False
 			

@@ -295,6 +295,7 @@ def cb_mode_change(mode_changes,init=False):
 		#exec_function_by_code('MODE-CHANGE', ...)
 	
 	print "Hello from cb_mode_change(): {0} Init={1}".format(mode_changes,init)
+	print "Doing Nothing, but thanks for the update"
 	
 	'''
 	active_modes.sort(key=itemgetter('name'))
@@ -409,12 +410,7 @@ def setup():
 	global modes
 	printer("GPIO: Initializing")
 	gpio = GpioController(cfg_gpio,cb_gpio_function,cb_mode_change,logger=logger)
-	
-	sleep(5)
-	gpio.set_mode('bass')
-	
-	# if we're responisble for modes, then send out a MQ message ? *(or have clients pull?)
-	
+		
 	printer('Initialized [OK]')
 			
 def main():		

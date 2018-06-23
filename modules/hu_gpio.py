@@ -93,18 +93,20 @@ class GpioController(object):
 			self.__gpio_setup()
 			
 		if callable(self.callback_mode_change):
-			print "1"
 			mode_change_params = []
 		
 			for modesetid in self.ms_authorative:
-				print "2"
-				for activemode in self.ms_all[modesetid].active():
-					print "3"
-					mode_change_params.append(activemode)
-					mode_change_params.append(True)		
+				for modeset in self.ms_all[modesetid]:
+					for mode in modeset:
+						mode_change_params.append(mode['mode'])
+						mode_change_params.append(mode['state'])
+						
+				#for activemode in self.ms_all[modesetid].active():
+				#	print "3"
+				#	mode_change_params.append(activemode)
+				#	mode_change_params.append(True)		
 			
 			if len(mode_change_params) > 0:
-				print "4"
 				self.callback_mode_change(mode_change_params,init=True)
 	
 	def __printer( self, message, level=LL_INFO, tag=None):
@@ -182,12 +184,9 @@ class GpioController(object):
 		"""
 		Set given mode to active.
 		"""
-		print "XX {0}".format(self.activemodes())
 		for key,val in self.ms_all.iteritems():
 			if val.index(mode) is not None:
-				val.activate( val.index(mode) )
-		print "XX {0}".format(self.activemodes())
-	
+				val.activate( val.index(mode) )	
 	
 	def modeset(self,modesetid):
 		"""

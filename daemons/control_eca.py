@@ -674,6 +674,9 @@ def mq_mode_change_put(path=None, cmd=None, args=None, data=None):
 				
 		printer("Active Modes: {0}".format(active_modes))
 		'''
+		
+		# 	gpio.set_mode('bass')
+		
 		pass
 
 	else:
