@@ -157,18 +157,17 @@ def mq_mode_change_put(path=None, cmd=None, args=None, data=None):
 		gpio.change_modes(valid_args)
 		# arguments are mode-state pairs
 		#for i in range(0,len(valid_args),2):
-			#printer('[MQ] Received Mode: "{0}", State: {1}'.format(valid_args[i],valid_args[i+1]), level=LL_DEBUG)
-			
-			#modes.active_modes()
-			#if ret[i+1] == True and ret[i] not in active_modes:
-			#	active_modes.append(ret[i])
-			#elif ret[i+1] == False and ret[i] in active_modes:
-			#	active_modes.remove(ret[i])
-				
-		printer("Active Modes: {0}".format(gpio.activemodes())
+		#printer('[MQ] Received Mode: "{0}", State: {1}'.format(valid_args[i],valid_args[i+1]), level=LL_DEBUG)
+		
+		#modes.active_modes()
+		#if ret[i+1] == True and ret[i] not in active_modes:
+		#	active_modes.append(ret[i])
+		#elif ret[i+1] == False and ret[i] in active_modes:
+		#	active_modes.remove(ret[i])				
+		printer("Active Modes: {0}".format(gpio.activemodes()))
 	else:
 		printer("put_change: Arguments: [FAIL]",level=LL_ERROR)
-		
+	
 	return None
 		
 @messaging.handle_mq('/mode/unset','PUT')
