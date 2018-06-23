@@ -402,16 +402,17 @@ def default_parser(description,banner=None):
 
 	import argparse
 	global DEFAULT_LOG_LEVEL
+
+	if banner is not None:
+		print "************************************************************"
+		print "* "+banner
+		print "************************************************************"
 	
 	# use debug, if no overriding log level given, and debug flag is set
 	debug_file = '/root/DEBUG_MODE'
 	if os.path.exists(debug_file):
 		DEFAULT_LOG_LEVEL = LL_DEBUG
-	
-	if banner is not None:
-		print "************************************************************"
-		print "* "+banner
-		print "************************************************************"
+		print "Debug output enabled"
 	
 	parser = argparse.ArgumentParser(description=description)
 	parser.add_argument('--loglevel', action='store', default=DEFAULT_LOG_LEVEL, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)

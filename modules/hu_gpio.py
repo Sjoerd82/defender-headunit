@@ -31,10 +31,11 @@ import json
 # GPIO stuff
 #
 class GpioController(object):
-	"""
+	"""	
 	Public functions:
 	  modeset(mode_set_id)		Return mode set
 	  modesets()				Return all mode sets
+	  activemodes()				Return list of all active modes
 	 
 	 Callbacks:
 	   callback_function(		Whenever a function needs executing
@@ -44,9 +45,10 @@ class GpioController(object):
 
 	def __init__(self, cfg_gpio, cb_function=None, cb_mode_change=None, logger=None):
 		"""
-		cfg_gpio is a configuration dictionary.
-		cb_function is the callback_function which is called whenever a function needs executing.
-		Optionally, provide a logger if you want feedback.
+		cfg_gpio 		is a configuration dictionary.
+		cb_function		is the callback_function called when a function needs executing.
+		cb_mode_change 	is the callback function called on mode change
+		logger			Optionally, provide a logger if you want feedback.
 		"""
 	
 		# configuration (dictionary)
@@ -62,21 +64,19 @@ class GpioController(object):
 			staticmethod(self.callback_mode_change)
 			
 		# (optional) logger
-		self.LOG_TAG = 'GPIO'
-		self.logger = logger
-
-		# setup
-		self.setup_done = False
-		
+		if logger is not None:
+			self.LOG_TAG = 'GPIO'
+			self.logger = logger
+			printer("GpioController initializing.")
+			printer("GpioController initializing.",level=LL_DEBUG)
+	
 		# pins
 		self.pins_state = {}		# pin (previous) state
 		self.pins_function = {}		# pin function(s)
 		self.pins_config = {}		# consolidated config, key=pin
 		
 		# mode sets
-		self.mode_sets = {}			# contains set of modes()
 		self.ms_all = {}			# contains the different modesets, key=modeset name
-		#self.ms.set_cb_mode_change(cb_mode_change)
 		
 		self.long_press_ms = 800
 
@@ -99,11 +99,15 @@ class GpioController(object):
 		"""
 		Called by modeset whenever a new mode becomes active. List_of_modes is a list of mode-dictionaries.
 		Source: Modeset.state_change
-		"""		
+		"""	
 		mode_change_params = []
 		for mode in list_of_modes:
 			mode_change_params.append(mode['mode'])
 			mode_change_params.append(mode['state'])
+
+		printer("Mode change. {0}".format(mode_change_params))
+		printer("Mode change. {0}".format(mode_change_params),level=LL_DEBUG)
+
 		self.__exec_function_by_code('MODE-CHANGE',mode_change_params)
 		
 		if callable(self.callback_mode_change):
@@ -154,13 +158,15 @@ class GpioController(object):
 		for key,val in self.ms_all.iteritems():
 			val.reset_restart()
 
-	def modeset(self,modesetid,copy=True):
+	def modeset(self,modesetid,deepcopy=True):
 		"""
 		Returns ModeSet-structure (a list of dictionaries)
-		"""
-		
+		"""		
 		if modesetid in self.ms_all:
-			return self.ms_all[modesetid]
+			if deepcopy:
+				copy.deepcopy(self.ms_all[modesetid])
+			else:
+				return self.ms_all[modesetid]
 		else:
 			return
 			
