@@ -28,7 +28,6 @@ from Queue import Queue		# queuing
 #sys.path.append('../modules')
 sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
-from hu_datastruct import Modes
 from hu_gpio import GpioController
 from hu_msg import MqPubSubFwdController
 
