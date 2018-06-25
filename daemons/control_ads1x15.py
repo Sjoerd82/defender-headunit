@@ -92,11 +92,12 @@ def setup():
 	global cfg_main
 	global cfg_zmq
 	global cfg_daemon
+	cfg_dummy = None	#TODO, make load_cfg listen to the configs parameter
 
 	# main
-	cfg_main, cfg_zmq, cfg_daemon, cfg_gpio = load_cfg(
+	cfg_main, cfg_zmq, cfg_daemon, cfg_dummy = load_cfg(
 		args.config,
-		['main','zmq','daemon','gpio'],
+		['main','zmq','daemon'],
 		args.port_subscriber, args.port_subscriber,
 		daemon_script=os.path.basename(__file__),
 		logger_name=LOGGER_NAME	)

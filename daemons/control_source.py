@@ -1119,7 +1119,8 @@ def setup():
 		['main','zmq','daemon','gpio'],
 		args.port_subscriber, args.port_subscriber,
 		daemon_script=os.path.basename(__file__),
-		logger_name=LOGGER_NAME	)
+		logger_name='srcctrl'	)	#TODO ?????????
+	#logger_name=LOGGER_NAME	)
 	
 	if cfg_main is None:
 		printer("Main configuration could not be loaded.", level=LL_CRITICAL)

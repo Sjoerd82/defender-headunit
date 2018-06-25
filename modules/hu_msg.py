@@ -432,7 +432,7 @@ class MqPubSubFwdController(object):
 			if stripped is not None:
 				self.topics.append(stripped)
 			
-			print "!DEBUG.. right now the list is: ".format(self.mq_path_list)
+			print "!DEBUG.. right now the list is: ".format(len(self.mq_path_list))
 			
 			def decorated(*args,**kwargs):
 				return fn(*args,**kwargs)

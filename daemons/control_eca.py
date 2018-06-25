@@ -67,7 +67,7 @@ logger = None
 args = None
 messaging = MqPubSubFwdController(origin=LOGGER_NAME)
 gpio = None
-commands = Commands()
+command = Commands()
 eca = None
 
 cfg_main = None		# main
@@ -611,7 +611,7 @@ def mq_mode_change_put(path=None, cmd=None, args=None, data=None):
 	Args:    Pairs of Mode-State
 	Returns: None
 	"""
-	valid_args = commands.validate_args('MODE-CHANGE',args)
+	valid_args = command.validate_args('MODE-CHANGE',args)
 	if valid_args is not None and valid_args is not False:
 		print "DEBUG, before: {0}".format(gpio.activemodes())
 		gpio.change_modes(valid_args)
