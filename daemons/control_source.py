@@ -17,6 +17,8 @@
 # -p, --play		Start playback (ignore resume)
 # 
 
+# MQ: Pub & Sub
+
 
 ## IGNORING QUEUING FOR NOW ! ##
 
@@ -25,23 +27,16 @@ import sys
 import json					# load json source configuration
 from Queue import Queue		# queuing
 import inspect				# dynamic module loading
-
 import gobject				# main loop
 from dbus.mainloop.glib import DBusGMainLoop
-
-#********************************************************************************
-# Logging
 from logging import getLogger
 
-#********************************************************************************
-# Headunit modules
 sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
 from hu_source import SourceController
 from hu_msg import MqPubSubFwdController
+from hu_commands import Commands
 
-#********************************************************************************
-# Third party and others...
 from slugify import slugify
 
 #********************************************************************************
@@ -70,9 +65,10 @@ DEFAULT_PORT_SUB = 5560
 # global variables
 logger = None						# logging
 args = None							# command line arguments
-messaging = MqPubSubFwdController()	# mq messaging
+messaging = MqPubSubFwdController(origin=LOGGER_NAME)	# mq messaging
 settings = None						# operational settings
 sc_sources = None					# source controller
+commands = Commands()
 
 # configuration
 cfg_main = None		# main
@@ -85,47 +81,6 @@ cfg_gpio = None		# GPIO setup
 #
 def printer( message, level=LL_INFO, continuation=False, tag=LOG_TAG ):
 	logger.log(level, message, extra={'tag': tag})
-
-# ********************************************************************************
-# Load configuration
-#
-def load_cfg_main():
-	""" load main configuration """
-	config = configuration_load(LOGGER_NAME,args.config)
-	return config
-
-def load_cfg_zmq():
-	""" load zeromq configuration """	
-	if not 'zeromq' in cfg_main:
-		printer('Error: Configuration not loaded or missing ZeroMQ, using defaults:')
-		printer('Publisher port: {0}'.format(args.port_publisher))
-		printer('Subscriber port: {0}'.format(args.port_subscriber))
-		#cfg_main["zeromq"] = { "port_publisher": DEFAULT_PORT_PUB, "port_subscriber":DEFAULT_PORT_SUB } }
-		config = { "port_publisher": DEFAULT_PORT_PUB, "port_subscriber":DEFAULT_PORT_SUB }
-		return config
-	else:
-		config = {}
-		# Get portnumbers from either the config, or default value
-		if 'port_publisher' in cfg_main['zeromq']:
-			config['port_publisher'] = cfg_main['zeromq']['port_publisher']
-		else:
-			config['port_publisher'] = DEFAULT_PORT_PUB
-		
-		if 'port_subscriber' in cfg_main['zeromq']:
-			config['port_subscriber'] = cfg_main['zeromq']['port_subscriber']		
-		else:
-			config['port_subscriber'] = DEFAULT_PORT_SUB
-			
-		return config
-
-def load_cfg_daemon():
-	""" load daemon configuration """
-	if 'daemons' not in cfg_main:
-		return
-	else:
-		for daemon in cfg_main['daemons']:
-			if 'script' in daemon and daemon['script'] == os.path.basename(__file__):
-				return daemon
 
 # NOT USED AT THE MOMENT...
 def process_queue():
@@ -1159,36 +1114,28 @@ def setup():
 	global cfg_daemon
 	global cfg_gpio
 
-	# main
-	cfg_main = load_cfg_main()
+	cfg_main, cfg_zmq, cfg_daemon, cfg_gpio = load_cfg(
+		args.config,
+		['main','zmq','daemon','gpio'],
+		args.port_subscriber, args.port_subscriber,
+		daemon_script=os.path.basename(__file__),
+		logger_name=LOGGER_NAME	)
+	
 	if cfg_main is None:
 		printer("Main configuration could not be loaded.", level=LL_CRITICAL)
 		exit(1)
 	
-	# zeromq
-	if not args.port_publisher and not args.port_subscriber:
-		cfg_zmq = load_cfg_zmq()
-	else:
-		if args.port_publisher and args.port_subscriber:
-			pass
-		else:
-			load_cfg_zmq()
-	
-		# Pub/Sub port override
-		if args.port_publisher:
-			configuration['zeromq']['port_publisher'] = args.port_publisher
-		if args.port_subscriber:
-			configuration['zeromq']['port_subscriber'] = args.port_subscriber
-
 	if cfg_zmq is None:
 		printer("Error loading Zero MQ configuration.", level=LL_CRITICAL)
 		exit(1)
 			
-	# daemon
-	cfg_daemon = load_cfg_daemon()
 	if cfg_daemon is None:
 		printer("Daemon configuration could not be loaded.", level=LL_CRITICAL)
-		exit(1)	
+		exit(1)
+	
+	if cfg_gpio is None:
+		printer("GPIO configuration could not be loaded.", level=LL_CRITICAL)
+		exit(1)
 	
 	#
 	# ZMQ

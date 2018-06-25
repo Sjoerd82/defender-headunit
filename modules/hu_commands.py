@@ -199,8 +199,15 @@ class Commands(object):
 				'path': '/player/track'
 			},
 			
-			{	'name': 'VOLUME',
-				'params': [ {'name':'volume', 'required':True,'help':'Volume in percentage'} ],
+			{	'name': 'VOLUME-GET',
+				'params': None,
+				'description': 'Set volume',
+				'command': 'GET',
+				'path': '/volume'
+			},
+			
+			{	'name': 'VOLUME-SET',
+				'params': [ {'name':'volume', 'required':True, 'datatype': (str,unicode,float), 'choices':['up','down','PERCENTAGE'], 'help':'Volume in percentage'} ],
 				'description': 'Set volume',
 				'command': 'PUT',
 				'path': '/volume'
@@ -317,11 +324,26 @@ class Commands(object):
 		if ix is not None:
 			return self.function_mq_map[ix]
 
-	#def validate_args(**args):
+	def validate(self, command):
+		""" Decorator function.
+			Validates arguments.
+			Returns list of valid arguments, None (no arguments) or False (invalid)
+		"""
+		def decorator(fn):
+			def decorated(*args,**kwargs):
+				if args in kwargs:
+					kwargs['args'] = self.validate_args(command,list_of_args)
+				else:
+					kwargs['args'] = None
+				return fn(*args,**kwargs)
+			return decorated
+		return decorator		
+	
 	def validate_args(self, command, args): #, repeat=False):
 		"""
 		args must be a list of arguments
 		Returns list of args if valid (may return None if no params)
+		TODO: Return False if invalid
 		"""
 
 		def strint_to_bool(value):
@@ -373,7 +395,22 @@ class Commands(object):
 				else:
 					print "hu_commands.py: Validate: Datatype: FAIL"
 					return None
-					
+
+			# choices (case insensitive, valid for strings ONLY)
+			if ( 'choices' in defs[i] and
+				 isinstance(arg, str) and
+				 not arg.lower() in [choice.lower() for choice in defs[i]['choices']] ):
+					if 'FLOAT_PERCENTAGE' in defs[i]['choices'] and arg.endswith('%') and isfloatint(arg[:-1]):
+						pass
+					elif 'INT_PERCENTAGE' in defs[i]['choices'] and arg.endswith('%') and isint(arg[:-1]):
+						pass
+					elif 'FLOAT_SIGNED' in defs[i]['choices'] and (arg.startswith('+') or arg.startswith('-')) and isfloatint(arg[1:]):
+						pass
+					elif 'INT_SIGNED' in defs[i]['choices'] and (arg.startswith('+') or arg.startswith('-')) and isint(arg[1:]):
+						pass
+					else:
+						return False
+						
 		if len(defs)-len(args) > 0:
 			for arg_def in defs[len(args):len(defs)]:
 				print arg_def

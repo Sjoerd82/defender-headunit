@@ -11,6 +11,8 @@
 # Only one mode group is supported at the moment!
 #
 
+# MQ: Pub & Sub
+
 # Button presses are NOT asynchronous!! i.e. wait until a button press is handled before the next button can be handled.
 # TODO: Consider making them asynchronous, or at least the update lib (long) / volume (short) buttons
 
@@ -23,12 +25,8 @@ import os						#
 from time import sleep
 from operator import itemgetter
 
-#from time import clock			# cpu time, not easily relateable to ms.
 from datetime import datetime
 from logging import getLogger	# logger
-
-import gobject					# main loop
-from dbus.mainloop.glib import DBusGMainLoop
 
 #sys.path.append('../modules')
 sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
@@ -45,9 +43,6 @@ DESCRIPTION = "GPIO Remote Control"
 BANNER = "GPIO Controller Daemon"
 LOG_TAG = 'CTGPIO'
 LOGGER_NAME = 'ctgpio'
-
-DEFAULT_CONFIG_FILE = '/etc/configuration.json'
-DEFAULT_LOG_LEVEL = LL_INFO
 SUBSCRIPTIONS = []
 
 # global variables
@@ -55,7 +50,7 @@ logger = None
 args = None
 messaging = MqPubSubFwdController(origin=LOGGER_NAME)
 gpio = None
-commands = Commands()
+command = Commands()
 
 # configuration
 cfg_main = None		# main
@@ -102,7 +97,7 @@ def printer( message, level=LL_INFO, continuation=False, tag=LOG_TAG ):
 # return False to return a 500 error thingy
 # return None to not return anything
 
-@messaging.handle_mq('/mode/list', cmd='GET')
+@messaging.handle_mq('/mode/list','GET')
 def testje_get_list(path=None, cmd=None, args=None, data=None):
 	"""
 	Return all modes. No parameters
@@ -118,7 +113,7 @@ def testje_get_list(path=None, cmd=None, args=None, data=None):
 	printer("MQ: {0} {1}, returning all known modes: {2} ".format(cmd,path,ret))
 	return ret
 
-@messaging.handle_mq('/mode/active')
+@messaging.handle_mq('/mode/active','GET')
 def testje_get_active(path=None, cmd=None, args=None, data=None):
 	"""
 	Return active modes. No parameters
@@ -128,47 +123,48 @@ def testje_get_active(path=None, cmd=None, args=None, data=None):
 	return ret
 
 @messaging.handle_mq('/mode/set','PUT')
+@command.validate('MODE-SET')
 def mq_mode_set(path=None, cmd=None, args=None, data=None):
 	"""
 	Set mode. Param: Mode
 	Returns True if succeful, False if not
-	TODO: perhaps do more checking?
 	"""
-	valid_arg = commands.validate_args('MODE-SET',args)
-	if valid_arg is not None:
-		printer("MQ: {0} {1}, setting active mode(s): {2} ".format(cmd,path,valid_arg))
-		gpio.set_mode(valid_arg)
+	#valid_arg = commands.validate_args('MODE-SET',args)
+	if args is not None and args is not False:
+		printer("MQ: {0} {1}, setting active mode(s): {2} ".format(cmd,path,args))
+		gpio.set_mode(args)
 		return True
 	else:
 		return False
 
-@messaging.handle_mq('/mode/change', cmd='PUT')
+@messaging.handle_mq('/mode/change','PUT')
+@command.validate('MODE-CHANGE')
 def mq_mode_change_put(path=None, cmd=None, args=None, data=None):
 	"""
 	Change modes; MODE-CHANGE
 	Args:    Pairs of Mode-State
 	Returns: None
 	"""
-	valid_args = commands.validate_args('MODE-CHANGE',args)
-	if valid_args is not None and valid_args is not False:
+	#valid_args = commands.validate_args('MODE-CHANGE',args)
+	if args is not None and args is not False:
 		print "DEBUG, before: {0}".format(gpio.activemodes())
-		gpio.change_modes(valid_args)
+		gpio.change_modes(args)
 		printer("Active Modes: {0}".format(gpio.activemodes()))
 	else:
 		printer("put_change: Arguments: [FAIL]",level=LL_ERROR)
-	
 	return None
 		
 @messaging.handle_mq('/mode/unset','PUT')
+@command.validate('MODE-UNSET')
 def mq_mode_unset(path=None, cmd=None, args=None, data=None):
 	"""
 	Unset mode
 	Arg: Mode
 	Returns: None
 	"""
-	valid_arg = commands.validate_args('MODE-UNSET',args)
-	gpio.set_mode(valid_arg,False)
-	printer("MQ: {0} {1}, unsetting mode: {2} ".format(cmd,path,valid_arg))
+	#args = commands.validate_args('MODE-UNSET',args)
+	gpio.set_mode(args,False)
+	printer("MQ: {0} {1}, unsetting mode: {2} ".format(cmd,path,args))
 	return None
 
 
@@ -196,8 +192,8 @@ def cb_gpio_function(code, arguments):
 	"""
 	print "cb_gpio_function: code={0}, arguments={1}".format(code,arguments)
 	#print "CALL: {0}".format(function)
-	if code in commands.command_list:
-		cmd = commands.get_command(code)
+	if code in command.command_list:
+		cmd = command.get_command(code)
 		printer("Executing: {0}".format(code))
 		zmq_path = cmd['path']
 		zmq_command = cmd['command']
@@ -297,7 +293,6 @@ def setup():
 	global cfg_daemon
 	global cfg_gpio
 
-	# main
 	cfg_main, cfg_zmq, cfg_daemon, cfg_gpio = load_cfg(
 		args.config,
 		['main','zmq','daemon','gpio'],

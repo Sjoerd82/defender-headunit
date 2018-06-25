@@ -193,6 +193,9 @@ class GpioController(object):
 	def set_mode(self,mode,state=True):
 		"""
 		Set given mode to active, or deactivate if state is False.
+		
+		WHAT IF A MODE DOESNT EXIST, BUT T
+		
 		"""
 		for key,val in self.ms_all.iteritems():
 			if val.index(mode) is not None:

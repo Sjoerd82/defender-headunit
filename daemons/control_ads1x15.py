@@ -11,6 +11,9 @@
 # http://www.ti.com/lit/ds/symlink/ads1115.pdf
 #
 
+# MQ: Pub only
+
+
 # Button presses are NOT asynchronous!! i.e. wait until a button press is handled before the next button can be handled.
 # TODO: Consider making them asynchronous, or at least the update lib (long) / volume (short) buttons
 
@@ -40,7 +43,7 @@ LOGGER_NAME = 'ad1x15'
 # global variables
 logger = None
 args = None
-messaging = MqPubSubFwdController()
+messaging = MqPubSubFwdController(origin=LOGGER_NAME)
 adc = None
 
 # configuration
@@ -54,47 +57,6 @@ cfg_zmq = None		# Zero MQ
 #
 def printer( message, level=LL_INFO, continuation=False, tag=LOG_TAG ):
 	logger.log(level, message, extra={'tag': tag})
-
-# ********************************************************************************
-# Load configuration
-#
-def load_cfg_main():
-	""" load main configuration """
-	config = configuration_load(LOGGER_NAME,args.config)
-	return config
-
-def load_cfg_zmq():
-	""" load zeromq configuration """	
-	if not 'zeromq' in cfg_main:
-		printer('Error: Configuration not loaded or missing ZeroMQ, using defaults:')
-		printer('Publisher port: {0}'.format(args.port_publisher))
-		printer('Subscriber port: {0}'.format(args.port_subscriber))
-		#cfg_main["zeromq"] = { "port_publisher": DEFAULT_PORT_PUB, "port_subscriber":DEFAULT_PORT_SUB } }
-		config = { "port_publisher": DEFAULT_PORT_PUB, "port_subscriber":DEFAULT_PORT_SUB }
-		return config
-	else:
-		config = {}
-		# Get portnumbers from either the config, or default value
-		if 'port_publisher' in cfg_main['zeromq']:
-			config['port_publisher'] = cfg_main['zeromq']['port_publisher']
-		else:
-			config['port_publisher'] = DEFAULT_PORT_PUB
-		
-		if 'port_subscriber' in cfg_main['zeromq']:
-			config['port_subscriber'] = cfg_main['zeromq']['port_subscriber']		
-		else:
-			config['port_subscriber'] = DEFAULT_PORT_SUB
-			
-		return config
-
-def load_cfg_daemon():
-	""" load daemon configuration """
-	if 'daemons' not in cfg_main:
-		return
-	else:
-		for daemon in cfg_main['daemons']:
-			if 'script' in daemon and daemon['script'] == os.path.basename(__file__):
-				return daemon
 
 #********************************************************************************
 # Parse command line arguments
@@ -132,32 +94,21 @@ def setup():
 	global cfg_daemon
 
 	# main
-	cfg_main = load_cfg_main()
+	cfg_main, cfg_zmq, cfg_daemon, cfg_gpio = load_cfg(
+		args.config,
+		['main','zmq','daemon','gpio'],
+		args.port_subscriber, args.port_subscriber,
+		daemon_script=os.path.basename(__file__),
+		logger_name=LOGGER_NAME	)
+	
 	if cfg_main is None:
 		printer("Main configuration could not be loaded.", level=LL_CRITICAL)
 		exit(1)
 	
-	# zeromq
-	if not args.port_publisher and not args.port_subscriber:
-		cfg_zmq = load_cfg_zmq()
-	else:
-		if args.port_publisher and args.port_subscriber:
-			pass
-		else:
-			load_cfg_zmq()
-	
-		# Pub/Sub port override
-		if args.port_publisher:
-			configuration['zeromq']['port_publisher'] = args.port_publisher
-		if args.port_subscriber:
-			configuration['zeromq']['port_subscriber'] = args.port_subscriber
-
 	if cfg_zmq is None:
 		printer("Error loading Zero MQ configuration.", level=LL_CRITICAL)
 		exit(1)
 			
-	# daemon
-	cfg_daemon = load_cfg_daemon()
 	if cfg_daemon is None:
 		printer("Daemon configuration could not be loaded.", level=LL_CRITICAL)
 		exit(1)
