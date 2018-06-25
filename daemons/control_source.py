@@ -1114,6 +1114,10 @@ def setup():
 	global cfg_daemon
 	global cfg_gpio
 
+	print args.config
+	print args.port_subscriber
+	print args.port_subscriber
+	print os.path.basename(__file__)
 	cfg_main, cfg_zmq, cfg_daemon, cfg_gpio = load_cfg(args.config, ['main','zmq','daemon','gpio'], args.port_subscriber, args.port_subscriber, daemon_script=os.path.basename(__file__), logger_name='srcctrl'	)	#TODO ?????????
 
 	#cfg_main, cfg_zmq, cfg_daemon, cfg_gpio = load_cfg(
