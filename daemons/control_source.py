@@ -68,7 +68,7 @@ args = None							# command line arguments
 messaging = MqPubSubFwdController(origin=LOGGER_NAME)	# mq messaging
 settings = None						# operational settings
 sc_sources = None					# source controller
-commands = Commands()
+command = Commands()
 
 # configuration
 cfg_main = None		# main
@@ -105,37 +105,34 @@ def validate_args(args, min_args, max_args):
 	return True
 
 # Sub Functions must return None (invalid params) or a {data} object.
-@messaging.handle_mq('/source/primary', cmd='GET')
-def get_primary(path=None, cmd=None, args=None, data=None):
-	"""	Retrieve Primary Sources
+# Value returned by MQ functions is used as payload, in case something must be returned.
+# Return codes may be returned by returning a tuple of payload, code.
+# If no tuple/code sent out the following is assumed:
+# True ->	200
+# None -> 	200
+# False ->	500
 
-		Arguments:
-			None			Retrieve list of all sources
-		Return data:
-			List of Sources
-			
-		Arguments:
-			<source_id>		Retrieve specified source
-		Return data:
-			Specified source
-			
-		Return codes:
-			200		OK
-			500		Error
+@messaging.handle_mq('/source/primary', cmd='GET')
+@command.validate()
+def get_primary(path=None, cmd=None, args=None, data=None):
 	"""
-	valid = validate_args(args,0,1)
-	if not valid:
-		return None
-	
+	Retrieve details for given index, or all indexes, if omitted.
+	"""
+	code = 200
 	if not args:
 		ret = sc_sources.source_all()
 	elif len(args) == 1:
-		ret = sc_sources.source(args[0])
-	
-	return ret
+		try:
+			ret = sc_sources.source(args[0])
+		except IndexError:
+			printer("Get Primary Source: Invalid Index requested",level=LL_WARNING)
+			ret = None
+			code = 500
+	return ret, code
 
 # the event will only be executed on a 200 return code
 @messaging.handle_mq('/source/primary', cmd='PUT', event='/events/source/active')
+@command.validate
 def put_primary(path=None, cmd=None, args=None, data=None):
 	""" Set active (sub)source to <id> (<subid>). If "P" then also start playing.
 
@@ -150,11 +147,7 @@ def put_primary(path=None, cmd=None, args=None, data=None):
 			200		OK			=> sends /events/source/active message
 			500		Error
 	"""
-	valid = validate_args(args,0,3)
-	if not valid:
-		return None
-		
-	elif len(args) == 1:
+	if len(args) == 1:
 		ret = sc_sources.select(args[0])
 	elif len(args) == 2:
 		ret = sc_sources.select(args[0],args[1])
@@ -254,6 +247,7 @@ def get_subsource(path=None, cmd=None, args=None, data=None):
 	return ret
 
 @messaging.handle_mq('/source/subsource', cmd='PUT', event='/events/source/active')
+@command.validate
 def put_subsource(path=None, cmd=None, args=None, data=None):
 	"""Set active subsource to <subid>. If "P" then also start playing.
 
@@ -316,6 +310,7 @@ def del_subsource(path=None, cmd=None, args=None, data=None):
 	return ret
 	
 @messaging.handle_mq('/source/available', cmd='PUT')
+@command.validate
 def put_available(path=None, cmd=None, args=None, data=None):
 	"""	Mark (sub)source as (un)available
 		Arguments:
@@ -342,6 +337,7 @@ def put_available(path=None, cmd=None, args=None, data=None):
 	return ret
 
 @messaging.handle_mq('/source/next', cmd='PUT')
+@command.validate
 def put_next(path=None, cmd=None, args=None, data=None):
 	"""	Change to next available (sub)source and start playing
 		Arguments:
@@ -372,6 +368,7 @@ def put_next(path=None, cmd=None, args=None, data=None):
 	return False
 
 @messaging.handle_mq('/source/prev', cmd='PUT', event='/events/source/active')
+@command.validate
 def put_prev(path=None, cmd=None, args=None, data=None):
 	"""	Change to prev available (sub)source and start playing
 		Arguments:
@@ -393,6 +390,7 @@ def put_prev(path=None, cmd=None, args=None, data=None):
 
 
 @messaging.handle_mq('/source/check', cmd='PUT')
+@command.validate
 def put_check(path=None, cmd=None, args=None, data=None):
 	"""	Do an availability check on given or current source
 		Arguments:
@@ -510,6 +508,7 @@ def get_folders(args):
 '''
 
 @messaging.handle_mq('/player/pause', cmd='PUT')
+@command.validate
 def put_pause(path=None, cmd=None, args=None, data=None):
 	"""	Enable/Disable Pause
 		Arguments:		on|off|toggle
@@ -527,6 +526,7 @@ def put_pause(path=None, cmd=None, args=None, data=None):
 	return ret
 
 @messaging.handle_mq('/player/state', cmd='GET')
+@command.validate
 def get_state(path=None, cmd=None, args=None, data=None):
 	"""	Get play state
 		Arguments:		None
@@ -577,6 +577,7 @@ def put_state(path=None, cmd=None, args=None, data=None):
 
 
 @messaging.handle_mq('/player/random', cmd='PUT')
+@command.validate
 def put_random(path=None, cmd=None, args=None, data=None):
 	"""	Set random mode
 		Arguments:		on|off|toggle|mode
@@ -614,6 +615,7 @@ def get_randommode(args):
 '''
 
 @messaging.handle_mq('/player/next', cmd='PUT')
+@command.validate
 def put_next(path=None, cmd=None, args=None, data=None):
 	"""	Next track
 		Arguments:
@@ -635,6 +637,7 @@ def put_next(path=None, cmd=None, args=None, data=None):
 	return ret
 
 @messaging.handle_mq('/player/prev', cmd='PUT')
+@command.validate
 def put_prev(path=None, cmd=None, args=None, data=None):
 	"""	Prev track
 		Arguments:
@@ -726,6 +729,7 @@ def put_update_location(args):
 '''
 
 @messaging.handle_mq('/player/update/source', cmd='PUT')
+@command.validate
 def put_update_source(path=None, cmd=None, args=None, data=None):
 	"""	Update MPD for source
 		Arguments:		Source index
@@ -1092,7 +1096,7 @@ def parse_args():
 # Setup
 #
 def setup():
-	
+
 	#
 	# Logging
 	# -> Output will be logged to the syslog, if -b specified, otherwise output will be printed to console

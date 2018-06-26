@@ -18,12 +18,12 @@ from time import sleep
 sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
 from hu_msg import MqPubSubFwdController
+from hu_commands import Commands
 
 # *******************************************************************************
 # Global variables and constants
 #
 DESCRIPTION = "Headunit CLI"
-#WELCOME = 
 LOG_TAG = None
 LOGGER_NAME = "None"
 
@@ -39,278 +39,12 @@ messaging = None
 cfg_main = None		# main
 cfg_zmq = None		# Zero MQ
 
-commands = []
+commandX = Commands()	#TODO: rename
 
 mq_cmd = None
 mq_path = None
 mq_args = None
 mq_rpath = None
-
-
-app_commands =	[
-	{	'name': 'source-list',
-		'params': None,
-		'description': 'List primary sources',
-		'command': 'GET',
-		'path': '/source/primary'
-	},
-	{	'name': 'source-check',
-		'params': [
-			{'name':'index','required':False, 'help':''},
-			{'name':'subindex','required':False, 'help':''}
-		],
-		'description': 'Check source availability',
-		'command': 'PUT',
-		'path': '/source/check'
-	},
-	{	'name': 'source-select',
-		 'params': [
-			{'name':'index', 'required':True, 'help':''},
-			{'name':'subindex','required':False, 'help':''}
-		],
-		 'description': 'Select a source',
-		 'command':'PUT',
-		 'path': '/source/subsource'
-	},
-	{	'name': 'source-next-primary',
-		'params': None,
-		'description': 'Select next primary source',
-		'command': 'PUT',
-		'path': '/source/next_primary'
-	},
-	{	'name': 'source-prev-primary',
-		'params': None,
-		'description': 'Select previous primary source',
-		'command': 'PUT',
-		'path': '/source/prev_primary'
-	},	
-	{	'name': 'source-next',
-		'params': None,
-		'description': 'Select next source',
-		'command': 'PUT',
-		'path': '/source/next'
-	},
-	{	'name': 'source-prev',
-		'params': None,
-		'description': 'Select previous source',
-		'command': 'PUT',
-		'path': '/source/prev'
-	},
-	{	'name': 'source-available',
-		 'params': [
-			{'name':'availability', 'required':True, 'help':''},
-			{'name':'index', 'required':True, 'help':''},
-			{'name':'subindex','required':True, 'help':''}
-		],
-		'description': 'Set source availability',
-		'command': 'PUT',
-		'path': '/source/available'
-	},
-	{	'name': 'source-details',
-		'params': [
-			{'name':'index','required':False, 'help':'Source index'},
-			{'name':'subindex','required':False, 'help':'Source subindex'}
-		],
-		'description': 'Get source details',
-		'command': 'GET',
-		'path': '/source/subsource'
-	},
-	{	'name': 'source-update',
-		'params': [
-			{'name':'index','required':False, 'help':'Source index'},
-			{'name':'subindex','required':False, 'help':'Source subindex'}
-		],
-		'description': 'Update source (MPD: Source Database)',
-		'command': 'PUT',
-		'path': '/source/update'
-	},
-	{	'name': 'source-update-location',
-		'params': [
-			{'name':'location','required':True, 'help':'Relative location, as seen from MPD'}
-		],
-		'description': 'Update MPD database for given location',
-		'command': 'PUT',
-		'path': '/source/update-location'
-	},
-	{	'name': 'player-play',
-		'params': None,
-		'description': 'Start playback',
-		'command': 'PUT',
-		'path': '/player/state',
-		'params_override': '{"state":"play"}'
-	},
-	{	'name': 'player-pause',
-		'params': None,
-		'description': 'Pause playback',
-		'command': 'PUT',
-		'path': '/player/state',
-		'params_override': '{"state":"pause"}'
-	},
-	{	'name': 'player-stop',
-		'params': None,
-		'description': 'Stop playback',
-		'command': 'PUT',
-		'path': '/player/state',
-		'params_override': '{"state":"stop"}'
-	},
-	{	'name': 'player-state',
-		'params': None,
-		'description': 'Get state',
-		'command': 'GET',
-		'path': '/player/state'
-	},
-	{	'name': 'player-next',
-		'params': None,
-		'description': 'Play next song',
-		'command': 'PUT',
-		'path': '/player/next'
-	},
-	{	'name': 'player-prev',
-		'params': None,
-		'description': 'Play previous song',
-		'command': 'PUT',
-		'path': '/player/prev'
-	},
-	{	'name': 'player-seek',
-		'params': [ {'name':'seconds', 'required':True, 'help':'Use a + or - sign to seek forward or reverse'} ],
-		'description': 'Seek',
-		'command': 'PUT',
-		'path': '/player/seek'
-	},
-	{	'name': 'player-folders',
-		'params': None,
-		'description': 'List folders',
-		'command': 'GET',
-		'path': '/player/folders'
-	},
-	{	'name': 'player-nextfolder',
-		'params': None,
-		'description': 'Next folder',
-		'command': 'PUT',
-		'path': '/player/nextfolder'
-	},
-	{	'name': 'player-prevfolder',
-		'params': None,
-		'description': 'Prev folder',
-		'command': 'PUT',
-		'path': '/player/prevfolder'
-	},
-	{	'name': 'player-update',
-		'params': [ {'name':'location', 'required':False, 'help':'Location to update'} ],
-		'description': 'Update MPD database',
-		'command': 'PUT',
-		'path': '/player/update'
-	},
-	{	'name': 'player-random-modes',
-		'params': None,
-		'description': 'Get available random modes',
-		'command': 'GET',
-		'path': '/player/randommode'
-	},
-	{	'name': 'player-random',
-		'params': [ {'name':'mode', 'required':False, 'help':'ON | OFF | TOGGLE (default)'} ],
-		'description': 'Set random',
-		'command': 'PUT',
-		'path': '/player/random'
-	},
-	{	'name': 'player-details',
-		'params': None,
-		'description': 'Get player details',
-		'command': 'GET',
-		'path': '/player/track'
-	},
-	{	'name': 'volume',
-		'params': [ {'name':'volume', 'required':True,'help':'Volume in percentage'} ],
-		'description': 'Set volume',
-		'command': 'PUT',
-		'path': '/volume'
-	},
-	{	'name': 'volume-att',
-		'params': [ {'name':'mode', 'required':False, 'help':'ON (default) | OFF | TOGGLE'} ],
-		'description': 'Set volume to ATT level',
-		'command': 'PUT',
-		'path': '/volume/att'
-	},
-	{	'name': 'volume-mute',
-		'params': [ {'name':'mode', 'required':False, 'help':'ON | OFF | TOGGLE (default)'} ],
-		'description': 'Mute volume',
-		'command': 'PUT',
-		'path': '/volume/mute'
-	},
-	{	'name': 'eca-chainsetup-get',
-		'params': None,
-		'description': 'Get current ecasound chainsetup',
-		'command': 'GET',
-		'path': '/ecasound/chainsetup'
-	},
-	{	'name': 'eca-chainsetup-set',
-		'params': [ {'name':'chainsetup', 'required':True, 'help':'Name of chain setup'} ],
-		'description': 'Select ecasound chainsetup',
-		'command': 'PUT',
-		'path': '/ecasound/chainsetup'
-	},
-	{	'name': 'mode-change',
-		'params': [ {'name':'mode', 'required':True, 'datatype': 'str', 'help':'Mode to set'},
-					{'name':'state', 'required':True, 'datatype': 'bool', 'default': False, 'help':'True or False'}
-		],
-		'params_repeat': True,
-		'description': 'Set a number of modes at once',
-		'command': 'PUT',
-		'path': '/mode/change'
-	},
-	{	'name': 'mode-set',
-		'params': [ {'name':'mode', 'required':True, 'help':'Mode to set'},
-					{'name':'state', 'required':False, 'help':'True or False'}
-		],
-		'description': 'Set a mode',
-		'command': 'PUT',
-		'path': '/mode/set'
-	},
-	{	'name': 'mode-unset',
-		'params': [ {'name':'mode', 'required':True, 'help':'Mode to unset'} ],
-		'description': 'Unset a mode',
-		'command': 'PUT',
-		'path': '/mode/unset'
-	},	
-	{	'name': 'modes-list',
-		'params': None,
-		'description': 'Get list of registered modes',
-		'command': 'GET',
-		'path': '/mode/list'
-	},
-	{	'name': 'modes-active',
-		'params': None,
-		'description': 'Get list of currently active modes',
-		'command': 'GET',
-		'path': '/mode/active'
-	},
-	{	'name': 'mode-test1',
-		'params': None,
-		'description': 'TEST PUT',
-		'command': 'PUT',
-		'path': '/mode/test',
-		'wait_for_reply': False
-	},
-	{	'name': 'mode-test2',
-		'params': None,
-		'description': 'TEST GET',
-		'command': 'GET',
-		'path': '/mode/test',
-		'wait_for_reply': False
-	},
-	{	'name': 'system-reboot',
-		'params': [ {'name':'timer', 'required':False, 'help':'Time in seconds to shutdown. Default: 0'} ],
-		'description': 'Reboot system',
-		'command': 'PUT',
-		'path': '/system/reboot'
-	},
-	{	'name': 'system-shutdown',
-		'params': [ {'name':'timer', 'required':False, 'help':'Time in seconds to shutdown. Default: 0'} ],
-		'description': 'Shutdown system' ,
-		'command': 'PUT',
-		'path': '/system/shutdown'
-	}
-	]
 	
 # ********************************************************************************
 # Load configuration
@@ -345,8 +79,6 @@ def load_cfg_zmq():
 		return config
 				
 # ********************************************************************************
-# 
-#
 def print_dict(obj, nested_level=0):
 	spacing = '   '
 	key_line = 20
@@ -387,28 +119,18 @@ def parse_args():
 		epilog += '\nRun "{0} help <command>" explains how to use the command\n'.format(os.path.basename(__file__))
 		return epilog
 
-	def list_of_commands():
-		cmd_list = ""
-		for command in app_commands:
-			cmd_list += command['name'] +"\n"
-		return cmd_list
-
 	def list_of_commands_descr():
 		cmd_list = ""
-		for command in app_commands:
-			cmd_list += " {0:20} {1}\n".format(command['name'],command['description'])
+		for cmd in commandX.function_mq_map:
+			cmd_list += " {0:20} {1}\n".format(cmd['name'],cmd['description'])
 		return cmd_list
 
 	import argparse
-	global commands
 	global args1
 	global args
 	DEFAULT_LOG_LEVEL = LL_INFO
 	DEFAULT_CONFIG_FILE = '/etc/configuration.json'
 
-	for command in app_commands:
-		commands.append(command['name'])
-	
 	# cmd.py -h										Show available commands and switches
 	# cmd.py [options] [help] <command> [args]		Execute command, with optional parmeter
 	# cmd.py [options] <mq> <-p> <-c> [-a] [-r] 	Execute specified path and command, with optional parameters and return path
@@ -448,7 +170,7 @@ def parse_args():
 	parser_mq.set_defaults(which='mq')
 
 	# commands
-	for command in app_commands:
+	for command in commandX.function_mq_map:
 		parser_cmd = subparsers.add_parser(command['name'])
 		parser_cmd.add_argument('command_args', action='store', nargs='*')
 		parser_cmd.set_defaults(which=command['name'])
@@ -470,18 +192,6 @@ def parse_args():
 
 def setup():
 	
-	#
-	# ZMQ
-	#
-	"""
-	global messaging
-	messaging = MqPubSubFwdController('localhost',DEFAULT_PORT_PUB,DEFAULT_PORT_SUB)
-	messaging.create_publisher()
-	messaging.create_subscriber()
-	#messaging.create_subscriber(SUBSCRIPTIONS)
-	sleep(1)
-	"""
-
 	global logger
 	logger = logging.getLogger(LOGGER_NAME)
 	logger.setLevel(logging.DEBUG)
@@ -610,26 +320,34 @@ def main():
 
 			exit(0)
 
-	
+	# Handle: help
 	if args.which == 'help':
 		if not args.command:
 			print "Available commands:"
 			print list_of_commands_descr()
 			print 'Run "{0} help <command>" for more details'.format(os.path.basename(__file__))
 			exit(1)
-		elif args.command[0] in commands:
-			ix = commands.index(args.command[0])
-			print "{0}".format(app_commands[ix]['description'])
+		elif args.command[0] in commandX.command_list:
+			ix = commandX.command_list.index(args.command[0])
+			print "{0}".format(commandX.function_mq_map[ix]['description'])
 			param_string = ""
-			if 'params' in app_commands[ix]:
+			if 'params' in commandX.function_mq_map[ix]:
 				param_help = ""
-				for param in app_commands[ix]['params']:
+				for param in commandX.function_mq_map[ix]['params']:
 					if param['required']:
 						param_string += "<"+param['name']+"> "
 					else:
 						param_string += "["+param['name']+"] "
+					param_name = param['name']
 					if 'help' in param:
-						param_help += " {0:12}{1}\n".format(param['name'], param['help'])
+						param_help += " {0:12}{1}\n".format(param_name,param['help'])
+						param_name = ""
+					if 'choices' in param:
+						param_help += " {0:12}{1}\n".format(param_name,param['choices'])
+						param_name = ""
+					if 'default' in param:
+						param_help += " {0:12}Default: {1}\n".format(param_name,param['default'])
+						param_name = ""
 			print "Syntax:\n {0} {1}".format(args.command[0],param_string)
 			if not param_help == "":
 				print "Parameters:"
@@ -669,19 +387,19 @@ def main():
 		exit(0)
 	
 	# Pre-defined command
-	if args.which in commands:
-		ix = commands.index(args.which)
+	if args.which in commandX.command_list:
+		ix = commandX.command_list.index(args.which)
 
-		mq_cmd = app_commands[ix]['command']
-		mq_path = app_commands[ix]['path']
-		if 'params_override' in app_commands[ix]:
-			mq_args = app_commands[ix]['params_override']
+		mq_cmd = commandX.function_mq_map[ix]['command']
+		mq_path = commandX.function_mq_map[ix]['path']
+		if 'params_override' in commandX.function_mq_map[ix]:
+			mq_args = commandX.function_mq_map[ix]['params_override']
 		else:
 		
 			""" JSON
 			params = {}
 			for pix, command_arg in enumerate(args.command_args):
-				key = app_commands[ix]['params'][pix]['name']
+				key = commandX.function_mq_map[ix]['params'][pix]['name']
 				params[key] = command_arg
 			
 			mq_args = json.dumps(params)
@@ -692,7 +410,7 @@ def main():
 			
 		#if mq_cmd == 'GET':
 		#mq_rpath = RETURN_PATH
-		if 'wait_for_reply' in app_commands[ix] and app_commands[ix]['wait_for_reply'] == False:
+		if 'wait_for_reply' in commandX.function_mq_map[ix] and commandX.function_mq_map[ix]['wait_for_reply'] == False:
 			mq_rpath = None
 		else:
 			mq_rpath = RETURN_PATH

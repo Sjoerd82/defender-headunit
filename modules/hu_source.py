@@ -781,7 +781,8 @@ class SourceController(object):
 		"""	
 		index = self.__check_index(index)
 		if index is False:
-			return False
+			raise IndexError
+			#return False
 
 		if index is None:
 			if self.iCurrentSource[0] is None:
