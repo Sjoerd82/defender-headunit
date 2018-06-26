@@ -373,7 +373,7 @@ class Commands(object):
 		Returns list of args (including defaults) if valid (may return None if no params)
 		Raises a ValueError if invalid.
 		"""
-
+		print "DEBUG.. hello from validate_args"
 		def strint_to_bool(value):
 			if isinstance(value, (str,unicode)) and value.lower() in ['true','on','1','t']:
 				return True

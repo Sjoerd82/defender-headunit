@@ -246,8 +246,8 @@ def get_subsource(path=None, cmd=None, args=None, data=None):
 
 	return ret
 
-@messaging.handle_mq('/source/subsource', cmd='PUT', event='/events/source/active')
 @command.validate
+@messaging.handle_mq('/source/subsource', cmd='PUT', event='/events/source/active')
 def put_subsource(path=None, cmd=None, args=None, data=None):
 	"""Set active subsource to <subid>. If "P" then also start playing.
 
@@ -309,8 +309,8 @@ def del_subsource(path=None, cmd=None, args=None, data=None):
 		
 	return ret
 	
-@messaging.handle_mq('/source/available', cmd='PUT')
 @command.validate
+@messaging.handle_mq('/source/available', cmd='PUT')
 def put_available(path=None, cmd=None, args=None, data=None):
 	"""	Mark (sub)source as (un)available
 		Arguments:
@@ -348,11 +348,7 @@ def put_next(path=None, cmd=None, args=None, data=None):
 			200		OK
 			500		Error
 	"""
-	valid = validate_args(args,0,0)
-	if not valid:
-		print "INVALID ARGS"
-		return None
-
+	print "AAAAARGS: {0}".format(args)
 	ret = sc_sources.select_next()
 	
 	# returns None if cannot change source
@@ -367,8 +363,8 @@ def put_next(path=None, cmd=None, args=None, data=None):
 	#return data
 	return False
 
-@messaging.handle_mq('/source/prev', cmd='PUT', event='/events/source/active')
 @command.validate
+@messaging.handle_mq('/source/prev', cmd='PUT', event='/events/source/active')
 def put_prev(path=None, cmd=None, args=None, data=None):
 	"""	Change to prev available (sub)source and start playing
 		Arguments:
