@@ -423,18 +423,19 @@ class MqPubSubFwdController(object):
 			Registers the MQ path (nothing more at the moment..)
 		"""
 		def decorator(fn):
-			key = self.__dispatcher_key(mq_path,cmd)
-			self.mq_path_list.append(prepostfix(mq_path).lower())
-			self.mq_path_func[key] = { 'function':fn, 'event':event }
-			
-			# add topic to subscriptions, if not already there
-			stripped = self.test_path(mq_path)
-			if stripped is not None:
-				self.topics.append(stripped)
-			
-			print "!DEBUG.. right now the list is: ".format(len(self.mq_path_list))
-			
 			def decorated(*args,**kwargs):
+				key = self.__dispatcher_key(mq_path,cmd)
+				self.mq_path_list.append(prepostfix(mq_path).lower())
+				self.mq_path_func[key] = { 'function':fn, 'event':event }
+				
+				# add topic to subscriptions, if not already there
+				stripped = self.test_path(mq_path)
+				if stripped is not None:
+					self.topics.append(stripped)
+				
+				print "!DEBUG.. right now the list is: ".format(len(self.mq_path_list))
+			
+				#def decorated(*args,**kwargs):
 				return fn(*args,**kwargs)
 			return decorated
 		return decorator
