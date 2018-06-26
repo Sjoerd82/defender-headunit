@@ -1093,6 +1093,14 @@ def parse_args():
 #
 def setup():
 
+	def test_load_cfg(config, configs, zmq_port_pub, zmq_port_sub, daemon_script=None, logger_name=None):
+		cfg_main = None
+		cfg_zmq = None
+		cfg_daemon = None
+		cfg_gpio = None
+
+		return cfg_main, cfg_zmq, cfg_daemon, cfg_gpio
+		
 	#
 	# Logging
 	# -> Output will be logged to the syslog, if -b specified, otherwise output will be printed to console
@@ -1118,7 +1126,10 @@ def setup():
 	print args.port_subscriber
 	print args.port_subscriber
 	print os.path.basename(__file__)
-	cfg_main, cfg_zmq, cfg_daemon, cfg_gpio = load_cfg(args.config, ['main','zmq','daemon','gpio'], args.port_subscriber, args.port_subscriber, daemon_script=os.path.basename(__file__), logger_name='srcctrl'	)	#TODO ?????????
+	print "1"
+	cfg_main, cfg_zmq, cfg_daemon, cfg_gpio = test_load_cfg(None,None,None,None, daemon_script=os.path.basename(__file__), logger_name='srcctrl'	)	#TODO ?????????
+	print "2"
+	cfg_main, cfg_zmq, cfg_daemon, cfg_gpio = test_load_cfg(args.config, ['main','zmq','daemon','gpio'], args.port_subscriber, args.port_subscriber, daemon_script=os.path.basename(__file__), logger_name='srcctrl'	)	#TODO ?????????
 
 	#cfg_main, cfg_zmq, cfg_daemon, cfg_gpio = load_cfg(
 	#	args.config,
