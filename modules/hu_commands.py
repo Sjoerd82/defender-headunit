@@ -348,21 +348,22 @@ class Commands(object):
 			If command could not be found then ???
 		"""
 		def decorator(fn):
-			def decorated(*args,**kwargs):
-				# add an empty args, if not present
-				if 'args' not in kwargs:
-					kwargs['args'] = None
-					
-				# derive from MQ-command mapping table
-				if ( command is None and
-					'path' in kwargs and
-					'cmd' in kwargs ):
-					command_to_validate = get_command_by_path(kwargs['path'],kwargs['cmd'])
-					kwargs['args'] = self.validate_args(command_to_validate,kwargs['args'])
-				# use provided command
-				else:
-					kwargs['args'] = self.validate_args(command,list_of_args)
+			#def decorated(*args,**kwargs):
+			# add an empty args, if not present
+			if 'args' not in kwargs:
+				kwargs['args'] = None
 				
+			# derive from MQ-command mapping table
+			if ( command is None and
+				'path' in kwargs and
+				'cmd' in kwargs ):
+				command_to_validate = get_command_by_path(kwargs['path'],kwargs['cmd'])
+				kwargs['args'] = self.validate_args(command_to_validate,kwargs['args'])
+			# use provided command
+			else:
+				kwargs['args'] = self.validate_args(command,list_of_args)
+				
+			def decorated(*args,**kwargs):
 				return fn(*args,**kwargs)
 			return decorated
 		return decorator		
