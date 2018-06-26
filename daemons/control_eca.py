@@ -719,7 +719,7 @@ def setup():
 	cfg_main, cfg_zmq, cfg_daemon, cfg_gpio = load_cfg(
 		args.config,
 		['main','zmq','daemon','gpio'],
-		args.port_subscriber, args.port_subscriber,
+		args.port_publisher, args.port_subscriber,
 		daemon_script=os.path.basename(__file__),
 		logger_name=LOGGER_NAME	)
 	

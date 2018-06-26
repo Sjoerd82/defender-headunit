@@ -1114,19 +1114,13 @@ def setup():
 	global cfg_daemon
 	global cfg_dummy
 
-	print args.config
-	print args.port_subscriber
-	print args.port_subscriber
-	print os.path.basename(__file__)
-	print "FAIL!"
 	cfg_main, cfg_zmq, cfg_daemon, cfg_dummy = load_cfg(
 		args.config,
 		['main','zmq','daemon'],
-		args.port_subscriber, args.port_subscriber,
+		args.port_publisher, args.port_subscriber,
 		daemon_script=os.path.basename(__file__),
 		logger_name=LOGGER_NAME	)
 	
-	exit(0)
 	if cfg_main is None:
 		printer("Main configuration could not be loaded.", level=LL_CRITICAL)
 		exit(1)
@@ -1138,11 +1132,7 @@ def setup():
 	if cfg_daemon is None:
 		printer("Daemon configuration could not be loaded.", level=LL_CRITICAL)
 		exit(1)
-	
-	#if cfg_gpio is None:
-	#	printer("GPIO configuration could not be loaded.", level=LL_CRITICAL)
-	#	exit(1)
-	
+		
 	#
 	# ZMQ
 	#

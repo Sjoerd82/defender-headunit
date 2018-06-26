@@ -480,30 +480,22 @@ def load_cfg(config, configs, zmq_port_pub, zmq_port_sub, daemon_script=None, lo
 				break #only one
 		
 	# gpio
-	print "7"
 	if cfg_daemon is not None:
 		if 'directories' not in cfg_main or 'daemon-config' not in cfg_main['directories'] or 'config' not in cfg_daemon:
-			print "8"
-			return
+			cfg_gpio = None
 		else:		
-			print "9"
 			config_dir = cfg_main['directories']['daemon-config']
 			# TODO
 			config_dir = "/mnt/PIHU_CONFIG/"	# fix!
 			config_file = cfg_daemon['config']
-			print "10"
 			gpio_config_file = os.path.join(config_dir,config_file)
-			print "11"
 	
-		# load gpio configuration
-		if os.path.exists(gpio_config_file):
-			print "12"
-			cfg_gpio = configuration_load(logger_name,gpio_config_file)
-			print "13"
-		else:
-			print "ERROR: not found: {0}".format(gpio_config_file)
+			# load gpio configuration
+			if os.path.exists(gpio_config_file):
+				cfg_gpio = configuration_load(logger_name,gpio_config_file)
+			else:
+				print "ERROR: not found: {0}".format(gpio_config_file)
 
-	print "8"
 	return cfg_main, cfg_zmq, cfg_daemon, cfg_gpio
 		
 
