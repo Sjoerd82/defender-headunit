@@ -74,7 +74,7 @@ commands = Commands()
 cfg_main = None		# main
 cfg_daemon = None	# daemon
 cfg_zmq = None		# Zero MQ
-cfg_gpio = None		# GPIO setup
+#cfg_gpio = None		# GPIO setup
 
 # ********************************************************************************
 # Output wrapper
@@ -1092,15 +1092,7 @@ def parse_args():
 # Setup
 #
 def setup():
-
-	def test_load_cfg(config, configs, zmq_port_pub, zmq_port_sub, daemon_script=None, logger_name=None):
-		cfg_main = None
-		cfg_zmq = None
-		cfg_daemon = None
-		cfg_gpio = None
-
-		return cfg_main, cfg_zmq, cfg_daemon, cfg_gpio
-		
+	
 	#
 	# Logging
 	# -> Output will be logged to the syslog, if -b specified, otherwise output will be printed to console
@@ -1120,16 +1112,16 @@ def setup():
 	global cfg_main
 	global cfg_zmq
 	global cfg_daemon
-	global cfg_gpio
+	global cfg_dummy
 
 	print args.config
 	print args.port_subscriber
 	print args.port_subscriber
 	print os.path.basename(__file__)
 	print "FAIL!"
-	cfg_main, cfg_zmq, cfg_daemon, cfg_gpio = load_cfg(
+	cfg_main, cfg_zmq, cfg_daemon, cfg_dummy = load_cfg(
 		args.config,
-		['main','zmq','daemon','gpio'],
+		['main','zmq','daemon'],
 		args.port_subscriber, args.port_subscriber,
 		daemon_script=os.path.basename(__file__),
 		logger_name=LOGGER_NAME	)
@@ -1147,9 +1139,9 @@ def setup():
 		printer("Daemon configuration could not be loaded.", level=LL_CRITICAL)
 		exit(1)
 	
-	if cfg_gpio is None:
-		printer("GPIO configuration could not be loaded.", level=LL_CRITICAL)
-		exit(1)
+	#if cfg_gpio is None:
+	#	printer("GPIO configuration could not be loaded.", level=LL_CRITICAL)
+	#	exit(1)
 	
 	#
 	# ZMQ
