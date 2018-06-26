@@ -31,7 +31,7 @@ class Commands(object):
 				'command': 'PUT',
 				'params': [
 					{'name':'index', 'datatype':(int,),'required':True, 'help':'Source index'}
-				]
+				],
 				'path': '/source/primary'
 			},
 			
