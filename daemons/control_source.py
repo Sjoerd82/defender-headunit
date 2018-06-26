@@ -1126,19 +1126,15 @@ def setup():
 	print args.port_subscriber
 	print args.port_subscriber
 	print os.path.basename(__file__)
-	print "1"
-	cfg_main, cfg_zmq, cfg_daemon, cfg_gpio = test_load_cfg(None,None,None,None, daemon_script=os.path.basename(__file__), logger_name='srcctrl'	)	#TODO ?????????
-	print "2"
-	cfg_main, cfg_zmq, cfg_daemon, cfg_gpio = test_load_cfg(args.config, ['main','zmq','daemon','gpio'], args.port_subscriber, args.port_subscriber, daemon_script=os.path.basename(__file__), logger_name='srcctrl'	)	#TODO ?????????
-
-	#cfg_main, cfg_zmq, cfg_daemon, cfg_gpio = load_cfg(
-	#	args.config,
-	#	['main','zmq','daemon','gpio'],
-	#	args.port_subscriber, args.port_subscriber,
-	#	daemon_script=os.path.basename(__file__),
-	#	logger_name='srcctrl'	)	#TODO ?????????
-	#logger_name=LOGGER_NAME	)
+	print "FAIL!"
+	cfg_main, cfg_zmq, cfg_daemon, cfg_gpio = load_cfg(
+		args.config,
+		['main','zmq','daemon','gpio'],
+		args.port_subscriber, args.port_subscriber,
+		daemon_script=os.path.basename(__file__),
+		logger_name=LOGGER_NAME	)
 	
+	exit(0)
 	if cfg_main is None:
 		printer("Main configuration could not be loaded.", level=LL_CRITICAL)
 		exit(1)

@@ -437,17 +437,20 @@ def load_cfg(config, configs, zmq_port_pub, zmq_port_sub, daemon_script=None, lo
 	cfg_zmq = None
 	cfg_daemon = None
 	cfg_gpio = None
-
+	print "1"
 	printer("Hello from load_cfg",logger_name=logger_name)
 	
 	# main
 	LOGGER_NAME = 'gpio'	# TODO
 	cfg_main = configuration_load(logger_name,config)
+	print "2"
 
 	if cfg_main is None:
+		print "3"
 		return cfg_main, cfg_zmq, cfg_daemon, cfg_gpio
 	
 	# zeromq
+	print "4"
 	if not 'zeromq' in cfg_main:
 		printer('Error: Configuration not loaded or missing ZeroMQ, using defaults:')
 		printer('Publisher port: {0}'.format(zmq_port_pub))
@@ -468,12 +471,14 @@ def load_cfg(config, configs, zmq_port_pub, zmq_port_sub, daemon_script=None, lo
 
 	# TODO, integrate in above
 	# Pub/Sub port override
+	print "5"
 	if zmq_port_pub:
 		cfg_zmq['port_publisher'] = args.port_publisher
 	if zmq_port_sub:
 		cfg_zmq['port_subscriber'] = args.port_subscriber
 			
 	# daemon
+	print "6"
 	if 'daemons' in cfg_main and daemon_script is not None:
 		for daemon in cfg_main['daemons']:
 			if 'script' in daemon and daemon['script'] == daemon_script: #os.path.basename(__file__):
@@ -481,6 +486,7 @@ def load_cfg(config, configs, zmq_port_pub, zmq_port_sub, daemon_script=None, lo
 				break #only one
 		
 	# gpio
+	print "7"
 	if cfg_daemon is not None:
 		if 'directories' not in cfg_main or 'daemon-config' not in cfg_main['directories'] or 'config' not in cfg_daemon:
 			return
@@ -498,6 +504,7 @@ def load_cfg(config, configs, zmq_port_pub, zmq_port_sub, daemon_script=None, lo
 		else:
 			print "ERROR: not found: {0}".format(gpio_config_file)
 
+	print "8"
 	return cfg_main, cfg_zmq, cfg_daemon, cfg_gpio
 		
 
