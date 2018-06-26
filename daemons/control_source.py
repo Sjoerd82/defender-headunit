@@ -337,7 +337,6 @@ def put_available(path=None, cmd=None, args=None, data=None):
 	return ret
 
 @messaging.handle_mq('/source/next', cmd='PUT')
-@command.validate
 def put_next(path=None, cmd=None, args=None, data=None):
 	"""	Change to next available (sub)source and start playing
 		Arguments:
