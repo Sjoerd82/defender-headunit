@@ -435,6 +435,7 @@ class MqPubSubFwdController(object):
 			print "!DEBUG.. right now the list is: ".format(len(self.mq_path_list))
 			
 			def decorated(*args,**kwargs):
+				print "HOI!!"
 				return fn(*args,**kwargs)
 			return decorated
 		return decorator
