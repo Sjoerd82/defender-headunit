@@ -493,7 +493,6 @@ class MqPubSubFwdController(object):
 		# else, try wildcards
 		if key in self.mq_path_func:
 			# EXACT
-			print self.mq_path_func[key]['function']
 			ret = self.mq_path_func[key]['function'](path=path_dispatch, cmd=cmd, args=args, data=data)
 			if ret is not None:
 			
