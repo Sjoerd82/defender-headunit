@@ -116,7 +116,7 @@ def validate_args(args, min_args, max_args):
 # SOURCE
 
 @messaging.register('/source/primary', cmd='GET')
-@command.validate
+@command.validate()
 def get_primary(path=None, cmd=None, args=None, data=None):
 	"""
 	Retrieve details for given index, or all indexes, if omitted.
@@ -146,7 +146,7 @@ def get_primary(path=None, cmd=None, args=None, data=None):
 	return ret, code
 
 @messaging.register('/source/primary', cmd='PUT', event='/events/source/active')
-@command.validate
+@command.validate()
 def put_primary(path=None, cmd=None, args=None, data=None):
 	"""
 	Set active (sub)source to <id> (<subid>). If "P" then also start playing.
@@ -255,7 +255,7 @@ def del_primary(path=None, cmd=None, args=None, data=None):
 	return ret
 
 @messaging.register('/source/subsource', cmd='GET')
-@command.validate
+@command.validate()
 def get_subsource(path=None, cmd=None, args=None, data=None):
 	"""
 	Retrieve details for given index, or all indexes, if omitted.
@@ -384,7 +384,7 @@ def del_subsource(path=None, cmd=None, args=None, data=None):
 	return ret
 	
 @messaging.register('/source/available', cmd='PUT')
-@command.validate
+@command.validate()
 def put_available(path=None, cmd=None, args=None, data=None):
 	"""
 	Mark (sub)source as (un)available
@@ -419,7 +419,7 @@ def put_available(path=None, cmd=None, args=None, data=None):
 	return None, code
 
 @messaging.register('/source/next', cmd='PUT')
-@command.validate
+@command.validate()
 def put_next(path=None, cmd=None, args=None, data=None):
 	"""	
 	Change to next available (sub)source and start playing
@@ -442,7 +442,7 @@ def put_next(path=None, cmd=None, args=None, data=None):
 	return None, code
 
 @messaging.register('/source/prev', cmd='PUT', event='/events/source/active')
-@command.validate
+@command.validate()
 def put_prev(path=None, cmd=None, args=None, data=None):
 	"""	
 	Change to prev available (sub)source and start playing
@@ -466,7 +466,7 @@ def put_prev(path=None, cmd=None, args=None, data=None):
 
 # TODO: add event
 @messaging.register('/source/check', cmd='PUT')
-@command.validate
+@command.validate()
 def put_check(path=None, cmd=None, args=None, data=None):
 	"""
 	Do an availability check on given or current source
@@ -544,7 +544,7 @@ def put_check(path=None, cmd=None, args=None, data=None):
 # -----------------------------------------------------------------------------
 # PLAYER
 @messaging.register('/player/track', cmd='GET')
-@command.validate
+@command.validate()
 def get_track(path=None, cmd=None, args=None, data=None):
 	"""
 	Retrieve Track details
@@ -564,7 +564,7 @@ def get_track(path=None, cmd=None, args=None, data=None):
 	return ret
 	
 @messaging.register('/player/track', cmd='PUT')
-@command.validate
+@command.validate()
 def put_track(path=None, cmd=None, args=None, data=None):
 	"""
 	Play track at specified playlist position
@@ -603,7 +603,7 @@ def get_folders(args):
 '''
 
 @messaging.register('/player/pause', cmd='PUT')
-@command.validate
+@command.validate()
 def put_pause(path=None, cmd=None, args=None, data=None):
 	"""
 	Enable/Disable Pause
@@ -621,7 +621,7 @@ def put_pause(path=None, cmd=None, args=None, data=None):
 	return ret
 
 @messaging.register('/player/state', cmd='GET')
-@command.validate
+@command.validate()
 def get_state(path=None, cmd=None, args=None, data=None):
 	"""
 	Get play state
@@ -638,7 +638,7 @@ def get_state(path=None, cmd=None, args=None, data=None):
 
 # TODO: state object?
 @messaging.register('/player/state', cmd='PUT')
-@command.validate
+@command.validate()
 def put_state(path=None, cmd=None, args=None, data=None):
 	"""
 	Set play state
@@ -680,7 +680,7 @@ def put_state(path=None, cmd=None, args=None, data=None):
 
 # TODO: support special modes as argument
 @messaging.register('/player/random', cmd='PUT')
-@command.validate
+@command.validate()
 def put_random(path=None, cmd=None, args=None, data=None):
 	"""
 	Set random mode
@@ -712,7 +712,7 @@ def get_randommode(args):
 '''
 
 @messaging.register('/player/next', cmd='PUT')
-@command.validate
+@command.validate()
 def put_next(path=None, cmd=None, args=None, data=None):
 	"""
 	Next track
@@ -729,7 +729,7 @@ def put_next(path=None, cmd=None, args=None, data=None):
 	return ret
 
 @messaging.register('/player/prev', cmd='PUT')
-@command.validate
+@command.validate()
 def put_prev(path=None, cmd=None, args=None, data=None):
 	"""
 	Prev track
@@ -755,7 +755,7 @@ def put_prevfolder(args):
 
 # TODO: implement regular SEEK in hu_source (currently it's either fwd or rev)
 @messaging.register('/player/seek', cmd='PUT')
-@command.validate
+@command.validate()
 def put_seek(path=None, cmd=None, args=None, data=None):
 	"""
 	Seek

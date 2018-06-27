@@ -374,7 +374,7 @@ class Commands(object):
 			If command could not be found then ???
 		"""
 		def decorator(fn):
-			def decorated(*args,**kwargs):
+			def wrapper(*args,**kwargs):
 				# add an empty args, if not present
 				if 'args' not in kwargs:
 					kwargs['args'] = None
@@ -396,7 +396,7 @@ class Commands(object):
 				#	kwargs['args'] = self.validate_args(command,list_of_args)
 				
 				return fn(*args,**kwargs)
-			return decorated
+			return wrapper
 		return decorator		
 	
 	def validate_args(self, command, args): #, repeat=False):

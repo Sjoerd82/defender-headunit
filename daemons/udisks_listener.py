@@ -64,7 +64,7 @@ def printer( message, level=LL_INFO, continuation=False, tag=LOG_TAG ):
 # Sub Functions must return None (invalid params) or a {data} object.
 # TODO: event path
 @messaging.register('/udisks/devices', cmd='GET')
-@command.validate
+@command.validate()
 def get_devices(path=None, cmd=None, args=None, data=None):
 	"""	Retrieve List of Registered Devices """						
 	data = struct_data(attached_drives)

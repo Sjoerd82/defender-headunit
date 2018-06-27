@@ -98,7 +98,7 @@ def printer( message, level=LL_INFO, continuation=False, tag=LOG_TAG ):
 # return None to not return anything
 
 @messaging.register('/mode/list','GET')
-@command.validate
+@command.validate()
 def testje_get_list(path=None, cmd=None, args=None, data=None):
 	"""
 	Return all modes. No parameters
@@ -125,7 +125,7 @@ def testje_get_active(path=None, cmd=None, args=None, data=None):
 	return ret
 
 @messaging.register('/mode/set','PUT')
-@command.validate
+@command.validate()
 def mq_mode_set(path=None, cmd=None, args=None, data=None):
 	"""
 	Set mode. Param: Mode
@@ -140,7 +140,7 @@ def mq_mode_set(path=None, cmd=None, args=None, data=None):
 		return False
 
 @messaging.register('/mode/change','PUT')
-@command.validate
+@command.validate()
 def mq_mode_change_put(path=None, cmd=None, args=None, data=None):
 	"""
 	Change modes; MODE-CHANGE
@@ -162,7 +162,7 @@ def mq_mode_change_put(path=None, cmd=None, args=None, data=None):
 	return None, code
 		
 @messaging.register('/mode/unset','PUT')
-@command.validate
+@command.validate()
 def mq_mode_unset(path=None, cmd=None, args=None, data=None):
 	"""
 	Unset mode

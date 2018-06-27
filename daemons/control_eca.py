@@ -433,7 +433,7 @@ def get_data(ret,returndata=False,eventpath=None):
 # -----------------------------------------------------------------------------
 # MQ: /ecasound
 @messaging.register('/ecasound/chainsetup', cmd='GET')
-@command.validate
+@command.validate()
 def mq_eca_cs_get(path=None, cmd=None, args=None, data=None):
 	"""
 	Retrieve currently active chainsetup
@@ -447,7 +447,7 @@ def mq_eca_cs_get(path=None, cmd=None, args=None, data=None):
 	return chainsetup_filename
 	
 @messaging.register('/ecasound/chainsetup', cmd='PUT')
-@command.validate
+@command.validate()
 def mq_eca_cs_put(path=None, cmd=None, args=None, data=None):
 	"""
 	Set the active chainsetup 
@@ -494,7 +494,7 @@ def mq_eca_mode_active(path=None, cmd=None, args=None, data=None):
 #
 # TODO: Volume object?
 @messaging.register('/volume/master', cmd='GET')
-@command.validate
+@command.validate()
 def mq_master_get(path=None, cmd=None, args=None, data=None):
 	"""
 	Get master volume
@@ -511,7 +511,7 @@ def mq_master_get(path=None, cmd=None, args=None, data=None):
 	
 # TODO: level can be a float ????????? or not?
 @messaging.register('/volume/master', cmd='PUT', event='/event/volume/changed')
-@command.validate
+@command.validate()
 def mq_master_put(path=None, cmd=None, args=None, data=None):
 	"""
 	Set master volume
@@ -567,7 +567,7 @@ def mq_master_put(path=None, cmd=None, args=None, data=None):
 
 # TODO: level can be a float ????????? or not?
 @messaging.register('/volume/master/increase', cmd='PUT', event='/event/volume/changed')
-@command.validate
+@command.validate()
 def mq_master_increase_put(path=None, cmd=None, args=None, data=None):
 	"""
 	Increase Volume
@@ -596,7 +596,7 @@ def mq_master_increase_put(path=None, cmd=None, args=None, data=None):
 	
 # TODO: level can be a float ????????? or not?
 @messaging.register('/volume/master/decrease', cmd='PUT', event='/event/volume/changed')
-@command.validate
+@command.validate()
 def mq_master_decrease_put(path=None, cmd=None, args=None, data=None):
 	"""
 	Decrease Volume
@@ -626,7 +626,7 @@ def mq_master_decrease_put(path=None, cmd=None, args=None, data=None):
 	
 # TODO: implement feature: change level
 @messaging.register('/volume/att', cmd='PUT', event='/event/volume/att')
-@command.validate
+@command.validate()
 def mq_att_put(path=None, cmd=None, args=None, data=None):
 	"""
 	Set Attention (Att) mode
@@ -659,7 +659,7 @@ def mq_att_put(path=None, cmd=None, args=None, data=None):
 	get_data(None,eventpath='/events/volume/att')
 	
 @messaging.register('/volume/mute', cmd='PUT', event='/event/volume/mute')
-@command.validate
+@command.validate()
 def mq_mute_put(path=None, cmd=None, args=None, data=None):
 	"""
 	Set Mute
@@ -715,7 +715,7 @@ def mq_mode_set_data(path=None, cmd=None, args=None, data=None):
 # return None to not return anything
 
 @messaging.register('/mode/change', cmd='PUT')
-@command.validate
+@command.validate()
 def mq_mode_change_put(path=None, cmd=None, args=None, data=None):
 	"""
 	Change modes; MODE-CHANGE
@@ -739,7 +739,7 @@ def mq_mode_change_put(path=None, cmd=None, args=None, data=None):
 
 # TODO, only relevant if it's one of 'our' modes	
 @messaging.register('/mode/set', cmd='PUT')
-@command.validate
+@command.validate()
 def mq_mode_set(path=None, cmd=None, args=None, data=None):
 	pass
 	
