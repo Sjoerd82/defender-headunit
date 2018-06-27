@@ -496,7 +496,7 @@ class MqPubSubFwdController(object):
 			ret = self.mq_path_func[key]['function'](path=path_dispatch, cmd=cmd, args=args, data=data)
 			if ret is not None:
 			
-				ret_data = struct_data
+				ret_data = struct_data(ret)
 				if cmd == 'GET':
 					return ret_data
 				else:

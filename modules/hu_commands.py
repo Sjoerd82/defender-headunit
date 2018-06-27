@@ -383,7 +383,9 @@ class Commands(object):
 					'cmd' in kwargs ):
 					command_to_validate = self.get_command_by_path(kwargs['path'],kwargs['cmd'])
 					#kwargs['args'] = self.validate_args(command_to_validate['name'],kwargs['args'])
-					kwargs['args'] = self.validate_args('MODES-ACTIVE',[])
+					print command_to_validate['name']
+					print kwargs['args']
+					kwargs['args'] = self.validate_args('MODES-ACTIVE',None)
 				# use provided command
 				#else:
 				#	kwargs['args'] = self.validate_args(command,list_of_args)
