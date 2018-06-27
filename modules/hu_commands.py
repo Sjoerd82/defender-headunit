@@ -360,8 +360,10 @@ class Commands(object):
 			return self.function_mq_map[ix]
 			
 	def get_command_by_path(self, mq_path, mq_cmd):
+		print "gcbp {0} {1}".format(mq_path, mq_cmd)
 		for ix, cmd in enumerate(self.function_mq_map):
 			if cmd['path'] == mq_path and cmd['command'] == mq_cmd:
+				print "MATCH {0}".format(cmd)
 				return cmd
 				#return ix
 
@@ -382,10 +384,13 @@ class Commands(object):
 					'path' in kwargs and
 					'cmd' in kwargs ):
 					command_to_validate = self.get_command_by_path(kwargs['path'],kwargs['cmd'])
-					#kwargs['args'] = self.validate_args(command_to_validate['name'],kwargs['args'])
-					print command_to_validate['name']
-					print kwargs['args']
-					kwargs['args'] = self.validate_args('MODES-ACTIVE',None)
+					if command_to_validate is not None:
+						#kwargs['args'] = self.validate_args(command_to_validate['name'],kwargs['args'])
+						print command_to_validate['name']
+						print kwargs['args']
+						kwargs['args'] = self.validate_args('MODES-ACTIVE',None)
+					else:
+						return False #??????????????
 				# use provided command
 				#else:
 				#	kwargs['args'] = self.validate_args(command,list_of_args)
