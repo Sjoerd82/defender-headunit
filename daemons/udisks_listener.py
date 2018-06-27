@@ -25,6 +25,7 @@ from dbus.mainloop.glib import DBusGMainLoop
 sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
 from hu_msg import MqPubSubFwdController
+from hu_commands import Commands
 
 # *******************************************************************************
 # Global variables and constants

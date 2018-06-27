@@ -10,8 +10,7 @@
 from threading import Timer		# Modesets: timer to reset mode change
 import copy
 
-def dict_volume_level(
-				,device=None
+def dict_volume_level(device=None
 				,simple_vol=None
 				,channels=None
 				,muted=None ):
