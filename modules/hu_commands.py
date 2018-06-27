@@ -385,10 +385,10 @@ class Commands(object):
 					'cmd' in kwargs ):
 					command_to_validate = self.get_command_by_path(kwargs['path'],kwargs['cmd'])
 					if command_to_validate is not None:
-						#kwargs['args'] = self.validate_args(command_to_validate['name'],kwargs['args'])
-						print command_to_validate['name']
-						print kwargs['args']
-						kwargs['args'] = self.validate_args('MODES-ACTIVE',None)
+						kwargs['args'] = self.validate_args(command_to_validate['name'],kwargs['args'])
+						#print command_to_validate['name']
+						#print kwargs['args']
+						#kwargs['args'] = self.validate_args('MODES-ACTIVE',None)
 					else:
 						return False #??????????????
 				# use provided command
@@ -405,7 +405,7 @@ class Commands(object):
 		Returns list of args (including defaults) if valid (may return None if no params)
 		Raises a ValueError if invalid.
 		"""
-		print "DEBUG.. hello from validate_args Command={0}".format(command)
+		#print "DEBUG.. hello from validate_args Command={0}".format(command)
 		def strint_to_bool(value):
 			if isinstance(value, (str,unicode)) and value.lower() in ['true','on','1','t']:
 				return True

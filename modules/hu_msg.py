@@ -440,30 +440,6 @@ class MqPubSubFwdController(object):
 			
 		return decorator
 		
-	#DEPRECATED
-	'''
-	def handle_mq(self, mq_path, cmd=None, event=None):
-		""" Decorator function.
-			Registers the MQ path (nothing more at the moment..)
-		"""
-		def decorator(fn):
-			key = self.__dispatcher_key(mq_path,cmd)
-			self.mq_path_list.append(prepostfix(mq_path).lower())
-			self.mq_path_func[key] = { 'function':fn, 'event':event }
-			
-			# add topic to subscriptions, if not already there
-			stripped = self.test_path(mq_path)
-			if stripped is not None:
-				self.topics.append(stripped)
-			
-			print "!DEBUG.. right now the list is: {0}".format(len(self.mq_path_list))
-			
-			def decorated(*args,**kwargs):
-				print "HOI!!"
-				return fn(*args,**kwargs)
-			return decorated
-		return decorator
-	'''
 	def execute(self, path_dispatch, cmd=None, args=None, data=None):
 		"""
 		Execute function for given path and command.

@@ -196,7 +196,7 @@ def cb_gpio_function(code, arguments):
 	"""
 	Execute the function indicated by code.
 	"""
-	print "cb_gpio_function: code={0}, arguments={1}".format(code,arguments)
+	#print "cb_gpio_function: code={0}, arguments={1}".format(code,arguments)
 	#print "CALL: {0}".format(function)
 	if code in command.command_list:
 		cmd = command.get_command(code)
