@@ -417,7 +417,6 @@ class MqPubSubFwdController(object):
 		else:
 			return None
 	
-	
 	def register(self, mq_path, cmd=None, event=None):
 		"""
 		DECORATOR

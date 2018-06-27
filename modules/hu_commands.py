@@ -387,8 +387,8 @@ class Commands(object):
 					command_to_validate = get_command_by_path(kwargs['path'],kwargs['cmd'])
 					kwargs['args'] = self.validate_args(command_to_validate,kwargs['args'])
 				# use provided command
-				else:
-					kwargs['args'] = self.validate_args(command,list_of_args)
+				#else:
+				#	kwargs['args'] = self.validate_args(command,list_of_args)
 				
 				return fn(*args,**kwargs)
 			return decorated
