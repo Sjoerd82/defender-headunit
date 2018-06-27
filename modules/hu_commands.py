@@ -386,7 +386,7 @@ class Commands(object):
 						try:
 							kwargs['args'] = self.validate_args(command_to_validate['name'],kwargs['args'])
 						except ValueError as err:
-							printer("ERROR: {0}".format(err),level=LL_ERROR)
+							print("ERROR: {0}".format(err))
 							return False #??????????????
 					else:
 						return False #??????????????
