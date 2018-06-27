@@ -74,7 +74,7 @@ def load_cfg_gpio():
 		print "ERROR: not found: {0}".format(gpio_config_file)
 		return
 
-@messaging.handle_mq('/mode/set', cmd='PUT')
+@messaging.register('/mode/set', cmd='PUT')
 def mq_mode_set_put(path=None, cmd=None, args=None, data=None):
 	# args[0] = mode
 	# args[1] = True|False (optional, default=True)
@@ -130,7 +130,7 @@ def mq_mode_set_put(path=None, cmd=None, args=None, data=None):
 	#print modes
 	return True
 			
-@messaging.handle_mq('/events/mode/changed', cmd='DATA')
+@messaging.register('/events/mode/changed', cmd='DATA')
 def data_mode_changed(path=None, cmd=None, args=None, data=None):
 	print "MODE CHANGE!"
 	print data
@@ -149,79 +149,79 @@ def data_mode_changed(path=None, cmd=None, args=None, data=None):
 		#current_state = modes.
 		#if data['payload']['state'] != 
 	
-@messaging.handle_mq('/events/source/active', cmd='DATA')
+@messaging.register('/events/source/active', cmd='DATA')
 def data_source_active(path=None, cmd=None, args=None, data=None):
 	print "ACTIVE"
 	pass
 	
-@messaging.handle_mq('/events/source/available', cmd='DATA')
+@messaging.register('/events/source/available', cmd='DATA')
 def data_source_available(path=None, cmd=None, args=None, data=None):
 	print "AVAILABLE"
 	pass
 	
-@messaging.handle_mq('/events/source/state', cmd='DATA')
+@messaging.register('/events/source/state', cmd='DATA')
 def data_player_state(path=None, cmd=None, args=None, data=None):
 	print "STATE"
 	pass
 	
-@messaging.handle_mq('/events/player/track', cmd='DATA')
+@messaging.register('/events/player/track', cmd='DATA')
 def data_player_track(path=None, cmd=None, args=None, data=None):
 	print "TRACK"
 	pass
 	
-@messaging.handle_mq('/events/player/elapsed', cmd='DATA')
+@messaging.register('/events/player/elapsed', cmd='DATA')
 def data_player_elapsed(path=None, cmd=None, args=None, data=None):
 	print "ELAPSED"
 	pass
 	
-@messaging.handle_mq('/events/player/updating', cmd='DATA')
+@messaging.register('/events/player/updating', cmd='DATA')
 def data_player_updating(path=None, cmd=None, args=None, data=None):
 	print "UPDATING"
 	pass
 	
-@messaging.handle_mq('/events/player/updated', cmd='DATA')
+@messaging.register('/events/player/updated', cmd='DATA')
 def data_player_updated(path=None, cmd=None, args=None, data=None):
 	print "UPDATED"
 	pass
 	
-@messaging.handle_mq('/events/volume/changed', cmd='DATA')
+@messaging.register('/events/volume/changed', cmd='DATA')
 def data_volume_changed(path=None, cmd=None, args=None, data=None):
 	print "VOL_CHG"
 	pass
 	
-@messaging.handle_mq('/events/volume/att', cmd='DATA')
+@messaging.register('/events/volume/att', cmd='DATA')
 def data_volume_att(path=None, cmd=None, args=None, data=None):
 	print "ATT"
 	pass
 	
-@messaging.handle_mq('/events/volume/mute', cmd='DATA')
+@messaging.register('/events/volume/mute', cmd='DATA')
 def data_volume_mute(path=None, cmd=None, args=None, data=None):
 	print "MUTE"
 	pass
 	
-@messaging.handle_mq('/events/network/up', cmd='DATA')
+@messaging.register('/events/network/up', cmd='DATA')
 def data_network_up(path=None, cmd=None, args=None, data=None):
 	print "NET UP"
 	pass
 	
-@messaging.handle_mq('/events/network/down', cmd='DATA')
+@messaging.register('/events/network/down', cmd='DATA')
 def data_network_down(path=None, cmd=None, args=None, data=None):
 	payload = json.loads(data)
 	sc_sources.do_event('network',path,payload)
 	printSummary()
 	return None
 	
-@messaging.handle_mq('/events/system/shutdown', cmd='DATA')
+@messaging.register('/events/system/shutdown', cmd='DATA')
 def data_system_shutdown(path=None, cmd=None, args=None, data=None):
 	print "SHUTDOWN"
 	pass
 	
-@messaging.handle_mq('/events/system/reboot', cmd='DATA')
+@messaging.register('/events/system/reboot', cmd='DATA')
 def data_system_reboot(path=None, cmd=None, args=None, data=None):
 	print "REBOOT"
 	pass
 	
-@messaging.handle_mq('/events/udisks/added', cmd='DATA')
+@messaging.register('/events/udisks/added', cmd='DATA')
 def data_udisks_added(path=None, cmd=None, args=None, data=None):
 	""" New media added
 		
@@ -246,7 +246,7 @@ def data_udisks_added(path=None, cmd=None, args=None, data=None):
 	printSummary()
 	return None
 	
-@messaging.handle_mq('/events/udisks/removed', cmd='DATA')
+@messaging.register('/events/udisks/removed', cmd='DATA')
 def data_udisks_removed(path=None, cmd=None, args=None, data=None):
 	print "REMOVED"
 	pass

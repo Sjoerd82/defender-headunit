@@ -422,11 +422,13 @@ class SourceController(object):
 		"""
 		index = self.__check_index(index)
 		if index is False:
-			return False
+			raise IndexError
+			#return False
 		
 		subindex = self.__check_subindex(index,subindex)
 		if subindex is False:
-			return False
+			raise IndexError
+			#return False
 		
 		changed_sources = []
 		
@@ -538,24 +540,29 @@ class SourceController(object):
 		return False
 		
 	def select( self, index, subIndex=None ):
-		"""Select source, by index
+		"""
+		Select source, by index
+		May raise a IndexError
+		Returns True if succesful?
+		Returns False if source not available
 		"""
 		index = int(index)		# not sure why, by since passing through MQ this is needed
 			
 		if index == None:
 			self.__printer('Setting active source to None')
 			return True
+			
 		elif index >= len(self.lSource):
 			self.__printer('ERROR selecting source: Index ({0}) out of bounds'.format(index),LL_ERROR)
 			print len(self.lSource)
 			print self.lSource
-			return False
+			raise IndexError
+			#return False
+			
 		elif not self.lSource[index]['available']:
 			self.__printer('ERROR selecting source: Requested source ({0}: {1:s}) is not available.'.format(index,self.lSource[index]['displayname']),LL_ERROR)
 			return False
-		#elif self.lSource[index]['template']:
-		#	self.__printer('ERROR: Requested source ({0}: {1:s}) is a template.'.format(index,self.lSource[index]['displayname']),LL_ERROR)
-		#	return False
+			
 		elif self.lSource[index]['available']:
 			self.__printer('Setting active source to {0}: {1:s}'.format(index,self.lSource[index]['displayname']))
 			self.iCurrentSource[0] = index
@@ -569,6 +576,7 @@ class SourceController(object):
 				return True
 
 		else:
+			# CATCH-ALL, SHOULD NOT BE REQUIRED ... TODO REMOVE
 			self.__printer('ERROR: Requested source ({0}: {1:s}) cannot be set.'.format(index,self.lSource[index]['displayname']),LL_ERROR)
 			return False
 
@@ -855,7 +863,8 @@ class SourceController(object):
 			
 		if index is None or subindex is None:
 			# we need both
-			return False
+			raise IndexError
+			#return False
 		
 		if 'subsources' in self.lSource[index]:
 			if len(self.lSource[index]['subsources']) > 0:
@@ -885,6 +894,9 @@ class SourceController(object):
 		index = self.__check_index(index)
 		subindex = self.__check_subindex(index,subindex)
 		
+		if index is False or subindex is False:
+			raise IndexError
+		
 		if index is not None and subindex is None:
 			# Mark all subsources of this index
 			if available:
@@ -908,7 +920,8 @@ class SourceController(object):
 			return True
 
 		else:
-			return None
+			# All indexes are None
+			return False
 			
 	def cnt_subsources(self, index=None):
 		"""Return number of available subsources"""		
@@ -958,7 +971,11 @@ class SourceController(object):
 	# execute play() for the current source
 	# suggested keywords: position in playlist; a dictionary may be given containing resume data
 	def source_play(self, **kwargs ):
-		""" Current source: Play
+		"""
+		Current source: Play
+		Will select the next source, if none selected.
+		Returns False if no sources available
+		
 		"""
 		
 		index, subindex = self.__get_current('PLAY')
@@ -1023,6 +1040,13 @@ class SourceController(object):
 			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.random(index=index,subindex=subindex,mode=mode,**kwargs)
 			return ret
 
+	# Proxy for seeking forward. Optionally provide arguments on how to seek (ie. number of seconds)
+	def source_seek(self, **kwargs ):
+		index, subindex = self.__get_current('SEEKFWD')
+		if index is not None and subindex is not None:
+			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.seekfwd(index=index,subindex=subindex,**kwargs)
+			return ret
+			
 	# Proxy for seeking forward. Optionally provide arguments on how to seek (ie. number of seconds)
 	def source_seekfwd(self, **kwargs ):
 		index, subindex = self.__get_current('SEEKFWD')

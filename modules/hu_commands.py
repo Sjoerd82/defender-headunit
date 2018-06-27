@@ -46,10 +46,10 @@ class Commands(object):
 			},
 			
 			{	'name': 'SOURCE-SELECT',
-				'description': 'Select a source',
+				'description': 'Select a (sub)source',
 				'command':'PUT',
 				'params': [
-					{'name':'index', 'datatype':(int,),'required':False, 'help':'Source index'},
+					{'name':'index', 'datatype':(int,),'required':True, 'help':'Source index'},
 					{'name':'subindex', 'datatype':(int,),'required':False, 'help':'Source subindex'}
 				],
 				'path': '/source/subsource'
@@ -123,6 +123,16 @@ class Commands(object):
 				'path': '/source/update-location'
 			},
 			
+			{	'name': 'SUBSOURCE',
+				'description': 'Retrieve details for given subindex or current source',
+				'command': 'GET',
+				'params': [
+					{'name':'index', 'datatype':(int,),'required':False, 'help':'Source index'},
+					{'name':'subindex', 'datatype':(int,),'required':False, 'help':'Source subindex'}
+				],
+				'path': '/source/subsource'
+			},
+			
 			{	'name': 'PLAYER-PLAY',
 				'description': 'Start playback',
 				'command': 'PUT',
@@ -150,16 +160,22 @@ class Commands(object):
 				'params': None,
 				'path': '/player/state'
 			},
+			{	'name': 'PLAYER-SET-STATE',
+				'description': 'Set state',
+				'command': 'PUT',
+				'params': [ {'name':'state', 'datatype':(str,unicode,), 'choices':['play','pause','stop'], 'required':True} ],
+				'path': '/player/state'
+			},
 			{	'name': 'PLAYER-NEXT',
 				'description': 'Play next song',
 				'command': 'PUT',
-				'params': None,
+				'params': [ {'name':'count', 'datatype':(int,), 'required':False, 'help':'Number of tracks to go ahead'} ],
 				'path': '/player/next'
 			},
 			{	'name': 'PLAYER-PREV',
 				'description': 'Play previous song',
 				'command': 'PUT',
-				'params': None,
+				'params': [ {'name':'count', 'datatype':(int,), 'required':False, 'help':'Number of tracks to go back'} ],
 				'path': '/player/prev'
 			},
 			{	'name': 'PLAYER-SEEK',
@@ -212,30 +228,30 @@ class Commands(object):
 			},
 			
 			{	'name': 'VOLUME-GET',
-				'description': 'Set volume',
+				'description': 'Get volume level',
 				'params': None,
 				'command': 'GET',
-				'path': '/volume'
+				'path': '/volume/master'
 			},
 			
 			{	'name': 'VOLUME-SET',
 				'description': 'Set volume',
-				'params': [ {'name':'volume', 'datatype': (str,unicode,int,float,), 'choices':['up','down','FLOAT_PERCENTAGE','FLOAT_SIGNED'], 'required':True, 'help':'Volume in percentage'} ],
+				'params': [ {'name':'volume', 'datatype': (str,unicode,int,float,), 'choices':['up','down','FLOAT_PERCENTAGE','FLOAT_SIGNED','att','mute'], 'required':True, 'help':'Volume in percentage'} ],
 				'command': 'PUT',
-				'path': '/volume'
+				'path': '/volume/master'
 			},
 			
 			{	'name': 'VOLUME-INCR',
 				'description': 'Increase volume',
 				'params': [ {'name':'volume', 'datatype': (str,unicode,int,float,), 'choices':['FLOAT_PERCENTAGE','FLOAT_SIGNED'], 'required':True,'help':'Volume in percentage'} ],
 				'command': 'PUT',
-				'path': '/volume'
+				'path': '/volume/master/increase'
 			},
 			{	'name': 'VOLUME-DECR',
 				'params': [ {'name':'volume', 'datatype': (str,unicode,int,float,), 'choices':['FLOAT_PERCENTAGE','FLOAT_SIGNED'], 'required':True,'help':'Volume in percentage'} ],
 				'description': 'Decrease volume',
 				'command': 'PUT',
-				'path': '/volume'
+				'path': '/volume/master/decrease'
 			},
 			
 			{	'name': 'VOLUME-ATT',
@@ -311,6 +327,13 @@ class Commands(object):
 				'command': 'GET',
 				'path': '/mode/test',
 				'wait_for_reply': False
+			},
+
+			{	'name': 'UDISKS-DEVICES',
+				'description': 'List registered UDisks devices',
+				'params': None,
+				'command': 'GET',
+				'path': '/udisks/devices'
 			},
 			
 			{	'name': 'SYSTEM-REBOOT',

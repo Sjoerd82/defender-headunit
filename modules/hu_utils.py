@@ -155,26 +155,28 @@ def dict_volume( system=None
 
 def struct_data(payload,code=None):
 	"""
-	Return a {data} structure.
-	If payload is None or False, a 500 code will be created, and no payload.
+	Return a {data} structure: { 'retval':<return code>, 'payload':<payload> }
+	Payload can be of any datatype*, but must be serializable (?).
+	* If payload is None or False, a 500 code will be created, and no payload.
+	  Payload can also be a Tuple consisting of a Payload and Return Value.
 	"""
-
-	#print "DEBUG: ret = {0}, code = {1}".format(payload,code)
-
 	data = {}
-	
-	if payload is False:
-		data['retval'] = 500
-		data['payload'] = None
-	elif payload is True or payload is None:
-		data['retval'] = 200
-		data['payload'] = None
-	else:
-		data['retval'] = 200
-		data['payload'] = payload
-		
-	if code is not None:
-		data['retval'] = int(code)
+	if isinstance(payload, tuple) and len(payload) == 2 and isint(payload[1]):
+		data['retval'] = int(payload[1])
+		data['payload'] = payload[0]
+	else:		
+		if payload is False:
+			data['retval'] = 500
+			data['payload'] = None
+		elif payload is True or payload is None:
+			data['retval'] = 200
+			data['payload'] = None
+		else:
+			data['retval'] = 200
+			data['payload'] = payload
+			
+		if code is not None:
+			data['retval'] = code
 	
 	return data
 	
@@ -727,7 +729,23 @@ def pa_sfx( sfx ):
 	
 	return True
 
-
+def isint(value):
+	"""
+	Return true if value is an int
+	Float without any digits after the decimal point is considered an integer.
+	Warning: int('530.0') does not yield a 530 int, but returns a ValueError.
+	"""
+	if isinstance(value, int):
+		return True	
+	elif isinstance(value, (str,unicode)):
+		if value[0] == '+' or value[0] == '-': value = value[1:]
+		
+	try:
+		ret = float(value).is_integer()
+		return ret
+	except:
+		return False
+	
 def strint_to_bool(value):
 	if isinstance(value, (str,unicode)) and value.lower() in ['true','on','1','t']:
 		return True

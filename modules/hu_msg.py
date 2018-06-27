@@ -383,7 +383,7 @@ class MqPubSubFwdController(object):
 			if parsed_msg['origin'] == self.origin and ignore_own_message:
 				pass
 			else:
-				ret = self.execute_mq(parsed_msg['path'], parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'])
+				ret = self.execute(parsed_msg['path'], parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'])
 				if parsed_msg['resp_path'] and ret is not None:
 					self.publish_command(parsed_msg['resp_path'],'DATA',ret)
 				
@@ -417,7 +417,32 @@ class MqPubSubFwdController(object):
 		else:
 			return None
 	
+	
+	def register(self, mq_path, cmd=None, event=None):
+		"""
+		DECORATOR
+		Registers the MQ path. This code is only executed once, when the script is loaded.
+		"""
+		def decorator(fn):
 		
+			# create a unique key by combining path and command
+			key = self.__dispatcher_key(mq_path,cmd)
+			
+			# keep track of paths in mq_path_list
+			self.mq_path_list.append(prepostfix(mq_path).lower())
+			
+			# store a reference to the mq function in mq_path_func
+			self.mq_path_func[key] = { 'function':fn, 'event':event }
+			
+			# add topic to subscriptions, if not already there
+			stripped = self.test_path(mq_path)
+			if stripped is not None:
+				self.topics.append(stripped)						
+			
+		return decorator
+		
+	#DEPRECATED
+	'''
 	def handle_mq(self, mq_path, cmd=None, event=None):
 		""" Decorator function.
 			Registers the MQ path (nothing more at the moment..)
@@ -432,16 +457,18 @@ class MqPubSubFwdController(object):
 			if stripped is not None:
 				self.topics.append(stripped)
 			
-			print "!DEBUG.. right now the list is: ".format(len(self.mq_path_list))
+			print "!DEBUG.. right now the list is: {0}".format(len(self.mq_path_list))
 			
 			def decorated(*args,**kwargs):
 				print "HOI!!"
 				return fn(*args,**kwargs)
 			return decorated
 		return decorator
-	
-	def execute_mq(self, path_dispatch, cmd=None, args=None, data=None):
-		"""	Execute function for given path and command.
+	'''
+	def execute(self, path_dispatch, cmd=None, args=None, data=None):
+		"""
+		Execute function for given path and command.
+		Called by self.poll_and_execute(), or may be called directly
 		
 			Will try an exact match first, if that fails a wildcard match will be
 			attempted.
@@ -451,6 +478,9 @@ class MqPubSubFwdController(object):
 			If return value is 2xx (?) and event present, will send out an event message.
 			Hmm, is this good practice? the decorated function can do a publish_command just as easily..
 			 .... let's see how this works out..
+			 
+		only GET will return a payload?
+		other commands will return the payload via an event message
 		"""
 		
 		# path_dispatch may be a string or a list
@@ -463,15 +493,26 @@ class MqPubSubFwdController(object):
 		# if there's an exact match, always handle that
 		# else, try wildcards
 		if key in self.mq_path_func:
+			# EXACT
 			ret = self.mq_path_func[key]['function'](path=path_dispatch, cmd=cmd, args=args, data=data)
 			if ret is not None:
-				ret_data = struct_data(ret)
-				if ret_data['retval'] == 200 and self.mq_path_func[key]['event'] is not None:
-					# todo... send out data ??? same data ???
-					self.publish_command(self.mq_path_func[key]['event'], 'INFO', arguments=None, wait_for_reply=False, response_path=None)
-				return ret_data
+			
+				ret_data = struct_data
+				if cmd == 'GET':
+					return ret_data
+				else:
+					#if ret_data['retval'] == 200 and self.mq_path_func[key]['event'] is not None:
+					if self.mq_path_func[key]['event'] is not None:
+						self.publish_command(self.mq_path_func[key]['event'], 'INFO', arguments=None, wait_for_reply=False, response_path=None)
+					#return ret_data
+					# return code only
+					ret_data['payload'] = None
+					return ret_data
+					
+					# TODO APPLY THIS TO WILDCARD AS WELL
 
-		else:	
+		else:
+			# WILDCARD
 			if cmd is None:
 				key = self.__dispatcher_key(path_dispatch,'#')
 				

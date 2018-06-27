@@ -35,8 +35,6 @@ LOG_TAG = 'UDISKS'
 LOGGER_NAME = 'udisks'
 
 SUBSCRIPTIONS = ['/udisks/']
-DEFAULT_PORT_SUB = 5560
-DEFAULT_PORT_PUB = 5559
 
 PATH_EVENT_ADD = '/events/udisks/added'
 PATH_EVENT_REM = '/events/udisks/removed'
@@ -61,112 +59,16 @@ attached_drives = []
 def printer( message, level=LL_INFO, continuation=False, tag=LOG_TAG ):
 	logger.log(level, message, extra={'tag': tag})
 
-# ********************************************************************************
-# Load configuration
-#
-# ********************************************************************************
-# Load configuration
-#
-def load_cfg_main():
-	""" load main configuration """
-	config = configuration_load(LOGGER_NAME,args.config)
-	return config
-
-def load_cfg_zmq():
-	""" load zeromq configuration """	
-	if not 'zeromq' in cfg_main:
-		printer('Error: Configuration not loaded or missing ZeroMQ, using defaults:')
-		printer('Publisher port: {0}'.format(args.port_publisher))
-		printer('Subscriber port: {0}'.format(args.port_subscriber))
-		#cfg_main["zeromq"] = { "port_publisher": DEFAULT_PORT_PUB, "port_subscriber":DEFAULT_PORT_SUB } }
-		config = { "port_publisher": DEFAULT_PORT_PUB, "port_subscriber":DEFAULT_PORT_SUB }
-		return config
-	else:
-		config = {}
-		# Get portnumbers from either the config, or default value
-		if 'port_publisher' in cfg_main['zeromq']:
-			config['port_publisher'] = cfg_main['zeromq']['port_publisher']
-		else:
-			config['port_publisher'] = DEFAULT_PORT_PUB
-		
-		if 'port_subscriber' in cfg_main['zeromq']:
-			config['port_subscriber'] = cfg_main['zeromq']['port_subscriber']		
-		else:
-			config['port_subscriber'] = DEFAULT_PORT_SUB
-			
-		return config
-
-def load_cfg_daemon():
-	""" load daemon configuration """
-	if 'daemons' not in cfg_main:
-		return
-	else:
-		for daemon in cfg_main['daemons']:
-			if 'script' in daemon and daemon['script'] == os.path.basename(__file__):
-				return daemon
-
-def load_cfg_gpio():
-	""" load specified GPIO configuration """	
-	if 'directories' not in cfg_main or 'daemon-config' not in cfg_main['directories'] or 'config' not in cfg_daemon:
-		return
-	else:		
-		config_dir = cfg_main['directories']['daemon-config']
-		# TODO
-		config_dir = "/mnt/PIHU_CONFIG/"	# fix!
-		config_file = cfg_daemon['config']
-		
-		gpio_config_file = os.path.join(config_dir,config_file)
-	
-	# load gpio configuration
-	if os.path.exists(gpio_config_file):
-		config = configuration_load(LOGGER_NAME,gpio_config_file)
-		return config
-	else:
-		print "ERROR: not found: {0}".format(gpio_config_file)
-		return
-
-
-	configuration = configuration_load(LOGGER_NAME,args.config)
-	
-	if not configuration or not 'zeromq' in configuration:
-		printer('Error: Configuration not loaded or missing ZeroMQ, using defaults:')
-		printer('Publisher port: {0}'.format(args.port_publisher))
-		printer('Subscriber port: {0}'.format(args.port_subscriber))
-		configuration = { "zeromq": { "port_publisher": DEFAULT_PORT_PUB, "port_subscriber":DEFAULT_PORT_SUB } }
-		return configuration
-		
-	else:
-		# Get portnumbers from either the config, or default value
-		if not 'port_publisher' in configuration['zeromq']:
-			configuration['zeromq']['port_publisher'] = DEFAULT_PORT_PUB
-			
-		if not 'port_subscriber' in configuration['zeromq']:
-			configuration['zeromq']['port_subscriber'] = DEFAULT_PORT_SUB
-			
-	return configuration	
-
-# ********************************************************************************
-# On Idle
-#
 # -------------------------------------------------------------------------
 # Sub Functions must return None (invalid params) or a {data} object.
-@messaging.handle_mq('/udisks/devices', cmd='GET')
+# TODO: event path
+@messaging.register('/udisks/devices', cmd='GET')
+@command.validate
 def get_devices(path=None, cmd=None, args=None, data=None):
 	"""	Retrieve List of Registered Devices """						
 	data = struct_data(attached_drives)
 	return data	# this will be returned using the response path
-	
-"""
-def idle_message_receiver():
-	parsed_msg = messaging.poll(timeout=1000, parse=True)	#Timeout: None=Blocking
-	if parsed_msg:
-		ret = messaging.execute_mq(parsed_msg['path'], parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'] )
-			
-		if parsed_msg['resp_path'] and ret is not False:
-			messaging.publish_command(parsed_msg['resp_path'],'DATA',ret)
-		
-	return True # Important! Returning true re-enables idle routine.
-"""
+
 
 #********************************************************************************
 # Parse command line arguments
@@ -412,39 +314,27 @@ def setup():
 	global cfg_main
 	global cfg_zmq
 	global cfg_daemon
-	global cfg_gpio
+	global cfg_dummy
 
-	# main
-	cfg_main = load_cfg_main()
+	cfg_main, cfg_zmq, cfg_daemon, cfg_dummy = load_cfg(
+		args.config,
+		['main','zmq','daemon'],
+		args.port_publisher, args.port_subscriber,
+		daemon_script=os.path.basename(__file__),
+		logger_name=LOGGER_NAME	)
+	
 	if cfg_main is None:
 		printer("Main configuration could not be loaded.", level=LL_CRITICAL)
 		exit(1)
 	
-	# zeromq
-	if not args.port_publisher and not args.port_subscriber:
-		cfg_zmq = load_cfg_zmq()
-	else:
-		if args.port_publisher and args.port_subscriber:
-			pass
-		else:
-			load_cfg_zmq()
-	
-		# Pub/Sub port override
-		if args.port_publisher:
-			configuration['zeromq']['port_publisher'] = args.port_publisher
-		if args.port_subscriber:
-			configuration['zeromq']['port_subscriber'] = args.port_subscriber
-
 	if cfg_zmq is None:
 		printer("Error loading Zero MQ configuration.", level=LL_CRITICAL)
 		exit(1)
 			
-	# daemon
-	cfg_daemon = load_cfg_daemon()
 	if cfg_daemon is None:
 		printer("Daemon configuration could not be loaded.", level=LL_CRITICAL)
 		exit(1)
-				
+					
 	#
 	# ZMQ
 	#

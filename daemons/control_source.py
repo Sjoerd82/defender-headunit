@@ -74,7 +74,6 @@ command = Commands()
 cfg_main = None		# main
 cfg_daemon = None	# daemon
 cfg_zmq = None		# Zero MQ
-#cfg_gpio = None		# GPIO setup
 
 # ********************************************************************************
 # Output wrapper
@@ -92,6 +91,7 @@ def process_queue():
 		queue_actions.task_done()
 	return True
 	
+# DEPRECATED #TODO
 def validate_args(args, min_args, max_args):
 
 	if len(args) < min_args:
@@ -112,11 +112,19 @@ def validate_args(args, min_args, max_args):
 # None -> 	200
 # False ->	500
 
-@messaging.handle_mq('/source/primary', cmd='GET')
-@command.validate()
+# -----------------------------------------------------------------------------
+# SOURCE
+
+@messaging.register('/source/primary', cmd='GET')
+@command.validate
 def get_primary(path=None, cmd=None, args=None, data=None):
 	"""
 	Retrieve details for given index, or all indexes, if omitted.
+	Arguments:
+		[int:source_id],[int:subsource_id]
+	Return codes:
+		200:	OK
+		500:	ERROR
 	"""
 	code = 200
 	if not args:
@@ -125,36 +133,63 @@ def get_primary(path=None, cmd=None, args=None, data=None):
 		try:
 			ret = sc_sources.source(args[0])
 		except IndexError:
-			printer("Get Primary Source: Invalid Index requested",level=LL_WARNING)
+			printer("{0} {1}: Invalid Index {2}".format(cmd,path,args[0]),level=LL_WARNING)
+			ret = None
+			code = 500
+	elif len(args) == 2:
+		try:
+			ret = sc_sources.subsource(args[0],args[1])
+		except IndexError:
+			printer("{0} {1}: Invalid (Sub)index {2}.{3}".format(cmd,path,args[0],args[1]),level=LL_WARNING)
 			ret = None
 			code = 500
 	return ret, code
 
-# the event will only be executed on a 200 return code
-@messaging.handle_mq('/source/primary', cmd='PUT', event='/events/source/active')
+@messaging.register('/source/primary', cmd='PUT', event='/events/source/active')
 @command.validate
 def put_primary(path=None, cmd=None, args=None, data=None):
-	""" Set active (sub)source to <id> (<subid>). If "P" then also start playing.
-
-		? Starts playback if P is specified, or not (default)
-		? Does not start playback if S specified
-		
-		Arguments:
-			<int:source_id>,[int:subsource_id][,S|P]
-		Return data:
-			Nothing
-		Return codes:
-			200		OK			=> sends /events/source/active message
-			500		Error
 	"""
-	if len(args) == 1:
-		ret = sc_sources.select(args[0])
-	elif len(args) == 2:
-		ret = sc_sources.select(args[0],args[1])
-	elif len(args) == 3:
-		ret = sc_sources.select(args[0],args[1])
-		#TODO: not implemented
+	Set active (sub)source to <id> (<subid>). If "P" then also start playing.
+	Arguments:
+		<int:source_id>,[int:subsource_id][,S|P]
+	Return data:
+		Nothing
+	Return codes:
+		200:	OK			=> sends /events/source/active message
+		500:	Error, invalid index
+		561:	Error, source not available
+	"""
+	code = 200
 
+	#	? Starts playback if P is specified, or not (default)
+	#	? Does not start playback if S specified
+	
+	if len(args) == 1:
+		try:
+			ret = sc_sources.select(args[0])
+		except IndexError:
+			printer("{0} {1}: Invalid index {2}".format(cmd,path,args[0]),level=LL_WARNING)
+			code = 500
+			
+	elif len(args) == 2:
+		try:
+			ret = sc_sources.select(args[0],args[1])
+		except IndexError:
+			printer("{0} {1}: Invalid (Sub)index {2}.{3}".format(cmd,path,args[0],args[1]),level=LL_WARNING)
+			code = 500
+			
+	elif len(args) == 3:
+		#TODO: S|P not implemented
+		try:
+			ret = sc_sources.select(args[0],args[1])
+		except IndexError:
+			printer("{0} {1}: Invalid (Sub)index {2}.{3}".format(cmd,path,args[0],args[1]),level=LL_WARNING)
+			code = 500
+
+	if ret == False:
+		# index valid, but source not available
+		code = 561
+			
 	#data = get_data(ret,False,'/events/source/active')
 	#return data
 
@@ -167,10 +202,15 @@ def put_primary(path=None, cmd=None, args=None, data=None):
 	#	save_settings()
 	"""
 	
+	# TODO !!
+	# add a third record to the tuple to for the event data? like so: ?
+	# return ret, code, event_data
+	
 	save_resume()
-	return ret
+	return None, code
 
-@messaging.handle_mq('/source/primary', cmd='POST')
+# TODO
+@messaging.register('/source/primary', cmd='POST')
 def post_primary(path=None, cmd=None, args=None, data=None):
 	"""	Add a new source
 		Arguments:
@@ -186,7 +226,8 @@ def post_primary(path=None, cmd=None, args=None, data=None):
 	ret = sc_sources.add(args[0])	
 	return ret
 
-@messaging.handle_mq('/source/primary', cmd='DEL')
+# TODO
+@messaging.register('/source/primary', cmd='DEL')
 def del_primary(path=None, cmd=None, args=None, data=None):
 	""" Remove a source
 		Arguments:
@@ -213,73 +254,106 @@ def del_primary(path=None, cmd=None, args=None, data=None):
 
 	return ret
 
-@messaging.handle_mq('/source/subsource', cmd='GET')
+@messaging.register('/source/subsource', cmd='GET')
+@command.validate
 def get_subsource(path=None, cmd=None, args=None, data=None):
 	"""
-		Arguments:
-			None						Return list of sub-sources for current index
-			source_id					Return list of sub-sources for specified index
-			source_id, subsource_id		Return specified subsource
-		Return data:
-			List of sub-sources
-			Sub-source
-		Return codes:
-			200		OK
-			500		Error
+	Retrieve details for given index, or all indexes, if omitted.
+	Params are optional: index, subindex
+	200:	OK
+	500:	ERROR
 	"""
-	valid = validate_args(args,0,2)
-	if not valid:
-		return None
-
-	ret = None
-
+	code = 200
 	if not args:
 		ret = sc_sources.subsource_all()
 	elif len(args) == 1:
-		if type(args[0]) == int:
+		try:
 			ret = sc_sources.subsource_all(args[0])
-		#else:
-		#	invalid arg...
-		# todo
+		except IndexError:
+			printer("{0} {1}: Invalid Index {2}".format(cmd,path,args[0]),level=LL_WARNING)
+			ret = None
+			code = 500
 	elif len(args) == 2:
-		ret = sc_sources.subsource(args[0],args[1])
+		try:
+			ret = sc_sources.subsource(args[0],args[1])
+		except IndexError:
+			printer("{0} {1}: Invalid (Sub)index {2}.{3}".format(cmd,path,args[0],args[1]),level=LL_WARNING)
+			ret = None
+			code = 500
+	return ret, code
 
-	return ret
-
-@command.validate
-@messaging.handle_mq('/source/subsource', cmd='PUT', event='/events/source/active')
+@messaging.register('/source/subsource', cmd='PUT', event='/events/source/active')
+@command.validate('SOURCE-SELECT')
 def put_subsource(path=None, cmd=None, args=None, data=None):
-	"""Set active subsource to <subid>. If "P" then also start playing.
-
-		? Starts playback if P is specified, or not (default)
-		? Does not start playback if S specified
-		
-		Arguments:
-			<int:source_id>,<int:subsource_id>[,S|P]
-		Return data:
-			Nothing
-		Return codes:
-			200		OK
-			500		Error
 	"""
-	valid = validate_args(args,1,3)
-	if not valid:
-		return None
-		
-	if len(args) == 2:
-		ret = sc_sources.select(args[0],args[1])
+	Set active subsource to <subid>
+	Arguments:
+		<int:source_id>,[int:subsource_id][,S|P]
+	Return data:
+		Nothing
+	Return codes:
+		200:	OK
+		500:	Error
+		561:	Error, source not available
+	"""
+	code = 200
+
+	#	? Starts playback if P is specified, or not (default)
+	#	? Does not start playback if S specified
+	
+	if len(args) == 1:
+		try:
+			ret = sc_sources.select(args[0])
+		except IndexError:
+			printer("{0} {1}: Invalid index {2}".format(cmd,path,args[0]),level=LL_WARNING)
+			code = 500
+			
+	elif len(args) == 2:
+		try:
+			ret = sc_sources.select(args[0],args[1])
+		except IndexError:
+			printer("{0} {1}: Invalid (Sub)index {2}.{3}".format(cmd,path,args[0],args[1]),level=LL_WARNING)
+			code = 500
+			
 	elif len(args) == 3:
-		ret = sc_sources.select(args[0],args[1])
-		#TODO: not implemented
+		#TODO: S|P not implemented
+		try:
+			ret = sc_sources.select(args[0],args[1])
+		except IndexError:
+			printer("{0} {1}: Invalid (Sub)index {2}.{3}".format(cmd,path,args[0],args[1]),level=LL_WARNING)
+			code = 500
 
-	return ret
+	if ret == False:
+		# index valid, but source not available
+		code = 561
+			
+	#data = get_data(ret,False,'/events/source/active')
+	#return data
 
-@messaging.handle_mq('/source/subsource', cmd='POST')
+	""" '/events/source/active'
+	curr_source = sc_sources.source()
+	data['payload'] = curr_source
+	messaging.publish_command(eventpath,'DATA',data)
+			
+	#	settings['source'] = curr_source['name']
+	#	save_settings()
+	"""
+	
+	# TODO !!
+	# add a third record to the tuple to for the event data? like so: ?
+	# return ret, code, event_data
+	
+	save_resume()
+	return None, code
+
+#TODO
+@messaging.register('/source/subsource', cmd='POST')
 def post_subsource(path=None, cmd=None, args=None, data=None):
 	#TODO
 	return None
 
-@messaging.handle_mq('/source/subsource', cmd='DEL')
+#TODO
+@messaging.register('/source/subsource', cmd='DEL')
 def del_subsource(path=None, cmd=None, args=None, data=None):
 	""" Remove a subsource
 		Arguments:
@@ -309,107 +383,121 @@ def del_subsource(path=None, cmd=None, args=None, data=None):
 		
 	return ret
 	
+@messaging.register('/source/available', cmd='PUT')
 @command.validate
-@messaging.handle_mq('/source/available', cmd='PUT')
 def put_available(path=None, cmd=None, args=None, data=None):
-	"""	Mark (sub)source as (un)available
-		Arguments:
-			True|False, source_id					Mark Source ID
-			True|False, source_id, sub-source_id	Mark Sub-Source ID
-		Return data:
-			None
-		Return codes:
-			200		OK
-			500		Error
 	"""
-	valid = validate_args(args,2,3)
-	if not valid:
-		return None
+	Mark (sub)source as (un)available
+	Arguments:
+		True|False, source_id					Mark Source ID
+		True|False, source_id, sub-source_id	Mark Sub-Source ID
+	Return data:
+		None
+	Return codes:
+		200:	OK
+		500:	Error
+	"""
+	code = 200
 
 	if len(args) == 2:
-		ret = sc_sources.set_available(args[1],str2bool(args[0]))
+		try:
+			ret = sc_sources.set_available(args[1],str2bool(args[0]))
+		except IndexError:
+			printer("{0} {1}: Invalid index {2}".format(cmd,path,args[0]),level=LL_WARNING)
+			code = 500
+			
 	elif len(args) == 3:
-		ret = sc_sources.set_available(args[1],str2bool(args[0]),args[2])
-	
+		#TODO: S|P not implemented
+		try:
+			ret = sc_sources.set_available(args[1],str2bool(args[0]),args[2])
+		except IndexError:
+			printer("{0} {1}: Invalid (Sub)index {2}.{3}".format(cmd,path,args[0],args[1]),level=LL_WARNING)
+			code = 500
+		
 	# LL_DEBUG
 	printSummary()
+	return None, code
 
-	return ret
-
-@command.validate('SOURCE-NEXT')
-@messaging.handle_mq('/source/next', cmd='PUT')
+@messaging.register('/source/next', cmd='PUT')
+@command.validate
 def put_next(path=None, cmd=None, args=None, data=None):
-	"""	Change to next available (sub)source and start playing
-		Arguments:
-			None
-		Return data:
-			None
-		Return codes:
-			200		OK
-			500		Error
+	"""	
+	Change to next available (sub)source and start playing
+	Arguments:
+		None
+	Return data:
+		None
+	Return codes:
+		200:	OK
+		500:	Error
 	"""
-	print "AAAAARGS: {0}".format(args)
-	ret = sc_sources.select_next()
-	
-	# returns None if cannot change source
+	code = 200
+	ret = sc_sources.select_next()	# returns None if cannot change source
 	if ret is not None:
-
-		# LL_DEBUG
-		printSummary()
-
-		return ret
+		printSummary()	# LL_DEBUG
+	else:
+		code = 500
 	
 	# TODO, Should we return a 4xx or 5xx maybe?
-	#return data
-	return False
+	return None, code
 
+@messaging.register('/source/prev', cmd='PUT', event='/events/source/active')
 @command.validate
-@messaging.handle_mq('/source/prev', cmd='PUT', event='/events/source/active')
 def put_prev(path=None, cmd=None, args=None, data=None):
-	"""	Change to prev available (sub)source and start playing
-		Arguments:
-			None
-		Return data:
-			None
-		Return codes:
-			200		OK
-			500		Error
+	"""	
+	Change to prev available (sub)source and start playing
+	Arguments:
+		None
+	Return data:
+		None
+	Return codes:
+		200:	OK
+		500:	Error
 	"""
-	valid = validate_args(args,0,0)
-	if not valid:
-		return None
+	code = 200
+	ret = sc_sources.select_next()	# returns None if cannot change source
+	if ret is not None:
+		printSummary()	# LL_DEBUG
+	else:
+		code = 500
+	
+	# TODO, Should we return a 4xx or 5xx maybe?
+	return None, code
 
-	ret = sc_sources.select_prev()
-
-	# LL_DEBUG
-	printSummary()
-
-
-@messaging.handle_mq('/source/check', cmd='PUT')
+# TODO: add event
+@messaging.register('/source/check', cmd='PUT')
 @command.validate
 def put_check(path=None, cmd=None, args=None, data=None):
-	"""	Do an availability check on given or current source
-		Arguments:
-			None						Check current source
-			source_id					Check source
-			source_id, sub-source_id	Check sub-source
-		Return data:
-			None
-		Return codes:
-			200		OK
-			500		Error
 	"""
-	valid = validate_args(args,0,2)
-	if not valid:
-		return None
-
+	Do an availability check on given or current source
+	Arguments:
+		None						Check current source
+		source_id					Check source
+		source_id, sub-source_id	Check sub-source
+	Return data:
+		None
+	Return codes:
+		200:	OK
+		500:	Error
+	"""
+	code = 200
 	if not args:
 		ret = sc_sources.check()
+			
 	elif len(args) == 1:
-		ret = sc_sources.check(args[0])
+		try:
+			ret = sc_sources.check(args[0])
+		except IndexError:
+			printer("{0} {1}: Invalid index {2}".format(cmd,path,args[0]),level=LL_WARNING)
+			code = 500
+			
 	elif len(args) == 2:
-		ret = sc_sources.check(args[0],args[1])
-
+		try:
+			ret = sc_sources.check(args[0],args[1])
+		except IndexError:
+			printer("{0} {1}: Invalid (Sub)index {2}.{3}".format(cmd,path,args[0],args[1]),level=LL_WARNING)
+			code = 500
+			
 	if ret != False:
 		
 		printSummary()		# LL_DEBUG
@@ -449,41 +537,52 @@ def put_check(path=None, cmd=None, args=None, data=None):
 				
 		"""
 	
-	return ret
+	#return ret
+	return None, code
 		
-@messaging.handle_mq('/player/track', cmd='GET')
+
+# -----------------------------------------------------------------------------
+# PLAYER
+@messaging.register('/player/track', cmd='GET')
+@command.validate
 def get_track(path=None, cmd=None, args=None, data=None):
-	"""	Retrieve Track details
-		Arguments:		None
-		Return data:	Track Details	
 	"""
-	valid = validate_args(args,0,0)
-	if not valid:
-		return None
-
-	if not args:
-		ret = sc_sources.source_get_details()
-
+	Retrieve Track details
+	Arguments:
+		None
+	Return data:
+		Track Details
+	Return codes:
+		?
+	"""
+	ret = sc_sources.source_get_details()
+	
 	# only keep the track section
 	if ret is not None and 'track' in ret:
 		ret = ret['track']
-		
+	
 	return ret
 	
-@messaging.handle_mq('/player/track', cmd='PUT')
+@messaging.register('/player/track', cmd='PUT')
+@command.validate
 def put_track(path=None, cmd=None, args=None, data=None):
-	"""	Play track at specified playlist position
-		Arguments:		Playlist position
-		Return data:	Nothing
 	"""
-	valid = validate_args(args,1,1)
-	if not valid:
-		return None
-
-	if len(args) == 1:
-		ret = sc_sources.source_play(position=args[0])
-
-	return ret
+	Play track at specified playlist position
+	Arguments:
+		Playlist position
+	Return data:
+		Nothing
+	Return codes:
+		200:	OK
+		561:	No sources available
+	"""
+	code = 200
+	ret = sc_sources.source_play(position=args[0])
+	if ret == False:
+		# no sources are available
+		code = 561
+	
+	return None, code
 
 '''
 TODO
@@ -503,17 +602,17 @@ def get_folders(args):
 	return data
 '''
 
-@messaging.handle_mq('/player/pause', cmd='PUT')
+@messaging.register('/player/pause', cmd='PUT')
 @command.validate
 def put_pause(path=None, cmd=None, args=None, data=None):
-	"""	Enable/Disable Pause
-		Arguments:		on|off|toggle
-		Return data:	Nothing
 	"""
-	valid = validate_args(args,1,1)
-	if not valid:
-		return None
-		
+	Enable/Disable Pause
+	Arguments:
+		on|off|toggle
+	Return data:
+		Nothing
+	"""
+	code = 200
 	if len(args) == 1:
 		ret = sc_sources.source_pause(args[0])
 
@@ -521,30 +620,37 @@ def put_pause(path=None, cmd=None, args=None, data=None):
 	
 	return ret
 
-@messaging.handle_mq('/player/state', cmd='GET')
+@messaging.register('/player/state', cmd='GET')
 @command.validate
 def get_state(path=None, cmd=None, args=None, data=None):
-	"""	Get play state
-		Arguments:		None
-		Return data:	State
 	"""
-	valid = validate_args(args,0,0)
-	if not valid:
-		return None
-
-	if not args:
-		ret = sc_sources.source_get_state()
-		
+	Get play state
+	Arguments:
+		None
+	Return data:
+		State
+	Return codes:
+		?
+	"""
+	ret = sc_sources.source_get_state()		
 	# Get state: play|pause|stop, toggle random
 	return ret
 
-
-@messaging.handle_mq('/player/state', cmd='PUT')
+# TODO: state object?
+@messaging.register('/player/state', cmd='PUT')
+@command.validate
 def put_state(path=None, cmd=None, args=None, data=None):
-	"""	Set play state
-		Arguments:		{state}
-		Return data:	Nothing
 	"""
+	Set play state
+	Arguments:
+		play|pause|stop  /// state object?
+	Return data:
+		Nothing
+	Return codes:
+		200
+		500
+	"""
+	
 	valid = validate_args(args,1,1)
 	if not valid:
 		return None
@@ -572,24 +678,19 @@ def put_state(path=None, cmd=None, args=None, data=None):
 	return ret
 
 
-@messaging.handle_mq('/player/random', cmd='PUT')
+# TODO: support special modes as argument
+@messaging.register('/player/random', cmd='PUT')
 @command.validate
 def put_random(path=None, cmd=None, args=None, data=None):
-	"""	Set random mode
-		Arguments:		on|off|toggle|mode
-		Return data:	Nothing
 	"""
-	valid = validate_args(args,1,1)
-	if not valid:
-		return None
-
-	# Set random on|off|toggle|special modes
-
-	if len(args) == 1:
-		ret = sc_sources.source_random(args[0])
-
+	Set random mode
+	Arguments:
+		on|off|toggle|mode
+	Return data:
+		Nothing
+	"""
+	ret = sc_sources.source_random(args[0])
 	return ret
-
 
 '''
 TODO
@@ -610,46 +711,38 @@ def get_randommode(args):
 	return data
 '''
 
-@messaging.handle_mq('/player/next', cmd='PUT')
+@messaging.register('/player/next', cmd='PUT')
 @command.validate
 def put_next(path=None, cmd=None, args=None, data=None):
-	"""	Next track
-		Arguments:
-			None		Advance by 1
-			<int>		Advance by <int>
-		Return data:	Nothing
 	"""
-	valid = validate_args(args,0,1)
-	if not valid:
-		return None
-
+	Next track
+	Arguments:
+		None		Advance by 1
+		<int>		Advance by <int>
+	Return data:
+		?
+	"""
 	if not args:
-		print "PUT NEXT NO ARGS"
 		ret = sc_sources.source_next()
 	elif len(args) == 1:
-		print "PUT NEXT 1 ARG"
 		ret = sc_sources.source_next(adv=args[0])
-
 	return ret
 
-@messaging.handle_mq('/player/prev', cmd='PUT')
+@messaging.register('/player/prev', cmd='PUT')
 @command.validate
 def put_prev(path=None, cmd=None, args=None, data=None):
-	"""	Prev track
-		Arguments:
-			None		Go back 1
-			<int>		Go back <int>
-		Return data:	Nothing
 	"""
-	valid = validate_args(args,0,1)
-	if not valid:
-		return None
-
+	Prev track
+	Arguments:
+		None		Go back 1
+		<int>		Go back <int>
+	Return data:
+		?
+	"""
 	if not args:
 		ret = sc_sources.source_prev()
 	elif len(args) == 1:
 		ret = sc_sources.source_prev(args[0])
-
 	return ret
 
 """
@@ -660,38 +753,22 @@ def put_prevfolder(args):
 	return True
 """
 
-@messaging.handle_mq('/player/seekfwd', cmd='PUT')
-def put_seekfwd(path=None, cmd=None, args=None, data=None):
-	"""	Seek FWD
-		Arguments:
-			None		Seek Fwd by ? seconds
-			<int>		Seek Fwd by <int> seconds
-		Return data:	Nothing
+# TODO: implement regular SEEK in hu_source (currently it's either fwd or rev)
+@messaging.register('/player/seek', cmd='PUT')
+@command.validate
+def put_seek(path=None, cmd=None, args=None, data=None):
 	"""
-	valid = validate_args(args,0,1)
-
-	if not args:
-		ret = sc_sources.seekfwd()
-	elif len(args) == 1:
-		ret = sc_sources.seekfwd(args[0])
-
-	return ret
-
-@messaging.handle_mq('/player/seekrev', cmd='PUT')
-def put_seekrev(path=None, cmd=None, args=None, data=None):
-	"""	Seek REV
-		Arguments:
-			None		Seek back by ? seconds
-			<int>		Seek back by <int> seconds
-		Return data:	Nothing
+	Seek
+	Arguments:
+		None		Seek Fwd. by ? seconds
+		<int>		Seek by <int> seconds
+	Return data:
+		?
 	"""
-	valid = validate_args(args,0,1)
-
 	if not args:
-		ret = sc_sources.seekrev()
+		ret = sc_sources.seek()
 	elif len(args) == 1:
-		ret = sc_sources.seekrev(args[0])
-
+		ret = sc_sources.seek(args[0])
 	return ret
 
 """
@@ -724,8 +801,8 @@ def put_update_location(args):
 	return ret
 '''
 
-@messaging.handle_mq('/player/update/source', cmd='PUT')
-@command.validate
+# TODO
+@messaging.register('/player/update/source', cmd='PUT')
 def put_update_source(path=None, cmd=None, args=None, data=None):
 	"""	Update MPD for source
 		Arguments:		Source index
@@ -740,79 +817,82 @@ def put_update_source(path=None, cmd=None, args=None, data=None):
 
 	return ret
 
-@messaging.handle_mq('/events/source/active', cmd='DATA')
+# -----------------------------------------------------------------------------
+# EVENTS
+
+@messaging.register('/events/source/active', cmd='DATA')
 def data_source_active(path=None, cmd=None, args=None, data=None):
 	print "ACTIVE"
 	pass
 	
-@messaging.handle_mq('/events/source/available', cmd='DATA')
+@messaging.register('/events/source/available', cmd='DATA')
 def data_source_available(path=None, cmd=None, args=None, data=None):
 	print "AVAILABLE"
 	pass
 	
-@messaging.handle_mq('/events/player/state', cmd='DATA')
+@messaging.register('/events/player/state', cmd='DATA')
 def data_player_state(path=None, cmd=None, args=None, data=None):
 	print "STATE"
 	pass
 	
-@messaging.handle_mq('/events/player/track', cmd='DATA')
+@messaging.register('/events/player/track', cmd='DATA')
 def data_player_track(path=None, cmd=None, args=None, data=None):
 	print "TRACK"
 	pass
 	
-@messaging.handle_mq('/events/player/elapsed', cmd='DATA')
+@messaging.register('/events/player/elapsed', cmd='DATA')
 def data_player_elapsed(path=None, cmd=None, args=None, data=None):
 	print "ELAPSED"
 	pass
 	
-@messaging.handle_mq('/events/player/updating', cmd='DATA')
+@messaging.register('/events/player/updating', cmd='DATA')
 def data_player_updating(path=None, cmd=None, args=None, data=None):
 	print "UPDATING"
 	pass
 	
-@messaging.handle_mq('/events/player/updated', cmd='DATA')
+@messaging.register('/events/player/updated', cmd='DATA')
 def data_player_updated(path=None, cmd=None, args=None, data=None):
 	print "UPDATED"
 	pass
 	
-@messaging.handle_mq('/events/volume/changed', cmd='DATA')
+@messaging.register('/events/volume/changed', cmd='DATA')
 def data_volume_changed(path=None, cmd=None, args=None, data=None):
 	print "VOL_CHG"
 	pass
 	
-@messaging.handle_mq('/events/volume/att', cmd='DATA')
+@messaging.register('/events/volume/att', cmd='DATA')
 def data_volume_att(path=None, cmd=None, args=None, data=None):
 	print "ATT"
 	pass
 	
-@messaging.handle_mq('/events/volume/mute', cmd='DATA')
+@messaging.register('/events/volume/mute', cmd='DATA')
 def data_volume_mute(path=None, cmd=None, args=None, data=None):
 	print "MUTE"
 	pass
 	
-@messaging.handle_mq('/events/network/up', cmd='DATA')
+@messaging.register('/events/network/up', cmd='DATA')
 def data_network_up(path=None, cmd=None, args=None, data=None):
 	print "NET UP"
 	pass
 	
-@messaging.handle_mq('/events/network/down', cmd='DATA')
+@messaging.register('/events/network/down', cmd='DATA')
 def data_network_down(path=None, cmd=None, args=None, data=None):
 	payload = json.loads(data)
 	sc_sources.do_event('network',path,payload)
 	printSummary()
 	return None
 	
-@messaging.handle_mq('/events/system/shutdown', cmd='DATA')
+@messaging.register('/events/system/shutdown', cmd='DATA')
 def data_system_shutdown(path=None, cmd=None, args=None, data=None):
 	print "SHUTDOWN"
 	pass
 	
-@messaging.handle_mq('/events/system/reboot/', cmd='DATA')
+@messaging.register('/events/system/reboot/', cmd='DATA')
 def data_system_reboot(path=None, cmd=None, args=None, data=None):
 	print "REBOOT"
 	pass
 	
-@messaging.handle_mq('/events/udisks/added', cmd='DATA')
+@messaging.register('/events/udisks/added', cmd='DATA')
 def data_udisks_added(path=None, cmd=None, args=None, data=None):
 	""" New media added
 		
@@ -837,7 +917,7 @@ def data_udisks_added(path=None, cmd=None, args=None, data=None):
 	printSummary()
 	return None
 	
-@messaging.handle_mq('/events/udisks/removed', cmd='DATA')
+@messaging.register('/events/udisks/removed', cmd='DATA')
 def data_udisks_removed(path=None, cmd=None, args=None, data=None):
 	print "REMOVED"
 	pass

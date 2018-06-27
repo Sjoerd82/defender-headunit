@@ -10,6 +10,57 @@
 from threading import Timer		# Modesets: timer to reset mode change
 import copy
 
+def dict_volume_level(
+				,device=None
+				,simple_vol=None
+				,channels=None
+				,muted=None ):
+	"""
+	`system` | "alsa", "jack", "pulseaudio", "mpd"(?)
+	`device` | Ex. "hw:0,0", "default-sink", etc.
+	`channels` | `[{level}]` list of levels
+	`muted` | Useful?
+	"""
+	volume = {}
+	volume['system'] = system
+	volume['device'] = device
+	volume['simple_vol'] = simple_vol
+	volume['channels'] = channels
+	volume['muted'] = muted
+	return volume
+	
+class VolumeLevel(list):
+	"""
+	Field | Value
+	--- | ---
+	`channel` | Channel number, zero-based
+	`level` | 0-100 (?)
+	"""
+	def init(self):
+		super(Volume, self).__init__()
+
+class Volume(dict):
+	"""
+	Dictionary
+
+	Field | Value
+	--- | ---
+	`system` | "alsa", "ecasound", "jack", "pulseaudio", "mpd"
+	`device` | Ex. "hw:0,0", "default-sink", etc.
+	`simple_vol` | Temporary shortcut for ecasound pre-amp
+	`channels` | `[{level}]` list of levels
+	`muted` | Useful?
+	"""
+	def init(self):
+		super(Volume, self).__init__()
+		self['system'] = None
+		#self['device'] = None
+		#self['simple_vol'] = None
+		#self['channels'] = None
+		self['muted'] = None
+	
+	
+
 class Modeset(list):
 	"""
 	List of dictionaries.

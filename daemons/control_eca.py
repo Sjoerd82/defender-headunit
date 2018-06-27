@@ -33,7 +33,7 @@ from hu_utils import *
 from hu_msg import MqPubSubFwdController
 from hu_gpio import GpioController
 from hu_commands import Commands
-from hu_datastruct import Modeset
+from hu_datastruct import Volume, Modeset
 
 # *******************************************************************************
 # Global variables and constants
@@ -55,7 +55,7 @@ ECA_CHAIN_EQ = None				# chain object that contains the equalizer
 
 eca_chain_op_master_amp = None
 att_level = 20		# TODO, get from configuration
-local_volume = 1	# TOOD, retrieve from resume!
+local_volume = 1	# TOOD, retrieve from resume!	# TODO, replace with Volume
 local_volume_chg = False
 eca_chain_selected = None
 volume_increment = 0.15
@@ -74,11 +74,16 @@ cfg_main = None		# main
 cfg_daemon = None	# daemon
 cfg_zmq = None		# Zero MQ
 cfg_ecasound = None
-cfg_gpio = None		# GPIO setup
 
 # global datastructures
 modes = Modeset()
 mode_controller = False		# ToDo remove
+
+# TODO
+#volume = Volume()
+#vol_eca_pre_amp = {}
+#vol_eca_pre_amp['level'] = 1
+
 
 qVolume = None
 
@@ -179,10 +184,11 @@ def eca_execute(command,tries=3):
 			return reteca
 
 def eca_load_chainsetup_file(ecs_file):
-	""" Load, Test and Connect chainsetup file
-		Returns:
-			True:	All OK
-			False:	Chainsetup not loaded
+	"""
+	Load, Test and Connect chainsetup file
+	Returns:
+		True:	All OK
+		False:	Chainsetup not loaded
 	"""
 	# load chainsetup from file, it will be automatically selected
 	eca_execute("cs-load {0}".format(ecs_file))
@@ -271,7 +277,10 @@ def eca_get_effect_amplification():
 	return ea_value
 	
 def eca_set_effect_amplification(level):
-
+	"""
+	Set level
+	level = %?
+	"""
 	global local_volume
 	
 	if level < 0:
@@ -374,6 +383,7 @@ def handle_queue(code,count):
 # MQ handler
 #
 
+#DEPRECATED
 def validate_args2(args, min_args, max_args):
 
 	if len(args) < min_args:
@@ -386,6 +396,7 @@ def validate_args2(args, min_args, max_args):
 		
 	return True
 
+#DEPRECATED
 def get_data(ret,returndata=False,eventpath=None):
 
 	print "DEBUG: ret = {0}".format(ret)
@@ -419,58 +430,106 @@ def get_data(ret,returndata=False,eventpath=None):
 		
 	return data
 
-# ********************************************************************************
+# -----------------------------------------------------------------------------
 # MQ: /ecasound
-#	
-@messaging.handle_mq('/ecasound/chainsetup', cmd='GET')
+@messaging.register('/ecasound/chainsetup', cmd='GET')
+@command.validate
 def mq_eca_cs_get(path=None, cmd=None, args=None, data=None):
-	"""	Retrieve currently active chainsetup """
-	data = struct_data(chainsetup_filename)
-	return data	# this will be returned using the response path
+	"""
+	Retrieve currently active chainsetup
+	Arguments:
+		None
+	Return data:
+		Chainsetup
+	Return codes:
+		200
+	"""
+	return chainsetup_filename
 	
-@messaging.handle_mq('/ecasound/chainsetup', cmd='PUT')
+@messaging.register('/ecasound/chainsetup', cmd='PUT')
+@command.validate
 def mq_eca_cs_put(path=None, cmd=None, args=None, data=None):
-	"""	Set the active chainsetup """
-	# TODO: validate input
-	print args[0]
+	"""
+	Set the active chainsetup 
+	Arguments:
+		Chainsetup
+	Return data:
+		None
+	Return codes:
+		200:	OK
+		500:	Error
+	"""
+	code = 200
 	if os.path.exists(args[0]):
 		ret = eca_load_chainsetup_file(args[0])
-	data = struct_data(ret) # True=OK, False=Not OK
-	return data
+		if ret == False:
+			code = 500
+	else:
+		code = 500
+	return None, code
 	
-@messaging.handle_mq('/ecasound/mode/active', cmd='DATA')
+# -----------------------------------------------------------------------------
+# MQ: Return path
+@messaging.register('/ecasound/mode/active', cmd='DATA')
 def mq_eca_mode_active(path=None, cmd=None, args=None, data=None):
+	"""
+	Response to request active mode
+	Arguments:
+		Payload data
+	Return data/code:
+		None
+	"""
 	global resilience_modes_received
-	print "RECEIVED LIST OF ACTIVE MODES..."
-	print data
 	resilience_modes_received = True
 	if 'payload' in data:
 		active_modes = data['payload']
 		for mode in active_modes:
-			print "SETTING MODE ACTIVE: {0}".format(mode)
 			gpio.set_mode(mode)
+			printer("Mode now active: {0}".format(mode))
+	else:
+		printer("List of active modes received: None",level=LL_WARNING)
 
-# ********************************************************************************
+# -----------------------------------------------------------------------------
 # MQ: /volume
 #
-
-@messaging.handle_mq('/volume/master', cmd='GET')
+# TODO: Volume object?
+@messaging.register('/volume/master', cmd='GET')
+@command.validate
 def mq_master_get(path=None, cmd=None, args=None, data=None):
-	""" get master volume """
-	validate_args2(params,0,0)	# no args
+	"""
+	Get master volume
+	Arguments:		None
+	Return data:
+		{volume} object
+	Return codes:
+		?
+	"""
+	code = 200
 	level = eca_get_effect_amplification()
 	data = get_data(dict_volume(system='ecasound', simple_vol=level),returndata=True)
-	print "DEBUG data:"
-	print data
-	return data
+	return data, code
 	
-@messaging.handle_mq('/volume/master', cmd='PUT')
-@command.validate('VOLUME-SET')
+# TODO: level can be a float ????????? or not?
+@messaging.register('/volume/master', cmd='PUT', event='/event/volume/changed')
+@command.validate
 def mq_master_put(path=None, cmd=None, args=None, data=None):
-	""" set master volume """
+	"""
+	Set master volume
+	Arguments:
+		up|down|FLOAT_PERCENTAGE|FLOAT_SIGNED|att|mute
+			FLOAT_PERCENTAGE = 42.2%, +5%, etc.
+			FLOAT_SIGNED = +5, -5, etc.
+	Return data:
+		None
+	Return event:
+		{volume} object
+	Return codes:
+		?
+	"""
 	global local_volume
-	#validate_args2(params,1,1)	# arg can be: <str:up|down|+n|-n|att>
+	code = 200
 	old_volume = local_volume
+	
 	if args[0] == 'up':
 		local_volume += volume_increment
 		
@@ -496,22 +555,37 @@ def mq_master_put(path=None, cmd=None, args=None, data=None):
 	elif args[0] == 'att':
 		local_volume = att_level
 		
+	elif args[0] == 'mute':
+		eca_mute('on')
+	
 	eca_set_effect_amplification(local_volume)
-	get_data(None,eventpath='/events/volume/changed')
+	#get_data(None,eventpath='/events/volume/changed')
+	
+	#TODO
+	ret = {'volume':42}
+	return ret, code
 
-@messaging.handle_mq('/volume/master/increase', cmd='PUT')
+# TODO: level can be a float ????????? or not?
+@messaging.register('/volume/master/increase', cmd='PUT', event='/event/volume/changed')
+@command.validate
 def mq_master_increase_put(path=None, cmd=None, args=None, data=None):
-	"""	Increase Volume
-		Arguments:		[percentage]
-		Return data:	Nothing
+	"""
+	Increase Volume
+	Arguments:
+		FLOAT_PERCENTAGE|FLOAT_SIGNED
+			FLOAT_PERCENTAGE = 42.2%, +5%, etc.
+			FLOAT_SIGNED = +5, -5, etc.
+	Return data:
+		None
+	Return codes:
+		?
 	"""
 	global local_volume
-	validate_args2(params,0,1)	# [percentage]
 	
-	if not params:
+	if not args:
 		local_volume += volume_increment
 	else:
-		change = int(params[0][1])
+		change = int(args[0][1])
 		local_volume += change
 
 	eca_set_effect_amplification(local_volume)	
@@ -520,15 +594,28 @@ def mq_master_increase_put(path=None, cmd=None, args=None, data=None):
 
 	get_data(None,eventpath='/events/volume/changed')
 	
-@messaging.handle_mq('/volume/master/decrease', cmd='PUT')
+# TODO: level can be a float ????????? or not?
+@messaging.register('/volume/master/decrease', cmd='PUT', event='/event/volume/changed')
+@command.validate
 def mq_master_decrease_put(path=None, cmd=None, args=None, data=None):
+	"""
+	Decrease Volume
+	Arguments:
+		FLOAT_PERCENTAGE|FLOAT_SIGNED
+			FLOAT_PERCENTAGE = 42.2%, +5%, etc.
+			FLOAT_SIGNED = +5, -5, etc.
+	Return data:
+		None
+	Return codes:
+		?
+	"""
 	global local_volume
-	validate_args2(params,0,1)	# [percentage]
+	#validate_args2(args,0,1)	# [percentage]
 	
-	if not params:
+	if not args:
 		local_volume -= volume_increment
 	else:
-		change = int(params[0][1])
+		change = int(args[0][1])
 		local_volume -= change
 
 	eca_set_effect_amplification(local_volume)	
@@ -537,32 +624,53 @@ def mq_master_decrease_put(path=None, cmd=None, args=None, data=None):
 		
 	get_data(None,eventpath='/events/volume/changed')
 	
-@messaging.handle_mq('/volume/master/att', cmd='PUT')
+# TODO: implement feature: change level
+@messaging.register('/volume/att', cmd='PUT', event='/event/volume/att')
+@command.validate
 def mq_att_put(path=None, cmd=None, args=None, data=None):
+	"""
+	Set Attention (Att) mode
+	Arguments:
+		on|off|toggle
+	Return data:
+		None
+	Return codes:
+		?
+	"""
 	global local_volume
-	validate_args2(params,0,2)	# [str:on|off|toggle],[int:Volume, in %]
+	#validate_args2(params,0,2)	# [str:on|off|toggle],[int:Volume, in %]
 
-	if not params:
+	if not args:
 		local_volume = att_level
 		
-	if len(params) == 2:
-		tmp_att_level = params[1]
+	if len(args) == 2:
+		tmp_att_level = args[1]
 	else:
 		tmp_att_level = att_level
 		
-	if len(params) == 1:
-		if params[0] == "on":
+	if len(args) == 1:
+		if args[0] == "on":
 			local_volume = tmp_att_level
-		#elif params[0] == "off":
+		#elif args[0] == "off":
 		#	local_volume = ?
-		#elif params[0] == "toggle":
+		#elif args[0] == "toggle":
 		#	pass
 	eca_set_effect_amplification(local_volume)
 	get_data(None,eventpath='/events/volume/att')
 	
-@messaging.handle_mq('/volume/master/mute', cmd='PUT')
+@messaging.register('/volume/mute', cmd='PUT', event='/event/volume/mute')
+@command.validate
 def mq_mute_put(path=None, cmd=None, args=None, data=None):
-	validate_args2(params,0,1)	# arg can be [str:on|off|toggle]
+	"""
+	Set Mute
+	Arguments:
+		on|off|toggle
+	Return data:
+		None
+	Return codes:
+		?
+	"""
+	#validate_args2(params,0,1)	# arg can be [str:on|off|toggle]
 	if not params:
 		eca_mute('toggle')
 	else:
@@ -572,19 +680,21 @@ def mq_mute_put(path=None, cmd=None, args=None, data=None):
 	
 # ********************************************************************************
 # MQ: /equalizer
-#
-@messaging.handle_mq('/equalizer/eq')
+# TODO!
+'''
+@messaging.register('/equalizer/eq')
 def get_eq(path=None, cmd=None, args=None, data=None):
 	pass	
 
-@messaging.handle_mq('/equalizer/band', cmd='PUT')
+@messaging.register('/equalizer/band', cmd='PUT')
 def put_band(path=None, cmd=None, args=None, data=None):
 	pass
 
+'''
 # ********************************************************************************
 # MQ: /events
-#
-@messaging.handle_mq('/events/source/active', cmd='DATA')
+# TODO!
+@messaging.register('/events/source/active', cmd='DATA')
 def mq_source_active_data(path=None, cmd=None, args=None, data=None):
 	if len(params) >= 1:
 		payload = json.loads(params[0])
@@ -592,7 +702,7 @@ def mq_source_active_data(path=None, cmd=None, args=None, data=None):
 	else:
 		print "HUH??"
 		
-@messaging.handle_mq('/events/mode/set', cmd='DATA')
+@messaging.register('/events/mode/set', cmd='DATA')
 def mq_mode_set_data(path=None, cmd=None, args=None, data=None):
 	print "A MODE WAS SET"
 
@@ -604,40 +714,39 @@ def mq_mode_set_data(path=None, cmd=None, args=None, data=None):
 # return False to return a 500 error thingy
 # return None to not return anything
 
-@messaging.handle_mq('/mode/change', cmd='PUT')
+@messaging.register('/mode/change', cmd='PUT')
+@command.validate
 def mq_mode_change_put(path=None, cmd=None, args=None, data=None):
 	"""
 	Change modes; MODE-CHANGE
-	Args:    Pairs of Mode-State
-	Returns: None
+	Arguments:
+		pairs of mode+state
+	Return data:
+		None
+	Return codes:
+		?
 	"""
-	valid_args = command.validate_args('MODE-CHANGE',args)
-	if valid_args is not None and valid_args is not False:
+	code = 200
+	#valid_args = commands.validate_args('MODE-CHANGE',args)
+	if args is not None and args is not False:
 		print "DEBUG, before: {0}".format(gpio.activemodes())
-		gpio.change_modes(valid_args)
+		gpio.change_modes(args)
 		printer("Active Modes: {0}".format(gpio.activemodes()))
 	else:
 		printer("put_change: Arguments: [FAIL]",level=LL_ERROR)
-	
-	return None
-	
-@messaging.handle_mq('/mode/set', cmd='PUT')
+		code = 500
+	return None, code
+
+# TODO, only relevant if it's one of 'our' modes	
+@messaging.register('/mode/set', cmd='PUT')
+@command.validate
 def mq_mode_set(path=None, cmd=None, args=None, data=None):
-	print "A MODE WAS SET"
-	if mode_controller:
-		return True
-	else:
-		return None
-
-@messaging.handle_mq('/mode/unset', cmd='PUT')
-def mq_unset_put(path=None, cmd=None, args=None, data=None):
-	print "A MODE WAS UNSET"
+	pass
 	
-	if mode_controller:
-		return True
-	else:
-		return None
-
+# TODO, only relevant if it's one of 'our' modes	
+@messaging.register('/mode/unset', cmd='PUT')
+def mq_unset_put(path=None, cmd=None, args=None, data=None):
+	pass
 	
 #********************************************************************************
 # Parse command line arguments
@@ -745,49 +854,6 @@ def setup():
 		printer("Ecasound configuration could not be loaded.", level=LL_CRITICAL)
 		exit(1)
 
-	'''
-	cfg_main = load_cfg_main()
-	if cfg_main is None:
-		printer("Main configuration could not be loaded.", level=LL_CRITICAL)
-		exit(1)
-
-	# zeromq
-	if not args.port_publisher and not args.port_subscriber:
-		cfg_zmq = load_cfg_zmq()
-	else:
-		if args.port_publisher and args.port_subscriber:
-			pass
-		else:
-			load_cfg_zmq()
-	
-		# Pub/Sub port override
-		if args.port_publisher:
-			configuration['zeromq']['port_publisher'] = args.port_publisher
-		if args.port_subscriber:
-			configuration['zeromq']['port_subscriber'] = args.port_subscriber
-
-	if cfg_zmq is None:
-		printer("Error loading Zero MQ configuration.", level=LL_CRITICAL)
-		exit(1)
-			
-	# daemon
-	cfg_daemon = load_cfg_daemon()
-	if cfg_daemon is None:
-		printer("Daemon configuration could not be loaded.", level=LL_CRITICAL)
-		exit(1)
-	
-	# eca
-	cfg_ecasound = load_cfg_ecasound()
-	if cfg_ecasound is None:
-		printer("Ecasound configuration could not be loaded.", level=LL_CRITICAL)
-		exit(1)
-
-	# gpio
-	cfg_gpio = load_cfg_gpio()
-	if cfg_gpio is None:
-		printer("GPIO configuration could not be loaded. GPIO input will not be available", level=LL_WARNING)
-	'''
-
 	#
 	# ECA
 	#	
@@ -824,6 +890,13 @@ def setup():
 	for topic in messaging.subscriptions():
 		printer("> {0}".format(topic))
 
+	#
+	# VOLUME
+	#
+	#volume['system'] = 'ecasound'
+	#volume['device'] =
+	#volume['simple_vol'] = 
+	
 	#
 	# GPIO
 	#
