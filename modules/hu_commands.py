@@ -362,7 +362,7 @@ class Commands(object):
 	def get_command_by_path(self, mq_path, mq_cmd):
 		for ix, cmd in enumerate(self.function_mq_map):
 			if cmd['path'] == mq_path and cmd['command'] == mq_cmd:
-				return function_mq_map
+				return cmd
 				#return ix
 
 	def validate(self, command=None):
