@@ -115,7 +115,7 @@ def testje_get_list(path=None, cmd=None, args=None, data=None):
 	return ret
 
 @messaging.register('/mode/active','GET')
-@command.validate
+@command.validate()
 def testje_get_active(path=None, cmd=None, args=None, data=None):
 	"""
 	Return active modes. No parameters

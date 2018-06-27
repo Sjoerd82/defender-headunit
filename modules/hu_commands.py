@@ -384,7 +384,7 @@ class Commands(object):
 					'path' in kwargs and
 					'cmd' in kwargs ):
 					print "4"
-					command_to_validate = get_command_by_path(kwargs['path'],kwargs['cmd'])
+					command_to_validate = self.get_command_by_path(kwargs['path'],kwargs['cmd'])
 					kwargs['args'] = self.validate_args(command_to_validate,kwargs['args'])
 				# use provided command
 				#else:
