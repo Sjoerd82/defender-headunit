@@ -535,7 +535,13 @@ class Commands(object):
 			'''
 		
 		# add default values / check if enough arguments present
-		args_missing = len(defs)-len(args)
+		i=0
+		for arg_def in defs[len(args):len(defs)]:
+			if 'required' in arg_def and arg_def['required']:
+				i += 1
+		args_req = i
+		
+		args_missing = args_req-len(args)
 		i=0
 		for arg_def in defs[len(args):len(defs)]:
 			if 'default' in arg_def:
@@ -545,6 +551,7 @@ class Commands(object):
 		print "DEBUG!!"
 		print cmd_def
 		print args
+		print args_req
 		print args_missing
 		print defaults_available
 		
