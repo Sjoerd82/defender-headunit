@@ -362,7 +362,8 @@ class Commands(object):
 	def get_command_by_path(self, mq_path, mq_cmd):
 		for ix, cmd in enumerate(self.function_mq_map):
 			if cmd['path'] == mq_path and cmd['command'] == mq_cmd:
-				return ix
+				return function_mq_map
+				#return ix
 
 	def validate(self, command=None):
 		""" Decorator function.
@@ -370,12 +371,9 @@ class Commands(object):
 			Returns list of valid arguments, None (no arguments) or False (invalid)
 			If command could not be found then ???
 		"""
-		print "Hello from validate 1"
 		def decorator(fn):
-			print "2"
 			def decorated(*args,**kwargs):
 				# add an empty args, if not present
-				print "3"
 				if 'args' not in kwargs:
 					kwargs['args'] = None
 					
@@ -383,7 +381,6 @@ class Commands(object):
 				if ( command is None and
 					'path' in kwargs and
 					'cmd' in kwargs ):
-					print "4"
 					command_to_validate = self.get_command_by_path(kwargs['path'],kwargs['cmd'])
 					kwargs['args'] = self.validate_args(command_to_validate,kwargs['args'])
 				# use provided command
@@ -400,7 +397,7 @@ class Commands(object):
 		Returns list of args (including defaults) if valid (may return None if no params)
 		Raises a ValueError if invalid.
 		"""
-		print "DEBUG.. hello from validate_args"
+		print "DEBUG.. hello from validate_args Command={0}".format(command)
 		def strint_to_bool(value):
 			if isinstance(value, (str,unicode)) and value.lower() in ['true','on','1','t']:
 				return True
