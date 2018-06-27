@@ -360,11 +360,9 @@ class Commands(object):
 			return self.function_mq_map[ix]
 			
 	def get_command_by_path(self, mq_path, mq_cmd):
-		print "gcbp {0} {1}".format(mq_path, mq_cmd)
 		# TODO, add postfix slash to search
 		for cmd in self.function_mq_map:
 			if cmd['path'].upper() == mq_path.upper() and cmd['command'].upper() == mq_cmd.upper():
-				print "MATCH {0}".format(cmd)
 				return cmd
 
 	def validate(self, command=None):

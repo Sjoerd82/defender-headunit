@@ -208,63 +208,15 @@ def cb_gpio_function(code, arguments):
 	else:
 		printer("Function {0} not in function_mq_map".format(code),level=LL_ERROR)
 	return
-	
-	""" The Old Function Mapper:
-	if code in function_map:
-		printer("Executing: {0}".format(code))
-		zmq_path = function_map[code]['zmq_path']
-		zmq_command = function_map[code]['zmq_command']
-		arguments = None
-		messaging.publish_command(zmq_path,zmq_command,arguments)
-	else:
-		printer("Function {0} not in function_map".format(code),level=LL_ERROR)
-	"""
-			
+				
 def cb_mode_change(mode_changes,init=False):
 	"""
 	Mode change.
 	"""
-	# active_modes is a Modes() struct
-	
-		# find modes that are no longer active.
-		# active modes
-		#mq_instruction = 
-		#exec_function_by_code('MODE-CHANGE', ...)
-	
-	
-	
-	print "Hello from cb_mode_change(): {0} Init={1}".format(mode_changes,init)
-	print "Doing Nothing, but thanks for the update"
-	
-	'''
-	active_modes.sort(key=itemgetter('name'))
-	modes.sort(key=itemgetter('name'))
-	
-	pairs = zip(modes,active_modes)
-	changes = [(y) for x, y in pairs if x != y]
-
-	if not changes:
-		return
-	
-	zmq_path = '/mode/change'
-	zmq_command = 'PUT'
-	zmq_arguments = []
-	modes_update_active = []
-	
-	for mode in changes:
-		if mode['state'] == True:
-			modes_update_active.append(mode['name'])
-			
-		zmq_arguments.append(mode['name'])
-		zmq_arguments.append(str(mode['state']))
-				
-	#print "sending MQ"
-	messaging.publish_command(zmq_path,zmq_command,zmq_arguments)
-	
-	#print "Updating local modes"
-	modes.set_active_modes(modes_update_active)
-	'''
-	
+	#print "Hello from cb_mode_change(): {0} Init={1}".format(mode_changes,init)
+	#print "Doing Nothing, but thanks for the update"
+	pass
+		
 #********************************************************************************
 # Parse command line arguments
 #

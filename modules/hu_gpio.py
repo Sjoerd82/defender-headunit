@@ -449,13 +449,17 @@ class GpioController(object):
 		self.pins_state[encoder_pinB] = Switch_B								# for next bouncing check
 		
 		# -------------------------------
+		print "A"
 		function = self.get_encoder_function_by_pin(pin)
+		print "B"
 		self.__mode_reset()									# Keep resetting as long as the mode is being used
+		print "C"
 
 		# TODO, check if possible to only reset affected timer: self.ms_all[fun['mode_cycle']].
 		if function is not None:
+			print "D"
 			if (Switch_A and Switch_B):						# Both one active? Yes -> end of sequence
-			
+				print "E"
 				this_chg = datetime.now()
 				delta = this_chg - self.encoder_last_chg
 				#print "diff: {0}".format(delta.total_seconds())
@@ -477,6 +481,7 @@ class GpioController(object):
 				"""
 
 				if pin == encoder_pinB:							# Turning direction depends on 
+					print "F"
 					#counter clockwise
 					#print "[Encoder] {0}: DECREASE/CCW".format(function['function_ccw'])
 					if self.encoder_fast_count > 3 and 'function_fast_ccw' in function:
@@ -484,6 +489,7 @@ class GpioController(object):
 					elif 'function_ccw' in function:
 						self.__exec_function_by_code(function['function_ccw'])
 				else:
+					print "G"
 					#clockwise
 					#print "[Encoder] {0}: INCREASE/CW".format(function['function_cw'])
 					if self.encoder_fast_count > 3 and 'function_fast_cw' in function:
@@ -493,6 +499,7 @@ class GpioController(object):
 					
 				self.encoder_last_chg = this_chg
 		else:
+			print "H"
 			self.__printer("Encoder, no function",level=LL_DEBUG)
 
 
