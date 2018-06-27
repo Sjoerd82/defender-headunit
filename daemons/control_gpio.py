@@ -351,6 +351,9 @@ def setup():
 			
 def main():		
 
+	messaging.execute('/mode/active',cmd='GET')
+	
+
 	# Initialize the mainloop
 	#DBusGMainLoop(set_as_default=True)
 	#mainloop = gobject.MainLoop()
