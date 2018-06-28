@@ -189,6 +189,7 @@ class GpioController(object):
 			valid_params = None
 		
 		if callable(self.callback_function):
+			print "-> Calling callback"
 			self.callback_function(command,valid_params)
 		
 	# ********************************************************************************
