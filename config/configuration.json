@@ -490,14 +490,14 @@
 					, "name":"Alsa: Behringer UCA202 16-bit"
 					, "device":"hw:CARD=CODEC,0"
 					, "format":"44100:16:2"
-					, "enabled":"no"
+					, "enabled":"yes"
 				},
 				{
 					  "type":"alsa" 
 					, "name":"Alsa: Loopback 16-bit"
 					, "device":"hw:CARD=Loopback,DEV=1"
 					, "format":"44100:16:2"
-					, "enabled":"yes"
+					, "enabled":"no"
 				},
 				{
 					  "type":"alsa" 
@@ -512,7 +512,7 @@
 					, "path": "/tmp/mpd.fifo"
 					, "format":"44100:32:2"
 					, "enabled":"no"
-					, "always_on":"yes"
+					, "always_on":"no"
 				},
 				{
 					  "type":"pipe" 
@@ -536,7 +536,7 @@
 					, "format":"44100:32:2"
 					, "mixer_type":"software"
 					, "command":"ecasound -q --server -z:nodb -z:mixmode,sum -a:pre -f:s32_le,2,44100 -i:stdin -pf:/etc/pre.ecp -o:loop,1 -a:woofer,tweeter -i:loop,1 -a:woofer -pf:/etc/woofer.ecp -chorder:1,0 -a:tweeter -pf:/etc/tweeter.ecp -chorder:0,2 -a:woofer,tweeter -f:16,4,44100 -o:jack"
-					, "enabled":"yes"
+					, "enabled":"no"
 				},
 				{
 					  "type":"pipe" 
