@@ -105,12 +105,12 @@ class MySource(MpdSourcePlugin,IPlugin):
 			new_availability = False
 
 		# Check if at least one stream is good
-		self.printer('Checking to see we have at least one valid stream (timeout=6s)')
+		self.printer('Checking to see we have at least one valid stream (timeout=8s)')
 		with open(streams_file,'r') as streams:
 			for l in streams:
 				uri = l.rstrip()
 				if not uri[:1] == '#' and not uri == '':
-					uri_OK = url_check(uri,6)	#1s timeout
+					uri_OK = url_check(uri,8)	#1s timeout
 					if uri_OK:
 						self.printer(' > Stream [OK]: {0}'.format(uri))
 						new_availability = True
