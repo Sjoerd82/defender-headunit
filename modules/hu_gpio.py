@@ -231,7 +231,9 @@ class GpioController(object):
 			copy_ms_all[mode_set_id] = copy.deepcopy(mode_set.simple())
 		return copy_ms_all
 		
-
+	def cleanup(self):
+		GPIO.cleanup()
+		
 	# ********************************************************************************
 	# GPIO helpers
 	# 
@@ -501,6 +503,7 @@ class GpioController(object):
 		"""
 		Setup
 		"""
+		GPIO.setwarnings(True)
 		
 		# gpio mode: BCM or board
 		if 'gpio_mode' in self.cfg_gpio:

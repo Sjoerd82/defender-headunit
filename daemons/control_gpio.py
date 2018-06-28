@@ -328,9 +328,10 @@ def main():
 if __name__ == "__main__":
 	parse_args()
 	setup()
-	#try:
-	main()
-	#finally:
-	#	pass
-		#GPIO.cleanup()
+	try:
+		main()
+	except KeyboardInterrupt:
+		print "KeyboardInterrupt"
+	finally:
+		gpio.cleanup()
 	
