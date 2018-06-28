@@ -1,7 +1,7 @@
 {
 	  "gpio_mode": "BCM"
 	, "long_press_ms": 800
-	, "base_modes": [ "volume" ]
+	, "base_modes": [ "track" ]
 	, "mode_timeout": 5
 	, "devices": [
 		{ 	  "name": "multi_encoder"
@@ -18,8 +18,8 @@
 	]
 	,"mode_sets": [
 		{	  "id": "modecycle1"
-			, "mode_list": [ "volume", "track", "bass", "treble", "random", "menu" ]
-			, "base_mode": "volume"
+			, "mode_list": [ "track", "bass", "treble", "random", "menu" ]
+			, "base_mode": "track"
 			, "reset": 8
 			, "authorative": true
 		},
@@ -34,7 +34,7 @@
 			, "function": null
 			, "short_press": [ "multi_enc_sw" ]
 			, "mode_cycle": "modecycle1"
-			, "mode_select": [ "volume", "track", "bass", "treble", "random", "menu" ]
+			, "mode_select": [ "track", "bass", "treble", "random", "menu" ]
 		},
 		{
 			  "name":"track_select"

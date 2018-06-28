@@ -5,7 +5,7 @@
 		{ 	  "name": "multi_encoder"
 			, "type": "rotenc"
 			, "clk": 19
-			, "dt": 5,
+			, "dt": 5
 		}
 	]
 	,"mode_sets": [

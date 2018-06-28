@@ -728,8 +728,6 @@ def mq_mode_change_put(path=None, cmd=None, args=None, data=None):
 	"""
 	code = 200
 	if args is not None and args is not False:
-		print "DEBUG, before: {0}".format(gpio.activemodes())
-		print "DEBUG, change to: {0}".format(args)
 		gpio.change_modes(args)
 		printer("Active Modes: {0}".format(gpio.activemodes()))
 	else:
@@ -913,7 +911,11 @@ def setup():
 	#todo: GPIO cleanup
 	
 	print "EXPERIMENTAL, requesting active modes.."
-	messaging.publish_command('/mode/active','GET', wait_for_reply=False, response_path='/ecasound/mode/active')
+	# IN CASE OF DEPENDENCY:
+	#messaging.publish_command('/mode/active','GET', wait_for_reply=False, response_path='/ecasound/mode/active')
+	# IF SEPARATE KNOB:
+	resilience_modes_received = True
+	gpio.set_mode('volume')
 	
 	printer('Initialized [OK]')
 
