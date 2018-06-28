@@ -263,10 +263,12 @@ class GpioController(object):
 		"""
 		Change a list of modes
 		"""
+		print "CHG_MODE START"
 		for mode_ix in range(0,len(change_list),2):
 			set_and_index = self.__mode_modesetid(change_list[mode_ix])
 			if set_and_index is not None:
 				self.ms_all[set_and_index[0]].activate(set_and_index[1])
+		print "CHG_MODE STOP"
 	
 	def modeset(self,modesetid):
 		"""
