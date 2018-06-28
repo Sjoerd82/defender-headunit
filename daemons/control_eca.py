@@ -985,5 +985,10 @@ def main():
 if __name__ == "__main__":
 	parse_args()
 	setup()
-	main()
+	try:
+		main()
+	except KeyboardInterrupt:
+		print "KeyboardInterrupt"
+	finally:
+		gpio.cleanup()
 	
