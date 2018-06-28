@@ -250,7 +250,7 @@ class CircularModeset(Modeset):
 		print "DeActivating {0}".format(ix)
 		if ( ix is not None and
 			 ix < len(self) and
-			 self.ix_active is not None
+			 self.ix_active is not None and		# useful?
 			 ix <> self.ix_active ):
 				print "Actually DeActivating.."
 				self[ix]['state'] = False
