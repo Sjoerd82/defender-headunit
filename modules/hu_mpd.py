@@ -208,7 +208,7 @@ class MpdController(object):
 		for i in range(count):
 			try:
 				self.mpdc.next()
-			except CommandError as err:
+			except mpd.CommandError as err:
 				print "ERROR: playing: {0}".format(err)
 				
 		self.__return_to_idle()
