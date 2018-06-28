@@ -1,13 +1,7 @@
 {
 	  "gpio_mode": "BCM"
 	, "long_press_ms": 800
-	, "devices": [
-		{ 	  "name": "multi_encoder"
-			, "type": "rotenc"
-			, "clk": 13
-			, "dt": 6
-		}
-	]
+	, "devices": []
 	,"mode_sets": [
 		{	  "id": "volume"
 			, "mode_list": [ "volume" ]
