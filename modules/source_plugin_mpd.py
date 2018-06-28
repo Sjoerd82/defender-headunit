@@ -257,7 +257,7 @@ class MpdSourcePlugin(SourcePlugin):
 		return True
 		
 	def prev(self, **kwargs):
-		self.printer('Prev track. Available parameters: {0}'.format(kwargs))')
+		self.printer('Prev track. Available parameters: {0}'.format(kwargs))
 		#TODO, implement advance track count
 		self.mpdc.prev()
 		return True
