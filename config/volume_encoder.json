@@ -4,8 +4,8 @@
 	, "devices": [
 		{ 	  "name": "multi_encoder"
 			, "type": "rotenc"
-			, "clk": 13
-			, "dt": 6
+			, "clk": 19
+			, "dt": 5,
 		}
 	]
 	,"mode_sets": [

@@ -128,6 +128,7 @@ class GpioController(object):
 		self.__printer("Mode change. {0}".format(mode_change_params),level=LL_DEBUG)
 		self.__exec_function_by_code('MODE-CHANGE',mode_change_params)
 		
+		"""
 		# DEBUG / EXPERIMENTAL
 		if self.int_encoder is not None:
 			if mode_change_params[1] == True and 'mode_timeout' in self.cfg_gpio and self.int_enabled:
@@ -154,6 +155,7 @@ class GpioController(object):
 				self.int_enabled = False
 
 			print "DEBUG.. done"
+		"""
 		
 		if callable(self.callback_mode_change):
 			self.callback_mode_change(mode_change_params)
@@ -235,6 +237,7 @@ class GpioController(object):
 					val.activate( val.index(mode) )
 				else:
 					val.deactivate( val.index(mode) )
+		"""
 		print "SET_MODE DONE -- ALSO DOING EXPERIMENTAL -- "
 		# DEBUG / EXPERIMENTAL
 		if self.int_encoder is not None:
@@ -260,8 +263,8 @@ class GpioController(object):
 				GPIO.remove_event_detect(13)
 				GPIO.remove_event_detect(6)
 				self.int_enabled = False
-
 			print "DEBUG2.. done"
+		"""
 	
 	def change_modes(self, change_list):
 		"""
