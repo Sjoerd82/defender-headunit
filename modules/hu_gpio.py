@@ -53,6 +53,9 @@ class GpioController(object):
 		logger			Optionally, provide a logger if you want feedback.
 		"""
 	
+		#TEMP - DEBUG - EXPERIMENTAL
+		self.int_encoder = None
+	
 		# configuration (dictionary)
 		self.cfg_gpio = cfg_gpio
 
@@ -525,6 +528,7 @@ class GpioController(object):
 		"""
 		Setup
 		"""
+		self.int_encoder = int_encoder
 		GPIO.setwarnings(True)
 		
 		# gpio mode: BCM or board
