@@ -954,7 +954,10 @@ class SourceController(object):
 	# move into subclass or something?
 	#
 
-	def __get_current(self,function):
+	def __get_current(self,function="Unknown"):
+		"""
+		Get current index and subindex
+		"""
 	
 		index = self.iCurrentSource[0]
 		subindex = self.iCurrentSource[1]
