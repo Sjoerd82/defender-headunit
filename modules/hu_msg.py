@@ -384,6 +384,7 @@ class MqPubSubFwdController(object):
 				pass
 			else:
 				ret = self.execute(parsed_msg['path'], parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'])
+				print "P&E: got back: {0}".format(ret)
 				if parsed_msg['resp_path'] and ret is not None:
 					self.publish_command(parsed_msg['resp_path'],'DATA',ret)
 				
@@ -469,13 +470,16 @@ class MqPubSubFwdController(object):
 		# else, try wildcards
 		if key in self.mq_path_func:
 			# EXACT
+			print "EXACT"
 			ret = self.mq_path_func[key]['function'](path=path_dispatch, cmd=cmd, args=args, data=data)
 			if ret is not None:
-			
+				print "1: {0}".format(ret)
 				ret_data = struct_data(ret)
 				if cmd == 'GET':
+					print "2: {0}".format(ret_data)
 					return ret_data
 				else:
+					print "3"
 					#if ret_data['retval'] == 200 and self.mq_path_func[key]['event'] is not None:
 					if self.mq_path_func[key]['event'] is not None:
 						self.publish_command(self.mq_path_func[key]['event'], 'INFO', arguments=None, wait_for_reply=False, response_path=None)
@@ -488,6 +492,7 @@ class MqPubSubFwdController(object):
 
 		else:
 			# WILDCARD
+			print "WILDCARD"
 			if cmd is None:
 				key = self.__dispatcher_key(path_dispatch,'#')
 				
