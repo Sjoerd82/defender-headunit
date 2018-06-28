@@ -232,6 +232,7 @@ class GpioController(object):
 		return copy_ms_all
 		
 	def cleanup(self):
+		printer("Cleaning up GPIO")
 		GPIO.cleanup()
 		
 	# ********************************************************************************
