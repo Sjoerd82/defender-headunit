@@ -206,7 +206,11 @@ class MpdController(object):
 	def next(self, count=1):
 		self.__test_conn()
 		for i in range(count):
-			self.mpdc.next()
+			try:
+				self.mpdc.next()
+			except CommandError as err:
+				print "ERROR: playing: {0}".format(err)
+				
 		self.__return_to_idle()
 		return True
 			
