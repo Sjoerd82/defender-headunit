@@ -128,7 +128,7 @@ class GpioController(object):
 		self.__exec_function_by_code('MODE-CHANGE',mode_change_params)
 		
 		# DEBUG / EXPERIMENTAL
-		if int_encoder is not None:
+		if self.int_encoder is not None:
 			if mode_change_params[1] == True and 'mode_timeout' in self.cfg_gpio:
 				print "DEBUG.. GPIO/VOLUME.. disabling our interrupts.."
 				GPIO.remove_event_detect(13)
