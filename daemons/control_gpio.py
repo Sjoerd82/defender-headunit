@@ -22,8 +22,10 @@
 
 import sys						# path
 import os						# 
+import signal					# catch SIGTERM (start-stop-daemon, kill)
 from time import sleep
 from operator import itemgetter
+
 
 from datetime import datetime
 from logging import getLogger	# logger
@@ -218,6 +220,12 @@ def cb_mode_change(mode_changes,init=False):
 	pass
 		
 #********************************************************************************
+
+def signal_term_handler(signal, frame):
+    print 'got SIGTERM'
+	gpio.cleanup()
+    sys.exit(0)
+
 # Parse command line arguments
 #
 def parse_args():
@@ -242,6 +250,11 @@ def setup():
 		logger = log_create_syslog_loghandler(logger, args.loglevel, LOG_TAG, address='/dev/log') 	# output to syslog
 	else:
 		logger = log_create_console_loghandler(logger, args.loglevel, LOG_TAG) 						# output to console
+	
+	#
+	# 
+	#
+	signal.signal(signal.SIGTERM, signal_term_handler)
 	
 	#
 	# Configuration
@@ -334,4 +347,5 @@ if __name__ == "__main__":
 		print "KeyboardInterrupt"
 	finally:
 		gpio.cleanup()
+	
 	
