@@ -265,9 +265,15 @@ class GpioController(object):
 		"""
 		print "CHG_MODE START"
 		for mode_ix in range(0,len(change_list),2):
-			set_and_index = self.__mode_modesetid(change_list[mode_ix])
-			if set_and_index is not None:
-				self.ms_all[set_and_index[0]].activate(set_and_index[1])
+			setid_and_index = self.__mode_modesetid(change_list[mode_ix])
+			if setid_and_index is not None:
+				if change_list[mode_ix+1] == True:
+					print "Setting Active"
+					self.ms_all[setid_and_index[0]].activate(setid_and_index[1])
+				elif change_list[mode_ix+1] == False:
+					self.ms_all[setid_and_index[0]].deactivate(setid_and_index[1])
+				else:
+					print "Invalid State"
 		print "CHG_MODE STOP"
 	
 	def modeset(self,modesetid):
