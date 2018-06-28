@@ -110,7 +110,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 			for l in streams:
 				uri = l.rstrip()
 				if not uri[:1] == '#' and not uri == '':
-					uri_OK = url_check(uri,3)	#1s timeout
+					uri_OK = url_check(uri,6)	#1s timeout
 					if uri_OK:
 						self.printer(' > Stream [OK]: {0}'.format(uri))
 						new_availability = True
