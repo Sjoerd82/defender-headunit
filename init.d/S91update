@@ -138,6 +138,7 @@ start() {
 			/etc/init.d/quickplay/S75udisks start
 			/etc/init.d/quickplay/S95source start
             /etc/init.d/S71ads1x15 start
+			
 			#/etc/init.d/S72ctrlgpio start
 		    #/etc/init.d/S95flask start
         fi
