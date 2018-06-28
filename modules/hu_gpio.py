@@ -127,20 +127,20 @@ class GpioController(object):
 		# DEBUG / EXPERIMENTAL
 		if mode_change_params[1] == True and 'mode_timeout' in self.cfg_gpio:
 			print "DEBUG.. GPIO/VOLUME.. disabling our interrupts.."
-			GPIO.remove_event_detect(pin_clk)
-			GPIO.remove_event_detect(pin_dt)
+			GPIO.remove_event_detect(13)
+			GPIO.remove_event_detect(6)
 		elif mode_change_params[1] == False and 'mode_timeout' in self.cfg_gpio:
 			print "DEBUG.. GPIO/NOT VOLUME.. enabling our interrupts.."
-			GPIO.add_event_detect(pin_clk, GPIO.RISING, callback=int_encoder) # NO bouncetime 
-			GPIO.add_event_detect(pin_dt, GPIO.RISING, callback=int_encoder) # NO bouncetime
+			GPIO.add_event_detect(13, GPIO.RISING, callback=int_encoder) # NO bouncetime 
+			GPIO.add_event_detect(6, GPIO.RISING, callback=int_encoder) # NO bouncetime
 		elif mode_change_params[1] == True and 'mode_timeout' not in self.cfg_gpio:
 			print "DEBUG.. ECA/VOLUME.. enabling our interrupts.."
-			GPIO.add_event_detect(pin_clk, GPIO.RISING, callback=int_encoder) # NO bouncetime 
-			GPIO.add_event_detect(pin_dt, GPIO.RISING, callback=int_encoder) # NO bouncetime		
+			GPIO.add_event_detect(13, GPIO.RISING, callback=int_encoder) # NO bouncetime 
+			GPIO.add_event_detect(6, GPIO.RISING, callback=int_encoder) # NO bouncetime		
 		elif mode_change_params[1] == False and 'mode_timeout' not in self.cfg_gpio:
 			print "DEBUG.. ECA/NOT VOLUME.. disabling our interrupts.."
-			GPIO.remove_event_detect(pin_clk)
-			GPIO.remove_event_detect(pin_dt)
+			GPIO.remove_event_detect(13)
+			GPIO.remove_event_detect(6)
 
 			
 		print "DEBUG.. done"
