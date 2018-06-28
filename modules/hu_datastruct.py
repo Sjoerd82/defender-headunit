@@ -105,12 +105,9 @@ class Modeset(list):
 		"""
 		Set state to True for given index.
 		"""
-		print "Activating {0}".format(ix)
 		if ix is not None and ix < len(self):
 			self[ix]['state'] = True
-			print "Activated.. calling state_change"
 			self.state_change()
-			print "Activating Done. {0}".format(self[ix]['state'])
 			
 	def deactivate(self,ix):
 		"""
@@ -121,7 +118,6 @@ class Modeset(list):
 			print "DEactivated.. calling state_change"
 			self[ix]['state'] = False
 			self.state_change()
-			print "DEactivating Done. {0}".format(self[ix]['state'])
 	
 	def active(self):
 		"""
@@ -233,25 +229,37 @@ class CircularModeset(Modeset):
 		"""
 		Activate given index, deactivates previously activate index
 		"""
-		if ix is not None and ix < len(self):	
+		print "Activating {0}".format(ix)
+		if ix is not None and ix < len(self):
+		
+			# Deactivate currently active mode
 			if self.ix_active is not None and ix <> self.ix_active:
 				self[self.ix_active]['state'] = False
 			
 			self.ix_active = ix
 			self[self.ix_active]['state'] = True
+			print "Calling __check_state"
 			self.__check_state(self.ix_active)
+			print "Activating Done. {0}".format(self[ix]['state'])
 
 	def deactivate(self,ix):
 		"""
-		Deactivate given index, activates index 0
+		Deactivate given index.
+		If there is a basemode set, will activate index 0 (basemode)
 		"""
+		print "DeActivating {0}".format(ix)
 		if ( ix is not None and
 			 ix < len(self) and
-			 ix > 0 and
-			 self.ix_active is not None and
+			 self.ix_active is not None
 			 ix <> self.ix_active ):
-				self.ix_active = 0
+				print "Actually DeActivating.."
 				self[ix]['state'] = False
+				
+				# if base mode set, active it
+				if self._basemode is not None:
+					self.ix_active = 0
+					self[self.ix_active]['state'] = True
+				
 				self.__check_state(self.ix_active)
 	
 	def next(self):
