@@ -548,13 +548,6 @@ class Commands(object):
 				i += 1
 		defaults_available = i
 		
-		print "DEBUG!!"
-		print cmd_def
-		print args
-		print args_req
-		print args_missing
-		print defaults_available
-		
 		if args_missing < 0:
 			pass
 		elif args_missing == 0 and args_missing == defaults_available:

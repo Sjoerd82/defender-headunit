@@ -740,9 +740,9 @@ def put_prev(path=None, cmd=None, args=None, data=None):
 		?
 	"""
 	if not args:
-		ret = sc_sources.source_prev()
+		ret = sc_sources.source_next() #prev()
 	elif len(args) == 1:
-		ret = sc_sources.source_prev(args[0])
+		ret = sc_sources.source_next(adv=args[0]) #prev(args[0])
 	return ret
 
 """
