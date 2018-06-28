@@ -137,11 +137,13 @@ class GpioController(object):
 				self.int_enabled = False
 			elif mode_change_params[1] == False and 'mode_timeout' in self.cfg_gpio and not self.int_enabled:
 				print "DEBUG.. GPIO/NOT VOLUME.. enabling our interrupts.."
+				GPIO.setup((13,6), GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 				GPIO.add_event_detect(13, GPIO.RISING, callback=self.int_encoder) # NO bouncetime 
 				GPIO.add_event_detect(6, GPIO.RISING, callback=self.int_encoder) # NO bouncetime
 				self.int_enabled = True
 			elif mode_change_params[1] == True and 'mode_timeout' not in self.cfg_gpio and not self.int_enabled:
 				print "DEBUG.. ECA/VOLUME.. enabling our interrupts.."
+				GPIO.setup((13,6), GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 				GPIO.add_event_detect(13, GPIO.RISING, callback=self.int_encoder) # NO bouncetime 
 				GPIO.add_event_detect(6, GPIO.RISING, callback=self.int_encoder) # NO bouncetime
 				self.int_enabled = True
@@ -243,11 +245,13 @@ class GpioController(object):
 				self.int_enabled = False
 			elif mode != 'volume' and state == True and 'mode_timeout' in self.cfg_gpio and not self.int_enabled:
 				print "DEBUG2.. GPIO/NOT VOLUME ({0}:{1}).. enabling our interrupts..".format(mode,state)
+				GPIO.setup((13,6), GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 				GPIO.add_event_detect(13, GPIO.RISING, callback=self.int_encoder) # NO bouncetime 
 				GPIO.add_event_detect(6, GPIO.RISING, callback=self.int_encoder) # NO bouncetime
 				self.int_enabled = True
 			elif mode == 'volume' and state == True and 'mode_timeout' not in self.cfg_gpio and not self.int_enabled:
 				print "DEBUG2.. ECA/VOLUME ({0}:{1}).. enabling our interrupts..".format(mode,state)
+				GPIO.setup((13,6), GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 				GPIO.add_event_detect(13, GPIO.RISING, callback=self.int_encoder) # NO bouncetime 
 				GPIO.add_event_detect(6, GPIO.RISING, callback=self.int_encoder) # NO bouncetime
 				self.int_enabled = True
