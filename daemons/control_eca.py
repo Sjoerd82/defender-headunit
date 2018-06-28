@@ -481,7 +481,7 @@ def mq_eca_mode_active(path=None, cmd=None, args=None, data=None):
 	"""
 	global resilience_modes_received
 	resilience_modes_received = True
-	if 'payload' in data:
+	if 'payload' in data and data['payload'] is not None:
 		active_modes = data['payload']
 		for mode in active_modes:
 			gpio.set_mode(mode)
