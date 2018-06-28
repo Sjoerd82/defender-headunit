@@ -347,7 +347,32 @@ class Commands(object):
 				'params': [ {'name':'timer', 'datatype':(int), 'required':False, 'help':'Time in seconds to shutdown'} ],
 				'command': 'PUT',
 				'path': '/system/shutdown'
-			}
+			},
+			
+			{	'name': 'VOLUME_INC',
+				'description': 'fix...',
+				'params': None,
+				'command': 'PUT',
+				'path': 'blah'
+			},
+			{	'name': 'VOLUME_INC_FAST',
+				'description': 'fix...',
+				'params': None,
+				'command': 'PUT',
+				'path': 'blah'
+			},
+			{	'name': 'VOLUME_DEC',
+				'description': 'fix...',
+				'params': None,
+				'command': 'PUT',
+				'path': 'blah'
+			},
+			{	'name': 'VOLUME_DEC_FAST',
+				'description': 'fix...',
+				'params': None,
+				'command': 'PUT',
+				'path': 'blah'
+			},
 			
 			]
 

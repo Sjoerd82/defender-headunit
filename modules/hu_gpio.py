@@ -173,10 +173,12 @@ class GpioController(object):
 		self.__printer("Preparing to execute function: {0}".format(command),level=LL_DEBUG)
 		
 		if command is None:
+			print "1"
 			return
 			
 		cmd_exec = Commands()
 		if command not in cmd_exec.command_list:
+			print "2"
 			return
 		
 		if param is not None:
