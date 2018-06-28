@@ -473,19 +473,19 @@ class MqPubSubFwdController(object):
 			print "EXACT"
 			ret = self.mq_path_func[key]['function'](path=path_dispatch, cmd=cmd, args=args, data=data)
 			if ret is not None:
-				print "1: {0}".format(ret)
+				print "1: {0}: {1}".format(key, ret)
 				ret_data = struct_data(ret)
 				if cmd == 'GET':
 					print "2: {0}".format(ret_data)
-					return ret_data
-				else:
-					print "3"
 					#if ret_data['retval'] == 200 and self.mq_path_func[key]['event'] is not None:
 					if self.mq_path_func[key]['event'] is not None:
 						self.publish_command(self.mq_path_func[key]['event'], 'INFO', arguments=None, wait_for_reply=False, response_path=None)
 					#return ret_data
 					# return code only
 					ret_data['payload'] = None
+					return ret_data
+				else:
+					print "3"
 					return ret_data
 					
 					# TODO APPLY THIS TO WILDCARD AS WELL
