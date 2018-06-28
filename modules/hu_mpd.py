@@ -213,7 +213,7 @@ class MpdController(object):
 	def prev(self, count=1):
 		self.__test_conn()
 		for i in range(count):
-			self.mpdc.prev()
+			self.mpdc.previous()
 		self.__return_to_idle()
 
 	def seek(self, seeksec='+1'):
