@@ -268,9 +268,10 @@ class GpioController(object):
 			setid_and_index = self.__mode_modesetid(change_list[mode_ix])
 			if setid_and_index is not None:
 				if change_list[mode_ix+1] == True:
-					print "Setting Active"
+					print "Setting Active Set:{0} Index:{1}".format(setid_and_index[0], setid_and_index[1])
 					self.ms_all[setid_and_index[0]].activate(setid_and_index[1])
 				elif change_list[mode_ix+1] == False:
+					print "Setting DEactive Set:{0} Index:{1}".format(setid_and_index[0], setid_and_index[1])
 					self.ms_all[setid_and_index[0]].deactivate(setid_and_index[1])
 				else:
 					print "Invalid State"
