@@ -105,17 +105,23 @@ class Modeset(list):
 		"""
 		Set state to True for given index.
 		"""
+		print "Activating {0}".format(ix)
 		if ix is not None and ix < len(self):
 			self[ix]['state'] = True
+			print "Activated.. calling state_change"
 			self.state_change()
+			print "Activating Done. {0}".format(self[ix]['state'])
 			
 	def deactivate(self,ix):
 		"""
 		Set state to False for given index.
 		"""
+		print "Deactivating {0}".format(ix)
 		if ix < len(self):
+			print "DEactivated.. calling state_change"
 			self[ix]['state'] = False
 			self.state_change()
+			print "DEactivating Done. {0}".format(self[ix]['state'])
 	
 	def active(self):
 		"""
