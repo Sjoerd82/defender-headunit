@@ -222,9 +222,9 @@ def cb_mode_change(mode_changes,init=False):
 #********************************************************************************
 
 def signal_term_handler(signal, frame):
-    print 'got SIGTERM'
+	print 'got SIGTERM'
 	gpio.cleanup()
-    sys.exit(0)
+	sys.exit(0)
 
 # Parse command line arguments
 #
