@@ -124,6 +124,27 @@ class GpioController(object):
 		self.__printer("Mode change. {0}".format(mode_change_params),level=LL_DEBUG)
 		self.__exec_function_by_code('MODE-CHANGE',mode_change_params)
 		
+		# DEBUG / EXPERIMENTAL
+		if mode_change_params[1] == True and 'mode_timeout' in self.cfg_gpio:
+			print "DEBUG.. GPIO/VOLUME.. disabling our interrupts.."
+			GPIO.remove_event_detect(pin_clk)
+			GPIO.remove_event_detect(pin_dt)
+		elif mode_change_params[1] == False and 'mode_timeout' in self.cfg_gpio:
+			print "DEBUG.. GPIO/NOT VOLUME.. enabling our interrupts.."
+			GPIO.add_event_detect(pin_clk, GPIO.RISING, callback=int_encoder) # NO bouncetime 
+			GPIO.add_event_detect(pin_dt, GPIO.RISING, callback=int_encoder) # NO bouncetime
+		elif mode_change_params[1] == True and 'mode_timeout' not in self.cfg_gpio:
+			print "DEBUG.. ECA/VOLUME.. enabling our interrupts.."
+			GPIO.add_event_detect(pin_clk, GPIO.RISING, callback=int_encoder) # NO bouncetime 
+			GPIO.add_event_detect(pin_dt, GPIO.RISING, callback=int_encoder) # NO bouncetime		
+		elif mode_change_params[1] == False and 'mode_timeout' not in self.cfg_gpio:
+			print "DEBUG.. ECA/NOT VOLUME.. disabling our interrupts.."
+			GPIO.remove_event_detect(pin_clk)
+			GPIO.remove_event_detect(pin_dt)
+
+			
+		print "DEBUG.. done"
+		
 		if callable(self.callback_mode_change):
 			self.callback_mode_change(mode_change_params)
 	
