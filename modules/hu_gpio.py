@@ -275,6 +275,10 @@ class GpioController(object):
 					self.ms_all[setid_and_index[0]].deactivate(setid_and_index[1])
 				else:
 					print "Invalid State"
+		if 'volume' in self.ms_all:
+			print self.ms_all['volume'].active()
+		if 'modecycle1' in self.ms_all:
+			print self.ms_all['modecycle1'].active()
 		print "CHG_MODE STOP"
 	
 	def modeset(self,modesetid):
