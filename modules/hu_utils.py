@@ -821,7 +821,8 @@ def url_check(url, timeout=None):
 	
 	# Using urllib2:
 	try:
-		urllib2.urlopen(url,timeout)
+		#urllib2.urlopen(url,timeout)
+		urllib2.urlopen(url)
 		return True
 	except:
 		return False
