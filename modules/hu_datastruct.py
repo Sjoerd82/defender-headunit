@@ -248,10 +248,12 @@ class CircularModeset(Modeset):
 		If there is a basemode set, will activate index 0 (basemode)
 		"""
 		print "DeActivating {0}".format(ix)
+		print ix
+		print len(self)
+		print self.ix_active
 		if ( ix is not None and
 			 ix < len(self) and
-			 self.ix_active is not None and		# useful?
-			 ix <> self.ix_active ):
+			 self.ix_active is not None ):		# useful?
 				print "Actually DeActivating.."
 				self[ix]['state'] = False
 				
