@@ -247,7 +247,7 @@ def mpd_handle_change(events):
 			if state['state'] != results[0]['state']:
 				printer(" > State changed from {0} to {1}".format(state['state'],results[0]['state']))
 				state['state'] = results[0]['state']
-				ret = messaging.publish_command('/events/state','INFO', state)
+				ret = messaging.publish('/events/state','INFO', state)
 				if ret == True:
 					printer(" > Sending MQ notification [OK]")
 				else:
@@ -275,7 +275,7 @@ def mpd_handle_change(events):
 				if 'folder' in results1[0]: track['folder'] = results1[0]['folder']
 				if 'genre' in results1[0]: track['genre'] = results1[0]['genre']
 				if 'date' in results1[0]: track['date'] = results1[0]['date']
-				ret = messaging.publish_command('/events/track','INFO', track)
+				ret = messaging.publish('/events/track','INFO', track)
 				if ret == True:
 					printer(" > Sending MQ notification [OK]")
 				else:
@@ -293,7 +293,7 @@ def mpd_handle_change(events):
 			#mpd_control('database')
 			#zmq_send('/event/mpd/update','SET')
 			#messaging.publish_event('/events/update', 'INFO', None)
-			messaging.publish_command('/events/update','INFO', None)
+			messaging.publish('/events/update','INFO', None)
 		elif e == "options":
 			print "OPTIONS! RANDOM??"
 		else:

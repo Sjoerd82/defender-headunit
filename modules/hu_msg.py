@@ -47,6 +47,26 @@ def create_data(payload, retval):
 # ZeroMQ Wrapper for Pub-Sub Forwarder Device
 #
 class MqPubSubFwdController(object):
+	"""
+	This is a ZeroMQ wrapper that connects to a Forwarder Device.
+	Topics are paths.
+	
+	Public functions:
+	  register				Decorator
+	  create_publisher		Setup and connect a publisher (no bind)
+	  create_subscriber		Setup and connect a subscriber
+	  set_address			Set MQ forwarder host and ports
+	  
+	  add_subscription		Add a subscription
+	  subscriptions			Return list of current subscriptions
+	
+	  publish				Send MQ message
+	  poll					Poll for a message
+	  poll_and_execute		Wait for a message and execute its function
+	  execute				Execute the function of a message
+	  
+	  parse_message			Parse a MQ message, returns a tuple
+	"""
 
 	def __init__(self, address=None, port_pub=None, port_sub=None, origin=None):
 
@@ -74,9 +94,7 @@ class MqPubSubFwdController(object):
 		
 		self.mq_path_list = []	# /path/path/*/ list of paths, from decorators, may contain wildcards
 		self.topics = []		# list of MQ subscriptions, generated from above, or configured
-		self.mq_path_func = {}	# "CMD/path/path/": function
-		# V2:					  "CMD/path/path/": { "function":fn, "event":"path" }
-
+		self.mq_path_func = {}	# "CMD/path/path/": { "function":fn, "event":"path" }
 		
 	def __send(self, message):
 		#printer(colorize("Sending MQ message: {0}".format(message),'dark_gray'),level=LL_DEBUG)
@@ -111,6 +129,10 @@ class MqPubSubFwdController(object):
 		return key_cmd_path
 	
 	def set_address(self, address=None, port_pub=None, port_sub=None):
+		"""
+		Must be called before creating publishers or subscribers.
+		TODO: Reconnect if set after creating pub/sub. (no real need for this at the moment.. Nice-to-Have)
+		"""
 		if address is not None: self.address = address
 		if port_pub is not None: self.port_pub = port_pub
 		if port_sub is not None: self.port_sub = port_sub		
@@ -126,21 +148,21 @@ class MqPubSubFwdController(object):
 		"""	Setup and connect a subscriber for the given topic(s).
 			This function also registers the subscription with the poller.
 		"""
-		if not self.topics:
-			self.topics.extend(subscriptions)
-		else:
-			for subscription in subscriptions:
-				if subscription not in self.topics:
-					self.topics.append(subscription)
+		# add subscription
+		self.topics.extend(subscriptions)
 		
+		# setup MQ context and connect
 		self.subscriber = self.context.socket (zmq.SUB)
 		self.subscriber.connect("tcp://{0}:{1}".format(self.address, self.port_sub))
+		
+		# setup poller
 		self.poller.register(self.subscriber, zmq.POLLIN)
 		for topic in self.topics:
 			self.subscriber.setsockopt (zmq.SUBSCRIBE, topic)
 		
+		# setup reply_subscriber (what was this again???)
 		# TODO; FOR SOME REASON WE NEED TO DEFINE IT HERE..
-		# .. DEFINING IT LATER, IN PUBLISH_COMMAND() DOESN'T WORK ?!
+		# .. DEFINING IT LATER, IN publish() DOESN'T WORK ?!
 		self.reply_subscriber = self.context.socket (zmq.SUB)
 		self.reply_subscriber.connect("tcp://{0}:{1}".format(self.address, self.port_sub))
 		#self.poller.register(self.reply_subscriber, zmq.POLLIN)
@@ -153,7 +175,10 @@ class MqPubSubFwdController(object):
 	def subscriptions(self):
 		return self.topics		
 	
-	def create_message(self, path, command, arguments=None, response_path=None):
+	def __create_message(self, path, command, arguments=None, response_path=None):
+		"""
+		Return a formatted message. Used by publish().
+		"""
 			
 		# path[+response_path] and command
 		if response_path:
@@ -183,7 +208,7 @@ class MqPubSubFwdController(object):
 				
 		return message
 	
-	def publish_command(self, path, command, arguments=None, wait_for_reply=False, timeout=5000, response_path=None):
+	def publish(self, path, command, arguments=None, wait_for_reply=False, timeout=5000, response_path=None):
 		"""
 		Publish a message. If wait_for_reply, then block until a reply is received.
 		Parameters:
@@ -208,7 +233,7 @@ class MqPubSubFwdController(object):
 			response_path = '/myuniquereplypath/'
 
 		# create message
-		message = self.create_message(path, command, arguments, response_path)
+		message = self.__create_message(path, command, arguments, response_path)
 		
 		if wait_for_reply:
 			#print "DEBUG: SETUP WAIT_FOR_REPLY; TOPIC={0}".format(response_path)
@@ -376,7 +401,6 @@ class MqPubSubFwdController(object):
 	
 	#********************************************************************************
 
-	# EXPERIMENTAL
 	def poll_and_execute(self,timeout,ignore_own_message=True):
 		parsed_msg = self.poll(timeout=500, parse=True)	#Timeout: None=Blocking
 		if parsed_msg:
@@ -385,7 +409,7 @@ class MqPubSubFwdController(object):
 			else:
 				ret = self.execute(parsed_msg['path'], parsed_msg['cmd'], args=parsed_msg['args'], data=parsed_msg['data'])
 				if parsed_msg['resp_path'] and ret is not None:
-					self.publish_command(parsed_msg['resp_path'],'DATA',ret)
+					self.publish(parsed_msg['resp_path'],'DATA',ret)
 				
 		return True
 	
@@ -451,7 +475,7 @@ class MqPubSubFwdController(object):
 			Returns a payload struct.
 			
 			If return value is 2xx (?) and event present, will send out an event message.
-			Hmm, is this good practice? the decorated function can do a publish_command just as easily..
+			Hmm, is this good practice? the decorated function can do a publish just as easily..
 			 .... let's see how this works out..
 			 
 		only GET will return a payload?
@@ -475,7 +499,7 @@ class MqPubSubFwdController(object):
 				if cmd == 'GET':
 					#if ret_data['retval'] == 200 and self.mq_path_func[key]['event'] is not None:
 					if self.mq_path_func[key]['event'] is not None:
-						self.publish_command(self.mq_path_func[key]['event'], 'INFO', arguments=None, wait_for_reply=False, response_path=None)
+						self.publish(self.mq_path_func[key]['event'], 'INFO', arguments=None, wait_for_reply=False, response_path=None)
 					#return ret_data
 					# return code only
 					ret_data['payload'] = None
@@ -502,8 +526,19 @@ class MqPubSubFwdController(object):
 						ret_data = struct_data(ret)
 						if ret_data['retval'] == 200 and self.mq_path_func[full_path]['event'] is not None:
 							# todo... send out data ??? same data ???
-							self.publish_command(self.mq_path_func[full_path]['event'], 'INFO', arguments=None, wait_for_reply=False, response_path=None)
+							self.publish(self.mq_path_func[full_path]['event'], 'INFO', arguments=None, wait_for_reply=False, response_path=None)
 						return ret_data
 		
 		return None
-		
+
+
+# FUTURE FEATURE:
+'''
+class MqFormatted(MqPubSubFwdController):
+	"""
+	Formatted Messages for ZeroMQ.
+	"""
+	def __create_message(self, path, command, arguments=None, response_path=None):
+	def parse_message(self, message):
+	
+'''

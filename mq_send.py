@@ -24,7 +24,7 @@ def main():
 	print("ZeroMQ: Creating Publisher: {0}".format(DEFAULT_PORT_PUB))
 	messaging.create_publisher()
 	sleep(1)
-	ret = messaging.publish_command('/hello/world','GET')
+	ret = messaging.publish('/hello/world','GET')
 	print ret
 
 if __name__ == '__main__':

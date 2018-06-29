@@ -206,7 +206,7 @@ def cb_gpio_function(code, arguments):
 		zmq_path = cmd['path']
 		zmq_command = cmd['command']
 		#arguments = None
-		messaging.publish_command(zmq_path,zmq_command,arguments)
+		messaging.publish(zmq_path,zmq_command,arguments)
 	else:
 		printer("Function {0} not in function_mq_map".format(code),level=LL_ERROR)
 	return

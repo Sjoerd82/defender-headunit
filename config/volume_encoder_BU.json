@@ -11,7 +11,7 @@
 	,"mode_sets": [
 		{	  "id": "volume"
 			, "mode_list": [ "volume" ]
-			, "base_mode": "volume"
+			, "base_mode": null
 		}
 	]
 	,"functions": [

@@ -18,14 +18,14 @@
 	]
 	,"mode_sets": [
 		{	  "id": "modecycle1"
-			, "mode_list": [ "track", "folder", "random" ]
+			, "mode_list": [ "track", "bass", "treble", "random", "menu" ]
 			, "base_mode": "track"
 			, "reset": 8
 			, "authorative": true
 		},
 		{
 			"id": "random"
-			, "mode_list": [ "random_off", "random_folder", "random_artist", "random_genre", "random_playlist" ]
+			, "mode_list": [ "random_off", "random_playlist", "random_folder", "random_artist", "random_genre"]
 		}
 	]
 	,"functions": [
@@ -34,7 +34,7 @@
 			, "function": null
 			, "short_press": [ "multi_enc_sw" ]
 			, "mode_cycle": "modecycle1"
-			, "mode_select": [ "track", "folder", "random" ]
+			, "mode_select": [ "track", "bass", "treble", "random", "menu" ]
 		},
 		{
 			  "name":"track_select"
@@ -44,11 +44,18 @@
 			, "mode": "track"
 		},
 		{
-			  "name":"folder_select"
-			, "function_cw":"PLAYER-NEXTFOLDER"
-			, "function_ccw":"PLAYER-PREVFOLDER"
-			, "encoder":"multi_encoder"
-			, "mode": "folder"
+			  "name":"bass"
+			, "function_cw":"ECA-BASS-INC"
+			, "function_ccw":"ECA-BASS-DEC"
+			, "encoder" :"multi_encoder"
+			, "mode":"bass"
+		},
+		{
+			  "name":"treble"
+			, "function_cw":"ECA-TREBLE-INC"
+			, "function_ccw":"ECA-TREBLE-DEC"
+			, "encoder" :"multi_encoder"
+			, "mode":"treble"
 		},
 		{
 			  "name":"random"
@@ -56,6 +63,13 @@
 			, "function_ccw":"PLAYER-RANDOM-PREV"
 			, "encoder" :"multi_encoder"
 			, "mode":"random"
+		},
+		{
+			  "name":"browse_menu"
+			, "function_cw":"MENU_SCROLL_DOWN"
+			, "function_ccw":"MENU_SCROLL_UP"
+			, "encoder":"multi_encoder"
+			, "mode":"menu"
 		},
 		{
 			  "name":"next_source"

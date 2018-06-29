@@ -128,7 +128,7 @@ def get_data(ret,returndata=False,eventpath=None):
 		if eventpath == '/events/source/active': # or eventpath == '/events/source/available':
 			curr_source = sc_sources.source()
 			data['payload'] = curr_source
-			messaging.publish_command(eventpath,'DATA',data)
+			messaging.publish(eventpath,'DATA',data)
 			
 		#	settings['source'] = curr_source['name']
 		#	save_settings()
@@ -461,8 +461,8 @@ def handle_path_source(path,cmd,args,data):
 				#available_source['index'] = change['index']
 				#available_source['subindex'] = change['subindex']
 				#available_source['available'] = change['available']
-				#messaging.publish_command('/events/source/available','DATA',available_source)
-				messaging.publish_command('/events/source/available','DATA',change)
+				#messaging.publish('/events/source/available','DATA',available_source)
+				messaging.publish('/events/source/available','DATA',change)
 				
 			
 			"""
@@ -477,13 +477,13 @@ def handle_path_source(path,cmd,args,data):
 						available_source['index'] = index
 						available_source['subindex'] = subindex
 						available_source['available'] = subsource['available']
-						messaging.publish_command('/events/source/available','DATA',available_source)
+						messaging.publish('/events/source/available','DATA',available_source)
 				else:
 					source = sc_sources.source(index)
 					available_source = {}
 					available_source['index'] = index
 					available_source['available'] = source['available']
-					messaging.publish_command('/events/source/available','DATA',available_source)
+					messaging.publish('/events/source/available','DATA',available_source)
 					
 			"""
 		
@@ -929,7 +929,7 @@ def idle_message_receiver():
 
 		if parsed_msg['resp_path']:
 			#print "DEBUG: Resp Path present.. returing message.. data={0}".format(retval)
-			messaging.publish_command(parsed_msg['resp_path'],'DATA',retval)
+			messaging.publish(parsed_msg['resp_path'],'DATA',retval)
 		
 	return True # Important! Returning true re-enables idle routine.
 
@@ -1001,7 +1001,7 @@ def check_all_sources_send_event():
 		#check_result = source['sourceClass'].check(self)	#returns a list of dicts with changes
 		if check_result:
 			for result in check_result:
-				messaging.publish_command('/events/source/available','DATA',result)
+				messaging.publish('/events/source/available','DATA',result)
 		i+=1
 
 # ********************************************************************************

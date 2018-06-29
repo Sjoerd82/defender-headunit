@@ -298,7 +298,7 @@ def main():
 			print "UDisks status:"
 			print "{0:10} {1:20} {2:11} {3:30}".format("Device","UUID","Label","Mountpoint")
 			print "{0:-<10} {1:-<20} {2:-<11} {3:-<30}".format("-","-","-","-")
-			ret = messaging.publish_command('/udisks/devices','GET',wait_for_reply=True)
+			ret = messaging.publish('/udisks/devices','GET',wait_for_reply=True)
 			if ret == False or ret is None:
 				print "[FAIL]"
 			else:
@@ -374,8 +374,8 @@ def main():
 		mq_path = args.p
 		mq_cmd = args.c
 		print "DEBUG --  DOING MQ! {0} {1} {2}".format(mq_path,mq_cmd,mq_args)
-		ret = messaging.publish_command(mq_path,mq_cmd)
-		#ret = messaging.publish_command('/udisks/devices','GET',[])
+		ret = messaging.publish(mq_path,mq_cmd)
+		#ret = messaging.publish('/udisks/devices','GET',[])
 		print ret
 		
 		#TODO
@@ -426,9 +426,9 @@ def main():
 	
 	# todo: check, is it ok to include an empty mq_args?
 	if mq_rpath is not None:
-		ret = messaging.publish_command(mq_path,mq_cmd,mq_args,wait_for_reply=True,timeout=6000,response_path=RETURN_PATH)
+		ret = messaging.publish(mq_path,mq_cmd,mq_args,wait_for_reply=True,timeout=6000,response_path=RETURN_PATH)
 	else:
-		ret = messaging.publish_command(mq_path,mq_cmd,mq_args,wait_for_reply=False)
+		ret = messaging.publish(mq_path,mq_cmd,mq_args,wait_for_reply=False)
 		
 	if ret == True:
 		print "Send: [OK]"
@@ -456,7 +456,7 @@ def main():
 		params = '{"device":"/dev/sda1", "mountpoint":"","uuid":"f9dc11d6-01","label":""}'
 	"""
 	
-	#ret = messaging.publish_command('/source/primary','GET', None, True, 5000, RETURN_PATH)
+	#ret = messaging.publish('/source/primary','GET', None, True, 5000, RETURN_PATH)
 	#print ret
 	exit(0)
 	

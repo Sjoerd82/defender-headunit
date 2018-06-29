@@ -185,8 +185,8 @@ def udisk_add( device ):
 		
 		mq_args = json.dumps(media_info)
 		
-		#messaging.publish_command(PATH_EVENT_ADD,'DATA',param)
-		ret = messaging.publish_command(PATH_EVENT_ADD,'DATA',mq_args)
+		#messaging.publish(PATH_EVENT_ADD,'DATA',param)
+		ret = messaging.publish(PATH_EVENT_ADD,'DATA',mq_args)
 		if ret == True:
 			printer(" > Sending MQ notification [OK]")
 		else:
@@ -238,7 +238,7 @@ def udisk_rem( device ):
 			media_info['label'] = devpart['label']
 
 			param = '{{"device":"{0}", "mountpoint":"{1}","uuid":"{2}","label":"{3}"}}'.format(media_info['device'],media_info['mountpoint'],media_info['uuid'],media_info['label'])
-			messaging.publish_command(PATH_EVENT_REM,'DATA',param)
+			messaging.publish(PATH_EVENT_REM,'DATA',param)
 			ix_del = i
 			break
 		i+=1

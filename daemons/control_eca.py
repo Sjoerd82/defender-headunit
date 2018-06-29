@@ -333,7 +333,7 @@ def cb_gpio_function(code, params):
 	elif code == 'PLAYER_NEXT':
 		mq_path = '/player/next'
 		mq_cmd = 'PUT'
-		ret = messaging.publish_command(mq_path,mq_cmd)
+		ret = messaging.publish(mq_path,mq_cmd)
 		if ret == True:
 			print "Response: [OK]"
 		elif ret == False or ret is None:
@@ -342,7 +342,7 @@ def cb_gpio_function(code, params):
 	elif code == 'PLAYER_PREV':
 		mq_path = '/player/prev'
 		mq_cmd = 'PUT'
-		ret = messaging.publish_command(mq_path,mq_cmd)
+		ret = messaging.publish(mq_path,mq_cmd)
 		if ret == True:
 			print "Response: [OK]"
 		elif ret == False or ret is None:
@@ -351,7 +351,7 @@ def cb_gpio_function(code, params):
 	elif code == 'SOURCE_NEXT':
 		mq_path = '/source/next'
 		mq_cmd = 'PUT'
-		ret = messaging.publish_command(mq_path,mq_cmd)
+		ret = messaging.publish(mq_path,mq_cmd)
 		if ret == True:
 			print "Response: [OK]"
 		elif ret == False or ret is None:
@@ -423,7 +423,7 @@ def get_data(ret,returndata=False,eventpath=None):
 	     eventpath == '/events/volume/att' or
 	     eventpath == '/events/volume/mute' ):
 		data['payload'] = ret
-		messaging.publish_command(eventpath,'DATA',data)
+		messaging.publish(eventpath,'DATA',data)
 			
 	if not returndata:
 		data['payload'] = None
@@ -912,7 +912,7 @@ def setup():
 	
 	print "EXPERIMENTAL, requesting active modes.."
 	# IN CASE OF DEPENDENCY:
-	#messaging.publish_command('/mode/active','GET', wait_for_reply=False, response_path='/ecasound/mode/active')
+	#messaging.publish('/mode/active','GET', wait_for_reply=False, response_path='/ecasound/mode/active')
 	# IF SEPARATE KNOB:
 	resilience_modes_received = True
 	gpio.set_mode('volume')
@@ -963,7 +963,7 @@ def main():
 			
 		if counter % 150 == 0:
 			if not resilience_modes_received:
-				messaging.publish_command('/mode/active','GET',wait_for_reply=False, response_path='/ecasound/mode/active')
+				messaging.publish('/mode/active','GET',wait_for_reply=False, response_path='/ecasound/mode/active')
 			counter = 0
 		
 		counter += 1

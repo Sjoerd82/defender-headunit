@@ -83,7 +83,7 @@ def main():
 
 	print param
 	
-	ret = messaging.publish_command(path,cmd,param)
+	ret = messaging.publish(path,cmd,param)
 	print ret
 	
 if __name__ == '__main__':

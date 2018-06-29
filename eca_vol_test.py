@@ -415,7 +415,7 @@ def idle_message_receiver():
 
 		if parsed_msg['resp_path']:
 			#print "DEBUG: Resp Path present.. returing message.. data={0}".format(retval)
-			messaging.publish_command(parsed_msg['resp_path'],'DATA',retval)
+			messaging.publish(parsed_msg['resp_path'],'DATA',retval)
 		
 	return True # Important! Returning true re-enables idle routine.
 
@@ -457,7 +457,7 @@ def get_data(ret,returndata=False,eventpath=None):
 	     eventpath == '/events/volume/att' or
 	     eventpath == '/events/volume/mute' ):
 		data['payload'] = ret
-		messaging.publish_command(eventpath,'DATA',data)
+		messaging.publish(eventpath,'DATA',data)
 			
 	if not returndata:
 		data['payload'] = None

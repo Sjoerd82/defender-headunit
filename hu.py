@@ -1592,7 +1592,7 @@ def main():
 	# Check if Source Controller started and available
 	#
 	printer('Checking if Source Controller is online...')	
-	messaging.publish_command('/source/next', 'SET')
+	messaging.publish('/source/next', 'SET')
 	
 	# !! !! TODO IMPORTANT !! !!
 
