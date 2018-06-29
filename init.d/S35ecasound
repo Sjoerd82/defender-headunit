@@ -16,7 +16,7 @@ NAME="Ecasound Controller"
 PID="ecactrl"
 PID_FILE=/var/run/$PID.pid
 DAEMON="control_eca.py"
-DAEMON_OPTS="-b"
+DAEMON_OPTS="-b -x"
 DAEMON_PATH="/mnt/PIHU_APP/defender-headunit/daemons"
 DAEMON_FILE=$DAEMON_PATH/$DAEMON
 

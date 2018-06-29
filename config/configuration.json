@@ -63,6 +63,7 @@
 			, "script":"udisks_listener.py"
 			, "init.d":"S70udisks"
 			, "pid_file":"udiskszmq.pid"
+			, "enabled": true
 		} ,
 		{
 			  "name":"Flask HTTP server"
@@ -75,12 +76,14 @@
 			, "init.d":"S35ecasound"
 			, "pid_file":"ecactrl.pid"
 			, "config": "volume_encoder.json"
+			, "enabled": false
 		},
 		{
 			  "name":"Control: ADS1x15"
 			, "script":"control_ads1x15.py"
 			, "init.d":"S71ads1x15"
 			, "pid_file":"ctrl_ads1x15.pid"
+			, "enabled": false
 		},
 		{
 			  "name": "Control: GPIO"
@@ -88,6 +91,7 @@
 			, "init.d":"S72ctrlgpio"
 			, "pid_file":"ctrl_gpio.pid"
 			, "config": "multi_functional_encoder.json"
+			, "enabled": true
 		},
 		{
 			  "name": "Output: GPIO"

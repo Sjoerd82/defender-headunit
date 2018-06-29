@@ -52,8 +52,8 @@
 		},
 		{
 			  "name":"random"
-			, "function_cw":"PLAYER-RANDOM-NEXT"
-			, "function_ccw":"PLAYER-RANDOM-PREV"
+			, "function_cw":"PLAYER-RANDOM"
+			, "function_ccw":"PLAYER-RANDOM"
 			, "encoder" :"multi_encoder"
 			, "mode":"random"
 		},

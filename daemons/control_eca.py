@@ -841,6 +841,9 @@ def setup():
 	if cfg_daemon is None:
 		printer("Daemon configuration could not be loaded.", level=LL_CRITICAL)
 		exit(1)
+	elif args.x and 'enabled' in cfg_daemon and cfg_daemon['enabled'] == False:
+		printer("Daemon disabled in configuration.", level=LL_CRITICAL)
+		exit(1)		
 	
 	if cfg_gpio is None:
 		printer("GPIO configuration could not be loaded.", level=LL_CRITICAL)

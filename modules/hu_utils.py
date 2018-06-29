@@ -419,7 +419,8 @@ def default_parser(description,banner=None):
 	parser = argparse.ArgumentParser(description=description)
 	parser.add_argument('--loglevel', action='store', default=DEFAULT_LOG_LEVEL, type=int, choices=[LL_DEBUG, LL_INFO, LL_WARNING, LL_CRITICAL], help="log level DEBUG=10 INFO=20", metavar=LL_INFO)
 	parser.add_argument('--config','-c', action='store', help='Configuration file', default=DEFAULT_CONFIG_FILE)
-	parser.add_argument('-b', action='store_true', default=False)
+	parser.add_argument('-b', action='store_true', default=False, help='Daemonize')
+	parser.add_argument('-x', action='store_true', default=False, help='Stop if disabled in configuration file')
 	parser.add_argument('--port_publisher', action='store')
 	parser.add_argument('--port_subscriber', action='store')
 	return parser
