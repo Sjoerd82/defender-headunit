@@ -83,7 +83,7 @@ mpc_db_label_exist
 import os
 import sys
 from subprocess import call
-from mpd import MPDClient
+from mpd import MPDClient, MPDError, CommandError
 from mpd import ConnectionError as MPDConnectionError
 from hu_utils import *
 
