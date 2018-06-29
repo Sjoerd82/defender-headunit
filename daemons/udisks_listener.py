@@ -45,6 +45,7 @@ logger = None
 args = None
 messaging = MqPubSubFwdController()
 bus = None
+command = Commands()
 
 # configuration
 cfg_main = None		# main
