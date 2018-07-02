@@ -504,7 +504,7 @@ class MpdController(object):
 		subprocess.call(["mpc", "-q", "clear"])
 	# --
 		
-	def mpc_get_PlaylistDirs( self ):
+	#def mpc_get_PlaylistDirs( self ):
 	def pls_gather_dir_pos(self):
 
 		self.__printer('Building playlist directory structure...')
