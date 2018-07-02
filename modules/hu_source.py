@@ -55,9 +55,9 @@
 #	source_play			Start playback (selects next source, if no current)
 #	source_stop
 #	source_pause
-#	source_next
+#	source_next			Next track
 #	source_prev
-#	source_random
+#	source_random		Set random mode
 #	source_seekfwd
 #	source_seekrev
 #	source_update
@@ -1036,8 +1036,22 @@ class SourceController(object):
 			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.prev(index=index,subindex=subindex,**kwargs)
 			return ret
 
-	# Proxy for random. Modes: on | off | toggle | 1 | 0 | "special modes.."
-	def source_random(self, mode, **kwargs ):
+	# Proxy for next folder
+	def source_next_folder(self, **kwargs ):
+		index, subindex = self.__get_current('NEXT_FOLDER')
+		if index is not None and subindex is not None:
+			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.next_folder(index=index,subindex=subindex,**kwargs)
+			return ret
+			
+	# Proxy for prev folder
+	def source_next_folder(self, **kwargs ):
+		index, subindex = self.__get_current('NEXT_FOLDER')
+		if index is not None and subindex is not None:
+			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.prev_folder(index=index,subindex=subindex,**kwargs)
+			return ret
+			
+	# Proxy for random. Modes: on | off | next | toggle | prev | 1 | 0 | "special modes.."
+	def source_random(self, mode='next', **kwargs ):
 		index, subindex = self.__get_current('MODE')
 		if index is not None and subindex is not None:
 			ret = self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.random(index=index,subindex=subindex,mode=mode,**kwargs)

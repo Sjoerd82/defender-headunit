@@ -120,7 +120,7 @@ class SourcePlugin(object):
 		self.state['state'] = 'stopped'
 		return False
 		
-	def next(self, **kwargs):		
+	def next(self, **kwargs):
 		# not implemented
 		return False
 		
@@ -128,6 +128,14 @@ class SourcePlugin(object):
 		# not implemented
 		return False
 
+	def next_folder(self, **kwargs):
+		# not implemented
+		return False
+		
+	def prev_folder(self, **kwargs):
+		# not implemented
+		return False
+		
 	def pause(self, **kwargs):
 		#not implemented
 		return False

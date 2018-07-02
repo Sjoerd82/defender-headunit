@@ -183,7 +183,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 				
 				if not self.mpdc.is_dbdir( mpd_dir ):
 					self.__printer(" > Running MPD update for this directory.. ALERT! LONG BLOCKING OPERATION AHEAD...")
-					self.mpdc.update_db( mpd_dir )
+					self.mpdc.update( mpd_dir )
 					if not self.mpdc.is_dbdir( mpd_dir ):
 						self.__printer(" > Nothing to play marking unavailable...")
 						new_availability = False
@@ -248,7 +248,7 @@ class MySource(MpdSourcePlugin,IPlugin):
 			self.__printer(' > Nothing in the playlist, trying to update database...')
 			
 			# update and try again...
-			self.mpdc.update_db( sLocalMusicMPD, True )
+			self.mpdc.update( sLocalMusicMPD, True )
 			playlistCount = self.mpdc.pls_pop(sLocalMusicMPD)
 			
 			# check if succesful...

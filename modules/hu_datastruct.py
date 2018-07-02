@@ -59,7 +59,6 @@ class Volume(dict):
 		self['muted'] = None
 	
 	
-
 class Modeset(list):
 	"""
 	List of dictionaries.
@@ -67,9 +66,12 @@ class Modeset(list):
 	Functions:
 	activate()
 	"""
-	def __init__(self):
+	def __init__(self,*args):
 		super(Modeset, self).__init__()
 		self.callback_mode_change = None
+		if args is not None:
+			for arg in args:
+				self.append(arg)
 			
 	def __contains__(self, item):
 		"""
@@ -98,7 +100,7 @@ class Modeset(list):
 		Only appends if the mode name doesn't already exist.
 		"""
 		mode_item = {"mode":item,"state":False}
-		if item not in self:
+		if len(self) == 0 or item not in self:
 			super(Modeset, self).append(mode_item)
 	
 	def activate(self,ix):
@@ -162,14 +164,14 @@ class CircularModeset(Modeset):
 	It adds an option to reset back to a given mode after a reset timer expires.
 	Reset timer engages on state change (__check_state), no need to call explicitly.
 	"""
-	def __init__(self):
-		super(CircularModeset, self).__init__()
+	def __init__(self,*args):
 		self._basemode = None
 		self.ix_basemode = None
 		self.ix_active = None
 		self.timer = None
 		self.timer_seconds = None
 		self.timer_enabled = False
+		super(CircularModeset, self).__init__(*args)
 
 	def __cb_mode_reset(self):
 		"""
@@ -196,8 +198,7 @@ class CircularModeset(Modeset):
 		"""
 		If appended mode is the basemode, then activate it.
 		"""
-		super(CircularModeset, self).append(item)
-		
+		super(CircularModeset, self).append(item)		
 		if item == self._basemode and item in self:
 			self.ix_basemode = self.index(str(item))
 			if self.ix_active is None:

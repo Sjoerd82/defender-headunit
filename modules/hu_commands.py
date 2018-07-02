@@ -220,6 +220,18 @@ class Commands(object):
 				'command': 'PUT',
 				'path': '/player/random'
 			},
+			{	'name': 'PLAYER-RANDOM-NEXT',
+				'description': 'Next random mode',
+				'params': None,
+				'command': 'PUT',
+				'path': '/player/next_random'
+			},
+			{	'name': 'PLAYER-RANDOM-PREV',
+				'description': 'Prev random mode',
+				'params': None,
+				'command': 'PUT',
+				'path': '/player/prev_random'
+			},
 			{	'name': 'PLAYER-DETAILS',
 				'description': 'Get player details',
 				'params': None,
@@ -421,7 +433,7 @@ class Commands(object):
 				
 				return fn(*args,**kwargs)
 			return wrapper
-		return decorator		
+		return decorator
 	
 	def validate_args(self, command, args): #, repeat=False):
 		"""

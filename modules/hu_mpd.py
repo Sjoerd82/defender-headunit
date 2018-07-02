@@ -8,6 +8,9 @@
 #
 # Provide a logger object to __init__ to get output from this class.
 #
+# TODO:
+# - add wrapper decorator for connection test
+#
 # MpdController()
 #
 # CONTROL & PLAYBACK
@@ -83,8 +86,10 @@ mpc_db_label_exist
 import os
 import sys
 from subprocess import call
-from mpd import MPDClient, MPDError, CommandError
+from mpd import MPDClient, MPDError
 from mpd import ConnectionError as MPDConnectionError
+from mpd import CommandError as MPDCommandError
+
 from hu_utils import *
 
 LOG_TAG = 'MPD'
@@ -94,6 +99,7 @@ LOG_TAG = 'MPD'
 # This Wrapper might not be needed anymore when upgrading to the latest library version
 #
 class MPDClientWrapper(object):
+
 	def __init__(self, *args, **kwargs):
 		self.__dict__['_mpd'] = MPDClient(*args, **kwargs)
 
@@ -136,6 +142,8 @@ class MpdController(object):
 
 	def __init__( self, logger, repeat=1, random=0 ):
 		self.logger = logger
+		self.pls_dir_pos = []		# list of start positions of directories in the playlist
+		
 		# Connect to MPD
 		try:
 			self.__printer('Initializing MPD client', level=LL_DEBUG)
@@ -151,6 +159,9 @@ class MpdController(object):
 			self.mpdc.send_idle()	#keep the connection open... Non-blocking..
 		except:
 			self.__printer('Failed to connect to MPD server: {0}'.format(sys.exc_info()[0]), level=LL_ERROR)
+			
+		# populate self.pls_dir_pos
+		self.pls_gather_dir_pos()
 	
 	def __test_conn(self):
 
@@ -171,10 +182,38 @@ class MpdController(object):
 			self.__printer('WEIRD... no idle was set..')
 			
 		return result
-
+	
 	def __return_to_idle(self):
 		self.mpdc.send_idle()
+
+	def mpdconnect(self):
+		"""
+		Decorator function.
+		Test connection and attempts to reconnect if not connected.
+		Reinstitutes idle state
+		"""
+		def decorator(fn):
+		
+			def wrapper(*args,**kwargs):
 			
+				# check if idle set
+				result = True
+				try:
+					self.mpdc.noidle()
+				except MPDConnectionError as e:
+					self.mpdc.connect("localhost", 6600)
+					result = False
+				except:
+					self.__printer('WEIRD... no idle was set..')
+					
+				ret = fn(*args, **kwargs)
+				return ret
+				
+				self.mpdc.send_idle()
+				
+			return wrapper
+		return decorator
+		
 	def play ( self, pos=None, time=0 ):
 		#TODO: add id=None
 		"""	Start playback
@@ -193,64 +232,63 @@ class MpdController(object):
 		self.__return_to_idle()
 		return True
 
+	@self.mpdconnect
 	def pause (self):
-		self.__test_conn()
 		self.mpdc.pause()
-		self.__return_to_idle()
 		
+	@self.mpdconnect
 	def stop (self):
-		self.__test_conn()
 		self.mpdc.stop()
-		self.__return_to_idle()
 		
+	@self.mpdconnect
 	def next(self, count=1):
-		self.__test_conn()
 		for i in range(count):
 			try:
 				self.mpdc.next()
-			except self.mpdc.CommandError as err:
-				print "ERROR: playing: {0}".format(err)
-				
-		self.__return_to_idle()
+			except MPDCommandError as e:
+				self.__printer("ERROR: {0}".format(e),level=LL_ERROR)
+				#TODO: what to do now?
 		return True
 			
+	@self.mpdconnect
 	def prev(self, count=1):
-		self.__test_conn()
 		for i in range(count):
 			self.mpdc.previous()
-		self.__return_to_idle()
 
+	@self.mpdconnect
 	def seek(self, seeksec='+1'):
-		self.__test_conn()
 		self.mpdc.seekcur(seeksec)
-		self.__return_to_idle()
 
-	def random(self, mode='toggle'):
+	@self.mpdconnect
+	def random(self, mode='next'):
 		"""	Set random mode. Modes:
-			- On (1)
-			- Off (0)
-			- Toggle
+			- On / 1 / Playlist
+			- Off / 0
+			- Folder
+			- Next, Prev
 			Not supported:
 			- Folder
 			- Genre
+			- Artist
 		"""
-		self.__test_conn()
-		if mode in ('on','1'):
+		mode = str(mode).lower()
+		if mode in ('on','1','playlist'):
 			#subprocess.call(["mpc", "-q", "random", "on"])
 			#subprocess.call(["mpc", "-q", "next"])
 			self.mpdc.random(1)
 		elif mode in ('off','0'):
 			#subprocess.call(["mpc", "-q", "random", "off"])
 			self.mpdc.random(0)
-		# toggle
-		else:
+		elif mode in ('folder'):
+			#todo
+			pass
+		elif mode in ('next','toggle'):
 			#TODO: current_mode = self.mpdc.status()
-			print('[MPC] Toggling random')
+			print('[MPC] Next random mode')
 			subprocess.call(["mpc", "-q", "random"])
-		self.__return_to_idle()
 		
+	@self.mpdconnect
 	def repeat(self, mode='toggle'):
-		self.__test_conn()
 		"""	Set random mode. Modes:
 			- On (1)
 			- Off (0)
@@ -264,11 +302,11 @@ class MpdController(object):
 		else:
 			#todo
 			pass
-		self.__return_to_idle()
 	
+	@self.mpdconnect
 	def is_dbdir(self, directory):
-		if self.__test_conn() == False:
-			return False
+		#if self.__test_conn() == False:
+		#	return False
 		
 		self.__printer("Checking existance of folder in MPD db..")
 		taskcmd = "mpc listall "+directory+" | wc -l"
@@ -279,20 +317,21 @@ class MpdController(object):
 		
 		if mpcOut.rstrip('\n') == '0':
 			self.__printer(' > {0}: nothing in the database for this source.'.format(directory))
-			self.__return_to_idle()
+			#self.__return_to_idle()
 			return False
 		else:
 			self.__printer(' > {0}: found {1:s} tracks'.format(directory,mpcOut.rstrip('\n')))
-			self.__return_to_idle()
+			#self.__return_to_idle()
 			return True
 	
-	def update_db (self, directory, wait=True):
+	@self.mpdconnect
+	def update (self, directory, wait=True):
 		
 		self.__printer('Updating database for location: {0}'.format(directory))
-		self.__test_conn()
+		#self.__test_conn()
 
 		#Sound effect
-		pa_sfx('mpd_update_db')
+		#pa_sfx('mpd_update_db')
 
 		#Update
 		if wait:
@@ -306,29 +345,50 @@ class MpdController(object):
 		self.mpdc.status()
 		results = self.mpdc.command_list_end()
 		
-		self.__return_to_idle()
+		#self.__return_to_idle()
 		print results
-			
+	
+	@self.mpdconnect	
 	def state(self):
+		"""
+		Return State
+		"""
 		self.__test_conn()
 		#mpd_state = self.mpdc.status()
 		state = {}
 		self.__return_to_idle()
 		return state
-		
+
+	@self.mpdconnect
 	def track(self):
-		self.__test_conn()
+		"""
+		Return track details
+		"""
+		#self.__test_conn()
 		results = self.mpdc.currentsong()
-		self.__return_to_idle()
+		#self.__return_to_idle()
 		#{'album': 'Exodus', 'composer': 'Andy Hunter/Tedd T.', 'title': 'Go', 'track': '1', 'duration': '411.480', 'artist': 'Andy Hunter', 'pos': '0', 'last-modified': '2013-10-12T15:53:13Z', 'albumartist': 'Andy Hunter', 'file': 'PIHU_SMB/music/electric/Andy Hunter/Andy Hunter - 2002 - Exodus/01 - Andy Hunter - Go.mp3', 'time': '411', 'date': '2002', 'genre': 'Electronic/Dance', 'id': '44365'}
 		return results
 	
-	"""
-	def stats(self):
-		mpd_stats = self.mpdc.stats()
-		stats = {}
-		return stats
-	"""
+	@self.mpdconnect
+	def next_folder():
+		"""
+		Plays first track of next folder and turns off random
+		Replaces: mpc_next_folder
+		"""	
+		curr_pos = self.__pls_pos_curr()
+		
+		# update dir playlist positions
+		if len(self.pls_dir_pos) == 0 and curr_pos >0:
+			self.pls_gather_dir_pos()		
+		
+		next_pos = self.__pls_pos_next_dir(curr_pos)
+		try:
+			self.mpdc.play(next_pos)
+		except MPDCommandError as e:
+			self.__printer("ERROR: {0}".format(e),level=LL_ERROR)
+				
+	# --- PLAYLIST
 	
 	'''TODO
 	def pls_load(self):
@@ -386,8 +446,35 @@ class MpdController(object):
 		return results[0]['playlistlength']
 		
 	def pls_dirs(self):
-		"""	Generate a directory-playlist position mapping
 		"""
+		Return a directory-playlist position mapping
+		"""
+		return self.pls_dir_pos
+
+	def __pls_pos_curr(self):
+		"""
+		Return current playlist position
+		"""
+		status = self.mpdc.status()
+		if 'song' in status:
+			return status['song']
+		
+	def __pls_pos_next_dir(self, current_pos=0):
+		"""
+		Return playlist position of next directory
+		"""
+		if current_pos == 0:
+			return 1
+		
+		if len(self.pls_dir_pos) == 0:
+			return
+		
+		for dir_pos in self.pls_dir_pos:
+			if dir_pos > current_pos:
+				return dir_pos
+		
+		# wrap around
+		return 1
 		
 	def pls_clear(self):
 		"""	Clear playlist
@@ -416,11 +503,9 @@ class MpdController(object):
 		subprocess.call(["mpc", "-q", "stop"])
 		subprocess.call(["mpc", "-q", "clear"])
 	# --
-
-	
-
 		
 	def mpc_get_PlaylistDirs( self ):
+	def pls_gather_dir_pos(self):
 
 		self.__printer('Building playlist directory structure...')
 
@@ -452,7 +537,7 @@ class MpdController(object):
 		
 		# Via the commandline
 
-# SEEMS TO HANG?
+		# SEEMS TO HANG?
 		"""
 		pipe = Popen('mpc -f %file% playlist', shell=True, stdout=PIPE)
 
@@ -467,8 +552,6 @@ class MpdController(object):
 			
 		return arMpcPlaylistDirs
 		
-
-
 	def mpc_get_status( self ):
 		self.__test_conn()
 
@@ -515,6 +598,8 @@ class MpdController(object):
 		self.mpdc.send_idle()
 			
 
+# Migrate
+'''
 def mpc_random_get():
 
 	xMpdClient = MPDClient() 
@@ -565,47 +650,6 @@ def mpc_random( state ):
 		print('[MPC] Toggling random')
 		subprocess.call(["mpc", "-q", "random"])
 	
-def mpc_get_PlaylistDirs():
-	global arMpcPlaylistDirs
-	print('[MPC] Building playlist directory structure...')
-
-	# local variables
-	dirname_current = ''
-	dirname_prev = ''
-	iPos = 1
-
-	# clear arMpcPlaylistDirs
-	arMpcPlaylistDirs = []
-
-	# TODO! DETERMINE WHICH IS FASTER... Commandline seems faster
-	
-	# Via the API
-	"""
-	xMpdClient = MPDClient() 
-	xMpdClient.connect("localhost", 6600)  # connect to localhost:6600
-	playlistitem = xMpdClient.playlistinfo()
-	xMpdClient.close()
-	
-	for line in playlistitem:
-		dirname_current=os.path.dirname(line['filename'].strip())
-		t = iPos, dirname_current
-		if dirname_prev != dirname_current:
-			arMpcPlaylistDirs.append(t)
-		dirname_prev = dirname_current
-		iPos += 1
-	"""
-	
-	# Via the commandline
-	pipe = subprocess.Popen('mpc -f %file% playlist', shell=True, stdout=subprocess.PIPE)
-
-	for line in pipe.stdout:
-		dirname_current=os.path.dirname(line.strip())
-		t = iPos, dirname_current
-		if dirname_prev != dirname_current:
-			arMpcPlaylistDirs.append(t)
-		dirname_prev = dirname_current
-		iPos += 1
-
 def mpc_current_folder():
 	# Get current folder
 	pipe = subprocess.check_output("mpc -f %file%", shell=True)
@@ -648,7 +692,6 @@ def mpc_prev_folder_pos():
 
 	return iNextPos
 
-
 def mpc_next_folder():
 	print('[MPC] Next folder')
 	subprocess.call(["mpc", "-q", "play", str(mpc_next_folder_pos())])
@@ -658,10 +701,6 @@ def mpc_prev_folder():
 	print('[MPC] Prev folder')
 	subprocess.call(["mpc", "-q", "play", str(mpc_prev_folder_pos())])
 	
-
-
-
-
 def mpc_lkp( label ):
 
 	#default
@@ -727,6 +766,8 @@ def mpc_lkp( label ):
 	return pos
 
 def mpc_populate_playlist ( label ):
+
+
 	#global oMpdClient
 
 	# Stop idle, in order to send a command
@@ -767,3 +808,5 @@ def mpc_populate_playlist ( label ):
 
 
 		
+		
+'''

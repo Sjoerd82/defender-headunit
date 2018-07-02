@@ -13,12 +13,14 @@ sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
 from source_plugin import SourcePlugin
 from hu_mpd import MpdController
+from hu_datastruct import CircularModeset
 
 class MpdSourcePlugin(SourcePlugin):
 
 	def __init__(self):
 		super(MpdSourcePlugin, self).__init__()
 		self.mpdc = None
+		self.random_modes = CircularModeset('off','folder','playlist') # genre, artist
 
 	def on_init(self, plugin_name, sourceCtrl, logger=None):
 		super(MpdSourcePlugin, self).on_init(plugin_name,sourceCtrl,logger)
@@ -132,7 +134,7 @@ class MpdSourcePlugin(SourcePlugin):
 				# check if this folder exists in the MPD database, update db if not.
 				if not self.mpdc.is_dbdir( mpd_dir ):
 					self.printer(" > Running MPD update for this directory.. (wait=True) ALERT! LONG BLOCKING OPERATION AHEAD...")
-					self.mpdc.update_db( mpd_dir, waitformpdupdate )
+					self.mpdc.update( mpd_dir, waitformpdupdate )
 					
 					# re-check
 					if not self.mpdc.is_dbdir( mpd_dir ):
@@ -194,7 +196,7 @@ class MpdSourcePlugin(SourcePlugin):
 			self.printer(' > Nothing in the playlist, trying to update database...')
 			
 			# update and try again...
-			self.mpdc.update_db( sLocalMusicMPD, True )
+			self.mpdc.update( sLocalMusicMPD, True )
 			playlistCount = self.mpdc.pls_pop(sLocalMusicMPD)
 			
 			# check if succesful...
@@ -262,14 +264,46 @@ class MpdSourcePlugin(SourcePlugin):
 		self.mpdc.prev()
 		return True
 
+	def next_folder(self, **kwargs):
+		self.printer('Next folder. Available parameters: {0}'.format(kwargs))
+		self.mpdc.next_folder()
+		return True
+		
+	def prev_folder(self, **kwargs):
+		# not implemented
+		return True
+		
 	def pause( self, mode ):
 		self.printer('Pause. Mode: {0}'.format(mode))
 		self.mpdc.pause(mode)
 		return True
 
 	def random( self, mode ):
-		self.printer('Random. Mode: {0}'.format(mode))
-		self.mpdc.random(mode)
+		if mode in ('next','toggle'):
+			self.random_modes.next()
+		elif mode == 'prev':
+			self.random_modes.prev()
+		else:
+			mode_ix = self.random_modes.index(mode)
+			if mode_ix is not None:
+				self.random_modes.activate(mode_ix)
+			else:
+				return False
+				
+		self.printer('Random. Mode: {0}'.format(self.random_modes.active))
+		if 'off' in self.random_modes.active:
+			self.mpdc.random('off')
+		elif 'playlist' in self.random_modes.active:
+			self.mpdc.random('on')
+		elif 'folder' in self.random_modes.active:
+			pass
+		elif 'artist' in self.random_modes.active:
+			pass
+		elif 'genre' in self.random_modes.active:
+			pass
+		else:
+			return False
+		
 		return True
 
 	def seekfwd( self ):
