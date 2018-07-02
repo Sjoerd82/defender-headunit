@@ -186,7 +186,7 @@ class MpdController(object):
 	def __return_to_idle(self):
 		self.mpdc.send_idle()
 
-	def mpdconnect(self):
+	def _mpdconnect(self):
 		"""
 		Decorator function.
 		Test connection and attempts to reconnect if not connected.
@@ -232,15 +232,15 @@ class MpdController(object):
 		self.__return_to_idle()
 		return True
 
-	@self.mpdconnect
+	@_mpdconnect
 	def pause (self):
 		self.mpdc.pause()
 		
-	@self.mpdconnect
+	@_mpdconnect
 	def stop (self):
 		self.mpdc.stop()
 		
-	@self.mpdconnect
+	@_mpdconnect
 	def next(self, count=1):
 		for i in range(count):
 			try:
@@ -250,16 +250,16 @@ class MpdController(object):
 				#TODO: what to do now?
 		return True
 			
-	@self.mpdconnect
+	@_mpdconnect
 	def prev(self, count=1):
 		for i in range(count):
 			self.mpdc.previous()
 
-	@self.mpdconnect
+	@_mpdconnect
 	def seek(self, seeksec='+1'):
 		self.mpdc.seekcur(seeksec)
 
-	@self.mpdconnect
+	@_mpdconnect
 	def random(self, mode='next'):
 		"""	Set random mode. Modes:
 			- On / 1 / Playlist
@@ -287,7 +287,7 @@ class MpdController(object):
 			print('[MPC] Next random mode')
 			subprocess.call(["mpc", "-q", "random"])
 		
-	@self.mpdconnect
+	@_mpdconnect
 	def repeat(self, mode='toggle'):
 		"""	Set random mode. Modes:
 			- On (1)
@@ -303,7 +303,7 @@ class MpdController(object):
 			#todo
 			pass
 	
-	@self.mpdconnect
+	@_mpdconnect
 	def is_dbdir(self, directory):
 		#if self.__test_conn() == False:
 		#	return False
@@ -324,7 +324,7 @@ class MpdController(object):
 			#self.__return_to_idle()
 			return True
 	
-	@self.mpdconnect
+	@_mpdconnect
 	def update (self, directory, wait=True):
 		
 		self.__printer('Updating database for location: {0}'.format(directory))
@@ -348,7 +348,7 @@ class MpdController(object):
 		#self.__return_to_idle()
 		print results
 	
-	@self.mpdconnect	
+	@_mpdconnect	
 	def state(self):
 		"""
 		Return State
@@ -359,7 +359,7 @@ class MpdController(object):
 		self.__return_to_idle()
 		return state
 
-	@self.mpdconnect
+	@_mpdconnect
 	def track(self):
 		"""
 		Return track details
@@ -370,7 +370,7 @@ class MpdController(object):
 		#{'album': 'Exodus', 'composer': 'Andy Hunter/Tedd T.', 'title': 'Go', 'track': '1', 'duration': '411.480', 'artist': 'Andy Hunter', 'pos': '0', 'last-modified': '2013-10-12T15:53:13Z', 'albumartist': 'Andy Hunter', 'file': 'PIHU_SMB/music/electric/Andy Hunter/Andy Hunter - 2002 - Exodus/01 - Andy Hunter - Go.mp3', 'time': '411', 'date': '2002', 'genre': 'Electronic/Dance', 'id': '44365'}
 		return results
 	
-	@self.mpdconnect
+	@_mpdconnect
 	def next_folder():
 		"""
 		Plays first track of next folder and turns off random
