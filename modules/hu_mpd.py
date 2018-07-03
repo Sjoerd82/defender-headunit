@@ -137,6 +137,37 @@ class MPDClientWrapper(object):
 
 class MpdController(object):
 
+	class Decorators(object):
+	
+		@classmethod
+		def _mpdconnect():
+			"""
+			Decorator function.
+			Test connection and attempts to reconnect if not connected.
+			Reinstitutes idle state
+			"""
+			def decorator(fn):
+			
+				def wrapper(*args,**kwargs):
+				
+					# check if idle set
+					result = True
+					try:
+						self.mpdc.noidle()
+					except MPDConnectionError as e:
+						self.mpdc.connect("localhost", 6600)
+						result = False
+					except:
+						self.__printer('WEIRD... no idle was set..')
+						
+					ret = fn(*args,**kwargs)
+					return ret
+					
+					self.mpdc.send_idle()
+					
+				return wrapper
+			return decorator
+
 	def __printer( self, message, level=LL_INFO, tag=LOG_TAG):
 		self.logger.log(level, message, extra={'tag': tag})
 
@@ -185,34 +216,6 @@ class MpdController(object):
 	
 	def __return_to_idle(self):
 		self.mpdc.send_idle()
-
-	def _mpdconnect(self):
-		"""
-		Decorator function.
-		Test connection and attempts to reconnect if not connected.
-		Reinstitutes idle state
-		"""
-		def decorator(fn):
-		
-			def wrapper(self,*args,**kwargs):
-			
-				# check if idle set
-				result = True
-				try:
-					self.mpdc.noidle()
-				except MPDConnectionError as e:
-					self.mpdc.connect("localhost", 6600)
-					result = False
-				except:
-					self.__printer('WEIRD... no idle was set..')
-					
-				ret = fn(self,*args,**kwargs)
-				return ret
-				
-				self.mpdc.send_idle()
-				
-			return wrapper
-		return decorator
 		
 	def play ( self, pos=None, time=0 ):
 		#TODO: add id=None
