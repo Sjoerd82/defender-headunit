@@ -290,16 +290,16 @@ class MpdSourcePlugin(SourcePlugin):
 			else:
 				return False
 				
-		self.printer('Random. Mode: {0}'.format(self.random_modes.active))
-		if 'off' in self.random_modes.active:
+		self.printer('Random. Mode: {0}'.format(self.random_modes.active()))
+		if 'off' in self.random_modes.active():
 			self.mpdc.random('off')
-		elif 'playlist' in self.random_modes.active:
+		elif 'playlist' in self.random_modes.active():
 			self.mpdc.random('on')
-		elif 'folder' in self.random_modes.active:
+		elif 'folder' in self.random_modes.active():
 			pass
-		elif 'artist' in self.random_modes.active:
+		elif 'artist' in self.random_modes.active():
 			pass
-		elif 'genre' in self.random_modes.active:
+		elif 'genre' in self.random_modes.active():
 			pass
 		else:
 			return False
