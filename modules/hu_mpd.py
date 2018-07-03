@@ -206,7 +206,7 @@ class MpdController(object):
 				except:
 					self.__printer('WEIRD... no idle was set..')
 					
-				ret = fn(*args, **kwargs)
+				ret = fn(self,*args,**kwargs)
 				return ret
 				
 				self.mpdc.send_idle()
