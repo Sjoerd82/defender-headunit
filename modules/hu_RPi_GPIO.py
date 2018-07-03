@@ -5,6 +5,8 @@ class GpioWrapper(object):
 	Wrapper for agnostic use of either RPi.GPIO or pigpio.
 	BCM pin mode
 	"""
+	IN		 = GPIO.IN
+	OUT		 = GPIO.OUT
 	HIGH	 = GPIO.HIGH
 	LOW		 = GPIO.LOW
 	FALLING	 = GPIO.FALLING
