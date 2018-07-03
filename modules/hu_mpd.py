@@ -179,6 +179,7 @@ class MpdController(object):
 				
 			ret = fn(self,*args,**kwargs)
 			self.mpdc.send_idle()
+			return ret
 			
 		return wrapper
 
@@ -319,7 +320,7 @@ class MpdController(object):
 		"""
 		Return State
 		"""
-		#mpd_state = self.mpdc.status()
+		mpd_state = self.mpdc.status()
 		state = {}
 		return state
 
