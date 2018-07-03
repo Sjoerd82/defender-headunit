@@ -16,11 +16,11 @@ from datetime import datetime
 from datetime import timedelta
 
 from logging import getLogger	# logger
-from RPi import GPIO			# GPIO
 from threading import Timer		# timer to reset mode change
 
 #sys.path.append('../modules')
 sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
+from hu_RPi_GPIO import GpioWrapper
 from hu_utils import *
 from hu_datastruct import CircularModeset
 from hu_commands import Commands
@@ -53,6 +53,8 @@ class GpioController(object):
 		logger			Optionally, provide a logger if you want feedback.
 		"""
 	
+		self.gpio = GpioWrapper()
+		
 		#TEMP - DEBUG - EXPERIMENTAL
 		self.int_encoder = None
 		self.int_enabled = True
@@ -133,25 +135,25 @@ class GpioController(object):
 		if self.int_encoder is not None:
 			if mode_change_params[1] == True and 'mode_timeout' in self.cfg_gpio and self.int_enabled:
 				print "DEBUG.. GPIO/VOLUME.. disabling our interrupts.."
-				GPIO.remove_event_detect(13)
-				GPIO.remove_event_detect(6)
+				self.gpio.remove_event_detect(13)
+				self.gpio.remove_event_detect(6)
 				self.int_enabled = False
 			elif mode_change_params[1] == False and 'mode_timeout' in self.cfg_gpio and not self.int_enabled:
 				print "DEBUG.. GPIO/NOT VOLUME.. enabling our interrupts.."
-				GPIO.setup((13,6), GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-				GPIO.add_event_detect(13, GPIO.RISING, callback=self.int_encoder) # NO bouncetime 
-				GPIO.add_event_detect(6, GPIO.RISING, callback=self.int_encoder) # NO bouncetime
+				self.gpio.setup((13,6), self.gpio.IN, pull_up_down=self.gpio.PUD_DOWN)
+				self.gpio.add_event_detect(13, self.gpio.RISING, callback=self.int_encoder) # NO bouncetime 
+				self.gpio.add_event_detect(6, self.gpio.RISING, callback=self.int_encoder) # NO bouncetime
 				self.int_enabled = True
 			elif mode_change_params[1] == True and 'mode_timeout' not in self.cfg_gpio and not self.int_enabled:
 				print "DEBUG.. ECA/VOLUME.. enabling our interrupts.."
-				GPIO.setup((13,6), GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-				GPIO.add_event_detect(13, GPIO.RISING, callback=self.int_encoder) # NO bouncetime 
-				GPIO.add_event_detect(6, GPIO.RISING, callback=self.int_encoder) # NO bouncetime
+				self.gpio.setup((13,6), self.gpio.IN, pull_up_down=self.gpio.PUD_DOWN)
+				self.gpio.add_event_detect(13, self.gpio.RISING, callback=self.int_encoder) # NO bouncetime 
+				self.gpio.add_event_detect(6, self.gpio.RISING, callback=self.int_encoder) # NO bouncetime
 				self.int_enabled = True
 			elif mode_change_params[1] == False and 'mode_timeout' not in self.cfg_gpio and self.int_enabled:
 				print "DEBUG.. ECA/NOT VOLUME.. disabling our interrupts.."
-				GPIO.remove_event_detect(13)
-				GPIO.remove_event_detect(6)
+				self.gpio.remove_event_detect(13)
+				self.gpio.remove_event_detect(6)
 				self.int_enabled = False
 
 			print "DEBUG.. done"
@@ -246,25 +248,25 @@ class GpioController(object):
 		if self.int_encoder is not None:
 			if mode == 'volume' and state == True and 'mode_timeout' in self.cfg_gpio and self.int_enabled:
 				print "DEBUG2.. GPIO/VOLUME ({0}:{1}).. disabling our interrupts..".format(mode,state)
-				GPIO.remove_event_detect(13)
-				GPIO.remove_event_detect(6)
+				self.gpio.remove_event_detect(13)
+				self.gpio.remove_event_detect(6)
 				self.int_enabled = False
 			elif mode != 'volume' and state == True and 'mode_timeout' in self.cfg_gpio and not self.int_enabled:
 				print "DEBUG2.. GPIO/NOT VOLUME ({0}:{1}).. enabling our interrupts..".format(mode,state)
-				GPIO.setup((13,6), GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-				GPIO.add_event_detect(13, GPIO.RISING, callback=self.int_encoder) # NO bouncetime 
-				GPIO.add_event_detect(6, GPIO.RISING, callback=self.int_encoder) # NO bouncetime
+				self.gpio.setup((13,6), self.gpio.IN, pull_up_down=self.gpio.PUD_DOWN)
+				self.gpio.add_event_detect(13, self.gpio.RISING, callback=self.int_encoder) # NO bouncetime 
+				self.gpio.add_event_detect(6, self.gpio.RISING, callback=self.int_encoder) # NO bouncetime
 				self.int_enabled = True
 			elif mode == 'volume' and state == True and 'mode_timeout' not in self.cfg_gpio and not self.int_enabled:
 				print "DEBUG2.. ECA/VOLUME ({0}:{1}).. enabling our interrupts..".format(mode,state)
-				GPIO.setup((13,6), GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-				GPIO.add_event_detect(13, GPIO.RISING, callback=self.int_encoder) # NO bouncetime 
-				GPIO.add_event_detect(6, GPIO.RISING, callback=self.int_encoder) # NO bouncetime
+				self.gpio.setup((13,6), self.gpio.IN, pull_up_down=self.gpio.PUD_DOWN)
+				self.gpio.add_event_detect(13, self.gpio.RISING, callback=self.int_encoder) # NO bouncetime 
+				self.gpio.add_event_detect(6, self.gpio.RISING, callback=self.int_encoder) # NO bouncetime
 				self.int_enabled = True
 			elif mode != 'volume' and state == True and 'mode_timeout' not in self.cfg_gpio and self.int_enabled:
 				print "DEBUG2.. ECA/NOT VOLUME ({0}:{1}).. disabling our interrupts..".format(mode,state)
-				GPIO.remove_event_detect(13)
-				GPIO.remove_event_detect(6)
+				self.gpio.remove_event_detect(13)
+				self.gpio.remove_event_detect(6)
 				self.int_enabled = False
 			print "DEBUG2.. done"
 		"""
@@ -311,7 +313,7 @@ class GpioController(object):
 		
 	def cleanup(self):
 		self.__printer("Cleaning up GPIO")
-		GPIO.cleanup()
+		self.gpio.cleanup()
 		
 	# ********************************************************************************
 	# GPIO helpers
@@ -375,7 +377,7 @@ class GpioController(object):
 		#	sleep(debounce)
 		#	
 		sleep(0.02)
-		if not GPIO.input(pin) == self.pins_config[pin]['gpio_on']:
+		if not self.gpio.input(pin) == self.pins_config[pin]['gpio_on']:
 			return None
 		
 		#print "DEBUG: self.int_handle_switch! for pin: {0}".format(pin)
@@ -406,7 +408,7 @@ class GpioController(object):
 			self.__printer("Button pressed (pin {0}), waiting for button to be released....".format(pin))
 			pressed = True
 			while True: #pressed == True or press_time >= self.long_press_ms:
-				state = GPIO.input(pin)
+				state = self.gpio.input(pin)
 				if state != self.pins_config[pin]['gpio_on']:
 					pressed = False
 					break
@@ -468,7 +470,7 @@ class GpioController(object):
 			
 					multi_match = True
 					for multi_pin in function['multi']:
-						if not GPIO.input(multi_pin) == self.pins_config[pin]['gpio_on']:
+						if not self.gpio.input(multi_pin) == self.pins_config[pin]['gpio_on']:
 							multi_match = False
 					if multi_match == True:
 						if function['press_type'] == 'short_press':
@@ -479,7 +481,7 @@ class GpioController(object):
 			self.__printer("Waiting for button to be released....")
 			pressed = True
 			while pressed == True or press_time >= self.long_press_ms:
-				state = GPIO.input(pin)
+				state = self.gpio.input(pin)
 				if state != self.pins_config[pin]['gpio_on']:
 					print "RELEASED!"
 					pressed = False
@@ -517,8 +519,8 @@ class GpioController(object):
 		encoder_pinA = device['clk']
 		encoder_pinB = device['dt']
 
-		Switch_A = GPIO.input(encoder_pinA)
-		Switch_B = GPIO.input(encoder_pinB)
+		Switch_A = self.gpio.input(encoder_pinA)
+		Switch_B = self.gpio.input(encoder_pinB)
 														# now check if state of A or B has changed
 														# if not that means that bouncing caused it	
 		Current_A = self.pins_state[encoder_pinA]
@@ -576,6 +578,7 @@ class GpioController(object):
 			self.__printer("Encoder, no function",level=LL_DEBUG)
 
 
+			pigpio.pi()
 	# ********************************************************************************
 	# GPIO setup
 	def __gpio_setup(self,int_switch=None,int_encoder=None):
@@ -583,16 +586,18 @@ class GpioController(object):
 		Setup
 		"""
 		self.int_encoder = int_encoder
-		GPIO.setwarnings(True)
+		self.gpio.setwarnings(True)
 		
 		# gpio mode: BCM or board
+		"""
 		if 'gpio_mode' in self.cfg_gpio:
 			if self.cfg_gpio['gpio_mode'] == 'BCM':
-				GPIO.setmode(GPIO.BCM)
+				self.gpio.setmode(self.gpio.BCM)
 			elif self.cfg_gpio['gpio_mode'] == 'BOARD':
-				GPIO.setmode(GPIO.BOARD)
+				self.gpio.setmode(self.gpio.BOARD)
 		else:
-			GPIO.setmode(GPIO.BCM)	# default
+			self.gpio.setmode(self.gpio.BCM)	# default
+		"""
 
 		# check if mandatory sections present
 		if not 'devices' in self.cfg_gpio:
@@ -648,7 +653,7 @@ class GpioController(object):
 				# Normal led
 				pin = device['pin']
 				self.__printer("Setting up pin: {0}".format(pin))
-				GPIO.setup(pin, GPIO.OUT)
+				self.gpio.setup(pin, self.gpio.OUT)
 				
 			if 'type' in device and device['type'] == 'rgb':
 				# RGB led
@@ -656,9 +661,9 @@ class GpioController(object):
 				pin_g = device['g']
 				pin_b = device['b']
 				self.__printer("Setting up pins: {0}, {1} and {2}".format(pin_r, pin_g, pin_b))
-				GPIO.setup(pin_r, GPIO.OUT)
-				GPIO.setup(pin_g, GPIO.OUT)
-				GPIO.setup(pin_b, GPIO.OUT)
+				self.gpio.setup(pin_r, self.gpio.OUT)
+				self.gpio.setup(pin_g, self.gpio.OUT)
+				self.gpio.setup(pin_b, self.gpio.OUT)
 				
 				
 			if 'sw' in device and int_switch is not None:
@@ -667,13 +672,13 @@ class GpioController(object):
 				pins_monitor.append(pin)
 				
 				self.__printer("Setting up pin: {0}".format(pin))
-				GPIO.setup(pin, GPIO.IN)
+				self.gpio.setup(pin, self.gpio.IN)
 				
 				# convert high/1, low/0 to bool
 				if device['gpio_on'] == "high" or device['gpio_on'] == 1:
-					gpio_on = GPIO.HIGH
+					gpio_on = self.gpio.HIGH
 				else:
-					gpio_on = GPIO.LOW
+					gpio_on = self.gpio.LOW
 				
 				# pull up/down setting
 				# valid settings are: True, "up", "down"
@@ -681,23 +686,23 @@ class GpioController(object):
 				# Set to True to automatically choose pull-up or down based on the on-level.
 				if 'gpio_pullupdown' in device:
 					if device['gpio_pullupdown'] == True:
-						if gpio_on == GPIO.HIGH:
-							#GPIO.set_pullupdn(pin, pull_up_down=GPIO.PUD_DOWN)	#v0.10
-							GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+						if gpio_on == self.gpio.HIGH:
+							#self.gpio.set_pullupdn(pin, pull_up_down=self.gpio.PUD_DOWN)	#v0.10
+							self.gpio.setup(pin, self.gpio.IN, pull_up_down=self.gpio.PUD_DOWN)
 							self.__printer("Pin {0}: Pull-down resistor enabled".format(pin))
 						else:
-							#GPIO.set_pullupdn(pin, pull_up_down=GPIO.PUD_UP)	#v0.10
-							GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+							#self.gpio.set_pullupdn(pin, pull_up_down=self.gpio.PUD_UP)	#v0.10
+							self.gpio.setup(pin, self.gpio.IN, pull_up_down=self.gpio.PUD_UP)
 							self.__printer("Pin {0}: Pull-up resistor enabled".format(pin))
 					elif device['gpio_pullupdown'] == False:
 						pass
 					elif device['gpio_pullupdown'] == 'up':
-						#GPIO.set_pullupdn(pin, pull_up_down=GPIO.PUD_UP)	#v0.10
-						GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+						#self.gpio.set_pullupdn(pin, pull_up_down=self.gpio.PUD_UP)	#v0.10
+						self.gpio.setup(pin, self.gpio.IN, pull_up_down=self.gpio.PUD_UP)
 						self.__printer("Pin {0}: Pull-up resistor enabled".format(pin))
 					elif device['gpio_pullupdown'] == 'down':
-						#GPIO.set_pullupdn(pin, pull_up_down=GPIO.PUD_DOWN)	#v0.10
-						GPIO.setup(pin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+						#self.gpio.set_pullupdn(pin, pull_up_down=self.gpio.PUD_DOWN)	#v0.10
+						self.gpio.setup(pin, self.gpio.IN, pull_up_down=self.gpio.PUD_DOWN)
 						self.__printer("Pin {0}: Pull-down resistor enabled".format(pin))
 					else:
 						self.__printer("ERROR: invalid pull_up_down value. This attribute is optional. Valid values are: True, 'up' and 'down'.",level=LL_ERROR)
@@ -707,27 +712,27 @@ class GpioController(object):
 				# if left out, the trigger will be based on the on-level
 				if 'gpio_edgedetect' in device:				
 					if device['gpio_edgedetect'] == 'rising':
-						GPIO.add_event_detect(pin, GPIO.RISING, callback=int_switch) #
+						self.gpio.add_event_detect(pin, self.gpio.RISING, callback=int_switch) #
 						self.__printer("Pin {0}: Added Rising Edge interrupt; bouncetime=600".format(pin))
 					elif device['gpio_edgedetect'] == 'falling':
-						GPIO.add_event_detect(pin, GPIO.FALLING, callback=int_switch) #
+						self.gpio.add_event_detect(pin, self.gpio.FALLING, callback=int_switch) #
 						self.__printer("Pin {0}: Added Falling Edge interrupt; bouncetime=600".format(pin))
 					elif device['gpio_edgedetect'] == 'both':
-						GPIO.add_event_detect(pin, GPIO.BOTH, callback=int_switch) #
+						self.gpio.add_event_detect(pin, self.gpio.BOTH, callback=int_switch) #
 						self.__printer("Pin {0}: Added Both Rising and Falling Edge interrupt; bouncetime=600".format(pin))
 						self.__printer("Pin {0}: Warning: detection both high and low level will cause an event to trigger on both press and release.".format(pin),level=LL_WARNING)
 					else:
 						self.__printer("Pin {0}: ERROR: invalid edge detection value.".format(pin),level=LL_ERROR)
 				else:
-					if gpio_on == GPIO.HIGH:
-						GPIO.add_event_detect(pin, GPIO.RISING, callback=int_switch) #
+					if gpio_on == self.gpio.HIGH:
+						self.gpio.add_event_detect(pin, self.gpio.RISING, callback=int_switch) #
 						self.__printer("Pin {0}: Added Rising Edge interrupt; bouncetime=600".format(pin))				
 					else:
-						GPIO.add_event_detect(pin, GPIO.FALLING, callback=int_switch) #, bouncetime=600
+						self.gpio.add_event_detect(pin, self.gpio.FALLING, callback=int_switch) #, bouncetime=600
 						self.__printer("Pin {0}: Added Falling Edge interrupt; bouncetime=600".format(pin))
 
 				
-				self.pins_state[pin] = GPIO.input(pin)
+				self.pins_state[pin] = self.gpio.input(pin)
 					
 				# consolidated config
 				self.pins_config[pin] = { "dev_name":device['name'], "dev_type":"sw", "gpio_on": gpio_on, "has_multi":False, "has_short":False, "has_long":False, "functions":[] }
@@ -737,12 +742,12 @@ class GpioController(object):
 				pin_dt = device['dt']
 				
 				self.__printer("Setting up encoder on pins: {0} and {1}".format(pin_clk, pin_dt))
-				GPIO.setup((pin_clk,pin_dt), GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-				GPIO.add_event_detect(pin_clk, GPIO.RISING, callback=int_encoder) # NO bouncetime 
-				GPIO.add_event_detect(pin_dt, GPIO.RISING, callback=int_encoder) # NO bouncetime 
+				self.gpio.setup((pin_clk,pin_dt), self.gpio.IN, pull_up_down=self.gpio.PUD_DOWN)
+				self.gpio.add_event_detect(pin_clk, self.gpio.RISING, callback=int_encoder) # NO bouncetime 
+				self.gpio.add_event_detect(pin_dt, self.gpio.RISING, callback=int_encoder) # NO bouncetime 
 				
-				self.pins_state[pin_clk] = GPIO.input(pin_clk)
-				self.pins_state[pin_dt] = GPIO.input(pin_dt)
+				self.pins_state[pin_clk] = self.gpio.input(pin_clk)
+				self.pins_state[pin_dt] = self.gpio.input(pin_dt)
 				
 				# consolidated config
 				self.pins_config[pin_clk] = { "dev_name":device['name'], "dev_type":"clk", "functions":[] }

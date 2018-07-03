@@ -137,40 +137,6 @@ class MPDClientWrapper(object):
 
 class MpdController(object):
 
-	class Decorators(object):
-	
-		@classmethod
-		def _mpdconnect():
-			"""
-			Decorator function.
-			Test connection and attempts to reconnect if not connected.
-			Reinstitutes idle state
-			"""
-			def decorator(fn):
-			
-				def wrapper(*args,**kwargs):
-				
-					# check if idle set
-					result = True
-					try:
-						self.mpdc.noidle()
-					except MPDConnectionError as e:
-						self.mpdc.connect("localhost", 6600)
-						result = False
-					except:
-						self.__printer('WEIRD... no idle was set..')
-						
-					ret = fn(*args,**kwargs)
-					return ret
-					
-					self.mpdc.send_idle()
-					
-				return wrapper
-			return decorator
-
-	def __printer( self, message, level=LL_INFO, tag=LOG_TAG):
-		self.logger.log(level, message, extra={'tag': tag})
-
 	def __init__( self, logger, repeat=1, random=0 ):
 		self.logger = logger
 		self.pls_dir_pos = []		# list of start positions of directories in the playlist
@@ -179,7 +145,7 @@ class MpdController(object):
 		try:
 			self.__printer('Initializing MPD client', level=LL_DEBUG)
 			#self.mpdc = MPDClientWrapper()		# per instance !
-			self.mpdc = MPDClient()		# per instance !
+			self.mpdc = MPDClient()				# per instance !
 			self.mpdc.timeout = None			# network timeout in seconds (floats allowed), default: None
 			self.mpdc.idletimeout = None		# timeout for fetching the result of the idle command is handled seperately, default: None
 			self.mpdc.connect("localhost", 6600)
@@ -193,30 +159,33 @@ class MpdController(object):
 			
 		# populate self.pls_dir_pos
 		self.pls_gather_dir_pos()
-	
-	def __test_conn(self):
 
+	def __mpdconnect(fn):
 		"""
-		test = self.mpdc.connect("localhost", 6600)
-		print test
-		
-		self.mpdc.noidle()
-		
+		Decorator function.
+		Test connection and attempts to reconnect if not connected.
+		Reinstitutes idle state
 		"""
-		result = True
-		try:
-			self.mpdc.noidle()
-		except MPDConnectionError as e:
-			self.mpdc.connect("localhost", 6600)
-			result = False
-		except:
-			self.__printer('WEIRD... no idle was set..')
+		def wrapper(self,*args,**kwargs):			
+			# check if idle set
+			result = True
+			try:
+				self.mpdc.noidle()
+			except MPDConnectionError as e:
+				self.mpdc.connect("localhost", 6600)
+				result = False
+			except:
+				self.__printer('WEIRD... no idle was set..')
+				
+			ret = fn(self,*args,**kwargs)
+			self.mpdc.send_idle()
 			
-		return result
-	
-	def __return_to_idle(self):
-		self.mpdc.send_idle()
+		return wrapper
+
+	def __printer( self, message, level=LL_INFO, tag=LOG_TAG):
+		self.logger.log(level, message, extra={'tag': tag})
 		
+	@__mpdconnect
 	def play ( self, pos=None, time=0 ):
 		#TODO: add id=None
 		"""	Start playback
@@ -224,26 +193,23 @@ class MpdController(object):
 				- position in playlist OR song id
 				- time in track
 		"""		
-		self.__test_conn()
 		if pos is not None: # and time is not None:
 			self.seek(pos,time)
 			self.mpdc.play(pos)	#TODO: pos param needed?
 			#return True #?
 		else:
 			self.mpdc.play()
-			
-		self.__return_to_idle()
 		return True
 
-	@_mpdconnect
+	@__mpdconnect
 	def pause (self):
 		self.mpdc.pause()
 		
-	@_mpdconnect
+	@__mpdconnect
 	def stop (self):
 		self.mpdc.stop()
 		
-	@_mpdconnect
+	@__mpdconnect
 	def next(self, count=1):
 		for i in range(count):
 			try:
@@ -253,16 +219,16 @@ class MpdController(object):
 				#TODO: what to do now?
 		return True
 			
-	@_mpdconnect
+	@__mpdconnect
 	def prev(self, count=1):
 		for i in range(count):
 			self.mpdc.previous()
 
-	@_mpdconnect
+	@__mpdconnect
 	def seek(self, seeksec='+1'):
 		self.mpdc.seekcur(seeksec)
 
-	@_mpdconnect
+	@__mpdconnect
 	def random(self, mode='next'):
 		"""	Set random mode. Modes:
 			- On / 1 / Playlist
@@ -290,7 +256,7 @@ class MpdController(object):
 			print('[MPC] Next random mode')
 			subprocess.call(["mpc", "-q", "random"])
 		
-	@_mpdconnect
+	@__mpdconnect
 	def repeat(self, mode='toggle'):
 		"""	Set random mode. Modes:
 			- On (1)
@@ -306,7 +272,7 @@ class MpdController(object):
 			#todo
 			pass
 	
-	@_mpdconnect
+	@__mpdconnect
 	def is_dbdir(self, directory):
 		#if self.__test_conn() == False:
 		#	return False
@@ -327,11 +293,9 @@ class MpdController(object):
 			#self.__return_to_idle()
 			return True
 	
-	@_mpdconnect
-	def update (self, directory, wait=True):
-		
+	@__mpdconnect
+	def update (self, directory, wait=True):	
 		self.__printer('Updating database for location: {0}'.format(directory))
-		#self.__test_conn()
 
 		#Sound effect
 		#pa_sfx('mpd_update_db')
@@ -348,32 +312,27 @@ class MpdController(object):
 		self.mpdc.status()
 		results = self.mpdc.command_list_end()
 		
-		#self.__return_to_idle()
 		print results
 	
-	@_mpdconnect	
+	@__mpdconnect	
 	def state(self):
 		"""
 		Return State
 		"""
-		#self.__test_conn()
 		#mpd_state = self.mpdc.status()
 		state = {}
-		#self.__return_to_idle()
 		return state
 
-	@_mpdconnect
+	@__mpdconnect
 	def track(self):
 		"""
 		Return track details
 		"""
-		#self.__test_conn()
 		results = self.mpdc.currentsong()
-		#self.__return_to_idle()
 		#{'album': 'Exodus', 'composer': 'Andy Hunter/Tedd T.', 'title': 'Go', 'track': '1', 'duration': '411.480', 'artist': 'Andy Hunter', 'pos': '0', 'last-modified': '2013-10-12T15:53:13Z', 'albumartist': 'Andy Hunter', 'file': 'PIHU_SMB/music/electric/Andy Hunter/Andy Hunter - 2002 - Exodus/01 - Andy Hunter - Go.mp3', 'time': '411', 'date': '2002', 'genre': 'Electronic/Dance', 'id': '44365'}
 		return results
 	
-	@_mpdconnect
+	@__mpdconnect
 	def next_folder():
 		"""
 		Plays first track of next folder and turns off random
@@ -399,12 +358,12 @@ class MpdController(object):
 		"""
 	`'''
 	
+	@__mpdconnect
 	def pls_pop_dir(self, location):
 		"""	Populate playlist for given MPD directory
 			Returns: count
 		"""
 		self.__printer('Populating playlist, folder: {0}'.format(location))
-		self.__test_conn()
 	
 		try:		
 			#self.mpdc.command_list_ok_begin()
@@ -415,7 +374,6 @@ class MpdController(object):
 			self.__printer('ERROR: folder not in MPD database?')
 		
 		#self.mpdc.play()
-		self.__return_to_idle()
 				
 		if 'playlistlength' in results:
 			return results['playlistlength']
@@ -427,25 +385,22 @@ class MpdController(object):
 		else:
 			return None
 
+	@__mpdconnect
 	def pls_pop_streams(self, streams):
 		"""Populate playlist with given list of streams """
 		self.__printer('Populating playlist')
-		self.__test_conn()
 		for stream in streams:
 			self.mpdc.add(stream)
-		self.__return_to_idle()
 		
+	@__mpdconnect
 	def pls_is_populated(self):
 		"""	Check if the playlist is populated (deprecate?)
 		"""
 		self.__printer('Checking if playlist is populated')
-		self.__test_conn()
 		
 		self.mpdc.command_list_ok_begin()
 		self.mpdc.status()
 		results = self.mpdc.command_list_end()
-		self.__return_to_idle()
-
 		return results[0]['playlistlength']
 		
 	def pls_dirs(self):
@@ -555,14 +510,12 @@ class MpdController(object):
 			
 		return arMpcPlaylistDirs
 		
+	@__mpdconnect
 	def mpc_get_status( self ):
-		self.__test_conn()
-
 		self.mpdc.command_list_ok_begin()
 		self.mpdc.status()
 
 		results = self.mpdc.command_list_end()
-		self.__return_to_idle()
 		
 		#print results
 
