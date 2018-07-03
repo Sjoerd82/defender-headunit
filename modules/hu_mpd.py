@@ -192,7 +192,7 @@ class MpdController(object):
 		Test connection and attempts to reconnect if not connected.
 		Reinstitutes idle state
 		"""
-		def decorator(fn):
+		def decorator(self,fn):
 		
 			def wrapper(self,*args,**kwargs):
 			
