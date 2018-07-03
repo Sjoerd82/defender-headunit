@@ -1,6 +1,6 @@
 from RPi import GPIO
 
-class GpioWrapper(object)
+class GpioWrapper(object):
 	"""
 	Wrapper for agnostic use of either RPi.GPIO or pigpio.
 	BCM pin mode
