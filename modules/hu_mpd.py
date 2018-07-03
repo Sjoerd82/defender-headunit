@@ -353,10 +353,10 @@ class MpdController(object):
 		"""
 		Return State
 		"""
-		self.__test_conn()
+		#self.__test_conn()
 		#mpd_state = self.mpdc.status()
 		state = {}
-		self.__return_to_idle()
+		#self.__return_to_idle()
 		return state
 
 	@_mpdconnect
