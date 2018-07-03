@@ -18,7 +18,10 @@ class GpioWrapper(object):
 		GPIO.setmode(GPIO.BCM)
 	
 	def setup(self, pin, in_out, pull_up_down=None):
-		return GPIO.setup(pin, in_out, pull_up_down)
+		if pull_up_down is None:
+			return GPIO.setup(pin, in_out)
+		else:
+			return GPIO.setup(pin, in_out, pull_up_down)
 		
 	def input(self, pin):
 		return GPIO.input(pin)
