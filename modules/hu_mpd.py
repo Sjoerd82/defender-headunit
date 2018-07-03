@@ -186,7 +186,7 @@ class MpdController(object):
 	def __return_to_idle(self):
 		self.mpdc.send_idle()
 
-	def _mpdconnect():
+	def _mpdconnect(self):
 		"""
 		Decorator function.
 		Test connection and attempts to reconnect if not connected.
