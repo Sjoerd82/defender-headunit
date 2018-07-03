@@ -273,12 +273,12 @@ class MpdSourcePlugin(SourcePlugin):
 		# not implemented
 		return True
 		
-	def pause( self, mode ):
+	def pause( self, mode, **kwargs ):
 		self.printer('Pause. Mode: {0}'.format(mode))
 		self.mpdc.pause(mode)
 		return True
 
-	def random( self, mode ):
+	def random( self, mode, **kwargs ):
 		if mode in ('next','toggle'):
 			self.random_modes.next()
 		elif mode == 'prev':
@@ -306,17 +306,17 @@ class MpdSourcePlugin(SourcePlugin):
 		
 		return True
 
-	def seekfwd( self ):
+	def seekfwd(self, **kwargs ):
 		self.printer('Seek FFWD')
 		self.mpdc.seek('+1')
 		return True
 
-	def seekrev( self ):
+	def seekrev(self, **kwargs ):
 		self.printer('Seek FBWD')
 		self.mpdc.seek('-1')
 		return True
 
-	def update( self, location ):
+	def update(self, location, **kwargs ):
 		self.printer('Update. Location: {0}'.format(location))
 		self.mpdc.update(location)
 		return True
