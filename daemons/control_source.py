@@ -710,6 +710,12 @@ def get_randommode(args):
 	data = get_data(ret,True)
 	return data
 '''
+@messaging.register('/player/next_random', cmd='PUT')
+@command.validate()
+def put_random_next(path=None, cmd=None, args=None, data=None):
+	ret = sc_sources.source_random('next')
+	return ret
+
 
 @messaging.register('/player/next', cmd='PUT')
 @command.validate()
