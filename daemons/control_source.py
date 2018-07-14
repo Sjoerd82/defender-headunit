@@ -557,15 +557,10 @@ def get_folders(args):
 		Return data:	playlist-folder mapping
 	"""
 	code = 200
-	valid = validate_args(args,0,0)
-	if not valid:
-		return None
+	#if not args:
+	#	ret = sc_sources.()
 
-	if not args:
-		ret = sc_sources.()
-
-	data = get_data(ret,True)
-	return data, code
+	return None, code
 
 # TODO
 @messaging.register('/player/folder/next', cmd='PUT')
