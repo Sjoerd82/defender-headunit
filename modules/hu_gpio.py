@@ -109,7 +109,7 @@ class GpioController(object):
 					mode_change_params.append(modeset['state'])
 					
 			if len(mode_change_params) > 0:
-				self.callback_function('MODE-CHANGE',*mode_change_params)
+				self.callback_function('MODE-CHANGE',mode_change_params)	# TODO. CHANGE to *mode_change_params
 				#self.callback_mode_change(mode_change_params,init=True)
 	
 	def __printer( self, message, level=LL_INFO, tag=None):
@@ -175,15 +175,18 @@ class GpioController(object):
 		self.__printer("Preparing to execute function: {0}".format(command),level=LL_DEBUG)
 		
 		if command is None:
-			print "1"
 			return
 			
 		cmd_exec = Commands()
 		if command not in cmd_exec.command_list:
-			print "2"
 			return
-			
+		
 		if args:
+			print "DEBUG"
+			print "args:   {0}".format(args)
+			print "[args]: {0}".format([args])
+			for arg in [args]:
+				print type(arg)
 			valid_params = cmd_exec.validate_args(command,[args])	#todo, change validate_args to accept *args
 		else:
 			valid_params = None
