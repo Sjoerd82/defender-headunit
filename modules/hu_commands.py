@@ -53,7 +53,7 @@ class Commands(object):
 				'description':'''Switch to next available (sub)source and start playback.''',
 				'command': 'PUT',
 				'params': [
-					{ 'name':'primary', 'datatype':(bool,), 'required':False, 'help':'''Skip to to next primary source''', 'default':False }
+					{ 'name':'primary', 'datatype':(bool,), 'required':False, 'help':'''Skip to to next primary source''' }
 				],
 				'path':'/source/next'
 			},
@@ -62,7 +62,7 @@ class Commands(object):
 				'description':'''Switch to previous available (sub)source and start playback.''',
 				'command': 'PUT',
 				'params': [
-					{ 'name':'primary', 'datatype':(bool,), 'required':False, 'help':'''Skip to to previous primary source''', 'default':False }
+					{ 'name':'primary', 'datatype':(bool,), 'required':False, 'help':'''Skip to to previous primary source''' }
 				],
 				'path':'/source/prev'
 			},

@@ -253,7 +253,7 @@ def put_next(path=None, cmd=None, args=None, data=None):
 	"""	
 	Switch to next available (sub)source and start playback.
 	Arguments:
-		None
+		Optional: Skip to next primary source (bool), by default don't.
 	Return data:
 		None
 	Return codes:
@@ -264,7 +264,15 @@ def put_next(path=None, cmd=None, args=None, data=None):
 		562:	Error: No current source
 	"""
 	code = 200
-	ret = sc_sources.select_next()	# returns None if cannot change source
+	if not args:
+		ret = sc_sources.select_next()	# returns None if cannot change source
+	else:
+		if args[0] == True:
+			# TODO, skip to next PRIMARY source.
+			ret = sc_sources.select_next()	# returns None if cannot change source
+		else:
+			ret = sc_sources.select_next()	# returns None if cannot change source
+		
 	if ret is not None:
 		printSummary()	# LL_DEBUG
 	else:
