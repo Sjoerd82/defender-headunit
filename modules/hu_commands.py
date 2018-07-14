@@ -129,7 +129,7 @@ class Commands(object):
 				'description':'''Next track/station.''',
 				'command': 'PUT',
 				'params': [
-					{ 'name':'advance_count', 'datatype':(int,), 'required':False, 'help':'''Number of tracks to advance.''', 'default':1 }
+					{ 'name':'advance_count', 'datatype':(int,), 'required':False, 'help':'''Number of tracks to advance.''' }
 				],
 				'path':'/player/next'
 			},
@@ -139,7 +139,7 @@ class Commands(object):
 				'command': 'PUT',
 				'params': [
 					{ 'name':'jump_to_start', 'datatype':(bool,), 'required':False, 'help':'''Jump to beginning of track (counts as 1 reverse), if supported.''', 'default':True },
-					{ 'name':'reverse_count', 'datatype':(int,), 'required':False, 'help':'''Number of tracks to reverse.''', 'default':1 }
+					{ 'name':'reverse_count', 'datatype':(int,), 'required':False, 'help':'''Number of tracks to reverse.''' }
 				],
 				'path':'/player/prev'
 			},
