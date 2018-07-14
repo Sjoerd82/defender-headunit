@@ -509,7 +509,7 @@ class Commands(object):
 			print "CONVERTED BACK TO LIST: {0}".format(args)
 			for arg in args:
 				print "Arg: {0} {1}".format(arg, type(arg))
-			if args = [[]]:
+			if args == [[]]:
 				print "PLEISTER [[]] -> None. fix dit"
 				args = None
 		
