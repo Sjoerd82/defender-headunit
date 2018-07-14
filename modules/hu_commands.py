@@ -455,7 +455,7 @@ class Commands(object):
 			return wrapper
 		return decorator
 	
-	def validate_args(self, command, args): #, repeat=False):
+	def validate_args(self, command, *args): #, repeat=False):
 		"""
 		args must be a list of arguments
 		Returns list of args (including defaults) if valid (may return None if no params)
@@ -498,7 +498,18 @@ class Commands(object):
 			
 		cmd_def = self.get_command(command)
 		arg_defs = cmd_def['params']
-				
+		
+		# START CONVERSION TO *args FORMAT
+		if isinstance(args,  tuple):
+			arg_list = []
+			for arg in args:
+				arg_list.append(arg)
+			
+			args = arg_list
+			print "CONVERTED BACK TO LIST: {0}".format(args)
+			for arg in args:
+				print "Arg: {0} {1}".format(arg, type(arg))
+		
 		# no arguments
 		if arg_defs is None and (args is None or args == []):
 			return None
