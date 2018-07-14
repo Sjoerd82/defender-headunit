@@ -257,7 +257,7 @@ class Commands(object):
 				'description':'''Seek forward or reverse. Use a negative value to reverse.''',
 				'command': 'PUT',
 				'params': [
-					{ 'name':'seek_seconds', 'datatype':(int,), 'required':False, 'help':'''Seconds to seek forward/reverse''', 'default':SOURCE_DEFAULT }
+					{ 'name':'seek_seconds', 'datatype':(int,), 'required':False, 'help':'''Seconds to seek forward/reverse''' }
 				],
 				'path':'/player/seek'
 			},
