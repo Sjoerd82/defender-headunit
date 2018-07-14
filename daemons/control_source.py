@@ -485,12 +485,12 @@ def get_track(path=None, cmd=None, args=None, data=None):
 	return ret
 
 # TODO
-@messaging.register('/player/playlists' cmd='GET')
+@messaging.register('/player/playlists', cmd='GET')
 def get_pls(path=None, cmd=None, args=None, data=None):
 	return None, 200
 
 # TODO
-@messaging.register('/player/playlists/load' cmd='PUT')
+@messaging.register('/player/playlists/load', cmd='PUT')
 def put_pls_load(path=None, cmd=None, args=None, data=None):
 	return None, 200
 
