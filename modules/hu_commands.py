@@ -381,7 +381,7 @@ class Commands(object):
 				'command': 'PUT',
 				'params': [
 					{ 'name':'mode', 'datatype':(str,unicode,), 'required':True, 'help':'''Mode name.''' },
-					{ 'name':'state', 'datatype':(str,unicode,), 'required':True, 'help':'''Activate/Deactivate.''', 'choices':[True,False] }
+					{ 'name':'state', 'datatype':(bool,), 'required':True, 'help':'''Activate/Deactivate.''', 'choices':[True,False] }
 				],
 				'params_repeat':True,
 				'path':'/mode/change'
