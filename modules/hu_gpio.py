@@ -578,12 +578,12 @@ class GpioController(object):
 				# prepare arguments
 				if key_args in function:
 					if isinstance(function[key_args],str):
-						f_args = [function[key_args]]
+						f_args = *[function[key_args]]
 					else:
-						f_args = function[key_args]
+						f_args = *function[key_args]
 						
 				# execute
-				self.__exec_function_by_code(function[key], *f_args)
+				self.__exec_function_by_code(function[key], f_args)
 						
 				self.encoder_last_chg = this_chg
 		else:
