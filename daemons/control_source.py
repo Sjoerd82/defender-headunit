@@ -687,7 +687,10 @@ def put_random(path=None, cmd=None, args=None, data=None):
 		Nothing
 	"""
 	code = 200
-	ret = sc_sources.source_random(args[0])
+	if not args:
+		ret = sc_sources.source_random('next')
+	else:
+		ret = sc_sources.source_random(args[0])
 	return ret, code
 
 # TODO
