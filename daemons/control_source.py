@@ -643,9 +643,6 @@ def put_state(path=None, cmd=None, args=None, data=None):
 		500
 	"""
 	code = 200
-	valid = validate_args(args,1,1)
-	if not valid:
-		return None
 
 	state = json.loads(args[0])
 		
@@ -693,11 +690,8 @@ def get_randommode(path=None, cmd=None, args=None, data=None):
 		Return data:	{randommodes}
 	"""
 	code = 200
-	if not args:
-		ret = sc_sources.()
-
 	# Get list of (supported) random modes
-	return data, code
+	return None, code
 
 # TODO
 @messaging.register('/player/random/supported', cmd='GET')
