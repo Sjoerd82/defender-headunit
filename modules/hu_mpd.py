@@ -83,12 +83,18 @@ mpc_db_label_exist
 """
 #
 
+try:
+	# MPD2
+	from mpd import MPDClient, MPDError
+	from mpd import ConnectionError as MPDConnectionError
+	from mpd import CommandError as MPDCommandError
+except ImportError as err:
+	print "Error importing required module: {0}".format(err)
+	exit(1)
+	
 import os
 import sys
 from subprocess import call
-from mpd import MPDClient, MPDError
-from mpd import ConnectionError as MPDConnectionError
-from mpd import CommandError as MPDCommandError
 
 from hu_utils import *
 

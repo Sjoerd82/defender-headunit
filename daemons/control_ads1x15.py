@@ -20,17 +20,25 @@
 # printer -> syslog adds considerable latency!  ?
 # (and?) Or.. is it the MQ send() ?
 
+try:
+	# ADS1x15 module
+	import Adafruit_ADS1x15
+except ImportError as err:
+	print "Error importing required module: {0}".format(err)
+	exit(1)
+	
 import sys						# path
 import os						# 
 from time import sleep
 from time import clock
 from logging import getLogger	# logger
-import Adafruit_ADS1x15			# ADS1x15 module
 
 #sys.path.append('../modules')
 sys.path.append('/mnt/PIHU_APP/defender-headunit/modules')
 from hu_utils import *
 from hu_msg import MqPubSubFwdController
+
+
 
 # *******************************************************************************
 # Global variables and constants

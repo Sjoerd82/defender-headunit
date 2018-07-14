@@ -115,16 +115,23 @@ def validate_args(args, min_args, max_args):
 # -----------------------------------------------------------------------------
 # SOURCE
 
-@messaging.register('/source/primary', cmd='GET')
+@messaging.register('/source', cmd='GET')
 @command.validate()
-def get_primary(path=None, cmd=None, args=None, data=None):
+def get_source(path=None, cmd=None, args=None, data=None):
 	"""
-	Retrieve details for given index, or all indexes, if omitted.
+	Retrieve source details for current or given (sub)index.
+	Return all sources and sub-sources if not arguments given.
 	Arguments:
 		[int:source_id],[int:subsource_id]
 	Return codes:
 		200:	OK
 		500:	ERROR
+		560:	Error: No Sources available
+		561:	Error: Source not available
+		562:	Error: No current source
+
+	TODO: check if this returns subsources as well (it should, BUT IT PROBABLY DOESNT)
+		
 	"""
 	code = 200
 	if not args:
@@ -145,19 +152,21 @@ def get_primary(path=None, cmd=None, args=None, data=None):
 			code = 500
 	return ret, code
 
-@messaging.register('/source/primary', cmd='PUT', event='/events/source/active')
+@messaging.register('/source', cmd='PUT', event='/events/source/active')
 @command.validate()
-def put_primary(path=None, cmd=None, args=None, data=None):
+def put_source(path=None, cmd=None, args=None, data=None):
 	"""
-	Set active (sub)source to <id> (<subid>). If "P" then also start playing.
+	Select (=activate) (sub)source. Start playback.
 	Arguments:
-		<int:source_id>,[int:subsource_id][,S|P]
+		<int:source_id>,[int:subsource_id]
 	Return data:
 		Nothing
 	Return codes:
 		200:	OK			=> sends /events/source/active message
 		500:	Error, invalid index
-		561:	Error, source not available
+		560:	Error: No Sources available
+		561:	Error: Source not available
+		562:	Error: No current source
 	"""
 	code = 200
 
@@ -209,185 +218,92 @@ def put_primary(path=None, cmd=None, args=None, data=None):
 	save_resume()
 	return None, code
 
-# TODO
-@messaging.register('/source/primary', cmd='POST')
-def post_primary(path=None, cmd=None, args=None, data=None):
-	"""	Add a new source
-		Arguments:
-			{source}
-		Return data:
-			Nothing
-		Return codes:
-			200		OK
-			500		Error
-	"""
-	#TODO
-	return None
-	ret = sc_sources.add(args[0])	
-	return ret
-
-# TODO
-@messaging.register('/source/primary', cmd='DEL')
-def del_primary(path=None, cmd=None, args=None, data=None):
-	""" Remove a source
-		Arguments:
-			None:			Remove current source
-			source_id		Remove specified source
-		Return data:
-			Nothing
-		Return codes:
-			200		OK
-			500		Error
-	"""
-	
-	valid = validate_args(args,0,1)
-	if not valid:
-		return None
-
-	if not args:
-		ret = sc_sources.rem()
-	elif len(args) == 1:
-		ret = sc_sources.rem(args[0])
-	
-	# LL_DEBUG:
-	printSummary()
-
-	return ret
-
-@messaging.register('/source/subsource', cmd='GET')
+@messaging.register('/source', cmd='DEL')
 @command.validate()
-def get_subsource(path=None, cmd=None, args=None, data=None):
+def del_source(path=None, cmd=None, args=None, data=None):
 	"""
-	Retrieve details for given index, or all indexes, if omitted.
-	Params are optional: index, subindex
-	200:	OK
-	500:	ERROR
-	"""
-	code = 200
-	if not args:
-		ret = sc_sources.subsource_all()
-	elif len(args) == 1:
-		try:
-			ret = sc_sources.subsource_all(args[0])
-		except IndexError:
-			printer("{0} {1}: Invalid Index {2}".format(cmd,path,args[0]),level=LL_WARNING)
-			ret = None
-			code = 500
-	elif len(args) == 2:
-		try:
-			ret = sc_sources.subsource(args[0],args[1])
-		except IndexError:
-			printer("{0} {1}: Invalid (Sub)index {2}.{3}".format(cmd,path,args[0],args[1]),level=LL_WARNING)
-			ret = None
-			code = 500
-	return ret, code
-
-@messaging.register('/source/subsource', cmd='PUT', event='/events/source/active')
-@command.validate('SOURCE-SELECT')
-def put_subsource(path=None, cmd=None, args=None, data=None):
-	"""
-	Set active subsource to <subid>
+	Remove specified (sub)source.
 	Arguments:
-		<int:source_id>,[int:subsource_id][,S|P]
+		<int:source_id>,[int:subsource_id]
 	Return data:
 		Nothing
 	Return codes:
 		200:	OK
-		500:	Error
-		561:	Error, source not available
+		500:	ERROR
+		560:	Error: No Sources available
+		561:	Error: Source not available
+		562:	Error: No current source
 	"""
 	code = 200
-
-	#	? Starts playback if P is specified, or not (default)
-	#	? Does not start playback if S specified
-	
-	if len(args) == 1:
-		try:
-			ret = sc_sources.select(args[0])
-		except IndexError:
-			printer("{0} {1}: Invalid index {2}".format(cmd,path,args[0]),level=LL_WARNING)
-			code = 500
-			
-	elif len(args) == 2:
-		try:
-			ret = sc_sources.select(args[0],args[1])
-		except IndexError:
-			printer("{0} {1}: Invalid (Sub)index {2}.{3}".format(cmd,path,args[0],args[1]),level=LL_WARNING)
-			code = 500
-			
-	elif len(args) == 3:
-		#TODO: S|P not implemented
-		try:
-			ret = sc_sources.select(args[0],args[1])
-		except IndexError:
-			printer("{0} {1}: Invalid (Sub)index {2}.{3}".format(cmd,path,args[0],args[1]),level=LL_WARNING)
-			code = 500
-
-	if ret == False:
-		# index valid, but source not available
-		code = 561
-			
-	#data = get_data(ret,False,'/events/source/active')
-	#return data
-
-	""" '/events/source/active'
-	curr_source = sc_sources.source()
-	data['payload'] = curr_source
-	messaging.publish(eventpath,'DATA',data)
-			
-	#	settings['source'] = curr_source['name']
-	#	save_settings()
-	"""
-	
-	# TODO !!
-	# add a third record to the tuple to for the event data? like so: ?
-	# return ret, code, event_data
-	
-	save_resume()
-	return None, code
-
-#TODO
-@messaging.register('/source/subsource', cmd='POST')
-def post_subsource(path=None, cmd=None, args=None, data=None):
-	#TODO
-	return None
-
-#TODO
-@messaging.register('/source/subsource', cmd='DEL')
-def del_subsource(path=None, cmd=None, args=None, data=None):
-	""" Remove a subsource
-		Arguments:
-			None:							Remove current subsource
-			<source_id>, <subsource_id>		Remove specified subsource
-		Return data:
-			Nothing
-		Return codes:
-			200		OK
-			500		Error
-	"""
-	valid = validate_args(args,0,2)
-	if not valid:
-		return None
-
-		
 	if not args:
-		ret = sc_sources.rem_sub()
+		ret = sc_sources.rem()
 	elif len(args) == 1:
-		printer('This function requires an index and subindex', level=LL_ERROR)
-		return None
+		ret = sc_sources.rem(args[0])
 	elif len(args) == 2:
 		ret = sc_sources.rem_sub(args[0],args[1])
 	
 	# LL_DEBUG:
 	printSummary()
-		
-	return ret
+	
+	return None, code
+
+@messaging.register('/source/next', cmd='PUT')
+@command.validate()
+def put_next(path=None, cmd=None, args=None, data=None):
+	"""	
+	Switch to next available (sub)source and start playback.
+	Arguments:
+		None
+	Return data:
+		None
+	Return codes:
+		200:	OK
+		500:	Error
+		560:	Error: No Sources available
+		561:	Error: Source not available
+		562:	Error: No current source
+	"""
+	code = 200
+	ret = sc_sources.select_next()	# returns None if cannot change source
+	if ret is not None:
+		printSummary()	# LL_DEBUG
+	else:
+		code = 500
+	
+	# TODO, Should we return a 4xx or 5xx maybe?
+	return None, code
+
+@messaging.register('/source/prev', cmd='PUT', event='/events/source/active')
+@command.validate()
+def put_prev(path=None, cmd=None, args=None, data=None):
+	"""	
+	Switch to previous available (sub)source and start playback.
+	Arguments:
+		None
+	Return data:
+		None
+	Return codes:
+		200:	OK
+		500:	Error
+		560:	Error: No Sources available
+		561:	Error: Source not available
+		562:	Error: No current source
+	"""
+	code = 200
+	ret = sc_sources.select_next()	# returns None if cannot change source
+	if ret is not None:
+		printSummary()	# LL_DEBUG
+	else:
+		code = 500
+	
+	# TODO, Should we return a 4xx or 5xx maybe?
+	return None, code
 	
 @messaging.register('/source/available', cmd='PUT')
 @command.validate()
 def put_available(path=None, cmd=None, args=None, data=None):
 	"""
-	Mark (sub)source as (un)available
+	Mark (sub)source as (un)available.
 	Arguments:
 		True|False, source_id					Mark Source ID
 		True|False, source_id, sub-source_id	Mark Sub-Source ID
@@ -407,7 +323,6 @@ def put_available(path=None, cmd=None, args=None, data=None):
 			code = 500
 			
 	elif len(args) == 3:
-		#TODO: S|P not implemented
 		try:
 			ret = sc_sources.set_available(args[1],str2bool(args[0]),args[2])
 		except IndexError:
@@ -418,58 +333,30 @@ def put_available(path=None, cmd=None, args=None, data=None):
 	printSummary()
 	return None, code
 
-@messaging.register('/source/next', cmd='PUT')
+@messaging.register('/source/update', cmd='PUT')
 @command.validate()
-def put_next(path=None, cmd=None, args=None, data=None):
-	"""	
-	Change to next available (sub)source and start playing
-	Arguments:
-		None
+def put_update(path=None, cmd=None, args=None, data=None):
+	"""
+	Update current or given (sub)source.
 	Return data:
 		None
 	Return codes:
 		200:	OK
 		500:	Error
+		560:	Error: No Sources available
+		561:	Error: Source not available
+		562:	Error: No current source
 	"""
 	code = 200
-	ret = sc_sources.select_next()	# returns None if cannot change source
-	if ret is not None:
-		printSummary()	# LL_DEBUG
-	else:
-		code = 500
-	
-	# TODO, Should we return a 4xx or 5xx maybe?
-	return None, code
-
-@messaging.register('/source/prev', cmd='PUT', event='/events/source/active')
-@command.validate()
-def put_prev(path=None, cmd=None, args=None, data=None):
-	"""	
-	Change to prev available (sub)source and start playing
-	Arguments:
-		None
-	Return data:
-		None
-	Return codes:
-		200:	OK
-		500:	Error
-	"""
-	code = 200
-	ret = sc_sources.select_next()	# returns None if cannot change source
-	if ret is not None:
-		printSummary()	# LL_DEBUG
-	else:
-		code = 500
-	
-	# TODO, Should we return a 4xx or 5xx maybe?
-	return None, code
+	#TODO
+	return none, code
 
 # TODO: add event
 @messaging.register('/source/check', cmd='PUT')
 @command.validate()
 def put_check(path=None, cmd=None, args=None, data=None):
 	"""
-	Do an availability check on given or current source
+	Check current or given (sub)source for availability.
 	Arguments:
 		None						Check current source
 		source_id					Check source
@@ -479,6 +366,9 @@ def put_check(path=None, cmd=None, args=None, data=None):
 	Return codes:
 		200:	OK
 		500:	Error
+		560:	Error: No Sources available
+		561:	Error: Source not available
+		562:	Error: No current source
 	"""
 	code = 200
 	if not args:
@@ -539,11 +429,42 @@ def put_check(path=None, cmd=None, args=None, data=None):
 	
 	#return ret
 	return None, code
-		
+	
+
+# -----------------------------------------------------------------------------
+# DEPRECATED
+@messaging.register('/source/subsource', cmd='GET')
+@command.validate()
+def get_subsource(path=None, cmd=None, args=None, data=None):
+	"""
+	Retrieve details for given index, or all indexes, if omitted.
+	Params are optional: index, subindex
+	200:	OK
+	500:	ERROR
+	"""
+	code = 200
+	if not args:
+		ret = sc_sources.subsource_all()
+	elif len(args) == 1:
+		try:
+			ret = sc_sources.subsource_all(args[0])
+		except IndexError:
+			printer("{0} {1}: Invalid Index {2}".format(cmd,path,args[0]),level=LL_WARNING)
+			ret = None
+			code = 500
+	elif len(args) == 2:
+		try:
+			ret = sc_sources.subsource(args[0],args[1])
+		except IndexError:
+			printer("{0} {1}: Invalid (Sub)index {2}.{3}".format(cmd,path,args[0],args[1]),level=LL_WARNING)
+			ret = None
+			code = 500
+	return ret, code
+
 
 # -----------------------------------------------------------------------------
 # PLAYER
-@messaging.register('/player/track', cmd='GET')
+@messaging.register('/player/metadata', cmd='GET')
 @command.validate()
 def get_track(path=None, cmd=None, args=None, data=None):
 	"""
@@ -562,160 +483,16 @@ def get_track(path=None, cmd=None, args=None, data=None):
 		ret = ret['track']
 	
 	return ret
-	
-@messaging.register('/player/track', cmd='PUT')
-@command.validate()
-def put_track(path=None, cmd=None, args=None, data=None):
-	"""
-	Play track at specified playlist position
-	Arguments:
-		Playlist position
-	Return data:
-		Nothing
-	Return codes:
-		200:	OK
-		561:	No sources available
-	"""
-	code = 200
-	ret = sc_sources.source_play(position=args[0])
-	if ret == False:
-		# no sources are available
-		code = 561
-	
-	return None, code
 
-'''
-TODO
-def get_folders(args):
-	"""	Retrieve list of playlist-folder mappings
-		Arguments:		None
-		Return data:	playlist-folder mapping
-	"""
-	valid = validate_args(args,0,0)
-	if not valid:
-		return None
+# TODO
+@messaging.register('/player/playlists' cmd='GET')
+def get_pls(path=None, cmd=None, args=None, data=None):
+	return None, 200
 
-	if not args:
-		ret = sc_sources.()
-
-	data = get_data(ret,True)
-	return data
-'''
-
-@messaging.register('/player/pause', cmd='PUT')
-@command.validate()
-def put_pause(path=None, cmd=None, args=None, data=None):
-	"""
-	Enable/Disable Pause
-	Arguments:
-		on|off|toggle
-	Return data:
-		Nothing
-	"""
-	code = 200
-	if len(args) == 1:
-		ret = sc_sources.source_pause(args[0])
-
-	# Set pause: on|off|toggle
-	
-	return ret
-
-@messaging.register('/player/state', cmd='GET')
-@command.validate()
-def get_state(path=None, cmd=None, args=None, data=None):
-	"""
-	Get play state
-	Arguments:
-		None
-	Return data:
-		State
-	Return codes:
-		?
-	"""
-	ret = sc_sources.source_get_state()		
-	# Get state: play|pause|stop, toggle random
-	return ret
-
-# TODO: state object?
-@messaging.register('/player/state', cmd='PUT')
-@command.validate()
-def put_state(path=None, cmd=None, args=None, data=None):
-	"""
-	Set play state
-	Arguments:
-		play|pause|stop  /// state object?
-	Return data:
-		Nothing
-	Return codes:
-		200
-		500
-	"""
-	
-	valid = validate_args(args,1,1)
-	if not valid:
-		return None
-
-	state = json.loads(args[0])
-		
-	# PARSE STATE -- IS THIS THE RIGHT PLACE TO DO THIS?
-	if not isinstance(state,dict):
-		#return False	#?
-		printer ("argument is not a dictionary")
-		return None
-				
-	if 'state' in state:
-		if state['state'] in ('play','playing'):
-			ret = sc_sources.source_play()
-		elif state['state'] in ('stop'):
-			ret = sc_sources.source_stop()
-		elif state['state'] in ('pause','paused'):
-			ret = sc_sources.source_pause()
-		else:
-			print "UNKNOWN state: {0}".format(state['state'])
-			return None #?
-		
-	# Set state: play|pause|stop, toggle random
-	return ret
-
-
-# TODO: support special modes as argument
-@messaging.register('/player/random', cmd='PUT')
-@command.validate()
-def put_random(path=None, cmd=None, args=None, data=None):
-	"""
-	Set random mode
-	Arguments:
-		on|off|toggle|mode
-	Return data:
-		Nothing
-	"""
-	ret = sc_sources.source_random(args[0])
-	return ret
-
-'''
-TODO
-def get_randommode(args):
-	"""	Get list of supported random modes
-		Arguments:		None
-		Return data:	{randommodes}
-	"""
-	valid = validate_args(args,0,0)
-	if not valid:
-		return None
-
-	if not args:
-		ret = sc_sources.()
-
-		# Get list of (supported) random modes
-	data = get_data(ret,True)
-	return data
-'''
-@messaging.register('/player/next_random', cmd='PUT')
-@command.validate()
-def put_random_next(path=None, cmd=None, args=None, data=None):
-	ret = sc_sources.source_random('next')
-	return ret
-
+# TODO
+@messaging.register('/player/playlists/load' cmd='PUT')
+def put_pls_load(path=None, cmd=None, args=None, data=None):
+	return None, 200
 
 @messaging.register('/player/next', cmd='PUT')
 @command.validate()
@@ -751,14 +528,204 @@ def put_prev(path=None, cmd=None, args=None, data=None):
 		ret = sc_sources.source_prev(adv=args[0]) #prev(args[0])
 	return ret
 
-"""
-def put_nextfolder(args):
-	return True
+@messaging.register('/player/play_position', cmd='PUT')
+@command.validate()
+def put_pls_pos(path=None, cmd=None, args=None, data=None):
+	"""
+	Play track at specified playlist position
+	Arguments:
+		Playlist position
+	Return data:
+		Nothing
+	Return codes:
+		200:	OK
+		561:	No sources available
+	"""
+	code = 200
+	ret = sc_sources.source_play(position=args[0])
+	if ret == False:
+		# no sources are available
+		code = 561
 	
-def put_prevfolder(args):
-	return True
-"""
+	return None, code
 
+# TODO -- UNTESTED
+@messaging.register('/player/folders', cmd='GET')
+def get_folders(args):
+	"""	Retrieve list of playlist-folder mappings
+		Arguments:		None
+		Return data:	playlist-folder mapping
+	"""
+	code = 200
+	valid = validate_args(args,0,0)
+	if not valid:
+		return None
+
+	if not args:
+		ret = sc_sources.()
+
+	data = get_data(ret,True)
+	return data, code
+
+# TODO
+@messaging.register('/player/folder/next', cmd='PUT')
+@command.validate()
+def put_nextfolder(path=None, cmd=None, args=None, data=None):
+	return None, 200
+
+# TODO
+@messaging.register('/player/folder/prev', cmd='PUT')
+@command.validate()
+def put_prevfolder(args):
+	return None, 200
+
+# TODO
+@messaging.register('/player/play', cmd='PUT')
+@command.validate()
+def put_play(path=None, cmd=None, args=None, data=None):
+	"""
+	TODO
+	"""
+	code = 200
+	return None, code
+	
+@messaging.register('/player/pause', cmd='PUT')
+@command.validate()
+def put_pause(path=None, cmd=None, args=None, data=None):
+	"""
+	Enable/Disable Pause
+	Arguments:
+		on|off|toggle
+	Return data:
+		Nothing
+	"""
+	code = 200
+	if len(args) == 1:
+		ret = sc_sources.source_pause(args[0])
+
+	# Set pause: on|off|toggle
+	
+	return None, code
+
+# TODO
+@messaging.register('/player/stop', cmd='PUT')
+@command.validate()
+def put_stop(path=None, cmd=None, args=None, data=None):
+	"""
+	TODO
+	"""
+	code = 200
+	return None, code
+
+@messaging.register('/player/state', cmd='GET')
+def get_state(path=None, cmd=None, args=None, data=None):
+	"""
+	Get play state
+	Arguments:
+		None
+	Return data:
+		State
+	Return codes:
+		?
+	"""
+	code = 200
+	ret = sc_sources.source_get_state()		
+	# Get state: play|pause|stop, toggle random
+	return ret, code
+
+# TODO: state object?
+@messaging.register('/player/state', cmd='PUT')
+@command.validate()
+def put_state(path=None, cmd=None, args=None, data=None):
+	"""
+	Set play state
+	Arguments:
+		play|pause|stop  /// state object?
+	Return data:
+		Nothing
+	Return codes:
+		200
+		500
+	"""
+	code = 200
+	valid = validate_args(args,1,1)
+	if not valid:
+		return None
+
+	state = json.loads(args[0])
+		
+	# PARSE STATE -- IS THIS THE RIGHT PLACE TO DO THIS?
+	if not isinstance(state,dict):
+		#return False	#?
+		printer ("argument is not a dictionary")
+		return None
+				
+	if 'state' in state:
+		if state['state'] in ('play','playing'):
+			ret = sc_sources.source_play()
+		elif state['state'] in ('stop'):
+			ret = sc_sources.source_stop()
+		elif state['state'] in ('pause','paused'):
+			ret = sc_sources.source_pause()
+		else:
+			print "UNKNOWN state: {0}".format(state['state'])
+			return None #?
+		
+	# Set state: play|pause|stop, toggle random
+	return ret, code
+
+
+# TODO: support special modes as argument
+@messaging.register('/player/random', cmd='PUT')
+@command.validate()
+def put_random(path=None, cmd=None, args=None, data=None):
+	"""
+	Set random mode
+	Arguments:
+		on|off|toggle|mode
+	Return data:
+		Nothing
+	"""
+	code = 200
+	ret = sc_sources.source_random(args[0])
+	return ret, code
+
+# TODO
+@messaging.register('/player/random', cmd='GET')
+def get_randommode(path=None, cmd=None, args=None, data=None):
+	"""	Get list of supported random modes
+		Arguments:		None
+		Return data:	{randommodes}
+	"""
+	code = 200
+	if not args:
+		ret = sc_sources.()
+
+	# Get list of (supported) random modes
+	return data, code
+
+# TODO
+@messaging.register('/player/random/supported', cmd='GET')
+def get_random_supported(path=None, cmd=None, args=None, data=None):
+	code = 200
+	return None, code
+
+# TODO	
+@messaging.register('/player/random/next', cmd='PUT')
+@command.validate()
+def put_random_next(path=None, cmd=None, args=None, data=None):
+	code = 200
+	ret = sc_sources.source_random('next')
+	return ret, code
+
+# TODO	
+@messaging.register('/player/random/prev', cmd='PUT')
+@command.validate()
+def put_random_prev(path=None, cmd=None, args=None, data=None):
+	code = 200
+	ret = sc_sources.source_random('prev')
+	return ret, code
+	
 # TODO: implement regular SEEK in hu_source (currently it's either fwd or rev)
 @messaging.register('/player/seek', cmd='PUT')
 @command.validate()
@@ -771,11 +738,20 @@ def put_seek(path=None, cmd=None, args=None, data=None):
 	Return data:
 		?
 	"""
+	code = 200
 	if not args:
 		ret = sc_sources.seek()
 	elif len(args) == 1:
 		ret = sc_sources.seek(args[0])
-	return ret
+	return ret, code
+
+# TODO
+@messaging.register('/player/update', cmd='PUT')
+@command.validate()
+def put_player_update(path=None, cmd=None, args=None, data=None):
+	code = 200
+	return None, code
+
 
 """
 def get_playlist(args):
@@ -808,6 +784,7 @@ def put_update_location(args):
 '''
 
 # TODO
+'''
 @messaging.register('/player/update/source', cmd='PUT')
 def put_update_source(path=None, cmd=None, args=None, data=None):
 	"""	Update MPD for source
@@ -822,6 +799,7 @@ def put_update_source(path=None, cmd=None, args=None, data=None):
 		ret = sc_sources.source_update(args[0])
 
 	return ret
+'''
 
 # -----------------------------------------------------------------------------
 # EVENTS

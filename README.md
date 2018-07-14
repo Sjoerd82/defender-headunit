@@ -182,7 +182,30 @@ Send out a standardized command over MQ or a custom MQ message.
 Currently still called cmd (todo).
 
 
+# Dependencies
+Core dependencies:
+ - ZeroMQ w/ Python Bindings
+ - Yapsy | Source plugin manager
+ - Slugify
 
+Dependency | Required for
+--- | ---
+mpd | Any source, except FM
+ecasound | Volume control
+dbus, udisks, udisks-glue | Removable Media
+rt-plugins | Equalizer
+
+Python dependency | Description
+--- | ---
+pigpio | GPIO. 
+RPi.GPIO | GPIO. May be used instead of pigpio, either is supported.
+Zero MQ (pyzmq) | Serverless MQ. https://github.com/zeromq/pyzmq
+python-mpd2 | MPD client. https://github.com/Mic92/python-mpd2
+yapsy | Plugin Manager, used to handle source plugins. http://yapsy.sourceforge.net/
+slugify | Used to create key values out of potentially 'unclean' text. Requires either unidecode or text-unidecode. https://github.com/un33k/python-slugify
+pyeca | https://ecasound.seul.org/ecasound/Documentation/programmers_guide/html_ecidoc/eci_doc.html#htoc29
+Adafruit_ADS1x15 | https://github.com/adafruit/Adafruit_Python_ADS1x15
+Flask | Lightweight webserver. http://flask.pocoo.org/
 
 # Hardware
 

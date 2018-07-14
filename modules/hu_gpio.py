@@ -128,7 +128,7 @@ class GpioController(object):
 			mode_change_params.append(mode['state'])
 
 		self.__printer("Mode change. {0}".format(mode_change_params),level=LL_DEBUG)
-		self.__exec_function_by_code('MODE-CHANGE',mode_change_params)
+		self.__exec_function_by_code('MODE-CHANGE',*mode_change_params)
 		
 		"""
 		# DEBUG / EXPERIMENTAL
@@ -162,7 +162,7 @@ class GpioController(object):
 		if callable(self.callback_mode_change):
 			self.callback_mode_change(mode_change_params)
 	
-	def __exec_function_by_code(self,command,param=None):
+	def __exec_function_by_code(self,command,*args):
 		"""
 		Kind of like a pass-through function to execute a command.
 		command are executed by passing them back to our owner for execution.
@@ -182,13 +182,9 @@ class GpioController(object):
 		if command not in cmd_exec.command_list:
 			print "2"
 			return
-		
-		if param is not None:
-			if isinstance(param, (str, unicode)):
-				param = [param]
-		
-		if param is not None:
-			valid_params = cmd_exec.validate_args(command,param)
+			
+		if args:
+			valid_params = cmd_exec.validate_args(command,[args])	#todo, change validate_args to accept *args
 		else:
 			valid_params = None
 		
@@ -558,21 +554,37 @@ class GpioController(object):
 						self.reset_mode_timer(self.mode_sets[function['mode_cycle']]['reset'])
 				"""
 
+				f_args = None
 				if pin == encoder_pinB:							# Turning direction depends on 
-					#counter clockwise
-					#print "[Encoder] {0}: DECREASE/CCW".format(function['function_ccw'])
-					if self.encoder_fast_count > 3 and 'function_fast_ccw' in function:
-						self.__exec_function_by_code(function['function_fast_ccw'])
+					#COUNTER CLOCKWISE (CCW) or DECREASE
+					if self.encoder_fast_count > 3 and 'function_fast_ccw' in function:				
+						key = 'function_fast_ccw'
+						key_args = 'function_fast_ccw_args'
+
 					elif 'function_ccw' in function:
-						self.__exec_function_by_code(function['function_ccw'])
-				else:
-					#clockwise
-					#print "[Encoder] {0}: INCREASE/CW".format(function['function_cw'])
-					if self.encoder_fast_count > 3 and 'function_fast_cw' in function:
-						self.__exec_function_by_code(function['function_fast_cw'])
-					elif 'function_cw' in function:
-						self.__exec_function_by_code(function['function_cw'])
+						key = 'function_ccw'
+						key_args = 'function_ccw_args'
 					
+				else:
+					#CLOCKWISE (CW) or INCREASE
+					if self.encoder_fast_count > 3 and 'function_fast_cw' in function:
+						key = 'function_fast_cw'
+						key_args = 'function_cw_args'
+					
+					elif 'function_cw' in function:
+						key = 'function_cw'
+						key_args = 'function_cw_args'
+
+				# prepare arguments
+				if key_args in function:
+					if isinstance(function[key_args],str):
+						f_args = [function[key_args]]
+					else:
+						f_args = function[key_args]
+						
+				# execute
+				self.__exec_function_by_code(function[key], *f_args)
+						
 				self.encoder_last_chg = this_chg
 		else:
 			self.__printer("Encoder, no function",level=LL_DEBUG)

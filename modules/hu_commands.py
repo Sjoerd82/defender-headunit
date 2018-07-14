@@ -15,378 +15,398 @@ class Commands(object):
 		self.command_list = []
 				
 		self.function_mq_map = [
-
-			{	'name': 'SOURCE',
-				'description': 'Retrieve details for given index',
+			{
+				'name': 'SOURCE',
+				'description':'''Retrieve source details for current or given (sub)index.''',
 				'command': 'GET',
 				'params': [
-					{'name':'index', 'datatype':(int,),'required':False, 'help':'Source index'},
-					{'name':'subindex', 'datatype':(int,),'required':False, 'help':'Source subindex'}
+					{ 'name':'index', 'datatype':(int,), 'required':False, 'help':'''Source index; '-1' returns all.''' },
+					{ 'name':'subindex', 'datatype':(int,), 'required':False, 'help':'''Sub source index; '-1' returns all.''' }
 				],
-				'path': '/source/primary'
-			},
-		
-			{	'name': 'SOURCE-SET',
-				'description': 'Activate primary source',
-				'command': 'PUT',
-				'params': [
-					{'name':'index', 'datatype':(int,),'required':True, 'help':'Source index'}
-				],
-				'path': '/source/primary'
-			},
-			
-			{	'name': 'SOURCE-CHECK',
-				'description': 'Check source availability',
-				'command': 'PUT',
-				'params': [
-					{'name':'index', 'datatype':(int,),'required':False, 'help':'Source index'},
-					{'name':'subindex', 'datatype':(int,),'required':False, 'help':'Source subindex'}
-				],
-				'path': '/source/check'
-			},
-			
-			{	'name': 'SOURCE-SELECT',
-				'description': 'Select a (sub)source',
-				'command':'PUT',
-				'params': [
-					{'name':'index', 'datatype':(int,),'required':True, 'help':'Source index'},
-					{'name':'subindex', 'datatype':(int,),'required':False, 'help':'Source subindex'}
-				],
-				'path': '/source/subsource'
-			},
-			
-			{	'name': 'SOURCE-NEXT-PRIMARY',
-				'description': 'Select next primary source',
-				'command': 'PUT',
-				'params': None,
-				'path': '/source/next_primary'
-			},
-			
-			{	'name': 'SOURCE-PREV-PRIMARY',
-				'description': 'Select previous primary source',
-				'command': 'PUT',
-				'params': None,
-				'path': '/source/prev_primary'
-			},
-			
-			{	'name': 'SOURCE-NEXT',
-				'description': 'Select next source',
-				'command': 'PUT',
-				'params': None,
-				'path': '/source/next'
-			},
-			
-			{	'name': 'SOURCE-PREV',
-				'description': 'Select previous source',
-				'command': 'PUT',
-				'params': None,
-				'path': '/source/prev'
-			},
-			
-			{	'name': 'SOURCE-AVAILABLE',
-				'description': 'Set source availability',
-				'command': 'PUT',
-				 'params': [
-					{'name':'availability', 'datatype':(bool,), 'required':True, 'help':''},
-					{'name':'index', 'datatype':(int,), 'required':True, 'help':'Source index'},
-					{'name':'subindex', 'datatype':(int,),'required':True, 'help':'Source subindex'}
-				],
-				'path': '/source/available'
-			},
-			
-			{	'name': 'SOURCE-DETAILS',
-				'description': 'Get source details',
-				'command': 'GET',
-				'params': [
-					{'name':'index', 'datatype':(int,), 'required':False, 'help':'Source index'},
-					{'name':'subindex', 'datatype':(int,), 'required':False, 'help':'Source subindex'}
-				],
-				'path': '/source/subsource'
-			},
-			
-			{	'name': 'SOURCE-UPDATE',
-				'description': 'Update source (MPD: Source Database)',
-				'command': 'PUT',
-				'params': [
-					{'name':'index', 'datatype':(int,), 'required':False, 'help':'Source index'},
-					{'name':'subindex', 'datatype':(int,), 'required':False, 'help':'Source subindex'}
-				],
-				'path': '/source/update'
-			},
-			
-			{	'name': 'SOURCE-UPDATE-LOCATION',
-				'description': 'Update MPD database for given location',
-				'command': 'PUT',
-				'params': [
-					{'name':'location', 'datatype':(str,unicode,), 'required':True, 'help':'Relative location, as seen from MPD'}
-				],
-				'path': '/source/update-location'
-			},
-			
-			{	'name': 'SUBSOURCE',
-				'description': 'Retrieve details for given subindex or current source',
-				'command': 'GET',
-				'params': [
-					{'name':'index', 'datatype':(int,),'required':False, 'help':'Source index'},
-					{'name':'subindex', 'datatype':(int,),'required':False, 'help':'Source subindex'}
-				],
-				'path': '/source/subsource'
-			},
-			
-			{	'name': 'PLAYER-PLAY',
-				'description': 'Start playback',
-				'command': 'PUT',
-				'params': None,
-				'path': '/player/state',
-				'params_override': '{"state":"play"}'
-			},
-			{	'name': 'PLAYER-PAUSE',
-				'description': 'Pause playback',
-				'command': 'PUT',
-				'params': None,
-				'path': '/player/state',
-				'params_override': '{"state":"pause"}'
-			},
-			{	'name': 'PLAYER-STOP',
-				'description': 'Stop playback',
-				'command': 'PUT',
-				'params': None,
-				'path': '/player/state',
-				'params_override': '{"state":"stop"}'
-			},
-			{	'name': 'PLAYER-STATE',
-				'description': 'Get state',
-				'command': 'GET',
-				'params': None,
-				'path': '/player/state'
-			},
-			{	'name': 'PLAYER-SET-STATE',
-				'description': 'Set state',
-				'command': 'PUT',
-				'params': [ {'name':'state', 'datatype':(str,unicode,), 'choices':['play','pause','stop'], 'required':True} ],
-				'path': '/player/state'
-			},
-			{	'name': 'PLAYER-NEXT',
-				'description': 'Play next song',
-				'command': 'PUT',
-				'params': [ {'name':'count', 'datatype':(int,), 'required':False, 'help':'Number of tracks to go ahead'} ],
-				'path': '/player/next'
-			},
-			{	'name': 'PLAYER-PREV',
-				'description': 'Play previous song',
-				'command': 'PUT',
-				'params': [ {'name':'count', 'datatype':(int,), 'required':False, 'help':'Number of tracks to go back'} ],
-				'path': '/player/prev'
-			},
-			{	'name': 'PLAYER-SEEK',
-				'description': 'Seek',
-				'command': 'PUT',
-				'params': [ {'name':'seconds', 'datatype':(str,unicode,int,), 'choices':['INT_SIGNED'], 'required':True, 'help':'Use a + or - sign to seek forward or reverse'} ],
-				'path': '/player/seek'
-			},
-			{	'name': 'PLAYER-FOLDERS',
-				'description': 'List folders',
-				'command': 'GET',
-				'params': None,
-				'path': '/player/folders'
-			},
-			{	'name': 'PLAYER-NEXTFOLDER',
-				'description': 'Next folder',
-				'command': 'PUT',
-				'params': None,
-				'path': '/player/nextfolder'
-			},
-			{	'name': 'PLAYER-PREVFOLDER',
-				'description': 'Prev folder',
-				'params': None,
-				'command': 'PUT',
-				'path': '/player/prevfolder'
-			},
-			{	'name': 'PLAYER-UPDATE',
-				'description': 'Update MPD database',
-				'params': [ {'name':'location', 'datatype':(str,unicode,), 'required':False, 'help':'Location to update'} ],
-				'command': 'PUT',
-				'path': '/player/update'
-			},
-			{	'name': 'PLAYER-RANDOM-MODES',
-				'description': 'Get available random modes',
-				'params': None,
-				'command': 'GET',
-				'path': '/player/randommode'
-			},
-			{	'name': 'PLAYER-RANDOM',
-				'description': 'Set random',
-				'params': [ {'name':'mode', 'datatype':(str,unicode,), 'choices':['ON','OFF','TOGGLE'], 'required':False, 'default':'TOGGLE'} ],
-				'command': 'PUT',
-				'path': '/player/random'
-			},
-			{	'name': 'PLAYER-RANDOM-NEXT',
-				'description': 'Next random mode',
-				'params': None,
-				'command': 'PUT',
-				'path': '/player/next_random'
-			},
-			{	'name': 'PLAYER-RANDOM-PREV',
-				'description': 'Prev random mode',
-				'params': None,
-				'command': 'PUT',
-				'path': '/player/prev_random'
-			},
-			{	'name': 'PLAYER-DETAILS',
-				'description': 'Get player details',
-				'params': None,
-				'command': 'GET',
-				'path': '/player/track'
-			},
-			
-			{	'name': 'VOLUME-GET',
-				'description': 'Get volume level',
-				'params': None,
-				'command': 'GET',
-				'path': '/volume/master'
-			},
-			
-			{	'name': 'VOLUME-SET',
-				'description': 'Set volume',
-				'params': [ {'name':'volume', 'datatype': (str,unicode,int,float,), 'choices':['up','down','FLOAT_PERCENTAGE','FLOAT_SIGNED','att','mute'], 'required':True, 'help':'Volume in percentage'} ],
-				'command': 'PUT',
-				'path': '/volume/master'
-			},
-			
-			{	'name': 'VOLUME-INCR',
-				'description': 'Increase volume',
-				'params': [ {'name':'volume', 'datatype': (str,unicode,int,float,), 'choices':['FLOAT_PERCENTAGE','FLOAT_SIGNED'], 'required':True,'help':'Volume in percentage'} ],
-				'command': 'PUT',
-				'path': '/volume/master/increase'
-			},
-			{	'name': 'VOLUME-DECR',
-				'params': [ {'name':'volume', 'datatype': (str,unicode,int,float,), 'choices':['FLOAT_PERCENTAGE','FLOAT_SIGNED'], 'required':True,'help':'Volume in percentage'} ],
-				'description': 'Decrease volume',
-				'command': 'PUT',
-				'path': '/volume/master/decrease'
-			},
-			
-			{	'name': 'VOLUME-ATT',
-				'description': 'Set volume to ATT level',
-				'params': [ {'name':'mode', 'datatype':(str,unicode,), 'choices':['ON','OFF','TOGGLE'], 'required':False, 'default':'ON'} ],
-				'command': 'PUT',
-				'path': '/volume/att'
-			},
-			{	'name': 'VOLUME-MUTE',
-				'description': 'Mute volume',
-				'params': [ {'name':'mode', 'datatype':(str,unicode,), 'choices':['ON','OFF','TOGGLE'], 'required':False, 'default':'TOGGLE'} ],
-				'command': 'PUT',
-				'path': '/volume/mute'
-			},
-			
-			{	'name': 'ECA-CHAINSETUP-GET',
-				'description': 'Get current ecasound chainsetup',
-				'params': None,
-				'command': 'GET',
-				'path': '/ecasound/chainsetup'
-			},
-			{	'name': 'ECA-CHAINSETUP-SET',
-				'description': 'Select ecasound chainsetup',
-				'params': [ {'name':'chainsetup', 'datatype':(str,unicode,), 'required':True, 'help':'Name of chain setup'} ],
-				'command': 'PUT',
-				'path': '/ecasound/chainsetup'
-			},
-			
-			{	'name': 'MODE-CHANGE',
-				'description': 'Set a number of modes at once',
-				'params': [ {'name':'mode', 'required':True, 'datatype': (str,unicode,), 'help':'Mode to set'},
-							{'name':'state', 'required':True, 'datatype': (bool,), 'default': False, 'help':'True to activate or False to deactivate'} ],
-				'params_repeat': True,
-				'command': 'PUT',
-				'path': '/mode/change'
-			},
-			{	'name': 'MODE-SET',
-				'description': 'Set a mode',
-				'params': [ {'name':'mode', 'datatype':(str,unicode,), 'required':True, 'help':'Mode to set'},
-							{'name':'state', 'datatype':(bool,), 'required':False, 'default': False, 'help':'True to activate or False to deactivate'}
-				],
-				'command': 'PUT',
-				'path': '/mode/set'
-			},
-			{	'name': 'MODE-UNSET',
-				'description': 'Unset a mode',
-				'params': [ {'name':'mode', 'datatype':(str,unicode,), 'required':True, 'help':'Mode to unset'} ],
-				'command': 'PUT',
-				'path': '/mode/unset'
-			},	
-			{	'name': 'MODES-LIST',
-				'description': 'Get list of registered modes',
-				'params': None,
-				'command': 'GET',
-				'path': '/mode/list'
-			},
-			{	'name': 'MODES-ACTIVE',
-				'description': 'Get list of currently active modes',
-				'params': None,
-				'command': 'GET',
-				'path': '/mode/active'
-			},
-			{	'name': 'mode-test1',
-				'description': 'TEST PUT',
-				'params': None,
-				'command': 'PUT',
-				'path': '/mode/test',
-				'wait_for_reply': False
-			},
-			{	'name': 'mode-test2',
-				'description': 'TEST GET',
-				'params': None,
-				'command': 'GET',
-				'path': '/mode/test',
-				'wait_for_reply': False
+				'path':'/source'
 			},
 
-			{	'name': 'UDISKS-DEVICES',
-				'description': 'List registered UDisks devices',
-				'params': None,
+			{
+				'name': 'SOURCE-SELECT',
+				'description':'''Switch to given (sub)source and start playback.''',
+				'command': 'PUT',
+				'params': [
+					{ 'name':'index', 'datatype':(int,), 'required':True, 'help':'''Source index''' },
+					{ 'name':'subindex', 'datatype':(int,), 'required':False, 'help':'''Sub source index''' }
+				],
+				'path':'/source'
+			},
+
+			{
+				'name': 'SOURCE-DELETE',
+				'description':'''Remove specified (sub)source.''',
+				'command': 'DEL',
+				'params': [
+					{ 'name':'index', 'datatype':(int,), 'required':True, 'help':'''Source index''' },
+					{ 'name':'subindex', 'datatype':(int,), 'required':False, 'help':'''Sub source index''' }
+				],
+				'path':'/source'
+			},
+
+			{
+				'name': 'SOURCE-NEXT',
+				'description':'''Switch to next available (sub)source and start playback.''',
+				'command': 'PUT',
+				'params': [
+					{ 'name':'primary', 'datatype':(bool,), 'required':False, 'help':'''Skip to to next primary source''', 'default':False }
+				],
+				'path':'/source/next'
+			},
+			{
+				'name': 'SOURCE-PREV',
+				'description':'''Switch to previous available (sub)source and start playback.''',
+				'command': 'PUT',
+				'params': [
+					{ 'name':'primary', 'datatype':(bool,), 'required':False, 'help':'''Skip to to previous primary source''', 'default':False }
+				],
+				'path':'/source/prev'
+			},
+			{
+				'name': 'SOURCE-ENABLE',
+				'description':'''Mark (sub)source as (un)available.''',
+				'command': 'PUT',
+				'params': [
+					{ 'name':'index', 'datatype':(int,), 'required':True, 'help':'''Source index''' },
+					{ 'name':'subindex', 'datatype':(int,), 'required':True, 'help':'''Sub source index; '-1' marks all.''', 'default':-1 },
+					{ 'name':'available', 'datatype':(bool,), 'required':True, 'help':'''Set Available''', 'choices':[True, False] }
+				],
+				'path':'/source/available'
+			},
+
+
+			{
+				'name': 'SOURCE-UPDATE',
+				'description':'''Update current or given (sub)source.''',
+				'command': 'PUT',
+				'params': [
+					{ 'name':'index', 'datatype':(int,), 'required':False, 'help':'''Source index''' },
+					{ 'name':'subindex', 'datatype':(int,), 'required':False, 'help':'''Sub source index''' }
+				],
+				'path':'/source/update'
+			},
+
+			{
+				'name': 'SOURCE-CHECK',
+				'description':'''Check current or given (sub)source for availability.''',
+				'command': 'PUT',
+				'params': [
+					{ 'name':'index', 'datatype':(int,), 'required':False, 'help':'''Source index; '-1' checks all.''' },
+					{ 'name':'subindex', 'datatype':(int,), 'required':False, 'help':'''Sub source index; '-1' checks all.''' }
+				],
+				'path':'/source/check'
+			},
+
+			{
+				'name': 'PLAYER-METADATA',
+				'description':'''Retrieve all available data, incl ID3 tag, of currently playing media.''',
 				'command': 'GET',
-				'path': '/udisks/devices'
+				'params': None,
+				'path':'/player/metadata'
 			},
+			{
+				'name': 'PLAYER-PLS',
+				'description':'''Retrieve current playlist.''',
+				'command': 'GET',
+				'params': None,
+				'path':'/player/playlists'
+			},
+			{
+				'name': 'PLAYER-PLS-LOAD',
+				'description':'''Load playlist.''',
+				'command': 'PUT',
+				'params': [
+					{ 'name':'playlist', 'datatype':(str,), 'required':True, 'help':'''Playlist to load''' }
+				],
+				'path':'/player/playlists/load'
+			},
+			{
+				'name': 'PLAYER-NEXT',
+				'description':'''Next track/station.''',
+				'command': 'PUT',
+				'params': [
+					{ 'name':'advance_count', 'datatype':(int,), 'required':False, 'help':'''Number of tracks to advance.''', 'default':1 }
+				],
+				'path':'/player/next'
+			},
+			{
+				'name': 'PLAYER-PREV',
+				'description':'''Prev track/station.''',
+				'command': 'PUT',
+				'params': [
+					{ 'name':'jump_to_start', 'datatype':(bool,), 'required':False, 'help':'''Jump to beginning of track (counts as 1 reverse), if supported.''', 'default':True },
+					{ 'name':'reverse_count', 'datatype':(int,), 'required':False, 'help':'''Number of tracks to reverse.''', 'default':1 }
+				],
+				'path':'/player/prev'
+			},
+
+			{
+				'name': 'PLAYER-PLAY-POS',
+				'description':'''Play track at specified position in playlist.''',
+				'command': 'PUT',
+				'params': [
+					{ 'name':'position', 'datatype':(int,), 'required':True, 'help':'''Position in playlist''' }
+				],
+				'path':'/player/play_positition'
+			},
+			{
+				'name': 'PLAYER-FOLDERS',
+				'description':'''Retrieve list of playlist position to folder mapping.''',
+				'command': 'GET',
+				'params': None,
+				'path':'/player/folders'
+			},
+			{
+				'name': 'PLAYER-FOLDER-NEXT',
+				'description':'''Advance to next folder.''',
+				'command': 'PUT',
+				'params': [
+					{ 'name':'advance_count', 'datatype':(int,), 'required':False, 'help':'''Number of folders to advance.''', 'default':1 }
+				],
+				'path':'/player/folder/next'
+			},
+			{
+				'name': 'PLAYER-FOLDER-PREV',
+				'description':'''Return to previous folder.''',
+				'command': 'PUT',
+				'params': [
+					{ 'name':'jump_to_start', 'datatype':(bool,), 'required':False, 'help':'''Jump to first track in folder (counts as 1 reverse).''', 'default':True },
+					{ 'name':'reverse_count', 'datatype':(int,), 'required':False, 'help':'''Number of folders to reverse.''', 'default':1 }
+				],
+				'path':'/player/folder/prev'
+			},
+
+			{
+				'name': 'PLAYER-PLAY',
+				'description':'''Play.''',
+				'command': 'PUT',
+				'params': [
+					{ 'name':'state', 'datatype':(str,), 'required':False, 'help':'''Play state''', 'choices':['on','off','toggle'], 'default':'toggle' }
+				],
+				'path':'/player/play'
+			},
+			{
+				'name': 'PLAYER-PAUSE',
+				'description':'''Pause.''',
+				'command': 'PUT',
+				'params': [
+					{ 'name':'state', 'datatype':(str,), 'required':False, 'help':'''Play state''', 'choices':['on','off','toggle'], 'default':'toggle' }
+				],
+				'path':'/player/pause'
+			},
+			{
+				'name': 'PLAYER-STOP',
+				'description':'''Stop.''',
+				'command': 'PUT',
+				'params': [
+					{ 'name':'state', 'datatype':(str,), 'required':False, 'help':'''Play state''', 'choices':['on','off','toggle'], 'default':'toggle' }
+				],
+				'path':'/player/stop'
+			},
+			{
+				'name': 'PLAYER-STATE',
+				'description':'''Retrieve player state (play/pause/stop).''',
+				'command': 'GET',
+				'params': None,
+				'path':'/player/state'
+			},
+
+			{
+				'name': 'PLAYER-RANDOM-SET',
+				'description':'''Set random mode.''',
+				'command': 'PUT',
+				'params': [
+					{ 'name':'mode', 'datatype':(str,unicode,), 'required':False, 'help':'''Random mode''', 'choices':['off','next','prev','folder','artist','genre','playlist'], 'default':'next' }
+				],
+				'path':'/player/random'
+			},
+			{
+				'name': 'PLAYER-RANDOM',
+				'description':'''Retrieves current random mode.''',
+				'command': 'GET',
+				'params': None,
+				'path':'/player/random'
+			},
+			{
+				'name': 'PLAYER-RANDOM-LIST',
+				'description':'''Retrieves list of supported random modes for currently playing source.''',
+				'command': 'GET',
+				'params': None,
+				'path':'/player/random/supported'
+			},
+			{
+				'name': 'PLAYER-RANDOM-NEXT',
+				'description':'''Selects next random mode.''',
+				'command': 'PUT',
+				'params': None,
+				'path':'/player/random/next'
+			},
+			{
+				'name': 'PLAYER-RANDOM-PREV',
+				'description':'''Selects previous random mode.''',
+				'command': 'PUT',
+				'params': None,
+				'path':'/player/random/prev'
+			},
+			{
+				'name': 'PLAYER-SEEK',
+				'description':'''Seek forward or reverse. Use a negative value to reverse.''',
+				'command': 'PUT',
+				'params': [
+					{ 'name':'seek_seconds', 'datatype':(int,), 'required':False, 'help':'''Seconds to seek forward/reverse''', 'default':SOURCE_DEFAULT }
+				],
+				'path':'/player/seek'
+			},
+			{
+				'name': 'PLAYER-UPDATE',
+				'description':'''Update MPD database, preferablly specify a location to update.''',
+				'command': 'PUT',
+				'params': [
+					{ 'name':'location', 'datatype':(str,), 'required':False, 'help':'''Location, as seen from MPD''' }
+				],
+				'path':'/player/update'
+			},
+			{
+				'name': 'SYSTEM-SHUTDOWN',
+				'description':'''Shutdown.''',
+				'command': 'PUT',
+				'params': [
+					{ 'name':'timer_seconds', 'datatype':(int,), 'required':False, 'help':'''Seconds to wait''', 'default':0 }
+				],
+				'path':'/system/shutdown'
+			},
+			{
+				'name': 'SYSTEM-REBOOT',
+				'description':'''Reboot.''',
+				'command': 'PUT',
+				'params': [
+					{ 'name':'timer_seconds', 'datatype':(int,), 'required':False, 'help':'''Seconds to wait''', 'default':0 }
+				],
+				'path':'/system/reboot'
+			},
+
+			{
+				'name': 'VOLUME',
+				'description':'''Retrieve current volume''',
+				'command': 'GET',
+				'params': None,
+				'path':'/volume/master'
+			},
+			{
+				'name': 'VOLUME-SET',
+				'description':'''Set volume, when using n+, n-, n=percentage)''',
+				'command': 'PUT',
+				'params': [
+					{ 'name':'volume', 'datatype':(str,unicode,int,float,), 'required':True, 'help':'''Volume''', 'choices':['up','down','FLOAT_PERCENTAGE','FLOAT_SIGNED','att','mute'] }
+				],
+				'path':'/volume/master'
+			},
+			{
+				'name': 'VOLUME-INCR',
+				'description':'''Increase volume by percentage''',
+				'command': 'PUT',
+				'params': [
+					{ 'name':'percentage', 'datatype':(str,unicode,int,float,), 'required':True, 'help':'''Percentage to increase''', 'choices':['FLOAT_PERCENTAGE'] }
+				],
+				'path':'/volume/master/increase'
+			},
+			{
+				'name': 'VOLUME-DECR',
+				'description':'''Decrease volume by percentage''',
+				'command': 'PUT',
+				'params': [
+					{ 'name':'percentage', 'datatype':(str,unicode,int,float,), 'required':True, 'help':'''Percentage to decrease''', 'choices':['FLOAT_PERCENTAGE'] }
+				],
+				'path':'/volume/master/decrease'
+			},
+			{
+				'name': 'VOLUME-ATT',
+				'description':'''Set volume to ATT level. Optionally, set (override) level in %.''',
+				'command': 'PUT',
+				'params': [
+					{ 'name':'state', 'datatype':(str,unicode,), 'required':False, 'help':'''Att state''', 'choices':['on','off','toggle'], 'default':'toggle' },
+					{ 'name':'percentage', 'datatype':(str,unicode,int,float,), 'required':False, 'help':'''Volume percentage''', 'choices':['FLOAT_PERCENTAGE'] }
+				],
+				'path':'/volume/att'
+			},
+
+			{
+				'name': 'VOLUME-MUTE',
+				'description':'''Mute volume (default: toggle)''',
+				'command': 'PUT',
+				'params': [
+					{ 'name':'state', 'datatype':(str,), 'required':False, 'help':'''Mute state''', 'choices':['on','off','toggle'], 'default':'toggle' }
+				],
+				'path':'/volume/mute'
+			},
+
+			{
+				'name': 'ECA-CS',
+				'description':'''Retrieve (file)name of current chainsetup.''',
+				'command': 'GET',
+				'params': None,
+				'path':'/eca/chainsetup'
+			},
+			{
+				'name': 'ECA-CS-SET',
+				'description':'''Load chainsetup by name or from file.''',
+				'command': 'PUT',
+				'params': [
+					{ 'name':'chainsetup', 'datatype':(str,unicode,), 'required':True, 'help':'''Filename or Name''' }
+				],
+				'path':'/eca/chainsetup'
+			},
+
+			{
+				'name': 'MODE',
+				'description':'''Retrieve list of all modes and their states.''',
+				'command': 'GET',
+				'params': None,
+				'path':'/mode/all'
+			},
+			{
+				'name': 'MODE-ACTIVE',
+				'description':'''Retrieve list of all active modes.''',
+				'command': 'GET',
+				'params': None,
+				'path':'/mode/active'
+			},
+			{
+				'name': 'MODE-CHANGE',
+				'description':'''(De)activate multiple modes in one go. Example: volume,off,bass,on.''',
+				'command': 'PUT',
+				'params': [
+					{ 'name':'mode', 'datatype':(str,unicode,), 'required':True, 'help':'''Mode name.''' },
+					{ 'name':'state', 'datatype':(str,unicode,), 'required':True, 'help':'''Activate/Deactivate.''', 'choices':[True,False] }
+				],
+				'params_repeat':True,
+				'path':'/mode/change'
+			},
+
+			{
+				'name': 'MODE-ACTIVATE',
+				'description':'''Activate mode.''',
+				'command': 'PUT',
+				'params': [
+					{ 'name':'mode', 'datatype':(str,unicode,), 'required':True, 'help':'''Mode name.''' }
+				],
+				'path':'/mode/set'
+			},
+			{
+				'name': 'MODE-DEACTIVATE',
+				'description':'''Deactivate mode.''',
+				'command': 'PUT',
+				'params': [
+					{ 'name':'mode', 'datatype':(str,unicode,), 'required':True, 'help':'''Mode name.''' }
+				],
+				'path':'/mode/unset'
+			}
 			
-			{	'name': 'SYSTEM-REBOOT',
-				'description': 'Reboot system',
-				'params': [ {'name':'timer', 'datatype':(int,), 'required':False, 'help':'Time in seconds to shutdown'} ],
-				'command': 'PUT',
-				'path': '/system/reboot'
-			},
-			{	'name': 'SYSTEM-SHUTDOWN',
-				'description': 'Shutdown system' ,
-				'params': [ {'name':'timer', 'datatype':(int), 'required':False, 'help':'Time in seconds to shutdown'} ],
-				'command': 'PUT',
-				'path': '/system/shutdown'
-			},
-			
-			{	'name': 'VOLUME_INC',
-				'description': 'fix...',
-				'params': None,
-				'command': 'PUT',
-				'path': 'blah'
-			},
-			{	'name': 'VOLUME_INC_FAST',
-				'description': 'fix...',
-				'params': None,
-				'command': 'PUT',
-				'path': 'blah'
-			},
-			{	'name': 'VOLUME_DEC',
-				'description': 'fix...',
-				'params': None,
-				'command': 'PUT',
-				'path': 'blah'
-			},
-			{	'name': 'VOLUME_DEC_FAST',
-				'description': 'fix...',
-				'params': None,
-				'command': 'PUT',
-				'path': 'blah'
-			},
-			
-			]
+		]
 
 		for command in self.function_mq_map:
 			self.command_list.append(command['name'])

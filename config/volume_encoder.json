@@ -17,10 +17,14 @@
 	,"functions": [
 		{
 			  "name":"volume"
-			, "function_cw" :"VOLUME_INC"
-			, "function_ccw":"VOLUME_DEC"
-			, "function_fast_cw" :"VOLUME_INC_FAST"
-			, "function_fast_ccw":"VOLUME_DEC_FAST"
+			, "function_cw" :"VOLUME_INCR"
+			, "function_ccw":"VOLUME_DECR"
+			, "function_cw_args": ['4%']
+			, "function_ccw_args": ['4%']
+			, "function_fast_cw" :"VOLUME_INCR"
+			, "function_fast_ccw":"VOLUME_DECR"
+			, "function_fast_cw_args": ['8%']
+			, "function_fast_ccw_args": ['8%']
 			, "encoder":"multi_encoder"
 			, "mode":"volume"
 		}

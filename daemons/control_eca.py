@@ -17,13 +17,19 @@
 
 # MQ: Pub & Sub
 
+try:
+	# ecasound
+	from pyeca import *		# default implementation
+except ImportError:
+	try:
+		from ecacontrol import *	# native Python implementation
+	except ImportError:
+		print "Required module not found or could not be imported: pyeca or ecacontrol"
+		exit(1)
+
 import sys
 import os
 import time
-
-# ecasound
-#from pyeca import *		# default implementation
-from ecacontrol import *	# native Python implementation
 from Queue import Queue		# queuing
 
 # Utils
