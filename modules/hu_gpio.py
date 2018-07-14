@@ -182,12 +182,7 @@ class GpioController(object):
 			return
 		
 		if args:
-			#print "DEBUG"
-			#print "args:   {0}".format(args)
-			#print "[args]: {0}".format([*args])
-			#for arg in [args]:
-			#	print type(arg)
-			valid_params = cmd_exec.validate_args(command,*args)	#todo, change validate_args to accept *args
+			valid_params = cmd_exec.validate_args(command,*args)
 		else:
 			valid_params = None
 		

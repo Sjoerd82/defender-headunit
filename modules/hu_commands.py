@@ -509,6 +509,9 @@ class Commands(object):
 			print "CONVERTED BACK TO LIST: {0}".format(args)
 			for arg in args:
 				print "Arg: {0} {1}".format(arg, type(arg))
+			if args = [[]]:
+				print "PLEISTER [[]] -> None. fix dit"
+				args = None
 		
 		# no arguments
 		if arg_defs is None and (args is None or args == []):
@@ -557,7 +560,7 @@ class Commands(object):
 				else:
 					#print "hu_commands.py: Validate: Datatype: FAIL; {0}".format(type(args[i]))
 					error_raise = True
-					error_msg_datatype += "{0}".format(defs[i]['name'])
+					error_msg_datatype += " param:{0}, datatype:{1}, must be:{2}".format(defs[i]['name'],type(arg),defs[i]['datatype'])
 					
 			# choices (case insensitive, valid for strings ONLY)
 			if ( 'choices' in defs[i] and
