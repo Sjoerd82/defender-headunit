@@ -577,8 +577,11 @@ class SourceController(object):
 			#return False
 
 		# handle sub index
-		subIndex = int(subIndex) 	# ??
-		if subIndex is not None and not self.lSource['subsources'][i]['available']:
+		if subIndex is not None:
+			print "DEBUG: {0}".format(type(subIndex))
+			subIndex = int(subIndex) 	# ??
+		
+		if subIndex is not None and not self.lSource['subsources'][subIndex]['available']:
 			self.__printer('ERROR selecting source: Index {0}, Subindex {1} is not available.'.format(index,subIndex),LL_ERROR)
 			return False
 
@@ -588,6 +591,8 @@ class SourceController(object):
 			if subix is None:
 				self.__printer('ERROR selecting source: Index ({0}) has no available subsources.'.format(index),LL_ERROR)
 				return False
+			else:
+				subIndex = subix
 		
 		# all good, make it so
 		self.__printer('Setting active source to {0}: {1:s}'.format(index,self.lSource[index]['displayname']))
