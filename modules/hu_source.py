@@ -527,6 +527,8 @@ class SourceController(object):
 		return self.iCurrentSource
 
 	def subindex(self,index,key,value):
+		"""
+		"""
 		index = self.__check_index(index)
 		if index is False:
 			return False
@@ -541,16 +543,31 @@ class SourceController(object):
 		
 	def select( self, index, subIndex=None ):
 		"""
-		Select source, by index
+		Select source by index and optionally subindex.
+		If no subindex provided will select first available source
+		If no index provided will select first available source, IF nothing
+		
+		
+		
 		May raise a IndexError
 		Returns True if succesful?
 		Returns False if source not available
 		"""
-		index = int(index)		# not sure why, by since passing through MQ this is needed
+		
+		# handle index
+		index = int(index)		# not sure why, by since passing through MQ this is needed		
+		if index is None and self.iCurrentSource[0] is not None:
+			self.__printer('No index provided and already a current source, doing nothing.',level=LL_DEBUG)
+			return False
 			
-		if index == None:
-			self.__printer('Setting active source to None')
-			return True
+		elif index is None and self.iCurrentSource[0] is None:	
+			self.__printer('No index given and no current source, trying to select first available source.')
+			ret = self.select_next()
+			if ret is None:
+				# Selecting next source failed
+				return False
+			else:
+				return True
 			
 		elif index >= len(self.lSource):
 			self.__printer('ERROR selecting source: Index ({0}) out of bounds'.format(index),LL_ERROR)
@@ -558,27 +575,40 @@ class SourceController(object):
 			print self.lSource
 			raise IndexError
 			#return False
-			
-		elif not self.lSource[index]['available']:
+
+		# handle sub index
+		subIndex = int(subIndex) 	# ??
+		if subIndex is not None and not self.lSource['subsources'][i]['available']:
+			self.__printer('ERROR selecting source: Index {0}, Subindex {1} is not available.'.format(index,subIndex),LL_ERROR)
+			return False
+
+		elif subIndex is None:
+			# find first available subsource
+			subix = self.subindex(index,'available',True)
+			if subix is None:
+				self.__printer('ERROR selecting source: Index ({0}) has no available subsources.'.format(index),LL_ERROR)
+				return False
+		
+		# all good, make it so
+		self.__printer('Setting active source to {0}: {1:s}'.format(index,self.lSource[index]['displayname']))
+		self.iCurrentSource[0] = index
+		self.iCurrentSource[1] = subIndex
+		return True
+		
+		'''
+		#elif not self.lSource[index]['available']:
+		if
+			print "DEBUG!: {0}".format(self.lSource[index]['available'])
 			self.__printer('ERROR selecting source: Requested source ({0}: {1:s}) is not available.'.format(index,self.lSource[index]['displayname']),LL_ERROR)
 			return False
 			
-		elif self.lSource[index]['available']:
-			self.__printer('Setting active source to {0}: {1:s}'.format(index,self.lSource[index]['displayname']))
-			self.iCurrentSource[0] = index
 
-			# NEW: SUBSOURCES:
-			if not subIndex == None:
-				#TODO: add checks... (available, boundry, etc..)
-				self.iCurrentSource[1] = subIndex
-				return True
-			else:
-				return True
 
 		else:
 			# CATCH-ALL, SHOULD NOT BE REQUIRED ... TODO REMOVE
 			self.__printer('ERROR: Requested source ({0}: {1:s}) cannot be set.'.format(index,self.lSource[index]['displayname']),LL_ERROR)
 			return False
+		'''
 
 	def select_prev( self ):
 		return self.select_next(True)
@@ -890,7 +920,12 @@ class SourceController(object):
 			return None
 			
 	def set_available( self, index, available, subindex=None ):
-		"""Set subsource availability"""
+		"""
+		Set subsource availability
+		
+		Sources don't have a 'available' status, only sub-sources (right? #todo)
+		
+		"""
 		index = self.__check_index(index)
 		subindex = self.__check_subindex(index,subindex)
 		
