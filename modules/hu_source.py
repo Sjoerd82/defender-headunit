@@ -553,7 +553,7 @@ class SourceController(object):
 		"""
 		
 		# handle index
-		index = int(index)		# not sure why, by since passing through MQ this is needed
+		#index = int(index)		# not sure why, by since passing through MQ this is needed
 		if index is None and self.iCurrentSource[0] is not None:
 			self.__printer('No index provided and already a current source, doing nothing.',level=LL_DEBUG)
 			return False
@@ -575,10 +575,10 @@ class SourceController(object):
 			#return False
 
 		# handle sub index		
-		if subIndex is not None:
-			subIndex = int(subIndex)
+		#if subIndex is not None:
+		#	subIndex = int(subIndex)
 		
-		if subIndex is not None and not self.lSource['subsources'][subIndex]['available']:
+		if subIndex is not None and not self.lSource[index]['subsources'][subIndex]['available']:
 			self.__printer('ERROR selecting source: Index {0}, Subindex {1} is not available.'.format(index,subIndex),LL_ERROR)
 			return False
 
