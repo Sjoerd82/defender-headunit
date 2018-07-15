@@ -516,11 +516,6 @@ class Commands(object):
 			
 			args = arg_list
 			print "CONVERTED BACK TO LIST: {0}".format(args)
-			#for arg in args:
-			#	print "Arg: {0} {1}".format(arg, type(arg))
-			if args == [[]]:
-				print "PLEISTER [[]] -> None. fix dit"
-				args = None
 		
 		# no arguments
 		if arg_defs is None and (args is None or args == []):
@@ -563,7 +558,7 @@ class Commands(object):
 			else:
 				if bool in defs[i]['datatype'] and strint_to_bool(arg) is not None:
 					args[i] = strint_to_bool(arg)
-				elif int in defs[i]['datatype'] and isinstance(arg, str) and isint(arg):
+				elif int in defs[i]['datatype'] and isinstance(arg, (str,unicode,)) and isint(arg):
 					# an int hidden as a string...
 					args[i] = int(arg)
 				else:
