@@ -1164,7 +1164,7 @@ def parse_args():
 	# --loglevel, --config/-c, -b, --port_publisher, --port_subscriber
 	# additional command line arguments mat be added here:
 	parser.add_argument('--resume','-r', action='store_true')
-	parser.add_argument('--play','-p', action='store_true')	
+	parser.add_argument('--play','-p', action='store_true')
 	args = parser.parse_args()
 
 #********************************************************************************

@@ -424,8 +424,17 @@ class Commands(object):
 
 	def validate(self, command=None):
 		""" Decorator function.
-			Validates arguments.
-			Returns list of valid arguments, None (no arguments) or False (invalid)
+			Validates command arguments.
+			Used in conjunction with MQ registered functions
+			
+			@messaging.register( ... )
+			@command.validate() or @command.validate( 'SOURCE-SELECT' )
+			def thing(path=None, cmd=None, args=None, data=None )
+			
+			The function "thing" will be executed by hu_msg.execute with kwargs path, cmd, args and data.
+			
+			Q. / TBD / TODO
+			Returns list(!) of valid arguments, None (no arguments) or False (invalid)
 			If command could not be found then ???
 		"""
 		def decorator(fn):
@@ -441,7 +450,7 @@ class Commands(object):
 					command_to_validate = self.get_command_by_path(kwargs['path'],kwargs['cmd'])
 					if command_to_validate is not None:
 						try:
-							kwargs['args'] = self.validate_args(command_to_validate['name'],kwargs['args'])
+							kwargs['args'] = self.validate_args(command_to_validate['name'],*kwargs['args'])
 						except ValueError as err:
 							print("ERROR: {0}".format(err))
 							return False #??????????????
