@@ -546,16 +546,14 @@ class SourceController(object):
 		Select source by index and optionally subindex.
 		If no subindex provided will select first available source
 		If no index provided will select first available source, IF nothing
-		
-		
-		
+
 		May raise a IndexError
-		Returns True if succesful?
+		Returns True if succesful
 		Returns False if source not available
 		"""
 		
 		# handle index
-		index = int(index)		# not sure why, by since passing through MQ this is needed		
+		index = int(index)		# not sure why, by since passing through MQ this is needed
 		if index is None and self.iCurrentSource[0] is not None:
 			self.__printer('No index provided and already a current source, doing nothing.',level=LL_DEBUG)
 			return False
@@ -576,10 +574,9 @@ class SourceController(object):
 			raise IndexError
 			#return False
 
-		# handle sub index
+		# handle sub index		
 		if subIndex is not None:
-			print "DEBUG: {0}".format(type(subIndex))
-			subIndex = int(subIndex) 	# ??
+			subIndex = int(subIndex)
 		
 		if subIndex is not None and not self.lSource['subsources'][subIndex]['available']:
 			self.__printer('ERROR selecting source: Index {0}, Subindex {1} is not available.'.format(index,subIndex),LL_ERROR)
@@ -598,6 +595,7 @@ class SourceController(object):
 		self.__printer('Setting active source to {0}: {1:s}'.format(index,self.lSource[index]['displayname']))
 		self.iCurrentSource[0] = index
 		self.iCurrentSource[1] = subIndex
+		self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.on_activate(subIndex)
 		return True
 		
 		'''

@@ -201,6 +201,9 @@ def put_source(path=None, cmd=None, args=None, data=None):
 	if ret == False:
 		# index valid, but source not available
 		code = 561
+	else:
+		printSummary()	# LL_DEBUG
+		
 			
 	#data = get_data(ret,False,'/events/source/active')
 	#return data
@@ -281,7 +284,7 @@ def put_next(path=None, cmd=None, args=None, data=None):
 		printSummary()	# LL_DEBUG
 	else:
 		code = 500
-	
+		
 	# TODO, Should we return a 4xx or 5xx maybe?
 	return None, code
 
