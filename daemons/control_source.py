@@ -51,7 +51,7 @@ DESCRIPTION = "Source Controller"
 BANNER = "Source Controller"
 LOG_TAG = 'SRCTRL'
 LOGGER_NAME = 'srctrl'
-SUBSCRIPTIONS = ['/source/','/player/','/events/udisks/']
+SUBSCRIPTIONS = ['/source','/player','/events/udisks']
 
 # ---------------------
 # deprecated:??
@@ -133,7 +133,9 @@ def get_source(path=None, cmd=None, args=None, data=None):
 	TODO: check if this returns subsources as well (it should, BUT IT PROBABLY DOESNT)
 		
 	"""
+	printer('Handling MQ request for path:{0} command:{1} args:{2}'.format(path,cmd,args),level=LL_DEBUG)
 	code = 200
+	
 	if not args:
 		ret = sc_sources.source_all()
 	elif len(args) == 1:
@@ -168,6 +170,7 @@ def put_source(path=None, cmd=None, args=None, data=None):
 		561:	Error: Source not available
 		562:	Error: No current source
 	"""
+	printer('Handling MQ request for path:{0} command:{1} args:{2}'.format(path,cmd,args),level=LL_DEBUG)
 	code = 200
 
 	#	? Starts playback if P is specified, or not (default)
@@ -263,6 +266,7 @@ def put_next(path=None, cmd=None, args=None, data=None):
 		561:	Error: Source not available
 		562:	Error: No current source
 	"""
+	printer('Handling MQ request for path:{0} command:{1} args:{2}'.format(path,cmd,args),level=LL_DEBUG)
 	code = 200
 	if not args:
 		ret = sc_sources.select_next()	# returns None if cannot change source
@@ -513,6 +517,9 @@ def put_next(path=None, cmd=None, args=None, data=None):
 	Return data:
 		?
 	"""
+	printer('Handling MQ request for path:{0} command:{1} args:{2}'.format(path,cmd,args),level=LL_DEBUG)
+	code = 200
+	
 	if not args:
 		ret = sc_sources.source_next()
 	elif len(args) == 1:
@@ -530,6 +537,9 @@ def put_prev(path=None, cmd=None, args=None, data=None):
 	Return data:
 		?
 	"""
+	printer('Handling MQ request for path:{0} command:{1} args:{2}'.format(path,cmd,args),level=LL_DEBUG)
+	code = 200
+	
 	if not args:
 		ret = sc_sources.source_prev()
 	elif len(args) == 1:
@@ -564,6 +574,7 @@ def get_folders(args):
 		Arguments:		None
 		Return data:	playlist-folder mapping
 	"""
+	printer('Handling MQ request for path:{0} command:{1} args:{2}'.format(path,cmd,args),level=LL_DEBUG)
 	code = 200
 	#if not args:
 	#	ret = sc_sources.()
@@ -574,13 +585,17 @@ def get_folders(args):
 @messaging.register('/player/folder/next', cmd='PUT')
 @command.validate()
 def put_nextfolder(path=None, cmd=None, args=None, data=None):
-	return None, 200
+	printer('Handling MQ request for path:{0} command:{1} args:{2}'.format(path,cmd,args),level=LL_DEBUG)
+	code = 200
+	return None, code
 
 # TODO
 @messaging.register('/player/folder/prev', cmd='PUT')
 @command.validate()
 def put_prevfolder(args):
-	return None, 200
+	printer('Handling MQ request for path:{0} command:{1} args:{2}'.format(path,cmd,args),level=LL_DEBUG)
+	code = 200
+	return None, code
 
 # TODO
 @messaging.register('/player/play', cmd='PUT')
