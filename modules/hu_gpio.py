@@ -158,17 +158,6 @@ class GpioController(object):
 					for active_mode in new_active_modes:
 						if active_mode in emc['modes']:
 							
-							# HIT!
-							print "DEBUG EVENT-MODE HIT!"
-							print emc
-							"""
-							  "name": "mode_track"
-							, "type": "mode_change"
-							, "modes": [ "track" ]
-							, "device": "rgb_1"
-							, "pattern": "on"
-							, "rgb": "#ff0000"
-							"""
 							rgb_dev = self.get_device_config(emc['device'])
 							pin_r = rgb_dev['r']
 							pin_g = rgb_dev['g']
@@ -201,11 +190,7 @@ class GpioController(object):
 			valid_params = cmd_exec.validate_args(command,*args)
 		else:
 			valid_params = None
-		
-		if callable(self.callback_function):
-			print "-> Calling callback"
-			self.callback_function(command,valid_params)
-			
+				
 		# Check if we have an event for this..
 		if self.event_mode_change:
 		
@@ -234,6 +219,11 @@ class GpioController(object):
 					# ignore pattern for now..
 					#turn on rgb_1, using ff0000
 					self.gpio.pwm_rgb(pin_r,pin_g,pin_b,emc['rgb'])
+					
+		if callable(self.callback_function):
+			print "-> Calling callback"
+			self.callback_function(command,valid_params)
+
 		
 	# ********************************************************************************
 	# Mode helpers
