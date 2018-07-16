@@ -174,7 +174,7 @@ class GpioController(object):
 							
 							# ignore pattern for now..
 							#turn on rgb_1, using ff0000
-							self.gpio.pwm_rgb(pin_r,pin_g,pin_b,"#ff0000") # todo change to emc['rgb']
+							self.gpio.pwm_rgb(pin_r,pin_g,pin_b,emc['rgb']) # todo change to emc['rgb']
 	
 	def __exec_function_by_code(self,command,*args):
 		"""
