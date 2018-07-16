@@ -149,28 +149,32 @@ class GpioController(object):
 		
 		# Check if we have an event for this..
 		if self.event_mode_change:
+		
 			for emc in self.event_mode_change:
-				if any(new_active_modes in emc['modes']):
-					# HIT!
-					print "DEBUG EVENT-MODE HIT!"
-					print emc
-					"""
-					  "name": "mode_track"
-					, "type": "mode_change"
-					, "modes": [ "track" ]
-					, "device": "rgb_1"
-					, "pattern": "on"
-					, "rgb": "#ff0000"
-					"""
-					rgb_dev = self.get_device_config("rgb_1")	# todo change to emc['device']
-					pin_r = rgb_dev['r']
-					pin_g = rgb_dev['g']
-					pin_b = rgb_dev['b']
-					
-					# ignore pattern for now..
-					#turn on rgb_1, using ff0000
-					self.gpio.pwm_rgb(pin_r,pin_g,pin_b,"#ff0000") # todo change to emc['rgb']
-					pass
+				if any(x in new_active_modes for x in emc['modes']):
+				
+					for active_mode in new_active_modes:
+						if active_mode in emc['modes']:
+							
+						# HIT!
+						print "DEBUG EVENT-MODE HIT!"
+						print emc
+						"""
+						  "name": "mode_track"
+						, "type": "mode_change"
+						, "modes": [ "track" ]
+						, "device": "rgb_1"
+						, "pattern": "on"
+						, "rgb": "#ff0000"
+						"""
+						rgb_dev = self.get_device_config("rgb_1")	# todo change to emc['device']
+						pin_r = rgb_dev['r']
+						pin_g = rgb_dev['g']
+						pin_b = rgb_dev['b']
+						
+						# ignore pattern for now..
+						#turn on rgb_1, using ff0000
+						self.gpio.pwm_rgb(pin_r,pin_g,pin_b,"#ff0000") # todo change to emc['rgb']
 	
 	def __exec_function_by_code(self,command,*args):
 		"""
