@@ -20,6 +20,7 @@
 			, "r": 16
 			, "g": 12
 			, "b": 23
+			, "start": "#ff0000"
 		}
 	]
 	, "mode_sets": [
@@ -47,20 +48,23 @@
 			  "name": "mode_folder"
 			, "type": "mode_change"
 			, "modes": [ "folder" ]
+			, "device": "rgb_1"
 			, "pattern": "on"
-			, "rgb": "#00ff00"
+			, "rgb": "#ff00ff"
 		},
 		{
 			  "name": "mode_random"
 			, "type": "mode_change"
 			, "modes": [ "random" ]
+			, "device": "rgb_1"
 			, "pattern": "on"
-			, "rgb": "#0000ff"
+			, "rgb": "#00fff"
 		},
 		{
 			  "name": "cmd_source_next"
 			, "type": "command"
 			, "command": [ "SOURCE-NEXT" ]
+			, "device": "rgb_1"
 			, "pattern": "blink"
 			, "rgb": "#ff00ff"
 		},
@@ -68,6 +72,7 @@
 			  "name": "fnc_player_next"
 			, "type": "function"
 			, "command": [ "track_select" ]
+			, "device": "rgb_1"
 			, "pattern": "blink"
 			, "rgb": "#00ffff"
 		}

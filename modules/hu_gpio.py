@@ -151,8 +151,10 @@ class GpioController(object):
 		if self.event_mode_change:
 		
 			for emc in self.event_mode_change:
-				if any(x in new_active_modes for x in emc['modes']):
-				
+				if emc['type'] == 'mode_change' and if any(x in new_active_modes for x in emc['modes']):
+					
+					# TODO! check if ['type'] == 'mode_change'
+					
 					for active_mode in new_active_modes:
 						if active_mode in emc['modes']:
 							
@@ -167,14 +169,14 @@ class GpioController(object):
 							, "pattern": "on"
 							, "rgb": "#ff0000"
 							"""
-							rgb_dev = self.get_device_config("rgb_1")	# todo change to emc['device']
+							rgb_dev = self.get_device_config(emc['device'])
 							pin_r = rgb_dev['r']
 							pin_g = rgb_dev['g']
 							pin_b = rgb_dev['b']
 							
 							# ignore pattern for now..
 							#turn on rgb_1, using ff0000
-							self.gpio.pwm_rgb(pin_r,pin_g,pin_b,emc['rgb']) # todo change to emc['rgb']
+							self.gpio.pwm_rgb(pin_r,pin_g,pin_b,emc['rgb'])
 	
 	def __exec_function_by_code(self,command,*args):
 		"""
@@ -203,6 +205,35 @@ class GpioController(object):
 		if callable(self.callback_function):
 			print "-> Calling callback"
 			self.callback_function(command,valid_params)
+			
+		# Check if we have an event for this..
+		if self.event_mode_change:
+		
+			for emc in self.event_mode_change:
+				if emc['type'] == 'command' and command in  emc['command']:
+					
+					# TODO, check if a required mode is specified
+					#if any(x in new_active_modes for x in emc['modes']):
+					
+					# HIT!
+					print "DEBUG EVENT-MODE HIT!"
+					print emc
+					"""
+					  "name": "mode_track"
+					, "type": "mode_change"
+					, "modes": [ "track" ]
+					, "device": "rgb_1"
+					, "pattern": "on"
+					, "rgb": "#ff0000"
+					"""
+					rgb_dev = self.get_device_config(emc['device'])
+					pin_r = rgb_dev['r']
+					pin_g = rgb_dev['g']
+					pin_b = rgb_dev['b']
+					
+					# ignore pattern for now..
+					#turn on rgb_1, using ff0000
+					self.gpio.pwm_rgb(pin_r,pin_g,pin_b,emc['rgb'])
 		
 	# ********************************************************************************
 	# Mode helpers
