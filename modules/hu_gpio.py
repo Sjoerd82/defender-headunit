@@ -54,7 +54,10 @@ class GpioController(object):
 		"""
 	
 		self.gpio = GpioWrapper()
-		
+	
+		# CONSTANTS
+		self.RGB_PWM_FREQ = 100
+	
 		#TEMP - DEBUG - EXPERIMENTAL
 		self.int_encoder = None
 		self.int_enabled = True
@@ -85,6 +88,9 @@ class GpioController(object):
 		# mode sets
 		self.ms_all = {}			# contains the different modesets, key=modeset name
 		self.ms_authorative = []	# list of modeset of which we have an authority
+		
+		# events
+		self.event_mode_change = [] # list of event dicts, connected to mode changes
 		
 		# default long press time
 		self.long_press_ms = 800
@@ -117,50 +123,54 @@ class GpioController(object):
 			if tag is None: tag = self.LOG_TAG
 			self.logger.log(level, message, extra={'tag': tag})
 	
+	# ********************************************************************************
+	# Callback
 	def __cb_mode_change(self, list_of_modes):
 		"""
 		Called by modeset whenever a new mode becomes active. List_of_modes is a list of mode-dictionaries.
+		First, executes the 'MODE-CHANGE' function.
+		Secondly, executes the user defined callback.
 		Source: Modeset.state_change
 		"""	
+		
+		new_active_modes = []		# only the new active mode(s)
 		mode_change_params = []
 		for mode in list_of_modes:
 			mode_change_params.append(mode['mode'])
 			mode_change_params.append(mode['state'])
+			if mode['state']:
+				new_active_modes.append(mode['mode'])
 
 		self.__printer("Mode change. {0}".format(mode_change_params),level=LL_DEBUG)
 		self.__exec_function_by_code('MODE-CHANGE',*mode_change_params)
 		
-		"""
-		# DEBUG / EXPERIMENTAL
-		if self.int_encoder is not None:
-			if mode_change_params[1] == True and 'mode_timeout' in self.cfg_gpio and self.int_enabled:
-				print "DEBUG.. GPIO/VOLUME.. disabling our interrupts.."
-				self.gpio.remove_event_detect(13)
-				self.gpio.remove_event_detect(6)
-				self.int_enabled = False
-			elif mode_change_params[1] == False and 'mode_timeout' in self.cfg_gpio and not self.int_enabled:
-				print "DEBUG.. GPIO/NOT VOLUME.. enabling our interrupts.."
-				self.gpio.setup((13,6), self.gpio.IN, pull_up_down=self.gpio.PUD_DOWN)
-				self.gpio.add_event_detect(13, self.gpio.RISING, callback=self.int_encoder) # NO bouncetime 
-				self.gpio.add_event_detect(6, self.gpio.RISING, callback=self.int_encoder) # NO bouncetime
-				self.int_enabled = True
-			elif mode_change_params[1] == True and 'mode_timeout' not in self.cfg_gpio and not self.int_enabled:
-				print "DEBUG.. ECA/VOLUME.. enabling our interrupts.."
-				self.gpio.setup((13,6), self.gpio.IN, pull_up_down=self.gpio.PUD_DOWN)
-				self.gpio.add_event_detect(13, self.gpio.RISING, callback=self.int_encoder) # NO bouncetime 
-				self.gpio.add_event_detect(6, self.gpio.RISING, callback=self.int_encoder) # NO bouncetime
-				self.int_enabled = True
-			elif mode_change_params[1] == False and 'mode_timeout' not in self.cfg_gpio and self.int_enabled:
-				print "DEBUG.. ECA/NOT VOLUME.. disabling our interrupts.."
-				self.gpio.remove_event_detect(13)
-				self.gpio.remove_event_detect(6)
-				self.int_enabled = False
-
-			print "DEBUG.. done"
-		"""
-		
 		if callable(self.callback_mode_change):
 			self.callback_mode_change(mode_change_params)
+		
+		# Check if we have an event for this..
+		if self.event_mode_change:
+			for emc in self.event_mode_change:
+				if any(new_active_modes in emc['modes']):
+					# HIT!
+					print "DEBUG EVENT-MODE HIT!"
+					print emc
+					"""
+					  "name": "mode_track"
+					, "type": "mode_change"
+					, "modes": [ "track" ]
+					, "device": "rgb_1"
+					, "pattern": "on"
+					, "rgb": "#ff0000"
+					"""
+					rgb_dev = self.get_device_config("rgb_1")	# todo change to emc['device']
+					pin_r = rgb_dev['r']
+					pin_g = rgb_dev['g']
+					pin_b = rgb_dev['b']
+					
+					# ignore pattern for now..
+					#turn on rgb_1, using ff0000
+					self.gpio.pwm_rgb(pin_r,pin_g,pin_b,"#ff0000") # todo change to emc['rgb']
+					pass
 	
 	def __exec_function_by_code(self,command,*args):
 		"""
@@ -192,7 +202,6 @@ class GpioController(object):
 		
 	# ********************************************************************************
 	# Mode helpers
-	# 
 	def __mode_reset(self):
 		"""
 		Restart all running timers
@@ -212,7 +221,6 @@ class GpioController(object):
 
 	# ********************************************************************************
 	# Public functions
-	# 
 	def activemodes(self):
 		"""
 		Returns a list of all active modes across all modesets.
@@ -311,7 +319,6 @@ class GpioController(object):
 		
 	# ********************************************************************************
 	# GPIO helpers
-	# 
 	def get_device_config(self,name):
 		for device in self.cfg_gpio['devices']:
 			if device['name'] == name:
@@ -357,7 +364,6 @@ class GpioController(object):
 					
 	# ********************************************************************************
 	# GPIO interrupt handlers
-	# 
 	def int_handle_switch(self,pin):
 		""" Callback function for switches """
 		#press_start = clock()
@@ -625,8 +631,9 @@ class GpioController(object):
 		# get global settings (default already set)
 		if 'self.long_press_ms' in self.cfg_gpio:
 			self.long_press_ms = self.cfg_gpio['self.long_press_ms']
-			
-		# modes
+		
+		# *********************************************************************
+		# Modes
 		if 'mode_sets' in self.cfg_gpio:
 			
 			self.__printer("Mode sets:")
@@ -660,26 +667,31 @@ class GpioController(object):
 		else:
 			self.__printer("WARNING: No 'mode_sets'-section.", level=LL_WARNING)
 		
-		# initialize all pins in configuration
+		# *********************************************************************
+		# Initialize all pins in configuration
 		pins_monitor = []
 		for device in self.cfg_gpio['devices']:
+			# *****************************************************************
 			if 'type' in device and device['type'] == 'led':
 				# Normal led
 				pin = device['pin']
 				self.__printer("Setting up pin: {0}".format(pin))
 				self.gpio.setup(pin, self.gpio.OUT)
 				
-			if 'type' in device and device['type'] == 'rgb':
+			# *****************************************************************
+			# Single RGB led, controlled using PWM
+			if 'type' in device and device['type'] == 'rgb_pwm':
 				# RGB led
 				pin_r = device['r']
 				pin_g = device['g']
 				pin_b = device['b']
 				self.__printer("Setting up pins: {0}, {1} and {2}".format(pin_r, pin_g, pin_b))
-				self.gpio.setup(pin_r, self.gpio.OUT)
-				self.gpio.setup(pin_g, self.gpio.OUT)
-				self.gpio.setup(pin_b, self.gpio.OUT)
+				self.gpio.setup(pin_r, self.gpio.OUT, softpwm=True)
+				self.gpio.setup(pin_g, self.gpio.OUT, softpwm=True)
+				self.gpio.setup(pin_b, self.gpio.OUT, softpwm=True)
 				
-				
+			# *****************************************************************
+			# Switch
 			if 'sw' in device and int_switch is not None:
 				#pin = self.cfg_gpio['devices'][ix]['sw']
 				pin = device['sw']
@@ -750,7 +762,9 @@ class GpioController(object):
 					
 				# consolidated config
 				self.pins_config[pin] = { "dev_name":device['name'], "dev_type":"sw", "gpio_on": gpio_on, "has_multi":False, "has_short":False, "has_long":False, "functions":[] }
-				
+			
+			# *****************************************************************
+			# Encoder
 			if 'clk' in device and int_encoder is not None:
 				pin_clk = device['clk']
 				pin_dt = device['dt']
@@ -767,7 +781,8 @@ class GpioController(object):
 				self.pins_config[pin_clk] = { "dev_name":device['name'], "dev_type":"clk", "functions":[] }
 				self.pins_config[pin_dt] = { "dev_name":device['name'], "dev_type":"dt", "functions":[] }
 						
-		# map pins to functions
+		# *********************************************************************
+		# Map pins to functions
 		for ix, function in enumerate(self.cfg_gpio['functions']):
 			if 'encoder' in function:		
 				device = self.get_device_config(function['encoder'])
@@ -875,3 +890,12 @@ class GpioController(object):
 		if len(pins_monitor) != len(set(pins_monitor)):
 			self.__printer("WARNING: Same pin used multiple times, this may lead to unpredictable results.",level=LL_WARNING)
 			pins_monitor = set(pins_monitor) # no use in keeping duplicates
+
+		# *********************************************************************
+		# Register (?) configured events
+		if 'events' in self.cfg_gpio:
+			for ix, event in enumerate(self.cfg_gpio['events']):
+			
+				if event['type'] == 'mode_change':
+					self.event_mode_change.append(event)
+		

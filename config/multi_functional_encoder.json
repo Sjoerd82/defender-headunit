@@ -2,7 +2,7 @@
 	  "gpio_mode": "BCM"
 	, "long_press_ms": 800
 	, "base_modes": [ "track" ]
-	, "mode_timeout": 5
+	, "mode_timeout": 8
 	, "devices": [
 		{ 	  "name": "multi_encoder"
 			, "type": "rotenc"
@@ -14,9 +14,15 @@
 			, "gpio_on": "low"
 			, "gpio_pullupdown": "up"
 			, "debounce": 10
+		},
+		{ 	  "name": "rgb_1"
+			, "type": "rgb_pwm"
+			, "r": 16
+			, "g": 12
+			, "b": 23
 		}
 	]
-	,"mode_sets": [
+	, "mode_sets": [
 		{	  "id": "modecycle1"
 			, "mode_list": [ "track", "folder", "random" ]
 			, "base_mode": "track"
@@ -28,7 +34,45 @@
 			, "mode_list": [ "random_off", "random_folder", "random_artist", "random_genre", "random_playlist" ]
 		}
 	]
-	,"functions": [
+	, "events": [
+		{
+			  "name": "mode_track"
+			, "type": "mode_change"
+			, "modes": [ "track" ]
+			, "device": "rgb_1"
+			, "pattern": "on"
+			, "rgb": "#ff0000"
+		},
+		{
+			  "name": "mode_folder"
+			, "type": "mode_change"
+			, "modes": [ "folder" ]
+			, "pattern": "on"
+			, "rgb": "#00ff00"
+		},
+		{
+			  "name": "mode_random"
+			, "type": "mode_change"
+			, "modes": [ "random" ]
+			, "pattern": "on"
+			, "rgb": "#0000ff"
+		},
+		{
+			  "name": "cmd_source_next"
+			, "type": "command"
+			, "command": [ "SOURCE-NEXT" ]
+			, "pattern": "blink"
+			, "rgb": "#ff00ff"
+		},
+		{
+			  "name": "fnc_player_next"
+			, "type": "function"
+			, "command": [ "track_select" ]
+			, "pattern": "blink"
+			, "rgb": "#00ffff"
+		}
+	]
+	, "functions": [
 		{
 			  "name": "toggler"
 			, "function": null

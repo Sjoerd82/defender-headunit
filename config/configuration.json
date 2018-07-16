@@ -113,7 +113,14 @@
 
 	]
 	, "gpio": {
-		"todo": "todo"
+		  "enforce": true
+		, "input": [5,6,13,19,26]
+		, "output": [12,16,23]
+		, "bcm13": "control_gpio.py"
+		, "bcm6":  "control_gpio.py"
+		, "bcm26": "control_gpio.py"
+		, "bcm5":  "control_eca.py.py"
+		, "bcm19": "control_eca.py.py"
 	}	
 	, "audio_output": {
 		"pulse-sink": "alsa_output.platform-soc_sound.analog-stereo"
