@@ -20,7 +20,7 @@
 			, "r": 16
 			, "g": 12
 			, "b": 23
-			, "start": "#ff0000"
+			, "startup": "#ff0000"
 		}
 	]
 	, "mode_sets": [
@@ -74,7 +74,7 @@
 			, "command": [ "track_select" ]
 			, "device": "rgb_1"
 			, "pattern": "blink"
-			, "rgb": "#00ffff"
+			, "rgb": "#00ff00"
 		}
 	]
 	, "functions": [

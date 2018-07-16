@@ -151,7 +151,7 @@ class GpioController(object):
 		if self.event_mode_change:
 		
 			for emc in self.event_mode_change:
-				if emc['type'] == 'mode_change' and if any(x in new_active_modes for x in emc['modes']):
+				if emc['type'] == 'mode_change' and any(x in new_active_modes for x in emc['modes']):
 					
 					# TODO! check if ['type'] == 'mode_change'
 					
@@ -210,7 +210,7 @@ class GpioController(object):
 		if self.event_mode_change:
 		
 			for emc in self.event_mode_change:
-				if emc['type'] == 'command' and command in  emc['command']:
+				if emc['type'] == 'command' and command in emc['command']:
 					
 					# TODO, check if a required mode is specified
 					#if any(x in new_active_modes for x in emc['modes']):
@@ -724,6 +724,10 @@ class GpioController(object):
 				self.gpio.setup(pin_r, self.gpio.OUT, softpwm=True)
 				self.gpio.setup(pin_g, self.gpio.OUT, softpwm=True)
 				self.gpio.setup(pin_b, self.gpio.OUT, softpwm=True)
+				
+				if 'startup' in device:			
+					# ignore pattern for now #todo
+					self.gpio.pwm_rgb(pin_r,pin_g,pin_b,device['startup'])
 				
 			# *****************************************************************
 			# Switch
