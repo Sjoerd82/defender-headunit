@@ -59,9 +59,9 @@ class GpioWrapper(object):
 			
 			rgb100 = [ int(round(x/2.55)) for x in rgb ]
 			
-			self.softpwm[pin_r].start(rgb[0])
-			self.softpwm[pin_g].start(rgb[1])
-			self.softpwm[pin_b].start(rgb[2])
+			self.softpwm[pin_r].start(rgb100[0])
+			self.softpwm[pin_g].start(rgb100[1])
+			self.softpwm[pin_b].start(rgb100[2])
 			
 	def pwm_stop(self, pin):
 		pass
