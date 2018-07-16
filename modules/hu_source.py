@@ -595,7 +595,7 @@ class SourceController(object):
 		self.__printer('Setting active source to {0}: {1:s}'.format(index,self.lSource[index]['displayname']))
 		self.iCurrentSource[0] = index
 		self.iCurrentSource[1] = subIndex
-		self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.on_activate(subIndex)
+		self.source_manager.getPluginByName(self.lSource[index]['name']).plugin_object.on_activate(subIndex)	# TODO! do we want to activate by calling ON-activate????
 		return True
 		
 		'''
@@ -695,7 +695,7 @@ class SourceController(object):
 						if subsource['available']:
 							self.iCurrentSource[0] = i
 							self.iCurrentSource[1] = j
-							self.source_manager.getPluginByName(self.lSource[i]['name']).plugin_object.on_activate(j)
+							self.source_manager.getPluginByName(self.lSource[i]['name']).plugin_object.on_activate(j)	# TODO! do we want to activate by calling ON-activate????
 							return self.iCurrentSource
 						j += 1
 				i += 1
