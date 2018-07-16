@@ -55,10 +55,10 @@ class GpioWrapper(object):
 			
 		if pin_r in self.softpwm and pin_g in self.softpwm and pin_b in self.softpwm:
 			# set duty cycle
-			rgbhex = hex_to_rgb(rgb_value)
-			self.softpwm[pin_r].start(rgbhex[0])
-			self.softpwm[pin_g].start(rgbhex[1])
-			self.softpwm[pin_b].start(rgbhex[2])
+			rgb = hex_to_rgb(rgbhex)
+			self.softpwm[pin_r].start(rgb[0])
+			self.softpwm[pin_g].start(rgb[1])
+			self.softpwm[pin_b].start(rgb[2])
 			
 	def pwm_stop(self, pin):
 		pass
