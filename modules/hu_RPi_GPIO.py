@@ -57,7 +57,7 @@ class GpioWrapper(object):
 			# set duty cycle
 			rgb = hex_to_rgb(rgbhex)
 			
-			rgb100 = [ round(x/2.55)*100) for x in rgb ]
+			rgb100 = [ round(x/2.55) for x in rgb ]
 			
 			self.softpwm[pin_r].start(rgb[0])
 			self.softpwm[pin_g].start(rgb[1])
