@@ -17,10 +17,10 @@
 		},
 		{ 	  "name": "rgb_1"
 			, "type": "rgb_pwm"
-			, "r": 16
+			, "r": 23
 			, "g": 12
-			, "b": 23
-			, "startup": "#ff0000"
+			, "b": 16
+			, "startup": "#004000"
 		}
 	]
 	, "mode_sets": [
@@ -42,7 +42,8 @@
 			, "modes": [ "track" ]
 			, "device": "rgb_1"
 			, "pattern": "on"
-			, "rgb": "#ff0000"
+			, "pwm_freq": 100
+			, "rgb": "#004000"
 		},
 		{
 			  "name": "mode_folder"
@@ -50,7 +51,8 @@
 			, "modes": [ "folder" ]
 			, "device": "rgb_1"
 			, "pattern": "on"
-			, "rgb": "#ff00ff"
+			, "pwm_freq": 100
+			, "rgb": "#004020"
 		},
 		{
 			  "name": "mode_random"
@@ -58,7 +60,8 @@
 			, "modes": [ "random" ]
 			, "device": "rgb_1"
 			, "pattern": "on"
-			, "rgb": "#00ffff"
+			, "pwm_freq": 100
+			, "rgb": "#003340"
 		},
 		{
 			  "name": "cmd_source_next"
@@ -66,7 +69,8 @@
 			, "command": [ "SOURCE-NEXT" ]
 			, "device": "rgb_1"
 			, "pattern": "blink"
-			, "rgb": "#00ff00"
+			, "pwm_freq": 100
+			, "rgb": "#008080"
 		},
 		{
 			  "name": "fnc_player_next"
@@ -74,7 +78,8 @@
 			, "command": [ "track_select" ]
 			, "device": "rgb_1"
 			, "pattern": "blink"
-			, "rgb": "#00ff00"
+			, "pwm_freq": 100
+			, "rgb": "#800080"
 		}
 	]
 	, "functions": [

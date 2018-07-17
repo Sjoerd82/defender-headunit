@@ -91,6 +91,7 @@ class GpioController(object):
 		
 		# events
 		self.event_mode_change = [] # list of event dicts, connected to mode changes
+		self.event_mode_command = []
 		
 		# default long press time
 		self.long_press_ms = 800
@@ -151,7 +152,7 @@ class GpioController(object):
 		if self.event_mode_change:
 		
 			for emc in self.event_mode_change:
-				if emc['type'] == 'mode_change' and any(x in new_active_modes for x in emc['modes']):
+				if any(x in new_active_modes for x in emc['modes']):
 					
 					# TODO! check if ['type'] == 'mode_change'
 					
@@ -192,10 +193,10 @@ class GpioController(object):
 			valid_params = None
 				
 		# Check if we have an event for this..
-		if self.event_mode_change:
+		if self.event_mode_command:
 		
-			for emc in self.event_mode_change:
-				if emc['type'] == 'command' and command in emc['command']:
+			for emc in self.event_mode_command:
+				if command in emc['command']:
 					
 					# TODO, check if a required mode is specified
 					#if any(x in new_active_modes for x in emc['modes']):
@@ -221,8 +222,10 @@ class GpioController(object):
 					self.gpio.pwm_rgb(pin_r,pin_g,pin_b,emc['rgb'])
 					
 		if callable(self.callback_function):
-			print "-> Calling callback"
+			print "-> Calling callback"	#blocking ??? yeah, probably..
 			self.callback_function(command,valid_params)
+			
+		# return to original led color
 
 		
 	# ********************************************************************************
@@ -927,4 +930,7 @@ class GpioController(object):
 			
 				if event['type'] == 'mode_change':
 					self.event_mode_change.append(event)
+					
+				elif event['type'] == 'command':
+					self.event_mode_command.append(event)
 		
