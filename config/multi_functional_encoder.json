@@ -58,7 +58,7 @@
 			, "modes": [ "random" ]
 			, "device": "rgb_1"
 			, "pattern": "on"
-			, "rgb": "#00fff"
+			, "rgb": "#00ffff"
 		},
 		{
 			  "name": "cmd_source_next"
