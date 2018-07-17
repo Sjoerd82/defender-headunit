@@ -539,7 +539,6 @@ class GpioController(object):
 		"""
 		Called for either inputs from rotary switch (A and B)
 		"""
-		
 		#print "DEBUG: self.int_handle_encoder! for pin: {0}".format(pin)
 			
 		device = self.get_device_config_by_pin(pin)
@@ -549,6 +548,19 @@ class GpioController(object):
 
 		Switch_A = self.gpio.input(encoder_pinA)
 		Switch_B = self.gpio.input(encoder_pinB)
+		
+		# debounce
+		#if 'debounce' in self.pins_config[pin]:
+		#	debounce = self.pins_config[pin]['debounce'] / 1000
+		#	print "DEBUG: sleeping: {0}".format(debounce)
+		#	sleep(debounce)
+		#	
+		sleep(0.02)
+		if not self.gpio.input(encoder_pinA) == self.pins_config[encoder_pinA]:
+			return None
+		if not self.gpio.input(encoder_pinB) == self.pins_config[encoder_pinB]:
+			return None
+			
 														# now check if state of A or B has changed
 														# if not that means that bouncing caused it	
 		Current_A = self.pins_state[encoder_pinA]
