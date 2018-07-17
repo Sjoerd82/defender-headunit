@@ -555,21 +555,21 @@ class GpioController(object):
 		#	print "DEBUG: sleeping: {0}".format(debounce)
 		#	sleep(debounce)
 		#	
-		sleep(0.02)
-		if not self.gpio.input(encoder_pinA) == self.pins_config[encoder_pinA]:
-			return None
-		if not self.gpio.input(encoder_pinB) == self.pins_config[encoder_pinB]:
-			return None
+		#sleep(0.02)
+		#if not self.gpio.input(encoder_pinA) == self.pins_config[encoder_pinA]:
+		#	return None
+		#if not self.gpio.input(encoder_pinB) == self.pins_config[encoder_pinB]:
+		#	return None
 			
 														# now check if state of A or B has changed
 														# if not that means that bouncing caused it	
 		Current_A = self.pins_state[encoder_pinA]
 		Current_B = self.pins_state[encoder_pinB]
 		if Current_A == Switch_A and Current_B == Switch_B:		# Same interrupt as before (Bouncing)?
-			return										# ignore interrupt!
+			return												# ignore interrupt!
 
-		self.pins_state[encoder_pinA] = Switch_A								# remember new state
-		self.pins_state[encoder_pinB] = Switch_B								# for next bouncing check
+		self.pins_state[encoder_pinA] = Switch_A				# remember new state
+		self.pins_state[encoder_pinB] = Switch_B				# for next bouncing check
 		
 		# -------------------------------
 		function = self.get_encoder_function_by_pin(pin)
