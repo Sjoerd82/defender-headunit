@@ -1,0 +1,2 @@
+add to board\arctura\overlay_hu\etc\profile.d:
+alias status='/mnt/PIHU_APP/defender-headunit/cmd.py status all'

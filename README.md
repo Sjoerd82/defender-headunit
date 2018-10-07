@@ -243,7 +243,7 @@ Reference Setup
 29 BCM 5			Encoder2 CLK
 31 BCM 6			Encoder1 DT
 33 BCM 13 (PWM1)	Encoder1 CLK
-35 BCM 19 (MISO)	DAC (i2s)
+35 BCM 19 (MISO)	i2s/DAC: "FS"
 37 BCM 26			Encoder1 SW
 39 Ground			-
 
@@ -252,10 +252,10 @@ Reference Setup
 06 Ground			-
 08 BCM 14 (TXD)		.
 10 BCM 15 (RXD)		.
-12 BCM 18 (PWM0)	.
+12 BCM 18 (PWM0,CLK)i2s/DAC: Clock
 14 Ground			-
 16 BCM 23			.
-18 BCM 24			DAC (i2s)
+18 BCM 24			.
 20 Ground			-
 22 BCM 25			Buzzer
 24 BCM 8 (CE0)		SPI chip-select 0
@@ -266,7 +266,7 @@ Reference Setup
 34 Ground			-
 36 BCM 16			.
 38 BCM 20 (MOSI)	.
-40 BCM 21 (SCLK)	DAC (i2s)
+40 BCM 21 (SCLK)	i2s/DAC: DOUT
 
 SPI: display, CAN
 FM+RDS (i2c or spi?)

@@ -257,9 +257,10 @@ def main():
 			print " status mpd        Display mpd status"
 			print " status eca        Display ecasound status"
 			print " status udisks     Display removable drives"
+			print " status all        All of the above"
 			exit(0)
 
-		if args.status_of_what[0] == 'daemons':
+		if args.status_of_what[0] == 'all' or args.status_of_what[0] == 'daemons':
 			if 'daemons' not in cfg_main:
 				return
 			else:
@@ -284,17 +285,17 @@ def main():
 					
 			exit(0)
 			
-		elif args.status_of_what[0] == 'mpd':
+		elif args.status_of_what[0] == 'mpd':	#args.status_of_what[0] == 'all' or #BROKEN
 			print "MPD status:"
 			print "Outputs"
 			
-		elif args.status_of_what[0] == 'eca':
+		elif args.status_of_what[0] == 'eca':	#args.status_of_what[0] == 'all' or #BROKEN
 			print "Ecasound status:"
 			print "Chainsetup: ?"
 			print 'Run "ecamonitor" for more details'
 			
 
-		elif args.status_of_what[0] == 'udisks':
+		elif args.status_of_what[0] == 'all' or args.status_of_what[0] == 'udisks':
 			print "UDisks status:"
 			print "{0:10} {1:20} {2:11} {3:30}".format("Device","UUID","Label","Mountpoint")
 			print "{0:-<10} {1:-<20} {2:-<11} {3:-<30}".format("-","-","-","-")
