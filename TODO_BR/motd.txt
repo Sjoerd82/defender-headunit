@@ -1,0 +1,2 @@
+create file /etc/motd
+Type 'status' to see headunit status.

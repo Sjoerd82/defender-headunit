@@ -257,6 +257,7 @@ def main():
 			print " status mpd        Display mpd status"
 			print " status eca        Display ecasound status"
 			print " status udisks     Display removable drives"
+			print " status sources    Display source details"	#TODO
 			print " status all        All of the above"
 			exit(0)
 
@@ -282,9 +283,7 @@ def main():
 									dmn_status = colorize("Not running",'light_red')
 									
 					print "{0:19} {1:15} {2:<5} {3}".format(daemon['name'],daemon['init.d'],dmn_pid,dmn_status)
-					
-			exit(0)
-			
+								
 		elif args.status_of_what[0] == 'mpd':	#args.status_of_what[0] == 'all' or #BROKEN
 			print "MPD status:"
 			print "Outputs"
@@ -293,7 +292,6 @@ def main():
 			print "Ecasound status:"
 			print "Chainsetup: ?"
 			print 'Run "ecamonitor" for more details'
-			
 
 		elif args.status_of_what[0] == 'all' or args.status_of_what[0] == 'udisks':
 			print "UDisks status:"
@@ -319,7 +317,16 @@ def main():
 					print "weird.. a string?!"
 					print ret
 
-			exit(0)
+		elif args.status_of_what[0] == 'all' or args.status_of_what[0] == 'source' or args.status_of_what[0] == 'sources':
+			print "Sources:"
+			
+			ret = messaging.publish('/source/primary','GET',wait_for_reply=True)
+			if ret == False or ret is None:
+				print "[FAIL]"
+			else:
+				print ret
+				
+		exit(0)
 
 	# Handle: help
 	if args.which == 'help':
