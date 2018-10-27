@@ -3,12 +3,14 @@
 # cmd.py, the swiss army knife for the headunit 
 #
 
+# See: def parse_args() for usage
+
 # TODO:
 # commands specific to daemons, microservices or plugins should not be hardcoded here.
 # currently these are:
 # - status udisks
 # - ecasound chain setup
-#
+# - merge config-tool in here
 
 import os
 import json
@@ -50,7 +52,10 @@ mq_rpath = None
 # Load configuration
 #
 def load_cfg_main():
-	""" load main configuration """
+	"""
+	LOAD MAIN CONFIGURATION
+	Returns config, a Python object. (json.load)
+	"""
 	config = configuration_load(LOGGER_NAME,args1.config)
 	return config
 
@@ -184,7 +189,9 @@ def parse_args():
 		print "{0} [options] status [daemons|udisks]".format(program)
 		print "{0} [options] [help] <command> [args]".format(program)
 		print "{0} [options] mq <-p path> <-c mq-command> [-a] [-r]".format(program)
-		print 'Run "{0} -h" for a list of commands'.format(program)		
+		print "Useful examples:"
+		print '"{0} -h"         List of commands'.format(program)
+		print '"{0} status all" System status overview'.format(program)
 		exit(0)
 
 	args = p2.parse_args()
@@ -284,16 +291,20 @@ def main():
 									
 					print "{0:19} {1:15} {2:<5} {3}".format(daemon['name'],daemon['init.d'],dmn_pid,dmn_status)
 								
-		elif args.status_of_what[0] == 'mpd':	#args.status_of_what[0] == 'all' or #BROKEN
+		if args.status_of_what[0] == 'web' or args.status_of_what[0] == 'www' or args.status_of_what[0] == 'flask':
+			print "Webserver: "
+			print "Outputs"
+			
+		if args.status_of_what[0] == 'mpd':	#args.status_of_what[0] == 'all' or #BROKEN
 			print "MPD status:"
 			print "Outputs"
 			
-		elif args.status_of_what[0] == 'eca':	#args.status_of_what[0] == 'all' or #BROKEN
+		if args.status_of_what[0] == 'eca':	#args.status_of_what[0] == 'all' or #BROKEN
 			print "Ecasound status:"
 			print "Chainsetup: ?"
 			print 'Run "ecamonitor" for more details'
 
-		elif args.status_of_what[0] == 'all' or args.status_of_what[0] == 'udisks':
+		if args.status_of_what[0] == 'all' or args.status_of_what[0] == 'udisks':
 			print "UDisks status:"
 			print "{0:10} {1:20} {2:11} {3:30}".format("Device","UUID","Label","Mountpoint")
 			print "{0:-<10} {1:-<20} {2:-<11} {3:-<30}".format("-","-","-","-")
@@ -317,10 +328,10 @@ def main():
 					print "weird.. a string?!"
 					print ret
 
-		elif args.status_of_what[0] == 'all' or args.status_of_what[0] == 'source' or args.status_of_what[0] == 'sources':
+		if args.status_of_what[0] == 'all' or args.status_of_what[0] == 'source' or args.status_of_what[0] == 'sources':
 			print "Sources:"
 			
-			ret = messaging.publish('/source/primary','GET',wait_for_reply=True)
+			ret = messaging.publish('/source/primary','GET',wait_for_reply=True,timeout=1000)
 			if ret == False or ret is None:
 				print "[FAIL]"
 			else:
@@ -328,6 +339,17 @@ def main():
 				
 		exit(0)
 
+	if args.which == 'show-config':
+		
+		if not args.status_of_what:
+			print "Usage: show-config <section>"
+			print "Config file has the following sections:"
+			print type(cfg_main)
+			for section in cfg_main:
+				print section
+			exit(0)
+
+		
 	# Handle: help
 	if args.which == 'help':
 		if not args.command:
