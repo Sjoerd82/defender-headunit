@@ -353,14 +353,25 @@ def main():
 			print "Displays configuration."
 			print " Usage: show-config <section> [subsection]"
 			print ""
-			print " Config file has the following sections:"
+			print "Config file has the following sections:"
 			print type(cfg_main)
 			for section in cfg_main:
 				print "   {0}".format(section)
 			exit(0)
 		else:
-			print type(args.status_of_what)
-			print args.status_of_what
+			if args.status_of_what[0] in cfg_main:
+				if len(args.status_of_what) == 1:
+					print cfg_main[args.status_of_what[0]]
+				else:
+					print "subsections not implemented yet"
+					print cfg_main[args.status_of_what[0]]
+			else:
+				print "Section not found: {0}".format(args.status_of_what[0])
+				print "Config file has the following sections:"
+				print type(cfg_main)
+				for section in cfg_main:
+					print "   {0}".format(section)
+				exit(0)
 			
 		exit(0)
 
