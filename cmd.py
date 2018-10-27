@@ -159,6 +159,11 @@ def parse_args():
 	parser_status = subparsers.add_parser('status')
 	parser_status.add_argument('status_of_what', action='store', nargs='*')
 	parser_status.set_defaults(which='status')
+
+	# status
+	parser_status = subparsers.add_parser('config')
+	parser_status.add_argument('status_of_what', action='store', nargs='*')
+	parser_status.set_defaults(which='config')
 	
 	# command help
 	parser_help = subparsers.add_parser('help')
@@ -187,11 +192,14 @@ def parse_args():
 		print "Headunit Command Interpreter"
 		print "{0} -h".format(program)
 		print "{0} [options] status [daemons|udisks]".format(program)
+		print "{0} [options] config <section>".format(program)
 		print "{0} [options] [help] <command> [args]".format(program)
 		print "{0} [options] mq <-p path> <-c mq-command> [-a] [-r]".format(program)
+		print ""
 		print "Useful examples:"
 		print '"{0} -h"         List of commands'.format(program)
 		print '"{0} status all" System status overview'.format(program)
+		print '"{0} config"     Display configuration'.format(program)
 		exit(0)
 
 	args = p2.parse_args()
@@ -339,15 +347,19 @@ def main():
 				
 		exit(0)
 
-	if args.which == 'show-config':
+	if args.which == 'config':
 		
 		if not args.status_of_what:
+			print "Displays configuration."
 			print "Usage: show-config <section>"
+			print ""
 			print "Config file has the following sections:"
 			print type(cfg_main)
 			for section in cfg_main:
 				print section
 			exit(0)
+			
+		exit(0)
 
 		
 	# Handle: help
