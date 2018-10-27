@@ -201,8 +201,9 @@ def home():
 	global nav_sources
 	page_title = "Landing page"
 	nav_ix_main = 1
-	ret_track = messaging.publish('/player/track','GET', None, True, 1000, RETURN_PATH)
-	print ret_track
+	ret_track = None
+	#ret_track = messaging.publish('/player/track','GET', None, True, 1000, RETURN_PATH)
+	#print ret_track
 	if ret_track is None:
 		payload = dict_track(display='No data available')
 	else:
