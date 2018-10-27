@@ -201,7 +201,7 @@ def home():
 	global nav_sources
 	page_title = "Landing page"
 	nav_ix_main = 1
-	ret_track = messaging.publish_command('/player/track','GET', None, True, 1000, RETURN_PATH)
+	ret_track = messaging.publish('/player/track','GET', None, True, 1000, RETURN_PATH)
 	print ret_track
 	if ret_track is None:
 		payload = dict_track(display='No data available')
@@ -321,8 +321,8 @@ def reboot():
 	#publish_message('/system/reboot', 'SET')
 	#publish_message('/player/next', 'SET')
 	global messaging
-	messaging.publish_request('/system/reboot', 'SET', None)
-	messaging.publish_request('/player/next', 'SET', None)
+	messaging.publish_request('/system/reboot', 'SET')
+	messaging.publish_request('/player/next', 'SET')
 	return "SEND x2"
 
 #
@@ -374,7 +374,7 @@ POST /plugin/<path:config>              Set for a plugin
 
 @app.route(API_VERSION+'/source/primary', methods=['PUT'])
 def put_primary():
-	retmsg = messaging.publish_command('/source/primary','PUT', None, True, 5000, RETURN_PATH)
+	retmsg = messaging.publish('/source/primary','PUT', None, True, 5000, RETURN_PATH)
 	print retmsg
 	return retmsg
 
@@ -383,15 +383,15 @@ def put_primary():
 def get_source():
 	print "DEBUG!! get_source()"
 	# Retrieve list of sources
-	#messaging.send_command('/source/primary','GET')
+	#messaging.publish('/source/primary','GET')
 	#messaging.subscribe('/data/source')
 	#sources = messaging.receive_poll('/data/source',5000)
 	
 	#retmsg = messaging.send_to_server('/source/primary GET')
 	#retmsg = messaging.client_request('/source/primary','GET', None, 5000)
-	#retmsg = messaging.publish_command('/source/primary','GET')
+	#retmsg = messaging.publish('/source/primary','GET')
 	#sleep(1)
-	retmsg = messaging.publish_command('/source/primary','GET', None, True, 5000, RETURN_PATH)
+	retmsg = messaging.publish('/source/primary','GET', None, True, 5000, RETURN_PATH)
 	print retmsg
 	return retmsg
 	
@@ -443,13 +443,13 @@ def post_source_id_subsource_id(source_id,subsource_id):
 #Set active (sub)source to the next available
 @app.route('/hu/api/v1.0/source/next', methods=['GET'])
 def post_source_next():
-	retmsg = messaging.publish_command('/source/next','PUT', None, False)
+	retmsg = messaging.publish('/source/next','PUT')
 	return "OK"
 
 #Set active (sub)source to the prev available
 @app.route('/hu/api/v1.0/source/prev', methods=['POST'])
 def post_source_prev():
-	retmsg = messaging.publish_command('/source/prev','PUT', None, False)
+	retmsg = messaging.publish('/source/prev','PUT')
 	return "OK"
 
 #Retrieve current player state (pause/play/stopped, random)
@@ -479,13 +479,13 @@ def post_player_pause_mode(mode):
 #Set state play|pause|stop
 @app.route('/hu/api/v1.0/player/state/<mode>', methods=['POST','GET'])
 def post_player_state_mode(mode):
-	retmsg = messaging.publish_command('/player/state','PUT', mode, False)
+	retmsg = messaging.publish('/player/state','PUT', mode, False)
 	return "OK"
 
 #Set random on|off|toggle|special modes
 @app.route('/hu/api/v1.0/player/random/<mode>', methods=['POST','GET'])
 def post_player_random_mode(mode):
-	retmsg = messaging.publish_command('/player/random/mode','PUT', mode, False)
+	retmsg = messaging.publish('/player/random/mode','PUT', mode, False)
 	return "OK"
 
 #Set random mode: folder|artist|genre|all
@@ -503,13 +503,13 @@ def post_player_track_track(track):
 #Next track
 @app.route('/hu/api/v1.0/player/next', methods=['GET'])
 def get_player_next():
-	retmsg = messaging.publish_command('/player/next','PUT', None, False)
+	retmsg = messaging.publish('/player/next','PUT')
 	return "OK"
 
 #Prev track
 @app.route('/hu/api/v1.0/player/prev', methods=['GET'])
 def post_player_prev():
-	retmsg = messaging.publish_command('/player/prev','PUT', None, False)
+	retmsg = messaging.publish('/player/prev','PUT')
 	return "OK"
 
 #Seek fwd
@@ -533,7 +533,7 @@ def post_player_seek_incrsec(incr_sec):
 #Update Library (MPD)
 @app.route('/hu/api/v1.0/player/update', methods=['GET'])
 def get_player_update():
-	retmsg = messaging.publish_command('/player/update','PUT', None, False)
+	retmsg = messaging.publish('/player/update','PUT')
 	return "OK"
 	
 #Retrieve current playlist

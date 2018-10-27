@@ -280,6 +280,7 @@ def main():
 			if 'daemons' not in cfg_main:
 				return
 			else:
+				print ""
 				print "Daemon status:"
 				print "{0:19} {1:15} PID   Status".format("Service","init.d")
 				print "------------------- --------------- ----- ------------"
@@ -299,20 +300,23 @@ def main():
 									
 					print "{0:19} {1:15} {2:<5} {3}".format(daemon['name'],daemon['init.d'],dmn_pid,dmn_status)
 								
-		if args.status_of_what[0] == 'web' or args.status_of_what[0] == 'www' or args.status_of_what[0] == 'flask':
-			print "Webserver: "
-			print "Outputs"
+		if args.status_of_what[0] == 'all' or args.status_of_what[0] == 'web' or args.status_of_what[0] == 'www' or args.status_of_what[0] == 'flask':
+			print ""
+			print "Webserver: port 8289 (hardcoded)"
 			
-		if args.status_of_what[0] == 'mpd':	#args.status_of_what[0] == 'all' or #BROKEN
+		if args.status_of_what[0] == 'all' or args.status_of_what[0] == 'mpd':	#args.status_of_what[0] == 'all' or #BROKEN
+			print ""
 			print "MPD status:"
 			print "Outputs"
 			
-		if args.status_of_what[0] == 'eca':	#args.status_of_what[0] == 'all' or #BROKEN
+		if args.status_of_what[0] == 'all' or args.status_of_what[0] == 'eca':	#args.status_of_what[0] == 'all' or #BROKEN
+			print ""
 			print "Ecasound status:"
 			print "Chainsetup: ?"
 			print 'Run "ecamonitor" for more details'
 
 		if args.status_of_what[0] == 'all' or args.status_of_what[0] == 'udisks':
+			print ""
 			print "UDisks status:"
 			print "{0:10} {1:20} {2:11} {3:30}".format("Device","UUID","Label","Mountpoint")
 			print "{0:-<10} {1:-<20} {2:-<11} {3:-<30}".format("-","-","-","-")
