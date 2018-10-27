@@ -54,7 +54,7 @@ mq_rpath = None
 def load_cfg_main():
 	"""
 	LOAD MAIN CONFIGURATION
-	Returns config, a Python object. (json.load)
+	Returns a dictionary containing the configuration (json.load)
 	"""
 	config = configuration_load(LOGGER_NAME,args1.config)
 	return config
@@ -351,13 +351,16 @@ def main():
 		
 		if not args.status_of_what:
 			print "Displays configuration."
-			print "Usage: show-config <section>"
+			print " Usage: show-config <section> [subsection]"
 			print ""
-			print "Config file has the following sections:"
+			print " Config file has the following sections:"
 			print type(cfg_main)
 			for section in cfg_main:
-				print section
+				print "   {0}".format(section)
 			exit(0)
+		else:
+			print type(args.status_of_what)
+			print args.status_of_what
 			
 		exit(0)
 
