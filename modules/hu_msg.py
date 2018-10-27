@@ -221,7 +221,7 @@ class MqPubSubFwdController(object):
 		 ? Tuple/Dict (#tbd)
 		
 		"""
-		
+		print "DEBUG -- publish()"
 		# check command is valid
 		if command not in self.VALID_COMMANDS:
 			#printer("Invalid command: {0}".format(command),level=LL_ERROR)
@@ -262,6 +262,7 @@ class MqPubSubFwdController(object):
 	
 			events = dict(self.poller.poll())
 			if timeout is not None:
+				print "with timeout"
 				events = dict(self.poller.poll(timeout))
 			else:
 				events = dict(self.poller.poll())
