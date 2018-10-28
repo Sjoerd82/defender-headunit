@@ -262,7 +262,7 @@ class MqPubSubFwdController(object):
 	
 			events = dict(self.poller.poll())
 			if timeout is not None:
-				print "with timeout"
+				print "with timeout {0}".format(timeout)
 				events = dict(self.poller.poll(timeout))
 				print "timeout!!"
 			else:
@@ -274,11 +274,11 @@ class MqPubSubFwdController(object):
 			#	return None
 	#		if self.subscriber in events:
 			if self.reply_subscriber in events:
-				#print "OHYEAHBABY! AGAIN"
+				print "OHYEAHBABY! AGAIN"
 				pass
 			
 			if events:
-				#print "DEBUG: YES!"
+				print "DEBUG: YES!"
 				# todo: have a look at what's returned?
 				# read response from the server
 				msg_resp = self.reply_subscriber.recv()
