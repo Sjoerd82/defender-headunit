@@ -11,6 +11,10 @@
 # Pages are implemented in nav_items[]
 # 
 # 
+# TODO: Handle broken pipe error gracefully.
+# https://stackoverflow.com/questions/12591760/flask-broken-pipe-with-requests
+# https://www.quora.com/How-can-you-avoid-a-broken-pipe-error-on-Python
+#
 
 from flask import Flask
 from flask import render_template
@@ -201,15 +205,11 @@ def home():
 	global nav_sources
 	page_title = "Landing page"
 	nav_ix_main = 1
-	ret_track = None
-	print "publishing..."
 	ret_track = messaging.publish('/player/metadata','GET', None, True, 1000, RETURN_PATH)
-	print "ret: {0}".format(ret_track)
 	if ret_track is None:
 		payload = dict_track(display='No data available')
 	else:
-		#payload = ret_track['args'][0]['payload']	# NASTY
-		payload = ret_track['payload']	# NASTY
+		payload = ret_track['payload']
 		print payload
 	return render_template('dash_home.html', title=page_title, nav_items=nav_items, nav_ix_main=nav_ix_main, nav_sources=nav_sources, player=payload)
 
