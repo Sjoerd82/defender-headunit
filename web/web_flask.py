@@ -203,7 +203,7 @@ def home():
 	nav_ix_main = 1
 	ret_track = None
 	print "publishing..."
-	ret_track = messaging.publish('/player/track','GET', None, True, 1000, RETURN_PATH)
+	ret_track = messaging.publish('/player/metadata','GET', None, True, 1000, RETURN_PATH)
 	print "ret: {0}".format(ret_track)
 	if ret_track is None:
 		payload = dict_track(display='No data available')
