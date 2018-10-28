@@ -262,8 +262,9 @@ class MqPubSubFwdController(object):
 	
 			#events = dict(self.poller.poll())
 			if timeout is not None:
+				timeout=6000
 				print "with timeout {0}".format(timeout)
-				events = dict(self.poller.poll(timeout))
+				events = dict(self.poller.poll(timeout, zmq.POLLIN))
 				print "timeout!!"
 			else:
 				events = dict(self.poller.poll())
@@ -277,7 +278,8 @@ class MqPubSubFwdController(object):
 				print "OHYEAHBABY! AGAIN"
 				pass
 			
-			if events:
+	#		if events:
+			if self.reply_subscriber in events and events[self.reply_subscriber] == zmq.POLLIN:
 				print "DEBUG: YES!"
 				print events
 				# todo: have a look at what's returned?
