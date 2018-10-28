@@ -252,7 +252,7 @@ class MqPubSubFwdController(object):
 			self.reply_subscriber.setsockopt (zmq.SUBSCRIBE, response_path)
 			
 	#		reply_subscriber.setsockopt(zmq.SUBSCRIBE,response_path)
-			print "response path: {0}".format(response_path)
+			#print "response path: {0}".format(response_path)
 
 		#print "message = {0}".format(message)
 		#print type(arguments)	# <class 'hu_datastruct.Modes'>
@@ -264,18 +264,9 @@ class MqPubSubFwdController(object):
 		else:
 			response = None
 			parsed_response = None
-	#		events = dict(reply_poller.poll()) #timeout
-	
-			#events = dict(self.poller.poll())
+			
 			if timeout is not None:
-				timeout=6000
-				print "with timeout {0}".format(timeout)
 				events = dict(self.poll_resp.poll(timeout))
-				print "timeout!!"
-				print events
-				for x in events:
-					print type(x)
-					print x
 			else:
 				events = dict(self.poll_resp.poll())
 
@@ -288,16 +279,15 @@ class MqPubSubFwdController(object):
 				print "OHYEAHBABY! AGAIN"
 				pass
 			
-			if self.subscriber in events:
-				print "EVENTS has self.subscriber socket"
+			#if self.subscriber in events:
+			#	print "EVENTS has self.subscriber socket"
 
-			if self.publisher in events:
-				print "EVENTS has self.publisher socket"
+			#if self.publisher in events:
+			#	print "EVENTS has self.publisher socket"
 				
 	#		if events:
 			if self.reply_subscriber in events and events[self.reply_subscriber] == zmq.POLLIN:
 				print "DEBUG: YES!"
-				print events
 				# todo: have a look at what's returned?
 				# read response from the server
 				msg_resp = self.reply_subscriber.recv()
