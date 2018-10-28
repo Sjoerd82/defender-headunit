@@ -219,8 +219,9 @@ class MqPubSubFwdController(object):
 		 - None (invalid command, send unsuccesful)
 		 ? Raw return message
 		 ? Tuple/Dict (#tbd)
-		
 		"""
+		events = None
+		
 		print "DEBUG -- publish()"
 		# check command is valid
 		if command not in self.VALID_COMMANDS:
@@ -247,6 +248,7 @@ class MqPubSubFwdController(object):
 			self.poller.register(self.reply_subscriber, zmq.POLLIN)
 			self.reply_subscriber.setsockopt (zmq.SUBSCRIBE, response_path)
 	#		reply_subscriber.setsockopt(zmq.SUBSCRIBE,response_path)
+			print "response path: {0}".format(response_path)
 
 		#print "message = {0}".format(message)
 		#print type(arguments)	# <class 'hu_datastruct.Modes'>
@@ -263,7 +265,6 @@ class MqPubSubFwdController(object):
 			#events = dict(self.poller.poll())
 			if timeout is not None:
 				timeout=6000
-				print events
 				print "with timeout {0}".format(timeout)
 				events = dict(self.poller.poll(timeout))
 				print "timeout!!"
