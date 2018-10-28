@@ -287,6 +287,7 @@ class MqPubSubFwdController(object):
 				
 				#? this ok? clean-up?
 				# check response?
+				print "returning: {0}".format(data)
 				return data
 				
 			else:
