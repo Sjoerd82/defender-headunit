@@ -85,6 +85,7 @@ class MqPubSubFwdController(object):
 		
 		# Poller
 		self.poller = zmq.Poller()
+		self.poll_resp = zmq.Poller()
 		
 		self.address = address
 		self.port_pub = port_pub
@@ -246,8 +247,8 @@ class MqPubSubFwdController(object):
 	#		reply_poller = zmq.Poller()
 	#		reply_poller.register(reply_subscriber, zmq.POLLIN)
 	
-			self.poller.unregister(self.subscriber)
-			self.poller.register(self.reply_subscriber, zmq.POLLIN)
+			#self.poller.unregister(self.subscriber)	#eyyy, this works... but where did it get registered? ALSO this fails on the second call (no longer registered)
+			self.poll_resp.register(self.reply_subscriber, zmq.POLLIN)
 			self.reply_subscriber.setsockopt (zmq.SUBSCRIBE, response_path)
 			
 	#		reply_subscriber.setsockopt(zmq.SUBSCRIBE,response_path)
@@ -269,16 +270,16 @@ class MqPubSubFwdController(object):
 			if timeout is not None:
 				timeout=6000
 				print "with timeout {0}".format(timeout)
-				events = dict(self.poller.poll(timeout))
+				events = dict(self.poll_resp.poll(timeout))
 				print "timeout!!"
 				print events
 				for x in events:
 					print type(x)
 					print x
 			else:
-				events = dict(self.poller.poll())
+				events = dict(self.poll_resp.poll())
 
-			self.poller.unregister(self.reply_subscriber)
+			self.poll_resp.unregister(self.reply_subscriber)
 			#except zmq.ZMQError:
 				# No Message Available
 			#	return None
