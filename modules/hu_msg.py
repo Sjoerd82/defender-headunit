@@ -246,8 +246,9 @@ class MqPubSubFwdController(object):
 	#		reply_poller = zmq.Poller()
 	#		reply_poller.register(reply_subscriber, zmq.POLLIN)
 	
-			self.reply_subscriber.setsockopt (zmq.SUBSCRIBE, response_path)
+			self.poller.unregister(self.subscriber)
 			self.poller.register(self.reply_subscriber, zmq.POLLIN)
+			self.reply_subscriber.setsockopt (zmq.SUBSCRIBE, response_path)
 			
 	#		reply_subscriber.setsockopt(zmq.SUBSCRIBE,response_path)
 			print "response path: {0}".format(response_path)
