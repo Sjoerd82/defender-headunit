@@ -245,8 +245,10 @@ class MqPubSubFwdController(object):
 			# setup a temporary poller for the new socket
 	#		reply_poller = zmq.Poller()
 	#		reply_poller.register(reply_subscriber, zmq.POLLIN)
-			self.poller.register(self.reply_subscriber, zmq.POLLIN)
+	
 			self.reply_subscriber.setsockopt (zmq.SUBSCRIBE, response_path)
+			self.poller.register(self.reply_subscriber, zmq.POLLIN)
+			
 	#		reply_subscriber.setsockopt(zmq.SUBSCRIBE,response_path)
 			print "response path: {0}".format(response_path)
 
@@ -284,6 +286,12 @@ class MqPubSubFwdController(object):
 				print "OHYEAHBABY! AGAIN"
 				pass
 			
+			if self.subscriber in events:
+				print "EVENTS has self.subscriber socket"
+
+			if self.publisher in events:
+				print "EVENTS has self.publisher socket"
+				
 	#		if events:
 			if self.reply_subscriber in events and events[self.reply_subscriber] == zmq.POLLIN:
 				print "DEBUG: YES!"
