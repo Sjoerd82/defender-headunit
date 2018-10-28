@@ -264,6 +264,7 @@ class MqPubSubFwdController(object):
 			if timeout is not None:
 				print "with timeout"
 				events = dict(self.poller.poll(timeout))
+				print "timeout!!"
 			else:
 				events = dict(self.poller.poll())
 
