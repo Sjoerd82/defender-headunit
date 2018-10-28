@@ -260,7 +260,7 @@ class MqPubSubFwdController(object):
 			parsed_response = None
 	#		events = dict(reply_poller.poll()) #timeout
 	
-			events = dict(self.poller.poll())
+			#events = dict(self.poller.poll())
 			if timeout is not None:
 				print "with timeout {0}".format(timeout)
 				events = dict(self.poller.poll(timeout))
@@ -279,6 +279,7 @@ class MqPubSubFwdController(object):
 			
 			if events:
 				print "DEBUG: YES!"
+				print events
 				# todo: have a look at what's returned?
 				# read response from the server
 				msg_resp = self.reply_subscriber.recv()
